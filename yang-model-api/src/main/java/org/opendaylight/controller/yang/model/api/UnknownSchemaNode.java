@@ -12,6 +12,9 @@ import org.opendaylight.controller.yang.common.QName;
 public interface UnknownSchemaNode extends SchemaNode {
 
     QName getNodeType();
+
     String getNodeParameter();
+
+    boolean isAddedByUses();
 
 }
