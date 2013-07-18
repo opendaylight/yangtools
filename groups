@@ -1,0 +1,5 @@
+# UUID                                  	Group Name
+#
+2373512464abcee3eaf50f265c4a4e428dab634e	Administrators
+c0a294ab525dd773e2ab0d839cc7b9a0b9268c7f	Non-interactive yangtools users
+ldap:cn=gerrit-yangtools-commiters,ou=Groups,dc=opendaylight,dc=org	ldap/gerrit-yangtools-commiters
