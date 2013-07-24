@@ -1,20 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <parent>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>yang-prototype</artifactId>
-        <version>0.5-SNAPSHOT</version>
-    </parent>
-
     <modelVersion>4.0.0</modelVersion>
+    <artifactId>yangtools</artifactId>
+    <groupId>org.opendaylight.controller</groupId>
     <version>0.5.4-SNAPSHOT</version>
-    <artifactId>yang</artifactId>
     <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Version of all child artifacts -->
+        <slf4j.version>1.7.2</slf4j.version>
     </properties>
 
     <modules>
@@ -86,8 +81,37 @@
                 <artifactId>yang-maven-plugin-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.10</version>
+                <scope>test</scope>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <!-- OpenDayLight Released artifact -->
+        <repository>
+            <id>opendaylight-release</id>
+            <url>${nexusproxy}/repositories/opendaylight.release/</url>
+        </repository>
+        <!-- OpenDayLight Snapshot artifact -->
+        <snapshotRepository>
+            <id>opendaylight-snapshot</id>
+            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+        </snapshotRepository>
+        <site>
+            <id>${project.artifactId}-site</id>
+            <url>./</url>
+        </site>
+    </distributionManagement>
 
     <build>
         <plugins>
