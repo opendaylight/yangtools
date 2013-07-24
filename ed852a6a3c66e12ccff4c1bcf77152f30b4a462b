@@ -1,0 +1,8 @@
+Change-Id: Ied852a6a3c66e12ccff4c1bcf77152f30b4a462b
+Code-Review+2: Tony Tkacik <ttkacik@cisco.com>
+Verified+1: Tony Tkacik <ttkacik@cisco.com>
+Submitted-by: Tony Tkacik <ttkacik@cisco.com>
+Submitted-at: Wed, 24 Jul 2013 11:51:17 +0000
+Reviewed-on: http://git.opendaylight.org/gerrit/649
+Project: yangtools
+Branch: refs/heads/master
