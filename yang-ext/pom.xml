@@ -2,8 +2,8 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>yang</artifactId>
+        <groupId>org.opendaylight.yang</groupId>
+        <artifactId>yang-parent</artifactId>
         <version>0.5.4-SNAPSHOT</version>
     </parent>
 
@@ -16,7 +16,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.opendaylight.controller</groupId>
+                <groupId>org.opendaylight.yang</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
                 <version>0.5.4-SNAPSHOT</version>
                 <executions>
@@ -32,14 +32,14 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.opendaylight.controller</groupId>
-                        <artifactId>maven-sal-api-gen-plugin</artifactId>
-                        <version>0.5.4-SNAPSHOT</version>
-                        <type>jar</type>
-                    </dependency>
-                </dependencies>
+                <!-- <dependencies> -->
+                <!-- <dependency> -->
+                <!-- <groupId>org.opendaylight.controller</groupId> -->
+                <!-- <artifactId>maven-sal-api-gen-plugin</artifactId> -->
+                <!-- <version>0.5.4-SNAPSHOT</version> -->
+                <!-- <type>jar</type> -->
+                <!-- </dependency> -->
+                <!-- </dependencies> -->
             </plugin>
         </plugins>
 
@@ -101,4 +101,5 @@
             </plugins>
         </pluginManagement>
     </build>
+
 </project>

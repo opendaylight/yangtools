@@ -8,15 +8,17 @@
 package org.opendaylight.controller.yang2sources.plugin.it;
 
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.File;
 import java.net.URL;
 
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class YangToSourcesPluginTestIT {
 
     // TODO Test yang files in transitive dependencies

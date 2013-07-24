@@ -2,8 +2,8 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>yang</artifactId>
+        <groupId>org.opendaylight.yang</groupId>
+        <artifactId>yang-parent</artifactId>
         <version>0.5.4-SNAPSHOT</version>
     </parent>
 
@@ -15,13 +15,15 @@
     <properties>
         <groovy.version>2.1.6</groovy.version>
     </properties>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Dlog4j.configuration=log4j-test.xml -Xmx1500m</argLine>
+                    <argLine>-Dlog4j.configuration=log4j-test.xml
+                        -Xmx1500m</argLine>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
@@ -30,15 +32,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.opendaylight.controller</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>yang-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.controller</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>yang-data-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.controller</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>yang-model-parser-impl</artifactId>
             <exclusions>
                 <exclusion>
@@ -52,7 +54,6 @@
             <artifactId>guava</artifactId>
             <version>14.0.1</version>
         </dependency>
-        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

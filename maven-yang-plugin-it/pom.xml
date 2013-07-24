@@ -1,11 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>yang</artifactId>
-        <groupId>org.opendaylight.controller</groupId>
+        <groupId>org.opendaylight.yang</groupId>
+        <artifactId>yang-parent</artifactId>
         <version>0.5.4-SNAPSHOT</version>
     </parent>
+
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>yang-maven-plugin-it</artifactId>
 
     <dependencies>
@@ -33,4 +35,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
