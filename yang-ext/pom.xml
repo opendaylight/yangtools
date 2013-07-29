@@ -76,13 +76,13 @@
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>
-                                            org.opendaylight.controller
+                                            org.opendaylight.yang
                                         </groupId>
                                         <artifactId>
                                             yang-maven-plugin
                                         </artifactId>
                                         <versionRange>
-                                            [0.5,)
+                                            [0.5.4,)
                                         </versionRange>
                                         <goals>
                                             <goal>
