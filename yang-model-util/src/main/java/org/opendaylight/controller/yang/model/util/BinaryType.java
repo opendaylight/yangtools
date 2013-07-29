@@ -12,11 +12,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.controller.yang.common.QName;
-import org.opendaylight.controller.yang.model.api.SchemaPath;
-import org.opendaylight.controller.yang.model.api.Status;
-import org.opendaylight.controller.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.controller.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.controller.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 /**
  * The <code>default</code> implementation of Binary Type Definition interface.

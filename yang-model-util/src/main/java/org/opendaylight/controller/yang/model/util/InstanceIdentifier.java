@@ -11,11 +11,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.controller.yang.common.QName;
-import org.opendaylight.controller.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.controller.yang.model.api.SchemaPath;
-import org.opendaylight.controller.yang.model.api.Status;
-import org.opendaylight.controller.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.controller.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
 /**
  * The <code>default</code> implementation of Instance Identifier Type

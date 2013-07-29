@@ -7,7 +7,7 @@
  */
 package org.opendaylight.controller.yang.model.util;
 
-import org.opendaylight.controller.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 /**
  * The <code>default</code> implementation of Instance Rewision Aware XPath interface.

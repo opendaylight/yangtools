@@ -8,8 +8,8 @@
 package org.opendaylight.controller.yang.model.util;
 
 import org.opendaylight.controller.yang.common.QName;
-import org.opendaylight.controller.yang.model.api.SchemaPath;
-import org.opendaylight.controller.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
 /**
  * Implementation of Yang int64 built-in type. <br>

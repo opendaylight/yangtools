@@ -20,17 +20,17 @@ import org.opendaylight.controller.yang.data.api.MutableCompositeNode;
 import org.opendaylight.controller.yang.data.api.MutableSimpleNode;
 import org.opendaylight.controller.yang.data.api.Node;
 import org.opendaylight.controller.yang.data.api.SimpleNode;
-import org.opendaylight.controller.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
  * @author michal.rehak
- * 
+ *
  */
 public class NodeModificationBuilderImplTest {
-    
+
     private static final Logger LOG = LoggerFactory
             .getLogger(NodeModificationBuilderImplTest.class);
 
@@ -47,14 +47,14 @@ public class NodeModificationBuilderImplTest {
     private void dumpResult() throws Exception {
         CompositeNode diffTree = nodeModificationBuilder.buildDiffTree();
         CompositeNode diffTreeImmutable = NodeFactory.copyDeepAsImmutable(diffTree, null);
-        
+
         Document diffShadow = NodeUtils.buildShadowDomTree(diffTreeImmutable);
         NodeHelper.dumpDoc(diffShadow, System.out);
     }
 
     /**
      * prepare schemaContext
-     * @throws Exception 
+     * @throws Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -62,10 +62,10 @@ public class NodeModificationBuilderImplTest {
 
         ns = "urn:opendaylight:controller:network";
         qName = new QName(
-                new URI(ns), 
+                new URI(ns),
                 new Date(1369000800000L), "topos");
         network = NodeHelper.buildTestConfigTree(qName);
-        
+
         nodeModificationBuilder = new NodeModificationBuilderImpl(network, schemaCtx);
     }
 
@@ -76,13 +76,13 @@ public class NodeModificationBuilderImplTest {
      */
     @Test
     public void testGetMutableEquivalent() {
-        MutableCompositeNode rootMutable = (MutableCompositeNode) 
+        MutableCompositeNode rootMutable = (MutableCompositeNode)
                 nodeModificationBuilder.getMutableEquivalent(network);
-        
+
         CompositeNode topologies = network.getCompositesByName("topologies").iterator().next();
         Node<?> mutableEquivalent = nodeModificationBuilder.getMutableEquivalent(topologies);
         CompositeNode topologiesMutable = rootMutable.getCompositesByName("topologies").iterator().next();
-        
+
         Assert.assertSame(topologiesMutable, mutableEquivalent);
     }
 
@@ -90,52 +90,52 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeAddSimple() throws Exception {
         LOG.debug("testBuildDiffTreeAddSimple");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        CompositeNode needle = NodeUtils.findNodeByXpath(networkShadow, 
+        CompositeNode needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]", ns));
-        
-        MutableCompositeNode mutableParent = (MutableCompositeNode) 
+
+        MutableCompositeNode mutableParent = (MutableCompositeNode)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         MutableSimpleNode<String> newMutable = NodeFactory.createMutableSimpleNode(
                 new QName(needle.getNodeType(), "anySubNode"), mutableParent, "42", null, null);
-        
+
         nodeModificationBuilder.addNode(newMutable);
         dumpResult();
     }
-    
+
     /**
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeAddComposite() throws Exception {
         LOG.debug("testBuildDiffTreeAddComposite");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        CompositeNode needle = NodeUtils.findNodeByXpath(networkShadow, 
+        CompositeNode needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]", ns));
-        
-        MutableCompositeNode mutableParent = (MutableCompositeNode) 
+
+        MutableCompositeNode mutableParent = (MutableCompositeNode)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         MutableSimpleNode<String> newMutable = NodeFactory.createMutableSimpleNode(
                 new QName(needle.getNodeType(), "anySubNode"), null, "42", null, null);
-        
+
         MutableCompositeNode newMutableCom = NodeFactory.createMutableCompositeNode(
-                new QName(needle.getNodeType(), "anySubNode"), mutableParent, 
+                new QName(needle.getNodeType(), "anySubNode"), mutableParent,
                 NodeUtils.buildChildrenList(newMutable), null, null);
         NodeUtils.fixChildrenRelation(newMutableCom);
         newMutableCom.init();
-        
+
         nodeModificationBuilder.addNode(newMutableCom);
         dumpResult();
     }
@@ -144,20 +144,20 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeDeleteComposite() throws Exception {
         LOG.debug("testBuildDiffTreeDeleteComposite");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow, 
+        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]/{0}tp-id", ns));
 
         @SuppressWarnings("unchecked")
-        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) 
+        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         nodeModificationBuilder.deleteNode(mutableNeedle.getParent().asMutable());
         dumpResult();
     }
@@ -166,20 +166,20 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeDeleteSimple() throws Exception {
         LOG.debug("testBuildDiffTreeDeleteSimple");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow, 
+        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]/{0}tp-id", ns));
-        
+
         @SuppressWarnings("unchecked")
-        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) 
+        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         nodeModificationBuilder.deleteNode(mutableNeedle);
         dumpResult();
     }
@@ -188,20 +188,20 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeMerge() throws Exception {
         LOG.debug("testBuildDiffTreeMerge");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow, 
+        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]/{0}tp-id", ns));
-        
+
         @SuppressWarnings("unchecked")
-        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) 
+        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         mutableNeedle.setValue("tpId_18x");
         nodeModificationBuilder.mergeNode(mutableNeedle.getParent().asMutable());
         dumpResult();
@@ -211,20 +211,20 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeRemoveComposite() throws Exception {
         LOG.debug("testBuildDiffTreeRemoveComposite");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow, 
+        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]/{0}tp-id", ns));
-        
+
         @SuppressWarnings("unchecked")
-        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) 
+        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         nodeModificationBuilder.removeNode(mutableNeedle.getParent().asMutable());
         dumpResult();
     }
@@ -233,20 +233,20 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeRemoveSimple() throws Exception {
         LOG.debug("testBuildDiffTreeRemoveSimple");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow, 
+        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]/{0}tp-id", ns));
-        
+
         @SuppressWarnings("unchecked")
-        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) 
+        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         nodeModificationBuilder.removeNode(mutableNeedle);
         dumpResult();
     }
@@ -255,20 +255,20 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeReplaceComposite() throws Exception {
         LOG.debug("testBuildDiffTreeReplaceComposite");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow, 
+        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]/{0}tp-id", ns));
-        
+
         @SuppressWarnings("unchecked")
-        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) 
+        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         mutableNeedle.setValue("tpId_18x");
         nodeModificationBuilder.replaceNode(mutableNeedle.getParent().asMutable());
         dumpResult();
@@ -278,20 +278,20 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.controller.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildDiffTreeReplaceSimple() throws Exception {
         LOG.debug("testBuildDiffTreeReplaceSimple");
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow, 
+        SimpleNode<?> needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                 "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]/{0}tp-id", ns));
-        
+
         @SuppressWarnings("unchecked")
-        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) 
+        MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>)
                 nodeModificationBuilder.getMutableEquivalent(needle);
-        
+
         mutableNeedle.setValue("tpId_18x");
         nodeModificationBuilder.replaceNode(mutableNeedle);
         dumpResult();

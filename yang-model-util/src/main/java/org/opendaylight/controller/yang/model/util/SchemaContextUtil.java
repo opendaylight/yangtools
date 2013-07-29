@@ -14,7 +14,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.opendaylight.controller.yang.common.QName;
-import org.opendaylight.controller.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.*;
 
 public final class SchemaContextUtil {
 

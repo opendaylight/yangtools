@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.opendaylight.controller.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.*;
 
 public class DataNodeIterator implements Iterator<DataSchemaNode> {
 

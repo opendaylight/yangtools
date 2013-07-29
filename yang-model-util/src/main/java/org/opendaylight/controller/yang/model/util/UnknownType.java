@@ -11,13 +11,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.controller.yang.common.QName;
-import org.opendaylight.controller.yang.model.api.SchemaPath;
-import org.opendaylight.controller.yang.model.api.Status;
-import org.opendaylight.controller.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.controller.yang.model.api.type.LengthConstraint;
-import org.opendaylight.controller.yang.model.api.type.PatternConstraint;
-import org.opendaylight.controller.yang.model.api.type.RangeConstraint;
-import org.opendaylight.controller.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
 public class UnknownType implements UnknownTypeDefinition {
 

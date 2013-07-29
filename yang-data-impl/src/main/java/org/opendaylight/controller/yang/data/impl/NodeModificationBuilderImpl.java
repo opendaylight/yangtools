@@ -20,22 +20,22 @@ import org.opendaylight.controller.yang.data.api.MutableNode;
 import org.opendaylight.controller.yang.data.api.MutableSimpleNode;
 import org.opendaylight.controller.yang.data.api.Node;
 import org.opendaylight.controller.yang.data.api.NodeModificationBuilder;
-import org.opendaylight.controller.yang.model.api.ListSchemaNode;
-import org.opendaylight.controller.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * @author michal.rehak
  *
  */
 public class NodeModificationBuilderImpl implements NodeModificationBuilder {
-    
+
     private SchemaContext context;
-    
+
     private Set<MutableNode<?>> changeLog;
     private LazyNodeToNodeMap originalToMutable;
 
     /**
-     * @param originalTreeRootNode 
+     * @param originalTreeRootNode
      * @param context
      */
     public NodeModificationBuilderImpl(CompositeNode originalTreeRootNode, SchemaContext context) {
@@ -46,7 +46,7 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
 
     /**
      * @param modNode
-     * @param action 
+     * @param action
      */
     private void addModificationToLog(MutableNode<?> modNode, ModifyAction action) {
         modNode.setModifyAction(action);
@@ -58,18 +58,18 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
         NodeUtils.fixParentRelation(newNode);
         addModificationToLog(newNode, ModifyAction.CREATE);
     }
-    
+
     @Override
     public void addNode(MutableCompositeNode newNode) {
         NodeUtils.fixParentRelation(newNode);
         addModificationToLog(newNode, ModifyAction.CREATE);
     }
-    
+
     @Override
     public void replaceNode(MutableSimpleNode<?> replacementNode) {
         addModificationToLog(replacementNode, ModifyAction.REPLACE);
     }
-    
+
     @Override
     public void replaceNode(MutableCompositeNode replacementNode) {
         addModificationToLog(replacementNode, ModifyAction.REPLACE);
@@ -79,7 +79,7 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
     public void deleteNode(MutableCompositeNode deadNode) {
         addModificationToLog(deadNode, ModifyAction.DELETE);
     }
-    
+
     @Override
     public void deleteNode(MutableSimpleNode<?> deadNode) {
         addModificationToLog(deadNode, ModifyAction.DELETE);
@@ -89,12 +89,12 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
     public void removeNode(MutableSimpleNode<?> deadNode) {
         addModificationToLog(deadNode, ModifyAction.REMOVE);
     }
-    
+
     @Override
     public void removeNode(MutableCompositeNode deadNode) {
         addModificationToLog(deadNode, ModifyAction.REMOVE);
     }
-    
+
     @Override
     public void mergeNode(MutableCompositeNode alteredNode) {
         addModificationToLog(alteredNode, ModifyAction.MERGE);
@@ -106,12 +106,12 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
     @Override
     public CompositeNode buildDiffTree() {
         Set<Node<?>> wanted = new HashSet<>();
-        
+
         // walk changeLog, collect all required nodes
         for (MutableNode<?> mutant : changeLog) {
             wanted.addAll(collectSelfAndAllParents(mutant));
         }
-        
+
         // walk wanted and add relevant keys
         Map<String, ListSchemaNode>  mapOfLists = NodeUtils.buildMapOfListNodes(context);
         for (Node<?> outlaw : wanted) {
@@ -132,7 +132,7 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
                 }
             }
         }
-        
+
         return originalToMutable.getMutableRoot();
     }
 

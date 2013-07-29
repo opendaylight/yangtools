@@ -25,13 +25,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
-import org.opendaylight.controller.yang.model.api.Module;
-import org.opendaylight.controller.yang.model.api.SchemaContext;
-import org.opendaylight.controller.yang.parser.impl.YangParserImpl;
 import org.opendaylight.controller.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.controller.yang2sources.plugin.Util.ContextHolder;
 import org.opendaylight.controller.yang2sources.plugin.Util.YangsInZipsResult;
 import org.opendaylight.controller.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;

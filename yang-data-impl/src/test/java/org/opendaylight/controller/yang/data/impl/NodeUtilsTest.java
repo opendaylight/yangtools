@@ -21,8 +21,8 @@ import org.opendaylight.controller.yang.common.QName;
 import org.opendaylight.controller.yang.data.api.CompositeNode;
 import org.opendaylight.controller.yang.data.api.Node;
 import org.opendaylight.controller.yang.data.api.SimpleNode;
-import org.opendaylight.controller.yang.model.api.ListSchemaNode;
-import org.opendaylight.controller.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -32,10 +32,10 @@ import org.w3c.dom.Document;
  *
  */
 public class NodeUtilsTest {
-    
+
     private static final Logger LOG = LoggerFactory
             .getLogger(NodeUtilsTest.class);
-    
+
     private QName qName;
     private CompositeNode network;
 
@@ -49,14 +49,14 @@ public class NodeUtilsTest {
     public void setUp() throws Exception {
         ns = "urn:ietf:params:xml:ns:netconf:base:1.0";
         qName = new QName(
-                new URI(ns), 
+                new URI(ns),
                 new Date(42), "yang-data-impl-mutableTest");
         network = NodeHelper.buildTestConfigTree(qName);
     }
 
     /**
      * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildPath(org.opendaylight.controller.yang.data.api.Node)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildPath() throws Exception {
@@ -64,45 +64,45 @@ public class NodeUtilsTest {
             .getCompositesByName("topology").iterator().next()
             .getSimpleNodesByName("topology-id").iterator().next();
         String breadCrumbs = NodeUtils.buildPath(needle);
-        
+
         Assert.assertEquals("network.topologies.topology.topology-id", breadCrumbs);
     }
 
     /**
      * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildShadowDomTree(org.opendaylight.controller.yang.data.api.CompositeNode)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testBuildShadowDomTree() throws Exception {
         MemoryConsumption mc = new MemoryConsumption();
         mc.startObserving();
-        
+
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
-        
+
         LOG.debug("After dom built: "+mc.finishObserving());
         NodeHelper.compareXmlTree(networkShadow, "./config02-shadow.xml", getClass());
     }
 
     /**
      * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#findNodeByXpath(org.w3c.dom.Document, java.lang.String)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testFindNodeByXpath() throws Exception {
         Document networkShadow = NodeUtils.buildShadowDomTree(network);
         MemoryConsumption mc = new MemoryConsumption();
         mc.startObserving();
-        
-        SimpleNode<String> needle = NodeUtils.findNodeByXpath(networkShadow, 
+
+        SimpleNode<String> needle = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                         "//{0}node[{0}node-id='nodeId_19']//{0}termination-point[2]/{0}tp-id", ns));
-        
+
         LOG.debug("After xpath executed: "+mc.finishObserving());
-        
+
         Assert.assertNotNull(needle);
         Assert.assertEquals("tpId_18", needle.getValue());
     }
-    
+
     /**
      * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildNodeMap(java.util.List)}.
      */
@@ -110,11 +110,11 @@ public class NodeUtilsTest {
     public void testBuildNodeMap() {
         CompositeNode topology = network.getCompositesByName("topologies").iterator().next()
             .getCompositesByName("topology").iterator().next();
-        
+
         Map<QName, List<Node<?>>> nodeMap = NodeUtils.buildNodeMap(topology.getChildren());
         Assert.assertEquals(3, nodeMap.size());
     }
-    
+
     /**
      * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildMapOfListNodes(org.opendaylight.controller.yang.model.api.SchemaContext)}.
      */
@@ -127,8 +127,8 @@ public class NodeUtilsTest {
 
     /**
      * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildMapOfListNodes(org.opendaylight.controller.yang.model.api.SchemaContext)}.
-     * @throws Exception 
-     * @throws IOException 
+     * @throws Exception
+     * @throws IOException
      */
     @Test
     public void testLoadConfigByGroovy() throws IOException, Exception {
@@ -140,26 +140,26 @@ public class NodeUtilsTest {
             LOG.error(e.getMessage());
             throw e;
         }
-    	
+
     	NodeHelper.compareXmlTree(shadowTree, "./config02g-shadow.xml", getClass());
     }
 
     private static void checkFamilyBinding(CompositeNode treeRoot) throws Exception {
         Stack<CompositeNode> jobQueue = new Stack<>();
         jobQueue.push(treeRoot);
-        
+
         while (!jobQueue.isEmpty()) {
             CompositeNode job = jobQueue.pop();
             for (Node<?> child : job.getChildren()) {
                 if (child instanceof CompositeNode) {
                     jobQueue.push((CompositeNode) child);
                 }
-                
+
                 if (job != child.getParent()) {
                     throw new Exception("binding mismatch occured: \nPARENT["+job+"]\n CHILD[" + child+"]\n  +->  "+child.getParent());
                 }
             }
         }
     }
-    
+
 }

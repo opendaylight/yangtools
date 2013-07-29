@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.controller.yang.common.QName;
-import org.opendaylight.controller.yang.model.api.SchemaPath;
-import org.opendaylight.controller.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public final class YangTypesConverter {
     private static final Set<String> baseYangTypes = new HashSet<String>();

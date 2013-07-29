@@ -7,9 +7,9 @@
  */
 package org.opendaylight.controller.yang.model.util;
 
-import org.opendaylight.controller.yang.model.api.type.LengthConstraint;
-import org.opendaylight.controller.yang.model.api.type.PatternConstraint;
-import org.opendaylight.controller.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 public final class BaseConstraints {
 

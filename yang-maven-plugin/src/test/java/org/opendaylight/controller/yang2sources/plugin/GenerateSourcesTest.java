@@ -7,10 +7,10 @@
  */
 package org.opendaylight.controller.yang2sources.plugin;
 
-import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
-import static org.mockito.Matchers.*;
+import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 import java.io.File;
@@ -26,11 +26,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.opendaylight.controller.yang.model.api.Module;
-import org.opendaylight.controller.yang.model.api.SchemaContext;
 import org.opendaylight.controller.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.controller.yang2sources.plugin.YangToSourcesProcessor.YangProvider;
 import org.opendaylight.controller.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 import com.google.common.collect.Lists;
 

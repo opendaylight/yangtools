@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.opendaylight.controller.yang.common.QName;
-import org.opendaylight.controller.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class BaseTypes {
 

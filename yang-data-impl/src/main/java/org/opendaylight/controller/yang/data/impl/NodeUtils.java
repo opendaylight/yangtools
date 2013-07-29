@@ -30,10 +30,10 @@ import org.opendaylight.controller.yang.data.api.ModifyAction;
 import org.opendaylight.controller.yang.data.api.Node;
 import org.opendaylight.controller.yang.data.api.NodeModification;
 import org.opendaylight.controller.yang.data.api.SimpleNode;
-import org.opendaylight.controller.yang.model.api.DataNodeContainer;
-import org.opendaylight.controller.yang.model.api.DataSchemaNode;
-import org.opendaylight.controller.yang.model.api.ListSchemaNode;
-import org.opendaylight.controller.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -47,14 +47,14 @@ import com.google.common.collect.Lists;
  *
  */
 public abstract class NodeUtils {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(NodeUtils.class);
-    
+
     /**
-     * 
+     *
      */
     private static final String USER_KEY_NODE = "node";
-    
+
     /**
      * @param node
      * @return node path up till root node
@@ -66,14 +66,14 @@ public abstract class NodeUtils {
             breadCrumbs.insertElementAt(tmpNode.getNodeType().getLocalName(), 0);
             tmpNode = tmpNode.getParent();
         }
-        
+
         return Joiner.on(".").join(breadCrumbs);
     }
 
-    
+
     /**
      * @param treeRootNode
-     * @return dom tree, containing same node structure, yang nodes are associated 
+     * @return dom tree, containing same node structure, yang nodes are associated
      * to dom nodes as user data
      */
     public static org.w3c.dom.Document buildShadowDomTree(CompositeNode treeRootNode) {
@@ -86,17 +86,17 @@ public abstract class NodeUtils {
             LOG.error("documentBuilder problem", e);
             return null;
         }
-        
-        
+
+
         Stack<SimpleEntry<org.w3c.dom.Node, Node<?>>> jobQueue = new Stack<>();
         jobQueue.push(new SimpleEntry<org.w3c.dom.Node, Node<?>>(doc, treeRootNode));
-        
+
         while (!jobQueue.isEmpty()) {
             SimpleEntry<org.w3c.dom.Node, Node<?>> job = jobQueue.pop();
             org.w3c.dom.Node jointPlace = job.getKey();
             Node<?> item = job.getValue();
             QName nodeType = item.getNodeType();
-            Element itemEl = doc.createElementNS(nodeType.getNamespace().toString(), 
+            Element itemEl = doc.createElementNS(nodeType.getNamespace().toString(),
                     item.getNodeType().getLocalName());
             itemEl.setUserData(USER_KEY_NODE, item, null);
             if (item instanceof SimpleNode<?>) {
@@ -110,19 +110,19 @@ public abstract class NodeUtils {
                     itemEl.setAttribute("modifyAction", modificationAction.toString());
                 }
             }
-            
+
             jointPlace.appendChild(itemEl);
-            
+
             if (item instanceof CompositeNode) {
                 for (Node<?> child : ((CompositeNode) item).getChildren()) {
                     jobQueue.push(new SimpleEntry<org.w3c.dom.Node, Node<?>>(itemEl, child));
                 }
             }
         }
-        
+
         return doc;
     }
-    
+
     /**
      * @param doc
      * @param xpathEx
@@ -130,27 +130,27 @@ public abstract class NodeUtils {
      * @throws XPathExpressionException
      */
     @SuppressWarnings("unchecked")
-    public static <T> T findNodeByXpath(org.w3c.dom.Document doc, String xpathEx) 
+    public static <T> T findNodeByXpath(org.w3c.dom.Document doc, String xpathEx)
             throws XPathExpressionException {
         T userNode = null;
         XPathFactory xPathfactory = XPathFactory.newInstance();
         XPath xpath = xPathfactory.newXPath();
         XPathExpression expr = xpath.compile(xpathEx);
-        
+
         org.w3c.dom.Node result = (org.w3c.dom.Node) expr.evaluate(doc, XPathConstants.NODE);
         if (result != null) {
             userNode = (T) result.getUserData(USER_KEY_NODE);
-        } 
-        
+        }
+
         return userNode;
     }
 
 
     /**
      * build NodeMap, where key = qName; value = node
-     * 
+     *
      * @param value
-     * @return map of children, where key = qName and value is list of children groupped by qName  
+     * @return map of children, where key = qName and value is list of children groupped by qName
      */
     public static Map<QName, List<Node<?>>> buildNodeMap(List<Node<?>> value) {
         Map<QName, List<Node<?>>> nodeMapTmp = new HashMap<>();
@@ -177,24 +177,24 @@ public abstract class NodeUtils {
     public static Map<String, ListSchemaNode> buildMapOfListNodes(
             SchemaContext context) {
         Map<String, ListSchemaNode> mapOfLists = new HashMap<>();
-        
+
         Stack<DataSchemaNode> jobQueue = new Stack<>();
         jobQueue.addAll(context.getDataDefinitions());
-        
+
         while (!jobQueue.isEmpty()) {
             DataSchemaNode dataSchema = jobQueue.pop();
             if (dataSchema instanceof ListSchemaNode) {
                 mapOfLists.put(schemaPathToPath(dataSchema.getPath().getPath()), (ListSchemaNode) dataSchema);
             }
-            
+
             if (dataSchema instanceof DataNodeContainer) {
                 jobQueue.addAll(((DataNodeContainer) dataSchema).getChildNodes());
             }
         }
-        
+
         return mapOfLists;
     }
-    
+
     /**
      * @param path
      * @return
@@ -219,7 +219,7 @@ public abstract class NodeUtils {
             }
         }
     }
-    
+
     /**
      * crawl all children of given node and assign it as their parent
      * @param parentNode
@@ -238,7 +238,7 @@ public abstract class NodeUtils {
     /**
      * @param keys
      * @param dataMap
-     * @return list of values of map, found by given keys 
+     * @return list of values of map, found by given keys
      */
     public static <T, K> List<K> collectMapValues(List<T> keys,
             Map<T, K> dataMap) {
@@ -246,10 +246,10 @@ public abstract class NodeUtils {
         for (T key : keys) {
             valueSubList.add(dataMap.get(key));
         }
-        
+
         return valueSubList;
     }
-    
+
     /**
      * @param nodes
      * @return list of children in list of appropriate type

@@ -20,9 +20,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.opendaylight.controller.yang.model.api.SchemaContext;
 import org.opendaylight.controller.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.controller.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 import com.google.common.annotations.VisibleForTesting;
 
