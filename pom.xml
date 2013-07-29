@@ -20,12 +20,12 @@
         <module>yang-data-impl</module>
         <module>yang-ext</module>
         <module>yang-model-api</module>
-        <module>yang-model-parser-api</module>
-        <module>yang-model-parser-impl</module>
         <module>yang-maven-plugin</module>
         <module>yang-maven-plugin-it</module>
         <module>yang-maven-plugin-spi</module>
         <module>yang-model-util</module>
+        <module>yang-parser-api</module>
+        <module>yang-parser-impl</module>
     </modules>
 
     <dependencyManagement>
@@ -62,12 +62,12 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yang</groupId>
-                <artifactId>yang-model-parser-api</artifactId>
+                <artifactId>yang-parser-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yang</groupId>
-                <artifactId>yang-model-parser-impl
+                <artifactId>yang-parser-impl
                 </artifactId>
                 <version>${project.version}</version>
             </dependency>

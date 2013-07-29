@@ -8,7 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>yang-model-parser-api</artifactId>
+    <artifactId>yang-parser-api</artifactId>
     <name>${project.artifactId}</name>
     <description>YANG parser API</description>
 

@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>yang-model-parser-impl</artifactId>
+            <artifactId>yang-parser-impl</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
