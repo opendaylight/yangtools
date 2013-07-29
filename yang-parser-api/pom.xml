@@ -3,7 +3,7 @@
 
     <parent>
         <groupId>org.opendaylight.yang</groupId>
-        <artifactId>yang-parent</artifactId>
+        <artifactId>yangtools</artifactId>
         <version>0.5.4-SNAPSHOT</version>
     </parent>
 
