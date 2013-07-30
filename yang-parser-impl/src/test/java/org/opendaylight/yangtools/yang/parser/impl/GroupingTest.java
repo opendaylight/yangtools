@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.controller.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 public class GroupingTest {
     private Set<Module> modules;

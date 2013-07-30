@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import org.opendaylight.controller.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 

@@ -14,7 +14,7 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.controller.yang.model.util.BaseConstraints;
+import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
 /**
  * Holder object for holding YANG type constraints.

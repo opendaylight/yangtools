@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import org.opendaylight.controller.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public interface IdentityTypeDefinition extends

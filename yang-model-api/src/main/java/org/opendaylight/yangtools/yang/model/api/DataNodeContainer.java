@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Set;
 
-import org.opendaylight.controller.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Node which can contains other nodes.

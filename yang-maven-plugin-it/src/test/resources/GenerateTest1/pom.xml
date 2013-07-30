@@ -2,14 +2,14 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.opendaylight.controller</groupId>
+    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>generator-test1</artifactId>
     <version>0.5.4-SNAPSHOT</version>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.opendaylight.controller</groupId>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
                 <version>0.5.4-SNAPSHOT</version>
                 <executions>
@@ -23,7 +23,7 @@
                             <codeGenerators>
                                 <generator>
                                     <codeGeneratorClass>
-                                        org.opendaylight.controller.yang2sources.spi.CodeGeneratorTestImpl
+                                        org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl
                                     </codeGeneratorClass>
                                 </generator>
                             </codeGenerators>
@@ -33,7 +33,7 @@
 
                 <dependencies>
                     <dependency>
-                        <groupId>org.opendaylight.controller</groupId>
+                        <groupId>org.opendaylight.yangtools</groupId>
                         <artifactId>yang-maven-plugin-spi</artifactId>
                         <version>0.5.4-SNAPSHOT</version>
                         <type>test-jar</type>

@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import java.util.Comparator;
 
-import org.opendaylight.controller.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 public class Comparators {

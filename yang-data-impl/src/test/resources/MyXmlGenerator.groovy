@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 import groovy.xml.MarkupBuilder
-import org.opendaylight.controller.yang.data.impl.MyNodeBuilder
+import org.opendaylight.yangtools.yang.data.impl.MyNodeBuilder
 
 /**
  * wrapper class - applies hardcoded builder on given data closure

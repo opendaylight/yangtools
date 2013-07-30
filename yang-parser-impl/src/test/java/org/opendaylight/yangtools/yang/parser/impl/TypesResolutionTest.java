@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.controller.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -27,12 +27,12 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.controller.yang.model.util.BitsType;
-import org.opendaylight.controller.yang.model.util.EnumerationType;
-import org.opendaylight.controller.yang.model.util.ExtendedType;
-import org.opendaylight.controller.yang.model.util.IdentityrefType;
-import org.opendaylight.controller.yang.model.util.InstanceIdentifier;
-import org.opendaylight.controller.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.model.util.BitsType;
+import org.opendaylight.yangtools.yang.model.util.EnumerationType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 public class TypesResolutionTest {
     private Set<Module> testedModules;

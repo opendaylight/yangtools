@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import org.opendaylight.controller.yang.common.QName;
-
 import java.util.Set;
+
+import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * The ChoiceNode defines a set of alternatives. It consists of a number of

@@ -49,10 +49,10 @@ import org.opendaylight.controller.antlrv4.code.gen.YangParser.Type_body_stmtsCo
 import org.opendaylight.controller.antlrv4.code.gen.YangParser.Units_stmtContext;
 import org.opendaylight.controller.antlrv4.code.gen.YangParser.When_stmtContext;
 import org.opendaylight.controller.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
-import org.opendaylight.controller.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.controller.yang.model.util.YangTypesConverter;
+import org.opendaylight.yangtools.yang.model.util.YangTypesConverter;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;

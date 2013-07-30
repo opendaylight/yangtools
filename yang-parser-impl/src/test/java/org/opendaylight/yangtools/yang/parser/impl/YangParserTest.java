@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.controller.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -47,13 +47,13 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.controller.yang.model.util.Decimal64;
-import org.opendaylight.controller.yang.model.util.ExtendedType;
-import org.opendaylight.controller.yang.model.util.Int16;
-import org.opendaylight.controller.yang.model.util.Int32;
-import org.opendaylight.controller.yang.model.util.StringType;
-import org.opendaylight.controller.yang.model.util.Uint32;
-import org.opendaylight.controller.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.model.util.Decimal64;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.Int16;
+import org.opendaylight.yangtools.yang.model.util.Int32;
+import org.opendaylight.yangtools.yang.model.util.StringType;
+import org.opendaylight.yangtools.yang.model.util.Uint32;
+import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 public class YangParserTest {
 
