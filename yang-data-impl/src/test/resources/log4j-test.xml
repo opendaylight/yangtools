@@ -8,11 +8,11 @@
        </layout>
     </appender>	
 
-    <logger name="org.opendaylight.controller.yang.data.impl" additivity="false">
+    <logger name="org.opendaylight.yangtools.yang.data.impl" additivity="false">
 	    <level value="DEBUG" />
 	    <appender-ref ref="console"/>
 	</logger>
-    <logger name="org.opendaylight.controller.yang.data.impl.MyNodeBuilder" additivity="false">
+    <logger name="org.opendaylight.yangtools.yang.data.impl.MyNodeBuilder" additivity="false">
         <level value="INFO" />
         <appender-ref ref="console"/>
     </logger>   

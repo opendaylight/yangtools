@@ -33,7 +33,7 @@ public final class Int64 extends AbstractSignedInteger {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.TypeDefinition#getBaseType()
+     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public IntegerTypeDefinition getBaseType() {
@@ -43,7 +43,7 @@ public final class Int64 extends AbstractSignedInteger {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.TypeDefinition#getDefaultValue()
+     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()
      */
     @Override
     public Object getDefaultValue() {

@@ -1,7 +1,7 @@
 lexer grammar YangLexer;
 
 @header {
-package org.opendaylight.controller.antlrv4.code.gen;
+package org.opendaylight.yangtools.antlrv4.code.gen;
 }
 
 tokens{

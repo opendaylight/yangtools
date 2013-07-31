@@ -1,7 +1,7 @@
 parser grammar YangParser;
 
 @header {
-package org.opendaylight.controller.antlrv4.code.gen;
+package org.opendaylight.yangtools.antlrv4.code.gen;
 }
 
 options{

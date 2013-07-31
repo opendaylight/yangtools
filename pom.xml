@@ -21,7 +21,7 @@
         <module>yang-data-impl</module>
         <module>yang-ext</module>
         <module>yang-model-api</module>
-        <module>yang-maven-plugin</module>
+        <module>yangtools-maven-plugin</module>
         <module>yang-maven-plugin-it</module>
         <module>yang-maven-plugin-spi</module>
         <module>yang-model-util</module>
@@ -129,6 +129,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
                 <configuration>
                     <stylesheet>maven</stylesheet>
                 </configuration>
