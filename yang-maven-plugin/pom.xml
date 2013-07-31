@@ -8,7 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>yangtools-maven-plugin</artifactId>
+    <artifactId>yang-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <description>
         This plugin is a wrapper for "yang to source code" generation.

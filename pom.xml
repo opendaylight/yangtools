@@ -21,7 +21,7 @@
         <module>yang-data-impl</module>
         <module>yang-ext</module>
         <module>yang-model-api</module>
-        <module>yangtools-maven-plugin</module>
+        <module>yang-maven-plugin</module>
         <module>yang-maven-plugin-it</module>
         <module>yang-maven-plugin-spi</module>
         <module>yang-model-util</module>
