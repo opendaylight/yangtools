@@ -32,7 +32,7 @@ public final class Uint32 extends AbstractUnsignedInteger {
      * (non-Javadoc)
      *
      * @see
-     * org.opendaylight.controller.yang.model.api.TypeDefinition#getBaseType()
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public UnsignedIntegerTypeDefinition getBaseType() {
@@ -43,7 +43,7 @@ public final class Uint32 extends AbstractUnsignedInteger {
      * (non-Javadoc)
      *
      * @see
-     * org.opendaylight.controller.yang.model.api.TypeDefinition#getDefaultValue
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
      */
     @Override

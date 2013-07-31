@@ -55,7 +55,7 @@ public class NodeUtilsTest {
     }
 
     /**
-     * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildPath(org.opendaylight.controller.yang.data.api.Node)}.
+     * Test method for {@link org.opendaylight.yangtools.yang.data.impl.NodeUtils#buildPath(org.opendaylight.yangtools.yang.data.api.Node)}.
      * @throws Exception
      */
     @Test
@@ -69,7 +69,7 @@ public class NodeUtilsTest {
     }
 
     /**
-     * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildShadowDomTree(org.opendaylight.controller.yang.data.api.CompositeNode)}.
+     * Test method for {@link org.opendaylight.yangtools.yang.data.impl.NodeUtils#buildShadowDomTree(org.opendaylight.yangtools.yang.data.api.CompositeNode)}.
      * @throws Exception
      */
     @Test
@@ -84,7 +84,7 @@ public class NodeUtilsTest {
     }
 
     /**
-     * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#findNodeByXpath(org.w3c.dom.Document, java.lang.String)}.
+     * Test method for {@link org.opendaylight.yangtools.yang.data.impl.NodeUtils#findNodeByXpath(org.w3c.dom.Document, java.lang.String)}.
      * @throws Exception
      */
     @Test
@@ -104,7 +104,7 @@ public class NodeUtilsTest {
     }
 
     /**
-     * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildNodeMap(java.util.List)}.
+     * Test method for {@link org.opendaylight.yangtools.yang.data.impl.NodeUtils#buildNodeMap(java.util.List)}.
      */
     @Test
     public void testBuildNodeMap() {
@@ -116,7 +116,7 @@ public class NodeUtilsTest {
     }
 
     /**
-     * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildMapOfListNodes(org.opendaylight.controller.yang.model.api.SchemaContext)}.
+     * Test method for {@link org.opendaylight.yangtools.yang.data.impl.NodeUtils#buildMapOfListNodes(org.opendaylight.yangtools.yang.model.api.SchemaContext)}.
      */
     @Test
     public void testBuildMapOfListNodes() {
@@ -126,7 +126,7 @@ public class NodeUtilsTest {
     }
 
     /**
-     * Test method for {@link org.opendaylight.controller.yang.data.impl.NodeUtils#buildMapOfListNodes(org.opendaylight.controller.yang.model.api.SchemaContext)}.
+     * Test method for {@link org.opendaylight.yangtools.yang.data.impl.NodeUtils#buildMapOfListNodes(org.opendaylight.yangtools.yang.model.api.SchemaContext)}.
      * @throws Exception
      * @throws IOException
      */

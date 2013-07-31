@@ -55,7 +55,7 @@ public class NodeFactoryTest {
 
     /**
      * Test method for methods creating immutable nodes in
-     * {@link org.opendaylight.controller.yang.data.impl.NodeFactory}.
+     * {@link org.opendaylight.yangtools.yang.data.impl.NodeFactory}.
      * @throws Exception
      */
     @Test

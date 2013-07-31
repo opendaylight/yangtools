@@ -13,12 +13,12 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Module_header_stmtsContext;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Module_stmtContext;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Namespace_stmtContext;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Revision_stmtContext;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Revision_stmtsContext;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_header_stmtsContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Namespace_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtsContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 public class YangModelValidationModuleTest {
