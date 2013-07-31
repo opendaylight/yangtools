@@ -75,7 +75,7 @@ public class Nodes {
         }
 
         /* (non-Javadoc)
-         * @see org.opendaylight.controller.yang.data.api.CompositeNode#asMutable()
+         * @see org.opendaylight.yangtools.yang.data.api.CompositeNode#asMutable()
          */
         @Override
         public MutableCompositeNode asMutable() {
@@ -102,7 +102,7 @@ public class Nodes {
         }
 
         /* (non-Javadoc)
-         * @see org.opendaylight.controller.yang.data.api.SimpleNode#asMutable()
+         * @see org.opendaylight.yangtools.yang.data.api.SimpleNode#asMutable()
          */
         @Override
         public MutableSimpleNode<T> asMutable() {

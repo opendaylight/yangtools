@@ -35,7 +35,7 @@ public final class Int32 extends AbstractSignedInteger {
      * (non-Javadoc)
      *
      * @see
-     * org.opendaylight.controller.yang.model.api.TypeDefinition#getBaseType()
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public IntegerTypeDefinition getBaseType() {
@@ -46,7 +46,7 @@ public final class Int32 extends AbstractSignedInteger {
      * (non-Javadoc)
      *
      * @see
-     * org.opendaylight.controller.yang.model.api.TypeDefinition#getDefaultValue
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
      */
     @Override

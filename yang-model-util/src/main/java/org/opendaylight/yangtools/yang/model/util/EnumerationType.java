@@ -52,7 +52,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.TypeDefinition#getBaseType()
+     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public EnumTypeDefinition getBaseType() {
@@ -62,7 +62,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.TypeDefinition#getUnits()
+     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
     public String getUnits() {
@@ -72,7 +72,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.TypeDefinition#getDefaultValue()
+     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()
      */
     @Override
     public Object getDefaultValue() {
@@ -82,7 +82,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getQName()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
     public QName getQName() {
@@ -92,7 +92,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getPath()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
     public SchemaPath getPath() {
@@ -102,7 +102,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getDescription()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
     @Override
     public String getDescription() {
@@ -112,7 +112,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getReference()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
     public String getReference() {
@@ -122,7 +122,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getStatus()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
     public Status getStatus() {
@@ -132,7 +132,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.base.type.api.EnumTypeDefinition#getValues()
+     * @see org.opendaylight.yangtools.yang.model.base.type.api.EnumTypeDefinition#getValues()
      */
     @Override
     public List<EnumPair> getValues() {

@@ -182,45 +182,6 @@ public class YangParserTest {
     }
 
     @Test
-    public void testParseContainer() {
-        Module test = TestUtils.findModule(modules, "types");
-        URI expectedNamespace = URI.create("urn:simple.types.test");
-        String expectedPrefix = "t";
-
-        ContainerSchemaNode interfaces = (ContainerSchemaNode) test.getDataChildByName("interfaces");
-        // test SchemaNode args
-        QName expectedQName = new QName(expectedNamespace, typesRev, expectedPrefix, "interfaces");
-        assertEquals(expectedQName, interfaces.getQName());
-        SchemaPath expectedPath = TestUtils.createPath(true, expectedNamespace, typesRev, expectedPrefix, "interfaces");
-        assertEquals(expectedPath, interfaces.getPath());
-        assertNull(interfaces.getDescription());
-        assertNull(interfaces.getReference());
-        assertEquals(Status.CURRENT, interfaces.getStatus());
-        assertEquals(0, interfaces.getUnknownSchemaNodes().size());
-        // test DataSchemaNode args
-        assertFalse(interfaces.isAugmenting());
-        assertTrue(interfaces.isConfiguration());
-        ConstraintDefinition constraints = interfaces.getConstraints();
-        assertNull(constraints.getWhenCondition());
-        assertEquals(0, constraints.getMustConstraints().size());
-        assertFalse(constraints.isMandatory());
-        assertNull(constraints.getMinElements());
-        assertNull(constraints.getMaxElements());
-        // test AugmentationTarget args
-        assertEquals(0, interfaces.getAvailableAugmentations().size());
-        // test ContainerSchemaNode args
-        assertFalse(interfaces.isPresenceContainer());
-        // test DataNodeContainer args
-        assertEquals(0, interfaces.getTypeDefinitions().size());
-        assertEquals(1, interfaces.getChildNodes().size());
-        assertEquals(1, interfaces.getGroupings().size());
-        assertEquals(0, interfaces.getUses().size());
-
-        ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
-        assertNotNull(ifEntry);
-    }
-
-    @Test
     public void testParseList() {
         Module test = TestUtils.findModule(modules, "types");
         URI expectedNamespace = URI.create("urn:simple.types.test");
@@ -701,33 +662,6 @@ public class YangParserTest {
         assertNotNull(input.getPath());
         assertNotNull(output);
         assertNotNull(output.getPath());
-    }
-
-    @Test
-    public void testAnyXml() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        AnyXmlSchemaNode data = (AnyXmlSchemaNode) testModule.getDataChildByName("datas");
-        assertNotNull("anyxml data not found", data);
-
-        // test SchemaNode args
-        QName qname = data.getQName();
-        assertEquals("datas", qname.getLocalName());
-        assertEquals("n", qname.getPrefix());
-        assertEquals(nodesNS, qname.getNamespace());
-        assertEquals(nodesRev, qname.getRevision());
-        assertTrue(data.getDescription().contains("Copy of the source typesstore subset that matched"));
-        assertNull(data.getReference());
-        assertEquals(Status.OBSOLETE, data.getStatus());
-        assertEquals(0, data.getUnknownSchemaNodes().size());
-        // test DataSchemaNode args
-        assertFalse(data.isAugmenting());
-        assertTrue(data.isConfiguration());
-        ConstraintDefinition constraints = data.getConstraints();
-        assertNull(constraints.getWhenCondition());
-        assertEquals(0, constraints.getMustConstraints().size());
-        assertFalse(constraints.isMandatory());
-        assertNull(constraints.getMinElements());
-        assertNull(constraints.getMaxElements());
     }
 
     @Test
