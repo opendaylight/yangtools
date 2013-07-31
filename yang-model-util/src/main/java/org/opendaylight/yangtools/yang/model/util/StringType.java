@@ -51,7 +51,7 @@ public final class StringType implements StringTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.TypeDefinition#getBaseType()
+     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public StringTypeDefinition getBaseType() {
@@ -61,7 +61,7 @@ public final class StringType implements StringTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.TypeDefinition#getUnits()
+     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
     public String getUnits() {
@@ -71,7 +71,7 @@ public final class StringType implements StringTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.TypeDefinition#getDefaultValue()
+     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()
      */
     @Override
     public Object getDefaultValue() {
@@ -81,7 +81,7 @@ public final class StringType implements StringTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getQName()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
     public QName getQName() {
@@ -91,7 +91,7 @@ public final class StringType implements StringTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getPath()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
     public SchemaPath getPath() {
@@ -101,7 +101,7 @@ public final class StringType implements StringTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getDescription()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
     @Override
     public String getDescription() {
@@ -111,7 +111,7 @@ public final class StringType implements StringTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getReference()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
     public String getReference() {
@@ -121,7 +121,7 @@ public final class StringType implements StringTypeDefinition {
     /*
      * (non-Javadoc)
      *
-     * @see org.opendaylight.controller.yang.model.api.SchemaNode#getStatus()
+     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
     public Status getStatus() {

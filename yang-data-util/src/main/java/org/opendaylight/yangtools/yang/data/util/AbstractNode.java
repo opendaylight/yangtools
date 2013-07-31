@@ -33,7 +33,7 @@ public abstract class AbstractNode<T> implements Node<T> {
     /* (non-Javadoc)
      */
     /**
-     * @see org.opendaylight.controller.yang.data.api.NodeModification#getModificationAction()
+     * @see org.opendaylight.yangtools.yang.data.api.NodeModification#getModificationAction()
      */
     public ModifyAction getModificationAction() {
         // TODO Auto-generated method stub

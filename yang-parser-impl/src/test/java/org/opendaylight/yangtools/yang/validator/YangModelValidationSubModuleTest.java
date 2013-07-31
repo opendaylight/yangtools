@@ -14,9 +14,9 @@ import static org.mockito.Mockito.mock;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Submodule_header_stmtsContext;
-import org.opendaylight.controller.antlrv4.code.gen.YangParser.Submodule_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_header_stmtsContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtContext;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 public class YangModelValidationSubModuleTest {

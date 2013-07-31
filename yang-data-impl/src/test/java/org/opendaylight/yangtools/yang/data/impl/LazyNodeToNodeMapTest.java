@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.impl.LazyNodeToNodeMap;
 
 /**
  * @author michal.rehak
@@ -44,7 +43,7 @@ public class LazyNodeToNodeMapTest {
     }
 
     /**
-     * Test method for {@link org.opendaylight.controller.yang.data.impl.LazyNodeToNodeMap#getMutableEquivalent(org.opendaylight.controller.yang.data.api.Node)}.
+     * Test method for {@link org.opendaylight.yangtools.yang.data.impl.LazyNodeToNodeMap#getMutableEquivalent(org.opendaylight.yangtools.yang.data.api.Node)}.
      */
     @Test
     public void testGetMutableEquivalent() {
@@ -67,7 +66,7 @@ public class LazyNodeToNodeMapTest {
     }
 
     /**
-     * Test method for {@link org.opendaylight.controller.yang.data.impl.LazyNodeToNodeMap#getMutableRoot()}.
+     * Test method for {@link org.opendaylight.yangtools.yang.data.impl.LazyNodeToNodeMap#getMutableRoot()}.
      */
     @Test
     public void testGetMutableRoot() {
