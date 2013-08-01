@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yangtools</artifactId>
     <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.5.4-SNAPSHOT</version>
+    <version>0.5.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>

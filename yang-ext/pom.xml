@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools</artifactId>
-        <version>0.5.4-SNAPSHOT</version>
+        <version>0.5.5-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -18,7 +18,7 @@
             <plugin>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>0.5.4-SNAPSHOT</version>
+                <version>0.5.5-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
@@ -32,14 +32,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <!-- <dependencies> -->
-                <!-- <dependency> -->
-                <!-- <groupId>org.opendaylight.controller</groupId> -->
-                <!-- <artifactId>maven-sal-api-gen-plugin</artifactId> -->
-                <!-- <version>0.5.4-SNAPSHOT</version> -->
-                <!-- <type>jar</type> -->
-                <!-- </dependency> -->
-                <!-- </dependencies> -->
             </plugin>
         </plugins>
 
@@ -82,7 +74,7 @@
                                             yang-maven-plugin
                                         </artifactId>
                                         <versionRange>
-                                            [0.5.4,)
+                                            [0.5.5,)
                                         </versionRange>
                                         <goals>
                                             <goal>
