@@ -98,6 +98,14 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         instance.setImports(imports);
         instance.setNamespace(namespace);
 
+        // process uses
+        for(UsesNodeBuilder use : addedUsesNodes) {
+            addedChildNodes.addAll(use.getTargetChildren());
+            addedGroupings.addAll(use.getTargetGroupings());
+            addedTypedefs.addAll(use.getTargetTypedefs());
+            addedUnknownNodes.addAll(use.getTargetUnknownNodes());
+        }
+
         // TYPEDEFS
         final Set<TypeDefinition<?>> typedefs = new TreeSet<TypeDefinition<?>>(Comparators.SCHEMA_NODE_COMP);
         for (TypeDefinitionBuilder tdb : addedTypedefs) {

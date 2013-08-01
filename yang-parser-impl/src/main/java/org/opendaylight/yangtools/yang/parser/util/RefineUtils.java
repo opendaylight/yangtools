@@ -20,9 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
@@ -30,11 +29,9 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingBuilderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
 /**
@@ -62,10 +59,14 @@ public class RefineUtils {
      *            current module name
      * @return
      */
-    public static SchemaNodeBuilder getRefineNodeFromGroupingBuilder(final GroupingBuilder targetGrouping,
+    public static DataSchemaNodeBuilder getRefineNodeFromGroupingBuilder(final GroupingBuilder targetGrouping,
             final RefineHolder refine, final String moduleName) {
-        Builder result = null;
-        final Builder lookedUpBuilder = findRefineTargetBuilder(targetGrouping, refine.getName());
+        DataSchemaNodeBuilder result = null;
+        final Builder lookedUpBuilder = targetGrouping.getDataChildByName(refine.getName());
+        if (lookedUpBuilder == null) {
+            throw new YangParseException(moduleName, refine.getLine(), "Target node '" + refine.getName()
+                    + "' not found");
+        }
         if (lookedUpBuilder instanceof LeafSchemaNodeBuilder) {
             result = new LeafSchemaNodeBuilder((LeafSchemaNodeBuilder) lookedUpBuilder);
         } else if (lookedUpBuilder instanceof ContainerSchemaNodeBuilder) {
@@ -78,15 +79,11 @@ public class RefineUtils {
             result = new ChoiceBuilder((ChoiceBuilder) lookedUpBuilder);
         } else if (lookedUpBuilder instanceof AnyXmlBuilder) {
             result = new AnyXmlBuilder((AnyXmlBuilder) lookedUpBuilder);
-        } else if (lookedUpBuilder instanceof GroupingBuilder) {
-            result = new GroupingBuilderImpl((GroupingBuilder) lookedUpBuilder);
-        } else if (lookedUpBuilder instanceof TypeDefinitionBuilder) {
-            result = new TypeDefinitionBuilderImpl((TypeDefinitionBuilder) lookedUpBuilder);
         } else {
             throw new YangParseException(moduleName, refine.getLine(), "Target '" + refine.getName()
                     + "' can not be refined");
         }
-        return (SchemaNodeBuilder) result;
+        return result;
     }
 
     /**
@@ -98,12 +95,15 @@ public class RefineUtils {
      *            refine object containing informations about refine
      * @return
      */
-    public static SchemaNodeBuilder getRefineNodeFromGroupingDefinition(final GroupingDefinition grouping,
+    public static DataSchemaNodeBuilder getRefineNodeFromGroupingDefinition(final GroupingDefinition grouping,
             final RefineHolder refine) {
         final String moduleName = refine.getModuleName();
         final int line = refine.getLine();
-        SchemaNodeBuilder result = null;
-        final Object lookedUpNode = findRefineTargetNode(grouping, refine.getName());
+        DataSchemaNodeBuilder result = null;
+        final Object lookedUpNode = grouping.getDataChildByName(refine.getName());
+        if (lookedUpNode == null) {
+            throw new YangParseException(moduleName, line, "Refine target node '" + refine.getName() + "' not found");
+        }
         if (lookedUpNode instanceof LeafSchemaNode) {
             result = createLeafBuilder((LeafSchemaNode) lookedUpNode, moduleName, line);
         } else if (lookedUpNode instanceof ContainerSchemaNode) {
@@ -116,10 +116,6 @@ public class RefineUtils {
             result = createChoice((ChoiceNode) lookedUpNode, moduleName, line);
         } else if (lookedUpNode instanceof AnyXmlSchemaNode) {
             result = createAnyXml((AnyXmlSchemaNode) lookedUpNode, moduleName, line);
-        } else if (lookedUpNode instanceof GroupingDefinition) {
-            result = createGrouping((GroupingDefinition) lookedUpNode, moduleName, line);
-        } else if (lookedUpNode instanceof TypeDefinition) {
-            result = createTypedef((ExtendedType) lookedUpNode, moduleName, line);
         } else {
             throw new YangParseException(moduleName, line, "Target '" + refine.getName() + "' can not be refined");
         }

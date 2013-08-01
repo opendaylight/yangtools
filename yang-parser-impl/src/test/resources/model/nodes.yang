@@ -168,7 +168,7 @@ module nodes {
                     description "IP address of target node";
                     reference "address reference added by refine";
                     config false;
-                    mandatory true;
+                    mandatory false;
                     must "ifType != 'ethernet' or " +
                             "(ifType = 'ethernet' and ifMTU = 1500)" {
                         error-message "An ethernet MTU must be 1500";
@@ -186,13 +186,6 @@ module nodes {
                     config false;
                     min-elements 2;
                     max-elements 12;
-                }
-                refine target-inner {
-                    description "new target-inner grouping description";
-                }
-                refine group-type {
-                    description "new group-type description";
-                    reference "new group-type reference";
                 }
             }
         }

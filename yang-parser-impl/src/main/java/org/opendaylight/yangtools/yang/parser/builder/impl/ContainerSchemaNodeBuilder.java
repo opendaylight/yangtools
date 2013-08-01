@@ -75,7 +75,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     public ContainerSchemaNodeBuilder(final ContainerSchemaNodeBuilder b) {
         super(b.getModuleName(), b.getLine(), b.getQName());
         instance = new ContainerSchemaNodeImpl(b.getQName());
-        constraints = b.getConstraints();
+        constraints = new ConstraintsBuilder(b.getConstraints());
         schemaPath = b.getPath();
         description = b.getDescription();
         reference = b.getReference();
@@ -101,6 +101,14 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     @Override
     public ContainerSchemaNode build() {
         if (!isBuilt) {
+            // process uses
+            for(UsesNodeBuilder use : addedUsesNodes) {
+                addedChildNodes.addAll(use.getTargetChildren());
+                addedGroupings.addAll(use.getTargetGroupings());
+                addedTypedefs.addAll(use.getTargetTypedefs());
+                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
+            }
+
             instance.setPath(schemaPath);
             instance.setDescription(description);
             instance.setReference(reference);

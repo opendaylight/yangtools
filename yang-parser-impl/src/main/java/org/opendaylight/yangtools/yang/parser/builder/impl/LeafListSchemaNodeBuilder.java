@@ -55,7 +55,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         type = b.getType();
         typedef = b.getTypedef();
 
-        constraints = b.getConstraints();
+        constraints = new ConstraintsBuilder(b.getConstraints());
         schemaPath = b.getPath();
         description = b.getDescription();
         reference = b.getReference();

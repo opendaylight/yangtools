@@ -93,6 +93,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     @Override
     public AugmentationSchema build() {
         if (!built) {
+            // process uses
+            for(UsesNodeBuilder use : usesNodes) {
+                addedChildNodes.addAll(use.getTargetChildren());
+                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
+            }
+
             instance.setDescription(description);
             instance.setReference(reference);
             instance.setStatus(status);

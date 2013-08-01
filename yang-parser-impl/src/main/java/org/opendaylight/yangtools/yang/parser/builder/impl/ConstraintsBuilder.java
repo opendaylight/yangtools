@@ -33,6 +33,16 @@ public final class ConstraintsBuilder extends AbstractBuilder {
         mustDefinitions = new HashSet<MustDefinition>();
     }
 
+    ConstraintsBuilder(final ConstraintsBuilder b) {
+        super(b.getModuleName(), b.getLine());
+        instance = new ConstraintDefinitionImpl();
+        mustDefinitions = new HashSet<MustDefinition>(b.getMustDefinitions());
+        whenCondition = b.getWhenCondition();
+        mandatory = b.isMandatory();
+        min = b.getMinElements();
+        max = b.getMaxElements();
+    }
+
     @Override
     public ConstraintDefinition build() {
         RevisionAwareXPath whenStmt;

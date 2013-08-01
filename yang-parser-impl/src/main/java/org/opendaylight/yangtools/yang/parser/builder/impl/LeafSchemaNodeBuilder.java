@@ -51,7 +51,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     public LeafSchemaNodeBuilder(final LeafSchemaNodeBuilder b) {
         super(b.getModuleName(), b.getLine(), b.getQName());
         instance = new LeafSchemaNodeImpl(qname);
-        constraints = b.getConstraints();
+        constraints = new ConstraintsBuilder(b.getConstraints());
         schemaPath = b.getPath();
 
         type = b.getType();

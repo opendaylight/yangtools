@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 
 /**
@@ -41,8 +42,16 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
 
     void addRefine(RefineHolder refine);
 
-    void addRefineNode(SchemaNodeBuilder refineNode);
+    void addRefineNode(DataSchemaNodeBuilder refineNode);
 
     UsesNode build();
+
+    Set<DataSchemaNodeBuilder> getTargetChildren();
+
+    Set<GroupingBuilder> getTargetGroupings();
+
+    Set<TypeDefinitionBuilder> getTargetTypedefs();
+
+    List<UnknownSchemaNodeBuilder> getTargetUnknownNodes();
 
 }

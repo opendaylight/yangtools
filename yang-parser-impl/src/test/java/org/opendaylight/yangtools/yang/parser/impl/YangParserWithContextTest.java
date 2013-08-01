@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -221,13 +220,11 @@ public class YangParserWithContextTest {
 
         // test refine
         Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
-        assertEquals(5, refines.size());
+        assertEquals(3, refines.size());
 
         LeafSchemaNode refineLeaf = null;
         ContainerSchemaNode refineContainer = null;
         ListSchemaNode refineList = null;
-        GroupingDefinition refineGrouping = null;
-        TypeDefinition<?> typedef = null;
         for (Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
             SchemaNode value = entry.getValue();
             if (value instanceof LeafSchemaNode) {
@@ -236,10 +233,6 @@ public class YangParserWithContextTest {
                 refineContainer = (ContainerSchemaNode) value;
             } else if (value instanceof ListSchemaNode) {
                 refineList = (ListSchemaNode) value;
-            } else if (value instanceof GroupingDefinition) {
-                refineGrouping = (GroupingDefinition) value;
-            } else if (value instanceof TypeDefinition<?>) {
-                typedef = (TypeDefinition<?>) value;
             }
         }
 
@@ -271,20 +264,6 @@ public class YangParserWithContextTest {
         assertFalse(refineList.isConfiguration());
         assertEquals(2, (int) refineList.getConstraints().getMinElements());
         assertEquals(12, (int) refineList.getConstraints().getMaxElements());
-
-        // grouping target-inner
-        assertNotNull(refineGrouping);
-        Set<DataSchemaNode> refineGroupingChildren = refineGrouping.getChildNodes();
-        assertEquals(1, refineGroupingChildren.size());
-        LeafSchemaNode refineGroupingLeaf = (LeafSchemaNode) refineGroupingChildren.iterator().next();
-        assertEquals("inner-grouping-id", refineGroupingLeaf.getQName().getLocalName());
-        assertEquals("new target-inner grouping description", refineGrouping.getDescription());
-
-        // typedef group-type
-        assertNotNull(typedef);
-        assertEquals("new group-type description", typedef.getDescription());
-        assertEquals("new group-type reference", typedef.getReference());
-        assertTrue(typedef.getBaseType() instanceof ExtendedType);
     }
 
     @Test

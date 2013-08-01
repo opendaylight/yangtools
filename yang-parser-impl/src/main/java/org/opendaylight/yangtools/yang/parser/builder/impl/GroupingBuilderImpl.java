@@ -72,6 +72,14 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     @Override
     public GroupingDefinition build() {
         if (!isBuilt) {
+            // process uses
+            for(UsesNodeBuilder use : addedUsesNodes) {
+                addedChildNodes.addAll(use.getTargetChildren());
+                addedGroupings.addAll(use.getTargetGroupings());
+                addedTypedefs.addAll(use.getTargetTypedefs());
+                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
+            }
+
             instance.setPath(schemaPath);
             instance.setDescription(description);
             instance.setReference(reference);

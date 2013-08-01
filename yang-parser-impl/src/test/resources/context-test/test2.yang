@@ -40,13 +40,6 @@ module test2 {
                     min-elements 2;
                     max-elements 12;
                 }
-                refine target-inner {
-                    description "new target-inner grouping description";
-                }
-                refine group-type {
-                    description "new group-type description";
-                    reference "new group-type reference";
-                }
             }
         }
     }

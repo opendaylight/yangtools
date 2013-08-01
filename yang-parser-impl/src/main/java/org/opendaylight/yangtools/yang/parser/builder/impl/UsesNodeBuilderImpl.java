@@ -24,7 +24,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
@@ -40,6 +43,11 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<AugmentationSchemaBuilder>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<SchemaNodeBuilder>();
     private final List<RefineHolder> refines = new ArrayList<RefineHolder>();
+
+    private final Set<DataSchemaNodeBuilder> targetChildren = new HashSet<>();
+    private final Set<GroupingBuilder> targetGroupings = new HashSet<>();
+    private final Set<TypeDefinitionBuilder> targetTypedefs = new HashSet<>();
+    private final List<UnknownSchemaNodeBuilder> targetUnknownNodes = new ArrayList<>();
 
     public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
         super(moduleName, line);
@@ -156,8 +164,19 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void addRefineNode(SchemaNodeBuilder refineNode) {
+    public void addRefineNode(DataSchemaNodeBuilder refineNode) {
+        // add to refine nodes
         refineBuilders.add(refineNode);
+        // replace in target children
+        DataSchemaNodeBuilder toRemove = null;
+        for(DataSchemaNodeBuilder child : targetChildren) {
+            if(child.getQName().equals(refineNode.getQName())) {
+                toRemove = child;
+                break;
+            }
+        }
+        targetChildren.remove(toRemove);
+        targetChildren.add(refineNode);
     }
 
     @Override
@@ -168,6 +187,26 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void addRefine(RefineHolder refine) {
         refines.add(refine);
+    }
+
+    @Override
+    public Set<DataSchemaNodeBuilder> getTargetChildren() {
+        return targetChildren;
+    }
+
+    @Override
+    public Set<GroupingBuilder> getTargetGroupings() {
+        return targetGroupings;
+    }
+
+    @Override
+    public Set<TypeDefinitionBuilder> getTargetTypedefs() {
+        return targetTypedefs;
+    }
+
+    @Override
+    public List<UnknownSchemaNodeBuilder> getTargetUnknownNodes() {
+        return targetUnknownNodes;
     }
 
     @Override

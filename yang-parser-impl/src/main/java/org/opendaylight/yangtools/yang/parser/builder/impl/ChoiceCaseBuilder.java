@@ -54,6 +54,12 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     @Override
     public ChoiceCaseNode build() {
         if (!isBuilt) {
+            // process uses
+            for(UsesNodeBuilder use : addedUsesNodes) {
+                addedChildNodes.addAll(use.getTargetChildren());
+                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
+            }
+
             instance.setConstraints(constraints.build());
             instance.setPath(schemaPath);
             instance.setDescription(description);

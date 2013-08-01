@@ -28,10 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 public class GroupingTest {
     private Set<Module> modules;
@@ -52,13 +50,11 @@ public class GroupingTest {
         assertEquals(1, usesNodes.size());
         UsesNode usesNode = usesNodes.iterator().next();
         Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
-        assertEquals(5, refines.size());
+        assertEquals(3, refines.size());
 
         LeafSchemaNode refineLeaf = null;
         ContainerSchemaNode refineContainer = null;
         ListSchemaNode refineList = null;
-        GroupingDefinition refineGrouping = null;
-        TypeDefinition<?> typedef = null;
         for (Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
             SchemaNode value = entry.getValue();
             if (value instanceof LeafSchemaNode) {
@@ -67,10 +63,6 @@ public class GroupingTest {
                 refineContainer = (ContainerSchemaNode) value;
             } else if (value instanceof ListSchemaNode) {
                 refineList = (ListSchemaNode) value;
-            } else if (value instanceof GroupingDefinition) {
-                refineGrouping = (GroupingDefinition) value;
-            } else if (value instanceof TypeDefinition<?>) {
-                typedef = (TypeDefinition<?>) value;
             }
         }
 
@@ -80,7 +72,7 @@ public class GroupingTest {
         assertEquals("IP address of target node", refineLeaf.getDescription());
         assertEquals("address reference added by refine", refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
-        assertTrue(refineLeaf.getConstraints().isMandatory());
+        assertFalse(refineLeaf.getConstraints().isMandatory());
         Set<MustDefinition> leafMustConstraints = refineLeaf.getConstraints().getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         MustDefinition leafMust = leafMustConstraints.iterator().next();
@@ -102,20 +94,6 @@ public class GroupingTest {
         assertFalse(refineList.isConfiguration());
         assertEquals(2, (int) refineList.getConstraints().getMinElements());
         assertEquals(12, (int) refineList.getConstraints().getMaxElements());
-
-        // grouping target-inner
-        assertNotNull(refineGrouping);
-        Set<DataSchemaNode> refineGroupingChildren = refineGrouping.getChildNodes();
-        assertEquals(1, refineGroupingChildren.size());
-        LeafSchemaNode refineGroupingLeaf = (LeafSchemaNode) refineGroupingChildren.iterator().next();
-        assertEquals("inner-grouping-id", refineGroupingLeaf.getQName().getLocalName());
-        assertEquals("new target-inner grouping description", refineGrouping.getDescription());
-
-        // typedef group-type
-        assertNotNull(typedef);
-        assertEquals("new group-type description", typedef.getDescription());
-        assertEquals("new group-type reference", typedef.getReference());
-        assertTrue(typedef.getBaseType() instanceof ExtendedType);
     }
 
     @Test
@@ -176,6 +154,7 @@ public class GroupingTest {
         assertEquals("address reference added by refine", address_u.getReference());
         assertFalse(address_u.isConfiguration());
         assertTrue(address_u.isAddedByUses());
+        assertFalse(address_u.getConstraints().isMandatory());
 
         LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName("address");
         assertNotNull(address_g);
@@ -185,6 +164,7 @@ public class GroupingTest {
         assertNull(address_g.getReference());
         assertTrue(address_g.isConfiguration());
         assertFalse(address_u.equals(address_g));
+        assertTrue(address_g.getConstraints().isMandatory());
 
         ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName("port");
         assertNotNull(port_u);
@@ -336,6 +316,47 @@ public class GroupingTest {
         DataSchemaNode leaf = children.iterator().next();
         assertTrue(leaf instanceof LeafSchemaNode);
         assertEquals("name", leaf.getQName().getLocalName());
+    }
+
+    @Test
+    public void testCascadeUses() throws FileNotFoundException {
+        modules = TestUtils.loadModules(getClass().getResource("/simple-test").getPath());
+        Module testModule = TestUtils.findModule(modules, "cascade-uses");
+        Set<GroupingDefinition> groupings = testModule.getGroupings();
+
+        GroupingDefinition gu = null;
+        GroupingDefinition gv = null;
+        GroupingDefinition gx = null;
+        GroupingDefinition gy = null;
+        GroupingDefinition gz = null;
+        GroupingDefinition gzz = null;
+        for (GroupingDefinition gd : groupings) {
+            if ("grouping-U".equals(gd.getQName().getLocalName()))
+                gu = gd;
+            if ("grouping-V".equals(gd.getQName().getLocalName()))
+                gv = gd;
+            if ("grouping-X".equals(gd.getQName().getLocalName()))
+                gx = gd;
+            if ("grouping-Y".equals(gd.getQName().getLocalName()))
+                gy = gd;
+            if ("grouping-Z".equals(gd.getQName().getLocalName()))
+                gz = gd;
+            if ("grouping-ZZ".equals(gd.getQName().getLocalName()))
+                gzz = gd;
+        }
+        assertNotNull(gu);
+        assertNotNull(gv);
+        assertNotNull(gx);
+        assertNotNull(gy);
+        assertNotNull(gz);
+        assertNotNull(gzz);
+
+        assertEquals(6, gu.getChildNodes().size());
+        assertEquals(3, gv.getChildNodes().size());
+        assertEquals(2, gx.getChildNodes().size());
+        assertEquals(1, gy.getChildNodes().size());
+        assertEquals(1, gz.getChildNodes().size());
+        assertEquals(1, gzz.getChildNodes().size());
     }
 
 }

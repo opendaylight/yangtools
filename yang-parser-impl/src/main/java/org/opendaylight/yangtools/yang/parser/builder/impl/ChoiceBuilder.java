@@ -57,7 +57,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         super(b.getModuleName(), b.getLine(), b.getQName());
         parent = b.getParent();
         instance = new ChoiceNodeImpl(qname);
-        constraints = b.getConstraints();
+        constraints = new ConstraintsBuilder(b.getConstraints());
         schemaPath = b.getPath();
         description = b.getDescription();
         reference = b.getReference();

@@ -115,9 +115,7 @@ public final class ParserUtils {
     /**
      * Create new SchemaPath from given path and name.
      *
-     * Append new qname to schema path created from name argument. New QName
-     * gets namespace, revision and prefix same as last qname in current schema
-     * path.
+     * Append new qname to schema path created from name argument.
      *
      * @param schemaPath
      * @param name
@@ -342,13 +340,13 @@ public final class ParserUtils {
     }
 
     /**
-     * Check if node is present in refine nodes.
+     * Get node from collection of refined nodes based on qname.
      *
      * @param nodeQName
      *            qname of node
      * @param refineNodes
      *            collections of refined nodes
-     * @return true, if node with given qname was found, false otherwise
+     * @return node with given qname if present, null otherwise
      */
     public static SchemaNodeBuilder getRefined(QName nodeQName, List<SchemaNodeBuilder> refineNodes) {
         for (SchemaNodeBuilder rn : refineNodes) {
@@ -377,74 +375,6 @@ public final class ParserUtils {
         } else if (type instanceof BinaryTypeDefinition) {
             constraints.addLengths(((BinaryTypeDefinition) type).getLengthConstraints());
         }
-    }
-
-    /**
-     * Find node in grouping by name.
-     *
-     * @param grouping
-     *            grouping to search
-     * @param refineNodeName
-     *            name of node
-     * @return builder of node with given name if present in grouping, null
-     *         otherwise
-     */
-    public static Builder findRefineTargetBuilder(final GroupingBuilder grouping, final String refineNodeName) {
-        // search child nodes
-        Builder result = grouping.getDataChildByName(refineNodeName);
-        // search groupings
-        if (result == null) {
-            Set<GroupingBuilder> grps = grouping.getGroupingBuilders();
-            for (GroupingBuilder gr : grps) {
-                if (gr.getQName().getLocalName().equals(refineNodeName)) {
-                    result = gr;
-                    break;
-                }
-            }
-        }
-        // search typedefs
-        if (result == null) {
-            Set<TypeDefinitionBuilder> typedefs = grouping.getTypeDefinitionBuilders();
-            for (TypeDefinitionBuilder typedef : typedefs) {
-                if (typedef.getQName().getLocalName().equals(refineNodeName)) {
-                    result = typedef;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Find node in grouping by name.
-     *
-     * @param builder
-     *            grouping to search
-     * @param refineNodeName
-     *            name of node
-     * @return node with given name if present in grouping, null otherwise
-     */
-    public static Object findRefineTargetNode(final GroupingDefinition builder, final String refineNodeName) {
-        Object result = builder.getDataChildByName(refineNodeName);
-        if (result == null) {
-            Set<GroupingDefinition> grps = builder.getGroupings();
-            for (GroupingDefinition gr : grps) {
-                if (gr.getQName().getLocalName().equals(refineNodeName)) {
-                    result = gr;
-                    break;
-                }
-            }
-        }
-        if (result == null) {
-            Set<TypeDefinition<?>> typedefs = builder.getTypeDefinitions();
-            for (TypeDefinition<?> typedef : typedefs) {
-                if (typedef.getQName().getLocalName().equals(refineNodeName)) {
-                    result = typedef;
-                    break;
-                }
-            }
-        }
-        return result;
     }
 
     /**

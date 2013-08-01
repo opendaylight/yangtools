@@ -179,6 +179,7 @@ module custom {
         leaf address {
             type string;
             description "Target IP address";
+            mandatory true;
         }
         container port {
             description "Target port container";
