@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContainerBuilder implements
@@ -57,7 +57,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr) {
         super(moduleName, line, null);
         this.augmentTargetStr = augmentTargetStr;
-        final SchemaPath targetPath = ParserListenerUtils.parseAugmentPath(augmentTargetStr);
+        final SchemaPath targetPath = ParserUtils.parseXPathString(augmentTargetStr);
         dirtyAugmentTarget = targetPath;
         instance = new AugmentationSchemaImpl(targetPath);
     }

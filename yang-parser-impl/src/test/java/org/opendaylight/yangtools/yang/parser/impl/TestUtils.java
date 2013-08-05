@@ -32,6 +32,8 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 
 final class TestUtils {
 
+    static final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     private TestUtils() {
     }
 

@@ -10,6 +10,9 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
+import java.net.URI;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -319,7 +322,7 @@ public class GroupingTest {
     }
 
     @Test
-    public void testCascadeUses() throws FileNotFoundException {
+    public void testCascadeUses() throws FileNotFoundException, ParseException {
         modules = TestUtils.loadModules(getClass().getResource("/simple-test").getPath());
         Module testModule = TestUtils.findModule(modules, "cascade-uses");
         Set<GroupingDefinition> groupings = testModule.getGroupings();
@@ -351,12 +354,43 @@ public class GroupingTest {
         assertNotNull(gz);
         assertNotNull(gzz);
 
-        assertEquals(6, gu.getChildNodes().size());
-        assertEquals(3, gv.getChildNodes().size());
+        assertEquals(7, gu.getChildNodes().size());
+        assertEquals(4, gv.getChildNodes().size());
         assertEquals(2, gx.getChildNodes().size());
         assertEquals(1, gy.getChildNodes().size());
         assertEquals(1, gz.getChildNodes().size());
         assertEquals(1, gzz.getChildNodes().size());
+
+        URI expectedNS = URI.create("urn:grouping:cascade-uses");
+        Date expectedRev = TestUtils.simpleDateFormat.parse("2013-07-18");
+        String expectedPref = "cu";
+        SchemaPath expectedPath;
+
+        // grouping-V/container-grouping-V
+        ContainerSchemaNode containerV = (ContainerSchemaNode)gv.getDataChildByName("container-grouping-V");
+        assertNotNull(containerV);
+        assertEquals(2, containerV.getChildNodes().size());
+        // grouping-V/container-grouping-V/leaf-grouping-X
+        LeafSchemaNode leafXinContainerV = (LeafSchemaNode)containerV.getDataChildByName("leaf-grouping-X");
+        assertNotNull(leafXinContainerV);
+        expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-V", "container-grouping-V", "leaf-grouping-X");
+        assertEquals(expectedPath, leafXinContainerV.getPath());
+        // grouping-V/container-grouping-V/leaf-grouping-Y
+        LeafSchemaNode leafYinContainerV = (LeafSchemaNode)containerV.getDataChildByName("leaf-grouping-Y");
+        assertNotNull(leafYinContainerV);
+        expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-V", "container-grouping-V", "leaf-grouping-Y");
+        assertEquals(expectedPath, leafYinContainerV.getPath());
+
+        // grouping-X/leaf-grouping-X
+        LeafSchemaNode leafXinGX = (LeafSchemaNode)gx.getDataChildByName("leaf-grouping-X");
+        assertNotNull(leafXinGX);
+        expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-X", "leaf-grouping-X");
+        assertEquals(expectedPath, leafXinGX.getPath());
+        // grouping-X/leaf-grouping-Y
+        LeafSchemaNode leafYinGY = (LeafSchemaNode)gx.getDataChildByName("leaf-grouping-Y");
+        assertNotNull(leafYinGY);
+        expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-X", "leaf-grouping-Y");
+        assertEquals(expectedPath, leafYinGY.getPath());
     }
 
 }

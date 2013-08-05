@@ -1,7 +1,7 @@
 module cascade-uses {
     
-    namespace "urn:grouping:dependencies";
-    prefix "sbd";
+    namespace "urn:grouping:cascade-uses";
+    prefix "cu";
 
     organization "OPEN DAYLIGHT";
     contact "http://www.opendaylight.org/";
@@ -20,6 +20,9 @@ module cascade-uses {
     grouping grouping-V {
         leaf leaf-grouping-V {
             type string;
+        }
+        container container-grouping-V {
+            uses grouping-X;
         }
         uses grouping-Z;
         uses grouping-ZZ;

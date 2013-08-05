@@ -48,8 +48,8 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public LeafListSchemaNodeBuilder(final LeafListSchemaNodeBuilder b) {
-        super(b.getModuleName(), b.getLine(), b.getQName());
+    public LeafListSchemaNodeBuilder(final LeafListSchemaNodeBuilder b, final QName qname) {
+        super(b.getModuleName(), b.getLine(), qname);
         instance = new LeafListSchemaNodeImpl(qname);
 
         type = b.getType();

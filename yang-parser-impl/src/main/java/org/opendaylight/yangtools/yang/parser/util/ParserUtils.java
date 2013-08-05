@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,18 +64,8 @@ import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.util.Int16;
-import org.opendaylight.yangtools.yang.model.util.Int32;
-import org.opendaylight.yangtools.yang.model.util.Int64;
-import org.opendaylight.yangtools.yang.model.util.Int8;
 import org.opendaylight.yangtools.yang.model.util.Leafref;
-import org.opendaylight.yangtools.yang.model.util.StringType;
-import org.opendaylight.yangtools.yang.model.util.Uint16;
-import org.opendaylight.yangtools.yang.model.util.Uint32;
-import org.opendaylight.yangtools.yang.model.util.Uint64;
-import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -104,7 +96,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
 public final class ParserUtils {
@@ -113,23 +104,16 @@ public final class ParserUtils {
     }
 
     /**
-     * Create new SchemaPath from given path and name.
-     *
-     * Append new qname to schema path created from name argument.
+     * Create new SchemaPath from given path and qname.
      *
      * @param schemaPath
-     * @param name
+     * @param qname
      * @return
      */
-    public static SchemaPath createSchemaPath(SchemaPath schemaPath, String name, URI namespace, Date revision, String prefix) {
-        List<QName> path = new ArrayList<QName>();
-        if(schemaPath != null) {
-            path.addAll(schemaPath.getPath());
-        }
-        QName newQName = new QName(namespace, revision, prefix, name);
-        path.add(newQName);
-        boolean abs = schemaPath == null ? true : schemaPath.isAbsolute();
-        return new SchemaPath(path, abs);
+    public static SchemaPath createSchemaPath(SchemaPath schemaPath, QName... qname) {
+        List<QName> path = new ArrayList<>(schemaPath.getPath());
+        path.addAll(Arrays.asList(qname));
+        return new SchemaPath(path, schemaPath.isAbsolute());
     }
 
     /**
@@ -276,53 +260,102 @@ public final class ParserUtils {
         return null;
     }
 
-    /**
-     * Search types for type with given name.
-     *
-     * @param types
-     *            types to search
-     * @param name
-     *            name of type
-     * @return type with given name if present in collection, null otherwise
-     */
-    public static TypeDefinitionBuilder findTypedefBuilderByName(Set<TypeDefinitionBuilder> types, String name) {
-        for (TypeDefinitionBuilder td : types) {
-            if (td.getQName().getLocalName().equals(name)) {
-                return td;
+    public static Set<DataSchemaNodeBuilder> processUsesDataSchemaNode(UsesNodeBuilder usesNode,
+            Set<DataSchemaNodeBuilder> children, SchemaPath parentPath, URI namespace, Date revision, String prefix) {
+        Set<DataSchemaNodeBuilder> newChildren = new HashSet<>();
+        for (DataSchemaNodeBuilder child : children) {
+            if (child != null) {
+                DataSchemaNodeBuilder newChild = null;
+                QName qname = new QName(namespace, revision, prefix, child.getQName().getLocalName());
+                if (child instanceof AnyXmlBuilder) {
+                    newChild = new AnyXmlBuilder((AnyXmlBuilder) child, qname);
+                } else if (child instanceof ChoiceBuilder) {
+                    newChild = new ChoiceBuilder((ChoiceBuilder) child, qname);
+                } else if (child instanceof ContainerSchemaNodeBuilder) {
+                    newChild = new ContainerSchemaNodeBuilder((ContainerSchemaNodeBuilder) child, qname);
+                } else if (child instanceof LeafListSchemaNodeBuilder) {
+                    newChild = new LeafListSchemaNodeBuilder((LeafListSchemaNodeBuilder) child, qname);
+                } else if (child instanceof LeafSchemaNodeBuilder) {
+                    newChild = new LeafSchemaNodeBuilder((LeafSchemaNodeBuilder) child, qname);
+                } else if (child instanceof ListSchemaNodeBuilder) {
+                    newChild = new ListSchemaNodeBuilder((ListSchemaNodeBuilder) child, qname);
+                }
+
+                if (newChild == null) {
+                    throw new YangParseException(usesNode.getModuleName(), usesNode.getLine(),
+                            "Unknown member of target grouping while resolving uses node.");
+                }
+                if (newChild instanceof GroupingMember) {
+                    ((GroupingMember) newChild).setAddedByUses(true);
+                }
+
+                correctNodePath(newChild, parentPath);
+                newChildren.add(newChild);
             }
         }
-        return null;
+        return newChildren;
     }
 
     /**
-     * Find type by name.
+     * Traverse given groupings and create new collection of groupings with
+     * schema path created based on current parent path.
      *
-     * @param types
-     *            collection of types
-     * @param typeName
-     *            type name
-     * @return type with given name if it is present in collection, null
-     *         otherwise
+     * @param groupings
+     * @param parentPath
+     * @param namespace
+     * @param revision
+     * @param prefix
+     * @return collection of new groupings with corrected path
      */
-    public static TypeDefinition<?> findTypeByName(Set<TypeDefinition<?>> types, String typeName) {
-        for (TypeDefinition<?> type : types) {
-            if (type.getQName().getLocalName().equals(typeName)) {
-                return type;
-            }
+    public static Set<GroupingBuilder> processUsesGroupings(Set<GroupingBuilder> groupings, SchemaPath parentPath,
+            URI namespace, Date revision, String prefix) {
+        Set<GroupingBuilder> newGroupings = new HashSet<>();
+        for (GroupingBuilder g : groupings) {
+            QName qname = new QName(namespace, revision, prefix, g.getQName().getLocalName());
+            GroupingBuilder newGrouping = new GroupingBuilderImpl(g, qname);
+            newGrouping.setAddedByUses(true);
+            correctNodePath(newGrouping, parentPath);
+            newGroupings.add(newGrouping);
         }
-        return null;
+        return newGroupings;
+    }
+
+    public static Set<TypeDefinitionBuilder> processUsesTypedefs(Set<TypeDefinitionBuilder> typedefs,
+            SchemaPath parentPath, URI namespace, Date revision, String prefix) {
+        Set<TypeDefinitionBuilder> newTypedefs = new HashSet<>();
+        for (TypeDefinitionBuilder td : typedefs) {
+            QName qname = new QName(namespace, revision, prefix, td.getQName().getLocalName());
+            TypeDefinitionBuilder newType = new TypeDefinitionBuilderImpl(td, qname);
+            newType.setAddedByUses(true);
+            correctNodePath(newType, parentPath);
+            newTypedefs.add(newType);
+        }
+        return newTypedefs;
+    }
+
+    public static List<UnknownSchemaNodeBuilder> processUsesUnknownNodes(List<UnknownSchemaNodeBuilder> unknownNodes,
+            SchemaPath parentPath, URI namespace, Date revision, String prefix) {
+        List<UnknownSchemaNodeBuilder> newUnknownNodes = new ArrayList<>();
+        for (UnknownSchemaNodeBuilder un : unknownNodes) {
+            QName qname = new QName(namespace, revision, prefix, un.getQName().getLocalName());
+            UnknownSchemaNodeBuilder newUn = new UnknownSchemaNodeBuilder(un, qname);
+            newUn.setAddedByUses(true);
+            correctNodePath(newUn, parentPath);
+            newUnknownNodes.add(newUn);
+        }
+        return newUnknownNodes;
     }
 
     /**
-     * Parse uses path.
+     * Parse XPath string.
      *
-     * @param usesPath
+     * @param xpathString
      *            as String
      * @return SchemaPath from given String
      */
-    public static SchemaPath parseUsesPath(final String usesPath) {
-        final boolean absolute = usesPath.startsWith("/");
-        final String[] splittedPath = usesPath.split("/");
+    public static SchemaPath parseXPathString(final String xpathString) {
+        final boolean absolute = xpathString.startsWith("/");
+        final String[] splittedPath = xpathString.split("/");
         final List<QName> path = new ArrayList<QName>();
         QName name;
         for (String pathElement : splittedPath) {
@@ -337,44 +370,6 @@ public final class ParserUtils {
             }
         }
         return new SchemaPath(path, absolute);
-    }
-
-    /**
-     * Get node from collection of refined nodes based on qname.
-     *
-     * @param nodeQName
-     *            qname of node
-     * @param refineNodes
-     *            collections of refined nodes
-     * @return node with given qname if present, null otherwise
-     */
-    public static SchemaNodeBuilder getRefined(QName nodeQName, List<SchemaNodeBuilder> refineNodes) {
-        for (SchemaNodeBuilder rn : refineNodes) {
-            if (rn.getQName().equals(nodeQName)) {
-                return rn;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Pull restriction from type and add them to constraints.
-     *
-     * @param type
-     * @param constraints
-     */
-    public static void mergeConstraints(final TypeDefinition<?> type, final TypeConstraints constraints) {
-        if (type instanceof DecimalTypeDefinition) {
-            constraints.addRanges(((DecimalTypeDefinition) type).getRangeStatements());
-            constraints.addFractionDigits(((DecimalTypeDefinition) type).getFractionDigits());
-        } else if (type instanceof IntegerTypeDefinition) {
-            constraints.addRanges(((IntegerTypeDefinition) type).getRangeStatements());
-        } else if (type instanceof StringTypeDefinition) {
-            constraints.addPatterns(((StringTypeDefinition) type).getPatterns());
-            constraints.addLengths(((StringTypeDefinition) type).getLengthStatements());
-        } else if (type instanceof BinaryTypeDefinition) {
-            constraints.addLengths(((BinaryTypeDefinition) type).getLengthConstraints());
-        }
     }
 
     /**
@@ -394,7 +389,7 @@ public final class ParserUtils {
                     ((GroupingMember) builder).setAddedByUses(true);
                 }
             }
-            correctAugmentChildPath(builder, target.getPath());
+            correctNodePath(builder, target.getPath());
             target.addChildNode(builder);
         }
     }
@@ -416,36 +411,36 @@ public final class ParserUtils {
                     ((GroupingMember) builder).setAddedByUses(true);
                 }
             }
-            correctAugmentChildPath(builder, target.getPath());
+            correctNodePath(builder, target.getPath());
             target.addCase(builder);
         }
     }
 
-    private static void correctAugmentChildPath(final DataSchemaNodeBuilder childNode, final SchemaPath parentSchemaPath) {
+    private static void correctNodePath(final SchemaNodeBuilder node, final SchemaPath parentSchemaPath) {
         // set correct path
         List<QName> targetNodePath = new ArrayList<QName>(parentSchemaPath.getPath());
-        targetNodePath.add(childNode.getQName());
-        childNode.setPath(new SchemaPath(targetNodePath, true));
+        targetNodePath.add(node.getQName());
+        node.setPath(new SchemaPath(targetNodePath, true));
 
         // set correct path for all child nodes
-        if (childNode instanceof DataNodeContainerBuilder) {
-            DataNodeContainerBuilder dataNodeContainer = (DataNodeContainerBuilder) childNode;
+        if (node instanceof DataNodeContainerBuilder) {
+            DataNodeContainerBuilder dataNodeContainer = (DataNodeContainerBuilder) node;
             for (DataSchemaNodeBuilder child : dataNodeContainer.getChildNodeBuilders()) {
-                correctAugmentChildPath(child, childNode.getPath());
+                correctNodePath(child, node.getPath());
             }
         }
 
         // set correct path for all cases
-        if (childNode instanceof ChoiceBuilder) {
-            ChoiceBuilder choiceBuilder = (ChoiceBuilder) childNode;
+        if (node instanceof ChoiceBuilder) {
+            ChoiceBuilder choiceBuilder = (ChoiceBuilder) node;
             for (ChoiceCaseBuilder choiceCaseBuilder : choiceBuilder.getCases()) {
-                correctAugmentChildPath(choiceCaseBuilder, childNode.getPath());
+                correctNodePath(choiceCaseBuilder, node.getPath());
             }
         }
 
         // if node can contains type, correct path for this type too
-        if (childNode instanceof TypeAwareBuilder) {
-            TypeAwareBuilder nodeBuilder = (TypeAwareBuilder) childNode;
+        if (node instanceof TypeAwareBuilder) {
+            TypeAwareBuilder nodeBuilder = (TypeAwareBuilder) node;
             correctTypeAwareNodePath(nodeBuilder, parentSchemaPath);
         }
     }
@@ -505,7 +500,7 @@ public final class ParserUtils {
                 return;
             }
 
-            SchemaPath newSchemaPath = createNewSchemaPath(nodeBuilderTypedef.getPath(), nodeBuilderQName,
+            SchemaPath newSchemaPath = createSchemaPath(nodeBuilderTypedef.getPath(), nodeBuilderQName,
                     nodeBuilderTypedef.getQName());
             nodeBuilderTypedef.setPath(newSchemaPath);
         }
@@ -540,7 +535,7 @@ public final class ParserUtils {
 
         if (nodeType != null) {
             QName nodeTypeQName = nodeType.getQName();
-            SchemaPath newSchemaPath = createNewSchemaPath(parentSchemaPath, nodeQName, nodeTypeQName);
+            SchemaPath newSchemaPath = createSchemaPath(parentSchemaPath, nodeQName, nodeTypeQName);
 
             if (nodeType instanceof BinaryTypeDefinition) {
                 BinaryTypeDefinition binType = (BinaryTypeDefinition) nodeType;
@@ -578,11 +573,12 @@ public final class ParserUtils {
                 return new InstanceIdentifier(newSchemaPath, instIdType.getPathStatement(),
                         instIdType.requireInstance());
             } else if (nodeType instanceof StringTypeDefinition) {
-                result = createNewStringType(parentSchemaPath, nodeQName, (StringTypeDefinition) nodeType);
+                result = TypeUtils.createNewStringType(parentSchemaPath, nodeQName, (StringTypeDefinition) nodeType);
             } else if (nodeType instanceof IntegerTypeDefinition) {
-                result = createNewIntType(parentSchemaPath, nodeQName, (IntegerTypeDefinition) nodeType);
+                result = TypeUtils.createNewIntType(parentSchemaPath, nodeQName, (IntegerTypeDefinition) nodeType);
             } else if (nodeType instanceof UnsignedIntegerTypeDefinition) {
-                result = createNewUintType(parentSchemaPath, nodeQName, (UnsignedIntegerTypeDefinition) nodeType);
+                result = TypeUtils.createNewUintType(parentSchemaPath, nodeQName,
+                        (UnsignedIntegerTypeDefinition) nodeType);
             } else if (nodeType instanceof LeafrefTypeDefinition) {
                 result = new Leafref(newSchemaPath, ((LeafrefTypeDefinition) nodeType).getPathStatement());
             } else if (nodeType instanceof UnionTypeDefinition) {
@@ -590,90 +586,10 @@ public final class ParserUtils {
                 return new UnionType(newSchemaPath, unionType.getTypes());
             } else if (nodeType instanceof ExtendedType) {
                 ExtendedType extType = (ExtendedType) nodeType;
-                result = createNewExtendedType(extType, newSchemaPath);
+                result = TypeUtils.createNewExtendedType(extType, newSchemaPath);
             }
         }
         return result;
-    }
-
-    /**
-     * Create new ExtendedType based on given type and with schema path.
-     *
-     * @param newPath
-     *            schema path for new type
-     * @param oldType
-     *            type based
-     * @return
-     */
-    private static ExtendedType createNewExtendedType(final ExtendedType oldType, final SchemaPath newPath) {
-        QName qname = oldType.getQName();
-        TypeDefinition<?> baseType = oldType.getBaseType();
-        String desc = oldType.getDescription();
-        String ref = oldType.getReference();
-        ExtendedType.Builder builder = new ExtendedType.Builder(qname, baseType, desc, ref, newPath);
-        builder.status(oldType.getStatus());
-        builder.lengths(oldType.getLengths());
-        builder.patterns(oldType.getPatterns());
-        builder.ranges(oldType.getRanges());
-        builder.fractionDigits(oldType.getFractionDigits());
-        builder.unknownSchemaNodes(oldType.getUnknownSchemaNodes());
-        return builder.build();
-    }
-
-    private static StringTypeDefinition createNewStringType(final SchemaPath schemaPath, final QName nodeQName,
-            final StringTypeDefinition nodeType) {
-        final List<QName> path = schemaPath.getPath();
-        final List<QName> newPath = new ArrayList<QName>(path);
-        newPath.add(nodeQName);
-        newPath.add(nodeType.getQName());
-        final SchemaPath newSchemaPath = new SchemaPath(newPath, schemaPath.isAbsolute());
-        return new StringType(newSchemaPath);
-    }
-
-    private static IntegerTypeDefinition createNewIntType(final SchemaPath schemaPath, final QName nodeQName,
-            final IntegerTypeDefinition type) {
-        final QName typeQName = type.getQName();
-        final SchemaPath newSchemaPath = createNewSchemaPath(schemaPath, nodeQName, typeQName);
-        final String localName = typeQName.getLocalName();
-
-        if ("int8".equals(localName)) {
-            return new Int8(newSchemaPath);
-        } else if ("int16".equals(localName)) {
-            return new Int16(newSchemaPath);
-        } else if ("int32".equals(localName)) {
-            return new Int32(newSchemaPath);
-        } else if ("int64".equals(localName)) {
-            return new Int64(newSchemaPath);
-        } else {
-            return null;
-        }
-    }
-
-    private static UnsignedIntegerTypeDefinition createNewUintType(final SchemaPath schemaPath, final QName nodeQName,
-            final UnsignedIntegerTypeDefinition type) {
-        final QName typeQName = type.getQName();
-        final SchemaPath newSchemaPath = createNewSchemaPath(schemaPath, nodeQName, typeQName);
-        final String localName = typeQName.getLocalName();
-
-        if ("uint8".equals(localName)) {
-            return new Uint8(newSchemaPath);
-        } else if ("uint16".equals(localName)) {
-            return new Uint16(newSchemaPath);
-        } else if ("uint32".equals(localName)) {
-            return new Uint32(newSchemaPath);
-        } else if ("uint64".equals(localName)) {
-            return new Uint64(newSchemaPath);
-        } else {
-            return null;
-        }
-    }
-
-    private static SchemaPath createNewSchemaPath(final SchemaPath schemaPath, final QName currentQName,
-            final QName qname) {
-        List<QName> newPath = new ArrayList<QName>(schemaPath.getPath());
-        newPath.add(currentQName);
-        newPath.add(qname);
-        return new SchemaPath(newPath, schemaPath.isAbsolute());
     }
 
     /**
@@ -681,13 +597,15 @@ public final class ParserUtils {
      *
      * @param leaf
      *            leaf from which to create builder
+     * @param qname
+     * @param moduleName
+     *            current module name
      * @param line
      *            line in module
-     * @return builder object from leaf
+     * @return leaf builder based on given leaf node
      */
-    public static LeafSchemaNodeBuilder createLeafBuilder(LeafSchemaNode leaf, String moduleName, int line) {
-        final LeafSchemaNodeBuilder builder = new LeafSchemaNodeBuilder(moduleName, line, leaf.getQName(),
-                leaf.getPath());
+    public static LeafSchemaNodeBuilder createLeafBuilder(LeafSchemaNode leaf, QName qname, String moduleName, int line) {
+        final LeafSchemaNodeBuilder builder = new LeafSchemaNodeBuilder(moduleName, line, qname, leaf.getPath());
         convertDataSchemaNode(leaf, builder);
         builder.setConfiguration(leaf.isConfiguration());
         final TypeDefinition<?> type = leaf.getType();
@@ -699,9 +617,21 @@ public final class ParserUtils {
         return builder;
     }
 
-    public static ContainerSchemaNodeBuilder createContainer(ContainerSchemaNode container, String moduleName, int line) {
-        final ContainerSchemaNodeBuilder builder = new ContainerSchemaNodeBuilder(moduleName, line,
-                container.getQName(), container.getPath());
+    /**
+     * Create ContainerSchemaNodeBuilder from given ContainerSchemaNode.
+     *
+     * @param container
+     * @param qname
+     * @param moduleName
+     *            current module name
+     * @param line
+     *            current line in module
+     * @return container builder based on given container node
+     */
+    public static ContainerSchemaNodeBuilder createContainer(ContainerSchemaNode container, QName qname,
+            String moduleName, int line) {
+        final ContainerSchemaNodeBuilder builder = new ContainerSchemaNodeBuilder(moduleName, line, qname,
+                container.getPath());
         convertDataSchemaNode(container, builder);
         builder.setConfiguration(container.isConfiguration());
         builder.setUnknownNodes(container.getUnknownSchemaNodes());
@@ -714,8 +644,19 @@ public final class ParserUtils {
         return builder;
     }
 
-    public static ListSchemaNodeBuilder createList(ListSchemaNode list, String moduleName, int line) {
-        ListSchemaNodeBuilder builder = new ListSchemaNodeBuilder(moduleName, line, list.getQName(), list.getPath());
+    /**
+     * Create ListSchemaNodeBuilder from given ListSchemaNode.
+     *
+     * @param list
+     * @param qname
+     * @param moduleName
+     *            current module name
+     * @param line
+     *            current line in module
+     * @return list builder based on given list node
+     */
+    public static ListSchemaNodeBuilder createList(ListSchemaNode list, QName qname, String moduleName, int line) {
+        ListSchemaNodeBuilder builder = new ListSchemaNodeBuilder(moduleName, line, qname, list.getPath());
         convertDataSchemaNode(list, builder);
         builder.setConfiguration(list.isConfiguration());
         builder.setUnknownNodes(list.getUnknownSchemaNodes());
@@ -728,8 +669,20 @@ public final class ParserUtils {
         return builder;
     }
 
-    public static LeafListSchemaNodeBuilder createLeafList(LeafListSchemaNode leafList, String moduleName, int line) {
-        final LeafListSchemaNodeBuilder builder = new LeafListSchemaNodeBuilder(moduleName, line, leafList.getQName(),
+    /**
+     * Create LeafListSchemaNodeBuilder from given LeafListSchemaNode.
+     *
+     * @param leafList
+     * @param qname
+     * @param moduleName
+     *            current module name
+     * @param line
+     *            current line in module
+     * @return leaf-list builder based on given leaf-list node
+     */
+    public static LeafListSchemaNodeBuilder createLeafList(LeafListSchemaNode leafList, QName qname, String moduleName,
+            int line) {
+        final LeafListSchemaNodeBuilder builder = new LeafListSchemaNodeBuilder(moduleName, line, qname,
                 leafList.getPath());
         convertDataSchemaNode(leafList, builder);
         builder.setConfiguration(leafList.isConfiguration());
@@ -739,8 +692,19 @@ public final class ParserUtils {
         return builder;
     }
 
-    public static ChoiceBuilder createChoice(ChoiceNode choice, String moduleName, int line) {
-        final ChoiceBuilder builder = new ChoiceBuilder(moduleName, line, choice.getQName());
+    /**
+     * Create ChoiceBuilder from given ChoiceNode.
+     *
+     * @param choice
+     * @param qname
+     * @param moduleName
+     *            current module name
+     * @param line
+     *            current line in module
+     * @return choice builder based on given choice node
+     */
+    public static ChoiceBuilder createChoice(ChoiceNode choice, QName qname, String moduleName, int line) {
+        final ChoiceBuilder builder = new ChoiceBuilder(moduleName, line, qname);
         convertDataSchemaNode(choice, builder);
         builder.setConfiguration(choice.isConfiguration());
         builder.setCases(choice.getCases());
@@ -749,16 +713,38 @@ public final class ParserUtils {
         return builder;
     }
 
-    public static AnyXmlBuilder createAnyXml(AnyXmlSchemaNode anyxml, String moduleName, int line) {
-        final AnyXmlBuilder builder = new AnyXmlBuilder(moduleName, line, anyxml.getQName(), anyxml.getPath());
+    /**
+     * Create AnyXmlBuilder from given AnyXmlSchemaNode.
+     *
+     * @param anyxml
+     * @param qname
+     * @param moduleName
+     *            current module name
+     * @param line
+     *            current line in module
+     * @return anyxml builder based on given anyxml node
+     */
+    public static AnyXmlBuilder createAnyXml(AnyXmlSchemaNode anyxml, QName qname, String moduleName, int line) {
+        final AnyXmlBuilder builder = new AnyXmlBuilder(moduleName, line, qname, anyxml.getPath());
         convertDataSchemaNode(anyxml, builder);
         builder.setConfiguration(anyxml.isConfiguration());
         builder.setUnknownNodes(anyxml.getUnknownSchemaNodes());
         return builder;
     }
 
-    public static GroupingBuilder createGrouping(GroupingDefinition grouping, String moduleName, int line) {
-        final GroupingBuilderImpl builder = new GroupingBuilderImpl(moduleName, line, grouping.getQName());
+    /**
+     * Create GroupingBuilder from given GroupingDefinition.
+     *
+     * @param grouping
+     * @param qname
+     * @param moduleName
+     *            current module name
+     * @param line
+     *            current line in module
+     * @return grouping builder based on given grouping node
+     */
+    public static GroupingBuilder createGrouping(GroupingDefinition grouping, QName qname, String moduleName, int line) {
+        final GroupingBuilderImpl builder = new GroupingBuilderImpl(moduleName, line, qname);
         builder.setPath(grouping.getPath());
         builder.setChildNodes(grouping.getChildNodes());
         builder.setGroupings(grouping.getGroupings());
@@ -771,8 +757,19 @@ public final class ParserUtils {
         return builder;
     }
 
-    public static TypeDefinitionBuilder createTypedef(ExtendedType typedef, String moduleName, int line) {
-        final TypeDefinitionBuilderImpl builder = new TypeDefinitionBuilderImpl(moduleName, line, typedef.getQName());
+    /**
+     * Create TypeDefinitionBuilder from given ExtendedType.
+     *
+     * @param typedef
+     * @param qname
+     * @param moduleName
+     *            current module name
+     * @param line
+     *            current line in module
+     * @return typedef builder based on given typedef node
+     */
+    public static TypeDefinitionBuilder createTypedef(ExtendedType typedef, QName qname, String moduleName, int line) {
+        final TypeDefinitionBuilderImpl builder = new TypeDefinitionBuilderImpl(moduleName, line, qname);
         builder.setPath(typedef.getPath());
         builder.setDefaultValue(typedef.getDefaultValue());
         builder.setUnits(typedef.getUnits());
@@ -790,9 +787,20 @@ public final class ParserUtils {
         return builder;
     }
 
-    public static UnknownSchemaNodeBuilder createUnknownSchemaNode(UnknownSchemaNode unknownNode, String moduleName,
-            int line) {
-        final UnknownSchemaNodeBuilder builder = new UnknownSchemaNodeBuilder(moduleName, line, unknownNode.getQName());
+    /**
+     * Create UnknownSchemaNodeBuilder from given UnknownSchemaNode.
+     *
+     * @param unknownNode
+     * @param qname
+     * @param moduleName
+     *            current module name
+     * @param line
+     *            current line in module
+     * @return unknown node builder based on given unknown node
+     */
+    public static UnknownSchemaNodeBuilder createUnknownSchemaNode(UnknownSchemaNode unknownNode, QName qname,
+            String moduleName, int line) {
+        final UnknownSchemaNodeBuilder builder = new UnknownSchemaNodeBuilder(moduleName, line, qname);
         builder.setPath(unknownNode.getPath());
         builder.setUnknownNodes(unknownNode.getUnknownSchemaNodes());
         builder.setDescription(unknownNode.getDescription());
@@ -997,222 +1005,62 @@ public final class ParserUtils {
     }
 
     /**
-     * Create new type builder based on old type with new base type.
+     * Search given modules for grouping by name defined in uses node.
      *
-     * @param newBaseType
-     *            new base type builder
-     * @param oldExtendedType
-     *            old type
+     * @param usesBuilder
+     *            builder of uses statement
      * @param modules
      *            all loaded modules
      * @param module
      *            current module
-     * @param line
-     *            current line in module
-     * @return new type builder based on old type with new base type
+     * @return grouping with given name if found, null otherwise
      */
-    public static TypeDefinitionBuilder extendedTypeWithNewBaseTypeBuilder(final TypeDefinitionBuilder newBaseType,
-            final ExtendedType oldExtendedType, final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder module, final int line) {
-        final TypeConstraints tc = new TypeConstraints(module.getName(), line);
-        tc.addFractionDigits(oldExtendedType.getFractionDigits());
-        tc.addLengths(oldExtendedType.getLengths());
-        tc.addPatterns(oldExtendedType.getPatterns());
-        tc.addRanges(oldExtendedType.getRanges());
+    public static GroupingBuilder getTargetGroupingFromModules(final UsesNodeBuilder usesBuilder,
+            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
+        final int line = usesBuilder.getLine();
+        final String groupingString = usesBuilder.getGroupingName();
+        String groupingPrefix;
+        String groupingName;
 
-        final TypeConstraints constraints = findConstraintsFromTypeBuilder(newBaseType, tc, modules, module, null);
-        final TypeDefinitionBuilderImpl newType = new TypeDefinitionBuilderImpl(module.getModuleName(), line,
-                oldExtendedType.getQName());
-        newType.setTypedef(newBaseType);
-        newType.setPath(oldExtendedType.getPath());
-        newType.setDescription(oldExtendedType.getDescription());
-        newType.setReference(oldExtendedType.getReference());
-        newType.setStatus(oldExtendedType.getStatus());
-        newType.setLengths(constraints.getLength());
-        newType.setPatterns(constraints.getPatterns());
-        newType.setRanges(constraints.getRange());
-        newType.setFractionDigits(constraints.getFractionDigits());
-        newType.setUnits(oldExtendedType.getUnits());
-        newType.setDefaultValue(oldExtendedType.getDefaultValue());
-        newType.setUnknownNodes(oldExtendedType.getUnknownSchemaNodes());
-        return newType;
-    }
-
-    /**
-     * Create new type builder based on old type with new base type.
-     *
-     * @param newBaseType
-     *            new base type
-     * @param oldExtendedType
-     *            old type
-     * @param modules
-     *            all loaded modules
-     * @param module
-     *            current module
-     * @param line
-     *            current line in module
-     * @return new type builder based on old type with new base type
-     */
-    public static TypeDefinitionBuilder extendedTypeWithNewBaseType(final TypeDefinition<?> newBaseType,
-            final ExtendedType oldExtendedType, final ModuleBuilder module, final int line) {
-        final TypeConstraints tc = new TypeConstraints(module.getName(), line);
-
-        final TypeConstraints constraints = findConstraintsFromTypeDefinition(newBaseType, tc);
-        final TypeDefinitionBuilderImpl newType = new TypeDefinitionBuilderImpl(module.getModuleName(), line,
-                oldExtendedType.getQName());
-        newType.setType(newBaseType);
-        newType.setPath(oldExtendedType.getPath());
-        newType.setDescription(oldExtendedType.getDescription());
-        newType.setReference(oldExtendedType.getReference());
-        newType.setStatus(oldExtendedType.getStatus());
-        newType.setLengths(constraints.getLength());
-        newType.setPatterns(constraints.getPatterns());
-        newType.setRanges(constraints.getRange());
-        newType.setFractionDigits(constraints.getFractionDigits());
-        newType.setUnits(oldExtendedType.getUnits());
-        newType.setDefaultValue(oldExtendedType.getDefaultValue());
-        newType.setUnknownNodes(oldExtendedType.getUnknownSchemaNodes());
-        return newType;
-    }
-
-    /**
-     * Pull restrictions from type and add them to constraints.
-     *
-     * @param typeToResolve
-     *            type from which constraints will be read
-     * @param constraints
-     *            constraints object to which constraints will be added
-     * @return constraints contstraints object containing constraints from given
-     *         type
-     */
-    private static TypeConstraints findConstraintsFromTypeDefinition(final TypeDefinition<?> typeToResolve,
-            final TypeConstraints constraints) {
-        // union type cannot be restricted
-        if (typeToResolve instanceof UnionTypeDefinition) {
-            return constraints;
-        }
-        if (typeToResolve instanceof ExtendedType) {
-            ExtendedType extType = (ExtendedType) typeToResolve;
-            constraints.addFractionDigits(extType.getFractionDigits());
-            constraints.addLengths(extType.getLengths());
-            constraints.addPatterns(extType.getPatterns());
-            constraints.addRanges(extType.getRanges());
-            return findConstraintsFromTypeDefinition(extType.getBaseType(), constraints);
-        } else {
-            mergeConstraints(typeToResolve, constraints);
-            return constraints;
-        }
-    }
-
-    public static TypeConstraints findConstraintsFromTypeBuilder(final TypeAwareBuilder nodeToResolve,
-            final TypeConstraints constraints, final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder builder, final SchemaContext context) {
-
-        // union and identityref types cannot be restricted
-        if (nodeToResolve instanceof UnionTypeBuilder || nodeToResolve instanceof IdentityrefTypeBuilder) {
-            return constraints;
-        }
-
-        if (nodeToResolve instanceof TypeDefinitionBuilder) {
-            TypeDefinitionBuilder typedefToResolve = (TypeDefinitionBuilder) nodeToResolve;
-            constraints.addFractionDigits(typedefToResolve.getFractionDigits());
-            constraints.addLengths(typedefToResolve.getLengths());
-            constraints.addPatterns(typedefToResolve.getPatterns());
-            constraints.addRanges(typedefToResolve.getRanges());
-        }
-
-        TypeDefinition<?> type = nodeToResolve.getType();
-        if (type == null) {
-            return findConstraintsFromTypeBuilder(nodeToResolve.getTypedef(), constraints, modules, builder, context);
-        } else {
-            QName qname = type.getQName();
-            if (type instanceof UnknownType) {
-                ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, builder, qname.getPrefix(),
-                        nodeToResolve.getLine());
-                if (dependentModuleBuilder == null) {
-                    if (context == null) {
-                        throw new YangParseException(builder.getName(), nodeToResolve.getLine(),
-                                "Failed to resolved type constraints.");
-                    }
-                    Module dm = findModuleFromContext(context, builder, qname.getPrefix(), nodeToResolve.getLine());
-                    TypeDefinition<?> t = findTypeByName(dm.getTypeDefinitions(), qname.getLocalName());
-                    if (t instanceof ExtendedType) {
-                        ExtendedType extType = (ExtendedType) t;
-                        constraints.addFractionDigits(extType.getFractionDigits());
-                        constraints.addLengths(extType.getLengths());
-                        constraints.addPatterns(extType.getPatterns());
-                        constraints.addRanges(extType.getRanges());
-                        return constraints;
-                    } else {
-                        mergeConstraints(t, constraints);
-                        return constraints;
-                    }
-                } else {
-                    TypeDefinitionBuilder tdb = findTypeDefinitionBuilder(nodeToResolve, dependentModuleBuilder,
-                            qname.getLocalName(), builder.getName(), nodeToResolve.getLine());
-                    return findConstraintsFromTypeBuilder(tdb, constraints, modules, dependentModuleBuilder, context);
-                }
-            } else if (type instanceof ExtendedType) {
-                ExtendedType extType = (ExtendedType) type;
-                constraints.addFractionDigits(extType.getFractionDigits());
-                constraints.addLengths(extType.getLengths());
-                constraints.addPatterns(extType.getPatterns());
-                constraints.addRanges(extType.getRanges());
-
-                TypeDefinition<?> base = extType.getBaseType();
-                if (base instanceof UnknownType) {
-                    ModuleBuilder dependentModule = findDependentModuleBuilder(modules, builder, base.getQName()
-                            .getPrefix(), nodeToResolve.getLine());
-                    TypeDefinitionBuilder tdb = findTypeDefinitionBuilder(nodeToResolve, dependentModule, base
-                            .getQName().getLocalName(), builder.getName(), nodeToResolve.getLine());
-                    return findConstraintsFromTypeBuilder(tdb, constraints, modules, dependentModule, context);
-                } else {
-                    // it has to be base yang type
-                    mergeConstraints(type, constraints);
-                    return constraints;
-                }
-            } else {
-                // it is base yang type
-                mergeConstraints(type, constraints);
-                return constraints;
+        if (groupingString.contains(":")) {
+            String[] splitted = groupingString.split(":");
+            if (splitted.length != 2 || groupingString.contains("/")) {
+                throw new YangParseException(module.getName(), line, "Invalid name of target grouping");
             }
+            groupingPrefix = splitted[0];
+            groupingName = splitted[1];
+        } else {
+            groupingPrefix = module.getPrefix();
+            groupingName = groupingString;
         }
-    }
 
-    /**
-     * Search for type definition builder by name.
-     *
-     * @param dirtyNodeSchemaPath
-     *            schema path of node which contains unresolved type
-     * @param dependentModule
-     *            module which should contains referenced type
-     * @param typeName
-     *            name of type definition
-     * @param currentModuleName
-     *            name of current module
-     * @param line
-     *            current line in yang model
-     * @return
-     */
-    public static TypeDefinitionBuilder findTypeDefinitionBuilder(final TypeAwareBuilder nodeToResolve,
-            final ModuleBuilder dependentModule, final String typeName, final String currentModuleName, final int line) {
+        ModuleBuilder dependentModule = null;
+        if (groupingPrefix.equals(module.getPrefix())) {
+            dependentModule = module;
+        } else {
+            dependentModule = findDependentModuleBuilder(modules, module, groupingPrefix, line);
+        }
 
-        TypeDefinitionBuilder result = null;
+        if (dependentModule == null) {
+            return null;
+        }
 
-        Set<TypeDefinitionBuilder> typedefs = dependentModule.getTypeDefinitionBuilders();
-        result = findTypedefBuilderByName(typedefs, typeName);
+        GroupingBuilder result = null;
+        Set<GroupingBuilder> groupings = dependentModule.getGroupingBuilders();
+        result = findGroupingBuilder(groupings, groupingName);
         if (result != null) {
             return result;
         }
 
-        Builder parent = nodeToResolve.getParent();
+        Builder parent = usesBuilder.getParent();
+
         while (parent != null) {
             if (parent instanceof DataNodeContainerBuilder) {
-                typedefs = ((DataNodeContainerBuilder) parent).getTypeDefinitionBuilders();
+                groupings = ((DataNodeContainerBuilder) parent).getGroupingBuilders();
             } else if (parent instanceof RpcDefinitionBuilder) {
-                typedefs = ((RpcDefinitionBuilder) parent).getTypeDefinitions();
+                groupings = ((RpcDefinitionBuilder) parent).getGroupings();
             }
-            result = findTypedefBuilderByName(typedefs, typeName);
+            result = findGroupingBuilder(groupings, groupingName);
             if (result == null) {
                 parent = parent.getParent();
             } else {
@@ -1221,7 +1069,62 @@ public final class ParserUtils {
         }
 
         if (result == null) {
-            throw new YangParseException(currentModuleName, line, "Referenced type '" + typeName + "' not found.");
+            throw new YangParseException(module.getName(), line, "Referenced grouping '" + groupingName
+                    + "' not found.");
+        }
+        return result;
+    }
+
+    /**
+     * Search context for grouping by name defined in uses node.
+     *
+     * @param usesBuilder
+     *            builder of uses statement
+     * @param module
+     *            current module
+     * @param context
+     *            SchemaContext containing already resolved modules
+     * @return grouping with given name if found, null otherwise
+     */
+    public static GroupingDefinition getTargetGroupingFromContext(final UsesNodeBuilder usesBuilder,
+            final ModuleBuilder module, final SchemaContext context) {
+        final int line = usesBuilder.getLine();
+        String groupingString = usesBuilder.getGroupingName();
+        String groupingPrefix;
+        String groupingName;
+
+        if (groupingString.contains(":")) {
+            String[] splitted = groupingString.split(":");
+            if (splitted.length != 2 || groupingString.contains("/")) {
+                throw new YangParseException(module.getName(), line, "Invalid name of target grouping");
+            }
+            groupingPrefix = splitted[0];
+            groupingName = splitted[1];
+        } else {
+            groupingPrefix = module.getPrefix();
+            groupingName = groupingString;
+        }
+
+        Module dependentModule = findModuleFromContext(context, module, groupingPrefix, line);
+        return findGroupingDefinition(dependentModule.getGroupings(), groupingName);
+    }
+
+    public static QName findFullQName(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final ModuleBuilder module, final IdentityrefTypeBuilder idref) {
+        QName result = null;
+        String baseString = idref.getBaseString();
+        if (baseString.contains(":")) {
+            String[] splittedBase = baseString.split(":");
+            if (splittedBase.length > 2) {
+                throw new YangParseException(module.getName(), idref.getLine(), "Failed to parse identityref base: "
+                        + baseString);
+            }
+            String prefix = splittedBase[0];
+            String name = splittedBase[1];
+            ModuleBuilder dependentModule = findDependentModuleBuilder(modules, module, prefix, idref.getLine());
+            result = new QName(dependentModule.getNamespace(), dependentModule.getRevision(), prefix, name);
+        } else {
+            result = new QName(module.getNamespace(), module.getRevision(), module.getPrefix(), baseString);
         }
         return result;
     }

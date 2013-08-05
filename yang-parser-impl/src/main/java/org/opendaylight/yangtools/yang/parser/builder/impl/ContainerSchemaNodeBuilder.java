@@ -72,8 +72,8 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public ContainerSchemaNodeBuilder(final ContainerSchemaNodeBuilder b) {
-        super(b.getModuleName(), b.getLine(), b.getQName());
+    public ContainerSchemaNodeBuilder(final ContainerSchemaNodeBuilder b, final QName qname) {
+        super(b.getModuleName(), b.getLine(), qname);
         instance = new ContainerSchemaNodeImpl(b.getQName());
         constraints = new ConstraintsBuilder(b.getConstraints());
         schemaPath = b.getPath();

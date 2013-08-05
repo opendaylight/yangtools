@@ -265,32 +265,6 @@ public final class ParserListenerUtils {
     }
 
     /**
-     * Create SchemaPath from given string.
-     *
-     * @param augmentPath
-     *            string representation of path
-     * @return SchemaPath object
-     */
-    public static SchemaPath parseAugmentPath(final String augmentPath) {
-        final boolean absolute = augmentPath.startsWith("/");
-        final String[] splittedPath = augmentPath.split("/");
-        List<QName> path = new ArrayList<QName>();
-        QName name;
-        for (String pathElement : splittedPath) {
-            if (pathElement.length() > 0) {
-                String[] splittedElement = pathElement.split(":");
-                if (splittedElement.length == 1) {
-                    name = new QName(null, null, null, splittedElement[0]);
-                } else {
-                    name = new QName(null, null, splittedElement[0], splittedElement[1]);
-                }
-                path.add(name);
-            }
-        }
-        return new SchemaPath(path, absolute);
-    }
-
-    /**
      * Create java.util.List of QName objects from given key definition as
      * string.
      *

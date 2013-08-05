@@ -11,9 +11,7 @@ import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.net.URI;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +54,6 @@ import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 public class YangParserTest {
-
     private final URI nodesNS = URI.create("urn:simple.nodes.test");
     private final URI typesNS = URI.create("urn:simple.types.test");
     private final URI customNS = URI.create("urn:custom.nodes.test");
@@ -64,14 +61,13 @@ public class YangParserTest {
     private Date typesRev;
     private Date customRev;
 
-    private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private Set<Module> modules;
 
     @Before
     public void init() throws FileNotFoundException, ParseException {
-        nodesRev = simpleDateFormat.parse("2013-02-27");
-        typesRev = simpleDateFormat.parse("2013-07-03");
-        customRev = simpleDateFormat.parse("2013-02-27");
+        nodesRev = TestUtils.simpleDateFormat.parse("2013-02-27");
+        typesRev = TestUtils.simpleDateFormat.parse("2013-07-03");
+        customRev = TestUtils.simpleDateFormat.parse("2013-02-27");
 
         modules = TestUtils.loadModules(getClass().getResource("/model").getPath());
         assertEquals(3, modules.size());

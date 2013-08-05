@@ -53,8 +53,8 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public ChoiceBuilder(ChoiceBuilder b) {
-        super(b.getModuleName(), b.getLine(), b.getQName());
+    public ChoiceBuilder(ChoiceBuilder b, QName qname) {
+        super(b.getModuleName(), b.getLine(), qname);
         parent = b.getParent();
         instance = new ChoiceNodeImpl(qname);
         constraints = new ConstraintsBuilder(b.getConstraints());
@@ -159,8 +159,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
                 caseNode.setAugmenting(false);
             }
             caseBuilder.setPath(caseNode.getPath());
-            SchemaPath newPath = ParserUtils.createSchemaPath(caseNode.getPath(), caseQName.getLocalName(),
-                    caseQName.getNamespace(), caseQName.getRevision(), caseQName.getPrefix());
+            SchemaPath newPath = ParserUtils.createSchemaPath(caseNode.getPath(), caseQName);
             caseNode.setPath(newPath);
             caseBuilder.addChildNode(caseNode);
             addedCases.add(caseBuilder);

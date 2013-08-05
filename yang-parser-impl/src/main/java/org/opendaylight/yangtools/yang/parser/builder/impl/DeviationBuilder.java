@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class DeviationBuilder extends AbstractBuilder {
@@ -36,7 +36,7 @@ public final class DeviationBuilder extends AbstractBuilder {
                     "Deviation argument string must be an absolute schema node identifier.");
         }
         this.targetPathStr = targetPathStr;
-        this.targetPath = ParserListenerUtils.parseAugmentPath(targetPathStr);
+        this.targetPath = ParserUtils.parseXPathString(targetPathStr);
         instance = new DeviationImpl();
     }
 

@@ -44,8 +44,8 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
         super(moduleName, line, qname);
     }
 
-    public TypeDefinitionBuilderImpl(TypeDefinitionBuilder tdb) {
-        super(tdb.getModuleName(), tdb.getLine(), tdb.getQName());
+    public TypeDefinitionBuilderImpl(TypeDefinitionBuilder tdb, QName qname) {
+        super(tdb.getModuleName(), tdb.getLine(), qname);
         schemaPath = tdb.getPath();
 
         type = tdb.getType();

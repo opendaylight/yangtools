@@ -7,21 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.*;
-
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
-import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
@@ -41,85 +31,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuil
 public class RefineUtils {
 
     private RefineUtils() {
-    }
-
-    /**
-     * Find original builder of node to refine and return copy of this builder.
-     * <p>
-     * We must create and use a copy of builder to preserve original builder
-     * state, because this object will be refined (modified) and later added to
-     * {@link UsesNodeBuilder}.
-     * </p>
-     *
-     * @param targetGrouping
-     *            builder of grouping which should contains node to refine
-     * @param refine
-     *            refine object containing informations about refine
-     * @param moduleName
-     *            current module name
-     * @return
-     */
-    public static DataSchemaNodeBuilder getRefineNodeFromGroupingBuilder(final GroupingBuilder targetGrouping,
-            final RefineHolder refine, final String moduleName) {
-        DataSchemaNodeBuilder result = null;
-        final Builder lookedUpBuilder = targetGrouping.getDataChildByName(refine.getName());
-        if (lookedUpBuilder == null) {
-            throw new YangParseException(moduleName, refine.getLine(), "Target node '" + refine.getName()
-                    + "' not found");
-        }
-        if (lookedUpBuilder instanceof LeafSchemaNodeBuilder) {
-            result = new LeafSchemaNodeBuilder((LeafSchemaNodeBuilder) lookedUpBuilder);
-        } else if (lookedUpBuilder instanceof ContainerSchemaNodeBuilder) {
-            result = new ContainerSchemaNodeBuilder((ContainerSchemaNodeBuilder) lookedUpBuilder);
-        } else if (lookedUpBuilder instanceof ListSchemaNodeBuilder) {
-            result = new ListSchemaNodeBuilder((ListSchemaNodeBuilder) lookedUpBuilder);
-        } else if (lookedUpBuilder instanceof LeafListSchemaNodeBuilder) {
-            result = new LeafListSchemaNodeBuilder((LeafListSchemaNodeBuilder) lookedUpBuilder);
-        } else if (lookedUpBuilder instanceof ChoiceBuilder) {
-            result = new ChoiceBuilder((ChoiceBuilder) lookedUpBuilder);
-        } else if (lookedUpBuilder instanceof AnyXmlBuilder) {
-            result = new AnyXmlBuilder((AnyXmlBuilder) lookedUpBuilder);
-        } else {
-            throw new YangParseException(moduleName, refine.getLine(), "Target '" + refine.getName()
-                    + "' can not be refined");
-        }
-        return result;
-    }
-
-    /**
-     * Create builder object from refine target node.
-     *
-     * @param grouping
-     *            grouping which should contains node to refine
-     * @param refine
-     *            refine object containing informations about refine
-     * @return
-     */
-    public static DataSchemaNodeBuilder getRefineNodeFromGroupingDefinition(final GroupingDefinition grouping,
-            final RefineHolder refine) {
-        final String moduleName = refine.getModuleName();
-        final int line = refine.getLine();
-        DataSchemaNodeBuilder result = null;
-        final Object lookedUpNode = grouping.getDataChildByName(refine.getName());
-        if (lookedUpNode == null) {
-            throw new YangParseException(moduleName, line, "Refine target node '" + refine.getName() + "' not found");
-        }
-        if (lookedUpNode instanceof LeafSchemaNode) {
-            result = createLeafBuilder((LeafSchemaNode) lookedUpNode, moduleName, line);
-        } else if (lookedUpNode instanceof ContainerSchemaNode) {
-            result = createContainer((ContainerSchemaNode) lookedUpNode, moduleName, line);
-        } else if (lookedUpNode instanceof ListSchemaNode) {
-            result = createList((ListSchemaNode) lookedUpNode, moduleName, line);
-        } else if (lookedUpNode instanceof LeafListSchemaNode) {
-            result = createLeafList((LeafListSchemaNode) lookedUpNode, moduleName, line);
-        } else if (lookedUpNode instanceof ChoiceNode) {
-            result = createChoice((ChoiceNode) lookedUpNode, moduleName, line);
-        } else if (lookedUpNode instanceof AnyXmlSchemaNode) {
-            result = createAnyXml((AnyXmlSchemaNode) lookedUpNode, moduleName, line);
-        } else {
-            throw new YangParseException(moduleName, line, "Target '" + refine.getName() + "' can not be refined");
-        }
-        return result;
     }
 
     public static void refineLeaf(LeafSchemaNodeBuilder leaf, RefineHolder refine) {
@@ -385,10 +296,9 @@ public class RefineUtils {
      *            builder of node to refine
      * @param refine
      *            refine object containing information about refine process
-     * @param line
-     *            current line in yang model
      */
-    public static void performRefine(SchemaNodeBuilder nodeToRefine, RefineHolder refine, int line) {
+    public static void performRefine(SchemaNodeBuilder nodeToRefine, RefineHolder refine) {
+        final int line = refine.getLine();
         checkRefine(nodeToRefine, refine);
         refineDefault(nodeToRefine, refine);
         if (nodeToRefine instanceof LeafSchemaNodeBuilder) {

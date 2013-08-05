@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public class YangParserSimpleTest {
-
     private final URI snNS = URI.create("urn:opendaylight:simple-nodes");
     private Date snRev;
     private final String snPref = "sn";

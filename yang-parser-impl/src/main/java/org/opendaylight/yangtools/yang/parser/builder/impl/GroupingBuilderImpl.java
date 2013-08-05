@@ -52,8 +52,8 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         instance = new GroupingDefinitionImpl(qname);
     }
 
-    public GroupingBuilderImpl(GroupingBuilder builder) {
-        super(builder.getModuleName(), builder.getLine(), builder.getQName());
+    public GroupingBuilderImpl(GroupingBuilder builder, QName qname) {
+        super(builder.getModuleName(), builder.getLine(), qname);
         parent = builder.getParent();
         instance = new GroupingDefinitionImpl(qname);
         schemaPath = builder.getPath();

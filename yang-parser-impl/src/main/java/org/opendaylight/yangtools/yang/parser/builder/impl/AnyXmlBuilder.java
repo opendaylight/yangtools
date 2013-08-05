@@ -38,8 +38,8 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public AnyXmlBuilder(final AnyXmlBuilder builder) {
-        super(builder.getModuleName(), builder.getLine(), builder.getQName());
+    public AnyXmlBuilder(final AnyXmlBuilder builder, final QName qname) {
+        super(builder.getModuleName(), builder.getLine(), qname);
         parent = builder.getParent();
         instance = new AnyXmlSchemaNodeImpl(qname);
         constraints = new ConstraintsBuilder(builder.getConstraints());

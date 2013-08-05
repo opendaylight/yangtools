@@ -58,6 +58,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private final ModuleImpl instance;
     private final String name;
+    private final SchemaPath schemaPath;
     private URI namespace;
     private String prefix;
     private Date revision;
@@ -84,6 +85,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     public ModuleBuilder(final String name) {
         super(name, 0, null);
         this.name = name;
+        schemaPath = new SchemaPath(Collections.<QName>emptyList(), true);
         instance = new ModuleImpl(name);
         actualPath.push(this);
     }
@@ -202,7 +204,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     @Override
     public SchemaPath getPath() {
-        return null;
+        return schemaPath;
     }
 
     @Override

@@ -71,8 +71,8 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public ListSchemaNodeBuilder(final ListSchemaNodeBuilder b) {
-        super(b.getModuleName(), b.getLine(), b.getQName());
+    public ListSchemaNodeBuilder(final ListSchemaNodeBuilder b, final QName qname) {
+        super(b.getModuleName(), b.getLine(), qname);
         instance = new ListSchemaNodeImpl(b.getQName());
         constraints = new ConstraintsBuilder(b.getConstraints());
         schemaPath = b.getPath();
@@ -102,7 +102,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     public ListSchemaNode build() {
         if (!isBuilt) {
             // process uses
-            for(UsesNodeBuilder use : addedUsesNodes) {
+            for (UsesNodeBuilder use : addedUsesNodes) {
                 addedChildNodes.addAll(use.getTargetChildren());
                 addedGroupings.addAll(use.getTargetGroupings());
                 addedTypedefs.addAll(use.getTargetTypedefs());
