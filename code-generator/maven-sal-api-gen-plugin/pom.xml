@@ -3,8 +3,8 @@
 
     <parent>
         <artifactId>binding-generator</artifactId>
-        <groupId>org.opendaylight.controller</groupId>
-        <version>0.5.5-SNAPSHOT</version>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <version>0.5.6-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -16,19 +16,19 @@
             <artifactId>yang-maven-plugin-spi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.controller</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-model-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.controller</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-generator-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.controller</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-generator-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.controller</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-java-api-generator</artifactId>
         </dependency>
     </dependencies>
