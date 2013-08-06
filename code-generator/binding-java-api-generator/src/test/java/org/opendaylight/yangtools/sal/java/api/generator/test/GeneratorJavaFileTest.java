@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
@@ -72,31 +74,33 @@ public class GeneratorJavaFileTest {
 
     @Test
     public void test() throws IOException {
-        final Set<GeneratedType> types = new HashSet<GeneratedType>();
+    	final Set<GeneratedType> types = new HashSet<GeneratedType>();
         GeneratedType t1 = createGeneratedType(
-                "org.opendaylight.yangtools.gen", "Type1");
+                "org.opendaylight.controller.gen", "Type1");
         GeneratedType t2 = createGeneratedType(
-                "org.opendaylight.yangtools.gen", "Type2");
+                "org.opendaylight.controller.gen", "Type2");
         GeneratedType t3 = createGeneratedType(
-                "org.opendaylight.yangtools.gen", "Type3");
+                "org.opendaylight.controller.gen", "Type3");
         types.add(t1);
         types.add(t2);
         types.add(t3);
+        GeneratedTypeBuilder gtb = new GeneratedTypeBuilderImpl("org.opendaylight.controller.gen", "Type4");
+        gtb.addImplementsType(Types.augmentableTypeFor(gtb));
+        types.add(gtb.toInstance());
         GeneratorJavaFile generator = new GeneratorJavaFile(
                 new InterfaceGenerator(), types);
         generator.generateToFile(new File(PATH));
 
         String[] files = new File(PATH + FS + "org" + FS + "opendaylight" + FS
-                + "yangtools" + FS + "gen").list();
+                + "controller" + FS + "gen").list();
         List<String> filesList = Arrays.asList(files);
 
-        assertEquals(6, files.length);
+        assertEquals(5, files.length);
         assertTrue(filesList.contains("Type1.java"));
         assertTrue(filesList.contains("Type2.java"));
         assertTrue(filesList.contains("Type3.java"));
-        assertTrue(filesList.contains("Type1Builder.java"));
-        assertTrue(filesList.contains("Type2Builder.java"));
-        assertTrue(filesList.contains("Type3Builder.java"));
+        assertTrue(filesList.contains("Type4.java"));
+        assertTrue(filesList.contains("Type4Builder.java"));
     }
 
     @Ignore
