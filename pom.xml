@@ -4,84 +4,24 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yangtools</artifactId>
     <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.5.5-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.2</slf4j.version>
         <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
+        <yang.version>0.5.6-SNAPSHOT</yang.version>
     </properties>
 
     <modules>
-        <module>yang-binding</module>
-        <module>yang-common</module>
-        <module>yang-data-api</module>
-        <module>yang-data-util</module>
-        <module>yang-data-impl</module>
-        <module>yang-ext</module>
-        <module>yang-model-api</module>
-        <module>yang-maven-plugin</module>
-        <module>yang-maven-plugin-it</module>
-        <module>yang-maven-plugin-spi</module>
-        <module>yang-model-util</module>
-        <module>yang-parser-api</module>
-        <module>yang-parser-impl</module>
+        <module>code-generator</module>
+        <module>model</module>
+        <module>yang</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-data-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-data-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-model-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-model-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-binding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-parser-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-parser-impl
-                </artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-maven-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-maven-plugin-spi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -166,3 +106,4 @@
     </reporting>
 
 </project>
+
