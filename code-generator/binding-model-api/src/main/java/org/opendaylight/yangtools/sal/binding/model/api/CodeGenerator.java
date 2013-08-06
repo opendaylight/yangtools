@@ -23,5 +23,13 @@ public interface CodeGenerator {
      * @throws IOException
      */
     Writer generate(Type type) throws IOException;
+    
+    /**
+     * 
+     * 
+     * @param type Input type to be processed
+     * @return true if type is acceptable for processing.
+     */
+	boolean isAcceptable(Type type);
 
 }

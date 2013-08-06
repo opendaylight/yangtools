@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSigna
 import org.opendaylight.yangtools.sal.binding.yang.types.GroupingDefinitionDependencySort;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -331,6 +332,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         final Set<RpcDefinition> rpcDefinitions = module.getRpcs();
         final List<Type> genRPCTypes = new ArrayList<>();
         final GeneratedTypeBuilder interfaceBuilder = moduleTypeBuilder(module, "Service");
+        interfaceBuilder.addImplementsType(Types.typeForClass(RpcService.class));
         final Type future = Types.typeForClass(Future.class);
         for (final RpcDefinition rpc : rpcDefinitions) {
             if (rpc != null) {
@@ -348,6 +350,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                     rpcInOut.add(new DataNodeIterator(input));
                     GeneratedTypeBuilder inType = addRawInterfaceDefinition(basePackageName, input, rpcName);
                     addInterfaceDefinition(input, inType);
+                    inType.addImplementsType(Types.DATA_OBJECT);
                     resolveDataSchemaNodes(basePackageName, inType, input.getChildNodes());
                     Type inTypeInstance = inType.toInstance();
                     genRPCTypes.add(inTypeInstance);
@@ -359,6 +362,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                     rpcInOut.add(new DataNodeIterator(output));
                     GeneratedTypeBuilder outType = addRawInterfaceDefinition(basePackageName, output, rpcName);
                     addInterfaceDefinition(output, outType);
+                    outType.addImplementsType(Types.DATA_OBJECT);
                     resolveDataSchemaNodes(basePackageName, outType, output.getChildNodes());
                     outTypeInstance = outType.toInstance();
                     genRPCTypes.add(outTypeInstance);
@@ -1260,3 +1264,4 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     }
 
 }
+

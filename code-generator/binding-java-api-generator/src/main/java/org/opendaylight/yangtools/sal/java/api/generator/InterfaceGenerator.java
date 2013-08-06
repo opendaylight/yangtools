@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
-public final class InterfaceGenerator implements CodeGenerator {
+public final class InterfaceGenerator extends AbstractCodeGenerator {
 
     @Override
     public Writer generate(Type type) throws IOException {
@@ -29,5 +29,7 @@ public final class InterfaceGenerator implements CodeGenerator {
         }
         return writer;
     }
-
+    
+    
+    
 }

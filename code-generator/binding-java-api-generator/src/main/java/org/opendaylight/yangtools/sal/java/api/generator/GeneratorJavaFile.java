@@ -30,7 +30,7 @@ public final class GeneratorJavaFile {
 
     private static final Logger log = LoggerFactory.getLogger(GeneratorJavaFile.class);
     private final CodeGenerator interfaceGenerator;
-    private final ClassGenerator classGenerator;
+    private final TOGenerator TOGenerator;
     private final EnumGenerator enumGenerator;
     private final BuilderGenerator builderGenerator;
 
@@ -43,7 +43,7 @@ public final class GeneratorJavaFile {
         this.genTypes = types;
         this.genTransferObjects = new HashSet<>();
         this.enumerations = new HashSet<>();
-        this.classGenerator = new ClassGenerator();
+        this.TOGenerator = new TOGenerator();
         this.enumGenerator = new EnumGenerator();
         this.builderGenerator = new BuilderGenerator();
     }
@@ -51,7 +51,7 @@ public final class GeneratorJavaFile {
     public GeneratorJavaFile(final Set<GeneratedType> types, final Set<GeneratedTransferObject> genTransferObjects,
             final Set<Enumeration> enumerations) {
         this.interfaceGenerator = new InterfaceGenerator();
-        this.classGenerator = new ClassGenerator();
+        this.TOGenerator = new TOGenerator();
         this.enumGenerator = new EnumGenerator();
         this.builderGenerator = new BuilderGenerator();
 
@@ -64,23 +64,22 @@ public final class GeneratorJavaFile {
         final List<File> result = new ArrayList<>();
         for (GeneratedType type : genTypes) {
             final File genFile = generateTypeToJavaFile(parentDirectory, type, interfaceGenerator, "");
+            
             if (genFile != null) {
                 result.add(genFile);
             }
-            if (genFile != null) {
-                result.add(genFile);
-            }
-            // "rpc" and "grouping" elements do not implement Augmentable interface
-            if (isAugmentableIfcImplemented(type)) {
-                final File genBuilderFile = generateTypeToJavaFile(parentDirectory, type, builderGenerator,
-                        BuilderGenerator.FILE_NAME_SUFFIX);
-                if (genBuilderFile != null) {
-                    result.add(genBuilderFile);
-                }
+            
+            if(builderGenerator.isAcceptable(type)){
+	            final File genBuilderFile = generateTypeToJavaFile(parentDirectory, type, builderGenerator,
+	                    BuilderGenerator.FILE_NAME_SUFFIX);
+	
+	            if (genBuilderFile != null) {
+	                result.add(genBuilderFile);
+	            }
             }
         }
         for (GeneratedTransferObject transferObject : genTransferObjects) {
-            final File genFile = generateTypeToJavaFile(parentDirectory, transferObject, classGenerator, "");
+            final File genFile = generateTypeToJavaFile(parentDirectory, transferObject, TOGenerator, "");
 
             if (genFile != null) {
                 result.add(genFile);

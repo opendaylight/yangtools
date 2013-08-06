@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.yangtools.sal.java.api.generator.ClassGenerator;
+import org.opendaylight.yangtools.sal.java.api.generator.TOGenerator;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
@@ -72,7 +72,7 @@ public class ClassCodeGeneratorTest {
                         }
                     }
 
-                    final ClassGenerator clsGen = new ClassGenerator();
+                    final TOGenerator clsGen = new TOGenerator();
                     try {
                         final Writer writer = clsGen.generate(genTO);
                         assertNotNull(writer);
@@ -119,7 +119,7 @@ public class ClassCodeGeneratorTest {
 
         final GeneratedTransferObject genTO = toBuilder.toInstance();
 
-        final ClassGenerator clsGen = new ClassGenerator();
+        final TOGenerator clsGen = new TOGenerator();
         try {
             final Writer writer = clsGen.generate(genTO);
             assertNotNull(writer);
@@ -150,7 +150,7 @@ public class ClassCodeGeneratorTest {
         propBuilder.setReadOnly(false);
         toBuilder.addToStringProperty(propBuilder);
         final GeneratedTransferObject genTO = toBuilder.toInstance();
-        final ClassGenerator clsGen = new ClassGenerator();
+        final TOGenerator clsGen = new TOGenerator();
         try {
             final Writer writer = clsGen.generate(genTO);
             assertNotNull(writer);
