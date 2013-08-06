@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>binding-generator</artifactId>
-        <groupId>org.opendaylight.controller</groupId>
-        <version>0.5.5-SNAPSHOT</version>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <version>0.5.6-SNAPSHOT</version>
     </parent>
     <artifactId>maven-code-gen-sample</artifactId>
 
@@ -13,7 +13,7 @@
             <plugin>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>${yangtools.version}</version>
+                <version>${yang.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -38,9 +38,9 @@
 
                 <dependencies>
                     <dependency>
-                        <groupId>org.opendaylight.controller</groupId>
+                        <groupId>org.opendaylight.yangtools</groupId>
                         <artifactId>maven-sal-api-gen-plugin</artifactId>
-                        <version>0.5.5-SNAPSHOT</version>
+                        <version>0.5.6-SNAPSHOT</version>
                         <type>jar</type>
                     </dependency>
                 </dependencies>

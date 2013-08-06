@@ -3,8 +3,8 @@
 
     <parent>
         <artifactId>model-parent</artifactId>
-        <groupId>org.opendaylight.controller</groupId>
-        <version>0.5-SNAPSHOT</version>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <version>0.5.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -12,7 +12,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.opendaylight.controller</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>ietf-inet-types</artifactId>
             <version>2010.09.24-SNAPSHOT</version>
         </dependency>
