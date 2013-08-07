@@ -19,9 +19,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
-import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -39,21 +36,7 @@ public final class CodeGeneratorImpl implements CodeGenerator {
 
         final BindingGenerator bindingGenerator = new BindingGeneratorImpl();
         final List<Type> types = bindingGenerator.generateTypes(context, yangModules);
-        final Set<GeneratedType> typesToGenerate = new HashSet<>();
-        final Set<GeneratedTransferObject> tosToGenerate = new HashSet<>();
-        final Set<Enumeration> enumsToGenerate = new HashSet<>();
-
-        for (Type type : types) {
-            if (type instanceof GeneratedTransferObject) {
-                tosToGenerate.add((GeneratedTransferObject) type);
-            } else if (type instanceof GeneratedType) {
-                typesToGenerate.add((GeneratedType) type);
-            } else if (type instanceof Enumeration) {
-                enumsToGenerate.add((Enumeration) type);
-            }
-        }
-
-        final GeneratorJavaFile generator = new GeneratorJavaFile(typesToGenerate, tosToGenerate, enumsToGenerate);
+        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
 
         return generator.generateToFile(outputBaseDir);
     }

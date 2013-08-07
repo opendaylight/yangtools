@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -31,13 +30,10 @@ import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
-import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
-import org.opendaylight.yangtools.sal.java.api.generator.InterfaceGenerator;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
@@ -87,8 +83,7 @@ public class GeneratorJavaFileTest {
         GeneratedTypeBuilder gtb = new GeneratedTypeBuilderImpl("org.opendaylight.controller.gen", "Type4");
         gtb.addImplementsType(Types.augmentableTypeFor(gtb));
         types.add(gtb.toInstance());
-        GeneratorJavaFile generator = new GeneratorJavaFile(
-                new InterfaceGenerator(), types);
+        GeneratorJavaFile generator = new GeneratorJavaFile(types);
         generator.generateToFile(new File(PATH));
 
         String[] files = new File(PATH + FS + "org" + FS + "opendaylight" + FS
@@ -100,7 +95,7 @@ public class GeneratorJavaFileTest {
         assertTrue(filesList.contains("Type2.java"));
         assertTrue(filesList.contains("Type3.java"));
         assertTrue(filesList.contains("Type4.java"));
-        assertTrue(filesList.contains("Type1Builder.java"));
+        assertTrue(filesList.contains("Type4Builder.java"));
     }
 
     @Ignore
@@ -120,28 +115,9 @@ public class GeneratorJavaFileTest {
 
         final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
 
-        final SchemaContext context = parser
-                .resolveSchemaContext(modulesToBuild);
+        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
         final List<Type> types = bindingGenerator.generateTypes(context);
-        final Set<GeneratedType> typesToGenerate = new HashSet<GeneratedType>();
-        final Set<GeneratedTransferObject> tosToGenerate = new HashSet<GeneratedTransferObject>();
-        final Set<Enumeration> enumerationToGenerate = new HashSet<Enumeration>();
-        for (Type type : types) {
-            if (type instanceof GeneratedType
-                    && !(type instanceof GeneratedTransferObject)) {
-                typesToGenerate.add((GeneratedType) type);
-            }
-
-            if (type instanceof GeneratedTransferObject) {
-                tosToGenerate.add((GeneratedTransferObject) type);
-            }
-            if (type instanceof Enumeration) {
-            	enumerationToGenerate.add((Enumeration) type);
-            }
-        }
-
-        final GeneratorJavaFile generator = new GeneratorJavaFile(
-                typesToGenerate, tosToGenerate, enumerationToGenerate);
+        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
         generator.generateToFile(new File(GENERATOR_OUTPUT_PATH));
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();

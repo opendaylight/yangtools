@@ -10,7 +10,7 @@ class EnumTemplate {
         this.enums = enums
     }
     
-    def generate() {
+    def String generate() {
         val body = generateBody
         val pkg = generatePkg
         return pkg.toString + body.toString

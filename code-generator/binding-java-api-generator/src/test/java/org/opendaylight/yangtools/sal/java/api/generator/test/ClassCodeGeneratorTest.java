@@ -1,10 +1,10 @@
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -73,21 +73,12 @@ public class ClassCodeGeneratorTest {
                     }
 
                     final TOGenerator clsGen = new TOGenerator();
-                    try {
-                        final Writer writer = clsGen.generate(genTO);
-                        assertNotNull(writer);
+                    final String outputStr = clsGen.generate(genTO);
 
-                        final String outputStr = writer.toString();
-                        writer.close();
-
-                        assertNotNull(outputStr);
-                        assertTrue(outputStr
-                                .contains("public CompositeKeyListKey(String Key2, "
-                                        + "Byte Key1)"));
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    assertNotNull(outputStr);
+                    assertTrue(outputStr
+                            .contains("public CompositeKeyListKey(String Key2, "
+                                    + "Byte Key1)"));
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;
@@ -120,19 +111,10 @@ public class ClassCodeGeneratorTest {
         final GeneratedTransferObject genTO = toBuilder.toInstance();
 
         final TOGenerator clsGen = new TOGenerator();
-        try {
-            final Writer writer = clsGen.generate(genTO);
-            assertNotNull(writer);
+        final String outputStr = clsGen.generate(genTO);
 
-            final String outputStr = writer.toString();
-            writer.close();
-
-            assertNotNull(outputStr);
-            assertTrue(outputStr.contains("public DefCtor()"));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        assertNotNull(outputStr);
+        assertTrue(outputStr.contains("public DefCtor()"));
     }
 
     @Test
@@ -151,11 +133,6 @@ public class ClassCodeGeneratorTest {
         toBuilder.addToStringProperty(propBuilder);
         final GeneratedTransferObject genTO = toBuilder.toInstance();
         final TOGenerator clsGen = new TOGenerator();
-        try {
-            final Writer writer = clsGen.generate(genTO);
-            assertNotNull(writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        assertNotNull(clsGen.generate(genTO));
     }
 }
