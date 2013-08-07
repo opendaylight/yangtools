@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
@@ -40,7 +41,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     private SchemaPath path;
 
     public UnionTypeBuilder(final String moduleName, final int line) {
-        super(moduleName, line, null);
+        super(moduleName, line, BaseTypes.constructQName(NAME));
         types = new ArrayList<TypeDefinition<?>>();
         typedefs = new ArrayList<TypeDefinitionBuilder>();
     }
