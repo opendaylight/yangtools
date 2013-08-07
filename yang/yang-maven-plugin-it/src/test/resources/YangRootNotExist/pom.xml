@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.5.6-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
 
     <artifactId>test</artifactId>
 
@@ -12,7 +12,7 @@
             <plugin>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>0.5.6-SNAPSHOT</version>
+                <version>0.5.7-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
