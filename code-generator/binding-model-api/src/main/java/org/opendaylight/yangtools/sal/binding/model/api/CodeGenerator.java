@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.sal.binding.model.api;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  *
@@ -17,19 +16,22 @@ import java.io.Writer;
 public interface CodeGenerator {
 
     /**
-     *
-     * @param type
-     * @return
+     * @param type Input type to be processed
+     * @return generated code
      * @throws IOException
      */
-    Writer generate(Type type) throws IOException;
-    
+    String generate(Type type);
+
     /**
-     * 
-     * 
      * @param type Input type to be processed
      * @return true if type is acceptable for processing.
      */
-	boolean isAcceptable(Type type);
+    boolean isAcceptable(Type type);
+
+    /**
+     * @param type Input type to be processed
+     * @return name of generated unit
+     */
+    String getUnitName(Type type);
 
 }

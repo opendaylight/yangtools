@@ -11,93 +11,44 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
-import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class GeneratorJavaFile {
 
     private static final Logger log = LoggerFactory.getLogger(GeneratorJavaFile.class);
-    private final CodeGenerator interfaceGenerator;
-    private final TOGenerator TOGenerator;
-    private final EnumGenerator enumGenerator;
-    private final BuilderGenerator builderGenerator;
+    private final List<CodeGenerator> generators = new ArrayList<>();
 
-    private final Set<GeneratedType> genTypes;
-    private final Set<GeneratedTransferObject> genTransferObjects;
-    private final Set<Enumeration> enumerations;
+    private final Set<? extends Type> types;
 
-    public GeneratorJavaFile(final CodeGenerator codeGenerator, final Set<GeneratedType> types) {
-        this.interfaceGenerator = codeGenerator;
-        this.genTypes = types;
-        this.genTransferObjects = new HashSet<>();
-        this.enumerations = new HashSet<>();
-        this.TOGenerator = new TOGenerator();
-        this.enumGenerator = new EnumGenerator();
-        this.builderGenerator = new BuilderGenerator();
-    }
-
-    public GeneratorJavaFile(final Set<GeneratedType> types, final Set<GeneratedTransferObject> genTransferObjects,
-            final Set<Enumeration> enumerations) {
-        this.interfaceGenerator = new InterfaceGenerator();
-        this.TOGenerator = new TOGenerator();
-        this.enumGenerator = new EnumGenerator();
-        this.builderGenerator = new BuilderGenerator();
-
-        this.genTypes = types;
-        this.genTransferObjects = genTransferObjects;
-        this.enumerations = enumerations;
+    public GeneratorJavaFile(final Set<? extends Type> types) {
+    	this.types = types;
+    	generators.add(new InterfaceGenerator());
+    	generators.add(new TOGenerator());
+    	generators.add(new EnumGenerator());
+    	generators.add(new BuilderGenerator());
     }
 
     public List<File> generateToFile(final File parentDirectory) throws IOException {
         final List<File> result = new ArrayList<>();
-        for (GeneratedType type : genTypes) {
-            final File genFile = generateTypeToJavaFile(parentDirectory, type, interfaceGenerator, "");
-            
-            if (genFile != null) {
-                result.add(genFile);
-            }
-            
-            if(builderGenerator.isAcceptable(type)){
-	            final File genBuilderFile = generateTypeToJavaFile(parentDirectory, type, builderGenerator,
-	                    BuilderGenerator.FILE_NAME_SUFFIX);
-	
-	            if (genBuilderFile != null) {
-	                result.add(genBuilderFile);
-	            }
+        for (Type type : types) {
+            for (CodeGenerator generator : generators) {
+                File generatedJavaFile = generateTypeToJavaFile(parentDirectory, type, generator);
+                if (generatedJavaFile != null) {
+                    result.add(generatedJavaFile);
+                }
             }
         }
-        for (GeneratedTransferObject transferObject : genTransferObjects) {
-            final File genFile = generateTypeToJavaFile(parentDirectory, transferObject, TOGenerator, "");
-
-            if (genFile != null) {
-                result.add(genFile);
-            }
-        }
-
-        for (Enumeration enumeration : enumerations) {
-            final File genFile = generateTypeToJavaFile(parentDirectory, enumeration, enumGenerator, "");
-
-            if (genFile != null) {
-                result.add(genFile);
-            }
-        }
-
         return result;
     }
 
-    private File generateTypeToJavaFile(final File parentDir, final Type type, final CodeGenerator generator, String fileNameSuffix)
+    private File generateTypeToJavaFile(final File parentDir, final Type type, final CodeGenerator generator)
             throws IOException {
         if (parentDir == null) {
             log.warn("Parent Directory not specified, files will be generated "
@@ -116,30 +67,27 @@ public final class GeneratorJavaFile {
         if (!packageDir.exists()) {
             packageDir.mkdirs();
         }
-        final File file = new File(packageDir, type.getName() + fileNameSuffix + ".java");
-        try (final FileWriter fw = new FileWriter(file)) {
-            file.createNewFile();
-
-            try (final BufferedWriter bw = new BufferedWriter(fw)) {
-                Writer writer = generator.generate(type);
-                bw.write(writer.toString());
+        
+        if (generator.isAcceptable(type)) {
+            String generatedCode = generator.generate(type);
+            if (generatedCode.isEmpty()) {
+                throw new IllegalStateException("Generated code should not be empty!");
             }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IOException(e.getMessage());
+            final File file = new File(packageDir, generator.getUnitName(type) + ".java");
+            try (final FileWriter fw = new FileWriter(file)) {
+                file.createNewFile();
+                try (final BufferedWriter bw = new BufferedWriter(fw)) {
+                    bw.write(generatedCode);
+                }
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                throw new IOException(e.getMessage());
+            }
+            return file;
         }
-        return file;
+        return null;
     }
     
-    private boolean isAugmentableIfcImplemented(GeneratedType genType) {
-        for (Type implType : genType.getImplements()) {
-            if (implType.getFullyQualifiedName().equals(Augmentable.class.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private File packageToDirectory(final File parentDirectory, final String packageName) {
         if (packageName == null) {
             throw new IllegalArgumentException("Package Name cannot be NULL!");

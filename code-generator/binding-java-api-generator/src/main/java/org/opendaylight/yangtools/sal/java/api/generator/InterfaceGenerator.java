@@ -7,29 +7,31 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-
-import org.opendaylight.yangtools.sal.java.api.generator.InterfaceTemplate;
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
-public final class InterfaceGenerator extends AbstractCodeGenerator {
+public final class InterfaceGenerator implements CodeGenerator {
 
     @Override
-    public Writer generate(Type type) throws IOException {
-        final Writer writer = new StringWriter();
+    public boolean isAcceptable(Type type) {
+        return type instanceof GeneratedType && !(type instanceof GeneratedTransferObject);
+    }
+
+    @Override
+    public String generate(Type type) {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
             final GeneratedType genType = (GeneratedType) type;
             final InterfaceTemplate interfaceTemplate = new InterfaceTemplate(genType);
-            writer.write(interfaceTemplate.generate().toString());
+            return interfaceTemplate.generate();
         }
-        return writer;
+        return "";
     }
-    
-    
-    
+
+    @Override
+    public String getUnitName(Type type) {
+        return type.getName();
+    }
+
 }

@@ -29,7 +29,7 @@ class ClassTemplate {
         this.consts = genTO.constantDefinitions
     }
     
-    def generate() {
+    def String generate() {
         val body = generateBody(false)
         val pkgAndImports = generatePkgAndImports
         return pkgAndImports.toString + body.toString

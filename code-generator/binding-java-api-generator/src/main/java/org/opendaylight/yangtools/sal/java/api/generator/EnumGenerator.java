@@ -7,26 +7,30 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-
-import org.opendaylight.yangtools.sal.java.api.generator.EnumTemplate;
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
-public class EnumGenerator extends AbstractCodeGenerator {
+public class EnumGenerator implements CodeGenerator {
 
     @Override
-    public Writer generate(Type type) throws IOException {
-        final Writer writer = new StringWriter();
+    public boolean isAcceptable(Type type) {
+        return type instanceof Enumeration;
+    }
+
+    @Override
+    public String generate(Type type) {
         if (type instanceof Enumeration) {
             final Enumeration enums = (Enumeration) type;
             final EnumTemplate enumTemplate = new EnumTemplate(enums);
-            writer.write(enumTemplate.generate().toString());
+            return enumTemplate.generate();
         }
-        return writer;
+        return "";
+    }
+
+    @Override
+    public String getUnitName(Type type) {
+        return type.getName();
     }
 
 }

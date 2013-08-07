@@ -1,35 +1,41 @@
 package org.opendaylight.yangtools.sal.java.api.generator;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-
-import org.opendaylight.yangtools.binding.generator.util.Types;
-import org.opendaylight.yangtools.sal.java.api.generator.BuilderTemplate;
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.Augmentable;
 
-public final class BuilderGenerator extends AbstractCodeGenerator {
+public final class BuilderGenerator implements CodeGenerator {
 
-    public static final String FILE_NAME_SUFFIX = "Builder";
+    public static final String BUILDER = "Builder";
 
     @Override
-    public Writer generate(Type type) throws IOException {
-        final Writer writer = new StringWriter();
-        if (type instanceof GeneratedType  && isAcceptable((GeneratedType )type)) {
-            final GeneratedType genType = (GeneratedType) type;
-            final BuilderTemplate template = new BuilderTemplate(genType);
-            writer.write(template.generate().toString());
+    public boolean isAcceptable(Type type) {
+        if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
+            for (Type t : ((GeneratedType) type).getImplements()) {
+                // "rpc" and "grouping" elements do not implement Augmentable
+                if (t.getFullyQualifiedName().equals(Augmentable.class.getName())) {
+                    return true;
+                }
+            }
         }
-        return writer;
+        return false;
     }
 
-    public boolean isAcceptable(Type type) {
-    	return super.isAcceptable(type) && type instanceof GeneratedType 
-    	&& ((GeneratedType )type).getImplements().contains(Types.typeForClass(DataObject.class));
+    @Override
+    public String generate(Type type) {
+        if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
+            final GeneratedType genType = (GeneratedType) type;
+            final BuilderTemplate template = new BuilderTemplate(genType);
+            return template.generate();
+        }
+        return "";
+    }
+
+    @Override
+    public String getUnitName(Type type) {
+        return type.getName() + BUILDER;
     }
 
 }

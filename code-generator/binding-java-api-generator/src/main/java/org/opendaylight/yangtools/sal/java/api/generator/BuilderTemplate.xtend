@@ -127,7 +127,7 @@ class BuilderTemplate {
         }
     }
 
-    def generate() {
+    def String generate() {
         val body = generateBody
         val pkgAndImports = generatePkgAndImports
         return pkgAndImports.toString + body.toString
