@@ -18,16 +18,14 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 /**
- * Builder for YANG union type. User can add type to this union as
- * TypeDefinition object (resolved type) or in form of TypeDefinitionBuilder.
- * When build is called, types in builder form will be built and add to resolved
- * types.
+ * Builder for YANG identityref type.
  */
 public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
     private static final String NAME = "identityref";
@@ -37,7 +35,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     private QName baseQName;
 
     IdentityrefTypeBuilder(final String moduleName, final int line, final String baseString, final SchemaPath schemaPath) {
-        super(moduleName, line, null);
+        super(moduleName, line, BaseTypes.constructQName(NAME));
         this.baseString = baseString;
         this.schemaPath = schemaPath;
     }
