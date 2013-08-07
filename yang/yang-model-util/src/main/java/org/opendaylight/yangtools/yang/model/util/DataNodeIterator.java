@@ -21,7 +21,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     private final List<ContainerSchemaNode> allContainers;
     private final List<ChoiceNode> allChoices;
     private final List<DataSchemaNode> allChilds;
-
+    
     public DataNodeIterator(final DataNodeContainer container) {
         if (container == null) {
             throw new IllegalArgumentException("Data Node Container MUST be specified and cannot be NULL!");
@@ -81,6 +81,10 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
             }
         }
 
+        if(dataNode instanceof Module) {
+            traverseModule((Module)dataNode);
+        }
+        
         final Set<GroupingDefinition> groupings = dataNode.getGroupings();
         if (groupings != null) {
             for (GroupingDefinition grouping : groupings) {
@@ -88,7 +92,26 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
             }
         }
     }
+    
 
+    private void traverseModule(Module module) {
+        final Set<NotificationDefinition> notifications = module.getNotifications();
+        for (NotificationDefinition notificationDefinition : notifications) {
+            traverse(notificationDefinition);
+        }
+        final Set<RpcDefinition> rpcs = module.getRpcs();
+        for (RpcDefinition rpcDefinition : rpcs) {
+            ContainerSchemaNode input = rpcDefinition.getInput();
+            if(input != null) {
+                traverse(input);
+            }
+            ContainerSchemaNode output = rpcDefinition.getInput();
+            if(input != null) {
+                traverse(output);
+            }
+        }
+    }
+    
     @Override
     public boolean hasNext() {
         if (container.getChildNodes() != null) {
