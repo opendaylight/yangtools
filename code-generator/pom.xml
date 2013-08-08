@@ -13,6 +13,10 @@
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
+    
+    <properties>
+    	<yang.version>0.5.7-SNAPSHOT</yang.version>
+    </properties>
 
     <modules>
         <module>binding-model-api</module>

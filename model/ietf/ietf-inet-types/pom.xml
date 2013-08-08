@@ -3,8 +3,8 @@
 
     <parent>
         <artifactId>model-ietf</artifactId>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <version>0.5.1-SNAPSHOT</version>
+        <groupId>org.opendaylight.yangtools.model</groupId>
+        <version>0.5.7-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -13,4 +13,5 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+    <packaging>bundle</packaging>
 </project>

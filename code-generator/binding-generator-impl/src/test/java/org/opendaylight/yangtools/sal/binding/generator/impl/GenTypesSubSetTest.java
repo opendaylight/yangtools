@@ -64,7 +64,7 @@ public class GenTypesSubSetTest {
         assertNotNull("genTypes is null", genTypes);
         assertFalse("genTypes is empty", genTypes.isEmpty());
         assertEquals("Expected Generated Types from provided sub set of " +
-                "modules should be 23!", 25,
+                "modules should be 23!", 23,
                 genTypes.size());
     }
 
@@ -93,7 +93,6 @@ public class GenTypesSubSetTest {
         final List<Type> genTypes = bindingGen.generateTypes(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
         assertFalse("genTypes is empty", genTypes.isEmpty());
-        assertEquals("Expected Generated Types from provided sub set of "  +
-                "modules should be 25!", 28, genTypes.size());
+        assertEquals("Expected Generated Types", 24, genTypes.size());
     }
 }

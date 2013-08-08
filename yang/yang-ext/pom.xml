@@ -18,7 +18,7 @@
             <plugin>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>${yang.version}</version>
+                <version>${parent.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -74,7 +74,7 @@
                                             yang-maven-plugin
                                         </artifactId>
                                         <versionRange>
-                                            [0.5.7,)
+                                            [0.5,)
                                         </versionRange>
                                         <goals>
                                             <goal>
