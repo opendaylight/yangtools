@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.sal.binding.yang.types.GroupingDefinitionDependencySort;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
+import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -97,8 +98,12 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         final Set<Module> modules = context.getModules();
         genTypeBuilders = new HashMap<>();
         for (final Module module : modules) {
+        	
             generatedTypes.addAll(allGroupingsToGenTypes(module));
-            generatedTypes.add(moduleToDataType(module));
+            
+            if(false == module.getChildNodes().isEmpty()) {   
+            	generatedTypes.add(moduleToDataType(module));
+            }
             generatedTypes.addAll(allTypeDefinitionsToGenTypes(module));
             generatedTypes.addAll(allContainersToGenTypes(module));
             generatedTypes.addAll(allListsToGenTypes(module));
@@ -133,7 +138,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
             final List<Type> generatedTypes = new ArrayList<>();
 
             generatedTypes.addAll(allGroupingsToGenTypes(contextModule));
-            generatedTypes.add(moduleToDataType(contextModule));
+            if(false == contextModule.getChildNodes().isEmpty()) {
+            	generatedTypes.add(moduleToDataType(contextModule));
+            }
             generatedTypes.addAll(allTypeDefinitionsToGenTypes(contextModule));
             generatedTypes.addAll(allContainersToGenTypes(contextModule));
             generatedTypes.addAll(allListsToGenTypes(contextModule));
@@ -305,6 +312,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
         final GeneratedTypeBuilder moduleDataTypeBuilder = moduleTypeBuilder(module, "Data");
         addInterfaceDefinition(module, moduleDataTypeBuilder);
+        moduleDataTypeBuilder.addImplementsType(Types.typeForClass(DataRoot.class));
 
         final String basePackageName = moduleNamespaceToPackageName(module);
         if (moduleDataTypeBuilder != null) {
@@ -330,6 +338,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
         final String basePackageName = moduleNamespaceToPackageName(module);
         final Set<RpcDefinition> rpcDefinitions = module.getRpcs();
+        
+        if(rpcDefinitions.isEmpty()) {
+        	return Collections.emptyList();
+        }
+        
         final List<Type> genRPCTypes = new ArrayList<>();
         final GeneratedTypeBuilder interfaceBuilder = moduleTypeBuilder(module, "Service");
         interfaceBuilder.addImplementsType(Types.typeForClass(RpcService.class));
@@ -1257,6 +1270,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         for (UsesNode usesNode : dataNodeContainer.getUses()) {
             if (usesNode.getGroupingPath() != null) {
                 GeneratedType genType = allGroupings.get(usesNode.getGroupingPath());
+                if(genType == null) {
+                	throw new IllegalStateException("Grouping " +usesNode.getGroupingPath() + "is not resolved for " + builder.getName());
+                }
                 builder.addImplementsType(genType);
             }
         }

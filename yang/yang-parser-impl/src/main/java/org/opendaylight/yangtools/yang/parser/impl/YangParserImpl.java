@@ -430,6 +430,8 @@ public final class YangParserImpl implements YangModelParser {
                     nextModule = allModulesIterator.next();
                     resolveAugment(modules, nextModule);
                 } catch (NoSuchElementException e) {
+                	
+                	
                     throw new YangParseException("Failed to resolve augments in module '" + module.getName() + "'.", e);
                 }
                 // then try to resolve first module again

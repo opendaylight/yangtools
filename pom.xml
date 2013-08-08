@@ -15,9 +15,9 @@
     </properties>
 
     <modules>
+    	<module>yang</module>
         <module>code-generator</module>
         <module>model</module>
-        <module>yang</module>
     </modules>
 
     <dependencyManagement>

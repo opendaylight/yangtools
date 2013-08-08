@@ -8,10 +8,15 @@
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
@@ -59,7 +64,7 @@ public class GroupingDefinitionDependencySort {
             final GroupingNode groupingNode = (GroupingNode) node;
             final GroupingDefinition groupingDefinition = groupingNode.getGroupingDefinition();
 
-            Set<UsesNode> usesNodes = groupingDefinition.getUses();
+            Set<UsesNode> usesNodes =getAllUsesNodes(groupingDefinition);
             for (UsesNode usesNode : usesNodes) {
                 SchemaPath schemaPath = usesNode.getGroupingPath();
                 if (schemaPath != null) {
@@ -72,6 +77,32 @@ public class GroupingDefinitionDependencySort {
         return resultNodes;
     }
 
+    private static Set<UsesNode> getAllUsesNodes(DataNodeContainer container) {
+    	Set<UsesNode> ret = new HashSet<>();
+    	ret.addAll(container.getUses());
+    	
+    	Set<GroupingDefinition> groupings = container.getGroupings();
+    	for (GroupingDefinition groupingDefinition : groupings) {
+			ret.addAll(getAllUsesNodes(groupingDefinition));
+		}
+    	Set<DataSchemaNode> children = container.getChildNodes();
+    	for (DataSchemaNode dataSchemaNode : children) {
+    		if(dataSchemaNode instanceof DataNodeContainer) {
+    			ret.addAll(getAllUsesNodes((DataNodeContainer) dataSchemaNode));
+    		} else if (dataSchemaNode instanceof ChoiceNode) {
+    			Set<ChoiceCaseNode> cases = ((ChoiceNode) dataSchemaNode).getCases();
+    			for (ChoiceCaseNode choiceCaseNode : cases) {
+					ret.addAll(getAllUsesNodes(choiceCaseNode));
+				}
+    		
+    		}
+		}
+    	
+    	return ret;
+    
+    }
+    
+    
     private static final class GroupingNode extends NodeImpl {
         private final GroupingDefinition groupingDefinition;
 
