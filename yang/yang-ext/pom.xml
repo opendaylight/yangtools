@@ -18,7 +18,7 @@
             <plugin>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>${yang.version}</version>
+                <version>0.5.6-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
