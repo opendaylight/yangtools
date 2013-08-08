@@ -51,7 +51,7 @@ public class GeneratedTypesTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
-        assertEquals(29, genTypes.size());
+        assertEquals(26, genTypes.size());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class GeneratedTypesTest {
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
-        assertEquals(57, genTypes.size());
+        assertEquals(51, genTypes.size());
         assertNotNull(genTypes);
 
         GeneratedTransferObject gtIfcKey = null;
@@ -262,7 +262,7 @@ public class GeneratedTypesTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
-        assertEquals(4, genTypes.size());
+        assertEquals(3, genTypes.size());
 
         final GeneratedType simpleContainer = (GeneratedType) genTypes.get(1);
         final GeneratedType nestedContainer = (GeneratedType) genTypes.get(2);
@@ -341,7 +341,7 @@ public class GeneratedTypesTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
-        assertEquals(4, genTypes.size());
+        assertEquals(3, genTypes.size());
 
         final GeneratedType simpleContainer = (GeneratedType) genTypes.get(1);
         final GeneratedType nestedContainer = (GeneratedType) genTypes.get(2);
@@ -419,7 +419,7 @@ public class GeneratedTypesTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
-        assertEquals(6, genTypes.size());
+        assertEquals(5, genTypes.size());
 
         int listParentContainerMethodsCount = 0;
         int simpleListMethodsCount = 0;
@@ -543,7 +543,7 @@ public class GeneratedTypesTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
-        assertEquals(8, genTypes.size());
+        assertEquals(7, genTypes.size());
 
         int genTypesCount = 0;
         int genTOsCount = 0;
@@ -581,7 +581,7 @@ public class GeneratedTypesTest {
 
         assertEquals(1, innerListKeyPropertyCount);
 
-        assertEquals(6, genTypesCount);
+        assertEquals(5, genTypesCount);
         assertEquals(2, genTOsCount);
     }
 
@@ -595,7 +595,7 @@ public class GeneratedTypesTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
-        assertEquals(15, genTypes.size());
+        assertEquals(14, genTypes.size());
 
         int genTypesCount = 0;
         int genTOsCount = 0;
@@ -607,7 +607,7 @@ public class GeneratedTypesTest {
             }
         }
 
-        assertEquals(12, genTypesCount);
+        assertEquals(11, genTypesCount);
         assertEquals(3, genTOsCount);
     }
 }
