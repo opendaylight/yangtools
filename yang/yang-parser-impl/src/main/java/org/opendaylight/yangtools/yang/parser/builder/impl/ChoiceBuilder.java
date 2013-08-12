@@ -53,26 +53,6 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public ChoiceBuilder(ChoiceBuilder b, QName qname) {
-        super(b.getModuleName(), b.getLine(), qname);
-        parent = b.getParent();
-        instance = new ChoiceNodeImpl(qname);
-        constraints = new ConstraintsBuilder(b.getConstraints());
-        schemaPath = b.getPath();
-        description = b.getDescription();
-        reference = b.getReference();
-        status = b.getStatus();
-        unknownNodes = b.unknownNodes;
-        addedUnknownNodes.addAll(b.getUnknownNodes());
-        augmenting = b.isAugmenting();
-        addedByUses = b.isAddedByUses();
-        configuration = b.isConfiguration();
-        addedAugmentations.addAll(b.getAugmentations());
-        cases = b.cases;
-        addedCases.addAll(b.getCases());
-        defaultCase = b.getDefaultCase();
-    }
-
     @Override
     public ChoiceNode build() {
         if (!isBuilt) {
@@ -125,6 +105,22 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
     public Set<ChoiceCaseBuilder> getCases() {
         return addedCases;
+    }
+
+    /**
+     * Get case by name.
+     *
+     * @param caseName
+     *            name of case to search
+     * @return case with given name if present, null otherwise
+     */
+    public ChoiceCaseBuilder getCaseNodeByName(String caseName) {
+        for (ChoiceCaseBuilder addedCase : addedCases) {
+            if (addedCase.getQName().getLocalName().equals(caseName)) {
+                return addedCase;
+            }
+        }
+        return null;
     }
 
     /**

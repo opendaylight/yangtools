@@ -63,8 +63,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private String prefix;
     private Date revision;
 
-    private int augmentsResolved;
-
     private final LinkedList<Builder> actualPath = new LinkedList<Builder>();
     private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<TypeAwareBuilder>();
 
@@ -99,14 +97,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         instance.setRevision(revision);
         instance.setImports(imports);
         instance.setNamespace(namespace);
-
-        // process uses
-        for(UsesNodeBuilder use : addedUsesNodes) {
-            addedChildNodes.addAll(use.getTargetChildren());
-            addedGroupings.addAll(use.getTargetGroupings());
-            addedTypedefs.addAll(use.getTargetTypedefs());
-            addedUnknownNodes.addAll(use.getTargetUnknownNodes());
-        }
 
         // TYPEDEFS
         final Set<TypeDefinition<?>> typedefs = new TreeSet<TypeDefinition<?>>(Comparators.SCHEMA_NODE_COMP);
@@ -197,6 +187,15 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return instance;
     }
 
+    public boolean allUsesLoadDone() {
+        for(UsesNodeBuilder usesNode : allUsesNodes) {
+            if(!usesNode.isLoadDone()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public void setParent(Builder parent) {
         throw new YangParseException(name, 0, "Can not set parent to module");
@@ -278,14 +277,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     public Date getRevision() {
         return revision;
-    }
-
-    public int getAugmentsResolved() {
-        return augmentsResolved;
-    }
-
-    public void augmentResolved() {
-        augmentsResolved++;
     }
 
     public void markActualNodeDirty() {
@@ -448,6 +439,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     @Override
+    public Set<UsesNodeBuilder> getUsesNodes() {
+        return addedUsesNodes;
+    }
+
+    @Override
     public void addUsesNode(UsesNodeBuilder usesBuilder) {
         addedUsesNodes.add(usesBuilder);
         allUsesNodes.add(usesBuilder);
@@ -490,6 +486,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
 
         final RpcDefinitionBuilder rpcBuilder = new RpcDefinitionBuilder(name, line, qname);
+        rpcBuilder.setParent(parent);
 
         String rpcName = qname.getLocalName();
         for (RpcDefinitionBuilder rpc : addedRpcs) {
@@ -569,6 +566,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
 
         final NotificationBuilder builder = new NotificationBuilder(name, line, qname);
+        builder.setParent(parent);
         addedNotifications.add(builder);
 
         return builder;
@@ -581,6 +579,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
 
         final FeatureBuilder builder = new FeatureBuilder(name, line, qname);
+        builder.setParent(parent);
 
         String featureName = qname.getLocalName();
         for (FeatureBuilder addedFeature : addedFeatures) {
@@ -735,6 +734,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
 
         final DeviationBuilder builder = new DeviationBuilder(name, line, targetPath);
+        builder.setParent(parent);
         addedDeviations.add(builder);
         return builder;
     }
@@ -753,6 +753,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
 
         final IdentitySchemaNodeBuilder builder = new IdentitySchemaNodeBuilder(name, line, qname);
+        builder.setParent(parent);
         addedIdentities.add(builder);
         return builder;
     }
@@ -1170,6 +1171,9 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             }
             addedChildNodes.add(child);
         } else {
+            if(parent instanceof AugmentationSchemaBuilder) {
+                child.setAugmenting(true);
+            }
             // no need for checking rpc and notification because they can be
             // defined only under module or submodule
             if (parent instanceof DataNodeContainerBuilder) {

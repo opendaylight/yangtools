@@ -44,26 +44,33 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<SchemaNodeBuilder>();
     private final List<RefineHolder> refines = new ArrayList<RefineHolder>();
 
-    private final Set<DataSchemaNodeBuilder> targetChildren = new HashSet<>();
-    private final Set<GroupingBuilder> targetGroupings = new HashSet<>();
-    private final Set<TypeDefinitionBuilder> targetTypedefs = new HashSet<>();
-    private final List<UnknownSchemaNodeBuilder> targetUnknownNodes = new ArrayList<>();
+    private final Set<DataSchemaNodeBuilder> finalChildren = new HashSet<>();
+    private Set<DataSchemaNodeBuilder> targetChildren;
+
+    private final Set<GroupingBuilder> finalGroupings = new HashSet<>();
+    private Set<GroupingBuilder> targetGroupings;
+
+    private final Set<TypeDefinitionBuilder> finalTypedefs = new HashSet<>();
+    private Set<TypeDefinitionBuilder> targetTypedefs;
+
+    private final List<UnknownSchemaNodeBuilder> finalUnknownNodes = new ArrayList<>();
+    private List<UnknownSchemaNodeBuilder> targetUnknownNodes;
+
+    private final List<UsesNodeBuilder> targetGroupingUses = new ArrayList<>();
+
+    boolean loadDone;
+
+    public boolean isLoadDone() {
+        return loadDone;
+    }
+
+    public void setLoadDone(boolean loadDone) {
+        this.loadDone = loadDone;
+    }
 
     public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
         super(moduleName, line);
         this.groupingName = groupingName;
-    }
-
-    public UsesNodeBuilderImpl(UsesNodeBuilder b) {
-        super(b.getModuleName(), b.getLine());
-        groupingName = b.getGroupingName();
-        parent = b.getParent();
-        groupingPath = b.getGroupingPath();
-        augmenting = b.isAugmenting();
-        addedByUses = b.isAddedByUses();
-        addedAugments.addAll(b.getAugmentations());
-        refineBuilders.addAll(b.getRefineNodes());
-        refines.addAll(b.getRefines());
     }
 
     @Override
@@ -97,6 +104,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
             isBuilt = true;
         }
+
         return instance;
     }
 
@@ -165,18 +173,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     @Override
     public void addRefineNode(DataSchemaNodeBuilder refineNode) {
-        // add to refine nodes
         refineBuilders.add(refineNode);
-        // replace in target children
-        DataSchemaNodeBuilder toRemove = null;
-        for(DataSchemaNodeBuilder child : targetChildren) {
-            if(child.getQName().equals(refineNode.getQName())) {
-                toRemove = child;
-                break;
-            }
-        }
-        targetChildren.remove(toRemove);
-        targetChildren.add(refineNode);
     }
 
     @Override
@@ -190,8 +187,23 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
+    public Set<DataSchemaNodeBuilder> getFinalChildren() {
+        return finalChildren;
+    }
+
+    @Override
     public Set<DataSchemaNodeBuilder> getTargetChildren() {
         return targetChildren;
+    }
+
+    @Override
+    public void setTargetChildren(Set<DataSchemaNodeBuilder> targetChildren) {
+        this.targetChildren = targetChildren;
+    }
+
+    @Override
+    public Set<GroupingBuilder> getFinalGroupings() {
+        return finalGroupings;
     }
 
     @Override
@@ -200,13 +212,43 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
+    public void setTargetGroupings(Set<GroupingBuilder> targetGroupings) {
+        this.targetGroupings = targetGroupings;
+    }
+
+    @Override
+    public Set<TypeDefinitionBuilder> getFinalTypedefs() {
+        return finalTypedefs;
+    }
+
+    @Override
     public Set<TypeDefinitionBuilder> getTargetTypedefs() {
         return targetTypedefs;
     }
 
     @Override
+    public void setTargetTypedefs(Set<TypeDefinitionBuilder> targetTypedefs) {
+        this.targetTypedefs = targetTypedefs;
+    }
+
+    @Override
+    public List<UnknownSchemaNodeBuilder> getFinalUnknownNodes() {
+        return finalUnknownNodes;
+    }
+
+    @Override
     public List<UnknownSchemaNodeBuilder> getTargetUnknownNodes() {
         return targetUnknownNodes;
+    }
+
+    @Override
+    public void setTargetUnknownNodes(List<UnknownSchemaNodeBuilder> targetUnknownNodes) {
+        this.targetUnknownNodes = targetUnknownNodes;
+    }
+
+    @Override
+    public List<UsesNodeBuilder> getTargetGroupingUses() {
+        return targetGroupingUses;
     }
 
     @Override

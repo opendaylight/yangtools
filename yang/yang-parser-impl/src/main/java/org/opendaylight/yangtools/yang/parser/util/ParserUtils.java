@@ -94,7 +94,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
@@ -147,7 +146,7 @@ public final class ParserUtils {
      *            target module prefix
      * @param line
      *            current line in yang model
-     * @return
+     * @return module builder if found, null otherwise
      */
     public static ModuleBuilder findDependentModuleBuilder(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder module, final String prefix, final int line) {
@@ -194,14 +193,12 @@ public final class ParserUtils {
             final String prefix, final int line) {
         TreeMap<Date, Module> modulesByRevision = new TreeMap<Date, Module>();
 
-        Date dependentModuleRevision = null;
-
         final ModuleImport dependentModuleImport = ParserUtils.getModuleImport(currentModule, prefix);
         if (dependentModuleImport == null) {
             throw new YangParseException(currentModule.getName(), line, "No import found with prefix '" + prefix + "'.");
         }
         final String dependentModuleName = dependentModuleImport.getModuleName();
-        dependentModuleRevision = dependentModuleImport.getRevision();
+        final Date dependentModuleRevision = dependentModuleImport.getRevision();
 
         for (Module contextModule : context.getModules()) {
             if (contextModule.getName().equals(dependentModuleName)) {
@@ -222,128 +219,6 @@ public final class ParserUtils {
         }
 
         return result;
-    }
-
-    /**
-     * Find grouping by name.
-     *
-     * @param groupings
-     *            collection of grouping builders to search
-     * @param name
-     *            name of grouping
-     * @return grouping with given name if present in collection, null otherwise
-     */
-    public static GroupingBuilder findGroupingBuilder(Set<GroupingBuilder> groupings, String name) {
-        for (GroupingBuilder grouping : groupings) {
-            if (grouping.getQName().getLocalName().equals(name)) {
-                return grouping;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Find grouping by name.
-     *
-     * @param groupings
-     *            collection of grouping definitions to search
-     * @param name
-     *            name of grouping
-     * @return grouping with given name if present in collection, null otherwise
-     */
-    public static GroupingDefinition findGroupingDefinition(Set<GroupingDefinition> groupings, String name) {
-        for (GroupingDefinition grouping : groupings) {
-            if (grouping.getQName().getLocalName().equals(name)) {
-                return grouping;
-            }
-        }
-        return null;
-    }
-
-    public static Set<DataSchemaNodeBuilder> processUsesDataSchemaNode(UsesNodeBuilder usesNode,
-            Set<DataSchemaNodeBuilder> children, SchemaPath parentPath, URI namespace, Date revision, String prefix) {
-        Set<DataSchemaNodeBuilder> newChildren = new HashSet<>();
-        for (DataSchemaNodeBuilder child : children) {
-            if (child != null) {
-                DataSchemaNodeBuilder newChild = null;
-                QName qname = new QName(namespace, revision, prefix, child.getQName().getLocalName());
-                if (child instanceof AnyXmlBuilder) {
-                    newChild = new AnyXmlBuilder((AnyXmlBuilder) child, qname);
-                } else if (child instanceof ChoiceBuilder) {
-                    newChild = new ChoiceBuilder((ChoiceBuilder) child, qname);
-                } else if (child instanceof ContainerSchemaNodeBuilder) {
-                    newChild = new ContainerSchemaNodeBuilder((ContainerSchemaNodeBuilder) child, qname);
-                } else if (child instanceof LeafListSchemaNodeBuilder) {
-                    newChild = new LeafListSchemaNodeBuilder((LeafListSchemaNodeBuilder) child, qname);
-                } else if (child instanceof LeafSchemaNodeBuilder) {
-                    newChild = new LeafSchemaNodeBuilder((LeafSchemaNodeBuilder) child, qname);
-                } else if (child instanceof ListSchemaNodeBuilder) {
-                    newChild = new ListSchemaNodeBuilder((ListSchemaNodeBuilder) child, qname);
-                }
-
-                if (newChild == null) {
-                    throw new YangParseException(usesNode.getModuleName(), usesNode.getLine(),
-                            "Unknown member of target grouping while resolving uses node.");
-                }
-                if (newChild instanceof GroupingMember) {
-                    ((GroupingMember) newChild).setAddedByUses(true);
-                }
-
-                correctNodePath(newChild, parentPath);
-                newChildren.add(newChild);
-            }
-        }
-        return newChildren;
-    }
-
-    /**
-     * Traverse given groupings and create new collection of groupings with
-     * schema path created based on current parent path.
-     *
-     * @param groupings
-     * @param parentPath
-     * @param namespace
-     * @param revision
-     * @param prefix
-     * @return collection of new groupings with corrected path
-     */
-    public static Set<GroupingBuilder> processUsesGroupings(Set<GroupingBuilder> groupings, SchemaPath parentPath,
-            URI namespace, Date revision, String prefix) {
-        Set<GroupingBuilder> newGroupings = new HashSet<>();
-        for (GroupingBuilder g : groupings) {
-            QName qname = new QName(namespace, revision, prefix, g.getQName().getLocalName());
-            GroupingBuilder newGrouping = new GroupingBuilderImpl(g, qname);
-            newGrouping.setAddedByUses(true);
-            correctNodePath(newGrouping, parentPath);
-            newGroupings.add(newGrouping);
-        }
-        return newGroupings;
-    }
-
-    public static Set<TypeDefinitionBuilder> processUsesTypedefs(Set<TypeDefinitionBuilder> typedefs,
-            SchemaPath parentPath, URI namespace, Date revision, String prefix) {
-        Set<TypeDefinitionBuilder> newTypedefs = new HashSet<>();
-        for (TypeDefinitionBuilder td : typedefs) {
-            QName qname = new QName(namespace, revision, prefix, td.getQName().getLocalName());
-            TypeDefinitionBuilder newType = new TypeDefinitionBuilderImpl(td, qname);
-            newType.setAddedByUses(true);
-            correctNodePath(newType, parentPath);
-            newTypedefs.add(newType);
-        }
-        return newTypedefs;
-    }
-
-    public static List<UnknownSchemaNodeBuilder> processUsesUnknownNodes(List<UnknownSchemaNodeBuilder> unknownNodes,
-            SchemaPath parentPath, URI namespace, Date revision, String prefix) {
-        List<UnknownSchemaNodeBuilder> newUnknownNodes = new ArrayList<>();
-        for (UnknownSchemaNodeBuilder un : unknownNodes) {
-            QName qname = new QName(namespace, revision, prefix, un.getQName().getLocalName());
-            UnknownSchemaNodeBuilder newUn = new UnknownSchemaNodeBuilder(un, qname);
-            newUn.setAddedByUses(true);
-            correctNodePath(newUn, parentPath);
-            newUnknownNodes.add(newUn);
-        }
-        return newUnknownNodes;
     }
 
     /**
@@ -381,16 +256,21 @@ public final class ParserUtils {
      *            augmentation target node
      */
     public static void fillAugmentTarget(final AugmentationSchemaBuilder augment, final DataNodeContainerBuilder target) {
-        boolean usesAugment = augment.getParent() instanceof UsesNodeBuilder;
-        for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
-            builder.setAugmenting(true);
-            if (usesAugment) {
-                if (builder instanceof GroupingMember) {
-                    ((GroupingMember) builder).setAddedByUses(true);
-                }
+        for (DataSchemaNodeBuilder child : augment.getChildNodeBuilders()) {
+            DataSchemaNodeBuilder childCopy = CopyUtils.copy(child, target, false);
+            childCopy.setAugmenting(true);
+            correctNodePath(child, target.getPath());
+            correctNodePath(childCopy, target.getPath());
+            try {
+                target.addChildNode(childCopy);
+            } catch(YangParseException e) {
+                // more descriptive message
+                throw new YangParseException(augment.getModuleName(), augment.getLine(), "Failed to perform augmentation: "+ e.getMessage());
             }
-            correctNodePath(builder, target.getPath());
-            target.addChildNode(builder);
+
+        }
+        for (UsesNodeBuilder usesNode : augment.getUsesNodes()) {
+            target.addUsesNode(CopyUtils.copyUses(usesNode, target));
         }
     }
 
@@ -403,20 +283,23 @@ public final class ParserUtils {
      *            augmentation target choice node
      */
     public static void fillAugmentTarget(final AugmentationSchemaBuilder augment, final ChoiceBuilder target) {
-        boolean usesAugment = augment.getParent() instanceof UsesNodeBuilder;
         for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
-            builder.setAugmenting(true);
-            if (usesAugment) {
-                if (builder instanceof GroupingMember) {
-                    ((GroupingMember) builder).setAddedByUses(true);
-                }
-            }
+            DataSchemaNodeBuilder childCopy = CopyUtils.copy(builder, target, false);
+            childCopy.setAugmenting(true);
             correctNodePath(builder, target.getPath());
-            target.addCase(builder);
+            correctNodePath(childCopy, target.getPath());
+            target.addCase(childCopy);
         }
+        for (UsesNodeBuilder usesNode : augment.getUsesNodes()) {
+            if (usesNode != null) {
+                throw new YangParseException(augment.getModuleName(), augment.getLine(),
+                        "Error in augment parsing: cannot augment uses to choice");
+            }
+        }
+
     }
 
-    private static void correctNodePath(final SchemaNodeBuilder node, final SchemaPath parentSchemaPath) {
+    static void correctNodePath(final SchemaNodeBuilder node, final SchemaPath parentSchemaPath) {
         // set correct path
         List<QName> targetNodePath = new ArrayList<QName>(parentSchemaPath.getPath());
         targetNodePath.add(node.getQName());
@@ -441,7 +324,7 @@ public final class ParserUtils {
         // if node can contains type, correct path for this type too
         if (node instanceof TypeAwareBuilder) {
             TypeAwareBuilder nodeBuilder = (TypeAwareBuilder) node;
-            correctTypeAwareNodePath(nodeBuilder, parentSchemaPath);
+            correctTypeAwareNodePath(nodeBuilder, node.getPath());
         }
     }
 
@@ -855,258 +738,207 @@ public final class ParserUtils {
         constraints.setMaxElements(nodeConstraints.getMaxElements());
     }
 
-    public static void processAugmentationOnContext(final AugmentationSchemaBuilder augmentBuilder,
-            final List<QName> path, final ModuleBuilder module, final String prefix, final int line,
-            final SchemaContext context) {
+    /**
+     * Find augment target node and perform augmentation.
+     *
+     * @param augment
+     * @param firstNodeParent
+     *            parent of first node in path
+     * @param path
+     *            path to augment target
+     * @param isUsesAugment
+     *            if this augment is defined under uses node
+     * @return true if augment process succeed, false otherwise
+     */
+    public static boolean processAugmentation(final AugmentationSchemaBuilder augment, final Builder firstNodeParent,
+            final List<QName> path, boolean isUsesAugment) {
+        // traverse augment target path and try to reach target node
+        String currentName = null;
+        Builder currentParent = firstNodeParent;
+
+        for (int i = 0; i < path.size(); i++) {
+            QName qname = path.get(i);
+
+            currentName = qname.getLocalName();
+            if (currentParent instanceof DataNodeContainerBuilder) {
+                DataSchemaNodeBuilder nodeFound = ((DataNodeContainerBuilder) currentParent)
+                        .getDataChildByName(currentName);
+                // if not found as regular child, search in uses
+                if (nodeFound == null) {
+                    boolean found = false;
+                    for (UsesNodeBuilder unb : ((DataNodeContainerBuilder) currentParent).getUsesNodes()) {
+                        DataSchemaNodeBuilder result = findNodeInUses(currentName, unb);
+                        if (result != null) {
+                            currentParent = result;
+                            found = true;
+                            break;
+                        }
+                    }
+                    // if not found even in uses nodes, return false
+                    if (!found) {
+                        return false;
+                    }
+                } else {
+                    currentParent = nodeFound;
+                }
+            } else if (currentParent instanceof ChoiceBuilder) {
+                currentParent = ((ChoiceBuilder) currentParent).getCaseNodeByName(currentName);
+            } else {
+                throw new YangParseException(augment.getModuleName(), augment.getLine(),
+                        "Error in augment parsing: failed to find node " + currentName);
+            }
+
+            // if node in path not found, return false
+            if (currentParent == null) {
+                return false;
+            }
+        }
+        if (!(currentParent instanceof DataSchemaNodeBuilder)) {
+            throw new YangParseException(
+                    augment.getModuleName(),
+                    augment.getLine(),
+                    "Error in augment parsing: The target node MUST be either a container, list, choice, case, input, output, or notification node.");
+        }
+
+        if (currentParent instanceof ChoiceBuilder) {
+            fillAugmentTarget(augment, (ChoiceBuilder) currentParent);
+        } else {
+            fillAugmentTarget(augment, (DataNodeContainerBuilder) currentParent);
+        }
+        ((AugmentationTargetBuilder) currentParent).addAugmentation(augment);
+        SchemaPath oldPath = ((DataSchemaNodeBuilder) currentParent).getPath();
+        augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+        augment.setResolved(true);
+
+        return true;
+    }
+
+    private static DataSchemaNodeBuilder findNodeInUses(String localName, UsesNodeBuilder uses) {
+        Set<DataSchemaNodeBuilder> usesTargetChildren = uses.getTargetChildren();
+        if (usesTargetChildren != null) {
+            for (DataSchemaNodeBuilder child : uses.getTargetChildren()) {
+                if (child.getQName().getLocalName().equals(localName)) {
+                    return child;
+                }
+            }
+        }
+        for (UsesNodeBuilder usesNode : uses.getTargetGroupingUses()) {
+            DataSchemaNodeBuilder result = findNodeInUses(localName, usesNode);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find augment target node in given context and perform augmentation.
+     *
+     * @param augment
+     * @param path
+     *            path to augment target
+     * @param module
+     *            current module
+     * @param prefix
+     *            current prefix of target module
+     * @param context
+     *            SchemaContext containing already resolved modules
+     * @return true if augment process succeed, false otherwise
+     */
+    public static boolean processAugmentationOnContext(final AugmentationSchemaBuilder augment, final List<QName> path,
+            final ModuleBuilder module, final String prefix, final SchemaContext context) {
+        final int line = augment.getLine();
         final Module dependentModule = findModuleFromContext(context, module, prefix, line);
         if (dependentModule == null) {
-            throw new YangParseException(module.getName(), line, "Failed to find referenced module with prefix "
-                    + prefix + ".");
+            throw new YangParseException(module.getName(), line,
+                    "Error in augment parsing: failed to find module with prefix " + prefix + ".");
         }
-        SchemaNode node = dependentModule.getDataChildByName(path.get(0).getLocalName());
-        if (node == null) {
+
+        String currentName = path.get(0).getLocalName();
+        SchemaNode currentParent = dependentModule.getDataChildByName(currentName);
+        if (currentParent == null) {
             Set<NotificationDefinition> notifications = dependentModule.getNotifications();
             for (NotificationDefinition ntf : notifications) {
-                if (ntf.getQName().getLocalName().equals(path.get(0).getLocalName())) {
-                    node = ntf;
+                if (ntf.getQName().getLocalName().equals(currentName)) {
+                    currentParent = ntf;
                     break;
                 }
             }
         }
-        if (node == null) {
-            return;
+        if (currentParent == null) {
+            throw new YangParseException(module.getName(), line, "Error in augment parsing: failed to find node "
+                    + currentName + ".");
         }
 
         for (int i = 1; i < path.size(); i++) {
-            if (node instanceof DataNodeContainer) {
-                DataNodeContainer ref = (DataNodeContainer) node;
-                node = ref.getDataChildByName(path.get(i).getLocalName());
+            currentName = path.get(i).getLocalName();
+            if (currentParent instanceof DataNodeContainer) {
+                currentParent = ((DataNodeContainer) currentParent).getDataChildByName(currentName);
+            } else if (currentParent instanceof ChoiceNode) {
+                currentParent = ((ChoiceNode) currentParent).getCaseNodeByName(currentName);
+            } else {
+                throw new YangParseException(augment.getModuleName(), line,
+                        "Error in augment parsing: failed to find node " + currentName);
+            }
+            // if node in path not found, return false
+            if (currentParent == null) {
+                throw new YangParseException(module.getName(), line, "Error in augment parsing: failed to find node "
+                        + currentName + ".");
             }
         }
-        if (node == null) {
-            return;
-        }
 
-        if (node instanceof ContainerSchemaNodeImpl) {
+        if (currentParent instanceof ContainerSchemaNodeImpl) {
             // includes container, input and output statement
-            ContainerSchemaNodeImpl c = (ContainerSchemaNodeImpl) node;
+            ContainerSchemaNodeImpl c = (ContainerSchemaNodeImpl) currentParent;
             ContainerSchemaNodeBuilder cb = c.toBuilder();
-            fillAugmentTarget(augmentBuilder, cb);
-            ((AugmentationTargetBuilder) cb).addAugmentation(augmentBuilder);
+            fillAugmentTarget(augment, cb);
+            ((AugmentationTargetBuilder) cb).addAugmentation(augment);
             SchemaPath oldPath = cb.getPath();
             cb.rebuild();
-            augmentBuilder.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-            augmentBuilder.setResolved(true);
-            module.augmentResolved();
-        } else if (node instanceof ListSchemaNodeImpl) {
-            ListSchemaNodeImpl l = (ListSchemaNodeImpl) node;
+            augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+            augment.setResolved(true);
+        } else if (currentParent instanceof ListSchemaNodeImpl) {
+            ListSchemaNodeImpl l = (ListSchemaNodeImpl) currentParent;
             ListSchemaNodeBuilder lb = l.toBuilder();
-            fillAugmentTarget(augmentBuilder, lb);
-            ((AugmentationTargetBuilder) lb).addAugmentation(augmentBuilder);
+            fillAugmentTarget(augment, lb);
+            ((AugmentationTargetBuilder) lb).addAugmentation(augment);
             SchemaPath oldPath = lb.getPath();
             lb.rebuild();
-            augmentBuilder.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-            augmentBuilder.setResolved(true);
-            module.augmentResolved();
-        } else if (node instanceof ChoiceNodeImpl) {
-            ChoiceNodeImpl ch = (ChoiceNodeImpl) node;
+            augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+            augment.setResolved(true);
+        } else if (currentParent instanceof ChoiceNodeImpl) {
+            ChoiceNodeImpl ch = (ChoiceNodeImpl) currentParent;
             ChoiceBuilder chb = ch.toBuilder();
-            fillAugmentTarget(augmentBuilder, chb);
-            ((AugmentationTargetBuilder) chb).addAugmentation(augmentBuilder);
+            fillAugmentTarget(augment, chb);
+            ((AugmentationTargetBuilder) chb).addAugmentation(augment);
             SchemaPath oldPath = chb.getPath();
             chb.rebuild();
-            augmentBuilder.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-            augmentBuilder.setResolved(true);
-            module.augmentResolved();
-        } else if (node instanceof ChoiceCaseNodeImpl) {
-            ChoiceCaseNodeImpl chc = (ChoiceCaseNodeImpl) node;
+            augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+            augment.setResolved(true);
+        } else if (currentParent instanceof ChoiceCaseNodeImpl) {
+            ChoiceCaseNodeImpl chc = (ChoiceCaseNodeImpl) currentParent;
             ChoiceCaseBuilder chcb = chc.toBuilder();
-            fillAugmentTarget(augmentBuilder, chcb);
-            ((AugmentationTargetBuilder) chcb).addAugmentation(augmentBuilder);
+            fillAugmentTarget(augment, chcb);
+            ((AugmentationTargetBuilder) chcb).addAugmentation(augment);
             SchemaPath oldPath = chcb.getPath();
             chcb.rebuild();
-            augmentBuilder.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-            augmentBuilder.setResolved(true);
-            module.augmentResolved();
-        } else if (node instanceof NotificationDefinitionImpl) {
-            NotificationDefinitionImpl nd = (NotificationDefinitionImpl) node;
+            augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+            augment.setResolved(true);
+        } else if (currentParent instanceof NotificationDefinitionImpl) {
+            NotificationDefinitionImpl nd = (NotificationDefinitionImpl) currentParent;
             NotificationBuilder nb = nd.toBuilder();
-            fillAugmentTarget(augmentBuilder, nb);
-            ((AugmentationTargetBuilder) nb).addAugmentation(augmentBuilder);
+            fillAugmentTarget(augment, nb);
+            ((AugmentationTargetBuilder) nb).addAugmentation(augment);
             SchemaPath oldPath = nb.getPath();
             nb.rebuild();
-            augmentBuilder.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-            augmentBuilder.setResolved(true);
-            module.augmentResolved();
+            augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+            augment.setResolved(true);
         } else {
-            throw new YangParseException(module.getName(), line, "Target of type " + node.getClass()
+            throw new YangParseException(module.getName(), line, "Target of type " + currentParent.getClass()
                     + " cannot be augmented.");
         }
-    }
 
-    public static void processAugmentation(final AugmentationSchemaBuilder augmentBuilder, final List<QName> path,
-            final ModuleBuilder module, final ModuleBuilder dependentModuleBuilder) {
-        DataSchemaNodeBuilder currentParent = null;
-        for (DataSchemaNodeBuilder child : dependentModuleBuilder.getChildNodeBuilders()) {
-            final QName childQName = child.getQName();
-            if (childQName.getLocalName().equals(path.get(0).getLocalName())) {
-                currentParent = child;
-                break;
-            }
-        }
-
-        if (currentParent == null) {
-            return;
-        }
-
-        for (int i = 1; i < path.size(); i++) {
-            final QName currentQName = path.get(i);
-            DataSchemaNodeBuilder newParent = null;
-            if (currentParent instanceof DataNodeContainerBuilder) {
-                for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder) currentParent).getChildNodeBuilders()) {
-                    final QName childQName = child.getQName();
-                    if (childQName.getLocalName().equals(currentQName.getLocalName())) {
-                        newParent = child;
-                        break;
-                    }
-                }
-            } else if (currentParent instanceof ChoiceBuilder) {
-                for (ChoiceCaseBuilder caseBuilder : ((ChoiceBuilder) currentParent).getCases()) {
-                    final QName caseQName = caseBuilder.getQName();
-                    if (caseQName.getLocalName().equals(currentQName.getLocalName())) {
-                        newParent = caseBuilder;
-                        break;
-                    }
-                }
-            }
-
-            if (newParent == null) {
-                break; // node not found, quit search
-            } else {
-                currentParent = newParent;
-            }
-        }
-
-        final String currentName = currentParent.getQName().getLocalName();
-        final String lastAugmentPathElementName = path.get(path.size() - 1).getLocalName();
-        if (currentName.equals(lastAugmentPathElementName)) {
-
-            if (currentParent instanceof ChoiceBuilder) {
-                fillAugmentTarget(augmentBuilder, (ChoiceBuilder) currentParent);
-            } else {
-                fillAugmentTarget(augmentBuilder, (DataNodeContainerBuilder) currentParent);
-            }
-            ((AugmentationTargetBuilder) currentParent).addAugmentation(augmentBuilder);
-            SchemaPath oldPath = currentParent.getPath();
-            augmentBuilder.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-            augmentBuilder.setResolved(true);
-            module.augmentResolved();
-        }
-    }
-
-    /**
-     * Search given modules for grouping by name defined in uses node.
-     *
-     * @param usesBuilder
-     *            builder of uses statement
-     * @param modules
-     *            all loaded modules
-     * @param module
-     *            current module
-     * @return grouping with given name if found, null otherwise
-     */
-    public static GroupingBuilder getTargetGroupingFromModules(final UsesNodeBuilder usesBuilder,
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
-        final int line = usesBuilder.getLine();
-        final String groupingString = usesBuilder.getGroupingName();
-        String groupingPrefix;
-        String groupingName;
-
-        if (groupingString.contains(":")) {
-            String[] splitted = groupingString.split(":");
-            if (splitted.length != 2 || groupingString.contains("/")) {
-                throw new YangParseException(module.getName(), line, "Invalid name of target grouping");
-            }
-            groupingPrefix = splitted[0];
-            groupingName = splitted[1];
-        } else {
-            groupingPrefix = module.getPrefix();
-            groupingName = groupingString;
-        }
-
-        ModuleBuilder dependentModule = null;
-        if (groupingPrefix.equals(module.getPrefix())) {
-            dependentModule = module;
-        } else {
-            dependentModule = findDependentModuleBuilder(modules, module, groupingPrefix, line);
-        }
-
-        if (dependentModule == null) {
-            return null;
-        }
-
-        GroupingBuilder result = null;
-        Set<GroupingBuilder> groupings = dependentModule.getGroupingBuilders();
-        result = findGroupingBuilder(groupings, groupingName);
-        if (result != null) {
-            return result;
-        }
-
-        Builder parent = usesBuilder.getParent();
-
-        while (parent != null) {
-            if (parent instanceof DataNodeContainerBuilder) {
-                groupings = ((DataNodeContainerBuilder) parent).getGroupingBuilders();
-            } else if (parent instanceof RpcDefinitionBuilder) {
-                groupings = ((RpcDefinitionBuilder) parent).getGroupings();
-            }
-            result = findGroupingBuilder(groupings, groupingName);
-            if (result == null) {
-                parent = parent.getParent();
-            } else {
-                break;
-            }
-        }
-
-        if (result == null) {
-            throw new YangParseException(module.getName(), line, "Referenced grouping '" + groupingName
-                    + "' not found.");
-        }
-        return result;
-    }
-
-    /**
-     * Search context for grouping by name defined in uses node.
-     *
-     * @param usesBuilder
-     *            builder of uses statement
-     * @param module
-     *            current module
-     * @param context
-     *            SchemaContext containing already resolved modules
-     * @return grouping with given name if found, null otherwise
-     */
-    public static GroupingDefinition getTargetGroupingFromContext(final UsesNodeBuilder usesBuilder,
-            final ModuleBuilder module, final SchemaContext context) {
-        final int line = usesBuilder.getLine();
-        String groupingString = usesBuilder.getGroupingName();
-        String groupingPrefix;
-        String groupingName;
-
-        if (groupingString.contains(":")) {
-            String[] splitted = groupingString.split(":");
-            if (splitted.length != 2 || groupingString.contains("/")) {
-                throw new YangParseException(module.getName(), line, "Invalid name of target grouping");
-            }
-            groupingPrefix = splitted[0];
-            groupingName = splitted[1];
-        } else {
-            groupingPrefix = module.getPrefix();
-            groupingName = groupingString;
-        }
-
-        Module dependentModule = findModuleFromContext(context, module, groupingPrefix, line);
-        return findGroupingDefinition(dependentModule.getGroupings(), groupingName);
+        return true;
     }
 
     public static QName findFullQName(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
@@ -1127,6 +959,196 @@ public final class ParserUtils {
             result = new QName(module.getNamespace(), module.getRevision(), module.getPrefix(), baseString);
         }
         return result;
+    }
+
+    /**
+     * Load uses target nodes and all uses target uses target nodes. Set this
+     * collection as uses final children.
+     *
+     * @param module
+     *            current module
+     * @param usesNode
+     */
+    public static void processUsesNode(final UsesNodeBuilder usesNode) {
+        ModuleBuilder module = getParentModule(usesNode);
+        DataNodeContainerBuilder parent = usesNode.getParent();
+        URI namespace = null;
+        Date revision = null;
+        String prefix = null;
+        if (parent instanceof ModuleBuilder || parent instanceof AugmentationSchemaBuilder) {
+            namespace = module.getNamespace();
+            revision = module.getRevision();
+            prefix = module.getPrefix();
+        } else {
+            QName parentQName = parent.getQName();
+            namespace = parentQName.getNamespace();
+            revision = parentQName.getRevision();
+            prefix = parentQName.getPrefix();
+        }
+        SchemaPath parentPath = parent.getPath();
+
+        // child nodes
+        Set<DataSchemaNodeBuilder> finalChildren = new HashSet<>();
+        Set<DataSchemaNodeBuilder> newChildren = GroupingUtils.copyUsesTargetNodesWithNewPath(usesNode, parent);
+        finalChildren.addAll(newChildren);
+        usesNode.getFinalChildren().addAll(finalChildren);
+
+        // groupings
+        Set<GroupingBuilder> finalGroupings = new HashSet<>();
+        Set<GroupingBuilder> newGroupings = GroupingUtils.copyUsesTargetGroupingsWithNewPath(usesNode, parentPath,
+                namespace, revision, prefix);
+        finalGroupings.addAll(newGroupings);
+        usesNode.getFinalGroupings().addAll(finalGroupings);
+
+        // typedefs
+        Set<TypeDefinitionBuilder> finalTypedefs = new HashSet<>();
+        Set<TypeDefinitionBuilder> newTypedefs = GroupingUtils.copyUsesTargetTypedefsWithNewPath(usesNode, parentPath,
+                namespace, revision, prefix);
+        finalTypedefs.addAll(newTypedefs);
+        usesNode.getFinalTypedefs().addAll(finalTypedefs);
+
+        // unknown nodes
+        List<UnknownSchemaNodeBuilder> finalUnknownNodes = new ArrayList<>();
+        List<UnknownSchemaNodeBuilder> newUnknownNodes = GroupingUtils.copyUsesTargetUnknownNodesWithNewPath(usesNode,
+                parentPath, namespace, revision, prefix);
+        finalUnknownNodes.addAll(newUnknownNodes);
+        usesNode.getFinalUnknownNodes().addAll(finalUnknownNodes);
+    }
+
+    /**
+     * Add nodes defined in uses target grouping to uses parent.
+     *
+     * @param usesNode
+     */
+    public static void updateUsesParent(UsesNodeBuilder usesNode, DataNodeContainerBuilder parent) {
+        // child nodes
+        for (DataSchemaNodeBuilder child : usesNode.getFinalChildren()) {
+            child.setParent(parent);
+            parent.addChildNode(child);
+        }
+        for (UsesNodeBuilder uses : usesNode.getTargetGroupingUses()) {
+            updateUsesParent(uses, parent);
+        }
+
+        // groupings
+        for (GroupingBuilder gb : usesNode.getFinalGroupings()) {
+            parent.addGrouping(gb);
+        }
+        // typedefs
+        for (TypeDefinitionBuilder tdb : usesNode.getFinalTypedefs()) {
+            parent.addTypedef(tdb);
+        }
+        // unknown nodes
+        for (UnknownSchemaNodeBuilder un : usesNode.getFinalUnknownNodes()) {
+            parent.addUnknownNodeBuilder(un);
+        }
+    }
+
+    public static void fixUsesNodesPath(UsesNodeBuilder usesNode) {
+        DataNodeContainerBuilder parent = usesNode.getParent();
+
+        // child nodes
+        Set<DataSchemaNodeBuilder> currentChildNodes = parent.getChildNodeBuilders();
+        Set<DataSchemaNodeBuilder> toRemove = new HashSet<>();
+        Set<DataSchemaNodeBuilder> toAdd = new HashSet<>();
+        for (DataSchemaNodeBuilder child : currentChildNodes) {
+            if (child instanceof GroupingMember) {
+                GroupingMember gm = (GroupingMember) child;
+                if (gm.isAddedByUses()) {
+                    toRemove.add(child);
+                    DataSchemaNodeBuilder copy = CopyUtils.copy(child, parent, true);
+                    correctNodePath(copy, parent.getPath());
+                    toAdd.add(copy);
+                }
+            }
+        }
+        currentChildNodes.removeAll(toRemove);
+        currentChildNodes.addAll(toAdd);
+
+        // groupings
+        Set<GroupingBuilder> currentGroupings = parent.getGroupingBuilders();
+        Set<GroupingBuilder> toRemoveG = new HashSet<>();
+        Set<GroupingBuilder> toAddG = new HashSet<>();
+        for (GroupingBuilder child : currentGroupings) {
+            if (child.isAddedByUses()) {
+                toRemoveG.add(child);
+                GroupingBuilder copy = CopyUtils.copy(child, parent, true);
+                correctNodePath(copy, parent.getPath());
+                toAddG.add(copy);
+            }
+
+        }
+        currentGroupings.removeAll(toRemoveG);
+        currentGroupings.addAll(toAddG);
+
+        // typedefs
+        Set<TypeDefinitionBuilder> currentTypedefs = parent.getTypeDefinitionBuilders();
+        Set<TypeDefinitionBuilder> toRemoveTD = new HashSet<>();
+        Set<TypeDefinitionBuilder> toAddTD = new HashSet<>();
+        for (TypeDefinitionBuilder child : currentTypedefs) {
+            if (child.isAddedByUses()) {
+                toRemoveTD.add(child);
+                TypeDefinitionBuilder copy = CopyUtils.copy(child, parent, true);
+                correctNodePath(copy, parent.getPath());
+                toAddTD.add(copy);
+            }
+
+        }
+        currentTypedefs.removeAll(toRemoveTD);
+        currentTypedefs.addAll(toAddTD);
+
+        // unknown nodes
+        List<UnknownSchemaNodeBuilder> currentUN = parent.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> toRemoveUN = new ArrayList<>();
+        List<UnknownSchemaNodeBuilder> toAddUN = new ArrayList<>();
+        for (UnknownSchemaNodeBuilder un : currentUN) {
+            if (un.isAddedByUses()) {
+                toRemoveUN.add(un);
+                UnknownSchemaNodeBuilder copy = CopyUtils.copy(un, parent, true);
+                correctNodePath(copy, parent.getPath());
+                toAddUN.add(copy);
+            }
+        }
+        currentUN.removeAll(toRemoveUN);
+        currentUN.addAll(toAddUN);
+    }
+
+    /**
+     * Perform refine process on uses children. It is expected that uses has
+     * already resolved all dependencies.
+     *
+     * @param usesNode
+     */
+    public static void performRefine(UsesNodeBuilder usesNode) {
+        for (RefineHolder refine : usesNode.getRefines()) {
+            DataSchemaNodeBuilder nodeToRefine = null;
+            for (DataSchemaNodeBuilder dataNode : usesNode.getFinalChildren()) {
+                if (refine.getName().equals(dataNode.getQName().getLocalName())) {
+                    nodeToRefine = dataNode;
+                    break;
+                }
+            }
+            if (nodeToRefine == null) {
+                throw new YangParseException(refine.getModuleName(), refine.getLine(), "Refine target node '"
+                        + refine.getName() + "' not found");
+            }
+            RefineUtils.performRefine(nodeToRefine, refine);
+            usesNode.addRefineNode(nodeToRefine);
+        }
+    }
+
+    /**
+     * Get module in which this node is defined.
+     *
+     * @param node
+     * @return builder of module where this node is defined
+     */
+    public static ModuleBuilder getParentModule(Builder node) {
+        Builder parent = node.getParent();
+        while (!(parent instanceof ModuleBuilder)) {
+            parent = parent.getParent();
+        }
+        return (ModuleBuilder) parent;
     }
 
 }

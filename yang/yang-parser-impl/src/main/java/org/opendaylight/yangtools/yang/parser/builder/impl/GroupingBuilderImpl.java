@@ -52,34 +52,9 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         instance = new GroupingDefinitionImpl(qname);
     }
 
-    public GroupingBuilderImpl(GroupingBuilder builder, QName qname) {
-        super(builder.getModuleName(), builder.getLine(), qname);
-        parent = builder.getParent();
-        instance = new GroupingDefinitionImpl(qname);
-        schemaPath = builder.getPath();
-        description = builder.getDescription();
-        reference = builder.getReference();
-        status = builder.getStatus();
-        addedByUses = builder.isAddedByUses();
-        childNodes = builder.getChildNodes();
-        addedChildNodes.addAll(builder.getChildNodeBuilders());
-        groupings = builder.getGroupings();
-        addedGroupings.addAll(builder.getGroupingBuilders());
-        addedUsesNodes.addAll(builder.getUses());
-        addedUnknownNodes.addAll(builder.getUnknownNodeBuilders());
-    }
-
     @Override
     public GroupingDefinition build() {
         if (!isBuilt) {
-            // process uses
-            for(UsesNodeBuilder use : addedUsesNodes) {
-                addedChildNodes.addAll(use.getTargetChildren());
-                addedGroupings.addAll(use.getTargetGroupings());
-                addedTypedefs.addAll(use.getTargetTypedefs());
-                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
-            }
-
             instance.setPath(schemaPath);
             instance.setDescription(description);
             instance.setReference(reference);
@@ -213,7 +188,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public Set<UsesNodeBuilder> getUses() {
+    public Set<UsesNodeBuilder> getUsesNodes() {
         return addedUsesNodes;
     }
 

@@ -34,7 +34,8 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     private final SchemaPath schemaPath;
     private QName baseQName;
 
-    IdentityrefTypeBuilder(final String moduleName, final int line, final String baseString, final SchemaPath schemaPath) {
+    public IdentityrefTypeBuilder(final String moduleName, final int line, final String baseString,
+            final SchemaPath schemaPath) {
         super(moduleName, line, BaseTypes.constructQName(NAME));
         this.baseString = baseString;
         this.schemaPath = schemaPath;
@@ -120,7 +121,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public SchemaPath getPath() {
-        return null;
+        return schemaPath;
     }
 
     @Override

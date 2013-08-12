@@ -30,20 +30,6 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         instance = new UnknownSchemaNodeImpl(qname);
     }
 
-    public UnknownSchemaNodeBuilder(UnknownSchemaNodeBuilder b, QName qname) {
-        super(b.getModuleName(), b.getLine(), qname);
-        instance = new UnknownSchemaNodeImpl(qname);
-        schemaPath = b.getPath();
-        description = b.getDescription();
-        reference = b.getReference();
-        status = b.getStatus();
-        addedByUses = b.isAddedByUses();
-        unknownNodes = b.unknownNodes;
-        addedUnknownNodes.addAll(b.addedUnknownNodes);
-        nodeType = b.getNodeType();
-        nodeParameter = b.getNodeParameter();
-    }
-
     @Override
     public UnknownSchemaNode build() {
         if (!isBuilt) {

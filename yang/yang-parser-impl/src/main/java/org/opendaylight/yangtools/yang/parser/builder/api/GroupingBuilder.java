@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import java.util.Set;
-
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 
 /**
@@ -20,12 +18,5 @@ public interface GroupingBuilder extends DataNodeContainerBuilder, SchemaNodeBui
      * Build GroupingDefinition object from this builder.
      */
     GroupingDefinition build();
-
-    /**
-     * Get uses statement defined in this builder
-     *
-     * @return collection of builders of uses statements
-     */
-    Set<UsesNodeBuilder> getUses();
 
 }

@@ -64,7 +64,8 @@ public class YangParserNegativeTest {
                 }
             }
         } catch (YangParseException e) {
-            assertTrue(e.getMessage().contains("Failed to resolve augments in module 'test3'."));
+            assertEquals("Error in module 'test3' at line 10: Error in augment parsing: failed to find augment target",
+                    e.getMessage());
         }
     }
 
@@ -174,7 +175,7 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'augment1' at line 11: Can not add 'leaf id' to 'container bar' in module 'augment0': node with same name already declared at line 9";
+            String expected = "Error in module 'augment1' at line 10: Failed to perform augmentation: Error in module 'augment0' at line 8: Can not add 'leaf id' to 'container bar' in module 'augment0': node with same name already declared at line 9";
             assertEquals(expected, e.getMessage());
         }
     }
@@ -190,7 +191,7 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'augment2' at line 11: Can not add 'anyxml delta' to node 'choice-ext' in module 'augment0': case with same name already declared at line 18";
+            String expected = "Error in module 'augment0' at line 17: Can not add 'anyxml delta' to node 'choice-ext' in module 'augment0': case with same name already declared at line 18";
             assertEquals(expected, e.getMessage());
         }
     }

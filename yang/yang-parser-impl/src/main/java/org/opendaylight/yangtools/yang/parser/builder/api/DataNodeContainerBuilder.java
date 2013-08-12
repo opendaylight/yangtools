@@ -86,6 +86,13 @@ public interface DataNodeContainerBuilder extends Builder {
     void addGrouping(GroupingBuilder groupingBuilder);
 
     /**
+     * Get builders of uses defined in this node.
+     *
+     * @return collection of uses builders
+     */
+    Set<UsesNodeBuilder> getUsesNodes();
+
+    /**
      * Add builder of uses statement to this node.
      *
      * @param usesBuilder

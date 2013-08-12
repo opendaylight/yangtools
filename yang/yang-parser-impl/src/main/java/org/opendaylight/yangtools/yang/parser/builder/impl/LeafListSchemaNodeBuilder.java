@@ -48,26 +48,6 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public LeafListSchemaNodeBuilder(final LeafListSchemaNodeBuilder b, final QName qname) {
-        super(b.getModuleName(), b.getLine(), qname);
-        instance = new LeafListSchemaNodeImpl(qname);
-
-        type = b.getType();
-        typedef = b.getTypedef();
-
-        constraints = new ConstraintsBuilder(b.getConstraints());
-        schemaPath = b.getPath();
-        description = b.getDescription();
-        reference = b.getReference();
-        status = b.getStatus();
-        augmenting = b.isAugmenting();
-        addedByUses = b.isAddedByUses();
-        configuration = b.isConfiguration();
-        userOrdered = b.isUserOrdered();
-        unknownNodes = b.unknownNodes;
-        addedUnknownNodes.addAll(b.getUnknownNodeBuilders());
-    }
-
     @Override
     public LeafListSchemaNode build() {
         if (!isBuilt) {

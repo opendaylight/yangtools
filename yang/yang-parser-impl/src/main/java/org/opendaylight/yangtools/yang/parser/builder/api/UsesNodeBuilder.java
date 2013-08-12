@@ -46,12 +46,34 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
 
     UsesNode build();
 
+    Set<DataSchemaNodeBuilder> getFinalChildren();
+
     Set<DataSchemaNodeBuilder> getTargetChildren();
+
+    void setTargetChildren(Set<DataSchemaNodeBuilder> targetChildren);
+
+    Set<GroupingBuilder> getFinalGroupings();
 
     Set<GroupingBuilder> getTargetGroupings();
 
+    void setTargetGroupings(Set<GroupingBuilder> targetGroupings);
+
+    Set<TypeDefinitionBuilder> getFinalTypedefs();
+
     Set<TypeDefinitionBuilder> getTargetTypedefs();
 
+    void setTargetTypedefs(Set<TypeDefinitionBuilder> targetTypedefs);
+
+    List<UnknownSchemaNodeBuilder> getFinalUnknownNodes();
+
     List<UnknownSchemaNodeBuilder> getTargetUnknownNodes();
+
+    void setTargetUnknownNodes(List<UnknownSchemaNodeBuilder> targetUnknownNodes);
+
+    List<UsesNodeBuilder> getTargetGroupingUses();
+
+    boolean isLoadDone();
+
+    void setLoadDone(boolean loadDone);
 
 }

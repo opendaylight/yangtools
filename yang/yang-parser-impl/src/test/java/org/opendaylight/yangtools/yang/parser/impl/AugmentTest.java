@@ -216,7 +216,7 @@ public class AugmentTest {
         expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
         assertEquals(expectedPath, odl.getPath());
 
-        // testfile3.yang
+        // custom.yang
         // augment "/data:interfaces/data:ifEntry/t3:augment-holder/t1:schemas"
         LeafSchemaNode linkleaf = (LeafSchemaNode) schemas.getDataChildByName("linkleaf");
         assertNotNull(linkleaf);

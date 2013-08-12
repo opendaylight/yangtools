@@ -27,7 +27,7 @@ public final class ConstraintsBuilder extends AbstractBuilder {
     private Integer min;
     private Integer max;
 
-    ConstraintsBuilder(final String moduleName, final int line) {
+    public ConstraintsBuilder(final String moduleName, final int line) {
         super(moduleName, line);
         instance = new ConstraintDefinitionImpl();
         mustDefinitions = new HashSet<MustDefinition>();

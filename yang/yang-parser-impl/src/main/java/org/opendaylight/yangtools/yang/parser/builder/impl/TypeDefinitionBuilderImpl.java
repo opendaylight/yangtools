@@ -44,30 +44,6 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
         super(moduleName, line, qname);
     }
 
-    public TypeDefinitionBuilderImpl(TypeDefinitionBuilder tdb, QName qname) {
-        super(tdb.getModuleName(), tdb.getLine(), qname);
-        schemaPath = tdb.getPath();
-
-        type = tdb.getType();
-        typedef = tdb.getTypedef();
-
-        unknownNodes = tdb.getUnknownNodes();
-        for (UnknownSchemaNodeBuilder usnb : tdb.getUnknownNodeBuilders()) {
-            addedUnknownNodes.add(usnb);
-        }
-        ranges = tdb.getRanges();
-        lengths = tdb.getLengths();
-        patterns = tdb.getPatterns();
-        fractionDigits = tdb.getFractionDigits();
-
-        description = tdb.getDescription();
-        reference = tdb.getReference();
-        status = tdb.getStatus();
-        units = tdb.getUnits();
-        defaultValue = tdb.getDefaultValue();
-        addedByUses = tdb.isAddedByUses();
-    }
-
     @Override
     public TypeDefinition<? extends TypeDefinition<?>> build() {
         TypeDefinition<?> result = null;

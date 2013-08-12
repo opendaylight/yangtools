@@ -48,28 +48,6 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public LeafSchemaNodeBuilder(final LeafSchemaNodeBuilder b, final QName qname) {
-        super(b.getModuleName(), b.getLine(), qname);
-        instance = new LeafSchemaNodeImpl(qname);
-        constraints = new ConstraintsBuilder(b.getConstraints());
-        schemaPath = b.getPath();
-
-        type = b.getType();
-        typedef = b.getTypedef();
-
-        description = b.getDescription();
-        reference = b.getReference();
-        status = b.getStatus();
-        augmenting = b.isAugmenting();
-        addedByUses = b.isAddedByUses();
-        configuration = b.isConfiguration();
-        unknownNodes = b.unknownNodes;
-        addedUnknownNodes.addAll(b.getUnknownNodeBuilders());
-
-        defaultStr = b.getDefaultStr();
-        unitsStr = b.getUnits();
-    }
-
     @Override
     public LeafSchemaNode build() {
         if (!isBuilt) {

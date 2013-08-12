@@ -20,9 +20,15 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
 
     void addWhenCondition(String whenCondition);
 
+    String getDescription();
+
     void setDescription(String description);
 
+    String getReference();
+
     void setReference(String reference);
+
+    Status getStatus();
 
     void setStatus(Status status);
 

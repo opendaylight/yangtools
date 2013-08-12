@@ -56,7 +56,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
     private final static SchemaPath path = new SchemaPath(Collections.<QName> emptyList(), true);
 
-    AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr) {
+    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr) {
         super(moduleName, line, null);
         this.augmentTargetStr = augmentTargetStr;
         final SchemaPath targetPath = ParserUtils.parseXPathString(augmentTargetStr);
@@ -80,6 +80,11 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
+    public Set<UsesNodeBuilder> getUsesNodes() {
+        return usesNodes;
+    }
+
+    @Override
     public void addUsesNode(UsesNodeBuilder usesBuilder) {
         usesNodes.add(usesBuilder);
     }
@@ -92,12 +97,6 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     @Override
     public AugmentationSchema build() {
         if (!built) {
-            // process uses
-            for (UsesNodeBuilder use : usesNodes) {
-                addedChildNodes.addAll(use.getTargetChildren());
-                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
-            }
-
             instance.setDescription(description);
             instance.setReference(reference);
             instance.setStatus(status);
@@ -167,13 +166,28 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
     @Override
+    public String getReference() {
+        return reference;
+    }
+
+    @Override
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    @Override
+    public Status getStatus() {
+        return status;
     }
 
     @Override

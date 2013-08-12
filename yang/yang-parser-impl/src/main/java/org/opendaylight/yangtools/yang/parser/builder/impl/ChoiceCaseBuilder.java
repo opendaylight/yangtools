@@ -45,7 +45,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     // AugmentationTarget args
     private final Set<AugmentationSchemaBuilder> addedAugmentations = new HashSet<AugmentationSchemaBuilder>();
 
-    ChoiceCaseBuilder(final String moduleName, final int line, final QName qname) {
+    public ChoiceCaseBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line, qname);
         instance = new ChoiceCaseNodeImpl(qname);
         constraints = new ConstraintsBuilder(moduleName, line);
@@ -54,12 +54,6 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     @Override
     public ChoiceCaseNode build() {
         if (!isBuilt) {
-            // process uses
-            for(UsesNodeBuilder use : addedUsesNodes) {
-                addedChildNodes.addAll(use.getTargetChildren());
-                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
-            }
-
             instance.setConstraints(constraints.build());
             instance.setPath(schemaPath);
             instance.setDescription(description);

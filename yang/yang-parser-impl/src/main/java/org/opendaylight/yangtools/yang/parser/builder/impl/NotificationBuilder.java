@@ -57,14 +57,6 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
     @Override
     public NotificationDefinition build() {
         if (!isBuilt) {
-            // process uses
-            for(UsesNodeBuilder use : addedUsesNodes) {
-                addedChildNodes.addAll(use.getTargetChildren());
-                addedGroupings.addAll(use.getTargetGroupings());
-                addedTypedefs.addAll(use.getTargetTypedefs());
-                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
-            }
-
             instance.setPath(schemaPath);
             instance.setDescription(description);
             instance.setReference(reference);
@@ -135,6 +127,11 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
     @Override
     public void addTypedef(final TypeDefinitionBuilder type) {
         addedTypedefs.add(type);
+    }
+
+    @Override
+    public Set<UsesNodeBuilder> getUsesNodes() {
+        return addedUsesNodes;
     }
 
     @Override

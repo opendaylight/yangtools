@@ -21,13 +21,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -73,9 +70,9 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilde
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.util.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
-import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
-import org.opendaylight.yangtools.yang.parser.util.RefineUtils;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
 import org.slf4j.Logger;
@@ -95,33 +92,39 @@ public final class YangParserImpl implements YangModelParser {
 
     @Override
     public Set<Module> parseYangModels(final List<File> yangFiles, final SchemaContext context) {
-        if (yangFiles != null) {
-            final Map<InputStream, File> inputStreams = Maps.newHashMap();
-
-            for (final File yangFile : yangFiles) {
-                try {
-                    inputStreams.put(new FileInputStream(yangFile), yangFile);
-                } catch (FileNotFoundException e) {
-                    LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
-                }
-            }
-
-            Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
-
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(
-                    Lists.newArrayList(inputStreams.keySet()), builderToStreamMap);
-
-            for (InputStream is : inputStreams.keySet()) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    LOG.debug("Failed to close stream.");
-                }
-            }
-
-            return new LinkedHashSet<Module>(buildWithContext(modules, context).values());
-        }
-        return Collections.emptySet();
+        // TODO
+        throw new YangParseException("Not yet implemented");
+        // if (yangFiles != null) {
+        // final Map<InputStream, File> inputStreams = Maps.newHashMap();
+        //
+        // for (final File yangFile : yangFiles) {
+        // try {
+        // inputStreams.put(new FileInputStream(yangFile), yangFile);
+        // } catch (FileNotFoundException e) {
+        // LOG.warn("Exception while reading yang file: " + yangFile.getName(),
+        // e);
+        // }
+        // }
+        //
+        // Map<ModuleBuilder, InputStream> builderToStreamMap =
+        // Maps.newHashMap();
+        //
+        // final Map<String, TreeMap<Date, ModuleBuilder>> modules =
+        // resolveModuleBuilders(
+        // Lists.newArrayList(inputStreams.keySet()), builderToStreamMap);
+        //
+        // for (InputStream is : inputStreams.keySet()) {
+        // try {
+        // is.close();
+        // } catch (IOException e) {
+        // LOG.debug("Failed to close stream.");
+        // }
+        // }
+        //
+        // return new LinkedHashSet<Module>(buildWithContext(modules,
+        // context).values());
+        // }
+        // return Collections.emptySet();
     }
 
     @Override
@@ -131,13 +134,18 @@ public final class YangParserImpl implements YangModelParser {
 
     @Override
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, SchemaContext context) {
-        if (yangModelStreams != null) {
-            Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuildersWithContext(
-                    yangModelStreams, builderToStreamMap, context);
-            return new LinkedHashSet<Module>(buildWithContext(modules, context).values());
-        }
-        return Collections.emptySet();
+        // TODO
+        throw new YangParseException("Not yet implemented");
+        // if (yangModelStreams != null) {
+        // Map<ModuleBuilder, InputStream> builderToStreamMap =
+        // Maps.newHashMap();
+        // final Map<String, TreeMap<Date, ModuleBuilder>> modules =
+        // resolveModuleBuildersWithContext(
+        // yangModelStreams, builderToStreamMap, context);
+        // return new LinkedHashSet<Module>(buildWithContext(modules,
+        // context).values());
+        // }
+        // return Collections.emptySet();
     }
 
     @Override
@@ -296,6 +304,7 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
         resolveAugments(modules);
+        finishResolvingUses(modules);
         resolveDeviations(modules);
 
         // build
@@ -400,76 +409,91 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     /**
-     * Go through all augment definitions and resolve them. It is expected that
-     * modules are already sorted by their dependencies. This method also finds
-     * augment target node and add child nodes to it.
+     * Go through all augment definitions and perform augmentation. It is
+     * expected that modules are already sorted by their dependencies.
      *
      * @param modules
-     *            all available modules
+     *            all loaded modules
      */
     private void resolveAugments(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        final List<ModuleBuilder> allModulesList = new ArrayList<ModuleBuilder>();
-        final Set<ModuleBuilder> allModulesSet = new HashSet<ModuleBuilder>();
+        // collect augments from all loaded modules
+        final List<AugmentationSchemaBuilder> allAugments = new ArrayList<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
-                allModulesList.add(inner.getValue());
-                allModulesSet.add(inner.getValue());
+                allAugments.addAll(inner.getValue().getAllAugments());
             }
         }
 
-        for (int i = 0; i < allModulesList.size(); i++) {
-            final ModuleBuilder module = allModulesList.get(i);
-            // try to resolve augments in module
-            resolveAugment(modules, module);
-            // while all augments are not resolved
-            final Iterator<ModuleBuilder> allModulesIterator = allModulesSet.iterator();
-            while (!(module.getAugmentsResolved() == module.getAllAugments().size())) {
-                ModuleBuilder nextModule = null;
-                // try resolve other module augments
-                try {
-                    nextModule = allModulesIterator.next();
-                    resolveAugment(modules, nextModule);
-                } catch (NoSuchElementException e) {
-                	
-                	
-                    throw new YangParseException("Failed to resolve augments in module '" + module.getName() + "'.", e);
-                }
-                // then try to resolve first module again
-                resolveAugment(modules, module);
+        for (int i = 0; i < allAugments.size(); i++) {
+            // pick one augment
+            final AugmentationSchemaBuilder augment = allAugments.get(i);
+            // create collection of others
+            List<AugmentationSchemaBuilder> others = new ArrayList<>(allAugments);
+            others.remove(augment);
+
+            // try to resolve it
+            boolean resolved = resolveAugment(modules, augment);
+            // while not resolved
+            int j = 0;
+            while (!(resolved) && j < others.size()) {
+                // try to resolve next augment
+                resolveAugment(modules, others.get(j));
+                // then try to resolve first again
+                resolved = resolveAugment(modules, augment);
+                j++;
+
+            }
+
+            if (!resolved) {
+                throw new YangParseException(augment.getModuleName(), augment.getLine(),
+                        "Error in augment parsing: failed to find augment target");
             }
         }
     }
 
     /**
-     * Tries to resolve augments in given module. If augment target node is not
-     * found, do nothing.
+     * Search for augment target and perform augmentation.
      *
      * @param modules
-     *            all available modules
-     * @param module
-     *            current module
+     *            all loaded modules
+     * @param augmentBuilder
+     *            augment to resolve
+     * @return true if target node found, false otherwise
      */
-    private void resolveAugment(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
-        if (module.getAugmentsResolved() < module.getAllAugments().size()) {
-            for (AugmentationSchemaBuilder augmentBuilder : module.getAllAugments()) {
-
-                if (!augmentBuilder.isResolved()) {
-                    final SchemaPath augmentTargetSchemaPath = augmentBuilder.getTargetPath();
-                    final List<QName> path = augmentTargetSchemaPath.getPath();
-
-                    final QName qname = path.get(0);
-                    String prefix = qname.getPrefix();
-                    if (prefix == null) {
-                        prefix = module.getPrefix();
-                    }
-
-                    final ModuleBuilder dependentModule = findDependentModuleBuilder(modules, module, prefix,
-                            augmentBuilder.getLine());
-                    processAugmentation(augmentBuilder, path, module, dependentModule);
-                }
-
-            }
+    private boolean resolveAugment(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final AugmentationSchemaBuilder augmentBuilder) {
+        if (augmentBuilder.isResolved()) {
+            return true;
         }
+
+        int line = augmentBuilder.getLine();
+        ModuleBuilder module = getParentModule(augmentBuilder);
+        List<QName> path = augmentBuilder.getTargetPath().getPath();
+        Builder augmentParent = augmentBuilder.getParent();
+        boolean isUsesAugment = false;
+
+        Builder firstNodeParent = null;
+        if (augmentParent instanceof ModuleBuilder) {
+            // if augment is defined under module, parent of first node is
+            // target module
+            final QName firstNameInPath = path.get(0);
+            String prefix = firstNameInPath.getPrefix();
+            if (prefix == null) {
+                prefix = module.getPrefix();
+            }
+            firstNodeParent = findDependentModuleBuilder(modules, module, prefix, line);
+        } else if (augmentParent instanceof UsesNodeBuilder) {
+            // if augment is defined under uses, parent of first node is uses
+            // parent
+            isUsesAugment = true;
+            firstNodeParent = augmentParent.getParent();
+        } else {
+            // augment can be defined only under module or uses
+            throw new YangParseException(augmentBuilder.getModuleName(), line,
+                    "Failed to parse augment: Unresolved parent of augment: " + augmentParent);
+        }
+
+        return processAugmentation(augmentBuilder, firstNodeParent, path, isUsesAugment);
     }
 
     /**
@@ -484,74 +508,81 @@ public final class YangParserImpl implements YangModelParser {
      */
     private void resolveAugmentsWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final SchemaContext context) {
-        final List<ModuleBuilder> allModulesList = new ArrayList<ModuleBuilder>();
-        final Set<ModuleBuilder> allModulesSet = new HashSet<ModuleBuilder>();
+        // collect augments from all loaded modules
+        final List<AugmentationSchemaBuilder> allAugments = new ArrayList<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
-                allModulesList.add(inner.getValue());
-                allModulesSet.add(inner.getValue());
+                allAugments.addAll(inner.getValue().getAllAugments());
             }
         }
 
-        for (int i = 0; i < allModulesList.size(); i++) {
-            final ModuleBuilder module = allModulesList.get(i);
-            // try to resolve augments in module
-            resolveAugmentWithContext(modules, module, context);
-            // while all augments are not resolved
-            final Iterator<ModuleBuilder> allModulesIterator = allModulesSet.iterator();
-            while (!(module.getAugmentsResolved() == module.getAllAugments().size())) {
-                ModuleBuilder nextModule = null;
-                // try resolve other module augments
-                try {
-                    nextModule = allModulesIterator.next();
-                    resolveAugmentWithContext(modules, nextModule, context);
-                } catch (NoSuchElementException e) {
-                    throw new YangParseException("Failed to resolve augments in module '" + module.getName() + "'.", e);
-                }
-                // then try to resolve first module again
-                resolveAugmentWithContext(modules, module, context);
+        for (int i = 0; i < allAugments.size(); i++) {
+            // pick augment from list
+            final AugmentationSchemaBuilder augment = allAugments.get(i);
+            // try to resolve it
+            boolean resolved = resolveAugmentWithContext(modules, augment, context);
+            // while not resolved
+            int j = i + 1;
+            while (!(resolved) && j < allAugments.size()) {
+                // try to resolve next augment
+                resolveAugmentWithContext(modules, allAugments.get(j), context);
+                // then try to resolve first again
+                resolved = resolveAugmentWithContext(modules, augment, context);
+                j++;
+            }
+
+            if (!resolved) {
+                throw new YangParseException(augment.getModuleName(), augment.getLine(),
+                        "Error in augment parsing: failed to find augment target");
             }
         }
     }
 
     /**
-     * Tries to resolve augments in given module. If augment target node is not
-     * found, do nothing.
+     * Search for augment target and perform augmentation.
      *
      * @param modules
-     *            all available modules
-     * @param module
-     *            current module
+     *            all loaded modules
+     * @param augmentBuilder
+     *            augment to resolve
+     * @param context
+     *            SchemaContext containing already resolved modules
+     * @return true if target node found, false otherwise
      */
-    private void resolveAugmentWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder module, final SchemaContext context) {
-        if (module.getAugmentsResolved() < module.getAllAugments().size()) {
+    private boolean resolveAugmentWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final AugmentationSchemaBuilder augmentBuilder, final SchemaContext context) {
+        if (augmentBuilder.isResolved()) {
+            return true;
+        }
+        int line = augmentBuilder.getLine();
+        ModuleBuilder module = getParentModule(augmentBuilder);
+        List<QName> path = augmentBuilder.getTargetPath().getPath();
+        final QName firstNameInPath = path.get(0);
+        String prefix = firstNameInPath.getPrefix();
+        if (prefix == null) {
+            prefix = module.getPrefix();
+        }
+        Builder augmentParent = augmentBuilder.getParent();
+        Builder currentParent = null;
+        boolean isUsesAugment = false;
 
-            for (AugmentationSchemaBuilder augmentBuilder : module.getAllAugments()) {
-                final int line = augmentBuilder.getLine();
+        if (augmentParent instanceof ModuleBuilder) {
+            // if augment is defined under module, first parent is target module
+            currentParent = findDependentModuleBuilder(modules, module, prefix, line);
+        } else if (augmentParent instanceof UsesNodeBuilder) {
+            // if augment is defined under uses, first parent is uses parent
+            isUsesAugment = true;
+            currentParent = augmentParent.getParent();
+        } else {
+            // augment can be defined only under module or uses
+            throw new YangParseException(augmentBuilder.getModuleName(), augmentBuilder.getLine(),
+                    "Error in augment parsing: Unresolved parent of augment: " + augmentParent);
+        }
 
-                if (!augmentBuilder.isResolved()) {
-                    final List<QName> path = augmentBuilder.getTargetPath().getPath();
-                    final QName qname = path.get(0);
-                    String prefix = qname.getPrefix();
-                    if (prefix == null) {
-                        prefix = module.getPrefix();
-                    }
-
-                    // try to find augment target module in loaded modules...
-                    final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, module, prefix,
-                            line);
-                    if (dependentModuleBuilder == null) {
-                        // perform augmentation on module from context and
-                        // continue to next augment
-                        processAugmentationOnContext(augmentBuilder, path, module, prefix, line, context);
-                        continue;
-                    } else {
-                        processAugmentation(augmentBuilder, path, module, dependentModuleBuilder);
-                    }
-                }
-
-            }
+        if (currentParent == null) {
+            return processAugmentationOnContext(augmentBuilder, path, module, prefix, context);
+        } else {
+            return processAugmentation(augmentBuilder, currentParent, path, isUsesAugment);
         }
     }
 
@@ -656,34 +687,46 @@ public final class YangParserImpl implements YangModelParser {
      */
     private void resolveUsesNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         final List<UsesNodeBuilder> allModuleUses = module.getAllUsesNodes();
+        List<UsesNodeBuilder> collection = new ArrayList<>(module.getAllUsesNodes());
+        boolean usesDataLoaded = module.allUsesLoadDone();
+        while (!usesDataLoaded) {
+            for (UsesNodeBuilder usesNode : collection) {
+                if (!usesNode.isLoadDone()) {
+                    final GroupingBuilder targetGrouping = GroupingUtils.getTargetGroupingFromModules(usesNode,
+                            modules, module);
+                    usesNode.setGroupingPath(targetGrouping.getPath());
+                    // load uses target nodes in uses
+                    GroupingUtils.loadTargetGroupingData(usesNode, targetGrouping);
+                }
+            }
+            collection = new ArrayList<>(module.getAllUsesNodes());
+            usesDataLoaded = module.allUsesLoadDone();
+        }
+
         for (UsesNodeBuilder usesNode : allModuleUses) {
-            // process uses operation
-            final GroupingBuilder targetGrouping = getTargetGroupingFromModules(usesNode, modules, module);
-            usesNode.setGroupingPath(targetGrouping.getPath());
-            processUsesNode(module, usesNode, targetGrouping);
-            // refine
-            for (RefineHolder refine : usesNode.getRefines()) {
-                DataSchemaNodeBuilder nodeToRefine = null;
-                for (DataSchemaNodeBuilder dsnb : usesNode.getTargetChildren()) {
-                    if (refine.getName().equals(dsnb.getQName().getLocalName())) {
-                        nodeToRefine = dsnb;
-                        break;
-                    }
-                }
-                if (nodeToRefine == null) {
-                    throw new YangParseException(refine.getModuleName(), refine.getLine(), "Refine target node '"
-                            + refine.getName() + "' not found");
-                }
-                if (nodeToRefine instanceof GroupingMember) {
-                    ((GroupingMember) nodeToRefine).setAddedByUses(true);
-                }
-                RefineUtils.performRefine(nodeToRefine, refine);
-                usesNode.addRefineNode(nodeToRefine);
+            final GroupingBuilder targetGrouping = GroupingUtils
+                    .getTargetGroupingFromModules(usesNode, modules, module);
+            // load uses target uses nodes in uses
+            GroupingUtils.loadTargetGroupingUses(usesNode, targetGrouping);
+        }
+    }
+
+    private void finishResolvingUses(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+        final List<UsesNodeBuilder> alluses = new ArrayList<>();
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
+                alluses.addAll(inner.getValue().getAllUsesNodes());
             }
         }
-        for (UsesNodeBuilder usesNode : allModuleUses) {
-            final GroupingBuilder targetGrouping = getTargetGroupingFromModules(usesNode, modules, module);
-            processUsesTarget(module, usesNode, targetGrouping);
+        for (UsesNodeBuilder usesNode : alluses) {
+            ParserUtils.processUsesNode(usesNode);
+        }
+        for (UsesNodeBuilder usesNode : alluses) {
+            ParserUtils.performRefine(usesNode);
+            ParserUtils.updateUsesParent(usesNode, usesNode.getParent());
+        }
+        for (UsesNodeBuilder usesNode : alluses) {
+            ParserUtils.fixUsesNodesPath(usesNode);
         }
     }
 
@@ -701,144 +744,30 @@ public final class YangParserImpl implements YangModelParser {
      */
     private void resolveUsesNodesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder module, final SchemaContext context) {
-        final List<UsesNodeBuilder> moduleUses = module.getAllUsesNodes();
-        for (UsesNodeBuilder usesNode : moduleUses) {
-            final GroupingBuilder targetGroupingBuilder = getTargetGroupingFromModules(usesNode, modules, module);
-            if (targetGroupingBuilder == null) {
-                final GroupingDefinition targetGrouping = getTargetGroupingFromContext(usesNode, module, context);
-                usesNode.setGroupingPath(targetGrouping.getPath());
-                processUsesNode(usesNode, targetGrouping);
-                for (RefineHolder refine : usesNode.getRefines()) {
-                    DataSchemaNodeBuilder nodeToRefine = null;
-                    for (DataSchemaNodeBuilder dsnb : usesNode.getTargetChildren()) {
-                        if (refine.getName().equals(dsnb.getQName().getLocalName())) {
-                            nodeToRefine = dsnb;
-                            break;
-                        }
-                    }
-                    if (nodeToRefine == null) {
-                        throw new YangParseException(refine.getModuleName(), refine.getLine(), "Refine target node '"
-                                + refine.getName() + "' not found");
-                    }
-                    if (nodeToRefine instanceof GroupingMember) {
-                        ((GroupingMember) nodeToRefine).setAddedByUses(true);
-                    }
-                    RefineUtils.performRefine(nodeToRefine, refine);
-                    usesNode.addRefineNode(nodeToRefine);
-                }
+        final List<UsesNodeBuilder> allModuleUses = module.getAllUsesNodes();
+        for (UsesNodeBuilder usesNode : allModuleUses) {
+            // process uses operation
+            final GroupingBuilder targetGrouping = GroupingUtils
+                    .getTargetGroupingFromModules(usesNode, modules, module);
+            if (targetGrouping == null) {
+                // TODO implement
             } else {
-                usesNode.setGroupingPath(targetGroupingBuilder.getPath());
-                processUsesNode(module, usesNode, targetGroupingBuilder);
-                for (RefineHolder refine : usesNode.getRefines()) {
-                    DataSchemaNodeBuilder nodeToRefine = null;
-                    for (DataSchemaNodeBuilder dsnb : usesNode.getTargetChildren()) {
-                        if (refine.getName().equals(dsnb.getQName().getLocalName())) {
-                            nodeToRefine = dsnb;
-                            break;
-                        }
-                    }
-                    if (nodeToRefine == null) {
-                        throw new YangParseException(refine.getModuleName(), refine.getLine(), "Refine target node '"
-                                + refine.getName() + "' not found");
-                    }
-                    if (nodeToRefine instanceof GroupingMember) {
-                        ((GroupingMember) nodeToRefine).setAddedByUses(true);
-                    }
-                    RefineUtils.performRefine(nodeToRefine, refine);
-                    usesNode.addRefineNode(nodeToRefine);
-                }
+                usesNode.setGroupingPath(targetGrouping.getPath());
+                GroupingUtils.loadTargetGroupingData(usesNode, targetGrouping);
+            }
+        }
+        for (UsesNodeBuilder usesNode : allModuleUses) {
+            final GroupingBuilder targetGrouping = GroupingUtils
+                    .getTargetGroupingFromModules(usesNode, modules, module);
+            if (targetGrouping == null) {
+                // TODO implement
+            } else {
+                GroupingUtils.loadTargetGroupingUses(usesNode, targetGrouping);
             }
         }
     }
 
-    /**
-     * Add nodes defined in target grouping to current context.
-     *
-     * @param module
-     *            current module
-     * @param usesNode
-     * @param targetGrouping
-     */
-    private void processUsesNode(final ModuleBuilder module, final UsesNodeBuilder usesNode,
-            final GroupingBuilder targetGrouping) {
-        DataNodeContainerBuilder parent = usesNode.getParent();
-        URI namespace = null;
-        Date revision = null;
-        String prefix = null;
-        if (parent instanceof ModuleBuilder || parent instanceof AugmentationSchemaBuilder) {
-            namespace = module.getNamespace();
-            revision = module.getRevision();
-            prefix = module.getPrefix();
-        } else {
-            QName parentQName = parent.getQName();
-            namespace = parentQName.getNamespace();
-            revision = parentQName.getRevision();
-            prefix = parentQName.getPrefix();
-        }
-        SchemaPath parentPath = parent.getPath();
-        // child nodes
-        Set<DataSchemaNodeBuilder> newChildren = processUsesDataSchemaNode(usesNode,
-                targetGrouping.getChildNodeBuilders(), parentPath, namespace, revision, prefix);
-        usesNode.getTargetChildren().addAll(newChildren);
-        // groupings
-        Set<GroupingBuilder> newGroupings = processUsesGroupings(targetGrouping.getGroupingBuilders(), parentPath,
-                namespace, revision, prefix);
-        usesNode.getTargetGroupings().addAll(newGroupings);
-        // typedefs
-        Set<TypeDefinitionBuilder> newTypedefs = processUsesTypedefs(targetGrouping.getTypeDefinitionBuilders(),
-                parentPath, namespace, revision, prefix);
-        usesNode.getTargetTypedefs().addAll(newTypedefs);
-        // unknown nodes
-        List<UnknownSchemaNodeBuilder> newUnknownNodes = processUsesUnknownNodes(
-                targetGrouping.getUnknownNodeBuilders(), parentPath, namespace, revision, prefix);
-        usesNode.getTargetUnknownNodes().addAll(newUnknownNodes);
-    }
-
-    /**
-     * Check if target grouping contains uses nodes and if it does, merge
-     * current uses with them.
-     *
-     * @param module
-     * @param usesNode
-     * @param targetGrouping
-     */
-    private void processUsesTarget(final ModuleBuilder module, final UsesNodeBuilder usesNode,
-            final GroupingBuilder targetGrouping) {
-        DataNodeContainerBuilder parent = usesNode.getParent();
-        URI namespace = null;
-        Date revision = null;
-        String prefix = null;
-        if (parent instanceof ModuleBuilder || parent instanceof AugmentationSchemaBuilder) {
-            namespace = module.getNamespace();
-            revision = module.getRevision();
-            prefix = module.getPrefix();
-        } else {
-            QName parentQName = parent.getQName();
-            namespace = parentQName.getNamespace();
-            revision = parentQName.getRevision();
-            prefix = parentQName.getPrefix();
-        }
-        SchemaPath parentPath = parent.getPath();
-
-        for (UsesNodeBuilder unb : targetGrouping.getUses()) {
-            Set<DataSchemaNodeBuilder> newChildren = processUsesDataSchemaNode(usesNode, unb.getTargetChildren(),
-                    parentPath, namespace, revision, prefix);
-            usesNode.getTargetChildren().addAll(newChildren);
-
-            Set<GroupingBuilder> newGroupings = processUsesGroupings(unb.getTargetGroupings(), parentPath, namespace,
-                    revision, prefix);
-            usesNode.getTargetGroupings().addAll(newGroupings);
-
-            Set<TypeDefinitionBuilder> newTypedefs = processUsesTypedefs(unb.getTargetTypedefs(), parentPath,
-                    namespace, revision, prefix);
-            usesNode.getTargetTypedefs().addAll(newTypedefs);
-
-            List<UnknownSchemaNodeBuilder> newUnknownNodes = processUsesUnknownNodes(unb.getTargetUnknownNodes(),
-                    parentPath, namespace, revision, prefix);
-            usesNode.getTargetUnknownNodes().addAll(newUnknownNodes);
-        }
-    }
-
+    // TODO use in implementation
     private void processUsesNode(final UsesNodeBuilder usesNode, final GroupingDefinition targetGrouping) {
         final String moduleName = usesNode.getModuleName();
         final int line = usesNode.getLine();
@@ -890,7 +819,7 @@ public final class YangParserImpl implements YangModelParser {
                 newChildren.add(newChild);
             }
         }
-        usesNode.getTargetChildren().addAll(newChildren);
+        usesNode.getFinalChildren().addAll(newChildren);
 
         final Set<GroupingBuilder> newGroupings = new HashSet<>();
         for (GroupingDefinition g : targetGrouping.getGroupings()) {
@@ -900,7 +829,7 @@ public final class YangParserImpl implements YangModelParser {
             newGrouping.setPath(createSchemaPath(parentPath, newQName));
             newGroupings.add(newGrouping);
         }
-        usesNode.getTargetGroupings().addAll(newGroupings);
+        usesNode.getFinalGroupings().addAll(newGroupings);
 
         final Set<TypeDefinitionBuilder> newTypedefs = new HashSet<>();
         for (TypeDefinition<?> td : targetGrouping.getTypeDefinitions()) {
@@ -910,7 +839,7 @@ public final class YangParserImpl implements YangModelParser {
             newType.setPath(createSchemaPath(parentPath, newQName));
             newTypedefs.add(newType);
         }
-        usesNode.getTargetTypedefs().addAll(newTypedefs);
+        usesNode.getFinalTypedefs().addAll(newTypedefs);
 
         final List<UnknownSchemaNodeBuilder> newUnknownNodes = new ArrayList<>();
         for (UnknownSchemaNode un : targetGrouping.getUnknownSchemaNodes()) {
@@ -920,7 +849,7 @@ public final class YangParserImpl implements YangModelParser {
             newNode.setPath(createSchemaPath(parentPath, newQName));
             newUnknownNodes.add(newNode);
         }
-        usesNode.getTargetUnknownNodes().addAll(newUnknownNodes);
+        usesNode.getFinalUnknownNodes().addAll(newUnknownNodes);
     }
 
     private void resolveUnknownNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {

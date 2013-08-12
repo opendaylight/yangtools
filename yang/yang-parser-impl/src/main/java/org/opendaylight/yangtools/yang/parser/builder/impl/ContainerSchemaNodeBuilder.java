@@ -72,43 +72,9 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    public ContainerSchemaNodeBuilder(final ContainerSchemaNodeBuilder b, final QName qname) {
-        super(b.getModuleName(), b.getLine(), qname);
-        instance = new ContainerSchemaNodeImpl(b.getQName());
-        constraints = new ConstraintsBuilder(b.getConstraints());
-        schemaPath = b.getPath();
-        description = b.getDescription();
-        reference = b.getReference();
-        status = b.getStatus();
-        presence = b.isPresence();
-        augmenting = b.isAugmenting();
-        addedByUses = b.isAddedByUses();
-        configuration = b.isConfiguration();
-        childNodes = b.getChildNodes();
-        addedChildNodes.addAll(b.getChildNodeBuilders());
-        groupings = b.getGroupings();
-        addedGroupings.addAll(b.getGroupingBuilders());
-        typedefs = b.typedefs;
-        addedTypedefs.addAll(b.getTypeDefinitionBuilders());
-        usesNodes = b.usesNodes;
-        addedUsesNodes.addAll(b.getUsesNodes());
-        augmentations = b.augmentations;
-        addedAugmentations.addAll(b.getAugmentations());
-        unknownNodes = b.unknownNodes;
-        addedUnknownNodes.addAll(b.getUnknownNodeBuilders());
-    }
-
     @Override
     public ContainerSchemaNode build() {
         if (!isBuilt) {
-            // process uses
-            for(UsesNodeBuilder use : addedUsesNodes) {
-                addedChildNodes.addAll(use.getTargetChildren());
-                addedGroupings.addAll(use.getTargetGroupings());
-                addedTypedefs.addAll(use.getTargetTypedefs());
-                addedUnknownNodes.addAll(use.getTargetUnknownNodes());
-            }
-
             instance.setPath(schemaPath);
             instance.setDescription(description);
             instance.setReference(reference);
@@ -123,6 +89,15 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
                 configuration = false;
             }
             instance.setConfiguration(configuration);
+
+            // USES
+            if (usesNodes == null) {
+                usesNodes = new HashSet<UsesNode>();
+                for (UsesNodeBuilder builder : addedUsesNodes) {
+                    usesNodes.add(builder.build());
+                }
+            }
+            instance.setUses(usesNodes);
 
             // CHILD NODES
             final Map<QName, DataSchemaNode> childs = new TreeMap<QName, DataSchemaNode>(Comparators.QNAME_COMP);
@@ -154,15 +129,6 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
                 }
             }
             instance.setTypeDefinitions(typedefs);
-
-            // USES
-            if (usesNodes == null) {
-                usesNodes = new HashSet<UsesNode>();
-                for (UsesNodeBuilder builder : addedUsesNodes) {
-                    usesNodes.add(builder.build());
-                }
-            }
-            instance.setUses(usesNodes);
 
             // AUGMENTATIONS
             if (augmentations == null) {
@@ -305,6 +271,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         return constraints;
     }
 
+    @Override
     public Set<UsesNodeBuilder> getUsesNodes() {
         return addedUsesNodes;
     }

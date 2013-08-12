@@ -323,7 +323,7 @@ public class GroupingTest {
 
     @Test
     public void testCascadeUses() throws FileNotFoundException, ParseException {
-        modules = TestUtils.loadModules(getClass().getResource("/simple-test").getPath());
+        modules = TestUtils.loadModules(getClass().getResource("/grouping-test").getPath());
         Module testModule = TestUtils.findModule(modules, "cascade-uses");
         Set<GroupingDefinition> groupings = testModule.getGroupings();
 
@@ -369,6 +369,7 @@ public class GroupingTest {
         // grouping-V/container-grouping-V
         ContainerSchemaNode containerV = (ContainerSchemaNode)gv.getDataChildByName("container-grouping-V");
         assertNotNull(containerV);
+        expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-V", "container-grouping-V");
         assertEquals(2, containerV.getChildNodes().size());
         // grouping-V/container-grouping-V/leaf-grouping-X
         LeafSchemaNode leafXinContainerV = (LeafSchemaNode)containerV.getDataChildByName("leaf-grouping-X");
