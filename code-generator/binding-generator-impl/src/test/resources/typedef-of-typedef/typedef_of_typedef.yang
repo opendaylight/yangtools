@@ -3,12 +3,24 @@ module typedef_typedef {
     namespace "urn:typedef:typedef";
     prefix "sbd";
 
+    import ietf-inet-types {
+        prefix "inet";
+        revision-date 2010-09-24;
+    }    
+
+
     organization "OPEN DAYLIGHT";
     contact "http://www.opendaylight.org/";
 
     revision 2013-07-09 {
         
     }
+
+
+    typedef typedef-from-import {
+    	type inet:ipv4-address;
+    }
+
 
    typedef byte-type {
         type bits {

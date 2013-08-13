@@ -1,0 +1,232 @@
+module module {
+    
+    namespace "urn:module";
+    prefix "sbd";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.whatever.com/";    
+
+    revision 2013-07-09 {
+        
+    }
+/*    
+    typedef typedef-simple-example {
+    	type int8;
+    	default 5;
+    	units "any unit";
+    	description "some sescription"
+    }
+    
+    typedef typedef-nested-example {
+    	type typedef-simple-example;
+    }
+    
+    typedef typedef-enumeration {
+    	type enumeration {
+    		enum enum1 {
+    			description "enum1 description";
+    			value 18;
+    		}
+    		enum enum2 {
+    			value 16;
+    		}
+    		enum enum3 {
+    		}    		
+    	}
+    }   
+    
+    typedef typedef-bits {
+    	type bits {
+    		bit first-bit {
+    			description "first-bit description";
+    			position 15;
+    		}
+    		bit second-bit; 
+    	}
+    }
+    
+    typedef typedef-string {
+    	type string {
+    		length 44;
+    		pattern "[a][.]*"
+    	}
+    }
+     
+    
+    typedef typedef-union {
+        type union {
+            type int32;
+            type string;
+        }
+    }    
+
+	container cont {
+		list outter-list {
+			leaf leaf-in-list {
+				type uint64;				
+			}
+			leaf-list leaf-list-in-list {
+				type string;				
+			}
+			list list-in-list {
+				leaf-list inner-leaf-list {
+					type int16;
+				}
+			}
+		}		
+	}
+
+	container cont1 {
+		list lst11 {
+		}
+		choice choice1 {
+			case case1 {
+			}		
+		}
+	}
+	container cont2 {
+		container cont21 {
+		}
+	}
+	
+	container cont3 {
+		leaf leaf31 {
+			type string;
+		}
+	}		
+	
+	list lst1 {
+		container cont11 {
+		}
+		choice choice1 {
+			case case1 {
+			}		
+		}		
+	}
+	
+	list lst2 {
+		list lst21 {
+		}
+	}	
+	
+	list lst3 {
+		leaf leaf31 {
+			type string;
+		}
+	}	
+	
+	container cont {
+		choice choice-test {
+			case case1 {
+				choice choice-test1 {
+					case case-test1 {
+					}
+				}
+			}
+			case case2 {
+				leaf lf {
+					type string;
+				}
+			}
+			case case3 {
+				leaf-list lf-lst {
+					type string;
+				}
+			}			
+			case case4 {
+				container cont {
+				}
+			}			
+			case case5 {
+				list lst {
+
+				}
+			}		
+		}
+	}		
+	
+	
+	choice choi1 {
+		leaf leaf1 {
+			type string;
+		}
+		leaf-list lf-lst1 {
+			type int32;
+		}
+		list lst1 {
+		}
+		container cont1 {
+		}
+	}
+
+	container cont {
+		choice choice-test {
+			case case1 {
+			}
+			case case2 {
+			}
+		}
+	}
+	
+// grouping and uses
+	grouping grp {
+		
+	}
+	
+	container cont {
+		uses grp;
+	}
+// :grouping and uses	
+
+// rpc
+	rpc rpc-test1 {
+		output {
+			leaf lf-output {
+				type string;
+			}
+		}
+		input {
+			leaf lf-input {
+				type string;
+			}		
+		}
+
+	}
+// :rpc	
+// notification
+	notification notif {
+	}
+// :notification	
+
+// augmentation
+    container cont {
+
+    }         
+    
+    augment "/cont" {
+    }
+// :augmentation
+
+*/
+
+// list with key
+	container cont {
+		list outter-list {
+			key "leaf-in-list";
+			leaf leaf-in-list {
+				type uint64;				
+			}
+			leaf-list leaf-list-in-list {
+				type string;				
+			}
+			list list-in-list {
+				leaf-list inner-leaf-list {
+					type int16;
+				}
+			}
+		}		
+	}
+// :list with key
+	
+    
+}
