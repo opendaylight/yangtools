@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
- *
+ * Transform Schema Context to Generated types.
  *
  */
 public interface BindingGenerator {
