@@ -29,7 +29,7 @@ class ClassTemplate {
         this.consts = genTO.constantDefinitions
     }
     
-    def generate() {
+    def String generate() {
         val body = generateBody(false)
         val pkgAndImports = generatePkgAndImports
         return pkgAndImports.toString + body.toString
@@ -227,7 +227,7 @@ class ClassTemplate {
     def private generateEquals() '''
         «IF !genTO.equalsIdentifiers.empty»
             @Override
-            public boolean equals(Object obj) {
+            public boolean equals(java.lang.Object obj) {
                 if (this == obj) {
                     return true;
                 }

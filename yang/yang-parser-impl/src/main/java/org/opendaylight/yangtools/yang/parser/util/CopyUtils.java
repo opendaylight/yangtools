@@ -41,6 +41,15 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UsesNodeBuilderImpl;
 
 public class CopyUtils {
 
+    /**
+     * Create copy of DataSchemaNodeBuilder with new parent. If updateQName is
+     * true, qname of node will be corrected based on new parent.
+     *
+     * @param old
+     * @param newParent
+     * @param updateQName
+     * @return
+     */
     public static DataSchemaNodeBuilder copy(DataSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
         if (old instanceof AnyXmlBuilder) {
             return copy((AnyXmlBuilder) old, newParent, updateQName);
@@ -57,7 +66,8 @@ public class CopyUtils {
         } else if (old instanceof ChoiceCaseBuilder) {
             return copy((ChoiceCaseBuilder) old, newParent, updateQName);
         } else {
-            throw new YangParseException(old.getModuleName(), old.getLine(), "Failed to copy node " + old);
+            throw new YangParseException(old.getModuleName(), old.getLine(),
+                    "Failed to copy node: Unknown type of DataSchemaNode: " + old);
         }
     }
 
@@ -76,7 +86,6 @@ public class CopyUtils {
         c.setAugmenting(old.isAugmenting());
         c.setAddedByUses(old.isAddedByUses());
         c.setConfiguration(old.isConfiguration());
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -99,15 +108,12 @@ public class CopyUtils {
         c.setAugmenting(old.isAugmenting());
         c.setAddedByUses(old.isAddedByUses());
         c.setConfiguration(old.isConfiguration());
-        // TODO: built child nodes?
         for (ChoiceCaseBuilder childNode : old.getCases()) {
             c.addCase(copy(childNode, c, updateQName));
         }
-        // TODO: built augments?
         for (AugmentationSchemaBuilder augment : old.getAugmentations()) {
             c.addAugmentation(copyAugment(augment, c));
         }
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -128,22 +134,20 @@ public class CopyUtils {
         c.setReference(old.getReference());
         c.setStatus(old.getStatus());
         c.setAugmenting(old.isAugmenting());
-        // TODO: built child nodes?
+        c.getChildNodes().addAll(old.getChildNodes());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             c.addChildNode(copy(childNode, c, updateQName));
         }
-        // TODO: built groupings?
-        // TODO: copy groupings?
         c.getGroupings().addAll(old.getGroupings());
-        // TODO: build typedefs?
+        for (GroupingBuilder grouping : old.getGroupingBuilders()) {
+            c.addGrouping(copy(grouping, c, updateQName));
+        }
         for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
             c.addTypedef(copy(tdb, c, updateQName));
         }
-        // TODO: built uses?
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             c.addUsesNode(copyUses(oldUses, c));
         }
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -169,28 +173,23 @@ public class CopyUtils {
         c.setAugmenting(old.isAugmenting());
         c.setAddedByUses(old.isAddedByUses());
         c.setConfiguration(old.isConfiguration());
-        // TODO: built child nodes?
+        c.setChildNodes(old.getChildNodes());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             c.addChildNode(copy(childNode, c, updateQName));
         }
-        // TODO: built groupings?
+        c.getGroupings().addAll(old.getGroupings());
         for (GroupingBuilder grouping : old.getGroupingBuilders()) {
             c.addGrouping(copy(grouping, c, updateQName));
         }
-
-        // TODO: build typedefs?
         for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
             c.addTypedef(copy(tdb, c, updateQName));
         }
-        // TODO: built uses?
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             c.addUsesNode(copyUses(oldUses, c));
         }
-        // TODO: built augments?
         for (AugmentationSchemaBuilder augment : old.getAugmentations()) {
             c.addAugmentation(copyAugment(augment, c));
         }
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -214,7 +213,6 @@ public class CopyUtils {
         c.setAugmenting(old.isAugmenting());
         c.setAddedByUses(old.isAddedByUses());
         c.setConfiguration(old.isConfiguration());
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -247,7 +245,6 @@ public class CopyUtils {
         c.setAugmenting(old.isAugmenting());
         c.setAddedByUses(old.isAddedByUses());
         c.setConfiguration(old.isConfiguration());
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -279,28 +276,23 @@ public class CopyUtils {
         c.setAugmenting(old.isAugmenting());
         c.setAddedByUses(old.isAddedByUses());
         c.setConfiguration(old.isConfiguration());
-        // TODO: built child nodes?
+        c.setChildNodes(old.getChildNodes());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             c.addChildNode(copy(childNode, c, updateQName));
         }
-        // TODO: built groupings?
+        c.getGroupings().addAll(old.getGroupings());
         for (GroupingBuilder grouping : old.getGroupingBuilders()) {
             c.addGrouping(copy(grouping, c, updateQName));
         }
-
-        // TODO: build typedefs?
         for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
             c.addTypedef(copy(tdb, c, updateQName));
         }
-        // TODO: built uses?
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             c.addUsesNode(copyUses(oldUses, c));
         }
-        // TODO: built augments?
         for (AugmentationSchemaBuilder augment : old.getAugmentations()) {
             c.addAugmentation(copyAugment(augment, c));
         }
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -311,36 +303,32 @@ public class CopyUtils {
         return c;
     }
 
-    public static GroupingBuilder copy(GroupingBuilder old, Builder newParent, boolean updateQName) {
+    static GroupingBuilder copy(GroupingBuilder old, Builder newParent, boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        GroupingBuilder c = new GroupingBuilderImpl(newParent.getModuleName(), newParent.getLine(), newQName);
+        GroupingBuilderImpl c = new GroupingBuilderImpl(newParent.getModuleName(), newParent.getLine(), newQName);
         c.setParent(newParent);
         c.setPath(newSchemaPath);
         c.setDescription(old.getDescription());
         c.setReference(old.getReference());
         c.setStatus(old.getStatus());
         c.setAddedByUses(old.isAddedByUses());
-        // TODO: built child nodes?
+        c.setChildNodes(old.getChildNodes());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             c.addChildNode(copy(childNode, c, updateQName));
         }
-        // TODO: built groupings?
+        c.getGroupings().addAll(old.getGroupings());
         for (GroupingBuilder grouping : old.getGroupingBuilders()) {
             c.addGrouping(copy(grouping, c, updateQName));
         }
-
-        // TODO: build typedefs?
         for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
             c.addTypedef(copy(tdb, c, updateQName));
         }
-        // TODO: built uses?
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             c.addUsesNode(copyUses(oldUses, c));
         }
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -348,7 +336,7 @@ public class CopyUtils {
         return c;
     }
 
-    public static TypeDefinitionBuilder copy(TypeDefinitionBuilder old, Builder newParent, boolean updateQName) {
+    static TypeDefinitionBuilder copy(TypeDefinitionBuilder old, Builder newParent, boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -398,7 +386,7 @@ public class CopyUtils {
         return newConstraints;
     }
 
-    public static UsesNodeBuilder copyUses(UsesNodeBuilder old, Builder newParent) {
+    static UsesNodeBuilder copyUses(UsesNodeBuilder old, Builder newParent) {
         UsesNodeBuilder u = new UsesNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
                 old.getGroupingName());
         u.setParent(newParent);
@@ -449,7 +437,6 @@ public class CopyUtils {
         }
         u.setTargetUnknownNodes(newUN);
 
-        // u.getTargetGroupingUses().addAll(old.getTargetGroupingUses());
         for (UsesNodeBuilder uses : old.getTargetGroupingUses()) {
             u.getTargetGroupingUses().add(copyUses(uses, uses.getParent()));
         }
@@ -462,23 +449,21 @@ public class CopyUtils {
     }
 
     private static AugmentationSchemaBuilder copyAugment(AugmentationSchemaBuilder old, Builder newParent) {
-        AugmentationSchemaBuilder a = new AugmentationSchemaBuilderImpl(newParent.getModuleName(), newParent.getLine(),
-                old.getTargetPathAsString());
+        AugmentationSchemaBuilderImpl a = new AugmentationSchemaBuilderImpl(newParent.getModuleName(),
+                newParent.getLine(), old.getTargetPathAsString());
         a.setParent(newParent);
 
         a.setDescription(old.getDescription());
         a.setReference(old.getReference());
         a.setStatus(old.getStatus());
         a.addWhenCondition(old.getWhenCondition());
-        // TODO: built child nodes?
+        a.setChildNodes(old.getChildNodes());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             a.addChildNode(copy(childNode, a, false));
         }
-        // TODO: built uses?
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             a.addUsesNode(copyUses(oldUses, a));
         }
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             a.addUnknownNodeBuilder((copy(un, a, false)));
         }
@@ -486,7 +471,7 @@ public class CopyUtils {
         return a;
     }
 
-    public static UnknownSchemaNodeBuilder copy(UnknownSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    static UnknownSchemaNodeBuilder copy(UnknownSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -500,8 +485,6 @@ public class CopyUtils {
         c.setReference(old.getReference());
         c.setStatus(old.getStatus());
         c.setAddedByUses(old.isAddedByUses());
-
-        // TODO: built un?
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
@@ -523,7 +506,6 @@ public class CopyUtils {
                 newPath = Collections.singletonList(newQName);
             }
         } else if (newParent instanceof AugmentationSchemaBuilder) {
-            // TODO: new parent is augment?
             ModuleBuilder parent = ParserUtils.getParentModule(newParent);
             if (updateQName) {
                 newQName = new QName(parent.getNamespace(), parent.getRevision(), parent.getPrefix(), old.getQName()
@@ -538,12 +520,6 @@ public class CopyUtils {
             SchemaNodeBuilder parent = (SchemaNodeBuilder) newParent;
             QName parentQName = parent.getQName();
             if (updateQName) {
-                if (parentQName == null) {
-                    System.out.println("NULL");
-                }
-                if (old == null) {
-                    System.out.println("2NULL");
-                }
                 newQName = new QName(parentQName.getNamespace(), parentQName.getRevision(), parentQName.getPrefix(),
                         old.getQName().getLocalName());
                 newPath = new ArrayList<>(parent.getPath().getPath());
