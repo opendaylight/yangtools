@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.binding;
 /**
  * Marker interface for generated notification listener interfaces
  *
- *
- *
  */
 public interface NotificationListener {
 
