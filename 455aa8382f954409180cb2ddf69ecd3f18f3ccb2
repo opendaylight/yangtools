@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAE3//+J4\u003d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 947,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2013-08-13T20:21:15Z",
+      "side": 1,
+      "message": "Please do not use string concatenation when logging. Replace this (and others) with:\nlogger.trace(\"entering {} {} ({})\", p1, p2, line);",
+      "revId": "455aa8382f954409180cb2ddf69ecd3f18f3ccb2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
