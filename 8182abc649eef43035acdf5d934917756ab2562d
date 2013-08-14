@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAE3//+HE\u003d",
+        "filename": "code-generator/samples/maven-code-gen-sample/src/main/yang/documentation.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2013-08-14T08:30:56Z",
+      "side": 1,
+      "message": "Please fix multiple whitespace errors.",
+      "revId": "8182abc649eef43035acdf5d934917756ab2562d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
