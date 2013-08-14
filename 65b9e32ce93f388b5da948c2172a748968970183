@@ -1,0 +1,7 @@
+Verified+1: jenkins-yangtools
+Code-Review+2: Robert Varga <rovarga@cisco.com>
+Submitted-by: Robert Varga <rovarga@cisco.com>
+Submitted-at: Wed, 14 Aug 2013 09:10:30 +0000
+Reviewed-on: http://git.opendaylight.org/gerrit/861
+Project: yangtools
+Branch: refs/heads/master
