@@ -22,11 +22,17 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class ExtendedTypedefTest {
 
     private final static List<File> testModels = new ArrayList<File>();
+    private final static String testFolderPath = AugmentedTypeTest.class.getResource("/typedef-of-typedef").getPath();
 
     @BeforeClass
     public static void loadTestResources() {
-        final File listModelFile = new File(ExtendedTypedefTest.class.getResource("/typedef_of_typedef.yang").getPath());
-        testModels.add(listModelFile);
+        final File testFolder = new File(testFolderPath);
+
+        for (final File fileEntry : testFolder.listFiles()) {
+            if (fileEntry.isFile()) {
+                testModels.add(fileEntry);
+            }
+        }
     }
 
     @Test
@@ -42,6 +48,7 @@ public class ExtendedTypedefTest {
         GeneratedTransferObject simpleTypedef4 = null;
         GeneratedTransferObject extendedTypedefUnion = null;
         GeneratedTransferObject unionTypedef = null;
+        GeneratedTransferObject typedefFromImport = null;
         for (final Type type : genTypes) {
             if (type instanceof GeneratedTransferObject) {
                 if (type.getName().equals("SimpleTypedef4")) {
@@ -50,16 +57,24 @@ public class ExtendedTypedefTest {
                     extendedTypedefUnion = (GeneratedTransferObject) type;
                 } else if (type.getName().equals("UnionTypedef")) {
                     unionTypedef = (GeneratedTransferObject) type;
+                } else if (type.getName().equals("TypedefFromImport")) {
+                    typedefFromImport = (GeneratedTransferObject) type;
                 }
             }
         }
+
+        // typedef-from-import
+        assertNotNull("TypedefFromImport not found", typedefFromImport);
+        List<GeneratedProperty> properties = typedefFromImport.getProperties();
+        assertTrue("Properties of TypedefFromImport should be empty", properties.isEmpty());
+        assertEquals("TypedefFromImport should be extended", "Ipv4Address", typedefFromImport.getExtends().getName());
 
         // simple-typedef4
         assertNotNull("SimpleTypedef4 not found", simpleTypedef4);
         assertNotNull("ExtendedTypedefUnion not found", extendedTypedefUnion);
         assertNotNull("UnionTypedef", unionTypedef);
 
-        List<GeneratedProperty> properties = simpleTypedef4.getProperties();
+        properties = simpleTypedef4.getProperties();
         assertTrue("SimpleTypedef4 shouldn't have properties.", properties.isEmpty());
 
         GeneratedTransferObject extendTO = simpleTypedef4.getExtends();
@@ -121,8 +136,7 @@ public class ExtendedTypedefTest {
                 .getReturnType().getName());
         assertEquals("Incorrect type for property simpleTypedef1.", "SimpleTypedef1", simpleTypedef1Property
                 .getReturnType().getName());
-        assertEquals("Incorrect type for property byteType.", "ByteType", byteTypeProperty
-                .getReturnType().getName());
+        assertEquals("Incorrect type for property byteType.", "ByteType", byteTypeProperty.getReturnType().getName());
         assertEquals("Incorrect type for property typedefEnumFruit.", "TypedefEnumFruit", typedefEnumFruitProperty
                 .getReturnType().getName());
     }

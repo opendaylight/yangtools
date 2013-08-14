@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 public final class TypeProviderImpl implements TypeProvider {
 
@@ -83,7 +84,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.controller.yang.model.type.provider.TypeProvider#
      * javaTypeForYangType(java.lang.String)
      */
@@ -368,7 +369,14 @@ public final class TypeProviderImpl implements TypeProvider {
         if (modules == null) {
             throw new IllegalArgumentException("Sef of Modules cannot be NULL!");
         }
-        for (final Module module : modules) {
+        final Module[] modulesArray = new Module[modules.size()];
+        int i = 0;
+        for (Module modul : modules) {
+            modulesArray[i++] = modul;
+        }
+        final List<Module> modulesSortedByDependency = ModuleDependencySort.sort(modulesArray);
+
+        for (final Module module : modulesSortedByDependency) {
             if (module == null) {
                 continue;
             }
@@ -658,7 +666,13 @@ public final class TypeProviderImpl implements TypeProvider {
         final String lowTypeDef = extendedType.getQName().getLocalName();
         final GeneratedTOBuilder genTOBuilder = new GeneratedTOBuilderImpl(basePackageName, typeDefName);
 
-        final Map<String, Type> typeMap = genTypeDefsContextMap.get(moduleName);
+        final Module parentModule = findParentModuleForTypeDefinition(schemaContext, extendedType);
+
+        Map<String, Type> typeMap = null;
+        if (parentModule != null) {
+            typeMap = genTypeDefsContextMap.get(parentModule.getName());
+        }
+
         if (typeMap != null) {
             Type type = typeMap.get(lowTypeDef);
             if (type instanceof GeneratedTransferObject) {
@@ -676,7 +690,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * equal depth. In next step are lists from this map concatenated to one
      * list in ascending order according to their depth. All type definitions
      * are in the list behind all type definitions on which depends.
-     *
+     * 
      * @param unsortedTypeDefinitions
      *            represents list of type definitions
      * @return list of type definitions sorted according their each other
@@ -710,7 +724,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * The method return how many immersion is necessary to get from type
      * definition to base type.
-     *
+     * 
      * @param typeDefinition
      *            is type definition for which is depth looked for.
      * @return how many immersion is necessary to get from type definition to
