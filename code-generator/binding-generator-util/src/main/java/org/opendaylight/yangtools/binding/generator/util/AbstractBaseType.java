@@ -9,9 +9,20 @@ package org.opendaylight.yangtools.binding.generator.util;
 
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
+/**
+ * It is used only as ancestor for other <code>Type</code>s
+ * 
+ */
 public class AbstractBaseType implements Type {
 
+    /**
+     * Name of the package to which this <code>Type</code> belongs.
+     */
     private final String packageName;
+
+    /**
+     * Name of this <code>Type</code>.
+     */
     private final String name;
 
     @Override
@@ -33,6 +44,16 @@ public class AbstractBaseType implements Type {
         }
     }
 
+    /**
+     * Constructs the instance of this class with the concrete package name type
+     * name.
+     * 
+     * @param pkName
+     *            string with the package name to which this <code>Type</code>
+     *            belongs
+     * @param name
+     *            string with the name for this <code>Type</code>
+     */
     protected AbstractBaseType(String pkName, String name) {
         this.packageName = pkName;
         this.name = name;
@@ -43,8 +64,7 @@ public class AbstractBaseType implements Type {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result
-                + ((packageName == null) ? 0 : packageName.hashCode());
+        result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
         return result;
     }
 

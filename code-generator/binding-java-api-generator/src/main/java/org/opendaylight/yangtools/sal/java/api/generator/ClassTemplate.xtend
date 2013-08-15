@@ -10,14 +10,41 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.binding.generator.util.Types
 
+/**
+ * Template for generating JAVA class. 
+ */
 class ClassTemplate {
     
+    /**
+     * Generated transfer object for which class JAVA file is generated
+     */
     val GeneratedTransferObject genTO
+    
+    /**
+     * Map of imports for this <code>genTO</code>.
+     */
     val Map<String, String> imports
+    
+    /**
+     * List of generated property instances which represents class attributes.
+     */
     val List<GeneratedProperty> fields
+    
+    /**
+     * List of enumeration which are generated as JAVA enum type.
+     */
     val List<Enumeration> enums
+    
+    /**
+     * List of constant instances which are generated as JAVA public static final attributes.
+     */
     val List<Constant> consts
     
+    /**
+     * Creates instance of this class with concrete <code>genTO</code>.
+     * 
+     * @param genTO generated transfer object which will be transformed to JAVA class source code
+     */
     new(GeneratedTransferObject genTO) {
         if (genTO == null) {
             throw new IllegalArgumentException("Generated transfer object reference cannot be NULL!")
@@ -30,16 +57,32 @@ class ClassTemplate {
         this.consts = genTO.constantDefinitions
     }
     
+    /**
+     * Generates JAVA class source code (package name + class body).
+     * 
+     * @return string with JAVA class source code
+     */
     def String generate() {
         val body = generateBody(false)
         val pkgAndImports = generatePkgAndImports
         return pkgAndImports.toString + body.toString
     }
     
+    /**
+     * Generates JAVA class source code (class body only).
+     * 
+     * @return string with JAVA class body source code
+     */
     def generateAsInnerClass() {
         return generateBody(true)
     }
     
+    /**
+     * Template method which generates class body.
+     * 
+     * @param isInnerClass boolean value which specify if generated class is|isn't inner
+     * @return string with class source code in JAVA format
+     */
     def private generateBody(boolean isInnerClass) '''
         «genTO.comment.generateComment»
         «generateClassDeclaration(isInnerClass)» {
@@ -69,6 +112,12 @@ class ClassTemplate {
         }
     '''
     
+    /**
+     * Template method which generates JAVA comments.
+     * 
+     * @param string with the comment for whole JAVA class
+     * @return string with comment in JAVA format
+     */
     def private generateComment(String comment) '''
         «IF comment != null && !comment.empty»
             /*
@@ -77,6 +126,12 @@ class ClassTemplate {
         «ENDIF»
     '''
     
+    /**
+     * Template method which generates JAVA class declaration.
+     * 
+     * @param isInnerClass boolean value which specify if generated class is|isn't inner
+     * @return string with class declaration in JAVA format
+     */
     def private generateClassDeclaration(boolean isInnerClass) '''
         public«
         IF (isInnerClass)»«
@@ -97,6 +152,11 @@ class ClassTemplate {
         ENDIF
     »'''
     
+    /**
+     * Template method which generates JAVA enum type.
+     * 
+     * @return string with inner enum source code in JAVA format
+     */
     def private generateEnums() '''
         «IF !enums.empty»
             «FOR e : enums SEPARATOR "\n"»
@@ -106,6 +166,11 @@ class ClassTemplate {
         «ENDIF»
     '''
     
+    /**
+     * Template method wich generates JAVA constants.
+     * 
+     * @return string with constants in JAVA format 
+     */
     def private generateConstants() '''
         «IF !consts.empty»
             «FOR c : consts»
@@ -130,6 +195,11 @@ class ClassTemplate {
         «ENDIF»
     '''
     
+    /**
+     * Template method which generates JAVA static initialization block.
+     * 
+     * @return string with static initialization block in JAVA format
+     */
     def private generateStaticInicializationBlock() '''
         static {
             for (String regEx : «TypeConstants.PATTERN_CONSTANT_NAME») {
@@ -137,6 +207,12 @@ class ClassTemplate {
             }
         }
     '''
+    
+    /**
+     * Template method which generates JAVA class attributes.
+     * 
+     * @return string with the class attributes in JAVA format
+     */
     def private generateFields() '''
         «IF !fields.empty»
             «FOR f : fields»
@@ -145,6 +221,11 @@ class ClassTemplate {
         «ENDIF»
     '''
     
+    /**
+     * Template method which generates JAVA constructor(s).
+     * 
+     * @return string with the class constructor(s) in JAVA format
+     */
     def private generateConstructor() '''
         «val genTOTopParent = GeneratorUtil.getTopParrentTransportObject(genTO)»
         «val properties = GeneratorUtil.resolveReadOnlyPropertiesFromTO(genTO.properties)»
@@ -183,21 +264,43 @@ class ClassTemplate {
         «ENDIF»
     '''
     
+    /**
+     * Template method which generates the getter method for <code>field</code>
+     * 
+     * @param field 
+     * generated property with data about field which is generated as the getter method
+     * @return string with the getter method source code in JAVA format 
+     */     
     def private generateGetter(GeneratedProperty field) {
         val prefix = if(field.returnType.equals(Types.typeForClass(Boolean))) "is" else "get"
     '''
         public «field.returnType.resolveName» «prefix»«field.name.toFirstUpper»() {
             return «field.fieldName»;
+
         }
     '''
     }
-    def private generateSetter(GeneratedProperty field) '''
+    /**
+     * Template method which generates the setter method for <code>field</code>
+     * 
+     * @param field 
+     * generated property with data about field which is generated as the setter method
+     * @return string with the setter method source code in JAVA format 
+     */
+     def private generateSetter(GeneratedProperty field) '''
         «val type = field.returnType.resolveName»
         public void set«field.name.toFirstUpper»(«type» «field.fieldName») {
             this.«field.fieldName» = «field.fieldName»;
         }
     '''
     
+    /**
+     * Template method which generates method parameters with their types from <code>parameters</code>.
+     * 
+     * @param parameters
+     * group of generated property instances which are transformed to the method parameters
+     * @return string with the list of the method parameters with their types in JAVA format
+     */
     def private generateParameters(Iterable<GeneratedProperty> parameters) '''«
         IF !parameters.empty»«
             FOR parameter : parameters SEPARATOR ", "»«
@@ -206,6 +309,13 @@ class ClassTemplate {
         ENDIF
     »'''
     
+    /**
+     * Template method which generates sequence of the names of the class attributes from <code>parameters</code>.
+     * 
+     * @param parameters 
+     * group of generated property instances which are transformed to the sequence of parameter names
+     * @return string with the list of the parameter names of the <code>parameters</code> 
+     */
     def private generateParameterNames(Iterable<GeneratedProperty> parameters) '''«
         IF !parameters.empty»«
             FOR parameter : parameters SEPARATOR ", "»«
@@ -214,6 +324,11 @@ class ClassTemplate {
         ENDIF
     »'''
     
+    /**
+     * Template method which generates the method <code>hashCode()</code>.
+     * 
+     * @return string with the <code>hashCode()</code> method definition in JAVA format
+     */
     def private generateHashCode() '''
         «IF !genTO.hashCodeIdentifiers.empty»
             @Override
@@ -227,6 +342,12 @@ class ClassTemplate {
             }
         «ENDIF»
     '''
+    
+    /**
+     * Template method which generates the method <code>equals()</code>.
+     * 
+     * @return string with the <code>equals()</code> method definition in JAVA format     
+     */
     def private generateEquals() '''
         «IF !genTO.equalsIdentifiers.empty»
             @Override
@@ -256,6 +377,11 @@ class ClassTemplate {
         «ENDIF»
     '''
     
+    /**
+     * Template method which generates the method <code>toString()</code>.
+     * 
+     * @return string with the <code>toString()</code> method definition in JAVA format     
+     */
     def private generateToString() '''
         «IF !genTO.toStringIdentifiers.empty»
             @Override
@@ -274,6 +400,11 @@ class ClassTemplate {
         «ENDIF»
     '''
     
+    /**
+     * Template method which generate package name line and import lines.
+     * 
+     * @result string with package and import lines in JAVA format
+     */
     def private generatePkgAndImports() '''
         package «genTO.packageName»;
         
@@ -285,7 +416,13 @@ class ClassTemplate {
         «ENDIF»
         
     '''
-    
+
+    /**
+     * Adds package to imports if it is necessary and returns necessary type name (with or without package name)
+     * 
+	 * @param type JAVA <code>Type</code> 
+     * @return string with the type name (with or without package name)
+     */    
     def private resolveName(Type type) {
         GeneratorUtil.putTypeIntoImports(genTO, type, imports);
         GeneratorUtil.getExplicitType(genTO, type, imports)

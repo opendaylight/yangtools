@@ -23,7 +23,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
     private final String name;
     private final List<Enumeration.Pair> values;
     private final List<AnnotationTypeBuilder> annotationBuilders = new ArrayList<>();
-    
+
     public EnumerationBuilderImpl(final String packageName, final String name) {
         super(packageName, name);
         this.packageName = packageName;
@@ -41,7 +41,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         }
         return null;
     }
-    
+
     @Override
     public void addValue(final String name, final Integer value) {
         values.add(new EnumPairImpl(name, value));
@@ -51,7 +51,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
     public Enumeration toInstance(final Type definingType) {
         return new EnumerationImpl(definingType, annotationBuilders, packageName, name, values);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -62,8 +62,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result
-                + ((packageName == null) ? 0 : packageName.hashCode());
+        result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
         return result;
     }
 
@@ -212,17 +211,15 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         private final String name;
         private final List<Pair> values;
         private List<AnnotationType> annotations = new ArrayList<>();
-        
-        public EnumerationImpl(final Type definingType,
-                final List<AnnotationTypeBuilder> annotationBuilders,
-                final String packageName, final String name,
-                final List<Pair> values) {
+
+        public EnumerationImpl(final Type definingType, final List<AnnotationTypeBuilder> annotationBuilders,
+                final String packageName, final String name, final List<Pair> values) {
             super();
             this.definingType = definingType;
             for (final AnnotationTypeBuilder builder : annotationBuilders) {
                 annotations.add(builder.toInstance());
             }
-            this.annotations = Collections.unmodifiableList(annotations); 
+            this.annotations = Collections.unmodifiableList(annotations);
             this.packageName = packageName;
             this.name = name;
             this.values = Collections.unmodifiableList(values);
@@ -252,7 +249,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         public List<Pair> getValues() {
             return values;
         }
-        
+
         @Override
         public List<AnnotationType> getAnnotations() {
             return annotations;
@@ -282,6 +279,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
                 }
                 ++i;
             }
+            builder.append("\n}");
             return builder.toString();
         }
 
@@ -295,10 +293,8 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
             final int prime = 31;
             int result = 1;
             result = prime * result + ((name == null) ? 0 : name.hashCode());
-            result = prime * result
-                    + ((packageName == null) ? 0 : packageName.hashCode());
-            result = prime * result
-                    + ((values == null) ? 0 : values.hashCode());
+            result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
+            result = prime * result + ((values == null) ? 0 : values.hashCode());
 
             return result;
         }

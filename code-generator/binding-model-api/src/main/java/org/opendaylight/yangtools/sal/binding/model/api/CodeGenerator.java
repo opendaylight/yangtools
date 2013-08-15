@@ -10,26 +10,40 @@ package org.opendaylight.yangtools.sal.binding.model.api;
 import java.io.IOException;
 
 /**
- *
- *
+ * Transformates virtual data to the concrete code in programming language.
+ * 
  */
 public interface CodeGenerator {
 
     /**
-     * @param type Input type to be processed
-     * @return generated code
+     * Generates code for <code>type</code>.
+     * 
+     * @param type
+     *            Input type to be processed
+     * @return generated JAVA code
      * @throws IOException
      */
     String generate(Type type);
 
     /**
-     * @param type Input type to be processed
+     * Checks if the concrete instance of <code>type</code> fit to concrete
+     * implementation of this interface.
+     * 
+     * (e. g. method return true if in <code>EnumGenerator</code> (which
+     * implements this interface) has input parameter of type Enumeration (which
+     * is subtype of Type)
+     * 
+     * @param type
+     *            Input type to be processed
      * @return true if type is acceptable for processing.
      */
     boolean isAcceptable(Type type);
 
     /**
-     * @param type Input type to be processed
+     * Returns name of <code>type</code> parameter.
+     * 
+     * @param type
+     *            Input type to be processed
      * @return name of generated unit
      */
     String getUnitName(Type type);

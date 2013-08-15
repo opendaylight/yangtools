@@ -8,10 +8,28 @@ import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
+/**
+ * 
+ * Transformator of the data from the virtual form to JAVA programming language.
+ * The result source code represent java class. For generation of the source
+ * code is used the template written in XTEND language.
+ * 
+ */
 public final class BuilderGenerator implements CodeGenerator {
 
+    /**
+     * Constant used as sufix for builder name.
+     */
     public static final String BUILDER = "Builder";
 
+    /**
+     * Passes via list of implemented types in <code>type</code>.
+     * 
+     * @param type
+     *            JAVA <code>Type</code>
+     * @return boolean value which is true if any of implemented types is of the
+     *         type <code>Augmentable</code>.
+     */
     @Override
     public boolean isAcceptable(Type type) {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
@@ -29,6 +47,11 @@ public final class BuilderGenerator implements CodeGenerator {
         return false;
     }
 
+    /**
+     * Generates JAVA source code for generated type <code>Type</code>. The code
+     * is generated according to the template source code template which is
+     * written in XTEND language.
+     */
     @Override
     public String generate(Type type) {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {

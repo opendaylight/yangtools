@@ -14,21 +14,70 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
 
+/**
+ * Template for generating JAVA builder classes. 
+ */
 class BuilderTemplate {
 
+	/**
+	 * Constant with prefix for getter methods.
+	 */
     val static GET_PREFIX = "get"
+    
+    /**
+     * Constant with the name of the concrete package prefix. 
+     */
     val static JAVA_UTIL = "java.util"
+    
+    /**
+     * Constant with the name of the concrete JAVA type
+     */
     val static HASH_MAP = "HashMap"
+    
+    /**
+     * Constant with the name of the concrete JAVA interface.
+     */
     val static MAP = "Map"
+    
+    /**
+     * Constant with the name of the concrete method.
+     */
     val static GET_AUGMENTATION_METHOD_NAME = "getAugmentation"
+    
+    /**
+     * Constant with the suffix for builder classes.
+     */
     val static BUILDER = 'Builder'
+    
+    /**
+     * Constant with suffix for the classes which are generated from the builder classes.
+     */
     val static IMPL = 'Impl'
     
+    /**
+     * Reference to type for which is generated builder class
+     */
     val GeneratedType genType
+    
+    /**
+     * Map of imports. The keys are type names and the values are package names.
+     */
     val Map<String, String> imports
+    
+    /**
+     * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME
+     */
     var GeneratedProperty augmentField
+    
+    /**
+     * Set of class attributes (fields) which are derived from the getter methods names
+     */
     val Set<GeneratedProperty> fields
     
+    /**
+     * Constructs new instance of this class.
+     * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
+     */
     new(GeneratedType genType) {
         if (genType == null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
@@ -39,6 +88,12 @@ class BuilderTemplate {
         this.fields = createFieldsFromMethods(createMethods)
     }
     
+    /**
+     * Returns set of method signature instances which contains all the methods of the <code>genType</code>
+     * and all the methods of the implemented interfaces.
+     * 
+     * @returns set of method signature instances
+     */
     def private Set<MethodSignature> createMethods() {
         val Set<MethodSignature> methods = new LinkedHashSet
         methods.addAll(genType.methodDefinitions)
@@ -46,6 +101,13 @@ class BuilderTemplate {
         return methods
     }
     
+    /**
+     * Adds to the <code>methods</code> set all the methods of the <code>implementedIfcs</code> 
+     * and recursivelly their implemented interfaces.
+     * 
+     * @param methods set of method signatures
+     * @param implementedIfcs list of implemented interfaces
+     */
     def private void storeMethodsOfImplementedIfcs(Set<MethodSignature> methods, List<Type> implementedIfcs) {
         if (implementedIfcs == null || implementedIfcs.empty) {
             return
@@ -76,6 +138,14 @@ class BuilderTemplate {
         }
     }
     
+    /**
+     * Adds to the <code>imports</code> map the package <code>typePackageName</code>.
+     * 
+     * @param typePackageName 
+     * string with the name of the package which is added to <code>imports</code> as a value
+     * @param typeName 
+     * string with the name of the package which is added to <code>imports</code> as a key
+     */
     def private void addToImports(String typePackageName,String typeName) {
         if (typePackageName.startsWith("java.lang") || typePackageName.isEmpty()) {
             return
@@ -85,20 +155,43 @@ class BuilderTemplate {
         }
     }
     
+    /**
+     * Returns the first element of the list <code>elements</code>.
+     * 
+     * @param list of elements
+     */
     def private <E> first(List<E> elements) {
         elements.get(0)
     }
     
+    /**
+     * Returns the name of the package from <code>fullyQualifiedName</code>.
+     * 
+     * @param fullyQualifiedName string with fully qualified type name (package + type)
+     * @return string with the package name
+     */
     def private String getPackage(String fullyQualifiedName) {
         val lastDotIndex = fullyQualifiedName.lastIndexOf(Constants.DOT)
         return if (lastDotIndex == -1) "" else fullyQualifiedName.substring(0, lastDotIndex)
     }
 
+	/**
+	 * Returns the name of tye type from <code>fullyQualifiedName</code>
+	 * 
+	 * @param fullyQualifiedName string with fully qualified type name (package + type)
+	 * @return string with the name of the type
+	 */
     def private String getName(String fullyQualifiedName) {
         val lastDotIndex = fullyQualifiedName.lastIndexOf(Constants.DOT)
         return if (lastDotIndex == -1) fullyQualifiedName else fullyQualifiedName.substring(lastDotIndex + 1)
     }
     
+    /**
+     * Creates set of generated property instances from getter <code>methods</code>.
+     * 
+     * @param set of method signature instances which should be transformed to list of properties 
+     * @return set of generated property instances which represents the getter <code>methods</code>
+     */
     def private createFieldsFromMethods(Set<MethodSignature> methods) {
         val Set<GeneratedProperty> result = new LinkedHashSet
 
@@ -115,6 +208,18 @@ class BuilderTemplate {
         return result
     }
     
+    /**
+     * Creates generated property instance from the getter <code>method</code> name and return type.
+     * 
+     * @param method method signature from which is the method name and return type obtained
+     * @return generated property instance for the getter <code>method</code>
+     * @throws IllegalArgumentException<ul>
+     * 	<li>if the <code>method</code> equals <code>null</code></li>
+     * 	<li>if the name of the <code>method</code> equals <code>null</code></li>
+     * 	<li>if the name of the <code>method</code> is empty</li>
+     * 	<li>if the return type of the <code>method</code> equals <code>null</code></li>
+     * </ul>
+     */
     def private GeneratedProperty createFieldFromGetter(MethodSignature method) {
         if (method == null || method.name == null || method.name.empty || method.returnType == null) {
             throw new IllegalArgumentException("Method, method name, method return type reference cannot be NULL or empty!")
@@ -127,12 +232,22 @@ class BuilderTemplate {
         }
     }
 
+	/**
+	 * Builds string which contains JAVA source code.
+	 * 
+	 * @return string with JAVA source code
+	 */
     def String generate() {
         val body = generateBody
         val pkgAndImports = generatePkgAndImports
         return pkgAndImports.toString + body.toString
     }
     
+    /**
+     * Template method which generates JAVA class body for builder class and for IMPL class. 
+     * 
+     * @return string with JAVA source code
+     */
     def private generateBody() '''
         public class «genType.name»«BUILDER» {
         
@@ -157,6 +272,12 @@ class BuilderTemplate {
         }
     '''
 
+	/**
+	 * Template method which generates class attributes.
+	 * 
+	 * @param boolean value which specify whether field is|isn't final
+	 * @return string with class attributes and their types
+	 */
     def private generateFields(boolean _final) '''
         «IF !fields.empty»
             «FOR f : fields»
@@ -168,6 +289,11 @@ class BuilderTemplate {
         «ENDIF»
     '''
 
+	/**
+	 * Template method which generates setter methods
+	 * 
+	 * @return string with the setter methods 
+	 */
     def private generateSetters() '''
         «FOR field : fields SEPARATOR '\n'»
             public «genType.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.resolveName» «field.name») {
@@ -184,6 +310,11 @@ class BuilderTemplate {
         «ENDIF»
     '''
     
+    /**
+     * Template method which generate constructor for IMPL class.
+     * 
+     * @return string with IMPL class constructor
+     */
     def private generateConstructor() '''
         private «genType.name»«IMPL»() {
             «IF !fields.empty»
@@ -197,6 +328,11 @@ class BuilderTemplate {
         }
     '''
     
+    /**
+     * Template method which generate getter methods for IMPL class.
+     * 
+     * @return string with getter methods
+     */
     def private generateGetters() '''
         «IF !fields.empty»
             «FOR field : fields SEPARATOR '\n'»
@@ -219,6 +355,11 @@ class BuilderTemplate {
         «ENDIF»
     '''    
     
+    /**
+     * Template method which generate package name line and import lines.
+     * 
+     * @result string with package and import lines in JAVA format
+     */
     def private generatePkgAndImports() '''
         package «genType.packageName»;
         
@@ -231,6 +372,12 @@ class BuilderTemplate {
         
     '''
     
+    /**
+     * Adds package to imports if it is necessary and returns necessary type name (with or without package name)
+     * 
+     * @param type JAVA <code>Type</code>
+     * @return string with the type name (with or without package name)
+     */
     def private resolveName(Type type) {
         GeneratorUtil.putTypeIntoImports(genType, type, imports);
         GeneratorUtil.getExplicitType(genType, type, imports)
