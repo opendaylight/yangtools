@@ -7,6 +7,12 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator;
 
+/**
+ * 
+ * Transformator of the data from the virtual form to JAVA source code. The result source code represents JAVA interface. For
+ * generating of the source code is used the template written in XTEND language.
+ * 
+ */
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
@@ -19,6 +25,11 @@ public final class InterfaceGenerator implements CodeGenerator {
         return type instanceof GeneratedType && !(type instanceof GeneratedTransferObject);
     }
 
+    /**
+     * Generates JAVA source code for generated type <code>Type</code>. The code
+     * is generated according to the template source code template which is
+     * written in XTEND language.
+     */
     @Override
     public String generate(Type type) {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
