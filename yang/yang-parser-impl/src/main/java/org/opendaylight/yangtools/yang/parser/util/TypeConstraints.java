@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -270,8 +271,8 @@ public final class TypeConstraints {
             if (range.getMin() instanceof UnknownBoundaryNumber || range.getMax() instanceof UnknownBoundaryNumber) {
                 throw new YangParseException(moduleName, line, "Unresolved range constraints");
             }
-            final long min = range.getMin().longValue();
-            final long max = range.getMax().longValue();
+            final BigDecimal min = new BigDecimal(range.getMin().toString());
+            final BigDecimal max = new BigDecimal(range.getMax().toString());
 
             List<RangeConstraint> parentRanges = ranges.get(1);
             boolean check = false;
@@ -280,15 +281,15 @@ public final class TypeConstraints {
                 if (parentMinNumber instanceof UnknownBoundaryNumber) {
                     parentMinNumber = resolveMinRange(parentMinNumber);
                 }
-                long parentMin = parentMinNumber.longValue();
+                BigDecimal parentMin = new BigDecimal(parentMinNumber.toString());
 
                 Number parentMaxNumber = r.getMax();
                 if (parentMaxNumber instanceof UnknownBoundaryNumber) {
                     parentMaxNumber = resolveMaxRange(parentMaxNumber);
                 }
-                long parentMax = parentMaxNumber.longValue();
+                BigDecimal parentMax = new BigDecimal(parentMaxNumber.toString());
 
-                if (parentMin <= min && parentMax >= max) {
+                if(parentMin.compareTo(min) <=0 && parentMax.compareTo(max) >= 0) {
                     check = true;
                     break;
                 }
