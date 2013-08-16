@@ -49,7 +49,7 @@ public final class TypeConstraints {
 
         if (!(min instanceof UnknownBoundaryNumber) && !(max instanceof UnknownBoundaryNumber)) {
             if (ranges.size() > 1) {
-                validateRange(resolved);
+                //validateRange(resolved);
             }
             return resolved;
         }
@@ -81,7 +81,7 @@ public final class TypeConstraints {
             }
         }
         if (this.ranges.size() > 1) {
-            validateRange(resolved);
+            //validateRange(resolved);
         }
         return resolved;
     }
@@ -261,6 +261,7 @@ public final class TypeConstraints {
         }
     }
 
+    // TODO: fix comparing, problem with BigInteger
     private void validateRange(List<RangeConstraint> typeRange) {
         if (ranges.size() < 2) {
             return;
