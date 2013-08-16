@@ -92,7 +92,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void enterModule_stmt(YangParser.Module_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
-        logger.debug("enter module " + moduleName);
+        enterLog("module", moduleName, 0);
         actualPath.push(moduleName);
         moduleBuilder = new ModuleBuilder(moduleName);
 
@@ -944,15 +944,15 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     private void enterLog(String p1, String p2, int line) {
-        logger.debug("entering " + p1 + " " + p2 + " (" + line + ")");
+        logger.trace("entering {} {} ({})", p1, p2, line);
     }
 
     private void exitLog(String p1, String p2) {
-        logger.debug("exiting " + p1 + " " + p2);
+        logger.trace("exiting {} {}", p1, p2);
     }
 
     private void setLog(String p1, String p2) {
-        logger.debug("setting " + p1 + " " + p2);
+        logger.trace("setting {} {}", p1, p2);
     }
 
 }
