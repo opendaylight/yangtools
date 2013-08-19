@@ -158,7 +158,7 @@ public class GeneratedTypesTest {
         MethodSignature getIfcKey = null;
         MethodSignature getHigherLayerIf = null;
         for (final MethodSignature method : gtIfcMethods) {
-            if (method.getName().equals("getInterfaceKey")) {
+            if (method.getName().equals("getKey")) {
                 getIfcKey = method;
             } else if (method.getName().equals("getHigherLayerIf")) {
                 getHigherLayerIf = method;
@@ -226,7 +226,7 @@ public class GeneratedTypesTest {
         assertNotNull(gtTunnelMethods);
         MethodSignature getTunnelKey = null;
         for (MethodSignature method : gtTunnelMethods) {
-            if (method.getName().equals("getTunnelKey")) {
+            if (method.getName().equals("getKey")) {
                 getTunnelKey = method;
             }
         }
@@ -459,7 +459,7 @@ public class GeneratedTypesTest {
                     simpleListMethodsCount = genType.getMethodDefinitions().size();
                     final List<MethodSignature> methods = genType.getMethodDefinitions();
                     for (final MethodSignature method : methods) {
-                        if (method.getName().equals("getSimpleListKey")) {
+                        if (method.getName().equals("getKey")) {
                             getSimpleListKeyMethodCount++;
                             getSimpleListKeyMethodReturnTypeName = method.getReturnType().getName();
                         } else if (method.getName().equals("getListChildContainer")) {

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public final class BaseYangTypes {
     public static final Type INT32_TYPE = Types.typeForClass(Integer.class);
     public static final Type INT64_TYPE = Types.typeForClass(Long.class);
     public static final Type STRING_TYPE = Types.typeForClass(String.class);
-    public static final Type DECIMAL64_TYPE = Types.typeForClass(Double.class);
+    public static final Type DECIMAL64_TYPE = Types.typeForClass(BigDecimal.class);
     public static final Type UINT8_TYPE = Types.typeForClass(Short.class);
     public static final Type UINT16_TYPE = Types.typeForClass(Integer.class);
     public static final Type UINT32_TYPE = Types.typeForClass(Long.class);

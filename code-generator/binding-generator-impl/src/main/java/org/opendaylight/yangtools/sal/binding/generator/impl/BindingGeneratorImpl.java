@@ -30,8 +30,10 @@ import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
@@ -41,6 +43,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSigna
 import org.opendaylight.yangtools.sal.binding.yang.types.GroupingDefinitionDependencySort;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
+import org.opendaylight.yangtools.yang.binding.Identifiable;
+import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
@@ -1543,7 +1547,14 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         final GeneratedTypeBuilder typeBuilder = resolveListTypeBuilder(packageName, list);
         final List<String> listKeys = listKeys(list);
         GeneratedTOBuilder genTOBuilder = resolveListKeyTOBuilder(packageName, list, listKeys);
-
+        
+        
+        if(genTOBuilder != null) {
+            ParameterizedType identifierMarker = Types.parameterizedTypeFor( Types.typeForClass(Identifier.class), typeBuilder);
+            ParameterizedType identifiableMarker = Types.parameterizedTypeFor(Types.typeForClass(Identifiable.class), genTOBuilder);
+            genTOBuilder.addImplementsType(identifierMarker);
+            typeBuilder.addImplementsType(identifiableMarker);
+        }
         final Set<DataSchemaNode> schemaNodes = list.getChildNodes();
 
         for (final DataSchemaNode schemaNode : schemaNodes) {
@@ -1589,7 +1600,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
         if (genTOBuilder != null) {
             final GeneratedTransferObject genTO = genTOBuilder.toInstance();
-            constructGetter(typeBuilder, genTO.getName(), "Returns Primary Key of Yang List Type", genTO);
+            constructGetter(typeBuilder, "key", "Returns Primary Key of Yang List Type", genTO);
             genTypes.add(genTO);
         }
         genTypes.add(typeBuilder.toInstance());

@@ -7,13 +7,75 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
- * Created with IntelliJ IDEA.
- * User: lsedlak
- * Date: 27.6.2013
- * Time: 11:44
- * To change this template use File | Settings | File Templates.
+ * Uniquely identifies instance of data tree. 
+ *
+ *
  */
 public class InstanceIdentifier <T extends DataObject> {
 
+    
+    private final List<PathArgument> path;
+    private final Class<T> targetType;
+    
+    public InstanceIdentifier(Class<T> type) {
+        path = Collections.emptyList();
+        this.targetType = type;
+    }
+    
+    
+    public InstanceIdentifier(List<PathArgument> path,Class<T> type) {
+        this.path = Collections.<PathArgument>unmodifiableList(new ArrayList<>(path));
+        this.targetType = type;
+    }
+    
+
+    /**
+     * 
+     * @return
+     */
+    public List<PathArgument> getPath() {
+        return this.path;
+    }
+    
+    public Class<T> getTargetType() {
+        return this.targetType;
+    }
+    
+    
+    /**
+     * Path argument of instance identifier.
+     * 
+     * Interface which implementations are used as path components
+     * of the instance path.
+     * 
+     * @author ttkacik
+     *
+     */
+    public static interface PathArgument {
+        
+    }
+    
+    public static class IdentifiableItem<I extends Identifiable<T>,T extends Identifier<I>>  implements PathArgument {
+           
+        private final T key;
+        private final Class<? extends I> type;
+
+        public IdentifiableItem(Class<I> type, T key) {
+            this.type = type;
+            this.key = key;
+        }
+        
+        T getKey() {
+            return this.key;
+        }
+        
+        Class<? extends I> getType() {
+            return this.type;
+        }
+    }
 }
