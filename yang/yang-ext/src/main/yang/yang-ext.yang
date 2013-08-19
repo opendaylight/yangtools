@@ -1,6 +1,6 @@
 module yang-ext {
     yang-version 1;
-    namespace "urn:opendaylight:params:ns:yang:extension:yang-ext";
+    namespace "urn:opendaylight:yang:extension:yang-ext";
     prefix "ext";
     
     contact "Anton Tkacik <ttkacik@cisco.com>";

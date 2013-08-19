@@ -15,6 +15,8 @@ import static org.opendaylight.yangtools.binding.generator.util.BindingGenerator
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,6 +68,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -109,6 +112,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Only parent constructor is invoked.
      */
+    
+    private final static String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
+    private final static String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
+    
     public BindingGeneratorImpl() {
         super();
     }
@@ -1000,8 +1007,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
             augmentBuilders = new HashMap<>();
             genTypeBuilders.put(augmentPackageName, augmentBuilders);
         }
-
-        final String augTypeName = augGenTypeName(augmentBuilders, targetTypeName);
+        final String augIdentifier = getAugmentIdentifier(augSchema.getUnknownSchemaNodes());
+        
+        final String augTypeName =  augIdentifier != null ? parseToClassName(augIdentifier): augGenTypeName(augmentBuilders, targetTypeName);
         final Type targetTypeRef = new ReferencedTypeImpl(targetPackageName, targetTypeName);
         final Set<DataSchemaNode> augChildNodes = augSchema.getChildNodes();
 
@@ -1014,6 +1022,18 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         augSchemaNodeToMethods(augmentPackageName, augTypeBuilder, augChildNodes);
         augmentBuilders.put(augTypeName, augTypeBuilder);
         return augTypeBuilder;
+    }
+
+    private String getAugmentIdentifier(List<UnknownSchemaNode> unknownSchemaNodes) {
+        String ret = null;
+        for (UnknownSchemaNode unknownSchemaNode : unknownSchemaNodes) {
+            QName nodeType = unknownSchemaNode.getNodeType();
+            if(AUGMENT_IDENTIFIER_NAME.equals(nodeType.getLocalName()) &&
+                    YANG_EXT_NAMESPACE.equals(nodeType.getNamespace().toString())) {
+                return unknownSchemaNode.getNodeParameter();
+            }
+        }
+        return ret;
     }
 
     /**
