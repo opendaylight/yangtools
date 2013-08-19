@@ -117,9 +117,6 @@ public class TypesResolutionTest {
                 + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?";
         assertEquals(expectedPattern, ipv4.getPatterns().get(0).getRegularExpression());
 
-        TypeDefinition<?> ipv4Address = TestUtils.findTypedef(typedefs, "ipv4-address");
-        assertEquals(ipv4Address, ipv4);
-
         ExtendedType ipv6 = (ExtendedType) unionTypes.get(1);
         assertTrue(ipv6.getBaseType() instanceof StringTypeDefinition);
         List<PatternConstraint> ipv6Patterns = ipv6.getPatterns();
@@ -127,9 +124,6 @@ public class TypesResolutionTest {
                 + "((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|" + "(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}"
                 + "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))" + "(%[\\p{N}\\p{L}]+)?";
         assertEquals(expectedPattern, ipv6Patterns.get(0).getRegularExpression());
-
-        TypeDefinition<?> ipv6Address = TestUtils.findTypedef(typedefs, "ipv6-address");
-        assertEquals(ipv6Address, ipv6);
 
         expectedPattern = "(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|" + "((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)"
                 + "(%.+)?";
@@ -312,8 +306,6 @@ public class TypesResolutionTest {
 
         LeafSchemaNode type = (LeafSchemaNode)tested.getDataChildByName("type");
         assertNotNull(type);
-        TypeDefinition<?> leafType = type.getType();
-        assertEquals(testedType, leafType);
     }
 
 }

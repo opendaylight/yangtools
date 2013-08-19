@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 import java.util.List;
 import java.util.Set;
 
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
@@ -27,6 +28,14 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
     SchemaPath getGroupingPath();
 
     void setGroupingPath(SchemaPath groupingPath);
+
+    GroupingDefinition getGroupingDefinition();
+
+    void setGroupingDefinition(GroupingDefinition groupingDefinition);
+
+    GroupingBuilder getGroupingBuilder();
+
+    void setGrouping(GroupingBuilder grouping);
 
     Set<AugmentationSchemaBuilder> getAugmentations();
 
@@ -46,34 +55,28 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
 
     UsesNode build();
 
-    Set<DataSchemaNodeBuilder> getFinalChildren();
-
     Set<DataSchemaNodeBuilder> getTargetChildren();
 
     void setTargetChildren(Set<DataSchemaNodeBuilder> targetChildren);
-
-    Set<GroupingBuilder> getFinalGroupings();
 
     Set<GroupingBuilder> getTargetGroupings();
 
     void setTargetGroupings(Set<GroupingBuilder> targetGroupings);
 
-    Set<TypeDefinitionBuilder> getFinalTypedefs();
-
     Set<TypeDefinitionBuilder> getTargetTypedefs();
 
     void setTargetTypedefs(Set<TypeDefinitionBuilder> targetTypedefs);
-
-    List<UnknownSchemaNodeBuilder> getFinalUnknownNodes();
 
     List<UnknownSchemaNodeBuilder> getTargetUnknownNodes();
 
     void setTargetUnknownNodes(List<UnknownSchemaNodeBuilder> targetUnknownNodes);
 
-    List<UsesNodeBuilder> getTargetGroupingUses();
+    boolean isDataCollected();
 
-    boolean isLoadDone();
+    void setDataCollected(boolean dataCollected);
 
-    void setLoadDone(boolean loadDone);
+    boolean isParentUpdated();
+
+    void setParentUpdated(boolean parentUpdated);
 
 }

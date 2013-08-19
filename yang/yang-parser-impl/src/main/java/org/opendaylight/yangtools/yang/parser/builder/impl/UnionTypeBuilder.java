@@ -56,7 +56,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     public List<TypeDefinitionBuilder> getTypedefs() {
-        return Collections.unmodifiableList(typedefs);
+        return typedefs;
     }
 
     @Override
@@ -214,7 +214,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     @Override
     public String toString() {
         final StringBuilder result = new StringBuilder(UnionTypeBuilder.class.getSimpleName() + "[");
-        result.append(", types=" + types);
+        result.append("types=" + types);
         result.append(", typedefs=" + typedefs);
         result.append("]");
         return result.toString();

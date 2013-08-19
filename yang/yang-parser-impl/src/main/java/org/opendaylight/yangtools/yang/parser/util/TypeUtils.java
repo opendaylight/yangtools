@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.util.Int16;
 import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.Int64;
 import org.opendaylight.yangtools.yang.model.util.Int8;
-import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.Uint16;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint64;
@@ -329,10 +328,10 @@ public class TypeUtils {
      */
     static ExtendedType createNewExtendedType(final ExtendedType oldType, final SchemaPath newPath) {
         QName qname = oldType.getQName();
-        TypeDefinition<?> baseType = oldType.getBaseType();
+        TypeDefinition<?> newBaseType = ParserUtils.createCorrectTypeDefinition(newPath, oldType.getBaseType());
         String desc = oldType.getDescription();
         String ref = oldType.getReference();
-        ExtendedType.Builder builder = new ExtendedType.Builder(qname, baseType, desc, ref, newPath);
+        ExtendedType.Builder builder = new ExtendedType.Builder(qname, newBaseType, desc, ref, newPath);
         builder.status(oldType.getStatus());
         builder.lengths(oldType.getLengths());
         builder.patterns(oldType.getPatterns());
@@ -342,22 +341,9 @@ public class TypeUtils {
         return builder.build();
     }
 
-    static StringTypeDefinition createNewStringType(final SchemaPath schemaPath, final QName nodeQName,
-            final StringTypeDefinition nodeType) {
-        final List<QName> path = schemaPath.getPath();
-        final List<QName> newPath = new ArrayList<QName>(path);
-        newPath.add(nodeQName);
-        newPath.add(nodeType.getQName());
-        final SchemaPath newSchemaPath = new SchemaPath(newPath, schemaPath.isAbsolute());
-        return new StringType(newSchemaPath);
-    }
-
-    static IntegerTypeDefinition createNewIntType(final SchemaPath schemaPath, final QName nodeQName,
+    static IntegerTypeDefinition createNewIntType(final SchemaPath newSchemaPath,
             final IntegerTypeDefinition type) {
-        final QName typeQName = type.getQName();
-        final SchemaPath newSchemaPath = createSchemaPath(schemaPath, nodeQName, typeQName);
-        final String localName = typeQName.getLocalName();
-
+        final String localName = type.getQName().getLocalName();
         if ("int8".equals(localName)) {
             return new Int8(newSchemaPath);
         } else if ("int16".equals(localName)) {
@@ -371,12 +357,9 @@ public class TypeUtils {
         }
     }
 
-    static UnsignedIntegerTypeDefinition createNewUintType(final SchemaPath schemaPath, final QName nodeQName,
+    static UnsignedIntegerTypeDefinition createNewUintType(final SchemaPath newSchemaPath,
             final UnsignedIntegerTypeDefinition type) {
-        final QName typeQName = type.getQName();
-        final SchemaPath newSchemaPath = createSchemaPath(schemaPath, nodeQName, typeQName);
-        final String localName = typeQName.getLocalName();
-
+        final String localName = type.getQName().getLocalName();
         if ("uint8".equals(localName)) {
             return new Uint8(newSchemaPath);
         } else if ("uint16".equals(localName)) {

@@ -761,7 +761,7 @@ public class YangParserTest {
         Module test = TestUtils.findModule(modules, "types");
         Set<TypeDefinition<?>> types = test.getTypeDefinitions();
 
-        // my-base-int32-type
+        // int32-ext1
         ExtendedType int32Typedef = (ExtendedType) TestUtils.findTypedef(types, "int32-ext1");
         QName int32TypedefQName = int32Typedef.getQName();
 
@@ -775,7 +775,7 @@ public class YangParserTest {
         assertEquals(1, typePath.size());
         assertEquals(int32TypedefQName, typePath.get(0));
 
-        // my-base-int32-type/int32
+        // int32-ext1/int32
         Int32 int32 = (Int32) int32Typedef.getBaseType();
         QName int32QName = int32.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:1"), int32QName.getNamespace());
@@ -785,9 +785,9 @@ public class YangParserTest {
 
         SchemaPath int32SchemaPath = int32.getPath();
         List<QName> int32Path = int32SchemaPath.getPath();
-        assertEquals(3, int32Path.size());
+        assertEquals(2, int32Path.size());
         assertEquals(int32TypedefQName, int32Path.get(0));
-        assertEquals(int32QName, int32Path.get(2));
+        assertEquals(int32QName, int32Path.get(1));
     }
 
     @Test
@@ -795,7 +795,7 @@ public class YangParserTest {
         Module test = TestUtils.findModule(modules, "types");
         Set<TypeDefinition<?>> types = test.getTypeDefinitions();
 
-        // my-base-int32-type
+        // my-decimal-type
         ExtendedType myDecType = (ExtendedType) TestUtils.findTypedef(types, "my-decimal-type");
         QName myDecTypeQName = myDecType.getQName();
 

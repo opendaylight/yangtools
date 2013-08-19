@@ -7,14 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -47,12 +42,9 @@ public final class YangTypesConverter {
         return baseYangTypes.contains(type);
     }
 
-    public static TypeDefinition<?> javaTypeForBaseYangType(
-            List<String> actualPath, URI namespace, Date revision,
-            String typeName) {
+    public static TypeDefinition<?> javaTypeForBaseYangType(SchemaPath path, String typeName) {
         TypeDefinition<?> type = null;
 
-        SchemaPath path = createSchemaPath(actualPath, namespace, revision, typeName);
         if (typeName.startsWith("int")) {
             if ("int8".equals(typeName)) {
                 type = new Int8(path);
@@ -86,21 +78,6 @@ public final class YangTypesConverter {
         }
 
         return type;
-    }
-
-    private static SchemaPath createSchemaPath(List<String> actualPath, URI namespace, Date revision, String typeName) {
-        List<String> correctPath = new ArrayList<String>(actualPath);
-        // remove module name
-        correctPath.remove(0);
-
-        List<QName> path = new ArrayList<QName>();
-        for(String element : correctPath) {
-            path.add(new QName(namespace, revision, element));
-        }
-        // add type qname
-        QName typeQName = new QName(BaseTypes.BaseTypesNamespace, typeName);
-        path.add(typeQName);
-        return new SchemaPath(path, true);
     }
 
 }

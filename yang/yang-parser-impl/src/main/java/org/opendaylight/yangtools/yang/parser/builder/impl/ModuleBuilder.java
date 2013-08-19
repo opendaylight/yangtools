@@ -187,9 +187,9 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return instance;
     }
 
-    public boolean allUsesLoadDone() {
+    public boolean isAllUsesDataCollected() {
         for(UsesNodeBuilder usesNode : allUsesNodes) {
-            if(!usesNode.isLoadDone()) {
+            if(!usesNode.isDataCollected()) {
                 return false;
             }
         }
@@ -739,7 +739,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return builder;
     }
 
-    public IdentitySchemaNodeBuilder addIdentity(final QName qname, final List<String> parentPath, final int line) {
+    public IdentitySchemaNodeBuilder addIdentity(final QName qname, final int line) {
         Builder parent = getActualNode();
         if (!(parent.equals(this))) {
             throw new YangParseException(name, line, "identity can be defined only in module or submodule");

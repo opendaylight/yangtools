@@ -13,6 +13,10 @@ module simple-nodes {
             "Initial revision.";
         reference "will be defined";
     }
+    
+    typedef mytype {
+        type string;
+    }
 
     // NOTE: simple comment
 
@@ -56,7 +60,7 @@ module simple-nodes {
             type int32;
         }
         leaf-list added {
-            type int64;
+            type mytype;
         }
         list links {
         }
