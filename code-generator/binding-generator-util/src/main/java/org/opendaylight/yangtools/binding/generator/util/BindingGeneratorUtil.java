@@ -152,7 +152,12 @@ public final class BindingGeneratorUtil {
 
         // make first char upper-case
         char first = Character.toUpperCase(correctStr.charAt(0));
-        correctStr = first + correctStr.substring(1);
+        if(first >= '0' && first <= '9') {
+            
+            correctStr = "_" + correctStr;
+        } else {
+            correctStr = first + correctStr.substring(1);
+        }
         return correctStr;
     }
 
