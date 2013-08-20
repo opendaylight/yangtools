@@ -19,7 +19,6 @@ module test3 {
     
     container network {
         custom:mountpoint point {
-            mnt:target-ref target;
         }
         
         description "network-description";

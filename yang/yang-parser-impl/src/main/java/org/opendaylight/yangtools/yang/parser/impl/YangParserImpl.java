@@ -844,8 +844,8 @@ public final class YangParserImpl implements YangModelParser {
                     }
                 }
             } catch (YangParseException e) {
-                LOG.debug(module.getName(), usnb.getLine(), "Failed to find unknown node extension definition: "
-                        + nodeType);
+                throw new YangParseException(module.getName(), usnb.getLine(), "Failed to resolve node " + usnb
+                        + ": no such extension definition found.");
             }
         }
     }
@@ -877,8 +877,8 @@ public final class YangParserImpl implements YangModelParser {
                 }
 
             } catch (YangParseException e) {
-                LOG.debug(module.getName(), usnb.getLine(), "Failed to find unknown node extension definition: "
-                        + nodeType);
+                throw new YangParseException(module.getName(), usnb.getLine(), "Failed to resolve node " + usnb
+                        + ": no such extension definition found.");
             }
 
         }

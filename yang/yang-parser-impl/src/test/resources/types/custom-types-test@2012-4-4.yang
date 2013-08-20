@@ -8,6 +8,13 @@ module custom-types-test {
     contact "WILL-BE-DEFINED-LATER";
         revision 2012-04-16 {
     }
+    
+    extension mountpoint {
+        description "enter point";
+        argument "name" {
+            yin-element "true";
+        }
+    }
 
     typedef access-operations-type {
         type bits {
