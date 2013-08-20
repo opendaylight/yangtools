@@ -64,12 +64,15 @@ public class GroupingDefinitionDependencySort {
             final GroupingNode groupingNode = (GroupingNode) node;
             final GroupingDefinition groupingDefinition = groupingNode.getGroupingDefinition();
 
-            Set<UsesNode> usesNodes =getAllUsesNodes(groupingDefinition);
+            Set<UsesNode> usesNodes = getAllUsesNodes(groupingDefinition);
             for (UsesNode usesNode : usesNodes) {
                 SchemaPath schemaPath = usesNode.getGroupingPath();
                 if (schemaPath != null) {
                     Node nodeTo = nodeMap.get(schemaPath);
-                    groupingNode.addEdge(nodeTo);
+                    if (nodeTo != null) {
+                        groupingNode.addEdge(nodeTo);
+                    }
+
                 }
             }
         }
@@ -78,31 +81,30 @@ public class GroupingDefinitionDependencySort {
     }
 
     private static Set<UsesNode> getAllUsesNodes(DataNodeContainer container) {
-    	Set<UsesNode> ret = new HashSet<>();
-    	ret.addAll(container.getUses());
-    	
-    	Set<GroupingDefinition> groupings = container.getGroupings();
-    	for (GroupingDefinition groupingDefinition : groupings) {
-			ret.addAll(getAllUsesNodes(groupingDefinition));
-		}
-    	Set<DataSchemaNode> children = container.getChildNodes();
-    	for (DataSchemaNode dataSchemaNode : children) {
-    		if(dataSchemaNode instanceof DataNodeContainer) {
-    			ret.addAll(getAllUsesNodes((DataNodeContainer) dataSchemaNode));
-    		} else if (dataSchemaNode instanceof ChoiceNode) {
-    			Set<ChoiceCaseNode> cases = ((ChoiceNode) dataSchemaNode).getCases();
-    			for (ChoiceCaseNode choiceCaseNode : cases) {
-					ret.addAll(getAllUsesNodes(choiceCaseNode));
-				}
-    		
-    		}
-		}
-    	
-    	return ret;
-    
+        Set<UsesNode> ret = new HashSet<>();
+        ret.addAll(container.getUses());
+
+        Set<GroupingDefinition> groupings = container.getGroupings();
+        for (GroupingDefinition groupingDefinition : groupings) {
+            ret.addAll(getAllUsesNodes(groupingDefinition));
+        }
+        Set<DataSchemaNode> children = container.getChildNodes();
+        for (DataSchemaNode dataSchemaNode : children) {
+            if (dataSchemaNode instanceof DataNodeContainer) {
+                ret.addAll(getAllUsesNodes((DataNodeContainer) dataSchemaNode));
+            } else if (dataSchemaNode instanceof ChoiceNode) {
+                Set<ChoiceCaseNode> cases = ((ChoiceNode) dataSchemaNode).getCases();
+                for (ChoiceCaseNode choiceCaseNode : cases) {
+                    ret.addAll(getAllUsesNodes(choiceCaseNode));
+                }
+
+            }
+        }
+
+        return ret;
+
     }
-    
-    
+
     private static final class GroupingNode extends NodeImpl {
         private final GroupingDefinition groupingDefinition;
 

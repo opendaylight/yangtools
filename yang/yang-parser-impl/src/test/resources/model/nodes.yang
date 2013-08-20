@@ -47,7 +47,7 @@ module nodes {
     }
 
     container ext {
-        types:c-define "MY_INTERFACES";
+        c:c-define "MY_INTERFACES";
     }
 
     leaf union-leaf {
