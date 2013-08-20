@@ -603,7 +603,7 @@ public final class TypeProviderImpl implements TypeProvider {
             for (final Bit bit : bitList) {
                 String name = bit.getName();
                 genPropertyBuilder = genTOBuilder.addProperty(parseToValidParamName(name));
-                genPropertyBuilder.setReadOnly(false);
+                genPropertyBuilder.setReadOnly(true);
                 genPropertyBuilder.setReturnType(BaseYangTypes.BOOLEAN_TYPE);
 
                 genTOBuilder.addEqualsIdentity(genPropertyBuilder);

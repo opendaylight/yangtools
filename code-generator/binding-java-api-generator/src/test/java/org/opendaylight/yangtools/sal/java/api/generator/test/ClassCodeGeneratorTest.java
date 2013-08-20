@@ -77,8 +77,8 @@ public class ClassCodeGeneratorTest {
 
                     assertNotNull(outputStr);
                     assertTrue(outputStr
-                            .contains("public CompositeKeyListKey(String Key2, "
-                                    + "Byte Key1)"));
+                            .contains("public CompositeKeyListKey(String _Key2, "
+                                    + "Byte _Key1)"));
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;
