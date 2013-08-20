@@ -8,6 +8,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.Type
+import org.opendaylight.yangtools.binding.generator.util.Types
 
 class ClassTemplate {
     
@@ -139,7 +140,7 @@ class ClassTemplate {
     def private generateFields() '''
         «IF !fields.empty»
             «FOR f : fields»
-                private «f.returnType.resolveName» «f.name»;
+                private «f.returnType.resolveName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
     '''
@@ -156,7 +157,7 @@ class ClassTemplate {
                     «if (genTO.abstract) "protected" else "public"» «genTO.name»(«parentPropertyAndProperties.generateParameters») {
                         super(«#[parentProperty].generateParameterNames»);
                         «FOR property : properties»
-                            this.«property.name» = «property.name»;
+                            this.«property.fieldName» = «property.name»;
                         «ENDFOR»
                     }
                 «ENDFOR»
@@ -166,7 +167,7 @@ class ClassTemplate {
                 «if (genTO.abstract) "protected" else "public"» «genTO.name»(«propertiesAll.generateParameters») {
                     super(«propertiesAllParents.generateParameterNames()»);
                     «FOR property : properties»
-                        this.«property.name» = «property.name»;
+                        this.«property.fieldName» = «property.fieldName»;
                     «ENDFOR»
                 }
             «ENDIF»
@@ -176,29 +177,31 @@ class ClassTemplate {
                 «val propertyAndTopParentProperties = propertiesAllParents + #[property]»
                 «if (genTO.abstract) "protected" else "public"» «genTO.name»(«propertyAndTopParentProperties.generateParameters») {
                     super(«propertiesAllParents.generateParameterNames()»);
-                    this.«property.name» = «property.name»;
+                    this.«property.fieldName» = «property.fieldName»;
                 }
             «ENDFOR»
         «ENDIF»
     '''
     
-    def private generateGetter(GeneratedProperty field) '''
-        public «field.returnType.resolveName» get«field.name.toFirstUpper»() {
-            return «field.name»;
+    def private generateGetter(GeneratedProperty field) {
+        val prefix = if(field.returnType.equals(Types.typeForClass(Boolean))) "is" else "get"
+    '''
+        public «field.returnType.resolveName» «prefix»«field.name.toFirstUpper»() {
+            return «field.fieldName»;
         }
     '''
-    
+    }
     def private generateSetter(GeneratedProperty field) '''
         «val type = field.returnType.resolveName»
-        public void set«field.name.toFirstUpper»(«type» «field.name») {
-            this.«field.name» = «field.name»;
+        public void set«field.name.toFirstUpper»(«type» «field.fieldName») {
+            this.«field.fieldName» = «field.fieldName»;
         }
     '''
     
     def private generateParameters(Iterable<GeneratedProperty> parameters) '''«
         IF !parameters.empty»«
             FOR parameter : parameters SEPARATOR ", "»«
-                parameter.returnType.resolveName» «parameter.name»«
+                parameter.returnType.resolveName» «parameter.fieldName»«
             ENDFOR»«
         ENDIF
     »'''
@@ -206,7 +209,7 @@ class ClassTemplate {
     def private generateParameterNames(Iterable<GeneratedProperty> parameters) '''«
         IF !parameters.empty»«
             FOR parameter : parameters SEPARATOR ", "»«
-                parameter.name»«
+                parameter.fieldName»«
             ENDFOR»«
         ENDIF
     »'''
@@ -218,7 +221,7 @@ class ClassTemplate {
                 final int prime = 31;
                 int result = 1;
                 «FOR property : genTO.hashCodeIdentifiers»
-                    result = prime * result + ((«property.name» == null) ? 0 : «property.name».hashCode());
+                    result = prime * result + ((«property.fieldName» == null) ? 0 : «property.fieldName».hashCode());
                 «ENDFOR»
                 return result;
             }
@@ -239,7 +242,7 @@ class ClassTemplate {
                 }
                 «genTO.name» other = («genTO.name») obj;
                 «FOR property : genTO.equalsIdentifiers»
-                    «val fieldName = property.name»
+                    «val fieldName = property.fieldName»
                     if («fieldName» == null) {
                         if (other.«fieldName» != null) {
                             return false;
@@ -259,11 +262,11 @@ class ClassTemplate {
             public String toString() {
                 StringBuilder builder = new StringBuilder();
                 «val properties = genTO.toStringIdentifiers»
-                builder.append("«genTO.name» [«properties.get(0).name»=");
-                builder.append(«properties.get(0).name»);
+                builder.append("«genTO.name» [«properties.get(0).fieldName»=");
+                builder.append(«properties.get(0).fieldName»);
                 «FOR i : 1..<genTO.toStringIdentifiers.size»
-                    builder.append(", «properties.get(i).name»=");
-                    builder.append(«properties.get(i).name»);
+                    builder.append(", «properties.get(i).fieldName»=");
+                    builder.append(«properties.get(i).fieldName»);
                 «ENDFOR»
                 builder.append("]");
                 return builder.toString();
@@ -288,4 +291,7 @@ class ClassTemplate {
         GeneratorUtil.getExplicitType(genTO, type, imports)
     }
     
+    def private fieldName(GeneratedProperty property) {
+        '''_«property.name»'''
+    }
 }
