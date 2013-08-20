@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToClassName;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 public final class EnumerationBuilderImpl extends AbstractBaseType implements EnumBuilder {
     private final String packageName;
@@ -116,6 +120,27 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         builder.append(values);
         builder.append("]");
         return builder.toString();
+    }
+
+    @Override
+    public void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef) {
+        final List<EnumPair> enums = enumTypeDef.getValues();
+        if (enums != null) {
+            int listIndex = 0;
+            for (final EnumPair enumPair : enums) {
+                if (enumPair != null) {
+                    final String enumPairName = parseToClassName(enumPair.getName());
+                    Integer enumPairValue = enumPair.getValue();
+
+                    if (enumPairValue == null) {
+                        enumPairValue = listIndex;
+                    }
+                    this.addValue(enumPairName, enumPairValue);
+                    listIndex++;
+                }
+            }
+        }
+
     }
 
     private static final class EnumPairImpl implements Enumeration.Pair {

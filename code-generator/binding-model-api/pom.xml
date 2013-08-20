@@ -12,4 +12,11 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+    <dependencies>
+    	<dependency>
+        	<groupId>org.opendaylight.yangtools</groupId>    	
+    		<artifactId>yang-model-api</artifactId>
+        	<version>0.5.7-SNAPSHOT</version>    		
+    	</dependency>
+    </dependencies>
 </project>

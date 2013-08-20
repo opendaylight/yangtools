@@ -50,7 +50,7 @@ public final class GeneratorUtil {
             throw new IllegalArgumentException("Generated Type cannot be NULL!");
         }
         final Map<String, String> imports = new LinkedHashMap<>();
-        imports.put(genType.getName(), genType.getPackageName());
+
         List<GeneratedType> childGeneratedTypes = genType.getEnclosedTypes();
         if (!childGeneratedTypes.isEmpty()) {
             for (GeneratedType genTypeChild : childGeneratedTypes) {
