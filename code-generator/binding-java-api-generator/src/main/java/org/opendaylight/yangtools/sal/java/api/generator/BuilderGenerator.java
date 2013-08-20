@@ -5,6 +5,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 
 public final class BuilderGenerator implements CodeGenerator {
 
@@ -17,7 +19,11 @@ public final class BuilderGenerator implements CodeGenerator {
                 // "rpc" and "grouping" elements do not implement Augmentable
                 if (t.getFullyQualifiedName().equals(Augmentable.class.getName())) {
                     return true;
+                } else if (t.getFullyQualifiedName().equals(Augmentation.class.getName())) {
+                    return true;
                 }
+                
+                
             }
         }
         return false;

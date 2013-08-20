@@ -136,7 +136,7 @@ class BuilderTemplate {
     def private generateBody() '''
         public class «genType.name»«BUILDER» {
         
-            «generateFields»
+            «generateFields(false)»
 
             «generateSetters»
 
@@ -146,7 +146,7 @@ class BuilderTemplate {
 
             private class «genType.name»«IMPL» implements «genType.name» {
 
-                «generateFields»
+                «generateFields(true)»
 
                 «generateConstructor»
 
@@ -157,10 +157,10 @@ class BuilderTemplate {
         }
     '''
 
-    def private generateFields() '''
+    def private generateFields(boolean _final) '''
         «IF !fields.empty»
             «FOR f : fields»
-                private «f.returnType.resolveName» «f.name»;
+                private  «IF _final»final«ENDIF»  «f.returnType.resolveName» «f.name»;
             «ENDFOR»
         «ENDIF»
         «IF augmentField != null»

@@ -839,6 +839,7 @@ public final class YangParserImpl implements YangModelParser {
                         usnb.getLine());
                 for (ExtensionBuilder extension : dependentModule.getExtensions()) {
                     if (extension.getQName().getLocalName().equals(nodeType.getLocalName())) {
+                        usnb.setNodeType(extension.getQName());
                         usnb.setExtensionBuilder(extension);
                         break;
                     }
@@ -863,6 +864,7 @@ public final class YangParserImpl implements YangModelParser {
                             usnb.getLine());
                     for (ExtensionDefinition e : dependentModule.getExtensionSchemaNodes()) {
                         if (e.getQName().getLocalName().equals(nodeType.getLocalName())) {
+                            usnb.setNodeType(new QName(e.getQName().getNamespace(),e.getQName().getRevision() , nodeType.getPrefix(), e.getQName().getLocalName()));
                             usnb.setExtensionDefinition(e);
                             break;
                         }

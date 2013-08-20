@@ -1024,8 +1024,10 @@ public final class ParserListenerUtils {
 
                 return result;
             }
+        } else {
+            unknownType.setReferenceOnly(true);
         }
-
+        
         return unknownType.build();
     }
 

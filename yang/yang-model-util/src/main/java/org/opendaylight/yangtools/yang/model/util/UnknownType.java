@@ -25,7 +25,7 @@ public class UnknownType implements UnknownTypeDefinition {
     private final SchemaPath path;
     private final String description;
     private final String reference;
-
+    private final boolean referenceOnly;
     private final List<LengthConstraint> lengthStatements;
     private final List<PatternConstraint> patterns;
     private final List<RangeConstraint> rangeStatements;
@@ -55,6 +55,7 @@ public class UnknownType implements UnknownTypeDefinition {
         private Status status = Status.CURRENT;
         private String units = "";
         private Object defaultValue = null;
+        private boolean referenceOnly = false;
 
         public Builder(final QName name, final String description,
                 final String reference) {
@@ -129,9 +130,15 @@ public class UnknownType implements UnknownTypeDefinition {
         public UnknownTypeDefinition build() {
             return new UnknownType(this);
         }
+
+        public void setReferenceOnly(boolean b) {
+            this.referenceOnly  = b;
+            
+        }
     }
 
     private UnknownType(Builder builder) {
+        this.referenceOnly = builder.referenceOnly;
         this.name = builder.name;
         this.path = builder.path;
         this.description = builder.description;
@@ -296,6 +303,11 @@ public class UnknownType implements UnknownTypeDefinition {
         return fractionDigits;
     }
 
+    @Override
+    public boolean isReferenceOnly() {
+        return referenceOnly;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

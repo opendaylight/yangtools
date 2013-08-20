@@ -24,4 +24,6 @@ public interface UnknownTypeDefinition extends
 
     Integer getFractionDigits();
 
+    boolean isReferenceOnly();
+
 }

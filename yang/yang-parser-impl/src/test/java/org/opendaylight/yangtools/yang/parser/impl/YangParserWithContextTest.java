@@ -316,8 +316,8 @@ public class YangParserWithContextTest {
 
         UnknownSchemaNode un = unknownNodes.get(0);
         QName unType = un.getNodeType();
-        assertEquals(URI.create("urn:simple.demo.test3"), unType.getNamespace());
-        assertEquals(simpleDateFormat.parse("2013-06-18"), unType.getRevision());
+        assertEquals(URI.create("urn:custom.types.demo"), unType.getNamespace());
+        assertEquals(simpleDateFormat.parse("2012-04-16"), unType.getRevision());
         assertEquals("custom", unType.getPrefix());
         assertEquals("mountpoint", unType.getLocalName());
         assertEquals("point", un.getNodeParameter());
