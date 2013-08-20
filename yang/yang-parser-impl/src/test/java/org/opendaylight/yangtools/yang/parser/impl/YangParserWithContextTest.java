@@ -321,6 +321,7 @@ public class YangParserWithContextTest {
         assertEquals("custom", unType.getPrefix());
         assertEquals("mountpoint", unType.getLocalName());
         assertEquals("point", un.getNodeParameter());
+        assertNotNull(un.getExtensionDefinition());
     }
 
     @Test

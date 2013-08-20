@@ -110,6 +110,17 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         this.extensionBuilder = extension;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(nodeType.getPrefix());
+        sb.append(":");
+        sb.append(nodeType.getLocalName());
+        sb.append(" ");
+        sb.append(nodeParameter);
+        return sb.toString();
+    }
+
     private final class UnknownSchemaNodeImpl implements UnknownSchemaNode {
         private final QName qname;
         private SchemaPath path;
@@ -218,10 +229,12 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(UnknownSchemaNodeImpl.class.getSimpleName());
-            sb.append("[");
-            sb.append(qname);
-            sb.append("]");
+            StringBuilder sb = new StringBuilder();
+            sb.append(nodeType.getPrefix());
+            sb.append(":");
+            sb.append(nodeType.getLocalName());
+            sb.append(" ");
+            sb.append(nodeParameter);
             return sb.toString();
         }
     }

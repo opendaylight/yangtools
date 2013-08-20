@@ -64,12 +64,15 @@ public class GroupingDefinitionDependencySort {
             final GroupingNode groupingNode = (GroupingNode) node;
             final GroupingDefinition groupingDefinition = groupingNode.getGroupingDefinition();
 
-            Set<UsesNode> usesNodes =getAllUsesNodes(groupingDefinition);
+            Set<UsesNode> usesNodes = getAllUsesNodes(groupingDefinition);
             for (UsesNode usesNode : usesNodes) {
                 SchemaPath schemaPath = usesNode.getGroupingPath();
                 if (schemaPath != null) {
                     Node nodeTo = nodeMap.get(schemaPath);
-                    groupingNode.addEdge(nodeTo);
+                    if (nodeTo != null) {
+                        groupingNode.addEdge(nodeTo);
+                    }
+
                 }
             }
         }
@@ -80,7 +83,7 @@ public class GroupingDefinitionDependencySort {
     private static Set<UsesNode> getAllUsesNodes(DataNodeContainer container) {
     	Set<UsesNode> ret = new HashSet<>();
     	ret.addAll(container.getUses());
-    	
+
     	Set<GroupingDefinition> groupings = container.getGroupings();
     	for (GroupingDefinition groupingDefinition : groupings) {
 			ret.addAll(getAllUsesNodes(groupingDefinition));
@@ -94,15 +97,15 @@ public class GroupingDefinitionDependencySort {
     			for (ChoiceCaseNode choiceCaseNode : cases) {
 					ret.addAll(getAllUsesNodes(choiceCaseNode));
 				}
-    		
+
     		}
 		}
-    	
+
     	return ret;
-    
+
     }
-    
-    
+
+
     private static final class GroupingNode extends NodeImpl {
         private final GroupingDefinition groupingDefinition;
 

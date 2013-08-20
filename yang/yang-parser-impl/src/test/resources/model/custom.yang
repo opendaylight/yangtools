@@ -48,8 +48,7 @@ module custom {
     }
 
     container network {
-        mnt:mountpoint point {
-            mnt:target-ref target;
+        c-define point {
         }
 
         description "network-description";
@@ -131,7 +130,7 @@ module custom {
             anyxml filter {
                 description
                   "Subtree or XPath filter to use.";
-                   nc:get-filter-element-attributes;
+                   c:c-define element-attributes;
             }
         }
 
