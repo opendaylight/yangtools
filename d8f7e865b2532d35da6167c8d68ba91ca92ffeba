@@ -1,0 +1,8 @@
+Change-Id: Id8f7e865b2532d35da6167c8d68ba91ca92ffeba
+Code-Review+2: Martin Vitez <mvitez@cisco.com>
+Verified+1: jenkins-yangtools
+Submitted-by: Martin Vitez <mvitez@cisco.com>
+Submitted-at: Tue, 20 Aug 2013 09:37:07 +0000
+Reviewed-on: http://git.opendaylight.org/gerrit/916
+Project: yangtools
+Branch: refs/heads/master
