@@ -9,6 +9,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.binding.generator.util.Types
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 
 /**
  * Template for generating JAVA class. 
@@ -41,6 +42,11 @@ class ClassTemplate {
     val List<Constant> consts
     
     /**
+     * List of generated types which are enclosed inside <code>genType</code>
+     */
+    val List<GeneratedType> enclosedGeneratedTypes;
+        
+    /**
      * Creates instance of this class with concrete <code>genTO</code>.
      * 
      * @param genTO generated transfer object which will be transformed to JAVA class source code
@@ -55,6 +61,7 @@ class ClassTemplate {
         this.fields = genTO.properties
         this.enums = genTO.enumerations
         this.consts = genTO.constantDefinitions
+        this.enclosedGeneratedTypes = genTO.enclosedTypes
     }
     
     /**
@@ -86,6 +93,7 @@ class ClassTemplate {
     def private generateBody(boolean isInnerClass) '''
         «genTO.comment.generateComment»
         «generateClassDeclaration(isInnerClass)» {
+        	«generateInnerClasses»
 
             «generateEnums»
         
@@ -112,6 +120,24 @@ class ClassTemplate {
         }
     '''
     
+    
+    /**
+     * Template method which generates inner classes inside this interface.
+     * 
+     * @return string with the source code for inner classes in JAVA format
+     */
+    def private generateInnerClasses() '''
+        «IF !enclosedGeneratedTypes.empty»
+            «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
+                «IF (innerClass instanceof GeneratedTransferObject)»
+                    «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
+                    «classTemplate.generateAsInnerClass»
+                    
+                «ENDIF»
+            «ENDFOR»
+        «ENDIF»
+    '''
+        
     /**
      * Template method which generates JAVA comments.
      * 

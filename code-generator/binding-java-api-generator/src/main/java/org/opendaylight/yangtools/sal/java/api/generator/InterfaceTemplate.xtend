@@ -137,6 +137,7 @@ class InterfaceTemplate {
                 «IF (innerClass instanceof GeneratedTransferObject)»
                     «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
                     «classTemplate.generateAsInnerClass»
+                    
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
