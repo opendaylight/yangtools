@@ -111,12 +111,18 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     private final Map<SchemaPath, GeneratedType> allGroupings = new HashMap<SchemaPath, GeneratedType>();
 
     /**
+     * Constant with the concrete name of namespace.
+     */
+    private final static String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
+
+    /**
+     * Constant with the concrete name of identifier.
+     */
+    private final static String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
+
+    /**
      * Only parent constructor is invoked.
      */
-    
-    private final static String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
-    private final static String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
-    
     public BindingGeneratorImpl() {
         super();
     }
@@ -785,7 +791,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         final Set<GroupingDefinition> groupings = module.getGroupings();
         List<GroupingDefinition> groupingsSortedByDependencies;
 
-        groupingsSortedByDependencies = GroupingDefinitionDependencySort.sort(groupings); 
+        groupingsSortedByDependencies = GroupingDefinitionDependencySort.sort(groupings);
 
         for (final GroupingDefinition grouping : groupingsSortedByDependencies) {
             GeneratedType genType = groupingToGenType(basePackageName, grouping);
@@ -867,26 +873,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
             final String enumerationName = parseToClassName(enumName);
             final EnumBuilder enumBuilder = typeBuilder.addEnumeration(enumerationName);
+            enumBuilder.updateEnumPairsFromEnumTypeDef(enumTypeDef);
 
-            if (enumBuilder != null) {
-                final List<EnumPair> enums = enumTypeDef.getValues();
-                if (enums != null) {
-                    int listIndex = 0;
-                    for (final EnumPair enumPair : enums) {
-                        if (enumPair != null) {
-                            final String enumPairName = parseToClassName(enumPair.getName());
-                            Integer enumPairValue = enumPair.getValue();
-
-                            if (enumPairValue == null) {
-                                enumPairValue = listIndex;
-                            }
-                            enumBuilder.addValue(enumPairName, enumPairValue);
-                            listIndex++;
-                        }
-                    }
-                }
-                return enumBuilder;
-            }
+            return enumBuilder;
         }
         return null;
     }
@@ -1009,8 +998,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
             genTypeBuilders.put(augmentPackageName, augmentBuilders);
         }
         final String augIdentifier = getAugmentIdentifier(augSchema.getUnknownSchemaNodes());
-        
-        final String augTypeName =  augIdentifier != null ? parseToClassName(augIdentifier): augGenTypeName(augmentBuilders, targetTypeName);
+
+        final String augTypeName = augIdentifier != null ? parseToClassName(augIdentifier) : augGenTypeName(
+                augmentBuilders, targetTypeName);
         final Type targetTypeRef = new ReferencedTypeImpl(targetPackageName, targetTypeName);
         final Set<DataSchemaNode> augChildNodes = augSchema.getChildNodes();
 
@@ -1025,12 +1015,17 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         return augTypeBuilder;
     }
 
+    /**
+     * 
+     * @param unknownSchemaNodes
+     * @return
+     */
     private String getAugmentIdentifier(List<UnknownSchemaNode> unknownSchemaNodes) {
         String ret = null;
         for (UnknownSchemaNode unknownSchemaNode : unknownSchemaNodes) {
             QName nodeType = unknownSchemaNode.getNodeType();
-            if(AUGMENT_IDENTIFIER_NAME.equals(nodeType.getLocalName()) &&
-                    YANG_EXT_NAMESPACE.equals(nodeType.getNamespace().toString())) {
+            if (AUGMENT_IDENTIFIER_NAME.equals(nodeType.getLocalName())
+                    && YANG_EXT_NAMESPACE.equals(nodeType.getNamespace().toString())) {
                 return unknownSchemaNode.getNodeParameter();
             }
         }
@@ -1891,11 +1886,12 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
         final List<String> listKeys = listKeys(list);
         GeneratedTOBuilder genTOBuilder = resolveListKeyTOBuilder(packageName, list);
-        
-        
-        if(genTOBuilder != null) {
-            ParameterizedType identifierMarker = Types.parameterizedTypeFor( Types.typeForClass(Identifier.class), typeBuilder);
-            ParameterizedType identifiableMarker = Types.parameterizedTypeFor(Types.typeForClass(Identifiable.class), genTOBuilder);
+
+        if (genTOBuilder != null) {
+            ParameterizedType identifierMarker = Types.parameterizedTypeFor(Types.typeForClass(Identifier.class),
+                    typeBuilder);
+            ParameterizedType identifiableMarker = Types.parameterizedTypeFor(Types.typeForClass(Identifiable.class),
+                    genTOBuilder);
             genTOBuilder.addImplementsType(identifierMarker);
             typeBuilder.addImplementsType(identifiableMarker);
         }
@@ -1978,7 +1974,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Selects the names of the list keys from <code>list</code> and returns
      * them as the list of the strings
      * 
-     * @param list of string with names of the list keys
+     * @param list
+     *            of string with names of the list keys
      * @return list of string which represents names of the list keys. If the
      *         <code>list</code> contains no keys then the empty list is
      *         returned.
@@ -1995,7 +1992,6 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         }
         return listKeys;
     }
-
 
     /**
      * Generates for the <code>list</code> which contains any list keys special
@@ -2028,9 +2024,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * BitsTypeDefinition} which are also added to <code>typeBuilder</code> as
      * enclosing transfer object.
      * 
+     * If more then one generated TO builder is created for enclosing then all
+     * of the generated TO builders are added to <code>typeBuilder</code> as
+     * enclosing transfer objects.
+     * 
      * @param typeDef
-     *            type definition which can be of type <code>UnionType</code>
-     *            or <code>BitsTypeDefinition</code>
+     *            type definition which can be of type <code>UnionType</code> or
+     *            <code>BitsTypeDefinition</code>
      * @param typeBuilder
      *            generated type builder to which is added generated TO created
      *            from <code>typeDef</code>
@@ -2041,18 +2041,20 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     private GeneratedTOBuilder addTOToTypeBuilder(TypeDefinition<?> typeDef, GeneratedTypeBuilder typeBuilder,
             String leafName) {
         final String classNameFromLeaf = parseToClassName(leafName);
-        GeneratedTOBuilder genTOBuilder = null;
+        List<GeneratedTOBuilder> genTOBuilders = new ArrayList<>();
         final String packageName = typeBuilder.getFullyQualifiedName();
         if (typeDef instanceof UnionTypeDefinition) {
-            genTOBuilder = ((TypeProviderImpl) typeProvider).provideGeneratedTOBuilderForUnionTypeDefinition(packageName, typeDef,
-                    classNameFromLeaf);
+            genTOBuilders.addAll(((TypeProviderImpl) typeProvider).provideGeneratedTOBuildersForUnionTypeDef(
+                    packageName, typeDef, classNameFromLeaf));
         } else if (typeDef instanceof BitsTypeDefinition) {
-            genTOBuilder = ((TypeProviderImpl) typeProvider).provideGeneratedTOBuilderForBitsTypeDefinition(packageName, typeDef,
-                    classNameFromLeaf);
+            genTOBuilders.add(((TypeProviderImpl) typeProvider).provideGeneratedTOBuilderForBitsTypeDefinition(
+                    packageName, typeDef, classNameFromLeaf));
         }
-        if (genTOBuilder != null) {
-            typeBuilder.addEnclosingTransferObject(genTOBuilder);
-            return genTOBuilder;
+        if (genTOBuilders != null && !genTOBuilders.isEmpty()) {
+            for (GeneratedTOBuilder genTOBuilder : genTOBuilders) {
+                typeBuilder.addEnclosingTransferObject(genTOBuilder);
+            }
+            return genTOBuilders.get(0);
         }
         return null;
 
