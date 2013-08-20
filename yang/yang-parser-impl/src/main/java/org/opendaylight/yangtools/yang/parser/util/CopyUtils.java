@@ -349,40 +349,6 @@ public class CopyUtils {
         return copy;
     }
 
-    public static GroupingBuilder copyGroupingWithoutDeep(GroupingBuilder old, Builder newParent, boolean updateQName) {
-        DataBean data = getdata(old, newParent, updateQName);
-        QName newQName = data.qname;
-        SchemaPath newSchemaPath = data.schemaPath;
-
-        GroupingBuilderImpl copy = new GroupingBuilderImpl(newParent.getModuleName(), newParent.getLine(), newQName);
-        copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
-        copy.setDescription(old.getDescription());
-        copy.setReference(old.getReference());
-        copy.setStatus(old.getStatus());
-        copy.setAddedByUses(old.isAddedByUses());
-        copy.setChildNodes(old.getChildNodes());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
-            copy.addChildNode(copy(childNode, copy, updateQName));
-        }
-        copy.getGroupings().addAll(old.getGroupings());
-        for (GroupingBuilder grouping : old.getGroupingBuilders()) {
-            copy.addGrouping(copy(grouping, copy, updateQName));
-        }
-        for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
-            copy.addTypedef(copy(tdb, copy, updateQName));
-        }
-        for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
-            copy.addUsesNode(copyUses(oldUses, copy));
-
-        }
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
-        }
-
-        return copy;
-    }
-
     public static TypeDefinitionBuilder copy(TypeDefinitionBuilder old, Builder newParent, boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
@@ -446,7 +412,7 @@ public class CopyUtils {
 
     static UsesNodeBuilder copyUses(UsesNodeBuilder old, Builder newParent) {
         UsesNodeBuilder copy = new UsesNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
-                old.getGroupingName());
+                old.getGroupingName(), true);
         copy.setParent(newParent);
         copy.setGroupingPath(old.getGroupingPath());
         // TODO grouping vs grouping path?
@@ -464,7 +430,7 @@ public class CopyUtils {
 
         // add new uses to collection of uses in module
         ModuleBuilder module = ParserUtils.getParentModule(newParent);
-        module.addUsesNode(copy);
+        module.getAllUsesNodes().add(copy);
 
         return copy;
     }
@@ -546,9 +512,6 @@ public class CopyUtils {
                 newPath = new ArrayList<>(parent.getPath().getPath());
                 newPath.add(newQName);
             } else {
-                if(old == null) {
-                    System.out.println();
-                }
                 newQName = old.getQName();
                 newPath = new ArrayList<>(parent.getPath().getPath());
                 newPath.add(newQName);

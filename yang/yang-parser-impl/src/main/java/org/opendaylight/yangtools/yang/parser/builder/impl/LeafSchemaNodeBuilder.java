@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuild
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder,
         GroupingMember {
@@ -61,6 +62,10 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
             instance.setConfiguration(configuration);
             instance.setDefault(defaultStr);
             instance.setUnits(unitsStr);
+
+            if (type == null && typedef == null) {
+                throw new YangParseException(moduleName, line, "Failed to resolve leaf type.");
+            }
 
             // TYPE
             if (type == null) {

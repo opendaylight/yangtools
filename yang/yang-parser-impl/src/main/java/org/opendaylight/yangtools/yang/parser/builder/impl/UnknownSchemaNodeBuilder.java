@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -24,6 +25,9 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private boolean addedByUses;
     private QName nodeType;
     private String nodeParameter;
+
+    private ExtensionDefinition extensionDefinition;
+    private ExtensionBuilder extensionBuilder;
 
     public UnknownSchemaNodeBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line, qname);
@@ -40,6 +44,15 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             instance.setReference(reference);
             instance.setStatus(status);
             instance.setAddedByUses(addedByUses);
+
+            // EXTENSION
+            if (extensionDefinition != null) {
+                instance.setExtensionDefinition(extensionDefinition);
+            } else {
+                if (extensionBuilder != null) {
+                    instance.setExtensionDefinition(extensionBuilder.build());
+                }
+            }
 
             // UNKNOWN NODES
             if (unknownNodes == null) {
@@ -81,9 +94,26 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         this.nodeParameter = nodeParameter;
     }
 
+    public ExtensionDefinition getExtensionDefinition() {
+        return extensionDefinition;
+    }
+
+    public void setExtensionDefinition(final ExtensionDefinition extensionDefinition) {
+        this.extensionDefinition = extensionDefinition;
+    }
+
+    public ExtensionBuilder getExtensionBuilder() {
+        return extensionBuilder;
+    }
+
+    public void setExtensionBuilder(final ExtensionBuilder extension) {
+        this.extensionBuilder = extension;
+    }
+
     private final class UnknownSchemaNodeImpl implements UnknownSchemaNode {
         private final QName qname;
         private SchemaPath path;
+        private ExtensionDefinition extension;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
@@ -108,6 +138,15 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
 
         private void setPath(final SchemaPath path) {
             this.path = path;
+        }
+
+        @Override
+        public ExtensionDefinition getExtensionDefinition() {
+            return extension;
+        }
+
+        private void setExtensionDefinition(final ExtensionDefinition extension) {
+            this.extension = extension;
         }
 
         @Override

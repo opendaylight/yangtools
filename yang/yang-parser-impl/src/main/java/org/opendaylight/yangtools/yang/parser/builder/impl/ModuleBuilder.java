@@ -255,6 +255,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return addedDeviations;
     }
 
+    public List<ExtensionBuilder> getExtensions() {
+        return addedExtensions;
+    }
+
     public List<UnknownSchemaNodeBuilder> getAllUnknownNodes() {
         return allUnknownNodes;
     }

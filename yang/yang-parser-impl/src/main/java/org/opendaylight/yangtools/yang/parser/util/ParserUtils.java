@@ -641,6 +641,10 @@ public final class ParserUtils {
      * @return builder of module where this node is defined
      */
     public static ModuleBuilder getParentModule(Builder node) {
+        if(node instanceof ModuleBuilder) {
+            return (ModuleBuilder)node;
+        }
+
         Builder parent = node.getParent();
         while (!(parent instanceof ModuleBuilder)) {
             parent = parent.getParent();

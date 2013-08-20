@@ -71,6 +71,8 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
 
     void setTargetUnknownNodes(List<UnknownSchemaNodeBuilder> targetUnknownNodes);
 
+    boolean isCopy();
+
     boolean isDataCollected();
 
     void setDataCollected(boolean dataCollected);

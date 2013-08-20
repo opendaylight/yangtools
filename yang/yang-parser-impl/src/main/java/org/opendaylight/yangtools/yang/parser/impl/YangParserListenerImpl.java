@@ -55,6 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.YangTypesConverter;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
@@ -387,6 +388,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     addNodeToPath(qname);
                     SchemaPath path = createActualSchemaPath(actualPath.peek());
                     UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
+                    Builder parent = moduleBuilder.getActualNode();
+                    unionBuilder.setParent(parent);
                     moduleBuilder.enterNode(unionBuilder);
                     unionBuilder.setPath(path);
                 } else if ("identityref".equals(typeName)) {
@@ -782,9 +785,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String nodeTypeStr = ctx.getChild(0).getText();
         final String[] splittedElement = nodeTypeStr.split(":");
         if (splittedElement.length == 1) {
-            nodeType = new QName(null, null, yangModelPrefix, splittedElement[0]);
+            nodeType = new QName(namespace, revision, yangModelPrefix, splittedElement[0]);
         } else {
-            nodeType = new QName(null, null, splittedElement[0], splittedElement[1]);
+            nodeType = new QName(namespace, revision, splittedElement[0], splittedElement[1]);
         }
 
         QName qname;

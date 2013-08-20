@@ -52,8 +52,15 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private Set<TypeDefinitionBuilder> targetTypedefs = new HashSet<>();
     private List<UnknownSchemaNodeBuilder> targetUnknownNodes = new ArrayList<>();
 
+    private final boolean isCopy;
     private boolean dataCollected;
     private boolean parentUpdated;
+
+
+    @Override
+    public boolean isCopy() {
+        return isCopy;
+    }
 
     @Override
     public boolean isDataCollected() {
@@ -78,6 +85,13 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
         super(moduleName, line);
         this.groupingName = groupingName;
+        isCopy = false;
+    }
+
+    public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName, final boolean isCopy) {
+        super(moduleName, line);
+        this.groupingName = groupingName;
+        this.isCopy = isCopy;
     }
 
     @Override

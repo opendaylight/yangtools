@@ -364,68 +364,40 @@ public class GroupingUtils {
 
         // child nodes
         Set<DataSchemaNodeBuilder> currentChildNodes = parent.getChildNodeBuilders();
-        Set<DataSchemaNodeBuilder> toRemove = new HashSet<>();
-        Set<DataSchemaNodeBuilder> toAdd = new HashSet<>();
         for (DataSchemaNodeBuilder child : currentChildNodes) {
             if (child instanceof GroupingMember) {
                 GroupingMember gm = (GroupingMember) child;
                 if (gm.isAddedByUses()) {
-                    toRemove.add(child);
-                    DataSchemaNodeBuilder copy = CopyUtils.copy(child, parent, true);
-                    ParserUtils.correctNodePath(copy, parent.getPath());
-                    toAdd.add(copy);
+                    ParserUtils.correctNodePath(child, parent.getPath());
                 }
             }
         }
-        currentChildNodes.removeAll(toRemove);
-        currentChildNodes.addAll(toAdd);
 
         // groupings
         Set<GroupingBuilder> currentGroupings = parent.getGroupingBuilders();
-        Set<GroupingBuilder> toRemoveG = new HashSet<>();
-        Set<GroupingBuilder> toAddG = new HashSet<>();
         for (GroupingBuilder child : currentGroupings) {
             if (child.isAddedByUses()) {
-                toRemoveG.add(child);
-                GroupingBuilder copy = CopyUtils.copy(child, parent, true);
-                ParserUtils.correctNodePath(copy, parent.getPath());
-                toAddG.add(copy);
+                ParserUtils.correctNodePath(child, parent.getPath());
             }
 
         }
-        currentGroupings.removeAll(toRemoveG);
-        currentGroupings.addAll(toAddG);
 
         // typedefs
         Set<TypeDefinitionBuilder> currentTypedefs = parent.getTypeDefinitionBuilders();
-        Set<TypeDefinitionBuilder> toRemoveTD = new HashSet<>();
-        Set<TypeDefinitionBuilder> toAddTD = new HashSet<>();
         for (TypeDefinitionBuilder child : currentTypedefs) {
             if (child.isAddedByUses()) {
-                toRemoveTD.add(child);
-                TypeDefinitionBuilder copy = CopyUtils.copy(child, parent, true);
-                ParserUtils.correctNodePath(copy, parent.getPath());
-                toAddTD.add(copy);
+                ParserUtils.correctNodePath(child, parent.getPath());
             }
 
         }
-        currentTypedefs.removeAll(toRemoveTD);
-        currentTypedefs.addAll(toAddTD);
 
         // unknown nodes
         List<UnknownSchemaNodeBuilder> currentUN = parent.getUnknownNodeBuilders();
-        List<UnknownSchemaNodeBuilder> toRemoveUN = new ArrayList<>();
-        List<UnknownSchemaNodeBuilder> toAddUN = new ArrayList<>();
         for (UnknownSchemaNodeBuilder un : currentUN) {
             if (un.isAddedByUses()) {
-                toRemoveUN.add(un);
-                UnknownSchemaNodeBuilder copy = CopyUtils.copy(un, parent, true);
-                ParserUtils.correctNodePath(copy, parent.getPath());
-                toAddUN.add(copy);
+                ParserUtils.correctNodePath(un, parent.getPath());
             }
         }
-        currentUN.removeAll(toRemoveUN);
-        currentUN.addAll(toAddUN);
     }
 
     /**

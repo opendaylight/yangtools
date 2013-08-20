@@ -10,7 +10,7 @@ module test3 {
     
     organization "opendaylight";
     contact "WILL-BE-DEFINED-LATER";
-        revision 2013-06-18 {
+    revision 2013-06-18 {
     }
 
     identity pt {

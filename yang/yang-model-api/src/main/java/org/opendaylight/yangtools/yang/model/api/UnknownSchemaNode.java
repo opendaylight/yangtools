@@ -17,4 +17,11 @@ public interface UnknownSchemaNode extends SchemaNode {
 
     boolean isAddedByUses();
 
+    /**
+     * Get extension definition which identifies this node
+     *
+     * @return extension definition if exists, null otherwise
+     */
+    ExtensionDefinition getExtensionDefinition();
+
 }
