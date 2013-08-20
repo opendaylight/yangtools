@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -38,34 +39,40 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private DataNodeContainerBuilder parent;
     private final String groupingName;
     private SchemaPath groupingPath;
+    private GroupingDefinition groupingDefinition;
+    private GroupingBuilder groupingBuilder;
     private boolean augmenting;
     private boolean addedByUses;
     private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<AugmentationSchemaBuilder>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<SchemaNodeBuilder>();
     private final List<RefineHolder> refines = new ArrayList<RefineHolder>();
 
-    private final Set<DataSchemaNodeBuilder> finalChildren = new HashSet<>();
-    private Set<DataSchemaNodeBuilder> targetChildren;
+    private Set<DataSchemaNodeBuilder> targetChildren = new HashSet<>();
+    private Set<GroupingBuilder> targetGroupings = new HashSet<>();
+    private Set<TypeDefinitionBuilder> targetTypedefs = new HashSet<>();
+    private List<UnknownSchemaNodeBuilder> targetUnknownNodes = new ArrayList<>();
 
-    private final Set<GroupingBuilder> finalGroupings = new HashSet<>();
-    private Set<GroupingBuilder> targetGroupings;
+    private boolean dataCollected;
+    private boolean parentUpdated;
 
-    private final Set<TypeDefinitionBuilder> finalTypedefs = new HashSet<>();
-    private Set<TypeDefinitionBuilder> targetTypedefs;
-
-    private final List<UnknownSchemaNodeBuilder> finalUnknownNodes = new ArrayList<>();
-    private List<UnknownSchemaNodeBuilder> targetUnknownNodes;
-
-    private final List<UsesNodeBuilder> targetGroupingUses = new ArrayList<>();
-
-    boolean loadDone;
-
-    public boolean isLoadDone() {
-        return loadDone;
+    @Override
+    public boolean isDataCollected() {
+        return dataCollected;
     }
 
-    public void setLoadDone(boolean loadDone) {
-        this.loadDone = loadDone;
+    @Override
+    public void setDataCollected(boolean dataCollected) {
+        this.dataCollected = dataCollected;
+    }
+
+    @Override
+    public boolean isParentUpdated() {
+        return parentUpdated;
+    }
+
+    @Override
+    public void setParentUpdated(boolean parentUpdated) {
+        this.parentUpdated = parentUpdated;
     }
 
     public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
@@ -132,6 +139,26 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
+    public GroupingDefinition getGroupingDefinition() {
+        return groupingDefinition;
+    }
+
+    @Override
+    public void setGroupingDefinition(GroupingDefinition groupingDefinition) {
+        this.groupingDefinition = groupingDefinition;
+    }
+
+    @Override
+    public GroupingBuilder getGroupingBuilder() {
+        return groupingBuilder;
+    }
+
+    @Override
+    public void setGrouping(GroupingBuilder grouping) {
+        this.groupingBuilder = grouping;
+    }
+
+    @Override
     public String getGroupingName() {
         return groupingName;
     }
@@ -187,11 +214,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public Set<DataSchemaNodeBuilder> getFinalChildren() {
-        return finalChildren;
-    }
-
-    @Override
     public Set<DataSchemaNodeBuilder> getTargetChildren() {
         return targetChildren;
     }
@@ -199,11 +221,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void setTargetChildren(Set<DataSchemaNodeBuilder> targetChildren) {
         this.targetChildren = targetChildren;
-    }
-
-    @Override
-    public Set<GroupingBuilder> getFinalGroupings() {
-        return finalGroupings;
     }
 
     @Override
@@ -217,11 +234,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public Set<TypeDefinitionBuilder> getFinalTypedefs() {
-        return finalTypedefs;
-    }
-
-    @Override
     public Set<TypeDefinitionBuilder> getTargetTypedefs() {
         return targetTypedefs;
     }
@@ -232,11 +244,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public List<UnknownSchemaNodeBuilder> getFinalUnknownNodes() {
-        return finalUnknownNodes;
-    }
-
-    @Override
     public List<UnknownSchemaNodeBuilder> getTargetUnknownNodes() {
         return targetUnknownNodes;
     }
@@ -244,11 +251,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void setTargetUnknownNodes(List<UnknownSchemaNodeBuilder> targetUnknownNodes) {
         this.targetUnknownNodes = targetUnknownNodes;
-    }
-
-    @Override
-    public List<UsesNodeBuilder> getTargetGroupingUses() {
-        return targetGroupingUses;
     }
 
     @Override

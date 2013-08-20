@@ -238,29 +238,14 @@ public final class ParserListenerUtils {
     }
 
     /**
-     * Create SchemaPath from actualPath and names.
+     * Create SchemaPath from actualPath and new node name.
      *
      * @param actualPath
      *            current position in model
-     * @param namespace
-     * @param revision
-     * @param prefix
-     * @param names
-     * @return SchemaPath object.
+     * @return SchemaPath object
      */
-    public static SchemaPath createActualSchemaPath(final List<String> actualPath, final URI namespace,
-            final Date revision, final String prefix, final String... names) {
-        final List<QName> path = new ArrayList<QName>();
-        QName qname;
-        // start from index 1 - module name omited
-        for (int i = 1; i < actualPath.size(); i++) {
-            qname = new QName(namespace, revision, prefix, actualPath.get(i));
-            path.add(qname);
-        }
-        for (String name : names) {
-            qname = new QName(namespace, revision, prefix, name);
-            path.add(qname);
-        }
+    public static SchemaPath createActualSchemaPath(final Stack<QName> actualPath) {
+        final List<QName> path = new ArrayList<QName>(actualPath);
         return new SchemaPath(path, true);
     }
 
@@ -300,14 +285,12 @@ public final class ParserListenerUtils {
      *            type body context to parse
      * @param path
      *            actual position in YANG model
-     * @param moduleName current module name
-     * @param namespace
-     * @param revision
-     * @param prefix
+     * @param moduleName
+     *            current module name
      * @return List of EnumPair object parsed from given context
      */
     private static List<EnumTypeDefinition.EnumPair> getEnumConstants(final Type_body_stmtsContext ctx,
-            final List<String> path, final String moduleName, final URI namespace, final Date revision, final String prefix) {
+            final Stack<QName> path, final String moduleName) {
         List<EnumTypeDefinition.EnumPair> enumConstants = new ArrayList<EnumTypeDefinition.EnumPair>();
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -317,8 +300,7 @@ public final class ParserListenerUtils {
                 for (int j = 0; j < enumSpecChild.getChildCount(); j++) {
                     ParseTree enumChild = enumSpecChild.getChild(j);
                     if (enumChild instanceof Enum_stmtContext) {
-                        EnumPair enumPair = createEnumPair((Enum_stmtContext) enumChild, highestValue, path, moduleName, namespace,
-                                revision, prefix);
+                        EnumPair enumPair = createEnumPair((Enum_stmtContext) enumChild, highestValue, path, moduleName);
                         if (enumPair.getValue() > highestValue) {
                             highestValue = enumPair.getValue();
                         }
@@ -341,24 +323,17 @@ public final class ParserListenerUtils {
      *            actual position in YANG model
      * @param moduleName
      *            current module name
-     * @param namespace
-     * @param revision
-     * @param prefix
      * @return EnumPair object parsed from given context
      */
     private static EnumTypeDefinition.EnumPair createEnumPair(final Enum_stmtContext ctx, final int highestValue,
-            final List<String> path, final String moduleName, final URI namespace, final Date revision,
-            final String prefix) {
+            final Stack<QName> actualPath, final String moduleName) {
         final String name = stringFromNode(ctx);
-        final QName qname = new QName(namespace, revision, prefix, name);
+        SchemaPath path = createTypePath(actualPath, name);
         Integer value = null;
 
         String description = null;
         String reference = null;
         Status status = null;
-
-        List<String> enumPairPath = new ArrayList<String>(path);
-        enumPairPath.add(name);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
@@ -383,8 +358,8 @@ public final class ParserListenerUtils {
         }
 
         EnumPairImpl result = new EnumPairImpl();
-        result.qname = qname;
-        result.path = createActualSchemaPath(enumPairPath, namespace, revision, prefix);
+        result.qname = path.getPath().get(path.getPath().size() - 1);
+        result.path = path;
         result.description = description;
         result.reference = reference;
         result.status = status;
@@ -519,6 +494,7 @@ public final class ParserListenerUtils {
      *
      * @param ctx
      *            type body context to parse
+     * @param moduleName
      * @return List of RangeConstraint created from this context
      */
     private static List<RangeConstraint> getRangeConstraints(final Type_body_stmtsContext ctx, final String moduleName) {
@@ -543,6 +519,7 @@ public final class ParserListenerUtils {
      *
      * @param ctx
      *            range context to parse
+     * @param moduleName
      * @return List of RangeConstraints parsed from this context
      */
     private static List<RangeConstraint> parseRangeConstraints(final Range_stmtContext ctx, final String moduleName) {
@@ -585,6 +562,7 @@ public final class ParserListenerUtils {
      *
      * @param ctx
      *            type body context to parse
+     * @param moduleName
      * @return List of LengthConstraint created from this context
      */
     private static List<LengthConstraint> getLengthConstraints(final Type_body_stmtsContext ctx, final String moduleName) {
@@ -609,6 +587,7 @@ public final class ParserListenerUtils {
      *
      * @param ctx
      *            length context to parse
+     * @param moduleName
      * @return List of LengthConstraints parsed from this context
      */
     private static List<LengthConstraint> parseLengthConstraints(final Length_stmtContext ctx, final String moduleName) {
@@ -649,6 +628,8 @@ public final class ParserListenerUtils {
     /**
      * @param value
      *            value to parse
+     * @param moduleName name of current module
+     * @param line current line in module
      * @return wrapper object of primitive java type or UnknownBoundaryNumber if
      *         type is one of special YANG values 'min' or 'max'
      */
@@ -790,14 +771,12 @@ public final class ParserListenerUtils {
      *            type body context to parse
      * @param actualPath
      *            current position in YANG model
-     * @param moduleName current module name
-     * @param namespace
-     * @param revision
-     * @param prefix
+     * @param moduleName
+     *            current module name
      * @return List of Bit objects created from this context
      */
-    private static List<BitsTypeDefinition.Bit> getBits(Type_body_stmtsContext ctx, List<String> actualPath,
-            String moduleName, URI namespace, Date revision, String prefix) {
+    private static List<BitsTypeDefinition.Bit> getBits(Type_body_stmtsContext ctx, Stack<QName> actualPath,
+            String moduleName) {
         final List<BitsTypeDefinition.Bit> bits = new ArrayList<BitsTypeDefinition.Bit>();
         for (int j = 0; j < ctx.getChildCount(); j++) {
             ParseTree bitsSpecChild = ctx.getChild(j);
@@ -806,8 +785,7 @@ public final class ParserListenerUtils {
                 for (int k = 0; k < bitsSpecChild.getChildCount(); k++) {
                     ParseTree bitChild = bitsSpecChild.getChild(k);
                     if (bitChild instanceof Bit_stmtContext) {
-                        Bit bit = parseBit((Bit_stmtContext) bitChild, highestPosition, actualPath, moduleName, namespace,
-                                revision, prefix);
+                        Bit bit = parseBit((Bit_stmtContext) bitChild, highestPosition, actualPath, moduleName);
                         if (bit.getPosition() > highestPosition) {
                             highestPosition = bit.getPosition();
                         }
@@ -828,27 +806,20 @@ public final class ParserListenerUtils {
      *            current highest position in bits type
      * @param actualPath
      *            current position in YANG model
-     * @param moduleName current module name
-     * @param namespace
-     * @param revision
-     * @param prefix
+     * @param moduleName
+     *            current module name
      * @return Bit object parsed from this context
      */
     private static BitsTypeDefinition.Bit parseBit(final Bit_stmtContext ctx, long highestPosition,
-            List<String> actualPath, final String moduleName, final URI namespace, final Date revision, final String prefix) {
+            Stack<QName> actualPath, final String moduleName) {
         String name = stringFromNode(ctx);
-        final QName qname = new QName(namespace, revision, prefix, name);
         Long position = null;
 
         String description = null;
         String reference = null;
         Status status = Status.CURRENT;
 
-        Stack<String> bitPath = new Stack<String>();
-        bitPath.addAll(actualPath);
-        bitPath.add(name);
-
-        SchemaPath schemaPath = createActualSchemaPath(bitPath, namespace, revision, prefix);
+        SchemaPath schemaPath = createBaseTypePath(actualPath, name);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
@@ -873,7 +844,8 @@ public final class ParserListenerUtils {
         }
 
         final List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
-        return new BitImpl(position, qname, schemaPath, description, reference, status, unknownNodes);
+        return new BitImpl(position, schemaPath.getPath().get(schemaPath.getPath().size() - 1), schemaPath,
+                description, reference, status, unknownNodes);
     }
 
     /**
@@ -975,7 +947,8 @@ public final class ParserListenerUtils {
      *
      * @param ctx
      *            config context to parse
-     * @param moduleName current module name
+     * @param moduleName
+     *            current module name
      * @return true if given context contains string 'true', false otherwise
      */
     private static Boolean parseConfig(final Config_stmtContext ctx, final String moduleName) {
@@ -1016,7 +989,7 @@ public final class ParserListenerUtils {
      * @return UnknownType object with constraints from parsed type body
      */
     public static TypeDefinition<?> parseUnknownTypeWithBody(final QName typedefQName,
-            final Type_body_stmtsContext ctx, final List<String> actualPath, final URI namespace, final Date revision,
+            final Type_body_stmtsContext ctx, final Stack<QName> actualPath, final URI namespace, final Date revision,
             final String prefix, final Builder parent) {
         String moduleName = parent.getModuleName();
         String typeName = typedefQName.getLocalName();
@@ -1040,8 +1013,7 @@ public final class ParserListenerUtils {
                 TypeDefinition<?> baseType = unknownType.build();
                 TypeDefinition<?> result = null;
                 QName qname = new QName(namespace, revision, prefix, typeName);
-                SchemaPath schemaPath = createTypeSchemaPath(actualPath, namespace, revision, prefix, typeName, false,
-                        false);
+                SchemaPath schemaPath = createTypePath(actualPath, typeName);
 
                 ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, null, null, schemaPath);
                 typeBuilder.ranges(rangeStatements);
@@ -1076,9 +1048,10 @@ public final class ParserListenerUtils {
      *            parent builder
      * @return TypeDefinition object based on parsed values.
      */
-    public static TypeDefinition<?> parseTypeWithBody(final String typeName,
-            final Type_body_stmtsContext typeBody, final List<String> actualPath, final URI namespace,
-            final Date revision, final String prefix, final Builder parent) {
+    public static TypeDefinition<?> parseTypeWithBody(final String typeName, final Type_body_stmtsContext typeBody,
+            final Stack<QName> actualPath, final URI namespace, final Date revision, final String prefix,
+            final Builder parent) {
+
         final String moduleName = parent.getModuleName();
         final int line = typeBody.getStart().getLine();
         TypeDefinition<?> baseType = null;
@@ -1094,27 +1067,30 @@ public final class ParserListenerUtils {
         constraints.addPatterns(patternStatements);
         constraints.addRanges(rangeStatements);
 
-        SchemaPath baseTypePathFinal = createTypeSchemaPath(actualPath, namespace, revision, prefix, typeName, true,
-                true);
-        SchemaPath baseTypePath = createTypeSchemaPath(actualPath, namespace, revision, prefix, typeName, true, false);
+        SchemaPath baseTypePath = createBaseTypePath(actualPath, typeName);
+        SchemaPath extBaseTypePath = createExtendedBaseTypePath(actualPath, namespace, revision, prefix, typeName);
+
+        if (parent instanceof TypeDefinitionBuilder && !(parent instanceof UnionTypeBuilder)) {
+            extBaseTypePath = baseTypePath;
+        }
 
         if ("decimal64".equals(typeName)) {
             if (rangeStatements.isEmpty()) {
-                return new Decimal64(baseTypePathFinal, fractionDigits);
+                return new Decimal64(baseTypePath, fractionDigits);
             }
-            Decimal64 decimalType = new Decimal64(baseTypePath, fractionDigits);
+            Decimal64 decimalType = new Decimal64(extBaseTypePath, fractionDigits);
             constraints.addRanges(decimalType.getRangeStatements());
             baseType = decimalType;
         } else if (typeName.startsWith("int")) {
             IntegerTypeDefinition intType = null;
             if ("int8".equals(typeName)) {
-                intType = new Int8(baseTypePath);
+                intType = new Int8(extBaseTypePath);
             } else if ("int16".equals(typeName)) {
-                intType = new Int16(baseTypePath);
+                intType = new Int16(extBaseTypePath);
             } else if ("int32".equals(typeName)) {
-                intType = new Int32(baseTypePath);
+                intType = new Int32(extBaseTypePath);
             } else if ("int64".equals(typeName)) {
-                intType = new Int64(baseTypePath);
+                intType = new Int64(extBaseTypePath);
             }
             if (intType == null) {
                 throw new YangParseException(moduleName, line, "Unknown yang type " + typeName);
@@ -1124,13 +1100,13 @@ public final class ParserListenerUtils {
         } else if (typeName.startsWith("uint")) {
             UnsignedIntegerTypeDefinition uintType = null;
             if ("uint8".equals(typeName)) {
-                uintType = new Uint8(baseTypePath);
+                uintType = new Uint8(extBaseTypePath);
             } else if ("uint16".equals(typeName)) {
-                uintType = new Uint16(baseTypePath);
+                uintType = new Uint16(extBaseTypePath);
             } else if ("uint32".equals(typeName)) {
-                uintType = new Uint32(baseTypePath);
+                uintType = new Uint32(extBaseTypePath);
             } else if ("uint64".equals(typeName)) {
-                uintType = new Uint64(baseTypePath);
+                uintType = new Uint64(extBaseTypePath);
             }
             if (uintType == null) {
                 throw new YangParseException(moduleName, line, "Unknown yang type " + typeName);
@@ -1138,27 +1114,26 @@ public final class ParserListenerUtils {
             constraints.addRanges(uintType.getRangeStatements());
             baseType = uintType;
         } else if ("enumeration".equals(typeName)) {
-            List<EnumTypeDefinition.EnumPair> enumConstants = getEnumConstants(typeBody, actualPath, moduleName, namespace,
-                    revision, prefix);
-            return new EnumerationType(baseTypePathFinal, enumConstants);
+            List<EnumTypeDefinition.EnumPair> enumConstants = getEnumConstants(typeBody, actualPath, moduleName);
+            return new EnumerationType(baseTypePath, enumConstants);
         } else if ("string".equals(typeName)) {
-            StringTypeDefinition stringType = new StringType(baseTypePath);
+            StringTypeDefinition stringType = new StringType(extBaseTypePath);
             constraints.addLengths(stringType.getLengthStatements());
             baseType = stringType;
         } else if ("bits".equals(typeName)) {
-            return new BitsType(baseTypePathFinal, getBits(typeBody, actualPath, moduleName, namespace, revision, prefix));
+            return new BitsType(baseTypePath, getBits(typeBody, actualPath, moduleName));
         } else if ("leafref".equals(typeName)) {
             final String path = parseLeafrefPath(typeBody);
             final boolean absolute = path.startsWith("/");
             RevisionAwareXPath xpath = new RevisionAwareXPathImpl(path, absolute);
-            return new Leafref(baseTypePathFinal, xpath);
+            return new Leafref(baseTypePath, xpath);
         } else if ("binary".equals(typeName)) {
-            BinaryTypeDefinition binaryType = new BinaryType(baseTypePath);
+            BinaryTypeDefinition binaryType = new BinaryType(extBaseTypePath);
             constraints.addLengths(binaryType.getLengthConstraints());
             baseType = binaryType;
         } else if ("instance-identifier".equals(typeName)) {
             boolean requireInstance = isRequireInstance(typeBody);
-            return new InstanceIdentifier(baseTypePath, null, requireInstance);
+            return new InstanceIdentifier(extBaseTypePath, null, requireInstance);
         }
 
         if (parent instanceof TypeDefinitionBuilder && !(parent instanceof UnionTypeBuilder)) {
@@ -1171,10 +1146,13 @@ public final class ParserListenerUtils {
         }
 
         TypeDefinition<?> result = null;
-        QName qname = new QName(namespace, revision, prefix, typeName);
         ExtendedType.Builder typeBuilder = null;
 
-        SchemaPath schemaPath = createTypeSchemaPath(actualPath, namespace, revision, prefix, typeName, false, false);
+        List<QName> path = new ArrayList<QName>(actualPath);
+        path.add(new QName(namespace, revision, prefix, typeName));
+        SchemaPath schemaPath = new SchemaPath(path, true);
+
+        QName qname = schemaPath.getPath().get(schemaPath.getPath().size() - 1);
         typeBuilder = new ExtendedType.Builder(qname, baseType, "", "", schemaPath);
 
         typeBuilder.ranges(constraints.getRange());
@@ -1186,44 +1164,27 @@ public final class ParserListenerUtils {
         return result;
     }
 
-    /**
-     * Create SchemaPath object from given path list with namespace, revision
-     * and prefix based on given values.
-     *
-     * @param actualPath
-     *            current position in model
-     * @param namespace
-     * @param revision
-     * @param prefix
-     * @param typeName
-     * @param isBaseYangType
-     *            if this is base yang type
-     * @param isBaseYangTypeFinal
-     *            if this is base yang type without restrictions
-     * @return SchemaPath object.
-     */
-    private static SchemaPath createTypeSchemaPath(final List<String> actualPath, final URI namespace,
-            final Date revision, final String prefix, final String typeName, final boolean isBaseYangType,
-            final boolean isBaseYangTypeFinal) {
-        List<String> typePath = new ArrayList<String>(actualPath);
-        if (isBaseYangType && !isBaseYangTypeFinal) {
-            typePath.add(typeName);
-        }
-
-        final List<QName> path = new ArrayList<QName>();
-        QName qname;
-        // start from index 1 -> module name omited
-        for (int i = 1; i < typePath.size(); i++) {
-            qname = new QName(namespace, revision, prefix, typePath.get(i));
-            path.add(qname);
-        }
-        QName typeQName;
-        if (isBaseYangType) {
-            typeQName = new QName(BaseTypes.BaseTypesNamespace, typeName);
-        } else {
-            typeQName = new QName(namespace, revision, prefix, typeName);
-        }
+    private static SchemaPath createTypePath(Stack<QName> actual, String typeName) {
+        QName last = actual.peek();
+        QName typeQName = new QName(last.getNamespace(), last.getRevision(), last.getPrefix(), typeName);
+        List<QName> path = new ArrayList<QName>(actual);
         path.add(typeQName);
+        return new SchemaPath(path, true);
+    }
+
+    private static SchemaPath createBaseTypePath(Stack<QName> actual, String typeName) {
+        List<QName> path = new ArrayList<QName>(actual);
+        path.add(BaseTypes.constructQName(typeName));
+        return new SchemaPath(path, true);
+    }
+
+    private static SchemaPath createExtendedBaseTypePath(Stack<QName> actual, URI namespace, Date revision,
+            String prefix, String typeName) {
+        QName extTypeName = new QName(namespace, revision, prefix, typeName);
+        QName baseTypeName = BaseTypes.constructQName(typeName);
+        List<QName> path = new ArrayList<QName>(actual);
+        path.add(extTypeName);
+        path.add(baseTypeName);
         return new SchemaPath(path, true);
     }
 
@@ -1483,6 +1444,7 @@ public final class ParserListenerUtils {
      *
      * @param refineCtx
      *            refine statement
+     * @param moduleName name of current module
      * @return RefineHolder object representing this refine statement
      */
     public static RefineHolder parseRefine(Refine_stmtContext refineCtx, String moduleName) {

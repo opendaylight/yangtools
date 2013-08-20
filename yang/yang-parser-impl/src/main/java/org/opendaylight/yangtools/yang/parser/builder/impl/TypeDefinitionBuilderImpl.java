@@ -205,15 +205,7 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder("TypedefBuilder[" + qname.getLocalName());
-        result.append(", type=");
-        if (type == null) {
-            result.append(typedef);
-        } else {
-            result.append(type);
-        }
-        result.append("]");
-        return result.toString();
+        return "typedef " + qname.getLocalName();
     }
 
 }

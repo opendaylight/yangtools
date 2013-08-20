@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.createSchemaPath;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,10 +18,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -175,183 +187,269 @@ public class GroupingUtils {
     }
 
     /**
-     * Copy target grouping data to given uses node.
-     * <p>
-     * Copy all data-schema-nodes, groupings, typedefs and unknown nodes from
-     * target grouping to uses node.
-     * </p>
+     * Add nodes defined in uses target grouping to uses parent.
      *
      * @param usesNode
-     * @param targetGrouping
      */
-    public static void loadTargetGroupingData(final UsesNodeBuilder usesNode, final GroupingBuilder targetGrouping) {
+    public static void updateUsesParent(UsesNodeBuilder usesNode) {
+        DataNodeContainerBuilder parent = usesNode.getParent();
+
         // child nodes
-        Set<DataSchemaNodeBuilder> targetChildren = new HashSet<>();
-        for (DataSchemaNodeBuilder targetChild : targetGrouping.getChildNodeBuilders()) {
-            targetChildren.add(CopyUtils.copy(targetChild, usesNode.getParent(), true));
+        for (DataSchemaNodeBuilder child : usesNode.getTargetChildren()) {
+            if (child instanceof GroupingMember) {
+                ((GroupingMember) child).setAddedByUses(true);
+            }
+            parent.addChildNode(child);
         }
-        usesNode.setTargetChildren(targetChildren);
 
         // groupings
-        Set<GroupingBuilder> targetGroupingGroupings = new HashSet<>();
-        for (GroupingBuilder targetGroupingGrouping : targetGrouping.getGroupingBuilders()) {
-            targetGroupingGroupings.add(CopyUtils.copy(targetGroupingGrouping, usesNode.getParent(), true));
+        for (GroupingBuilder gb : usesNode.getTargetGroupings()) {
+            gb.setAddedByUses(true);
+            parent.addGrouping(gb);
         }
-        usesNode.setTargetGroupings(targetGroupingGroupings);
 
         // typedefs
-        Set<TypeDefinitionBuilder> targetGroupingTypedefs = new HashSet<>();
-        for(TypeDefinitionBuilder targetGroupingTypedef : targetGrouping.getTypeDefinitionBuilders()) {
-            targetGroupingTypedefs.add(CopyUtils.copy(targetGroupingTypedef, usesNode.getParent(), true));
+        for (TypeDefinitionBuilder tdb : usesNode.getTargetTypedefs()) {
+            tdb.setAddedByUses(true);
+            parent.addTypedef(tdb);
         }
-        usesNode.setTargetTypedefs(targetGroupingTypedefs);
 
         // unknown nodes
-        List<UnknownSchemaNodeBuilder> targetGroupingUNs = new ArrayList<>();
-        for(UnknownSchemaNodeBuilder targetGroupingUN : targetGrouping.getUnknownNodeBuilders()) {
-            targetGroupingUNs.add(CopyUtils.copy(targetGroupingUN, usesNode.getParent(), true));
+        for (UnknownSchemaNodeBuilder un : usesNode.getTargetUnknownNodes()) {
+            un.setAddedByUses(true);
+            parent.addUnknownNodeBuilder(un);
         }
-        usesNode.setTargetUnknownNodes(targetGroupingUNs);
+    }
 
-        usesNode.setLoadDone(true);
+    public static void collectUsesData(UsesNodeBuilder usesNode) {
+        usesNode.setTargetChildren(collectUsesChildNodes(usesNode));
+        usesNode.setTargetTypedefs(collectUsesTypedefs(usesNode));
+        usesNode.setTargetGroupings(collectUsesGroupings(usesNode));
+        usesNode.setTargetUnknownNodes(collectUsesUnknownNodes(usesNode));
+        usesNode.setDataCollected(true);
+    }
+
+    private static Set<DataSchemaNodeBuilder> collectUsesChildNodes(UsesNodeBuilder usesNode) {
+        final GroupingBuilder target = usesNode.getGroupingBuilder();
+        Set<DataSchemaNodeBuilder> childNodes = target.getChildNodeBuilders();
+        Set<DataSchemaNodeBuilder> copies = new HashSet<>();
+        for (DataSchemaNodeBuilder childNode : childNodes) {
+            copies.add(CopyUtils.copy(childNode, usesNode.getParent(), true));
+        }
+        for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
+            copies.addAll(collectUsesChildNodes(targetUses));
+        }
+        return copies;
+    }
+
+    private static Set<TypeDefinitionBuilder> collectUsesTypedefs(UsesNodeBuilder usesNode) {
+        final GroupingBuilder target = usesNode.getGroupingBuilder();
+        Set<TypeDefinitionBuilder> typedefs = target.getTypeDefinitionBuilders();
+        Set<TypeDefinitionBuilder> copies = new HashSet<>();
+        for (TypeDefinitionBuilder typedef : typedefs) {
+            copies.add(CopyUtils.copy(typedef, usesNode.getParent(), true));
+        }
+        for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
+            copies.addAll(collectUsesTypedefs(targetUses));
+        }
+        return copies;
+    }
+
+    private static Set<GroupingBuilder> collectUsesGroupings(UsesNodeBuilder usesNode) {
+        final GroupingBuilder target = usesNode.getGroupingBuilder();
+        Set<GroupingBuilder> groupings = target.getGroupingBuilders();
+        Set<GroupingBuilder> copies = new HashSet<>();
+        for (GroupingBuilder grouping : groupings) {
+            copies.add(CopyUtils.copy(grouping, usesNode.getParent(), true));
+        }
+        for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
+            copies.addAll(collectUsesGroupings(targetUses));
+        }
+        return copies;
+    }
+
+    private static List<UnknownSchemaNodeBuilder> collectUsesUnknownNodes(UsesNodeBuilder usesNode) {
+        final GroupingBuilder target = usesNode.getGroupingBuilder();
+        List<UnknownSchemaNodeBuilder> unknownNodes = target.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> copies = new ArrayList<>();
+        for (UnknownSchemaNodeBuilder unknownNode : unknownNodes) {
+            copies.add(CopyUtils.copy(unknownNode, usesNode.getParent(), true));
+        }
+        for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
+            copies.addAll(collectUsesUnknownNodes(targetUses));
+        }
+        return copies;
+    }
+
+    public static void collectUsesDataFromContext(UsesNodeBuilder usesNode) {
+        DataNodeContainerBuilder parent = usesNode.getParent();
+        URI namespace = parent.getQName().getNamespace();
+        Date revision = parent.getQName().getRevision();
+        String prefix = parent.getQName().getPrefix();
+        String  moduleName = parent.getModuleName();
+        int line = parent.getLine();
+
+        // child nodes
+        final Set<DataSchemaNodeBuilder> newChildren = new HashSet<>();
+        for (DataSchemaNode child : usesNode.getGroupingDefinition().getChildNodes()) {
+            if (child != null) {
+                DataSchemaNodeBuilder newChild = null;
+                QName newQName = new QName(namespace, revision, prefix, child.getQName().getLocalName());
+                if (child instanceof AnyXmlSchemaNode) {
+                    newChild = CopyUtils.createAnyXml((AnyXmlSchemaNode) child, newQName, moduleName, line);
+                } else if (child instanceof ChoiceNode) {
+                    newChild = CopyUtils.createChoice((ChoiceNode) child, newQName, moduleName, line);
+                } else if (child instanceof ContainerSchemaNode) {
+                    newChild = CopyUtils.createContainer((ContainerSchemaNode) child, newQName, moduleName, line);
+                } else if (child instanceof LeafListSchemaNode) {
+                    newChild = CopyUtils.createLeafList((LeafListSchemaNode) child, newQName, moduleName, line);
+                } else if (child instanceof LeafSchemaNode) {
+                    newChild = CopyUtils.createLeafBuilder((LeafSchemaNode) child, newQName, moduleName, line);
+                } else if (child instanceof ListSchemaNode) {
+                    newChild = CopyUtils.createList((ListSchemaNode) child, newQName, moduleName, line);
+                }
+
+                if (newChild == null) {
+                    throw new YangParseException(moduleName, line,
+                            "Unknown member of target grouping while resolving uses node.");
+                }
+                if (newChild instanceof GroupingMember) {
+                    ((GroupingMember) newChild).setAddedByUses(true);
+                }
+
+                newChild.setPath(createSchemaPath(parent.getPath(), newQName));
+                newChildren.add(newChild);
+            }
+        }
+        usesNode.setTargetChildren(newChildren);
+
+        // groupings
+        final Set<GroupingBuilder> newGroupings = new HashSet<>();
+        for (GroupingDefinition g : usesNode.getGroupingDefinition().getGroupings()) {
+            QName newQName = new QName(namespace, revision, prefix, g.getQName().getLocalName());
+            GroupingBuilder newGrouping = CopyUtils.createGrouping(g, newQName, moduleName, line);
+            newGrouping.setAddedByUses(true);
+            newGrouping.setPath(createSchemaPath(parent.getPath(), newQName));
+            newGroupings.add(newGrouping);
+        }
+        usesNode.setTargetGroupings(newGroupings);
+
+        // typedefs
+        final Set<TypeDefinitionBuilder> newTypedefs = new HashSet<>();
+        for (TypeDefinition<?> td : usesNode.getGroupingDefinition().getTypeDefinitions()) {
+            QName newQName = new QName(namespace, revision, prefix, td.getQName().getLocalName());
+            TypeDefinitionBuilder newType = CopyUtils.createTypedef((ExtendedType) td, newQName, moduleName, line);
+            newType.setAddedByUses(true);
+            newType.setPath(createSchemaPath(parent.getPath(), newQName));
+            newTypedefs.add(newType);
+        }
+        usesNode.setTargetTypedefs(newTypedefs);
+
+        // unknown nodes
+        final List<UnknownSchemaNodeBuilder> newUnknownNodes = new ArrayList<>();
+        for (UnknownSchemaNode un : usesNode.getGroupingDefinition().getUnknownSchemaNodes()) {
+            QName newQName = new QName(namespace, revision, prefix, un.getQName().getLocalName());
+            UnknownSchemaNodeBuilder newNode = CopyUtils.createUnknownSchemaNode(un, newQName, moduleName, line);
+            newNode.setAddedByUses(true);
+            newNode.setPath(createSchemaPath(parent.getPath(), newQName));
+            newUnknownNodes.add(newNode);
+        }
+        usesNode.setTargetUnknownNodes(newUnknownNodes);
+
+        usesNode.setDataCollected(true);
+    }
+
+    public static void fixUsesNodesPath(UsesNodeBuilder usesNode) {
+        DataNodeContainerBuilder parent = usesNode.getParent();
+
+        // child nodes
+        Set<DataSchemaNodeBuilder> currentChildNodes = parent.getChildNodeBuilders();
+        Set<DataSchemaNodeBuilder> toRemove = new HashSet<>();
+        Set<DataSchemaNodeBuilder> toAdd = new HashSet<>();
+        for (DataSchemaNodeBuilder child : currentChildNodes) {
+            if (child instanceof GroupingMember) {
+                GroupingMember gm = (GroupingMember) child;
+                if (gm.isAddedByUses()) {
+                    toRemove.add(child);
+                    DataSchemaNodeBuilder copy = CopyUtils.copy(child, parent, true);
+                    ParserUtils.correctNodePath(copy, parent.getPath());
+                    toAdd.add(copy);
+                }
+            }
+        }
+        currentChildNodes.removeAll(toRemove);
+        currentChildNodes.addAll(toAdd);
+
+        // groupings
+        Set<GroupingBuilder> currentGroupings = parent.getGroupingBuilders();
+        Set<GroupingBuilder> toRemoveG = new HashSet<>();
+        Set<GroupingBuilder> toAddG = new HashSet<>();
+        for (GroupingBuilder child : currentGroupings) {
+            if (child.isAddedByUses()) {
+                toRemoveG.add(child);
+                GroupingBuilder copy = CopyUtils.copy(child, parent, true);
+                ParserUtils.correctNodePath(copy, parent.getPath());
+                toAddG.add(copy);
+            }
+
+        }
+        currentGroupings.removeAll(toRemoveG);
+        currentGroupings.addAll(toAddG);
+
+        // typedefs
+        Set<TypeDefinitionBuilder> currentTypedefs = parent.getTypeDefinitionBuilders();
+        Set<TypeDefinitionBuilder> toRemoveTD = new HashSet<>();
+        Set<TypeDefinitionBuilder> toAddTD = new HashSet<>();
+        for (TypeDefinitionBuilder child : currentTypedefs) {
+            if (child.isAddedByUses()) {
+                toRemoveTD.add(child);
+                TypeDefinitionBuilder copy = CopyUtils.copy(child, parent, true);
+                ParserUtils.correctNodePath(copy, parent.getPath());
+                toAddTD.add(copy);
+            }
+
+        }
+        currentTypedefs.removeAll(toRemoveTD);
+        currentTypedefs.addAll(toAddTD);
+
+        // unknown nodes
+        List<UnknownSchemaNodeBuilder> currentUN = parent.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> toRemoveUN = new ArrayList<>();
+        List<UnknownSchemaNodeBuilder> toAddUN = new ArrayList<>();
+        for (UnknownSchemaNodeBuilder un : currentUN) {
+            if (un.isAddedByUses()) {
+                toRemoveUN.add(un);
+                UnknownSchemaNodeBuilder copy = CopyUtils.copy(un, parent, true);
+                ParserUtils.correctNodePath(copy, parent.getPath());
+                toAddUN.add(copy);
+            }
+        }
+        currentUN.removeAll(toRemoveUN);
+        currentUN.addAll(toAddUN);
     }
 
     /**
-     * Copy all data from target grouping which were added by uses.
-     * <p>
-     * Traverse uses statements in target grouping and copy all
-     * data-schema-nodes, groupings, typedefs and unknown nodes to current uses
-     * node.
-     * </p>
+     * Perform refinement of uses target grouping nodes. Uses process has to be
+     * already performed.
      *
      * @param usesNode
-     * @param targetGrouping
      */
-    public static void loadTargetGroupingUses(final UsesNodeBuilder usesNode, final GroupingBuilder targetGrouping) {
-        usesNode.getTargetGroupingUses().addAll(targetGrouping.getUsesNodes());
-    }
-
-    /**
-     * Create copy of collection of given nodes with new schema path.
-     *
-     * @param nodes
-     *            nodes to copy
-     * @param parentPath
-     *            schema path of parent node
-     * @param namespace
-     *            new namespace of node qname
-     * @param revision
-     *            new revision of node qname
-     * @param prefix
-     *            new prefix of node qname
-     * @param moduleName
-     *            current yang module name
-     * @param line
-     *            current line in yang module
-     * @return collection of new nodes with corrected path
-     */
-    public static Set<DataSchemaNodeBuilder> copyUsesTargetNodesWithNewPath(UsesNodeBuilder usesNode, Builder parent) {
-        Set<DataSchemaNodeBuilder> newNodes = new HashSet<>();
-
-        for (DataSchemaNodeBuilder node : usesNode.getTargetChildren()) {
-            if (node != null) {
-                if (node instanceof GroupingMember) {
-                    ((GroupingMember) node).setAddedByUses(true);
+    public static void performRefine(UsesNodeBuilder usesNode) {
+        for (RefineHolder refine : usesNode.getRefines()) {
+            DataSchemaNodeBuilder nodeToRefine = null;
+            for (DataSchemaNodeBuilder dataNode : usesNode.getParent().getChildNodeBuilders()) {
+                if (refine.getName().equals(dataNode.getQName().getLocalName())) {
+                    nodeToRefine = dataNode;
+                    break;
                 }
-                newNodes.add(node);
             }
-        }
-
-        return newNodes;
-    }
-
-    /**
-     * Create copy of collection of given groupings with new schema path.
-     *
-     * @param groupings
-     *            groupings to copy
-     * @param parentPath
-     *            schema path of parent node
-     * @param namespace
-     *            new namespace of node qname
-     * @param revision
-     *            new revision of node qname
-     * @param prefix
-     *            new prefix of node qname
-     * @return collection of new groupings with corrected path
-     */
-    public static Set<GroupingBuilder> copyUsesTargetGroupingsWithNewPath(UsesNodeBuilder usesNode,
-            SchemaPath parentPath, URI namespace, Date revision, String prefix) {
-        Set<GroupingBuilder> newGroupings = new HashSet<>();
-        for (GroupingBuilder node : usesNode.getTargetGroupings()) {
-            if (node != null) {
-                if (node instanceof GroupingMember) {
-                    ((GroupingMember) node).setAddedByUses(true);
-                }
-                newGroupings.add(node);
+            if (nodeToRefine == null) {
+                throw new YangParseException(refine.getModuleName(), refine.getLine(), "Refine target node '"
+                        + refine.getName() + "' not found");
             }
+            RefineUtils.performRefine(nodeToRefine, refine);
+            usesNode.addRefineNode(nodeToRefine);
         }
-
-        return newGroupings;
-    }
-
-    /**
-     * Create copy of collection of given typedefs with new schema path.
-     *
-     * @param typedefs
-     *            typedefs to copy
-     * @param parentPath
-     *            schema path of parent node
-     * @param namespace
-     *            new namespace of node qname
-     * @param revision
-     *            new revision of node qname
-     * @param prefix
-     *            new prefix of node qname
-     * @return collection of new typedefs with corrected path
-     */
-    public static Set<TypeDefinitionBuilder> copyUsesTargetTypedefsWithNewPath(UsesNodeBuilder usesNode,
-            SchemaPath parentPath, URI namespace, Date revision, String prefix) {
-        Set<TypeDefinitionBuilder> newTypedefs = new HashSet<>();
-
-        for (TypeDefinitionBuilder node : usesNode.getTargetTypedefs()) {
-            if (node != null) {
-                if (node instanceof GroupingMember) {
-                    ((GroupingMember) node).setAddedByUses(true);
-                }
-                newTypedefs.add(node);
-            }
-        }
-
-        return newTypedefs;
-    }
-
-    /**
-     * Create copy of collection of given unknown nodes with new schema path.
-     *
-     * @param usesNode
-     * @param parentPath
-     *            schema path of parent node
-     * @param namespace
-     *            new namespace of node qname
-     * @param revision
-     *            new revision of node qname
-     * @param prefix
-     *            new prefix of node qname
-     * @return collection of new unknownNodes with corrected path
-     */
-    public static List<UnknownSchemaNodeBuilder> copyUsesTargetUnknownNodesWithNewPath(UsesNodeBuilder usesNode,
-            SchemaPath parentPath, URI namespace, Date revision, String prefix) {
-        List<UnknownSchemaNodeBuilder> newUnknownNodes = new ArrayList<>();
-
-        for (UnknownSchemaNodeBuilder node : usesNode.getTargetUnknownNodes()) {
-            if (node != null) {
-                node.setAddedByUses(true);
-                newUnknownNodes.add(node);
-            }
-        }
-
-        return newUnknownNodes;
     }
 
 }

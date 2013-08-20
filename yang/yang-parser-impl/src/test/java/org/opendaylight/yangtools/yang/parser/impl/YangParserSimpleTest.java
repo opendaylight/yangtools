@@ -14,7 +14,9 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -176,6 +178,9 @@ public class YangParserSimpleTest {
         assertNotNull(nodesId);
         LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName("added");
         assertNotNull(added);
+        assertEquals(createPath("nodes", "added"), added.getPath());
+        assertEquals(createPath("nodes", "added", "mytype"), added.getType().getPath());
+
         ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName("links");
         assertNotNull(links);
         assertFalse(links.isUserOrdered());
@@ -196,6 +201,25 @@ public class YangParserSimpleTest {
         assertEquals(1, uses.size());
         UsesNode use = uses.iterator().next();
         assertEquals(nodeGroupPath, use.getGroupingPath());
+    }
+
+
+    private final URI ns = URI.create("urn:opendaylight:simple-nodes");
+    private Date rev;
+    private final String prefix = "sn";
+
+    private SchemaPath createPath(String... names) {
+        try {
+            rev = TestUtils.simpleDateFormat.parse("2013-07-30");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        List<QName> path = new ArrayList<>();
+        for (String name : names) {
+            path.add(new QName(ns, rev, prefix, name));
+        }
+        return new SchemaPath(path, true);
     }
 
 }

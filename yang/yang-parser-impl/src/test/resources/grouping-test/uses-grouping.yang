@@ -10,6 +10,13 @@ module uses-grouping {
 
 	revision "2013-07-30" {
 	}
+	
+	typedef int-ext {
+	    type union {
+	        type uint8;
+	        type protocol-version;
+	    }
+	}
 
 	typedef protocol-version {
 		type uint8 {
@@ -75,6 +82,9 @@ module uses-grouping {
 		leaf version {
 			type protocol-version;
 			default 1;
+		}
+		leaf type {
+		    type int-ext;
 		}
 	}
 

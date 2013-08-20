@@ -14,6 +14,7 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -31,9 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.Leafref;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 import com.google.common.collect.Lists;
 
@@ -107,6 +106,12 @@ public class AugmentTest {
         qnames[3] = new QName(types1NS, types1Rev, t1, "ds0ChannelNumber");
         expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
         assertEquals(expectedPath, ds0ChannelNumber.getPath());
+        // type of leaf ds0ChannelNumber
+        QName typeQName = BaseTypes.constructQName("string");
+        List<QName> typePath = new ArrayList<>(Arrays.asList(qnames));
+        typePath.add(typeQName);
+        expectedPath = new SchemaPath(typePath, true);
+        assertEquals(expectedPath, ds0ChannelNumber.getType().getPath());
 
         // leaf interface-id
         qnames[3] = new QName(types1NS, types1Rev, t1, "interface-id");
@@ -326,35 +331,6 @@ public class AugmentTest {
         assertNotNull(caseNode3Child);
         expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
         assertEquals(expectedPath, caseNode3Child.getPath());
-    }
-
-    @Test
-    public void testAugmentNodesTypeSchemaPath() throws Exception {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        Set<AugmentationSchema> augments = testModule.getAugmentations();
-        assertEquals(1, augments.size());
-        AugmentationSchema augment = augments.iterator().next();
-
-        LeafSchemaNode ifcId = (LeafSchemaNode) augment.getDataChildByName("interface-id");
-        Leafref ifcIdType = (Leafref) ifcId.getType();
-        SchemaPath ifcIdTypeSchemaPath = ifcIdType.getPath();
-        List<QName> ifcIdTypePath = ifcIdTypeSchemaPath.getPath();
-
-        Date expectedDate = simpleDateFormat.parse("2013-02-27");
-
-        QName q3 = new QName(types1NS, expectedDate, "data", "interface-id");
-        assertEquals(q0, ifcIdTypePath.get(0));
-        assertEquals(q1, ifcIdTypePath.get(1));
-        assertEquals(q2, ifcIdTypePath.get(2));
-        assertEquals(q3, ifcIdTypePath.get(3));
-
-        LeafSchemaNode myType = (LeafSchemaNode) augment.getDataChildByName("my-type");
-        ExtendedType leafType = (ExtendedType) myType.getType();
-
-        testModule = TestUtils.findModule(modules, "types");
-        TypeDefinition<?> typedef = TestUtils.findTypedef(testModule.getTypeDefinitions(), "int32-ext2");
-
-        assertEquals(typedef, leafType);
     }
 
 }

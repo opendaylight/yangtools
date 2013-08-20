@@ -1,10 +1,10 @@
 /*
-  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
-  *
-  * This program and the accompanying materials are made available under the
-  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
-  * and is available at http://www.eclipse.org/legal/epl-v10.html
-  */
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.Collections;
@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 /**
- * The <code>default</code> implementation of Identityref Type Definition interface.
+ * The <code>default</code> implementation of Identityref Type Definition
+ * interface.
  *
  * @see IdentityrefTypeDefinition
  */
@@ -84,6 +85,11 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
     @Override
     public IdentityrefTypeDefinition getBaseType() {
         return baseType;
+    }
+
+    @Override
+    public String toString() {
+        return "identityref " + identity.getLocalName();
     }
 
 }
