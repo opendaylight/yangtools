@@ -58,6 +58,9 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(required = false)
     private String yangFilesRootDir; // defaults to ${basedir}/src/main/yang
 
+    @Parameter(required = false)
+    private String[] excludeFiles;
+
     @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
@@ -82,18 +85,16 @@ public final class YangToSourcesMojo extends AbstractMojo {
             List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);
 
             // defaults to ${basedir}/src/main/yang
-            File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir,
-                    project.getBasedir());
+            File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
+            File[] excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
-            yangToSourcesProcessor = new YangToSourcesProcessor(getLog(),
-                    yangFilesRootFile, codeGeneratorArgs, project,
-                    inspectDependencies);
+            yangToSourcesProcessor = new YangToSourcesProcessor(getLog(), yangFilesRootFile, excludedFiles,
+                    codeGeneratorArgs, project, inspectDependencies);
         }
         yangToSourcesProcessor.execute();
     }
 
-    private static List<CodeGeneratorArg> processCodeGenerators(
-            CodeGeneratorArg[] codeGenerators) {
+    private static List<CodeGeneratorArg> processCodeGenerators(CodeGeneratorArg[] codeGenerators) {
         List<CodeGeneratorArg> codeGeneratorArgs;
         if (codeGenerators == null) {
             codeGeneratorArgs = Collections.emptyList();
@@ -103,12 +104,10 @@ public final class YangToSourcesMojo extends AbstractMojo {
         return codeGeneratorArgs;
     }
 
-    private static File processYangFilesRootDir(String yangFilesRootDir,
-            File baseDir) {
+    private static File processYangFilesRootDir(String yangFilesRootDir, File baseDir) {
         File yangFilesRootFile;
         if (yangFilesRootDir == null) {
-            yangFilesRootFile = new File(baseDir, "src" + File.separator
-                    + "main" + File.separator + "yang");
+            yangFilesRootFile = new File(baseDir, "src" + File.separator + "main" + File.separator + "yang");
         } else {
             File file = new File(yangFilesRootDir);
             if (file.isAbsolute()) {
@@ -119,4 +118,17 @@ public final class YangToSourcesMojo extends AbstractMojo {
         }
         return yangFilesRootFile;
     }
+
+    private static File[] processExcludeFiles(String[] excludeFiles, File baseDir) {
+        if (excludeFiles == null) {
+            return new File[] {};
+        }
+        File[] result = new File[excludeFiles.length];
+        for (int i = 0; i < excludeFiles.length; i++) {
+            result[i] = new File(baseDir, excludeFiles[i]);
+        }
+
+        return result;
+    }
+
 }

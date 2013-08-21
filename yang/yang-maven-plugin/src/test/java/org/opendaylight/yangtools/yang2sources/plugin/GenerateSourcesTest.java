@@ -46,17 +46,14 @@ public class GenerateSourcesTest {
     public void setUp() throws MojoFailureException {
         MockitoAnnotations.initMocks(this);
 
-        yang = new File(getClass().getResource("/yang/mock.yang").getFile())
-                .getParent();
+        yang = new File(getClass().getResource("/yang/mock.yang").getFile()).getParent();
         outDir = new File("/outputDir");
         YangProvider mock = mock(YangProvider.class);
-        doNothing().when(mock).addYangsToMETA_INF(any(Log.class),
-                any(MavenProject.class), any(File.class));
+        doNothing().when(mock).addYangsToMETA_INF(any(Log.class), any(MavenProject.class), any(File.class),
+                any(File[].class));
 
-        YangToSourcesProcessor processor = new YangToSourcesProcessor(
-                mock(Log.class), new File(yang),
-                Lists.newArrayList(new CodeGeneratorArg(GeneratorMock.class
-                        .getName(), "outputDir")), project, false,
+        YangToSourcesProcessor processor = new YangToSourcesProcessor(mock(Log.class), new File(yang), new File[] {},
+                Lists.newArrayList(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), project, false,
                 mock);
         mojo = new YangToSourcesMojo(processor);
         doReturn(new File("")).when(project).getBasedir();
@@ -71,9 +68,8 @@ public class GenerateSourcesTest {
         assertThat(GeneratorMock.project, is(project));
         assertNotNull(GeneratorMock.log);
         assertTrue(GeneratorMock.additionalCfg.isEmpty());
-        assertThat(GeneratorMock.resourceBaseDir.toString(),
-                containsString("target" + File.separator
-                        + "generated-resources"));
+        assertThat(GeneratorMock.resourceBaseDir.toString(), containsString("target" + File.separator
+                + "generated-resources"));
     }
 
     public static class GeneratorMock implements CodeGenerator {
@@ -86,8 +82,7 @@ public class GenerateSourcesTest {
         private static MavenProject project;
 
         @Override
-        public Collection<File> generateSources(SchemaContext context,
-                File outputBaseDir, Set<Module> currentModules)
+        public Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules)
                 throws IOException {
             called++;
             outputDir = outputBaseDir;
@@ -100,8 +95,7 @@ public class GenerateSourcesTest {
         }
 
         @Override
-        public void setAdditionalConfig(
-                Map<String, String> additionalConfiguration) {
+        public void setAdditionalConfig(Map<String, String> additionalConfiguration) {
             GeneratorMock.additionalCfg = additionalConfiguration;
         }
 
