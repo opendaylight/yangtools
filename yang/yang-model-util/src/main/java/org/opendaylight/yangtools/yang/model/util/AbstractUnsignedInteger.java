@@ -41,39 +41,20 @@ public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefi
 
     /**
      *
-     * @param path uint type schema path
-     * @param name qname
+     * @param name
      * @param description
      * @param maxRange
      * @param units
      */
-    public AbstractUnsignedInteger(final SchemaPath path, final QName name, final String description,
-            final Number maxRange, final String units) {
+    public AbstractUnsignedInteger(final QName name, final String description, final Number maxRange, final String units) {
         this.name = name;
+        this.path = new SchemaPath(Collections.singletonList(name), true);
         this.description = description;
-        this.path = path;
         this.units = units;
         this.rangeStatements = new ArrayList<RangeConstraint>();
         final String rangeDescription = "Integer values between " + MIN_VALUE + " and " + maxRange + ", inclusively.";
         this.rangeStatements.add(BaseConstraints.rangeConstraint(MIN_VALUE, maxRange, rangeDescription,
                 "https://tools.ietf.org/html/rfc6020#section-9.2.4"));
-    }
-
-    /**
-     *
-     * @param path uint type schema path
-     * @param name qname
-     * @param description
-     * @param rangeStatements
-     * @param units
-     */
-    public AbstractUnsignedInteger(final SchemaPath path, final QName name, final String description,
-            final List<RangeConstraint> rangeStatements, final String units) {
-        this.name = name;
-        this.description = description;
-        this.path = path;
-        this.units = units;
-        this.rangeStatements = rangeStatements;
     }
 
     @Override

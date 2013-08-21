@@ -762,32 +762,22 @@ public class YangParserTest {
         Set<TypeDefinition<?>> types = test.getTypeDefinitions();
 
         // int32-ext1
-        ExtendedType int32Typedef = (ExtendedType) TestUtils.findTypedef(types, "int32-ext1");
-        QName int32TypedefQName = int32Typedef.getQName();
+        ExtendedType int32ext1 = (ExtendedType) TestUtils.findTypedef(types, "int32-ext1");
+        QName int32TypedefQName = int32ext1.getQName();
 
         assertEquals(typesNS, int32TypedefQName.getNamespace());
         assertEquals(typesRev, int32TypedefQName.getRevision());
         assertEquals("t", int32TypedefQName.getPrefix());
         assertEquals("int32-ext1", int32TypedefQName.getLocalName());
 
-        SchemaPath typeSchemaPath = int32Typedef.getPath();
+        SchemaPath typeSchemaPath = int32ext1.getPath();
         List<QName> typePath = typeSchemaPath.getPath();
         assertEquals(1, typePath.size());
         assertEquals(int32TypedefQName, typePath.get(0));
 
         // int32-ext1/int32
-        Int32 int32 = (Int32) int32Typedef.getBaseType();
-        QName int32QName = int32.getQName();
-        assertEquals(URI.create("urn:ietf:params:xml:ns:yang:1"), int32QName.getNamespace());
-        assertNull(int32QName.getRevision());
-        assertEquals("", int32QName.getPrefix());
-        assertEquals("int32", int32QName.getLocalName());
-
-        SchemaPath int32SchemaPath = int32.getPath();
-        List<QName> int32Path = int32SchemaPath.getPath();
-        assertEquals(2, int32Path.size());
-        assertEquals(int32TypedefQName, int32Path.get(0));
-        assertEquals(int32QName, int32Path.get(1));
+        Int32 int32 = (Int32) int32ext1.getBaseType();
+        assertEquals(Int32.getInstance(), int32);
     }
 
     @Test

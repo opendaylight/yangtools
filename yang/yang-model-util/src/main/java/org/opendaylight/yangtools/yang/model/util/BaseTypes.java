@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public final class BaseTypes {
     /**
      * Construct QName for Built-in base Yang type. The namespace for
      * built-in base yang types is defined as: urn:ietf:params:xml:ns:yang:1
-     * 
+     *
      * @param typeName yang type name
      * @return built-in base yang type QName.
      */
@@ -35,20 +36,19 @@ public final class BaseTypes {
 
     /**
      * Creates Schema Path from Qname.
-     * 
+     *
      * @param typeName yang type QName
      * @return Schema Path from Qname.
      */
     public static final SchemaPath schemaPath(final QName typeName) {
-        final List<QName> pathList = new ArrayList<QName>();
-        pathList.add(typeName);
+        List<QName> pathList = Collections.singletonList(typeName);
         return new SchemaPath(pathList, true);
     }
-    
+
     /**
      * Creates Schema Path from List of partial paths defined as Strings, module Namespace and
      * module latest Revision Date.
-     * 
+     *
      * @param actualPath List of partial paths
      * @param namespace Module Namespace
      * @param revision Revision Date

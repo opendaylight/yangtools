@@ -22,35 +22,21 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
  * @see BooleanTypeDefinition
  */
 public final class BooleanType implements BooleanTypeDefinition {
-    private final QName name = BaseTypes.constructQName("boolean");
-    private final SchemaPath path;
-    private final String description = "The boolean built-in type represents a boolean value.";
-    private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.5";
-    private final BooleanTypeDefinition baseType;
-    private final Boolean defaultValue;
+    private static final BooleanType INSTANCE = new BooleanType();
+    private static final QName name = BaseTypes.constructQName("boolean");
+    private static final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
+    private static final String description = "The boolean built-in type represents a boolean value.";
+    private static final String reference = "https://tools.ietf.org/html/rfc6020#section-9.5";
     private final String units = "";
 
     /**
      * Default constructor with default value set to "false".
      */
-    public BooleanType(final SchemaPath path) {
-        super();
-        this.defaultValue = false;
-        this.path = path;
-        this.baseType = this;
+    private BooleanType() {
     }
 
-    /**
-     * Boolean Type constructor.
-     *
-     * @param defaultValue
-     *            Default Value
-     */
-    public BooleanType(final SchemaPath path, final Boolean defaultValue) {
-        super();
-        this.defaultValue = defaultValue;
-        this.path = path;
-        this.baseType = this;
+    public static BooleanType getInstance() {
+        return INSTANCE;
     }
 
     /*
@@ -61,7 +47,7 @@ public final class BooleanType implements BooleanTypeDefinition {
      */
     @Override
     public BooleanTypeDefinition getBaseType() {
-        return baseType;
+        return this;
     }
 
     /*
@@ -83,7 +69,7 @@ public final class BooleanType implements BooleanTypeDefinition {
      */
     @Override
     public Object getDefaultValue() {
-        return defaultValue;
+        return false;
     }
 
     /*
@@ -143,93 +129,12 @@ public final class BooleanType implements BooleanTypeDefinition {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        BooleanType other = (BooleanType) obj;
-        if (defaultValue == null) {
-            if (other.defaultValue != null) {
-                return false;
-            }
-        } else if (!defaultValue.equals(other.defaultValue)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
-            return false;
-        }
-        if (units == null) {
-            if (other.units != null) {
-                return false;
-            }
-        } else if (!units.equals(other.units)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("BooleanType [name=");
         builder.append(name);
         builder.append(", path=");
         builder.append(path);
-        builder.append(", description=");
-        builder.append(description);
-        builder.append(", reference=");
-        builder.append(reference);
-        builder.append(", defaultValue=");
-        builder.append(defaultValue);
-        builder.append(", units=");
-        builder.append(units);
         builder.append("]");
         return builder.toString();
     }

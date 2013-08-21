@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
 /**
@@ -21,78 +20,33 @@ import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
  *
  */
 public final class Int32 extends AbstractSignedInteger {
-    private static final QName name = BaseTypes.constructQName("int32");
-    private final Integer defaultValue = null;
-    private static final String description = "int32  represents integer values between -2147483648 and 2147483647, inclusively.";
-    private final IntegerTypeDefinition baseType;
+    private static Int32 INSTANCE;
+    private static final QName NAME = BaseTypes.constructQName("int32");
+    private static final String DESCRIPTION = "int32  represents integer values between -2147483648 and 2147483647, inclusively.";
 
-    public Int32(final SchemaPath path) {
-        super(path, name, description, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
-        this.baseType = this;
+    private Int32() {
+        super(Int32.NAME, Int32.DESCRIPTION, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
-     */
+    public static Int32 getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Int32();
+        }
+        return INSTANCE;
+    }
+
     @Override
     public IntegerTypeDefinition getBaseType() {
-        return baseType;
+        return this;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
-     * ()
-     */
     @Override
     public Object getDefaultValue() {
-        return defaultValue;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Int32 other = (Int32) obj;
-        if (defaultValue == null) {
-            if (other.defaultValue != null) {
-                return false;
-            }
-        } else if (!defaultValue.equals(other.defaultValue)) {
-            return false;
-        }
-        return true;
+        return null;
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Int32 [defaultValue=");
-        builder.append(defaultValue);
-        builder.append(", AbstractInteger=");
-        builder.append(super.toString());
-        builder.append("]");
-        return builder.toString();
+        return "type " + NAME;
     }
 }

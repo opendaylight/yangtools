@@ -24,33 +24,24 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  * @see BinaryTypeDefinition
  */
 public final class BinaryType implements BinaryTypeDefinition {
+    private static final BinaryType INSTANCE = new BinaryType();
     private final QName name = BaseTypes.constructQName("binary");
-    private final SchemaPath path;
+    private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
     private final String description = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
     private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.8";
-    private final BinaryTypeDefinition baseType;
     private final List<Byte> bytes;
     private final List<LengthConstraint> lengthConstraints;
     private final String units = "";
 
-    public BinaryType(final SchemaPath path) {
+    private BinaryType() {
         final List<LengthConstraint> constraints = new ArrayList<LengthConstraint>();
-        constraints.add(BaseConstraints.lengthConstraint(0, Long.MAX_VALUE, "",
-                ""));
+        constraints.add(BaseConstraints.lengthConstraint(0, Long.MAX_VALUE, "", ""));
         this.lengthConstraints = Collections.unmodifiableList(constraints);
         this.bytes = Collections.emptyList();
-        this.path = path;
-        this.baseType = this;
     }
 
-    public BinaryType(final SchemaPath path, final List<Byte> bytes) {
-        final List<LengthConstraint> constraints = new ArrayList<LengthConstraint>();
-        constraints.add(BaseConstraints.lengthConstraint(0, Long.MAX_VALUE, "",
-                ""));
-        this.lengthConstraints = Collections.unmodifiableList(constraints);
-        this.bytes = Collections.unmodifiableList(bytes);
-        this.path = path;
-        this.baseType = this;
+    public static BinaryType getInstance() {
+        return INSTANCE;
     }
 
     /*
@@ -61,7 +52,7 @@ public final class BinaryType implements BinaryTypeDefinition {
      */
     @Override
     public BinaryTypeDefinition getBaseType() {
-        return baseType;
+        return this;
     }
 
     /*
@@ -159,16 +150,11 @@ public final class BinaryType implements BinaryTypeDefinition {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((bytes == null) ? 0 : bytes.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime
-                * result
-                + ((lengthConstraints == null) ? 0 : lengthConstraints
-                        .hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((lengthConstraints == null) ? 0 : lengthConstraints.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
         result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;
     }

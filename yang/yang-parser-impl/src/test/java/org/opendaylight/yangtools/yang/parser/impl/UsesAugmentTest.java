@@ -30,6 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.BooleanType;
+import org.opendaylight.yangtools.yang.model.util.Uint32;
+import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 import com.google.common.collect.Lists;
@@ -118,8 +121,7 @@ public class UsesAugmentTest {
         assertNotNull(version);
         assertEquals(createPath("pcreq", "version"), version.getPath());
         assertEquals(createPath("pcreq", "version", "protocol-version"), version.getType().getPath());
-        assertEquals(createPathForYangType("pcreq", "version", "protocol-version", "uint8"), version.getType()
-                .getBaseType().getPath());
+        assertEquals(Uint8.getInstance(), version.getType().getBaseType());
         assertTrue(version.isAddedByUses());
         // * |-- leaf type (U)
         LeafSchemaNode type = (LeafSchemaNode) pcreq.getDataChildByName("type");
@@ -128,7 +130,7 @@ public class UsesAugmentTest {
         assertEquals(createPath("pcreq", "type"), type.getPath());
         assertEquals(createPath("pcreq", "type", "int-ext"), type.getType().getPath());
         UnionType union = (UnionType)type.getType().getBaseType();
-        assertEquals(createPathForYangType("pcreq", "type", "int-ext", "union"), union.getPath());
+        assertEquals(BaseTypes.schemaPath(BaseTypes.constructQName("union")), union.getPath());
         assertEquals(2, union.getTypes().size());
         // * |-- list requests
         ListSchemaNode requests = (ListSchemaNode) pcreq.getDataChildByName("requests");
@@ -148,9 +150,8 @@ public class UsesAugmentTest {
         LeafSchemaNode priority = (LeafSchemaNode) rp.getDataChildByName("priority");
         assertNotNull(priority);
         assertEquals(createPath("pcreq", "requests", "rp", "priority"), priority.getPath());
-        assertEquals(createPath("pcreq", "requests", "rp", "priority", "uint8"), priority.getType().getPath());
-        assertEquals(createPathForYangType("pcreq", "requests", "rp", "priority", "uint8", "uint8"), priority.getType()
-                .getBaseType().getPath());
+        assertEquals(createPath("rp-object", "priority", "uint8"), priority.getType().getPath());
+        assertEquals(Uint8.getInstance(), priority.getType().getBaseType());
         assertTrue(priority.isAddedByUses());
         // * |-- |-- |-- container box (U)
         ContainerSchemaNode box = (ContainerSchemaNode) rp.getDataChildByName("box");
@@ -168,28 +169,25 @@ public class UsesAugmentTest {
         LeafSchemaNode delete = (LeafSchemaNode) order.getDataChildByName("delete");
         assertNotNull(delete);
         assertEquals(createPath("pcreq", "requests", "rp", "box", "order", "delete"), delete.getPath());
-        assertEquals(createPathForYangType("pcreq", "requests", "rp", "box", "order", "delete", "uint32"), delete
-                .getType().getPath());
+        assertEquals(Uint32.getInstance(), delete.getType());
         assertTrue(delete.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf ignore (U)
         LeafSchemaNode setup = (LeafSchemaNode) order.getDataChildByName("setup");
         assertNotNull(setup);
         assertEquals(createPath("pcreq", "requests", "rp", "box", "order", "setup"), setup.getPath());
-        assertEquals(createPathForYangType("pcreq", "requests", "rp", "box", "order", "setup", "uint32"), setup
-                .getType().getPath());
+        assertEquals(Uint32.getInstance(), setup.getType());
         assertTrue(setup.isAddedByUses());
         // * |-- |-- |-- leaf processing-rule (U)
         LeafSchemaNode processingRule = (LeafSchemaNode) rp.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
         assertEquals(createPath("pcreq", "requests", "rp", "processing-rule"), processingRule.getPath());
-        assertEquals(createPathForYangType("pcreq", "requests", "rp", "processing-rule", "boolean"), processingRule
-                .getType().getPath());
+        assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- leaf ignore (U)
         LeafSchemaNode ignore = (LeafSchemaNode) rp.getDataChildByName("ignore");
         assertNotNull(ignore);
         assertEquals(createPath("pcreq", "requests", "rp", "ignore"), ignore.getPath());
-        assertEquals(createPathForYangType("pcreq", "requests", "rp", "ignore", "boolean"), ignore.getType().getPath());
+        assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- path-key-expansion
         ContainerSchemaNode pke = (ContainerSchemaNode) requests.getDataChildByName("path-key-expansion");
@@ -217,9 +215,7 @@ public class UsesAugmentTest {
         assertEquals(
                 createPath("pcreq", "requests", "path-key-expansion", "path-key", "path-keys", "version",
                         "protocol-version"), version.getType().getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "path-key-expansion", "path-key", "path-keys", "version",
-                        "protocol-version", "uint8"), version.getType().getBaseType().getPath());
+        assertEquals(Uint8.getInstance(), version.getType().getBaseType());
         assertTrue(version.isAddedByUses());
         assertFalse(version.isAugmenting());
         // * |-- |-- |-- |-- |-- leaf type (U)
@@ -230,9 +226,6 @@ public class UsesAugmentTest {
         assertEquals(
                 createPath("pcreq", "requests", "path-key-expansion", "path-key", "path-keys", "type",
                         "int-ext"), type.getType().getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "path-key-expansion", "path-key", "path-keys", "type",
-                        "int-ext", "union"), type.getType().getBaseType().getPath());
         assertTrue(type.isAddedByUses());
         assertFalse(type.isAugmenting());
         // * |-- |-- |-- |-- |-- leaf processing-rule (U)
@@ -240,16 +233,13 @@ public class UsesAugmentTest {
         assertNotNull(processingRule);
         assertEquals(createPath("pcreq", "requests", "path-key-expansion", "path-key", "processing-rule"),
                 processingRule.getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "path-key-expansion", "path-key", "processing-rule",
-                        "boolean"), processingRule.getType().getPath());
+        assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf ignore (U)
         ignore = (LeafSchemaNode) pathKey.getDataChildByName("ignore");
         assertNotNull(ignore);
         assertEquals(createPath("pcreq", "requests", "path-key-expansion", "path-key", "ignore"), ignore.getPath());
-        assertEquals(createPathForYangType("pcreq", "requests", "path-key-expansion", "path-key", "ignore", "boolean"),
-                ignore.getType().getPath());
+        assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- container segment-computation
         ContainerSchemaNode sc = (ContainerSchemaNode) requests.getDataChildByName("segment-computation");
@@ -271,18 +261,14 @@ public class UsesAugmentTest {
         assertNotNull(processingRule);
         assertEquals(createPath("pcreq", "requests", "segment-computation", "p2p", "endpoints", "processing-rule"),
                 processingRule.getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "segment-computation", "p2p", "endpoints",
-                        "processing-rule", "boolean"), processingRule.getType().getPath());
+        assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf ignore (U)
         ignore = (LeafSchemaNode) endpoints.getDataChildByName("ignore");
         assertNotNull(ignore);
         assertEquals(createPath("pcreq", "requests", "segment-computation", "p2p", "endpoints", "ignore"),
                 ignore.getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "segment-computation", "p2p", "endpoints", "ignore",
-                        "boolean"), ignore.getType().getPath());
+        assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- |-- |-- |-- container box
         box = (ContainerSchemaNode) endpoints.getDataChildByName("box");
@@ -319,18 +305,14 @@ public class UsesAugmentTest {
         assertEquals(
                 createPath("pcreq", "requests", "segment-computation", "p2p", "reported-route", "processing-rule"),
                 processingRule.getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "segment-computation", "p2p", "reported-route",
-                        "processing-rule", "boolean"), processingRule.getType().getPath());
+        assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf ignore (U)
         ignore = (LeafSchemaNode) reportedRoute.getDataChildByName("ignore");
         assertNotNull(ignore);
         assertEquals(createPath("pcreq", "requests", "segment-computation", "p2p", "reported-route", "ignore"),
                 ignore.getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "segment-computation", "p2p", "reported-route", "ignore",
-                        "boolean"), ignore.getType().getPath());
+        assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- |-- |-- container bandwidth (U)
         bandwidth = (ContainerSchemaNode) p2p.getDataChildByName("bandwidth");
@@ -348,18 +330,14 @@ public class UsesAugmentTest {
         assertNotNull(processingRule);
         assertEquals(createPath("pcreq", "requests", "segment-computation", "p2p", "bandwidth", "processing-rule"),
                 processingRule.getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "segment-computation", "p2p", "bandwidth",
-                        "processing-rule", "boolean"), processingRule.getType().getPath());
+        assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf ignore (U)
         ignore = (LeafSchemaNode) bandwidth.getDataChildByName("ignore");
         assertNotNull(ignore);
         assertEquals(createPath("pcreq", "requests", "segment-computation", "p2p", "bandwidth", "ignore"),
                 ignore.getPath());
-        assertEquals(
-                createPathForYangType("pcreq", "requests", "segment-computation", "p2p", "bandwidth", "ignore",
-                        "boolean"), ignore.getType().getPath());
+        assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- list svec
         ListSchemaNode svec = (ListSchemaNode) pcreq.getDataChildByName("svec");
@@ -375,8 +353,7 @@ public class UsesAugmentTest {
         LeafSchemaNode metricType = (LeafSchemaNode) metric.getDataChildByName("metric-type");
         assertNotNull(metricType);
         assertEquals(createPath("pcreq", "svec", "metric", "metric-type"), metricType.getPath());
-        assertEquals(createPathForYangType("pcreq", "svec", "metric", "metric-type", "uint8"), metricType.getType()
-                .getPath());
+        assertEquals(Uint8.getInstance(), metricType.getType());
         assertTrue(metricType.isAddedByUses());
         // * |-- |-- |-- box (U)
         box = (ContainerSchemaNode) metric.getDataChildByName("box");
@@ -387,33 +364,31 @@ public class UsesAugmentTest {
         processingRule = (LeafSchemaNode) metric.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
         assertEquals(createPath("pcreq", "svec", "metric", "processing-rule"), processingRule.getPath());
-        assertEquals(createPathForYangType("pcreq", "svec", "metric", "processing-rule", "boolean"), processingRule
-                .getType().getPath());
+        assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- leaf ignore (U)
         ignore = (LeafSchemaNode) metric.getDataChildByName("ignore");
         assertNotNull(ignore);
         assertEquals(createPath("pcreq", "svec", "metric", "ignore"), ignore.getPath());
-        assertEquals(createPathForYangType("pcreq", "svec", "metric", "ignore", "boolean"), ignore.getType().getPath());
+        assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- leaf link-diverse (U)
         LeafSchemaNode linkDiverse = (LeafSchemaNode) svec.getDataChildByName("link-diverse");
         assertNotNull(linkDiverse);
         assertEquals(createPath("pcreq", "svec", "link-diverse"), linkDiverse.getPath());
-        assertEquals(createPathForYangType("pcreq", "svec", "link-diverse", "boolean"), linkDiverse.getType().getPath());
+        assertEquals(BooleanType.getInstance(), linkDiverse.getType());
         assertTrue(linkDiverse.isAddedByUses());
         // * |-- |-- leaf processing-rule (U)
         processingRule = (LeafSchemaNode) svec.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
         assertEquals(createPath("pcreq", "svec", "processing-rule"), processingRule.getPath());
-        assertEquals(createPathForYangType("pcreq", "svec", "processing-rule", "boolean"), processingRule.getType()
-                .getPath());
+        assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- leaf ignore (U)
         ignore = (LeafSchemaNode) svec.getDataChildByName("ignore");
         assertNotNull(ignore);
         assertEquals(createPath("pcreq", "svec", "ignore"), ignore.getPath());
-        assertEquals(createPathForYangType("pcreq", "svec", "ignore", "boolean"), ignore.getType().getPath());
+        assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
     }
 
@@ -422,15 +397,6 @@ public class UsesAugmentTest {
         for (String name : names) {
             path.add(new QName(ns, rev, prefix, name));
         }
-        return new SchemaPath(path, true);
-    }
-
-    private SchemaPath createPathForYangType(String... names) {
-        List<QName> path = new ArrayList<>();
-        for (int i = 0; i < names.length - 1; i++) {
-            path.add(new QName(ns, rev, prefix, names[i]));
-        }
-        path.add(new QName(URI.create("urn:ietf:params:xml:ns:yang:1"), names[names.length - 1]));
         return new SchemaPath(path, true);
     }
 
@@ -464,10 +430,9 @@ public class UsesAugmentTest {
         assertNotNull(pv);
 
         SchemaPath expectedPath = null;
-        QName q0 = new QName(ns, rev, prefix, "int-ext");
         QName q1 = BaseTypes.constructQName("union");
 
-        expectedPath = new SchemaPath(Lists.newArrayList(q0, q1), true);
+        expectedPath = new SchemaPath(Lists.newArrayList(q1), true);
         assertEquals(expectedPath, union.getPath());
     }
 

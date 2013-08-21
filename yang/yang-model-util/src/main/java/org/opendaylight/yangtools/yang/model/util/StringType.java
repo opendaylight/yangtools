@@ -25,27 +25,28 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
  * @see StringTypeDefinition
  */
 public final class StringType implements StringTypeDefinition {
+    private static final StringType INSTANCE = new StringType();
     private final QName name = BaseTypes.constructQName("string");
-    private final SchemaPath path;
+    private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
     private final String defaultValue = "";
     private final String description = "";
     private final String reference = "";
     private final List<LengthConstraint> lengthStatements;
     private final List<PatternConstraint> patterns;
     private final String units = "";
-    private final StringTypeDefinition baseType;
 
     /**
      * Default Constructor.
      */
-    public StringType(final SchemaPath path) {
-        super();
-        this.path = path;
+    private StringType() {
         final List<LengthConstraint> constraints = new ArrayList<LengthConstraint>();
         constraints.add(BaseConstraints.lengthConstraint(0, Long.MAX_VALUE, "", ""));
         lengthStatements = Collections.unmodifiableList(constraints);
         patterns = Collections.emptyList();
-        baseType = this;
+    }
+
+    public static StringType getIntance() {
+        return INSTANCE;
     }
 
     /*
@@ -55,7 +56,7 @@ public final class StringType implements StringTypeDefinition {
      */
     @Override
     public StringTypeDefinition getBaseType() {
-        return baseType;
+        return this;
     }
 
     /*

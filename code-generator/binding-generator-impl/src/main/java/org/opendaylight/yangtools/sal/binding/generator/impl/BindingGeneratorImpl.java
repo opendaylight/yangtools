@@ -7,16 +7,9 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.moduleNamespaceToPackageName;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.packageNameForGeneratedType;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToClassName;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToValidParamName;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.schemaNodeToTransferObjectBuilder;
-import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
-import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,7 +25,6 @@ import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
-import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
@@ -113,10 +105,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Only parent constructor is invoked.
      */
-    
+
     private final static String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
     private final static String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
-    
+
     public BindingGeneratorImpl() {
         super();
     }
@@ -124,10 +116,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Resolves generated types from <code>context</code> schema nodes of all
      * modules.
-     * 
+     *
      * Generated types are created for modules, groupings, types, containers,
      * lists, choices, augments, rpcs, notification, identities.
-     * 
+     *
      * @param context
      *            schema context which contains data about all schema nodes
      *            saved in modules
@@ -176,10 +168,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Resolves generated types from <code>context</code> schema nodes only for
      * modules specified in <code>modules</code>
-     * 
+     *
      * Generated types are created for modules, groupings, types, containers,
      * lists, choices, augments, rpcs, notification, identities.
-     * 
+     *
      * @param context
      *            schema context which contains data about all schema nodes
      *            saved in modules
@@ -244,7 +236,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all extended type definitions of module to the list of
      * <code>Type</code> objects.
-     * 
+     *
      * @param module
      *            module from which is obtained set of type definitions
      * @return list of <code>Type</code> which are generated from extended
@@ -255,7 +247,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if name of module equals null</li>
      *             <li>if type definitions of module equal null</li>
      *             </ul>
-     * 
+     *
      */
     private List<Type> allTypeDefinitionsToGenTypes(final Module module) {
         if (module == null) {
@@ -284,7 +276,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>containers</b> of the module to the list of
      * <code>Type</code> objects.
-     * 
+     *
      * @param module
      *            module from which is obtained DataNodeIterator to iterate over
      *            all containers
@@ -296,7 +288,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     * 
+     *
      */
     private List<Type> allContainersToGenTypes(final Module module) {
         if (module == null) {
@@ -327,7 +319,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>lists</b> of the module to the list of <code>Type</code>
      * objects.
-     * 
+     *
      * @param module
      *            module from which is obtained DataNodeIterator to iterate over
      *            all lists
@@ -339,7 +331,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     * 
+     *
      */
     private List<Type> allListsToGenTypes(final Module module) {
         if (module == null) {
@@ -372,7 +364,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>choices</b> of the module to the list of
      * <code>Type</code> objects.
-     * 
+     *
      * @param module
      *            module from which is obtained DataNodeIterator to iterate over
      *            all choices
@@ -383,7 +375,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the module equals null</li>
      *             <li>if the name of module equals null</li> *
      *             </ul>
-     * 
+     *
      */
     private List<GeneratedType> allChoicesToGenTypes(final Module module) {
         if (module == null) {
@@ -409,7 +401,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>augmentation</b> of the module to the list
      * <code>Type</code> objects.
-     * 
+     *
      * @param module
      *            module from which is obtained list of all augmentation objects
      *            to iterate over them
@@ -421,7 +413,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     * 
+     *
      */
     private List<Type> allAugmentsToGenTypes(final Module module) {
         if (module == null) {
@@ -448,7 +440,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Returns list of <code>AugmentationSchema</code> objects. The objects are
      * sorted according to the length of their target path from the shortest to
      * the longest.
-     * 
+     *
      * @param module
      *            module from which is obtained list of all augmentation objects
      * @return list of sorted <code>AugmentationSchema</code> objects obtained
@@ -458,7 +450,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the module equals null</li>
      *             <li>if the set of augmentation equals null</li>
      *             </ul>
-     * 
+     *
      */
     private List<AugmentationSchema> resolveAugmentations(final Module module) {
         if (module == null) {
@@ -492,7 +484,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Converts whole <b>module</b> to <code>GeneratedType</code> object.
      * Firstly is created the module builder object from which is finally
      * obtained reference to <code>GeneratedType</code> object.
-     * 
+     *
      * @param module
      *            module from which are obtained the module name, child nodes,
      *            uses and is derived package name
@@ -500,7 +492,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *         the module
      * @throws IllegalArgumentException
      *             if the module equals null
-     * 
+     *
      */
     private GeneratedType moduleToDataType(final Module module) {
         if (module == null) {
@@ -523,7 +515,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Converts all <b>rpcs</b> inputs and outputs substatements of the module
      * to the list of <code>Type</code> objects. In addition are to containers
      * and lists which belong to input or output also part of returning list.
-     * 
+     *
      * @param module
      *            module from which is obtained set of all rpc objects to
      *            iterate over them
@@ -535,7 +527,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     * 
+     *
      */
     private List<Type> allRPCMethodsToGenType(final Module module) {
         if (module == null) {
@@ -627,7 +619,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Converts all <b>notifications</b> of the module to the list of
      * <code>Type</code> objects. In addition are to this list added containers
      * and lists which are part of this notification.
-     * 
+     *
      * @param module
      *            module from which is obtained set of all notification objects
      *            to iterate over them
@@ -639,7 +631,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     * 
+     *
      */
     private List<Type> allNotificationsToGenType(final Module module) {
         if (module == null) {
@@ -690,7 +682,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>identities</b> of the module to the list of
      * <code>Type</code> objects.
-     * 
+     *
      * @param module
      *            module from which is obtained set of all identity objects to
      *            iterate over them
@@ -699,7 +691,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *            {@link identityToGenType}
      * @return list of <code>Type</code> which are generated from identities
      *         (object of type <code>IdentitySchemaNode</code>
-     * 
+     *
      */
     private List<Type> allIdentitiesToGenTypes(final Module module, final SchemaContext context) {
         List<Type> genTypes = new ArrayList<>();
@@ -723,7 +715,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * If identity doesn't contain base identity then only reference to abstract
      * class {@link org.opendaylight.yangtools.yang.model.api.BaseIdentity
      * BaseIdentity} is added
-     * 
+     *
      * @param basePackageName
      *            string contains the module package name
      * @param identity
@@ -731,10 +723,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * @param context
      *            SchemaContext which is used to get package and name
      *            information about base of identity
-     * 
+     *
      * @return GeneratedType which is generated from identity (object of type
      *         <code>IdentitySchemaNode</code>
-     * 
+     *
      */
     private GeneratedType identityToGenType(final String basePackageName, final IdentitySchemaNode identity,
             final SchemaContext context) {
@@ -768,13 +760,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * dependencies. At least dependend (indepedent) groupings are in the list
      * saved at first positions. For every grouping the record is added to map
      * {@link BindingGeneratorImpl#allGroupings allGroupings}
-     * 
+     *
      * @param module
      *            module from which is obtained set of all grouping objects to
      *            iterate over them
      * @return list of <code>Type</code> which are generated from groupings
      *         (object of type <code>GroupingDefinition</code>)
-     * 
+     *
      */
     private List<Type> allGroupingsToGenTypes(final Module module) {
         if (module == null) {
@@ -785,7 +777,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         final Set<GroupingDefinition> groupings = module.getGroupings();
         List<GroupingDefinition> groupingsSortedByDependencies;
 
-        groupingsSortedByDependencies = GroupingDefinitionDependencySort.sort(groupings); 
+        groupingsSortedByDependencies = GroupingDefinitionDependencySort.sort(groupings);
 
         for (final GroupingDefinition grouping : groupingsSortedByDependencies) {
             GeneratedType genType = groupingToGenType(basePackageName, grouping);
@@ -800,7 +792,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Converts individual grouping to GeneratedType. Firstly generated type
      * builder is created and every child node of grouping is resolved to the
      * method.
-     * 
+     *
      * @param basePackageName
      *            string contains the module package name
      * @param grouping
@@ -825,7 +817,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Tries to find EnumTypeDefinition in <code>typeDefinition</code>. If base
      * type of <code>typeDefinition</code> is of the type ExtendedType then this
      * method is recursivelly called with this base type.
-     * 
+     *
      * @param typeDefinition
      *            TypeDefinition in which should be EnumTypeDefinition found as
      *            base type
@@ -846,10 +838,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds enumeration builder created from <code>enumTypeDef</code> to
      * <code>typeBuilder</code>.
-     * 
+     *
      * Each <code>enumTypeDef</code> item is added to builder with its name and
      * value.
-     * 
+     *
      * @param enumTypeDef
      *            EnumTypeDefinition contains enum data
      * @param enumName
@@ -893,7 +885,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Generates type builder for <code>module</code>.
-     * 
+     *
      * @param module
      *            Module which is source of package name for generated type
      *            builder
@@ -922,7 +914,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * generated types for all containers, list and choices which are child of
      * <code>augSchema</code> node or a generated types for cases are added if
      * augmented node is choice.
-     * 
+     *
      * @param augmentPackageName
      *            string with the name of the package to which the augmentation
      *            belongs
@@ -983,10 +975,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Returns a generated type builder for an augmentation.
-     * 
+     *
      * The name of the type builder is equal to the name of augmented node with
      * serial number as suffix.
-     * 
+     *
      * @param augmentPackageName
      *            string with contains the package name to which the augment
      *            belongs
@@ -1009,8 +1001,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
             genTypeBuilders.put(augmentPackageName, augmentBuilders);
         }
         final String augIdentifier = getAugmentIdentifier(augSchema.getUnknownSchemaNodes());
-        
-        final String augTypeName =  augIdentifier != null ? parseToClassName(augIdentifier): augGenTypeName(augmentBuilders, targetTypeName);
+
+        final String augTypeName = augIdentifier != null ? parseToClassName(augIdentifier) : augGenTypeName(
+                augmentBuilders, targetTypeName);
         final Type targetTypeRef = new ReferencedTypeImpl(targetPackageName, targetTypeName);
         final Set<DataSchemaNode> augChildNodes = augSchema.getChildNodes();
 
@@ -1029,8 +1022,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         String ret = null;
         for (UnknownSchemaNode unknownSchemaNode : unknownSchemaNodes) {
             QName nodeType = unknownSchemaNode.getNodeType();
-            if(AUGMENT_IDENTIFIER_NAME.equals(nodeType.getLocalName()) &&
-                    YANG_EXT_NAMESPACE.equals(nodeType.getNamespace().toString())) {
+            if (AUGMENT_IDENTIFIER_NAME.equals(nodeType.getLocalName())
+                    && YANG_EXT_NAMESPACE.equals(nodeType.getNamespace().toString())) {
                 return unknownSchemaNode.getNodeParameter();
             }
         }
@@ -1040,13 +1033,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Convert a container, list and choice subnodes (and recursivelly their
      * subnodes) of augment to generated types
-     * 
+     *
      * @param augBasePackageName
      *            string with the augment package name
      * @param augChildNodes
      *            set of data schema nodes which represents child nodes of the
      *            augment
-     * 
+     *
      * @return list of <code>Type</code> which represents container, list and
      *         choice subnodes of augment
      */
@@ -1100,7 +1093,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Returns first unique name for the augment generated type builder. The
      * generated type builder name for augment consists from name of augmented
      * node and serial number of its augmentation.
-     * 
+     *
      * @param builders
      *            map of builders which were created in the package to which the
      *            augmentation belongs
@@ -1124,7 +1117,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * generated type builder is created. The subnodes of
      * <code>containerNode</code> are added as methods and the instance of
      * <code>GeneratedType</code> is returned.
-     * 
+     *
      * @param basePackageName
      *            string contains the module package name
      * @param containerNode
@@ -1148,10 +1141,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds the methods to <code>typeBuilder</code> which represent subnodes of
      * node for which <code>typeBuilder</code> was created.
-     * 
+     *
      * The subnodes aren't mapped to the methods if they are part of grouping or
      * augment (in this case are already part of them).
-     * 
+     *
      * @param basePackageName
      *            string contains the module package name
      * @param typeBuilder
@@ -1182,7 +1175,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds the methods to <code>typeBuilder</code> what represents subnodes of
      * node for which <code>typeBuilder</code> was created.
-     * 
+     *
      * @param basePackageName
      *            string contains the module package name
      * @param typeBuilder
@@ -1212,7 +1205,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds to <code>typeBuilder</code> a method which is derived from
      * <code>schemaNode</code>.
-     * 
+     *
      * @param basePackageName
      *            string with the module package name
      * @param schemaNode
@@ -1241,14 +1234,14 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates a getter method for a choice node.
-     * 
+     *
      * Firstly generated type builder for choice is created or found in
      * {@link BindingGeneratorImpl#allGroupings allGroupings}. The package name
      * in the builder is created as concatenation of module package name and
      * names of all parent nodes. In the end the getter method for choice is
      * added to <code>typeBuilder</code> and return type is set to choice
      * builder.
-     * 
+     *
      * @param basePackageName
      *            string with the module package name
      * @param typeBuilder
@@ -1262,7 +1255,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if <code>typeBuilder</code> equals null</li>
      *             <li>if <code>choiceNode</code> equals null</li>
      *             </ul>
-     * 
+     *
      */
     private void resolveChoiceSchemaNode(final String basePackageName, final GeneratedTypeBuilder typeBuilder,
             final ChoiceNode choiceNode) {
@@ -1287,11 +1280,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>choiceNode</code> to the list of generated types for
      * choice and its cases.
-     * 
+     *
      * The package names for choice and for its cases are created as
      * concatenation of the module package (<code>basePackageName</code>) and
      * names of all parents node.
-     * 
+     *
      * @param basePackageName
      *            string with the module package name
      * @param choiceNode
@@ -1305,7 +1298,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if <code>basePackageName</code> equals null</li>
      *             <li>if <code>choiceNode</code> equals null</li>
      *             </ul>
-     * 
+     *
      */
     private List<GeneratedType> choiceToGeneratedType(final String basePackageName, final ChoiceNode choiceNode) {
         if (basePackageName == null) {
@@ -1332,14 +1325,14 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>caseNodes</code> set to list of corresponding generated
      * types.
-     * 
+     *
      * For every <i>case</i> which isn't added through augment or <i>uses</i> is
      * created generated type builder. The package names for the builder is
      * created as concatenation of the module package (
      * <code>basePackageName</code>) and names of all parents nodes of the
      * concrete <i>case</i>. There is also relation "<i>implements type</i>"
      * between every case builder and <i>choice</i> type
-     * 
+     *
      * @param basePackageName
      *            string with the module package name
      * @param refChoiceType
@@ -1388,8 +1381,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Generates list of generated types for all the cases of a choice which are
      * added to the choice through the augment.
-     * 
-     * 
+     *
+     *
      * @param basePackageName
      *            string contains name of package to which augment belongs. If
      *            an augmented choice is from an other package (pcg1) than an
@@ -1443,7 +1436,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>leaf</code> to the getter method which is added to
      * <code>typeBuilder</code>.
-     * 
+     *
      * @param typeBuilder
      *            generated type builder to which is added getter method as
      *            <code>leaf</code> mapping
@@ -1465,6 +1458,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                 leafDesc = "";
             }
 
+            final Module parentModule = findParentModule(schemaContext, leaf);
             if (leafName != null && !leaf.isAddedByUses()) {
                 final TypeDefinition<?> typeDef = leaf.getType();
 
@@ -1480,12 +1474,12 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                     }
                     ((TypeProviderImpl) typeProvider).putReferencedType(leaf.getPath(), returnType);
                 } else if (typeDef instanceof UnionType) {
-                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName);
+                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, parentModule);
                     if (genTOBuilder != null) {
                         returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
                     }
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName);
+                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, parentModule);
                     if (genTOBuilder != null) {
                         returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
                     }
@@ -1504,7 +1498,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>leaf</code> schema node to property of generated TO
      * builder.
-     * 
+     *
      * @param toBuilder
      *            generated TO builder to which is <code>leaf</code> added as
      *            property
@@ -1556,7 +1550,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>node</code> leaf list schema node to getter method of
      * <code>typeBuilder</code>.
-     * 
+     *
      * @param typeBuilder
      *            generated type builder to which is <code>node</code> added as
      *            getter method
@@ -1591,14 +1585,14 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates a getter method for a container node.
-     * 
+     *
      * Firstly generated type builder for container is created or found in
      * {@link BindingGeneratorImpl#allGroupings allGroupings}. The package name
      * in the builder is created as concatenation of module package name and
      * names of all parent nodes. In the end the getter method for container is
      * added to <code>typeBuilder</code> and return type is set to container
      * type builder.
-     * 
+     *
      * @param basePackageName
      *            string with the module package name
      * @param typeBuilder
@@ -1634,13 +1628,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates a getter method for a list node.
-     * 
+     *
      * Firstly generated type builder for list is created or found in
      * {@link BindingGeneratorImpl#allGroupings allGroupings}. The package name
      * in the builder is created as concatenation of module package name and
      * names of all parent nodes. In the end the getter method for list is added
      * to <code>typeBuilder</code> and return type is set to list type builder.
-     * 
+     *
      * @param basePackageName
      *            string with the module package name
      * @param typeBuilder
@@ -1675,7 +1669,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Instantiates generated type builder with <code>packageName</code> and
      * <code>schemaNode</code>.
-     * 
+     *
      * The new builder always implements
      * {@link org.opendaylight.yangtools.yang.binding.DataObject DataObject}.<br />
      * If <code>schemaNode</code> is instance of GroupingDefinition it also
@@ -1685,7 +1679,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer
      * DataNodeContainer} it can also implement nodes which are specified in
      * <i>uses</i>.
-     * 
+     *
      * @param packageName
      *            string with the name of the package to which
      *            <code>schemaNode</code> belongs.
@@ -1709,7 +1703,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Wraps the calling of the same overloaded method.
-     * 
+     *
      * @param packageName
      *            string with the package name to which returning generated type
      *            builder belongs
@@ -1724,11 +1718,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Returns reference to generated type builder for specified
      * <code>schemaNode</code> with <code>packageName</code>.
-     * 
+     *
      * Firstly the generated type builder is searched in
      * {@link BindingGeneratorImpl#genTypeBuilders genTypeBuilders}. If it isn't
      * found it is created and added to <code>genTypeBuilders</code>.
-     * 
+     *
      * @param packageName
      *            string with the package name to which returning generated type
      *            builder belongs
@@ -1742,7 +1736,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if Q name of schema node is null</li>
      *             <li>if schema node name is nul</li>
      *             </ul>
-     * 
+     *
      */
     private GeneratedTypeBuilder addRawInterfaceDefinition(final String packageName, final SchemaNode schemaNode,
             final String prefix) {
@@ -1783,7 +1777,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates the name of the getter method from <code>methodName</code>.
-     * 
+     *
      * @param methodName
      *            string with the name of the getter method
      * @return string with the name of the getter method for
@@ -1798,7 +1792,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates the name of the setter method from <code>methodName</code>.
-     * 
+     *
      * @param methodName
      *            string with the name of the setter method
      * @return string with the name of the setter method for
@@ -1814,11 +1808,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Created a method signature builder as part of
      * <code>interfaceBuilder</code>.
-     * 
+     *
      * The method signature builder is created for the getter method of
      * <code>schemaNodeName</code>. Also <code>comment</code> and
      * <code>returnType</code> information are added to the builder.
-     * 
+     *
      * @param interfaceBuilder
      *            generated type builder for which the getter method should be
      *            created
@@ -1845,12 +1839,12 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Creates a method signature builder as a part of
      * <code>interfaceBuilder</code> for <code>schemaNodeName</code>
-     * 
+     *
      * The method signature builder is created for the setter method of
      * <code>schemaNodeName</code>. Also <code>comment</code>
      * <code>parameterType</code> data are added to the builder. The return type
      * of the method is set to <code>void</code>.
-     * 
+     *
      * @param interfaceBuilder
      *            generated type builder for which the setter method should be
      *            created
@@ -1891,11 +1885,12 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
         final List<String> listKeys = listKeys(list);
         GeneratedTOBuilder genTOBuilder = resolveListKeyTOBuilder(packageName, list);
-        
-        
-        if(genTOBuilder != null) {
-            ParameterizedType identifierMarker = Types.parameterizedTypeFor( Types.typeForClass(Identifier.class), typeBuilder);
-            ParameterizedType identifiableMarker = Types.parameterizedTypeFor(Types.typeForClass(Identifiable.class), genTOBuilder);
+
+        if (genTOBuilder != null) {
+            ParameterizedType identifierMarker = Types.parameterizedTypeFor(Types.typeForClass(Identifier.class),
+                    typeBuilder);
+            ParameterizedType identifiableMarker = Types.parameterizedTypeFor(Types.typeForClass(Identifiable.class),
+                    genTOBuilder);
             genTOBuilder.addImplementsType(identifierMarker);
             typeBuilder.addImplementsType(identifiableMarker);
         }
@@ -1913,7 +1908,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds <code>schemaNode</code> to <code>typeBuilder</code> as getter method
      * or to <code>genTOBuilder</code> as property.
-     * 
+     *
      * @param basePackageName
      *            string contains the module package name
      * @param schemaNode
@@ -1977,8 +1972,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Selects the names of the list keys from <code>list</code> and returns
      * them as the list of the strings
-     * 
-     * @param list of string with names of the list keys
+     *
+     * @param list
+     *            of string with names of the list keys
      * @return list of string which represents names of the list keys. If the
      *         <code>list</code> contains no keys then the empty list is
      *         returned.
@@ -1996,11 +1992,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         return listKeys;
     }
 
-
     /**
      * Generates for the <code>list</code> which contains any list keys special
      * generated TO builder.
-     * 
+     *
      * @param packageName
      *            string with package name to which the list belongs
      * @param list
@@ -2027,10 +2022,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * {@link org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
      * BitsTypeDefinition} which are also added to <code>typeBuilder</code> as
      * enclosing transfer object.
-     * 
+     *
      * @param typeDef
-     *            type definition which can be of type <code>UnionType</code>
-     *            or <code>BitsTypeDefinition</code>
+     *            type definition which can be of type <code>UnionType</code> or
+     *            <code>BitsTypeDefinition</code>
      * @param typeBuilder
      *            generated type builder to which is added generated TO created
      *            from <code>typeDef</code>
@@ -2039,16 +2034,16 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * @return generated TO builder for <code>typeDef</code>
      */
     private GeneratedTOBuilder addTOToTypeBuilder(TypeDefinition<?> typeDef, GeneratedTypeBuilder typeBuilder,
-            String leafName) {
+            String leafName, Module parentModule) {
         final String classNameFromLeaf = parseToClassName(leafName);
         GeneratedTOBuilder genTOBuilder = null;
         final String packageName = typeBuilder.getFullyQualifiedName();
         if (typeDef instanceof UnionTypeDefinition) {
-            genTOBuilder = ((TypeProviderImpl) typeProvider).provideGeneratedTOBuilderForUnionTypeDefinition(packageName, typeDef,
-                    classNameFromLeaf);
+            genTOBuilder = ((TypeProviderImpl) typeProvider).provideGeneratedTOBuilderForUnionTypeDefinition(
+                    packageName, typeDef, classNameFromLeaf, parentModule);
         } else if (typeDef instanceof BitsTypeDefinition) {
-            genTOBuilder = ((TypeProviderImpl) typeProvider).provideGeneratedTOBuilderForBitsTypeDefinition(packageName, typeDef,
-                    classNameFromLeaf);
+            genTOBuilder = ((TypeProviderImpl) typeProvider).provideGeneratedTOBuilderForBitsTypeDefinition(
+                    packageName, typeDef, classNameFromLeaf);
         }
         if (genTOBuilder != null) {
             typeBuilder.addEnclosingTransferObject(genTOBuilder);
@@ -2060,13 +2055,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Adds the implemented types to type builder.
-     * 
+     *
      * The method passes through the list of <i>uses</i> in
      * {@code dataNodeContainer}. For every <i>use</i> is obtained coresponding
      * generated type from {@link BindingGeneratorImpl#allGroupings
      * allGroupings} which is adde as <i>implements type</i> to
      * <code>builder</code>
-     * 
+     *
      * @param dataNodeContainer
      *            element which contains the list of used YANG groupings
      * @param builder

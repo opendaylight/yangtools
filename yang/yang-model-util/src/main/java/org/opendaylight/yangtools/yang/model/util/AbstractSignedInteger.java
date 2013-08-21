@@ -49,35 +49,16 @@ public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
      * @param maxRange
      * @param units
      */
-    public AbstractSignedInteger(final SchemaPath path, final QName name,
-            final String description, final Number minRange,
+    public AbstractSignedInteger(final QName name, final String description, final Number minRange,
             final Number maxRange, final String units) {
         this.name = name;
+        this.path = new SchemaPath(Collections.singletonList(name), true);
         this.description = description;
-        this.path = path;
         this.units = units;
         this.rangeStatements = new ArrayList<RangeConstraint>();
-        final String rangeDescription = "Integer values between " + minRange
-                + " and " + maxRange + ", inclusively.";
-        this.rangeStatements.add(BaseConstraints.rangeConstraint(minRange,
-                maxRange, rangeDescription,
+        final String rangeDescription = "Integer values between " + minRange + " and " + maxRange + ", inclusively.";
+        this.rangeStatements.add(BaseConstraints.rangeConstraint(minRange, maxRange, rangeDescription,
                 "https://tools.ietf.org/html/rfc6020#section-9.2.4"));
-    }
-
-    /**
-     * @param name
-     * @param description
-     * @param rangeStatements
-     * @param units
-     */
-    public AbstractSignedInteger(final SchemaPath path, final QName name,
-            final String description,
-            final List<RangeConstraint> rangeStatements, final String units) {
-        this.name = name;
-        this.description = description;
-        this.path = path;
-        this.units = units;
-        this.rangeStatements = rangeStatements;
     }
 
     @Override
@@ -124,14 +105,11 @@ public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result
-                + ((rangeStatements == null) ? 0 : rangeStatements.hashCode());
-        result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + ((rangeStatements == null) ? 0 : rangeStatements.hashCode());
+        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
         result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;
     }

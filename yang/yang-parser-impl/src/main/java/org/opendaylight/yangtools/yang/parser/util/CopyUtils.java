@@ -233,7 +233,7 @@ public class CopyUtils {
         if (old.getType() == null) {
             copy.setTypedef(copy(old.getTypedef(), copy, updateQName));
         } else {
-            copy.setType(ParserUtils.createCorrectTypeDefinition(copy.getPath(), old.getType()));
+            copy.setType(old.getType());
         }
 
         copy.setDefaultStr(old.getDefaultStr());
@@ -265,7 +265,7 @@ public class CopyUtils {
         if (old.getType() == null) {
             copy.setTypedef(copy(old.getTypedef(), copy, updateQName));
         } else {
-            copy.setType(ParserUtils.createCorrectTypeDefinition(copy.getPath(), old.getType()));
+            copy.setType(old.getType());
         }
 
         copy.setUserOrdered(old.isUserOrdered());
@@ -359,9 +359,8 @@ public class CopyUtils {
             UnionTypeBuilder oldUnion = (UnionTypeBuilder)old;
             type = new UnionTypeBuilder(newParent.getModuleName(), newParent.getLine());
             type.setParent(newParent);
-            type.setPath(newSchemaPath);
             for(TypeDefinition<?> td : oldUnion.getTypes()) {
-                type.setType(ParserUtils.createCorrectTypeDefinition(type.getPath(), td));
+                type.setType(td);
             }
             for(TypeDefinitionBuilder tdb : oldUnion.getTypedefs()) {
                 type.setTypedef(copy(tdb, type, updateQName));
@@ -379,7 +378,7 @@ public class CopyUtils {
             if (old.getType() == null) {
                 type.setTypedef(copy(old.getTypedef(), type, updateQName));
             } else {
-                type.setType(ParserUtils.createCorrectTypeDefinition(type.getPath(), old.getType()));
+                type.setType(old.getType());
             }
 
             for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {

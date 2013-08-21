@@ -19,23 +19,13 @@ import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.Int16;
-import org.opendaylight.yangtools.yang.model.util.Int32;
-import org.opendaylight.yangtools.yang.model.util.Int64;
-import org.opendaylight.yangtools.yang.model.util.Int8;
-import org.opendaylight.yangtools.yang.model.util.Uint16;
-import org.opendaylight.yangtools.yang.model.util.Uint32;
-import org.opendaylight.yangtools.yang.model.util.Uint64;
-import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
@@ -314,62 +304,6 @@ public class TypeUtils {
             constraints.addLengths(((StringTypeDefinition) type).getLengthStatements());
         } else if (type instanceof BinaryTypeDefinition) {
             constraints.addLengths(((BinaryTypeDefinition) type).getLengthConstraints());
-        }
-    }
-
-    /**
-     * Create new ExtendedType based on given type and with schema path.
-     *
-     * @param newPath
-     *            schema path for new type
-     * @param oldType
-     *            type based
-     * @return
-     */
-    static ExtendedType createNewExtendedType(final ExtendedType oldType, final SchemaPath newPath) {
-        QName qname = oldType.getQName();
-        TypeDefinition<?> newBaseType = ParserUtils.createCorrectTypeDefinition(newPath, oldType.getBaseType());
-        String desc = oldType.getDescription();
-        String ref = oldType.getReference();
-        ExtendedType.Builder builder = new ExtendedType.Builder(qname, newBaseType, desc, ref, newPath);
-        builder.status(oldType.getStatus());
-        builder.lengths(oldType.getLengths());
-        builder.patterns(oldType.getPatterns());
-        builder.ranges(oldType.getRanges());
-        builder.fractionDigits(oldType.getFractionDigits());
-        builder.unknownSchemaNodes(oldType.getUnknownSchemaNodes());
-        return builder.build();
-    }
-
-    static IntegerTypeDefinition createNewIntType(final SchemaPath newSchemaPath,
-            final IntegerTypeDefinition type) {
-        final String localName = type.getQName().getLocalName();
-        if ("int8".equals(localName)) {
-            return new Int8(newSchemaPath);
-        } else if ("int16".equals(localName)) {
-            return new Int16(newSchemaPath);
-        } else if ("int32".equals(localName)) {
-            return new Int32(newSchemaPath);
-        } else if ("int64".equals(localName)) {
-            return new Int64(newSchemaPath);
-        } else {
-            return null;
-        }
-    }
-
-    static UnsignedIntegerTypeDefinition createNewUintType(final SchemaPath newSchemaPath,
-            final UnsignedIntegerTypeDefinition type) {
-        final String localName = type.getQName().getLocalName();
-        if ("uint8".equals(localName)) {
-            return new Uint8(newSchemaPath);
-        } else if ("uint16".equals(localName)) {
-            return new Uint16(newSchemaPath);
-        } else if ("uint32".equals(localName)) {
-            return new Uint32(newSchemaPath);
-        } else if ("uint64".equals(localName)) {
-            return new Uint64(newSchemaPath);
-        } else {
-            return null;
         }
     }
 

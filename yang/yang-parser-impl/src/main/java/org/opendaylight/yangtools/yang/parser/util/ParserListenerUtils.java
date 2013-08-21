@@ -1027,7 +1027,7 @@ public final class ParserListenerUtils {
         } else {
             unknownType.setReferenceOnly(true);
         }
-        
+
         return unknownType.build();
     }
 
@@ -1086,13 +1086,13 @@ public final class ParserListenerUtils {
         } else if (typeName.startsWith("int")) {
             IntegerTypeDefinition intType = null;
             if ("int8".equals(typeName)) {
-                intType = new Int8(extBaseTypePath);
+                intType = Int8.getInstance();
             } else if ("int16".equals(typeName)) {
-                intType = new Int16(extBaseTypePath);
+                intType = Int16.getInstance();
             } else if ("int32".equals(typeName)) {
-                intType = new Int32(extBaseTypePath);
+                intType = Int32.getInstance();
             } else if ("int64".equals(typeName)) {
-                intType = new Int64(extBaseTypePath);
+                intType = Int64.getInstance();
             }
             if (intType == null) {
                 throw new YangParseException(moduleName, line, "Unknown yang type " + typeName);
@@ -1102,13 +1102,13 @@ public final class ParserListenerUtils {
         } else if (typeName.startsWith("uint")) {
             UnsignedIntegerTypeDefinition uintType = null;
             if ("uint8".equals(typeName)) {
-                uintType = new Uint8(extBaseTypePath);
+                uintType = Uint8.getInstance();
             } else if ("uint16".equals(typeName)) {
-                uintType = new Uint16(extBaseTypePath);
+                uintType = Uint16.getInstance();
             } else if ("uint32".equals(typeName)) {
-                uintType = new Uint32(extBaseTypePath);
+                uintType = Uint32.getInstance();
             } else if ("uint64".equals(typeName)) {
-                uintType = new Uint64(extBaseTypePath);
+                uintType = Uint64.getInstance();
             }
             if (uintType == null) {
                 throw new YangParseException(moduleName, line, "Unknown yang type " + typeName);
@@ -1119,7 +1119,7 @@ public final class ParserListenerUtils {
             List<EnumTypeDefinition.EnumPair> enumConstants = getEnumConstants(typeBody, actualPath, moduleName);
             return new EnumerationType(baseTypePath, enumConstants);
         } else if ("string".equals(typeName)) {
-            StringTypeDefinition stringType = new StringType(extBaseTypePath);
+            StringTypeDefinition stringType = StringType.getIntance();
             constraints.addLengths(stringType.getLengthStatements());
             baseType = stringType;
         } else if ("bits".equals(typeName)) {
@@ -1130,12 +1130,12 @@ public final class ParserListenerUtils {
             RevisionAwareXPath xpath = new RevisionAwareXPathImpl(path, absolute);
             return new Leafref(baseTypePath, xpath);
         } else if ("binary".equals(typeName)) {
-            BinaryTypeDefinition binaryType = new BinaryType(extBaseTypePath);
+            BinaryTypeDefinition binaryType = BinaryType.getInstance();
             constraints.addLengths(binaryType.getLengthConstraints());
             baseType = binaryType;
         } else if ("instance-identifier".equals(typeName)) {
             boolean requireInstance = isRequireInstance(typeBody);
-            return new InstanceIdentifier(extBaseTypePath, null, requireInstance);
+            return new InstanceIdentifier(null, requireInstance);
         }
 
         if (parent instanceof TypeDefinitionBuilder && !(parent instanceof UnionTypeBuilder)) {

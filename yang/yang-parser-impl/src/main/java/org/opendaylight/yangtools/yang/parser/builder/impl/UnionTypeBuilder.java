@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -32,13 +33,12 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  */
 public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
     private final static String NAME = "union";
+    private final static QName QNAME = BaseTypes.constructQName(NAME);
 
     private final List<TypeDefinition<?>> types;
     private final List<TypeDefinitionBuilder> typedefs;
     private UnionType instance;
     private boolean isBuilt;
-
-    private SchemaPath path;
 
     public UnionTypeBuilder(final String moduleName, final int line) {
         super(moduleName, line, BaseTypes.constructQName(NAME));
@@ -77,7 +77,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     @Override
     public UnionType build() {
         if (!isBuilt) {
-            instance = new UnionType(path, types);
+            instance = new UnionType(types);
             for (TypeDefinitionBuilder tdb : typedefs) {
                 types.add(tdb.build());
             }
@@ -88,7 +88,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
 
     @Override
     public void setPath(final SchemaPath schemaPath) {
-        this.path = schemaPath;
+        throw new YangParseException(moduleName, line, "Can not set path to " + NAME);
     }
 
     @Override
@@ -128,7 +128,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
 
     @Override
     public SchemaPath getPath() {
-        return path;
+        return BaseTypes.schemaPath(QNAME);
     }
 
     @Override

@@ -179,7 +179,7 @@ public class YangParserSimpleTest {
         LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName("added");
         assertNotNull(added);
         assertEquals(createPath("nodes", "added"), added.getPath());
-        assertEquals(createPath("nodes", "added", "mytype"), added.getType().getPath());
+        assertEquals(createPath("mytype"), added.getType().getPath());
 
         ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName("links");
         assertNotNull(links);

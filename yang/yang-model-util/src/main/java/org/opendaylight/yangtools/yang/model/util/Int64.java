@@ -1,94 +1,51 @@
 /*
-  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
-  *
-  * This program and the accompanying materials are made available under the
-  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
-  * and is available at http://www.eclipse.org/legal/epl-v10.html
-  */
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
 /**
  * Implementation of Yang int64 built-in type. <br>
- * int64  represents integer values between -9223372036854775808 and 9223372036854775807, inclusively.
- * The Java counterpart of Yang int64 built-in type is
- * {@link Long}.
+ * int64 represents integer values between -9223372036854775808 and
+ * 9223372036854775807, inclusively. The Java counterpart of Yang int64 built-in
+ * type is {@link Long}.
  *
  */
 public final class Int64 extends AbstractSignedInteger {
-    private static final QName name = BaseTypes.constructQName("int64");
-    private final Long defaultValue = null;
-    private static final String description =
-            "int64  represents integer values between -9223372036854775808 and 9223372036854775807, inclusively.";
-    private final IntegerTypeDefinition baseType;
+    private static Int64 INSTANCE;
+    private static final QName NAME = BaseTypes.constructQName("int64");
+    private static final String DESCRIPTION = "int64  represents integer values between -9223372036854775808 and 9223372036854775807, inclusively.";
 
-    public Int64(final SchemaPath path) {
-        super(path, name, description, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
-        this.baseType = this;
+    private Int64() {
+        super(NAME, DESCRIPTION, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
-     */
+    public static Int64 getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Int64();
+        }
+        return INSTANCE;
+    }
+
     @Override
     public IntegerTypeDefinition getBaseType() {
-        return baseType;
+        return this;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()
-     */
     @Override
     public Object getDefaultValue() {
-        return defaultValue;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Int64 other = (Int64) obj;
-        if (defaultValue == null) {
-            if (other.defaultValue != null) {
-                return false;
-            }
-        } else if (!defaultValue.equals(other.defaultValue)) {
-            return false;
-        }
-        return true;
+        return null;
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Int64 [defaultValue=");
-        builder.append(defaultValue);
-        builder.append(", AbstractInteger=");
-        builder.append(super.toString());
-        builder.append("]");
-        return builder.toString();
+        return "type " + NAME;
     }
+
 }

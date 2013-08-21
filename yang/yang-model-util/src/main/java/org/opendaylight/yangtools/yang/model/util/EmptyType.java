@@ -17,20 +17,25 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 public final class EmptyType implements EmptyTypeDefinition {
-    private final QName name = BaseTypes.constructQName("empty");
-    private final SchemaPath path;
-    private final String description = "The empty built-in type represents a leaf that does not have any value, it conveys information by its presence or absence.";
-    private final String reference = "https://tools.ietf.org/html/rfc6020#page-131";
-    private final EmptyTypeDefinition baseType;
+    private static EmptyType INSTANCE;
+    private static final QName NAME = BaseTypes.constructQName("empty");
+    private static final SchemaPath path = new SchemaPath(Collections.singletonList(NAME), true);
+    private static final String description = "The empty built-in type represents a leaf that does not have any value, it conveys information by its presence or absence.";
+    private static final String reference = "https://tools.ietf.org/html/rfc6020#page-131";
 
-    public EmptyType(final SchemaPath path) {
-        this.path = path;
-        this.baseType = this;
+    private EmptyType() {
+    }
+
+    public static EmptyType getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new EmptyType();
+        }
+        return INSTANCE;
     }
 
     @Override
     public EmptyTypeDefinition getBaseType() {
-        return baseType;
+        return this;
     }
 
     @Override
@@ -45,7 +50,7 @@ public final class EmptyType implements EmptyTypeDefinition {
 
     @Override
     public QName getQName() {
-        return name;
+        return NAME;
     }
 
     @Override
@@ -71,6 +76,11 @@ public final class EmptyType implements EmptyTypeDefinition {
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public String toString() {
+        return "type empty " + NAME;
     }
 
 }

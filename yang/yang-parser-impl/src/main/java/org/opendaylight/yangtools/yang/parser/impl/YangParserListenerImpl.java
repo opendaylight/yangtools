@@ -377,21 +377,17 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 // check for types which must have body
                 checkMissingBody(typeName, moduleName, line);
                 // if there are no constraints, just grab default base yang type
-                QName qname = BaseTypes.constructQName(typeName);
-                addNodeToPath(qname);
-                SchemaPath path = createActualSchemaPath(actualPath.peek());
-                type = YangTypesConverter.javaTypeForBaseYangType(path, typeName);
+                type = YangTypesConverter.javaTypeForBaseYangType(typeName);
+                addNodeToPath(type.getQName());
                 moduleBuilder.setType(type);
             } else {
                 if ("union".equals(typeName)) {
                     QName qname = BaseTypes.constructQName("union");
                     addNodeToPath(qname);
-                    SchemaPath path = createActualSchemaPath(actualPath.peek());
                     UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
                     Builder parent = moduleBuilder.getActualNode();
                     unionBuilder.setParent(parent);
                     moduleBuilder.enterNode(unionBuilder);
-                    unionBuilder.setPath(path);
                 } else if ("identityref".equals(typeName)) {
                     QName qname = BaseTypes.constructQName("identityref");
                     addNodeToPath(qname);

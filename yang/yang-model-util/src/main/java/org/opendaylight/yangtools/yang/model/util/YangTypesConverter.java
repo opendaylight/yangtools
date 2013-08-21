@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public final class YangTypesConverter {
@@ -42,39 +41,40 @@ public final class YangTypesConverter {
         return baseYangTypes.contains(type);
     }
 
-    public static TypeDefinition<?> javaTypeForBaseYangType(SchemaPath path, String typeName) {
+    public static TypeDefinition<?> javaTypeForBaseYangType(String typeName) {
         TypeDefinition<?> type = null;
 
         if (typeName.startsWith("int")) {
             if ("int8".equals(typeName)) {
-                type = new Int8(path);
+                type = Int8.getInstance();
             } else if ("int16".equals(typeName)) {
-                type = new Int16(path);
+                type = Int16.getInstance();
             } else if ("int32".equals(typeName)) {
-                type = new Int32(path);
+                type = Int32.getInstance();
             } else if ("int64".equals(typeName)) {
-                type = new Int64(path);
+                type = Int64.getInstance();
             }
         } else if (typeName.startsWith("uint")) {
             if ("uint8".equals(typeName)) {
-                type = new Uint8(path);
+                type = Uint8.getInstance();
             } else if ("uint16".equals(typeName)) {
-                type = new Uint16(path);
+                type = Uint16.getInstance();
             } else if ("uint32".equals(typeName)) {
-                type = new Uint32(path);
+                type = Uint32.getInstance();
             } else if ("uint64".equals(typeName)) {
-                type = new Uint64(path);
+                type = Uint64.getInstance();
             }
         } else if ("string".equals(typeName)) {
-            type = new StringType(path);
+            type = StringType.getIntance();
         } else if("binary".equals(typeName)) {
-            type = new BinaryType(path);
+            type = BinaryType.getInstance();
         } else if("boolean".equals(typeName)) {
-            type = new BooleanType(path);
+            type = BooleanType.getInstance();
         } else if("empty".equals(typeName)) {
-            type = new EmptyType(path);
+            type = EmptyType.getInstance();
         } else if("instance-identifier".equals(typeName)) {
-            type = new InstanceIdentifier(path, null, true);
+            // FIXME
+            type = new InstanceIdentifier(null, true);
         }
 
         return type;

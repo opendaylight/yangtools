@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -43,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
@@ -52,7 +50,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuild
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
@@ -61,7 +58,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilde
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.CopyUtils;
 import org.opendaylight.yangtools.yang.parser.util.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
@@ -285,7 +281,6 @@ public final class YangParserImpl implements YangModelParser {
                 fixUnresolvedNodes(modules, moduleBuilder);
             }
         }
-        finishResolveDirtyNodes(modules);
         resolveAugments(modules);
         resolveUses(modules);
         resolveDeviations(modules);
@@ -315,7 +310,6 @@ public final class YangParserImpl implements YangModelParser {
                 fixUnresolvedNodesWithContext(modules, moduleBuilder, context);
             }
         }
-        finishResolveDirtyNodes(modules);
         resolveAugmentsWithContext(modules, context);
         resolveUsesWithContext(modules, context);
         resolveDeviationsWithContext(modules, context);
@@ -369,45 +363,6 @@ public final class YangParserImpl implements YangModelParser {
                     nodeToResolve.setType(new IdentityrefType(findFullQName(modules, module, idref), idref.getPath()));
                 } else {
                     resolveType(nodeToResolve, modules, module);
-                }
-            }
-        }
-    }
-
-    private void finishResolveDirtyNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        final Set<TypeAwareBuilder> dirtyNodes = new HashSet<>();
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
-            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
-                dirtyNodes.addAll(inner.getValue().getDirtyNodes());
-            }
-        }
-
-        if (!dirtyNodes.isEmpty()) {
-            for (TypeAwareBuilder nodeToResolve : dirtyNodes) {
-                if (nodeToResolve instanceof UnionTypeBuilder) {
-                    List<TypeDefinitionBuilder> newTypes = new ArrayList<>();
-                    List<TypeDefinitionBuilder> oldTypes = ((UnionTypeBuilder) nodeToResolve).getTypedefs();
-                    for (TypeDefinitionBuilder tdb : oldTypes) {
-                        TypeDefinitionBuilder newType = CopyUtils.copy(tdb, nodeToResolve, false);
-                        ParserUtils.correctTypeAwareNodePath(newType);
-                        newTypes.add(newType);
-                    }
-                    oldTypes.clear();
-                    oldTypes.addAll(newTypes);
-                } else if (nodeToResolve.getType() instanceof IdentityrefType) {
-                    TypeDefinition<?> idRef = ParserUtils.createCorrectTypeDefinition(nodeToResolve.getPath(),
-                            nodeToResolve.getType());
-                    nodeToResolve.setType(idRef);
-                } else {
-                    if (nodeToResolve.getType() == null) {
-                        TypeDefinitionBuilder tdb = CopyUtils.copy(nodeToResolve.getTypedef(), nodeToResolve, false);
-                        ParserUtils.correctTypeAwareNodePath(tdb);
-                        nodeToResolve.setTypedef(tdb);
-                    } else {
-                        TypeDefinition<?> td = ParserUtils.createCorrectTypeDefinition(nodeToResolve.getPath(),
-                                nodeToResolve.getType());
-                        nodeToResolve.setType(td);
-                    }
                 }
             }
         }

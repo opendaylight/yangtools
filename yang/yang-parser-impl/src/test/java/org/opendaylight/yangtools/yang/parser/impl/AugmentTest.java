@@ -14,8 +14,8 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -108,8 +108,7 @@ public class AugmentTest {
         assertEquals(expectedPath, ds0ChannelNumber.getPath());
         // type of leaf ds0ChannelNumber
         QName typeQName = BaseTypes.constructQName("string");
-        List<QName> typePath = new ArrayList<>(Arrays.asList(qnames));
-        typePath.add(typeQName);
+        List<QName> typePath = Collections.singletonList(typeQName);
         expectedPath = new SchemaPath(typePath, true);
         assertEquals(expectedPath, ds0ChannelNumber.getType().getPath());
 

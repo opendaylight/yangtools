@@ -24,33 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
-import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BinaryType;
-import org.opendaylight.yangtools.yang.model.util.BitsType;
-import org.opendaylight.yangtools.yang.model.util.BooleanType;
-import org.opendaylight.yangtools.yang.model.util.Decimal64;
-import org.opendaylight.yangtools.yang.model.util.EmptyType;
-import org.opendaylight.yangtools.yang.model.util.EnumerationType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.util.Leafref;
-import org.opendaylight.yangtools.yang.model.util.StringType;
-import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -58,8 +31,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuild
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder.ChoiceNodeImpl;
@@ -73,7 +44,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 
 public final class ParserUtils {
 
@@ -299,120 +269,6 @@ public final class ParserUtils {
                 correctNodePath(choiceCaseBuilder, node.getPath());
             }
         }
-
-        // if node can contains type, correct path for this type too
-        if (node instanceof TypeAwareBuilder) {
-            TypeAwareBuilder nodeBuilder = (TypeAwareBuilder) node;
-            correctTypeAwareNodePath(nodeBuilder);
-        }
-    }
-
-    /**
-     * Repair schema path of node type.
-     *
-     * @param node
-     *            node which contains type statement
-     * @param parentSchemaPath
-     *            schema path of parent node
-     */
-    public static void correctTypeAwareNodePath(final TypeAwareBuilder node) {
-        final SchemaPath parentSchemaPath = node.getPath();
-        final TypeDefinition<?> nodeType = node.getType();
-
-        // handle union type
-        if (node instanceof UnionTypeBuilder) {
-            for (TypeDefinitionBuilder tdb : ((UnionTypeBuilder) node).getTypedefs()) {
-                SchemaPath newSchemaPath = createSchemaPath(node.getPath(), tdb.getQName());
-                tdb.setPath(newSchemaPath);
-                correctTypeAwareNodePath(tdb);
-            }
-            List<TypeDefinition<?>> oldTypes = ((UnionTypeBuilder) node).getTypes();
-            List<TypeDefinition<?>> newTypes = new ArrayList<>();
-            for (TypeDefinition<?> td : oldTypes) {
-                TypeDefinition<?> newType = createCorrectTypeDefinition(node.getPath(), td);
-                newTypes.add(newType);
-            }
-            oldTypes.clear();
-            oldTypes.addAll(newTypes);
-            return;
-        }
-
-        // handle identityref type
-        if (node instanceof IdentityrefTypeBuilder) {
-            return;
-        }
-
-        // default handling
-        if (nodeType == null) {
-            TypeDefinitionBuilder nodeTypedef = node.getTypedef();
-            SchemaPath newSchemaPath = createSchemaPath(parentSchemaPath, nodeTypedef.getQName());
-            nodeTypedef.setPath(newSchemaPath);
-            correctTypeAwareNodePath(nodeTypedef);
-        } else {
-            TypeDefinition<?> newType = createCorrectTypeDefinition(parentSchemaPath, nodeType);
-            node.setType(newType);
-        }
-
-    }
-
-    public static TypeDefinition<?> createCorrectTypeDefinition(SchemaPath parentSchemaPath, TypeDefinition<?> nodeType) {
-        TypeDefinition<?> result = null;
-
-        if (nodeType != null) {
-            SchemaPath newSchemaPath = createSchemaPath(parentSchemaPath, nodeType.getQName());
-
-            if (nodeType instanceof BinaryTypeDefinition) {
-                BinaryTypeDefinition binType = (BinaryTypeDefinition) nodeType;
-
-                // List<Byte> bytes = (List<Byte>) binType.getDefaultValue();
-                // workaround to get rid of 'Unchecked cast' warning
-                List<Byte> bytes = new ArrayList<Byte>();
-                Object defaultValue = binType.getDefaultValue();
-                if (defaultValue instanceof List) {
-                    for (Object o : List.class.cast(defaultValue)) {
-                        if (o instanceof Byte) {
-                            bytes.add((Byte) o);
-                        }
-                    }
-                }
-                result = new BinaryType(newSchemaPath, bytes);
-            } else if (nodeType instanceof BitsTypeDefinition) {
-                BitsTypeDefinition bitsType = (BitsTypeDefinition) nodeType;
-                result = new BitsType(newSchemaPath, bitsType.getBits());
-            } else if (nodeType instanceof BooleanTypeDefinition) {
-                result = new BooleanType(newSchemaPath);
-            } else if (nodeType instanceof DecimalTypeDefinition) {
-                DecimalTypeDefinition decimalType = (DecimalTypeDefinition) nodeType;
-                result = new Decimal64(newSchemaPath, decimalType.getFractionDigits());
-            } else if (nodeType instanceof EmptyTypeDefinition) {
-                result = new EmptyType(newSchemaPath);
-            } else if (nodeType instanceof EnumTypeDefinition) {
-                EnumTypeDefinition enumType = (EnumTypeDefinition) nodeType;
-                result = new EnumerationType(newSchemaPath, (EnumPair) enumType.getDefaultValue(), enumType.getValues());
-            } else if (nodeType instanceof IdentityrefTypeDefinition) {
-                IdentityrefTypeDefinition idrefType = (IdentityrefTypeDefinition) nodeType;
-                result = new IdentityrefType(idrefType.getIdentity(), newSchemaPath);
-            } else if (nodeType instanceof InstanceIdentifierTypeDefinition) {
-                InstanceIdentifierTypeDefinition instIdType = (InstanceIdentifierTypeDefinition) nodeType;
-                return new InstanceIdentifier(newSchemaPath, instIdType.getPathStatement(),
-                        instIdType.requireInstance());
-            } else if (nodeType instanceof StringTypeDefinition) {
-                result = new StringType(newSchemaPath);
-            } else if (nodeType instanceof IntegerTypeDefinition) {
-                result = TypeUtils.createNewIntType(newSchemaPath, (IntegerTypeDefinition) nodeType);
-            } else if (nodeType instanceof UnsignedIntegerTypeDefinition) {
-                result = TypeUtils.createNewUintType(newSchemaPath, (UnsignedIntegerTypeDefinition) nodeType);
-            } else if (nodeType instanceof LeafrefTypeDefinition) {
-                result = new Leafref(newSchemaPath, ((LeafrefTypeDefinition) nodeType).getPathStatement());
-            } else if (nodeType instanceof UnionTypeDefinition) {
-                UnionTypeDefinition unionType = (UnionTypeDefinition) nodeType;
-                return new UnionType(newSchemaPath, unionType.getTypes());
-            } else if (nodeType instanceof ExtendedType) {
-                ExtendedType extType = (ExtendedType) nodeType;
-                result = TypeUtils.createNewExtendedType(extType, newSchemaPath);
-            }
-        }
-        return result;
     }
 
     /**
