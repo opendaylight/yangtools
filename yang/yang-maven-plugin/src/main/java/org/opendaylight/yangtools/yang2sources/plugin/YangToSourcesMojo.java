@@ -22,6 +22,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
+import org.slf4j.impl.StaticLoggerBinder;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -76,6 +77,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        StaticLoggerBinder.SINGLETON.setLog(getLog());
         if (yangToSourcesProcessor == null) {
             List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);
 
