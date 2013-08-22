@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.EnumerationBuilderImpl;
@@ -84,7 +85,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *             if <code>schemaContext</code> equal null.
      */
     public TypeProviderImpl(final SchemaContext schemaContext) {
-        Preconditions.checkArgument(schemaContext != null,"Schema Context cannot be null!");
+        Preconditions.checkArgument(schemaContext != null, "Schema Context cannot be null!");
 
         this.schemaContext = schemaContext;
         this.genTypeDefsContextMap = new HashMap<>();
@@ -107,9 +108,10 @@ public final class TypeProviderImpl implements TypeProvider {
      * 
      */
     public void putReferencedType(final SchemaPath refTypePath, final Type refType) {
-        Preconditions.checkArgument(refTypePath != null,"Path reference of Enumeration Type Definition cannot be NULL!");
+        Preconditions.checkArgument(refTypePath != null,
+                "Path reference of Enumeration Type Definition cannot be NULL!");
 
-        Preconditions.checkArgument(refType != null,"Reference to Enumeration Type cannot be NULL!");
+        Preconditions.checkArgument(refType != null, "Reference to Enumeration Type cannot be NULL!");
         referencedTypes.put(refTypePath, refType);
     }
 
@@ -144,12 +146,13 @@ public final class TypeProviderImpl implements TypeProvider {
     @Override
     public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> typeDefinition) {
         Type returnType = null;
-        Preconditions.checkArgument(typeDefinition != null,"Type Definition cannot be NULL!");
+        Preconditions.checkArgument(typeDefinition != null, "Type Definition cannot be NULL!");
         if (typeDefinition.getQName() == null) {
             throw new IllegalArgumentException(
                     "Type Definition cannot have non specified QName (QName cannot be NULL!)");
         }
-        Preconditions.checkArgument(typeDefinition.getQName().getLocalName() != null,"Type Definitions Local Name cannot be NULL!");
+        Preconditions.checkArgument(typeDefinition.getQName().getLocalName() != null,
+                "Type Definitions Local Name cannot be NULL!");
 
         if (typeDefinition instanceof ExtendedType) {
             returnType = javaTypeForExtendedType(typeDefinition);
@@ -221,6 +224,12 @@ public final class TypeProviderImpl implements TypeProvider {
             }
         }
         return returnType;
+        // TODO: add throw exception when we will be able to resolve ALL yang
+        // types!
+        // if (returnType == null) {
+        // throw new IllegalArgumentException("Type Provider can't resolve " +
+        // "type for specified Type Definition " + typedefName);
+        // }
     }
 
     /**
@@ -247,7 +256,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 identity = id;
             }
         }
-        Preconditions.checkArgument(identity != null,"Target identity '" + baseIdQName + "' do not exists");
+        Preconditions.checkArgument(identity != null, "Target identity '" + baseIdQName + "' do not exists");
 
         final String basePackageName = moduleNamespaceToPackageName(module);
         final String packageName = packageNameForGeneratedType(basePackageName, identity.getPath());
@@ -275,12 +284,13 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     public Type generatedTypeForExtendedDefinitionType(final TypeDefinition<?> typeDefinition) {
         Type returnType = null;
-        Preconditions.checkArgument(typeDefinition != null,"Type Definition cannot be NULL!");
+        Preconditions.checkArgument(typeDefinition != null, "Type Definition cannot be NULL!");
         if (typeDefinition.getQName() == null) {
             throw new IllegalArgumentException(
                     "Type Definition cannot have non specified QName (QName cannot be NULL!)");
         }
-        Preconditions.checkArgument(typeDefinition.getQName().getLocalName() != null,"Type Definitions Local Name cannot be NULL!");
+        Preconditions.checkArgument(typeDefinition.getQName().getLocalName() != null,
+                "Type Definitions Local Name cannot be NULL!");
 
         final String typedefName = typeDefinition.getQName().getLocalName();
         if (typeDefinition instanceof ExtendedType) {
@@ -311,7 +321,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *             if <code>extendTypeDef</code> equal null
      */
     private TypeDefinition<?> baseTypeDefForExtendedType(final TypeDefinition<?> extendTypeDef) {
-        Preconditions.checkArgument(extendTypeDef != null,"Type Definiition reference cannot be NULL!");
+        Preconditions.checkArgument(extendTypeDef != null, "Type Definiition reference cannot be NULL!");
         final TypeDefinition<?> baseTypeDef = extendTypeDef.getBaseType();
         if (baseTypeDef instanceof ExtendedType) {
             return baseTypeDefForExtendedType(baseTypeDef);
@@ -340,9 +350,10 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     public Type provideTypeForLeafref(final LeafrefTypeDefinition leafrefType) {
         Type returnType = null;
-        Preconditions.checkArgument(leafrefType != null,"Leafref Type Definition reference cannot be NULL!");
+        Preconditions.checkArgument(leafrefType != null, "Leafref Type Definition reference cannot be NULL!");
 
-        Preconditions.checkArgument(leafrefType.getPathStatement() != null,"The Path Statement for Leafref Type Definition cannot be NULL!");
+        Preconditions.checkArgument(leafrefType.getPathStatement() != null,
+                "The Path Statement for Leafref Type Definition cannot be NULL!");
 
         final RevisionAwareXPath xpath = leafrefType.getPathStatement();
         final String strXPath = xpath.toString();
@@ -440,10 +451,12 @@ public final class TypeProviderImpl implements TypeProvider {
      *             </ul>
      */
     private Enumeration provideTypeForEnum(final EnumTypeDefinition enumTypeDef, final String enumName) {
-        Preconditions.checkArgument(enumTypeDef != null,"EnumTypeDefinition reference cannot be NULL!");
-        Preconditions.checkArgument(enumTypeDef.getValues() != null,"EnumTypeDefinition MUST contain at least ONE value definition!");
-        Preconditions.checkArgument(enumTypeDef.getQName() != null,"EnumTypeDefinition MUST contain NON-NULL QName!");
-        Preconditions.checkArgument(enumTypeDef.getQName().getLocalName() != null,"Local Name in EnumTypeDefinition QName cannot be NULL!");
+        Preconditions.checkArgument(enumTypeDef != null, "EnumTypeDefinition reference cannot be NULL!");
+        Preconditions.checkArgument(enumTypeDef.getValues() != null,
+                "EnumTypeDefinition MUST contain at least ONE value definition!");
+        Preconditions.checkArgument(enumTypeDef.getQName() != null, "EnumTypeDefinition MUST contain NON-NULL QName!");
+        Preconditions.checkArgument(enumTypeDef.getQName().getLocalName() != null,
+                "Local Name in EnumTypeDefinition QName cannot be NULL!");
 
         final String enumerationName = parseToClassName(enumName);
 
@@ -480,11 +493,13 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private Enumeration addInnerEnumerationToTypeBuilder(final EnumTypeDefinition enumTypeDef, final String enumName,
             final GeneratedTypeBuilder typeBuilder) {
-        Preconditions.checkArgument(enumTypeDef != null,"EnumTypeDefinition reference cannot be NULL!");
-        Preconditions.checkArgument(enumTypeDef.getValues() != null,"EnumTypeDefinition MUST contain at least ONE value definition!");
-        Preconditions.checkArgument(enumTypeDef.getQName() != null,"EnumTypeDefinition MUST contain NON-NULL QName!");
-        Preconditions.checkArgument(enumTypeDef.getQName().getLocalName() != null,"Local Name in EnumTypeDefinition QName cannot be NULL!");
-        Preconditions.checkArgument(typeBuilder != null,"Generated Type Builder reference cannot be NULL!");
+        Preconditions.checkArgument(enumTypeDef != null, "EnumTypeDefinition reference cannot be NULL!");
+        Preconditions.checkArgument(enumTypeDef.getValues() != null,
+                "EnumTypeDefinition MUST contain at least ONE value definition!");
+        Preconditions.checkArgument(enumTypeDef.getQName() != null, "EnumTypeDefinition MUST contain NON-NULL QName!");
+        Preconditions.checkArgument(enumTypeDef.getQName().getLocalName() != null,
+                "Local Name in EnumTypeDefinition QName cannot be NULL!");
+        Preconditions.checkArgument(typeBuilder != null, "Generated Type Builder reference cannot be NULL!");
 
         final String enumerationName = parseToClassName(enumName);
 
@@ -530,7 +545,7 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private void resolveTypeDefsFromContext() {
         final Set<Module> modules = schemaContext.getModules();
-        Preconditions.checkArgument(modules != null,"Sef of Modules cannot be NULL!");
+        Preconditions.checkArgument(modules != null, "Sef of Modules cannot be NULL!");
         final Module[] modulesArray = new Module[modules.size()];
         int i = 0;
         for (Module modul : modules) {
@@ -703,8 +718,8 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     public List<GeneratedTOBuilder> provideGeneratedTOBuildersForUnionTypeDef(final String basePackageName,
             final TypeDefinition<?> typedef, final String typeDefName) {
-        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL!");
-        Preconditions.checkArgument(typedef != null,"Type Definition cannot be NULL!");
+        Preconditions.checkArgument(basePackageName != null, "Base Package Name cannot be NULL!");
+        Preconditions.checkArgument(typedef != null, "Type Definition cannot be NULL!");
         if (typedef.getQName() == null) {
             throw new IllegalArgumentException(
                     "Type Definition cannot have non specified QName (QName cannot be NULL!)");
@@ -785,7 +800,9 @@ public final class TypeProviderImpl implements TypeProvider {
         final List<GeneratedTOBuilder> subUnionGenTOBUilders = provideGeneratedTOBuildersForUnionTypeDef(
                 basePackageName, unionSubtype, newTOBuilderName);
 
-        GeneratedPropertyBuilder propertyBuilder = parentUnionGenTOBuilder.addProperty(newTOBuilderName);
+        final GeneratedPropertyBuilder propertyBuilder;
+        propertyBuilder = parentUnionGenTOBuilder.addProperty(BindingGeneratorUtil
+                .parseToValidParamName(newTOBuilderName));
         propertyBuilder.setReturnType(subUnionGenTOBUilders.get(0));
         parentUnionGenTOBuilder.addEqualsIdentity(propertyBuilder);
         parentUnionGenTOBuilder.addToStringProperty(propertyBuilder);
@@ -949,8 +966,8 @@ public final class TypeProviderImpl implements TypeProvider {
     public GeneratedTOBuilder provideGeneratedTOBuilderForBitsTypeDefinition(final String basePackageName,
             final TypeDefinition<?> typeDef, String typeDefName) {
 
-        Preconditions.checkArgument(typeDef != null,"typeDef cannot be NULL!");
-        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL!");
+        Preconditions.checkArgument(typeDef != null, "typeDef cannot be NULL!");
+        Preconditions.checkArgument(basePackageName != null, "Base Package Name cannot be NULL!");
 
         if (typeDef instanceof BitsTypeDefinition) {
             BitsTypeDefinition bitsTypeDefinition = (BitsTypeDefinition) typeDef;
@@ -989,7 +1006,7 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private List<String> resolveRegExpressionsFromTypedef(ExtendedType typedef) {
         final List<String> regExps = new ArrayList<String>();
-        Preconditions.checkArgument(typedef != null,"typedef can't be null");
+        Preconditions.checkArgument(typedef != null, "typedef can't be null");
         final TypeDefinition<?> strTypeDef = baseTypeDefForExtendedType(typedef);
         if (strTypeDef instanceof StringType) {
             final List<PatternConstraint> patternConstraints = typedef.getPatterns();
@@ -1062,9 +1079,9 @@ public final class TypeProviderImpl implements TypeProvider {
     private GeneratedTransferObject provideGeneratedTOFromExtendedType(final ExtendedType innerExtendedType,
             final String basePackageName, final String typedefName) {
 
-        Preconditions.checkArgument(innerExtendedType != null,"Extended type cannot be NULL!");
-        Preconditions.checkArgument(basePackageName != null,"String with base package name cannot be NULL!");
-        Preconditions.checkArgument(typedefName != null,"String with type definition name cannot be NULL!");
+        Preconditions.checkArgument(innerExtendedType != null, "Extended type cannot be NULL!");
+        Preconditions.checkArgument(basePackageName != null, "String with base package name cannot be NULL!");
+        Preconditions.checkArgument(typedefName != null, "String with type definition name cannot be NULL!");
 
         final String classTypedefName = parseToClassName(typedefName);
         final String innerTypeDef = innerExtendedType.getQName().getLocalName();
@@ -1134,7 +1151,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *         definition to the base type
      */
     private int getTypeDefinitionDepth(final TypeDefinition<?> typeDefinition) {
-        Preconditions.checkArgument(typeDefinition != null,"Type definition can't be null");
+        Preconditions.checkArgument(typeDefinition != null, "Type definition can't be null");
         int depth = 1;
         TypeDefinition<?> baseType = typeDefinition.getBaseType();
 

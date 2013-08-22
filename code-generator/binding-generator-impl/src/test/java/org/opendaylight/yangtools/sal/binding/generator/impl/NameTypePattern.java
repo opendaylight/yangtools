@@ -1,12 +1,12 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-public class MethodSignaturePattern {
+public class NameTypePattern {
     final String name;
     final String type;
 
-    public MethodSignaturePattern(String methodName, String methodType) {
-        this.name = methodName;
-        this.type = methodType;
+    public NameTypePattern(String name, String type) {
+        this.name = name;
+        this.type = type;
     }
 
     public String getName() {

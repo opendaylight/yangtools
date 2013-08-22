@@ -135,8 +135,8 @@ public class UsesTest {
 
         assertEquals("Number of method in GroupingCaseTest is incorrect", 1, groupingCaseTest.getMethodDefinitions()
                 .size());
-        containsSignatures(groupingCaseTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getLeafGroupingCaseTest1", "String"));
+        containsMethods(groupingCaseTest.getMethodDefinitions(), new NameTypePattern("getLeafGroupingCaseTest1",
+                "String"));
     }
 
     @Test
@@ -186,12 +186,11 @@ public class UsesTest {
                 .getMethodDefinitions().size());
         assertEquals("Number of method in ContainerTest is incorrect", 1, containerTest.getMethodDefinitions().size());
 
-        containsSignatures(groupingContainerTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getLeafGroupingContainerTest1", "String"), new MethodSignaturePattern("getLeafGroupingContainerTest2",
+        containsMethods(groupingContainerTest.getMethodDefinitions(), new NameTypePattern(
+                "getLeafGroupingContainerTest1", "String"), new NameTypePattern("getLeafGroupingContainerTest2",
                 "Short"));
 
-        containsSignatures(containerTest.getMethodDefinitions(), new MethodSignaturePattern("getContainerLeafTest",
-                "String"));
+        containsMethods(containerTest.getMethodDefinitions(), new NameTypePattern("getContainerLeafTest", "String"));
     }
 
     @Test
@@ -240,11 +239,10 @@ public class UsesTest {
                 .getMethodDefinitions().size());
         assertEquals("Number of method in GroupingTest is incorrect", 1, groupingTest.getMethodDefinitions().size());
 
-        containsSignatures(groupingGroupingTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getLeafGroupingGrouping", "String"));
+        containsMethods(groupingGroupingTest.getMethodDefinitions(), new NameTypePattern("getLeafGroupingGrouping",
+                "String"));
 
-        containsSignatures(groupingTest.getMethodDefinitions(), new MethodSignaturePattern("getLeafGroupingTest",
-                "Byte"));
+        containsMethods(groupingTest.getMethodDefinitions(), new NameTypePattern("getLeafGroupingTest", "Byte"));
     }
 
     @Test
@@ -319,15 +317,15 @@ public class UsesTest {
         assertEquals("Number of method in ListGroupingListTest is incorrect", 1, listGroupingListTest
                 .getMethodDefinitions().size());
 
-        containsSignatures(groupingListTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getContainerGroupingListTest", "ContainerGroupingListTest"), new MethodSignaturePattern(
-                "getLeafGroupingListTest", "String"), new MethodSignaturePattern("getLeaffllistGroupingListTest",
-                "List<String>"), new MethodSignaturePattern("getListGroupingListTest", "List<ListGroupingListTest>"));
-        containsSignatures(listTest.getMethodDefinitions(), new MethodSignaturePattern("getListLeafTest", "String"));
-        containsSignatures(containerGroupingListTest.getMethodDefinitions(), new MethodSignaturePattern(
+        containsMethods(groupingListTest.getMethodDefinitions(), new NameTypePattern("getContainerGroupingListTest",
+                "ContainerGroupingListTest"), new NameTypePattern("getLeafGroupingListTest", "String"),
+                new NameTypePattern("getLeaffllistGroupingListTest", "List<String>"), new NameTypePattern(
+                        "getListGroupingListTest", "List<ListGroupingListTest>"));
+        containsMethods(listTest.getMethodDefinitions(), new NameTypePattern("getListLeafTest", "String"));
+        containsMethods(containerGroupingListTest.getMethodDefinitions(), new NameTypePattern(
                 "getLeafContainerGroupingListTest", "Short"));
-        containsSignatures(listGroupingListTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getLeafListGroupingListTest", "Integer"));
+        containsMethods(listGroupingListTest.getMethodDefinitions(), new NameTypePattern("getLeafListGroupingListTest",
+                "Integer"));
     }
 
     @Test
@@ -378,8 +376,8 @@ public class UsesTest {
         assertEquals("Number of method in GroupingModulTest is incorrect", 2, groupingModulTest.getMethodDefinitions()
                 .size());
 
-        containsSignatures(groupingModulTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getLeafGroupingModulTest", "String"), new MethodSignaturePattern("getLeafGroupingModulTest2", "Short"));
+        containsMethods(groupingModulTest.getMethodDefinitions(), new NameTypePattern("getLeafGroupingModulTest",
+                "String"), new NameTypePattern("getLeafGroupingModulTest2", "Short"));
     }
 
     @Test
@@ -467,12 +465,12 @@ public class UsesTest {
         assertEquals("Number of method in ContainerGroupingRpcInputTest is incorrect", 1, containerGroupingRpcInputTest
                 .getMethodDefinitions().size());
 
-        containsSignatures(groupingRpcInputTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getContainerGroupingRpcInputTest", "ContainerGroupingRpcInputTest"), new MethodSignaturePattern(
+        containsMethods(groupingRpcInputTest.getMethodDefinitions(), new NameTypePattern(
+                "getContainerGroupingRpcInputTest", "ContainerGroupingRpcInputTest"), new NameTypePattern(
                 "getLeaflistGroupingRpcInputTest", "List<Short>"));
-        containsSignatures(groupingRpcOutputTest.getMethodDefinitions(), new MethodSignaturePattern(
+        containsMethods(groupingRpcOutputTest.getMethodDefinitions(), new NameTypePattern(
                 "getLeafGroupingRpcOutputTest", "Byte"));
-        containsSignatures(containerGroupingRpcInputTest.getMethodDefinitions(), new MethodSignaturePattern(
+        containsMethods(containerGroupingRpcInputTest.getMethodDefinitions(), new NameTypePattern(
                 "getLeafContainerGroupingRpcInputTest", "String"));
     }
 
@@ -526,8 +524,8 @@ public class UsesTest {
         assertEquals("Number of method in GroupingCaseTest is incorrect", 1, groupingAugmentTest.getMethodDefinitions()
                 .size());
 
-        containsSignatures(groupingAugmentTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getLeafGroupingAugmentTest", "String"));
+        containsMethods(groupingAugmentTest.getMethodDefinitions(), new NameTypePattern("getLeafGroupingAugmentTest",
+                "String"));
     }
 
     @Test
@@ -594,12 +592,12 @@ public class UsesTest {
         assertEquals("Number of method in ContainerGroupingNotificationTest is incorrect", 1,
                 containerGroupingNotificationTest.getMethodDefinitions().size());
 
-        containsSignatures(notificationTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getLeafNotificationTest", "String"));
-        containsSignatures(groupingNotificationTest.getMethodDefinitions(), new MethodSignaturePattern(
-                "getContainerGroupingNotificationTest", "ContainerGroupingNotificationTest"),
-                new MethodSignaturePattern("getLeaffllistGroupingNotificationTest", "List<String>"));
-        containsSignatures(containerGroupingNotificationTest.getMethodDefinitions(), new MethodSignaturePattern(
+        containsMethods(notificationTest.getMethodDefinitions(), new NameTypePattern("getLeafNotificationTest",
+                "String"));
+        containsMethods(groupingNotificationTest.getMethodDefinitions(), new NameTypePattern(
+                "getContainerGroupingNotificationTest", "ContainerGroupingNotificationTest"), new NameTypePattern(
+                "getLeaffllistGroupingNotificationTest", "List<String>"));
+        containsMethods(containerGroupingNotificationTest.getMethodDefinitions(), new NameTypePattern(
                 "getLeafContainerGroupingNotificationTest", "Long"));
     }
 
