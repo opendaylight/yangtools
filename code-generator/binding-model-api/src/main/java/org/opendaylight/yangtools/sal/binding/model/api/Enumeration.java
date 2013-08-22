@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Interface provide methods for reading data of enumeration class.
  */
-public interface Enumeration extends Type {
+public interface Enumeration extends GeneratedType {
 
     /**
      * 
@@ -23,7 +23,7 @@ public interface Enumeration extends Type {
      */
     public List<AnnotationType> getAnnotations();
 
-    public Type getDefiningType();
+    public Type getParentType();
 
     /**
      * Returns list of the couples - name and value.

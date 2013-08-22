@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
@@ -95,6 +96,7 @@ public class ClassCodeGeneratorTest {
         assertEquals(2, genTOsCount);
     }
 
+    @Ignore
     @Test
     public void defaultConstructorTest() {
         final GeneratedTOBuilder toBuilder = new GeneratedTOBuilderImpl(

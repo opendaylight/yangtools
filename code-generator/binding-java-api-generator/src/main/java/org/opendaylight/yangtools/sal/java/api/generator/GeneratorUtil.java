@@ -211,7 +211,6 @@ public final class GeneratorUtil {
             if (cons.getName().equals(constName)) {
                 return true;
             }
-
         }
         return false;
     }

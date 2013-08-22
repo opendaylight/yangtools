@@ -1700,9 +1700,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * @return string with the name of the getter method for
      *         <code>methodName</code> in JAVA method format
      */
-    private String getterMethodName(final String methodName) {
+    private String getterMethodName(final String methodName,Type returnType) {
         final StringBuilder method = new StringBuilder();
-        method.append("get");
+        if(BOOLEAN.equals(returnType)) {
+            method.append("is");
+        } else {
+            method.append("get");
+        }
         method.append(parseToClassName(methodName));
         return method.toString();
     }
@@ -1745,7 +1749,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private MethodSignatureBuilder constructGetter(final GeneratedTypeBuilder interfaceBuilder,
             final String schemaNodeName, final String comment, final Type returnType) {
-        final MethodSignatureBuilder getMethod = interfaceBuilder.addMethod(getterMethodName(schemaNodeName));
+        final MethodSignatureBuilder getMethod = interfaceBuilder.addMethod(getterMethodName(schemaNodeName,returnType));
 
         getMethod.setComment(comment);
         getMethod.setReturnType(returnType);
