@@ -26,6 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -142,7 +143,7 @@ public class GeneratorJavaFileTest {
     private GeneratedType createGeneratedType(String pkgName, String name) {
         GeneratedTypeBuilder builder = new GeneratedTypeBuilderImpl(pkgName,
                 name);
-        builder.addImplementsType(Types.DATA_OBJECT);
+        builder.addImplementsType(BindingTypes.DATA_OBJECT);
         return builder.toInstance();
     }
 

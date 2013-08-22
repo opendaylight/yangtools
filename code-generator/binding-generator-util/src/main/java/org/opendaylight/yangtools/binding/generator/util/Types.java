@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
@@ -26,7 +30,24 @@ public final class Types {
     private static final Type SET_TYPE = typeForClass(Set.class);
     private static final Type LIST_TYPE = typeForClass(List.class);
     private static final Type MAP_TYPE = typeForClass(Map.class);
-    public static final Type DATA_OBJECT = typeForClass(DataObject.class);
+    public static final ConcreteType NUMBER = typeForClass(Number.class);
+    public static final ConcreteType BIG_DECIMAL = typeForClass(BigDecimal.class);
+    public static final ConcreteType BIG_INTEGER = typeForClass(BigInteger.class);
+    public static final ConcreteType BYTE = typeForClass(Byte.class);
+    public static final ConcreteType BOOLEAN = typeForClass(Boolean.class);
+    public static final ConcreteType DOUBLE = typeForClass(Double.class);
+    public static final ConcreteType FLOAT = typeForClass(Float.class);
+    public static final ConcreteType INTEGER = typeForClass(Integer.class);
+    public static final ConcreteType LONG = typeForClass(Long.class);
+    public static final ConcreteType SHORT = typeForClass(Short.class);
+    public static final ConcreteType STRING = typeForClass(String.class);
+    public static final ConcreteType CHAR_SEQUENCE = typeForClass(CharSequence.class);
+    public static final ConcreteType THREAD = typeForClass(Thread.class);
+    public static final ConcreteType FUTURE = typeForClass(Future.class);
+    public static final ConcreteType CALLABLE = typeForClass(Callable.class);
+    public static final ConcreteType VOID = typeForClass(Void.class);
+    public static final ConcreteType THROWABLE = typeForClass(Throwable.class);
+    public static final ConcreteType EXCEPTION = typeForClass(Exception.class);
 
     /**
      * Creates the instance of type
@@ -37,7 +58,7 @@ public final class Types {
      *         <code>void</code>
      */
     public static ConcreteType voidType() {
-        return new ConcreteTypeImpl(Void.class.getPackage().getName(), Void.class.getSimpleName());
+        return VOID;
     }
 
     /**

@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.sal.binding.yang.types.GroupingDefinitionDependencySort;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
+import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
@@ -70,6 +71,9 @@ import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
+import static org.opendaylight.yangtools.binding.generator.util.Types.*;
+import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
+
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
@@ -536,7 +540,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                     rpcInOut.add(new DataNodeIterator(input));
                     GeneratedTypeBuilder inType = addRawInterfaceDefinition(basePackageName, input, rpcName);
                     addImplementedInterfaceFromUses(input, inType);
-                    inType.addImplementsType(Types.DATA_OBJECT);
+                    inType.addImplementsType(DATA_OBJECT);
+                    inType.addImplementsType(augmentable(inType));
                     resolveDataSchemaNodes(basePackageName, inType, input.getChildNodes());
                     Type inTypeInstance = inType.toInstance();
                     genRPCTypes.add(inTypeInstance);
@@ -548,7 +553,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                     rpcInOut.add(new DataNodeIterator(output));
                     GeneratedTypeBuilder outType = addRawInterfaceDefinition(basePackageName, output, rpcName);
                     addImplementedInterfaceFromUses(output, outType);
-                    outType.addImplementsType(Types.DATA_OBJECT);
+                    outType.addImplementsType(DATA_OBJECT);
+                    outType.addImplementsType(augmentable(outType));
+                    
                     resolveDataSchemaNodes(basePackageName, outType, output.getChildNodes());
                     outTypeInstance = outType.toInstance();
                     genRPCTypes.add(outTypeInstance);
@@ -944,7 +951,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
         final GeneratedTypeBuilder augTypeBuilder = new GeneratedTypeBuilderImpl(augmentPackageName, augTypeName);
 
-        augTypeBuilder.addImplementsType(Types.DATA_OBJECT);
+        augTypeBuilder.addImplementsType(DATA_OBJECT);
         augTypeBuilder.addImplementsType(Types.augmentationTypeFor(targetTypeRef));
         addImplementedInterfaceFromUses(augSchema, augTypeBuilder);
 
@@ -1241,7 +1248,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         final List<GeneratedType> generatedTypes = new ArrayList<>();
         final String packageName = packageNameForGeneratedType(basePackageName, choiceNode.getPath());
         final GeneratedTypeBuilder choiceTypeBuilder = addRawInterfaceDefinition(packageName, choiceNode);
-        choiceTypeBuilder.addImplementsType(Types.DATA_OBJECT);
+        choiceTypeBuilder.addImplementsType(DATA_OBJECT);
         final GeneratedType choiceType = choiceTypeBuilder.toInstance();
 
         generatedTypes.add(choiceType);
@@ -1607,9 +1614,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private GeneratedTypeBuilder addDefaultInterfaceDefinition(final String packageName, final SchemaNode schemaNode) {
         final GeneratedTypeBuilder builder = addRawInterfaceDefinition(packageName, schemaNode, "");
-        builder.addImplementsType(Types.DATA_OBJECT);
+        builder.addImplementsType(DATA_OBJECT);
         if (!(schemaNode instanceof GroupingDefinition)) {
-            builder.addImplementsType(Types.augmentableTypeFor(builder));
+            builder.addImplementsType(augmentable(builder));
         }
 
         if (schemaNode instanceof DataNodeContainer) {

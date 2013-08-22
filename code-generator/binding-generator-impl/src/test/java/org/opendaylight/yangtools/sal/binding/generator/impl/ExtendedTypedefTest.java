@@ -95,7 +95,7 @@ public class ExtendedTypedefTest {
         properties = extendTO.getProperties();
         assertEquals("Incorrect number of properties in class SimpleTypedef1.", 1, properties.size());
 
-        assertEquals("Incorrect property's name", "simpleTypedef1", properties.get(0).getName());
+        assertEquals("Incorrect property's name", "value", properties.get(0).getName());
         assertEquals("Property's incorrect type", BaseYangTypes.UINT8_TYPE, properties.get(0).getReturnType());
 
         extendTO = extendTO.getExtends();

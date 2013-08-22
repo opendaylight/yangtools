@@ -633,7 +633,7 @@ public final class TypeProviderImpl implements TypeProvider {
             final Type javaType) {
         if (javaType != null) {
             final String typedefName = typedef.getQName().getLocalName();
-            final String propertyName = parseToValidParamName(typedefName);
+            final String propertyName = "value";
 
             final GeneratedTOBuilder genTOBuilder = typedefToTransferObject(basePackageName, typedef);
 
