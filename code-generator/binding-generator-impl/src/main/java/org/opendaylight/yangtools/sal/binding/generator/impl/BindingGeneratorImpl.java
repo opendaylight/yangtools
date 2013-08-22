@@ -71,6 +71,9 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
+
 public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
@@ -139,13 +142,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     @Override
     public List<Type> generateTypes(final SchemaContext context) {
-        if (context == null) {
-            throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
-        }
-        if (context.getModules() == null) {
-            throw new IllegalStateException("Schema Context does not contain defined modules!");
-        }
-
+        Preconditions.checkArgument(context != null,"Schema Context reference cannot be NULL.");
+        Preconditions.checkState(context.getModules() != null,"Schema Context does not contain defined modules.");
         final List<Type> generatedTypes = new ArrayList<>();
         schemaContext = context;
         typeProvider = new TypeProviderImpl(context);
@@ -201,15 +199,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     @Override
     public List<Type> generateTypes(final SchemaContext context, final Set<Module> modules) {
-        if (context == null) {
-            throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
-        }
-        if (context.getModules() == null) {
-            throw new IllegalStateException("Schema Context does not contain defined modules!");
-        }
-        if (modules == null) {
-            throw new IllegalArgumentException("Sef of Modules cannot be NULL!");
-        }
+        Preconditions.checkArgument(context != null,"Schema Context reference cannot be NULL.");
+        Preconditions.checkState(context.getModules() != null,"Schema Context does not contain defined modules.");
+        Preconditions.checkArgument(modules != null,"Sef of Modules cannot be NULL.");
 
         final List<Type> filteredGenTypes = new ArrayList<>();
         schemaContext = context;
@@ -256,15 +248,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<Type> allTypeDefinitionsToGenTypes(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
-        if (module.getName() == null) {
-            throw new IllegalArgumentException("Module name cannot be NULL!");
-        }
-        if (module.getTypeDefinitions() == null) {
-            throw new IllegalArgumentException("Type Definitions for module " + module.getName() + " cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
+        Preconditions.checkArgument(module.getTypeDefinitions() != null,"Type Definitions for module " + module.getName() + " cannot be NULL.");
 
         final Set<TypeDefinition<?>> typeDefinitions = module.getTypeDefinitions();
         final List<Type> generatedTypes = new ArrayList<>();
@@ -297,17 +283,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<Type> allContainersToGenTypes(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
 
-        if (module.getName() == null) {
-            throw new IllegalArgumentException("Module name cannot be NULL!");
-        }
+        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
 
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of Child Nodes in module " + module.getName()
-                    + " cannot be NULL!");
+                    + " cannot be NULL.");
         }
 
         final List<Type> generatedTypes = new ArrayList<>();
@@ -340,17 +322,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<Type> allListsToGenTypes(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
 
-        if (module.getName() == null) {
-            throw new IllegalArgumentException("Module name cannot be NULL!");
-        }
+        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
 
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of Child Nodes in module " + module.getName()
-                    + " cannot be NULL!");
+                    + " cannot be NULL.");
         }
 
         final List<Type> generatedTypes = new ArrayList<>();
@@ -384,12 +362,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<GeneratedType> allChoicesToGenTypes(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
-        if (module.getName() == null) {
-            throw new IllegalArgumentException("Module name cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
 
         final DataNodeIterator it = new DataNodeIterator(module);
         final List<ChoiceNode> choiceNodes = it.allChoices();
@@ -422,15 +396,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<Type> allAugmentsToGenTypes(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
-        if (module.getName() == null) {
-            throw new IllegalArgumentException("Module name cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of Augmentation Definitions in module "
-                    + module.getName() + " cannot be NULL!");
+                    + module.getName() + " cannot be NULL.");
         }
 
         final List<Type> generatedTypes = new ArrayList<>();
@@ -459,12 +429,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<AugmentationSchema> resolveAugmentations(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
-        if (module.getAugmentations() == null) {
-            throw new IllegalStateException("Augmentations Set cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkState(module.getAugmentations() != null,"Augmentations Set cannot be NULL.");
 
         final Set<AugmentationSchema> augmentations = module.getAugmentations();
         final List<AugmentationSchema> sortedAugmentations = new ArrayList<>(augmentations);
@@ -501,9 +467,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private GeneratedType moduleToDataType(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
 
         final GeneratedTypeBuilder moduleDataTypeBuilder = moduleTypeBuilder(module, "Data");
         addImplementedInterfaceFromUses(module, moduleDataTypeBuilder);
@@ -536,17 +500,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<Type> allRPCMethodsToGenType(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
 
-        if (module.getName() == null) {
-            throw new IllegalArgumentException("Module name cannot be NULL!");
-        }
+        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
 
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of RPC Method Definitions in module "
-                    + module.getName() + " cannot be NULL!");
+                    + module.getName() + " cannot be NULL.");
         }
 
         final String basePackageName = moduleNamespaceToPackageName(module);
@@ -640,17 +600,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<Type> allNotificationsToGenType(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
 
-        if (module.getName() == null) {
-            throw new IllegalArgumentException("Module name cannot be NULL!");
-        }
+        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
 
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of Notification Definitions in module "
-                    + module.getName() + " cannot be NULL!");
+                    + module.getName() + " cannot be NULL.");
         }
 
         final String basePackageName = moduleNamespaceToPackageName(module);
@@ -775,9 +731,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<Type> allGroupingsToGenTypes(final Module module) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module parameter can not be null");
-        }
+        Preconditions.checkArgument(module != null,"Module parameter can not be null");
         final List<Type> genTypes = new ArrayList<>();
         final String basePackageName = moduleNamespaceToPackageName(module);
         final Set<GroupingDefinition> groupings = module.getGroupings();
@@ -887,9 +841,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             if <code>module</code> equals null
      */
     private GeneratedTypeBuilder moduleTypeBuilder(final Module module, final String postfix) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!");
-        }
+        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
         String packageName = moduleNamespaceToPackageName(module);
         final String moduleName = parseToClassName(module.getName()) + postfix;
 
@@ -920,15 +872,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             </ul>
      */
     private List<Type> augmentationToGenTypes(final String augmentPackageName, final AugmentationSchema augSchema) {
-        if (augmentPackageName == null) {
-            throw new IllegalArgumentException("Package Name cannot be NULL!");
-        }
-        if (augSchema == null) {
-            throw new IllegalArgumentException("Augmentation Schema cannot be NULL!");
-        }
-        if (augSchema.getTargetPath() == null) {
-            throw new IllegalStateException("Augmentation Schema does not contain Target Path (Target Path is NULL).");
-        }
+        Preconditions.checkArgument(augmentPackageName != null,"Package Name cannot be NULL.");
+        Preconditions.checkArgument(augSchema != null,"Augmentation Schema cannot be NULL.");
+        Preconditions.checkState(augSchema.getTargetPath() != null,"Augmentation Schema does not contain Target Path (Target Path is NULL).");
 
         final List<Type> genTypes = new ArrayList<>();
 
@@ -1253,15 +1199,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private void resolveChoiceSchemaNode(final String basePackageName, final GeneratedTypeBuilder typeBuilder,
             final ChoiceNode choiceNode) {
-        if (basePackageName == null) {
-            throw new IllegalArgumentException("Base Package Name cannot be NULL!");
-        }
-        if (typeBuilder == null) {
-            throw new IllegalArgumentException("Generated Type Builder cannot be NULL!");
-        }
-        if (choiceNode == null) {
-            throw new IllegalArgumentException("Choice Schema Node cannot be NULL!");
-        }
+        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL.");
+        Preconditions.checkArgument(typeBuilder != null,"Generated Type Builder cannot be NULL.");
+        Preconditions.checkArgument(choiceNode != null,"Choice Schema Node cannot be NULL.");
 
         final String choiceName = choiceNode.getQName().getLocalName();
         if (choiceName != null && !choiceNode.isAddedByUses()) {
@@ -1295,12 +1235,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private List<GeneratedType> choiceToGeneratedType(final String basePackageName, final ChoiceNode choiceNode) {
-        if (basePackageName == null) {
-            throw new IllegalArgumentException("Base Package Name cannot be NULL!");
-        }
-        if (choiceNode == null) {
-            throw new IllegalArgumentException("Choice Schema Node cannot be NULL!");
-        }
+        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL.");
+        Preconditions.checkArgument(choiceNode != null,"Choice Schema Node cannot be NULL.");
 
         final List<GeneratedType> generatedTypes = new ArrayList<>();
         final String packageName = packageNameForGeneratedType(basePackageName, choiceNode.getPath());
@@ -1344,15 +1280,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private List<GeneratedType> generateTypesFromChoiceCases(final String basePackageName, final Type refChoiceType,
             final Set<ChoiceCaseNode> caseNodes) {
-        if (basePackageName == null) {
-            throw new IllegalArgumentException("Base Package Name cannot be NULL!");
-        }
-        if (refChoiceType == null) {
-            throw new IllegalArgumentException("Referenced Choice Type cannot be NULL!");
-        }
-        if (caseNodes == null) {
-            throw new IllegalArgumentException("Set of Choice Case Nodes cannot be NULL!");
-        }
+        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL.");
+        Preconditions.checkArgument(refChoiceType != null,"Referenced Choice Type cannot be NULL.");
+        Preconditions.checkArgument(caseNodes != null,"Set of Choice Case Nodes cannot be NULL.");
 
         final List<GeneratedType> generatedTypes = new ArrayList<>();
         for (final ChoiceCaseNode caseNode : caseNodes) {
@@ -1399,15 +1329,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private List<GeneratedType> generateTypesFromAugmentedChoiceCases(final String basePackageName,
             final Type refChoiceType, final Set<ChoiceCaseNode> caseNodes) {
-        if (basePackageName == null) {
-            throw new IllegalArgumentException("Base Package Name cannot be NULL!");
-        }
-        if (refChoiceType == null) {
-            throw new IllegalArgumentException("Referenced Choice Type cannot be NULL!");
-        }
-        if (caseNodes == null) {
-            throw new IllegalArgumentException("Set of Choice Case Nodes cannot be NULL!");
-        }
+        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL.");
+        Preconditions.checkArgument(refChoiceType != null,"Referenced Choice Type cannot be NULL.");
+        Preconditions.checkArgument(caseNodes != null,"Set of Choice Case Nodes cannot be NULL.");
 
         final List<GeneratedType> generatedTypes = new ArrayList<>();
         for (final ChoiceCaseNode caseNode : caseNodes) {
@@ -1734,19 +1658,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private GeneratedTypeBuilder addRawInterfaceDefinition(final String packageName, final SchemaNode schemaNode,
             final String prefix) {
-        if (schemaNode == null) {
-            throw new IllegalArgumentException("Data Schema Node cannot be NULL!");
-        }
-        if (packageName == null) {
-            throw new IllegalArgumentException("Package Name for Generated Type cannot be NULL!");
-        }
-        if (schemaNode.getQName() == null) {
-            throw new IllegalArgumentException("QName for Data Schema Node cannot be NULL!");
-        }
+        Preconditions.checkArgument(schemaNode != null,"Data Schema Node cannot be NULL.");
+        Preconditions.checkArgument(packageName != null,"Package Name for Generated Type cannot be NULL.");
+        Preconditions.checkArgument(schemaNode.getQName() != null,"QName for Data Schema Node cannot be NULL.");
         final String schemaNodeName = schemaNode.getQName().getLocalName();
-        if (schemaNodeName == null) {
-            throw new IllegalArgumentException("Local Name of QName for Data Schema Node cannot be NULL!");
-        }
+        Preconditions.checkArgument(schemaNodeName != null,"Local Name of QName for Data Schema Node cannot be NULL.");
 
         final String genTypeName;
         if (prefix == null) {
@@ -1865,12 +1781,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     }
 
     private List<Type> listToGenType(final String basePackageName, final ListSchemaNode list) {
-        if (basePackageName == null) {
-            throw new IllegalArgumentException("Package Name for Generated Type cannot be NULL!");
-        }
-        if (list == null) {
-            throw new IllegalArgumentException("List Schema Node cannot be NULL!");
-        }
+        Preconditions.checkArgument(basePackageName != null,"Package Name for Generated Type cannot be NULL.");
+        Preconditions.checkArgument(list != null,"List Schema Node cannot be NULL.");
 
         final String packageName = packageNameForGeneratedType(basePackageName, list.getPath());
         // final GeneratedTypeBuilder typeBuilder =
@@ -1923,13 +1835,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private void addSchemaNodeToListBuilders(final String basePackageName, final DataSchemaNode schemaNode,
             final GeneratedTypeBuilder typeBuilder, final GeneratedTOBuilder genTOBuilder, final List<String> listKeys) {
-        if (schemaNode == null) {
-            throw new IllegalArgumentException("Data Schema Node cannot be NULL!");
-        }
+        Preconditions.checkArgument(schemaNode != null,"Data Schema Node cannot be NULL.");
 
-        if (typeBuilder == null) {
-            throw new IllegalArgumentException("Generated Type Builder cannot be NULL!");
-        }
+        Preconditions.checkArgument(typeBuilder != null,"Generated Type Builder cannot be NULL.");
 
         if (schemaNode instanceof LeafSchemaNode) {
             final LeafSchemaNode leaf = (LeafSchemaNode) schemaNode;
@@ -1950,9 +1858,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     private List<Type> typeBuildersToGenTypes(final GeneratedTypeBuilder typeBuilder, GeneratedTOBuilder genTOBuilder) {
         final List<Type> genTypes = new ArrayList<>();
-        if (typeBuilder == null) {
-            throw new IllegalArgumentException("Generated Type Builder cannot be NULL!");
-        }
+        Preconditions.checkArgument(typeBuilder != null,"Generated Type Builder cannot be NULL.");
 
         if (genTOBuilder != null) {
             final GeneratedTransferObject genTO = genTOBuilder.toInstance();
