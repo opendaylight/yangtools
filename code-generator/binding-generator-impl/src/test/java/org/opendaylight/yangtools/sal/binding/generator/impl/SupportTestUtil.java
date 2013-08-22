@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
@@ -12,14 +14,13 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
 public class SupportTestUtil {
 
-    public static void containsSignatures(final GeneratedType genType,
-            final MethodSignaturePattern... searchedSignsWhat) {
+    public static void containsMethods(final GeneratedType genType, final NameTypePattern... searchedSignsWhat) {
         final List<MethodSignature> searchedSignsIn = genType.getMethodDefinitions();
-        containsSignatures(searchedSignsIn, searchedSignsWhat);
+        containsMethods(searchedSignsIn, searchedSignsWhat);
     }
 
-    public static void containsSignatures(final List<MethodSignature> searchedSignsIn,
-            final MethodSignaturePattern... searchedSignsWhat) {
+    public static void containsMethods(final List<MethodSignature> searchedSignsIn,
+            final NameTypePattern... searchedSignsWhat) {
         if (searchedSignsIn == null) {
             throw new IllegalArgumentException("List of method signatures in which should be searched can't be null");
         }
@@ -27,7 +28,7 @@ public class SupportTestUtil {
             throw new IllegalArgumentException("Array of method signatures which should be searched can't be null");
         }
 
-        for (MethodSignaturePattern searchedSignWhat : searchedSignsWhat) {
+        for (NameTypePattern searchedSignWhat : searchedSignsWhat) {
             boolean nameMatchFound = false;
             String typeNameFound = "";
             for (MethodSignature searchedSignIn : searchedSignsIn) {
@@ -42,6 +43,48 @@ public class SupportTestUtil {
             assertTrue("Method " + searchedSignWhat.getName() + " wasn't found.", nameMatchFound);
             assertEquals("Return type in method " + searchedSignWhat.getName() + " doesn't match expected type ",
                     searchedSignWhat.getType(), typeNameFound);
+
+        }
+    }
+
+    public static void containsAttributes(final GeneratedTransferObject genTO, boolean equal, boolean hash,
+            boolean toString, final NameTypePattern... searchedSignsWhat) {
+        List<GeneratedProperty> searchedPropertiesIn = genTO.getProperties();
+        containsAttributes(searchedPropertiesIn, "", searchedSignsWhat);
+        if (equal) {
+            searchedPropertiesIn = genTO.getEqualsIdentifiers();
+            containsAttributes(searchedPropertiesIn, "equal", searchedSignsWhat);
+        }
+        if (hash) {
+            searchedPropertiesIn = genTO.getHashCodeIdentifiers();
+            containsAttributes(searchedPropertiesIn, "hash", searchedSignsWhat);
+        }
+        if (toString) {
+            searchedPropertiesIn = genTO.getToStringIdentifiers();
+            containsAttributes(searchedPropertiesIn, "toString", searchedSignsWhat);
+        }
+
+    }
+
+    public static void containsAttributes(final List<GeneratedProperty> searchedPropertiesIn, final String listType,
+            final NameTypePattern... searchedPropertiesWhat) {
+
+        for (NameTypePattern searchedPropertyWhat : searchedPropertiesWhat) {
+            boolean nameMatchFound = false;
+            String typeNameFound = "";
+            for (GeneratedProperty searchedPropertyIn : searchedPropertiesIn) {
+                if (searchedPropertyWhat.getName().equals(searchedPropertyIn.getName())) {
+                    nameMatchFound = true;
+                    typeNameFound = resolveFullNameOfReturnType(searchedPropertyIn.getReturnType());
+                    if (searchedPropertyWhat.getType().equals(typeNameFound)) {
+                        break;
+                    }
+                }
+            }
+            assertTrue("Property " + searchedPropertyWhat.getName() + " wasn't found in " + listType
+                    + " property list.", nameMatchFound);
+            assertEquals("The type of property " + searchedPropertyWhat.getName() + " in " + listType
+                    + " property list doesn't match expected type.", searchedPropertyWhat.getType(), typeNameFound);
 
         }
     }
