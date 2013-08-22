@@ -13,16 +13,20 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
+import static org.opendaylight.yangtools.binding.generator.util.Types.*
+import java.util.HashMap
+import java.util.Collections
 
 /**
  * Template for generating JAVA builder classes. 
  */
-class BuilderTemplate {
 
+class BuilderTemplate extends BaseTemplate {
 	/**
 	 * Constant with prefix for getter methods.
 	 */
     val static GET_PREFIX = "get"
+
     
     /**
      * Constant with the name of the concrete package prefix. 
@@ -55,16 +59,6 @@ class BuilderTemplate {
     val static IMPL = 'Impl'
     
     /**
-     * Reference to type for which is generated builder class
-     */
-    val GeneratedType genType
-    
-    /**
-     * Map of imports. The keys are type names and the values are package names.
-     */
-    val Map<String, String> imports
-    
-    /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME
      */
     var GeneratedProperty augmentField
@@ -72,20 +66,15 @@ class BuilderTemplate {
     /**
      * Set of class attributes (fields) which are derived from the getter methods names
      */
-    val Set<GeneratedProperty> fields
+    val Set<GeneratedProperty> properties
     
     /**
      * Constructs new instance of this class.
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
     new(GeneratedType genType) {
-        if (genType == null) {
-            throw new IllegalArgumentException("Generated type reference cannot be NULL!")
-        }
-        
-        this.genType = genType
-        this.imports = GeneratorUtil.createChildImports(genType)
-        this.fields = createFieldsFromMethods(createMethods)
+        super(genType)
+        this.properties = propertiesFromMethods(createMethods)
     }
     
     /**
@@ -96,11 +85,12 @@ class BuilderTemplate {
      */
     def private Set<MethodSignature> createMethods() {
         val Set<MethodSignature> methods = new LinkedHashSet
-        methods.addAll(genType.methodDefinitions)
-        storeMethodsOfImplementedIfcs(methods, genType.implements)
+        methods.addAll(type.methodDefinitions)
+        collectImplementedMethods(methods, type.implements)
         return methods
     }
     
+
     /**
      * Adds to the <code>methods</code> set all the methods of the <code>implementedIfcs</code> 
      * and recursivelly their implemented interfaces.
@@ -108,7 +98,7 @@ class BuilderTemplate {
      * @param methods set of method signatures
      * @param implementedIfcs list of implemented interfaces
      */
-    def private void storeMethodsOfImplementedIfcs(Set<MethodSignature> methods, List<Type> implementedIfcs) {
+    def private void collectImplementedMethods(Set<MethodSignature> methods, List<Type> implementedIfcs) {
         if (implementedIfcs == null || implementedIfcs.empty) {
             return
         }
@@ -116,44 +106,28 @@ class BuilderTemplate {
             if ((implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))) {
                 val ifc = implementedIfc as GeneratedType
                 methods.addAll(ifc.methodDefinitions)
-                storeMethodsOfImplementedIfcs(methods, ifc.implements)
+                collectImplementedMethods(methods, ifc.implements)
             } else if (implementedIfc.fullyQualifiedName == Augmentable.name) {
                 for (m : Augmentable.methods) {
                     if (m.name == GET_AUGMENTATION_METHOD_NAME) {
-                        addToImports(JAVA_UTIL, HASH_MAP)
-                        addToImports(JAVA_UTIL, MAP)
+                        //addToImports(JAVA_UTIL, HASH_MAP)
+                        //addToImports(JAVA_UTIL, MAP)
                         val fullyQualifiedName = m.returnType.name
                         val pkg = fullyQualifiedName.package
                         val name = fullyQualifiedName.name
-                        addToImports(pkg, name)
+                        //addToImports(pkg, name)
                         val tmpGenTO = new GeneratedTOBuilderImpl(pkg, name)
-                        val type = new ReferencedTypeImpl(pkg, name)
-                        val generic = new ReferencedTypeImpl(genType.packageName, genType.name)
-                        val parametrizedReturnType = Types.parameterizedTypeFor(type, generic)
+                        val refType = new ReferencedTypeImpl(pkg, name)
+                        val generic = new ReferencedTypeImpl(type.packageName, type.name)
+                        val parametrizedReturnType = Types.parameterizedTypeFor(refType, generic)
                         tmpGenTO.addMethod(m.name).setReturnType(parametrizedReturnType)
-                        augmentField = tmpGenTO.toInstance.methodDefinitions.first.createFieldFromGetter
+                        augmentField = tmpGenTO.toInstance.methodDefinitions.first.propertyFromGetter
                     }
                 }
             }
         }
     }
     
-    /**
-     * Adds to the <code>imports</code> map the package <code>typePackageName</code>.
-     * 
-     * @param typePackageName 
-     * string with the name of the package which is added to <code>imports</code> as a value
-     * @param typeName 
-     * string with the name of the package which is added to <code>imports</code> as a key
-     */
-    def private void addToImports(String typePackageName,String typeName) {
-        if (typePackageName.startsWith("java.lang") || typePackageName.isEmpty()) {
-            return
-        }
-        if (!imports.containsKey(typeName)) {
-            imports.put(typeName, typePackageName)
-        }
-    }
     
     /**
      * Returns the first element of the list <code>elements</code>.
@@ -186,21 +160,22 @@ class BuilderTemplate {
         return if (lastDotIndex == -1) fullyQualifiedName else fullyQualifiedName.substring(lastDotIndex + 1)
     }
     
+
     /**
      * Creates set of generated property instances from getter <code>methods</code>.
      * 
      * @param set of method signature instances which should be transformed to list of properties 
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
-    def private createFieldsFromMethods(Set<MethodSignature> methods) {
-        val Set<GeneratedProperty> result = new LinkedHashSet
+    def private propertiesFromMethods(Set<MethodSignature> methods) {
+        
 
         if (methods == null || methods.isEmpty()) {
-            return result
+            return Collections.emptySet
         }
-
+        val Set<GeneratedProperty> result = new LinkedHashSet
         for (m : methods) {
-            val createdField = m.createFieldFromGetter
+            val createdField = m.propertyFromGetter
             if (createdField != null) {
                 result.add(createdField)
             }
@@ -220,52 +195,50 @@ class BuilderTemplate {
      * 	<li>if the return type of the <code>method</code> equals <code>null</code></li>
      * </ul>
      */
-    def private GeneratedProperty createFieldFromGetter(MethodSignature method) {
+    def private GeneratedProperty propertyFromGetter(MethodSignature method) {
+
         if (method == null || method.name == null || method.name.empty || method.returnType == null) {
             throw new IllegalArgumentException("Method, method name, method return type reference cannot be NULL or empty!")
         }
-        if (method.name.startsWith(GET_PREFIX)) {
-            val fieldName = method.getName().substring(GET_PREFIX.length()).toFirstLower
+        var prefix = "get";
+        if(BOOLEAN.equals(method.returnType)) {
+            prefix = "is";
+        } 
+        if (method.name.startsWith(prefix)) {
+            val fieldName = method.getName().substring(prefix.length()).toFirstLower
             val tmpGenTO = new GeneratedTOBuilderImpl("foo", "foo")
             tmpGenTO.addProperty(fieldName).setReturnType(method.returnType)
             return tmpGenTO.toInstance.properties.first
         }
     }
 
-	/**
-	 * Builds string which contains JAVA source code.
-	 * 
-	 * @return string with JAVA source code
-	 */
-    def String generate() {
-        val body = generateBody
-        val pkgAndImports = generatePkgAndImports
-        return pkgAndImports.toString + body.toString
-    }
-    
     /**
      * Template method which generates JAVA class body for builder class and for IMPL class. 
      * 
      * @return string with JAVA source code
      */
-    def private generateBody() '''
-        public class «genType.name»«BUILDER» {
+    override body() '''
+
+        public class «type.name»«BUILDER» {
         
             «generateFields(false)»
 
+            «generateGetters(false)»
+            
             «generateSetters»
+            
 
-            public «genType.name» build() {
-                return new «genType.name»«IMPL»();
+            public «type.name» build() {
+                return new «type.name»«IMPL»(this);
             }
 
-            private class «genType.name»«IMPL» implements «genType.name» {
+            private static class «type.name»«IMPL» implements «type.name» {
 
                 «generateFields(true)»
 
                 «generateConstructor»
 
-                «generateGetters»
+                «generateGetters(true)»
 
             }
 
@@ -279,13 +252,13 @@ class BuilderTemplate {
 	 * @return string with class attributes and their types
 	 */
     def private generateFields(boolean _final) '''
-        «IF !fields.empty»
-            «FOR f : fields»
-                private  «IF _final»final«ENDIF»  «f.returnType.resolveName» «f.name»;
+        «IF !properties.empty»
+            «FOR f : properties»
+                private  «IF _final»final«ENDIF»  «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
         «IF augmentField != null»
-            private Map<Class<? extends «augmentField.returnType.resolveName»>, «augmentField.returnType.resolveName»> «augmentField.name» = new HashMap<>();
+            private «Map.importedName»<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = new «HashMap.importedName»<>();
         «ENDIF»
     '''
 
@@ -295,15 +268,15 @@ class BuilderTemplate {
 	 * @return string with the setter methods 
 	 */
     def private generateSetters() '''
-        «FOR field : fields SEPARATOR '\n'»
-            public «genType.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.resolveName» «field.name») {
-                this.«field.name» = «field.name»;
+        «FOR field : properties SEPARATOR '\n'»
+            public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
+                this.«field.fieldName» = value;
                 return this;
             }
         «ENDFOR»
         «IF augmentField != null»
             
-            public «genType.name»«BUILDER» add«augmentField.name.toFirstUpper»(Class<? extends «augmentField.returnType.resolveName»> augmentationType, «augmentField.returnType.resolveName» augmentation) {
+            public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(Class<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
                 this.«augmentField.name».put(augmentationType, augmentation);
                 return this;
             }
@@ -316,37 +289,36 @@ class BuilderTemplate {
      * @return string with IMPL class constructor
      */
     def private generateConstructor() '''
-        private «genType.name»«IMPL»() {
-            «IF !fields.empty»
-                «FOR field : fields»
-                    this.«field.name» = «genType.name»«BUILDER».this.«field.name»;
+        private «type.name»«IMPL»(«type.name»«BUILDER» builder) {
+            «IF !properties.empty»
+                «FOR field : properties»
+                    this.«field.fieldName» = builder.«field.fieldName»;
                 «ENDFOR»
             «ENDIF»
             «IF augmentField != null»
-                this.«augmentField.name».putAll(«genType.name»«BUILDER».this.«augmentField.name»);
+                this.«augmentField.name».putAll(builder.«augmentField.name»);
             «ENDIF»
         }
     '''
     
+
     /**
      * Template method which generate getter methods for IMPL class.
      * 
      * @return string with getter methods
      */
-    def private generateGetters() '''
-        «IF !fields.empty»
-            «FOR field : fields SEPARATOR '\n'»
-                @Override
-                public «field.returnType.resolveName» get«field.name.toFirstUpper»() {
-                    return «field.name»;
-                }
+    def private generateGetters(boolean addOverride) '''
+        «IF !properties.empty»
+            «FOR field : properties SEPARATOR '\n'»
+                «IF addOverride»@Override«ENDIF»
+                «field.getterMethod»
             «ENDFOR»
         «ENDIF»
         «IF augmentField != null»
 
             @SuppressWarnings("unchecked")
-            @Override
-            public <E extends «augmentField.returnType.resolveName»> E get«augmentField.name.toFirstUpper»(Class<E> augmentationType) {
+            «IF addOverride»@Override«ENDIF»
+            public <E extends «augmentField.returnType.importedName»> E get«augmentField.name.toFirstUpper»(Class<E> augmentationType) {
                 if (augmentationType == null) {
                     throw new IllegalArgumentException("Augmentation Type reference cannot be NULL!");
                 }
@@ -354,34 +326,5 @@ class BuilderTemplate {
             }
         «ENDIF»
     '''    
-    
-    /**
-     * Template method which generate package name line and import lines.
-     * 
-     * @result string with package and import lines in JAVA format
-     */
-    def private generatePkgAndImports() '''
-        package «genType.packageName»;
-        
-        
-        «IF !imports.empty»
-            «FOR entry : imports.entrySet»
-                import «entry.value».«entry.key»;
-            «ENDFOR»
-        «ENDIF»
-        
-    '''
-    
-    /**
-     * Adds package to imports if it is necessary and returns necessary type name (with or without package name)
-     * 
-     * @param type JAVA <code>Type</code>
-     * @return string with the type name (with or without package name)
-     */
-    def private resolveName(Type type) {
-        GeneratorUtil.putTypeIntoImports(genType, type, imports);
-        GeneratorUtil.getExplicitType(genType, type, imports)
-    }
-    
 }
 

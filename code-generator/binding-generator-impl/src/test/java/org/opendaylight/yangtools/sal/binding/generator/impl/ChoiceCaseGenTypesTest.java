@@ -161,7 +161,7 @@ public class ChoiceCaseGenTypesTest {
 
         genType = checkGeneratedType(genTypes, "Bar", pcgPref
                 + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock.aug._case.by.choice"); // case
-        containsMethods(genType, new NameTypePattern("getBar", "Boolean"));
+        containsMethods(genType, new NameTypePattern("isBar", "Boolean"));
         containsInterface("AugCaseByChoice", genType);
 
         // augment "/nm:netconf-state/nm:datastores/nm:datastore" {

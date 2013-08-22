@@ -1,10 +1,12 @@
 package org.opendaylight.yangtools.sal.java.api.generator
 
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 /**
  * Template for generating JAVA enumeration type. 
  */
-class EnumTemplate {
+class EnumTemplate extends BaseTemplate {
+
     
     /**
      * Enumeration which will be transformed to JAVA source code for enumeration
@@ -17,19 +19,10 @@ class EnumTemplate {
      * @param enumeration which will be transformed to JAVA source code 
      */
     new(Enumeration enums) {
+        super(enums as GeneratedType )
         this.enums = enums
     }
     
-    /**
-     * Generates JAVA source code for the enumeration with the package name.
-     * 
-     * @return JAVA source code for enumeration and for the package name 
-     */
-    def String generate() {
-        val body = generateBody
-        val pkg = generatePkg
-        return pkg.toString + body.toString
-    }
     
     /**
      * Generates only JAVA enumeration source code.
@@ -37,7 +30,7 @@ class EnumTemplate {
      * @return string with JAVA enumeration source code
      */
     def generateAsInnerClass() {
-        return generateBody
+        return body
     }
     
     /**
@@ -45,7 +38,7 @@ class EnumTemplate {
      * 
      * @return string with the enumeration body 
      */
-    def private generateBody() '''
+    override body() '''
         public enum «enums.name» {
         «FOR v : enums.values SEPARATOR ",\n"»
             «"    "»«v.name»(«v.value»)«
@@ -58,16 +51,4 @@ class EnumTemplate {
             }
         }
     '''
-    
-    /**
-     * Template method which generates the package name line.
-     * 
-     * @return string with the package name line   
-     */
-    def private generatePkg() '''
-        package «enums.packageName»;
-        
-        
-    '''
-    
 }

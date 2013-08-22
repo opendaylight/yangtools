@@ -95,7 +95,7 @@ abstract class AbstractTypeMember implements TypeMember {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        MethodSignatureImpl other = (MethodSignatureImpl) obj;
+        AbstractTypeMember other = (AbstractTypeMember) obj;
         if (getName() == null) {
             if (other.getName() != null) {
                 return false;

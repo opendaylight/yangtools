@@ -15,7 +15,10 @@ import java.util.List;
 
 import org.opendaylight.yangtools.binding.generator.util.AbstractBaseType;
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
@@ -251,7 +254,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         }
 
         @Override
-        public Type getDefiningType() {
+        public Type getParentType() {
             return definingType;
         }
 
@@ -389,6 +392,42 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
             builder.append(values);
             builder.append("]");
             return builder.toString();
+        }
+
+        @Override
+        public String getComment() {
+            return null;
+        }
+
+        @Override
+        public boolean isAbstract() {
+            return false;
+        }
+
+        @Override
+        public List<Type> getImplements() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<GeneratedType> getEnclosedTypes() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<Enumeration> getEnumerations() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<Constant> getConstantDefinitions() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<MethodSignature> getMethodDefinitions() {
+            // TODO Auto-generated method stub
+            return Collections.emptyList();
         }
     }
 }

@@ -1,29 +1,18 @@
 package org.opendaylight.yangtools.sal.java.api.generator
 
 import java.util.List
-import java.util.Map
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants
 import org.opendaylight.yangtools.sal.binding.model.api.Constant
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
-import org.opendaylight.yangtools.sal.binding.model.api.Type
-import java.util.LinkedHashMap
+
+
 /**
  * Template for generating JAVA interfaces. 
  */
-class InterfaceTemplate {
-    
-    /**
-     * Generated type which is transformed to interface JAVA file.
-     */
-    val GeneratedType genType
-    
-    /**
-     * Map of imports for this <code>genTO</code>.
-     */
-    val Map<String, String> imports
+class InterfaceTemplate extends BaseTemplate {
     
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
@@ -52,37 +41,28 @@ class InterfaceTemplate {
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
     new(GeneratedType genType) {
+        super(genType)
         if (genType == null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
         }
         
-        this.genType = genType
-        imports = GeneratorUtil.createImports(genType)
         consts = genType.constantDefinitions
         methods = genType.methodDefinitions
         enums = genType.enumerations
         enclosedGeneratedTypes = genType.enclosedTypes
     }
     
-    /**
-     * Generates the source code for interface with package name, imports and interface body.
-     * 
-     * @return string with the code for the interface file in JAVA format
-     */
-    def String generate() {
-        val body = generateBody
-        val pkgAndImports = generatePkgAndImports
-        return pkgAndImports.toString + body.toString
-    }
+
     
     /**
      * Template method which generate the whole body of the interface.
      * 
      * @return string with code for interface body in JAVA format
      */
-    def private generateBody() '''
-        «genType.comment.generateComment»
-        «generateIfcDeclaration» {
+    override body() '''
+        «type.comment.generateComment»
+        public interface «type.name»
+            «superInterfaces» {
         
             «generateInnerClasses»
         
@@ -116,16 +96,16 @@ class InterfaceTemplate {
      * 
      * @return string with the code for the interface declaration in JAVA format
      */
-    def private generateIfcDeclaration() '''
-        public interface «genType.name»«
-        IF (!genType.implements.empty)»«
-            " extends "»«
-            FOR type : genType.implements SEPARATOR ", "»«
-                type.resolveName»«
-            ENDFOR»«
-        ENDIF
-    »'''
-    
+    def private superInterfaces() 
+    '''
+    «IF (!type.implements.empty)»
+         extends
+         «FOR type : type.implements SEPARATOR ","»
+         
+             «type.importedName»
+         «ENDFOR»
+     « ENDIF»
+     '''
     /**
      * Template method which generates inner classes inside this interface.
      * 
@@ -166,7 +146,7 @@ class InterfaceTemplate {
         «IF !consts.empty»
             «FOR c : consts»
                 «IF c.name != TypeConstants.PATTERN_CONSTANT_NAME»
-                    public static final «c.type.resolveName» «c.name» = «c.value»;
+                    public static final «c.type.importedName» «c.name» = «c.value»;
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
@@ -181,7 +161,7 @@ class InterfaceTemplate {
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
                 «m.comment.generateComment»
-                «m.returnType.resolveName» «m.name»(«m.parameters.generateParameters»);
+                «m.returnType.importedName» «m.name»(«m.parameters.generateParameters»);
             «ENDFOR»
         «ENDIF»
     '''
@@ -196,57 +176,11 @@ class InterfaceTemplate {
     def private generateParameters(List<MethodSignature.Parameter> parameters) '''«
         IF !parameters.empty»«
             FOR parameter : parameters SEPARATOR ", "»«
-                parameter.type.resolveName» «parameter.name»«
+                parameter.type.importedName» «parameter.name»«
             ENDFOR»«
         ENDIF
     »'''
-    
 
-    /**
-     * Template method which generates the map of all the required imports for and imports 
-     * from extended type (and recursivelly so on).
-     * 
-     * @return map which maps type name to package name   
-     */
-    def private Map<String, String> resolveImports() {
-        val innerTypeImports = GeneratorUtil.createChildImports(genType)
-        val Map<String, String> resolvedImports = new LinkedHashMap
-        for (Map.Entry<String, String> entry : imports.entrySet() + innerTypeImports.entrySet) {
-            val typeName = entry.getKey();
-            val packageName = entry.getValue();
-            if (packageName != genType.packageName && packageName != genType.fullyQualifiedName) {
-                resolvedImports.put(typeName, packageName);
-            }
-        }
-        return resolvedImports
-    }
     
-    /**
-     * Template method which generate package name line and import lines.
-     * 
-     * @result string with package and import lines in JAVA format
-     */    
-    def private generatePkgAndImports() '''
-        package «genType.packageName»;
-        
-        
-        «IF !imports.empty»
-            «FOR entry : resolveImports.entrySet»
-                import «entry.value».«entry.key»;
-            «ENDFOR»
-        «ENDIF»
-        
-    '''    
-    
-    /**
-     * Adds package to imports if it is necessary and returns necessary type name (with or without package name)
-     *  
-     * @param type JAVA <code>Type</code> 
-     * @return string with the type name (with or without package name)
-     */      
-    def private resolveName(Type type) {
-        GeneratorUtil.putTypeIntoImports(genType, type, imports);
-        GeneratorUtil.getExplicitType(genType, type, imports)
-    }
-    
-}   
+}
+
