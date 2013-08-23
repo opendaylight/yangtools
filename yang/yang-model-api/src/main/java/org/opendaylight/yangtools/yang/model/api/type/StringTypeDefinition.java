@@ -11,10 +11,28 @@ import java.util.List;
 
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface StringTypeDefinition extends
-        TypeDefinition<StringTypeDefinition> {
+/**
+ * 
+ * Contains method for getting data from the <code>string</code> YANG built-in
+ * type.
+ */
+public interface StringTypeDefinition extends TypeDefinition<StringTypeDefinition> {
 
+    /**
+     * Returns length constraint specified in the string.
+     * 
+     * @return list of length constraint which are specified in the
+     *         <code>lenght</code> substatement of the <code>type</code>
+     *         statement
+     */
     List<LengthConstraint> getLengthStatements();
 
+    /**
+     * Returns patterns specified in the string.
+     * 
+     * @return list of pattern constraints which are specified in the
+     *         <code>pattern</code> substatement of the <code>type</code>
+     *         statement
+     */
     List<PatternConstraint> getPatterns();
 }

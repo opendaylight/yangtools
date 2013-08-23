@@ -13,20 +13,55 @@ import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
 
+/**
+ * 
+ * Represents unique path to the every node inside the module.
+ * 
+ */
 public class SchemaPath {
 
+    /**
+     * List of QName instances which represents complete path to the node.
+     */
     final List<QName> path;
+
+    /**
+     * Boolean value which represents type of schema path (relative or
+     * absolute).
+     */
     final boolean absolute;
 
+    /**
+     * Constructs new instance of this class with the concrete path.
+     * 
+     * @param path
+     *            list of QName instances which specifies exact path to the
+     *            module node
+     * @param absolute
+     *            boolean value which specifies if the path is absolute or
+     *            relative
+     */
     public SchemaPath(final List<QName> path, boolean absolute) {
         this.path = Collections.unmodifiableList(new ArrayList<QName>(path));
         this.absolute = absolute;
     }
 
+    /**
+     * Returns the complete path to schema node.
+     * 
+     * @return list of <code>QName</code> instances which represents complete
+     *         path to schema node
+     */
     public List<QName> getPath() {
         return path;
     }
 
+    /**
+     * Describes whether schema path is|isn't absolute.
+     * 
+     * @return boolean value which is <code>true</code> if schema path is
+     *         absolute.
+     */
     public boolean isAbsolute() {
         return absolute;
     }

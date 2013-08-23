@@ -16,28 +16,55 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 public interface SchemaNode {
 
+    /**
+     * Returns QName of the instance of the type <code>SchemaNode</code>.
+     * 
+     * @return QName with the name of the schema node
+     */
     public QName getQName();
 
+    /**
+     * Returns the schema path of the instance of the type
+     * <code>SchemaNode</code> <code>SchemaNode</code>.
+     * 
+     * @return schema path of the schema node
+     */
     public SchemaPath getPath();
 
     /**
-     * @return textual description of this node.
+     * Returns description of the instance of the type <code>SchemaNode</code>
+     * 
+     * @return string with textual description the node which represents the
+     *         argument of the YANG <code>description</code> substatement
      */
     public String getDescription();
 
     /**
-     * @return textual cross-reference to an external document that provides
-     *         additional information relevant to this node.
+     * Returns reference of the instance of the type <code>SchemaNode</code>
+     * 
+     * The reference refers to external document that provides additional
+     * information relevant for the instance of this type.
+     * 
+     * @return string with the reference to some external document which
+     *         represents the argument of the YANG <code>reference</code>
+     *         substatement
      */
     public String getReference();
 
     /**
-     * @return actual status of this node.
+     * Returns status of the instance of the type <code>SchemaNode</code>
+     * 
+     * @return status of this node which represents the argument of the YANG
+     *         <code>status</code> substatement
      */
     public Status getStatus();
 
     /**
-     * @return collection of all unknown nodes defined under this schema node.
+     * 
+     * Returns unknown schema nodes which belongs to this instance of the type
+     * <code>SchemaNode</code>.
+     * 
+     * @return list of unknown schema nodes defined under this schema node.
      */
     public List<UnknownSchemaNode> getUnknownSchemaNodes();
 

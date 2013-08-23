@@ -109,7 +109,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
     /**
      * Get case by name.
-     *
+     * 
      * @param caseName
      *            name of case to search
      * @return case with given name if present, null otherwise
@@ -125,10 +125,10 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
     /**
      * Add case node to this choice.
-     *
+     * 
      * If node is not declared with 'case' keyword, create new case builder and
      * make this node child of newly created case.
-     *
+     * 
      * @param caseNode
      *            case node
      */

@@ -7,12 +7,52 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-
+/**
+ * 
+ * YANG statement <code>typedef</code> contains also substatements
+ * <ul>
+ * <li><code>default</code> - default value which is compatible with
+ * <code>type</code>,</li>
+ * <li><code>type</code> - base type from which is <code>typedef</code> derived,
+ * </li>
+ * <li><code>units</code> - textual information about units associated with this
+ * type.</li>
+ * </ul>
+ * This interface contains the methods for getting the values of the arguments
+ * of substatements mentioned above.
+ * 
+ * @param <T>
+ *            type of the base type (YANG <code>type</code> substatement) which
+ *            is included in the instance of this type
+ */
 public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode {
 
+    /**
+     * Returns the base type which represents the value of the argument of the
+     * <code>type</code> substatement of the YANG <code>typedef</code>
+     * statement.
+     * 
+     * @return value of <code>&lt;T&gt;</code> type which represents the base
+     *         type of instance of the <code>TypeDefinition</code> type
+     */
     T getBaseType();
 
+    /**
+     * Returns the unit which represents the value of the argument of the
+     * <code>units</code> substatement of the YANG <code>typedef</code>
+     * statement.
+     * 
+     * @return string with units in which is type measured
+     */
     String getUnits();
 
+    /**
+     * Returns the default value which represents the value of the argument of
+     * the <code>default</code> substatement of the YANG <code>typedef</code>
+     * statement.
+     * 
+     * @return instance of <code>Object</code> type which contains default value
+     *         for <code>typedef</code>
+     */
     Object getDefaultValue();
 }

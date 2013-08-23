@@ -7,6 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+/**
+ * 
+ * Contains the methods for getting the data which are part of the YANG
+ * <code>extensoion</code> statement.
+ * 
+ */
 public interface ExtensionDefinition extends SchemaNode {
 
     /**

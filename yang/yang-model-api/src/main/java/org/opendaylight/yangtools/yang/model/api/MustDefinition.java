@@ -7,7 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+/**
+ * 
+ * Contains methods for accessing constraint declaration for valid data in form
+ * of XPath expressions.<br />
+ * <br />
+ * <i>YANG example:<br />
+ * <code>must "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";</code>
+ * </i>
+ */
 public interface MustDefinition extends ConstraintMetaDefinition {
 
+    /**
+     * Returns XPath expression which contains constraint.
+     * 
+     * @return XPath expression which represents the value of the argument of
+     *         the <code>must</code> YANG substatement
+     */
     RevisionAwareXPath getXpath();
 }

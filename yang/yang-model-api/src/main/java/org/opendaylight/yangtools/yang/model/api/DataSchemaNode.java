@@ -7,12 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+/**
+ * 
+ * Contains the method which are used for getting metadata from the schema nodes
+ * which contains data.
+ * 
+ */
 public interface DataSchemaNode extends SchemaNode {
 
     /**
      * Returns <code>true</code> if the data node was added by augmentation,
      * otherwise returns <code>false</code>
-     *
+     * 
      * @return <code>true</code> if the data node was added by augmentation,
      *         otherwise returns <code>false</code>
      */
@@ -21,7 +27,7 @@ public interface DataSchemaNode extends SchemaNode {
     /**
      * Returns <code>true</code> if the data node was added by uses statement,
      * otherwise returns <code>false</code>
-     *
+     * 
      * @return <code>true</code> if the data node was added by uses statement,
      *         otherwise returns <code>false</code>
      */
@@ -30,7 +36,7 @@ public interface DataSchemaNode extends SchemaNode {
     /**
      * Returns <code>true</code> if the data represents configuration data,
      * otherwise returns <code>false</code>
-     *
+     * 
      * @return <code>true</code> if the data represents configuration data,
      *         otherwise returns <code>false</code>
      */
@@ -38,7 +44,7 @@ public interface DataSchemaNode extends SchemaNode {
 
     /**
      * Returns the constraints associated with Data Schema Node
-     *
+     * 
      * @return the constraints associated with Data Schema Node
      */
     ConstraintDefinition getConstraints();

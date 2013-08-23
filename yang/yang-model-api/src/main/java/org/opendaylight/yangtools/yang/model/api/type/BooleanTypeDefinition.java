@@ -9,7 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface BooleanTypeDefinition extends
-        TypeDefinition<BooleanTypeDefinition> {
+/**
+ * 
+ * Marker interface which marks that type definition represents the built-in
+ * YANG <code>boolean</code> type.
+ * 
+ */
+public interface BooleanTypeDefinition extends TypeDefinition<BooleanTypeDefinition> {
 
 }

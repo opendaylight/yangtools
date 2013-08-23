@@ -11,8 +11,21 @@ import java.util.List;
 
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface UnsignedIntegerTypeDefinition extends
-        TypeDefinition<UnsignedIntegerTypeDefinition> {
+/**
+ * 
+ * Contains the method for getting detail data about unsigned integer.
+ * 
+ * Specifically it is the method for getting the range value.
+ * 
+ */
+public interface UnsignedIntegerTypeDefinition extends TypeDefinition<UnsignedIntegerTypeDefinition> {
 
+    /**
+     * Returns range data of the instance of the type
+     * <code>UnsignedIntegerTypeDefinition</code>.
+     * 
+     * @return list of <code>RangeConstraint</code> which represents the YANG
+     *         <code>range</code> substatement arguments.
+     */
     List<RangeConstraint> getRangeStatements();
 }

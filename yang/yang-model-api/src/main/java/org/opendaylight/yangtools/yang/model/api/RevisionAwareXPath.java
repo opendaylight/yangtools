@@ -7,20 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+/**
+ * 
+ * Contains methods for getting data (concrete XPath) and metadata (is XPath
+ * absolute) from XPath instance.
+ * 
+ * 
+ */
 public interface RevisionAwareXPath {
-    
-    
+
     /**
-     * Returns <code>true</code> if the XPapth starts in root of Yang model, otherwise returns <code>false</cdoe>.
+     * Returns <code>true</code> if the XPapth starts in root of Yang model,
+     * otherwise returns <code>false</cdoe>.
      * 
-     * @return <code>true</code> if the XPapth starts in root of Yang model, otherwise returns <code>false</cdoe>
+     * @return <code>true</code> if the XPapth starts in root of Yang model,
+     *         otherwise returns <code>false</cdoe>
      */
     public boolean isAbsolute();
-    
+
     /**
-     * Returns the XPath formatted string as is defined in model. 
-     * <br>
-     * For example: /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf
+     * Returns the XPath formatted string as is defined in model. <br>
+     * For example:
+     * /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf
      * 
      * @return the XPath formatted string as is defined in model.
      */

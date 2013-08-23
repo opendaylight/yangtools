@@ -10,14 +10,24 @@ package org.opendaylight.yangtools.yang.model.api;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Contains the methods for getting data and checking properties of the YANG
+ * <code>uses</code> substatement.
+ * 
+ */
 public interface UsesNode {
 
     /**
-     * @return path to 'grouping' on which this 'uses' statement points
+     * Returns the schema path to used grouping.
+     * 
+     * @return schema path to 'grouping' on which this 'uses' statement points
      */
     SchemaPath getGroupingPath();
 
     /**
+     * 
+     * Returns agumentations which were specified in this uses node.
+     * 
      * @return Set of augment statements defined under this uses node
      */
     Set<AugmentationSchema> getAugmentations();
@@ -25,7 +35,7 @@ public interface UsesNode {
     /**
      * Returns <code>true</code> if the data node was added by augmentation,
      * otherwise returns <code>false</code>
-     *
+     * 
      * @return <code>true</code> if the data node was added by augmentation,
      *         otherwise returns <code>false</code>
      */
@@ -34,7 +44,7 @@ public interface UsesNode {
     /**
      * Returns <code>true</code> if the data node was added by uses statement,
      * otherwise returns <code>false</code>
-     *
+     * 
      * @return <code>true</code> if the data node was added by uses statement,
      *         otherwise returns <code>false</code>
      */
@@ -43,7 +53,7 @@ public interface UsesNode {
     /**
      * Some of the properties of each node in the grouping can be refined with
      * the "refine" statement.
-     *
+     * 
      * @return Map, where key is schema path of refined node and value is
      *         refined node
      */

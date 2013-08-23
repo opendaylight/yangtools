@@ -10,9 +10,20 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface IdentityrefTypeDefinition extends
-        TypeDefinition<IdentityrefTypeDefinition> {
+/**
+ * 
+ * Contains method for getting data from <code>identityref</code> built-in YANG
+ * type.
+ * 
+ */
+public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTypeDefinition> {
 
+    /**
+     * Returns QName of the identity to which the instance of this type refers.
+     * 
+     * @return QName of referenced identity which is specified with the
+     *         <code>identity</code> YANG statement
+     */
     public QName getIdentity();
 
 }
