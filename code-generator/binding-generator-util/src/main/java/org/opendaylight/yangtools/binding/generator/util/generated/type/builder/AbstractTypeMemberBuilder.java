@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.TypeMemberB
 import java.util.ArrayList;
 import java.util.List;
 
-abstract class AbstractTypeMemberBuilder implements TypeMemberBuilder {
+abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> implements TypeMemberBuilder<T> {
     private final String name;
     private Type returnType;
     private final List<AnnotationTypeBuilder> annotationBuilders;
@@ -68,33 +68,39 @@ abstract class AbstractTypeMemberBuilder implements TypeMemberBuilder {
         return name;
     }
 
+    protected abstract T thisInstance();
+    
     @Override
-    public void setReturnType(Type returnType) {
+    public T setReturnType(Type returnType) {
         if (returnType == null) {
             throw new IllegalArgumentException("Return Type of member cannot be null!");
         }
         this.returnType = returnType;
+        return thisInstance();
     }
 
     @Override
-    public void setAccessModifier(AccessModifier modifier) {
+    public T setAccessModifier(AccessModifier modifier) {
         if (modifier == null) {
             throw new IllegalArgumentException("Access Modifier for member type cannot be null!");
         }
         this.accessModifier = modifier;
+        return thisInstance();
     }
 
     @Override
-    public void setComment(String comment) {
+    public T setComment(String comment) {
         if (comment == null) {
             this.comment = "";
         }
         this.comment = comment;
+        return thisInstance();
     }
 
     @Override
-    public void setFinal(boolean isFinal) {
+    public T setFinal(boolean isFinal) {
         this.isFinal = isFinal;
+        return thisInstance();
     }
 
     protected List<AnnotationType> toAnnotationTypes() {

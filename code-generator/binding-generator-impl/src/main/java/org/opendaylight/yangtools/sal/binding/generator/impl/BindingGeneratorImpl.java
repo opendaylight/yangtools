@@ -21,12 +21,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
+import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
@@ -611,11 +613,18 @@ public final class BindingGeneratorImpl implements BindingGenerator {
             throw new IllegalArgumentException("Reference to Set of Notification Definitions in module "
                     + module.getName() + " cannot be NULL.");
         }
-
-        final String basePackageName = moduleNamespaceToPackageName(module);
-        final List<Type> genNotifyTypes = new ArrayList<>();
         final Set<NotificationDefinition> notifications = module.getNotifications();
-
+        if(notifications.isEmpty()) return Collections.emptyList();
+        
+        final GeneratedTypeBuilder listenerInterface = moduleTypeBuilder(module, "Listener");
+        listenerInterface.addImplementsType(BindingTypes.NOTIFICATION_LISTENER);
+        
+        
+        
+        final String basePackageName = moduleNamespaceToPackageName(module);
+        final List<Type> generatedTypes = new ArrayList<>();
+        
+        
         for (final NotificationDefinition notification : notifications) {
             if (notification != null) {
                 DataNodeIterator it = new DataNodeIterator(notification);
@@ -623,25 +632,32 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                 // Containers
                 for (ContainerSchemaNode node : it.allContainers()) {
                     if (!node.isAddedByUses()) {
-                        genNotifyTypes.add(containerToGenType(basePackageName, node));
+                        generatedTypes.add(containerToGenType(basePackageName, node));
                     }
                 }
                 // Lists
                 for (ListSchemaNode node : it.allLists()) {
                     if (!node.isAddedByUses()) {
-                        genNotifyTypes.addAll(listToGenType(basePackageName, node));
+                        generatedTypes.addAll(listToGenType(basePackageName, node));
                     }
                 }
-                final GeneratedTypeBuilder notificationTypeBuilder = addDefaultInterfaceDefinition(basePackageName,
+                final GeneratedTypeBuilder notificationInterface = addDefaultInterfaceDefinition(basePackageName,
                         notification);
-                notificationTypeBuilder.addImplementsType(Types
+                notificationInterface.addImplementsType(Types
                         .typeForClass(org.opendaylight.yangtools.yang.binding.Notification.class));
                 // Notification object
-                resolveDataSchemaNodes(basePackageName, notificationTypeBuilder, notification.getChildNodes());
-                genNotifyTypes.add(notificationTypeBuilder.toInstance());
+                resolveDataSchemaNodes(basePackageName, notificationInterface, notification.getChildNodes());
+                
+                listenerInterface.addMethod("on"+notificationInterface.getName()) //
+                    .setAccessModifier(AccessModifier.PUBLIC)
+                    .addParameter(notificationInterface, "notification")
+                    .setReturnType(Types.VOID);
+                
+                generatedTypes.add(notificationInterface.toInstance());
             }
         }
-        return genNotifyTypes;
+        generatedTypes.add(listenerInterface.toInstance());
+        return generatedTypes;
     }
 
     /**

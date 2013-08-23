@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
  * 
  * @see GeneratedTransferObject
  */
-public interface GeneratedTOBuilder extends GeneratedTypeBuilder {
+public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTOBuilder> {
 
     /**
      * Add Generated Transfer Object from which will be extended current
@@ -28,8 +28,9 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilder {
      * 
      * @param genTransObj
      *            Generated Transfer Object
+     * @return This instance of builder
      */
-    public void setExtendsType(final GeneratedTransferObject genTransObj);
+    public GeneratedTOBuilder setExtendsType(final GeneratedTransferObject genTransObj);
 
     /**
      * Add Property that will be part of <code>equals</code> definition. <br>
@@ -38,10 +39,9 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilder {
      * 
      * @param property
      *            Generated Property Builder
-     * @return <code>true</code> if addition of Generated Property into list of
-     *         <code>equals</code> properties is successful.
+     * @return This instance of builder
      */
-    public boolean addEqualsIdentity(final GeneratedPropertyBuilder property);
+    public GeneratedTOBuilder addEqualsIdentity(final GeneratedPropertyBuilder property);
 
     /**
      * Add Property that will be part of <code>hashCode</code> definition. <br>
@@ -50,10 +50,9 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilder {
      * 
      * @param property
      *            Generated Property Builder
-     * @return <code>true</code> if addition of Generated Property into list of
-     *         <code>hashCode</code> properties is successful.
+     * @return This instance of builder
      */
-    public boolean addHashIdentity(final GeneratedPropertyBuilder property);
+    public GeneratedTOBuilder addHashIdentity(final GeneratedPropertyBuilder property);
 
     /**
      * Add Property that will be part of <code>toString</code> definition. <br>
@@ -62,12 +61,10 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilder {
      * 
      * @param property
      *            Generated Property Builder
-     * @return <code>true</code> if addition of Generated Property into list of
-     *         <code>toString</code> properties is successful.
+     * @return This instance of builder
      */
-    public boolean addToStringProperty(final GeneratedPropertyBuilder property);
+    public GeneratedTOBuilder addToStringProperty(final GeneratedPropertyBuilder property);
 
-    @Override
     public GeneratedTransferObject toInstance();
 
     /**

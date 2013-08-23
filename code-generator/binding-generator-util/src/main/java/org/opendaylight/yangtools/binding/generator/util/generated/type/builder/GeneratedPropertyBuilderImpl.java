@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPr
 
 import java.util.List;
 
-final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilder implements GeneratedPropertyBuilder {
+final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilder<GeneratedPropertyBuilder> implements GeneratedPropertyBuilder {
 
     private boolean isReadOnly;
 
@@ -24,10 +24,16 @@ final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilder imple
     }
 
     @Override
-    public void setReadOnly(boolean isReadOnly) {
+    public GeneratedPropertyBuilderImpl setReadOnly(boolean isReadOnly) {
         this.isReadOnly = isReadOnly;
+        return this;
     }
 
+    @Override
+    protected GeneratedPropertyBuilderImpl thisInstance() {
+        return this;
+    }
+    
     @Override
     public GeneratedProperty toInstance(Type definingType) {
         final List<AnnotationType> annotations = toAnnotationTypes();

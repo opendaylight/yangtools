@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder implements GeneratedTOBuilder {
+public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder> implements GeneratedTOBuilder {
 
     private GeneratedTransferObject extendsType;
     private final List<GeneratedPropertyBuilder> properties = new ArrayList<>();
@@ -28,11 +28,12 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder i
     }
 
     @Override
-    public void setExtendsType(final GeneratedTransferObject genTransObj) {
+    public GeneratedTOBuilder setExtendsType(final GeneratedTransferObject genTransObj) {
         if (genTransObj == null) {
             throw new IllegalArgumentException("Generated Transfer Object cannot be null!");
         }
         extendsType = genTransObj;
+        return this;
     }
 
 
@@ -59,20 +60,28 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder i
     }
 
     @Override
-    public boolean addEqualsIdentity(GeneratedPropertyBuilder property) {
-        return equalsProperties.add(property);
+    public GeneratedTOBuilder addEqualsIdentity(GeneratedPropertyBuilder property) {
+        equalsProperties.add(property);
+        return this;
     }
 
     @Override
-    public boolean addHashIdentity(GeneratedPropertyBuilder property) {
-        return hashProperties.add(property);
+    public GeneratedTOBuilder addHashIdentity(GeneratedPropertyBuilder property) {
+        hashProperties.add(property);
+        return this;
     }
 
     @Override
-    public boolean addToStringProperty(GeneratedPropertyBuilder property) {
-        return toStringProperties.add(property);
+    public GeneratedTOBuilder addToStringProperty(GeneratedPropertyBuilder property) {
+        toStringProperties.add(property);
+        return this;
     }
 
+    @Override
+    protected GeneratedTOBuilder thisInstance() {
+        return this;
+    }
+    
     @Override
     public GeneratedTransferObject toInstance() {
         return new GeneratedTransferObjectImpl(this);

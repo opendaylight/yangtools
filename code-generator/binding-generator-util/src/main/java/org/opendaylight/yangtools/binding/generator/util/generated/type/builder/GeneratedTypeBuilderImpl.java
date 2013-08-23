@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.binding.generator.util.generated.type.builder
 
 
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 
-public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder {
+public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder> implements GeneratedTypeBuilder {
 
     public GeneratedTypeBuilderImpl(String packageName, String name) {
         super(packageName, name);
@@ -46,6 +47,11 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
         builder.append(getMethodDefinitions());
         builder.append("]");
         return builder.toString();
+    }
+    
+    @Override
+    protected GeneratedTypeBuilderImpl thisInstance() {
+        return this;
     }
 
     private static final class GeneratedTypeImpl extends AbstractGeneratedType {

@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
  *
  * @see MethodSignature
  */
-public interface MethodSignatureBuilder extends TypeMemberBuilder {
+public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatureBuilder> {
 
     /**
      * Sets the flag for declaration of method as abstract or non abstract. If the flag <code>isAbstract == true</code>
@@ -37,7 +37,7 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder {
      *
      * @param isAbstract is abstract flag
      */
-    public void setAbstract(boolean isAbstract);
+    public MethodSignatureBuilder setAbstract(boolean isAbstract);
 
     /**
      * Adds Parameter into the List of method parameters. Neither the Name or
@@ -50,7 +50,7 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder {
      * @param type Parameter Type
      * @param name Parameter Name
      */
-    public void addParameter(final Type type, final String name);
+    public MethodSignatureBuilder addParameter(final Type type, final String name);
 
     /**
      * Returns <code>new</code> <i>immutable</i> instance of Method Signature.

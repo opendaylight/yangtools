@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
  *
  * @see GeneratedProperty
  */
-public interface GeneratedPropertyBuilder extends TypeMemberBuilder {
+public interface GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedPropertyBuilder> {
 
     /**
      * Sets isReadOnly flag for property. If property is marked as read only
@@ -24,7 +24,7 @@ public interface GeneratedPropertyBuilder extends TypeMemberBuilder {
      *
      * @param isReadOnly Read Only property flag.
      */
-    public void setReadOnly(final boolean isReadOnly);
+    public GeneratedPropertyBuilder setReadOnly(final boolean isReadOnly);
 
     /**
      * Returns <code>new</code> <i>immutable</i> instance of Generated

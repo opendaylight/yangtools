@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -492,7 +493,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *
      */
     private Enumeration addInnerEnumerationToTypeBuilder(final EnumTypeDefinition enumTypeDef, final String enumName,
-            final GeneratedTypeBuilder typeBuilder) {
+            final GeneratedTypeBuilderBase<?> typeBuilder) {
         Preconditions.checkArgument(enumTypeDef != null, "EnumTypeDefinition reference cannot be NULL!");
         Preconditions.checkArgument(enumTypeDef.getValues() != null,
                 "EnumTypeDefinition MUST contain at least ONE value definition!");
@@ -647,7 +648,6 @@ public final class TypeProviderImpl implements TypeProvider {
     private GeneratedTransferObject wrapJavaTypeIntoTO(final String basePackageName, final TypeDefinition<?> typedef,
             final Type javaType) {
         if (javaType != null) {
-            final String typedefName = typedef.getQName().getLocalName();
             final String propertyName = "value";
 
             final GeneratedTOBuilder genTOBuilder = typedefToTransferObject(basePackageName, typedef);

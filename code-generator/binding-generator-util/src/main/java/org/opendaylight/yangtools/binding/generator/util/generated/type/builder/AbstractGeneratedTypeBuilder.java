@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.*;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements GeneratedTypeBuilder {
+abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractBaseType implements GeneratedTypeBuilderBase<T> {
 
     private String comment = "";
 
@@ -26,7 +26,7 @@ abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements 
     private final List<Constant> constants = new ArrayList<>();
     private final List<MethodSignatureBuilder> methodDefinitions = new ArrayList<>();
     private final List<GeneratedTypeBuilder> enclosedTypes = new ArrayList<>();
-    private final List<GeneratedTOBuilder> enclosingTransferObjects = new ArrayList<>();
+    private final List<GeneratedTOBuilder> enclosedTransferObjects = new ArrayList<>();
     private final List<GeneratedPropertyBuilder> properties = new ArrayList<>();
     private boolean isAbstract;
 
@@ -67,40 +67,34 @@ abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements 
     }
 
     protected List<GeneratedTOBuilder> getEnclosedTransferObjects() {
-        return enclosingTransferObjects;
+        return enclosedTransferObjects;
     }
 
-    @Override
-    public GeneratedTypeBuilder addEnclosingType(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Name for Enclosing Generated Type cannot be null!");
-        }
-        GeneratedTypeBuilder builder = new GeneratedTOBuilderImpl(getFullyQualifiedName(), name);
-        enclosedTypes.add(builder);
-        return builder;
-    }
-
+    abstract protected T thisInstance();
+    
     @Override
     public GeneratedTOBuilder addEnclosingTransferObject(String name) {
         if (name == null) {
             throw new IllegalArgumentException("Name for Enclosing Generated Transfer Object cannot be null!");
         }
         GeneratedTOBuilder builder = new GeneratedTOBuilderImpl(getFullyQualifiedName(), name);
-        enclosingTransferObjects.add(builder);
+        enclosedTransferObjects.add(builder);
         return builder;
     }
 
     @Override
-    public void addEnclosingTransferObject(final GeneratedTOBuilder genTOBuilder) {
+    public T addEnclosingTransferObject(final GeneratedTOBuilder genTOBuilder) {
         if (genTOBuilder == null) {
             throw new IllegalArgumentException("Parameter genTOBuilder cannot be null!");
         }
-        enclosingTransferObjects.add(genTOBuilder);
+        enclosedTransferObjects.add(genTOBuilder);
+        return thisInstance();
     }
 
     @Override
-    public void addComment(String comment) {
+    public T addComment(String comment) {
         this.comment = comment;
+        return thisInstance();
     }
 
     @Override
@@ -118,16 +112,18 @@ abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements 
     }
 
     @Override
-    public void setAbstract(boolean isAbstract) {
+    public T setAbstract(boolean isAbstract) {
         this.isAbstract = isAbstract;
+        return thisInstance();
     }
 
     @Override
-    public boolean addImplementsType(Type genType) {
+    public T addImplementsType(Type genType) {
         if (genType == null) {
             throw new IllegalArgumentException("Type cannot be null");
         }
-        return implementsTypes.add(genType);
+        implementsTypes.add(genType);
+        return thisInstance();
     }
 
     @Override
@@ -220,7 +216,7 @@ abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements 
         if (getClass() != obj.getClass()) {
             return false;
         }
-        AbstractGeneratedTypeBuilder other = (AbstractGeneratedTypeBuilder) obj;
+        AbstractGeneratedTypeBuilder<T> other = (AbstractGeneratedTypeBuilder<T>) obj;
         if (getName() == null) {
             if (other.getName() != null) {
                 return false;

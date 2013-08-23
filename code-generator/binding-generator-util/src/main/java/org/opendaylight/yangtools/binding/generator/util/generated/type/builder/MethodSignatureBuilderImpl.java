@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 
-final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder implements MethodSignatureBuilder {
+final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodSignatureBuilder> implements MethodSignatureBuilder {
 
     private final List<MethodSignature.Parameter> parameters;
     private boolean isAbstract;
@@ -26,15 +26,22 @@ final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder impleme
     }
 
     @Override
-    public void setAbstract(boolean isAbstract) {
+    public MethodSignatureBuilder setAbstract(boolean isAbstract) {
         this.isAbstract = isAbstract;
+        return this;
     }
 
     @Override
-    public void addParameter(Type type, String name) {
+    public MethodSignatureBuilder addParameter(Type type, String name) {
         parameters.add(new MethodParameterImpl(name, type));
+        return this;
     }
 
+@Override
+    protected MethodSignatureBuilder thisInstance() {
+        return this;
+    }
+    
     @Override
     public MethodSignature toInstance(Type definingType) {
         final List<AnnotationType> annotations = toAnnotationTypes();

@@ -6,7 +6,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 /**
  *
  */
-public interface TypeMemberBuilder {
+public interface TypeMemberBuilder<T extends TypeMemberBuilder<T>> {
 
     /**
      * The method creates new AnnotationTypeBuilder containing specified
@@ -38,14 +38,14 @@ public interface TypeMemberBuilder {
      *
      * @param returnType Return Type of property.
      */
-    public void setReturnType(final Type returnType);
+    public T setReturnType(final Type returnType);
 
     /**
      * Sets the access modifier of property.
      *
      * @param modifier Access Modifier value.
      */
-    public void setAccessModifier(final AccessModifier modifier);
+    public T setAccessModifier(final AccessModifier modifier);
 
     /**
      * Adds String definition of comment into Method Signature definition.
@@ -55,7 +55,7 @@ public interface TypeMemberBuilder {
      *
      * @param comment Comment String.
      */
-    public void setComment(final String comment);
+    public T setComment(final String comment);
 
     /**
      * Sets the flag final for method signature. If this is set the method will be prohibited from overriding.
@@ -65,5 +65,5 @@ public interface TypeMemberBuilder {
      *
      * @param isFinal Is Final
      */
-    public void setFinal(final boolean isFinal);
+    public T setFinal(final boolean isFinal);
 }
