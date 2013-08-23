@@ -372,10 +372,10 @@ public final class GeneratorUtil {
         if (childTransportObject == null) {
             throw new IllegalArgumentException("Parameter childTransportObject can't be null.");
         }
-        if (childTransportObject.getExtends() == null) {
+        if (childTransportObject.getSuperType() == null) {
             return childTransportObject;
         } else {
-            return getTopParrentTransportObject(childTransportObject.getExtends());
+            return getTopParrentTransportObject(childTransportObject.getSuperType());
         }
     }
 
@@ -414,11 +414,11 @@ public final class GeneratorUtil {
      */
     public static List<GeneratedProperty> getPropertiesOfAllParents(GeneratedTransferObject genTO) {
         List<GeneratedProperty> propertiesOfAllParents = new ArrayList<GeneratedProperty>();
-        if (genTO.getExtends() != null) {
-            final List<GeneratedProperty> allPropertiesOfTO = genTO.getExtends().getProperties();
+        if (genTO.getSuperType() != null) {
+            final List<GeneratedProperty> allPropertiesOfTO = genTO.getSuperType().getProperties();
             List<GeneratedProperty> readOnlyPropertiesOfTO = resolveReadOnlyPropertiesFromTO(allPropertiesOfTO);
             propertiesOfAllParents.addAll(readOnlyPropertiesOfTO);
-            propertiesOfAllParents.addAll(getPropertiesOfAllParents(genTO.getExtends()));
+            propertiesOfAllParents.addAll(getPropertiesOfAllParents(genTO.getSuperType()));
         }
         return propertiesOfAllParents;
     }

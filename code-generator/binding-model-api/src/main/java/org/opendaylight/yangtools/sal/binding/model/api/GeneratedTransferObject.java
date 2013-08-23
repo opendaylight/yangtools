@@ -31,16 +31,7 @@ public interface GeneratedTransferObject extends GeneratedType {
      * @return the extending Generated Transfer Object or <code>null</code> if
      *         there is no extending Generated Transfer Object.
      */
-    public GeneratedTransferObject getExtends();
-
-    /**
-     * Returns List of Properties that are declared for Generated Transfer
-     * Object.
-     * 
-     * @return List of Properties that are declared for Generated Transfer
-     *         Object.
-     */
-    public List<GeneratedProperty> getProperties();
+    public GeneratedTransferObject getSuperType();
 
     /**
      * Returns List of Properties that are designated to define equality for

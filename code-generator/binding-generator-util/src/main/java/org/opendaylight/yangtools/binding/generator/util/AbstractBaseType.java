@@ -55,6 +55,12 @@ public class AbstractBaseType implements Type {
      *            string with the name for this <code>Type</code>
      */
     protected AbstractBaseType(String pkName, String name) {
+        if (pkName == null) {
+            throw new IllegalArgumentException("Package Name for Generated Type cannot be null!");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("Name of Generated Type cannot be null!");
+        }
         this.packageName = pkName;
         this.name = name;
     }

@@ -97,8 +97,20 @@ public interface GeneratedType extends Type {
 
     /**
      * Returns List of Method Definitions associated with Generated Type.
+     * 
+     * List does not contains getters and setters for properties.
      *
      * @return List of Method Definitions associated with Generated Type.
      */
     public List<MethodSignature> getMethodDefinitions();
+    
+    /**
+     * Returns List of Properties that are declared for Generated Transfer
+     * Object.
+     * 
+     * @return List of Properties that are declared for Generated Transfer
+     *         Object.
+     */
+    public List<GeneratedProperty> getProperties();
+    
 }

@@ -86,27 +86,18 @@ class ClassTemplate extends BaseTemplate {
         «type.comment.generateComment»
         «generateClassDeclaration(isInnerClass)» {
         	«innerClassesDeclarations»
-
             «enumDeclarations»
-        
             «constantsDeclarations»
-        
             «generateFields»
-        
             «constructors»
-        
             «FOR field : properties SEPARATOR "\n"»
                 «field.getterMethod»
                 «IF !field.readOnly»
-                
                     «field.setterMethod»
                 «ENDIF»
             «ENDFOR»
-        
             «generateHashCode»
-        
             «generateEquals»
-        
             «generateToString»
         
         }
@@ -171,11 +162,11 @@ class ClassTemplate extends BaseTemplate {
     
     def protected parentConstructor() '''
     /**
-     * Creates a new instance from «genTO.extends.importedName»
+     * Creates a new instance from «genTO.superType.importedName»
      *
      * @param source Source object
      */
-    public «type.name»(«genTO.extends.importedName» source) {
+    public «type.name»(«genTO.superType.importedName» source) {
             super(source);
     }
     '''
@@ -209,8 +200,8 @@ class ClassTemplate extends BaseTemplate {
         ELSE»«
             " "»«
         ENDIF»class «type.name»«
-        IF (genTO.extends != null)»«
-            " extends "»«genTO.extends.importedName»«
+        IF (genTO.superType != null)»«
+            " extends "»«genTO.superType.importedName»«
         ENDIF»«
         IF (!type.implements.empty)»«
             " implements "»«
