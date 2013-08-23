@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * The Schema Context Util contains support methods for searching through Schema Context modules for specified schema
@@ -179,7 +178,7 @@ public final class SchemaContextUtil {
 
         final SchemaPath actualNodePath = actualSchemaNode.getPath();
         if (actualNodePath != null) {
-            final Queue<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualNodePath);
+            final Queue<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
 
             if (qnamePath != null) {
                 final DataSchemaNode dataNode = findSchemaNodeForGivenPath(context, module, qnamePath);
@@ -221,44 +220,6 @@ public final class SchemaContextUtil {
             }
         }
 
-        return null;
-    }
-
-    /**
-     * Returns the Yang Module from specified Schema Context in which the TypeDefinition is declared. If the
-     * TypeDefinition si not present in Schema Context then the method will return <code>null</code>
-     *
-     * If Schema Context or TypeDefinition contains <code>null</code> references the method will throw IllegalArgumentException
-     *
-     * @throws IllegalArgumentException
-     *
-     * @param context Schema Context
-     * @param type Type Definition
-     * @return Yang Module in which the TypeDefinition is declared, if is not present, returns <code>null</code>.
-     */
-    public static Module findParentModuleForTypeDefinition(final SchemaContext context, final TypeDefinition<?> type) {
-        final SchemaPath schemaPath = type.getPath();
-        if (schemaPath == null) {
-            throw new IllegalArgumentException("Schema Path reference cannot be NULL");
-        }
-        final List<QName> qnamedPath = schemaPath.getPath();
-        if (qnamedPath == null || qnamedPath.isEmpty()) {
-            throw new IllegalStateException("Schema Path contains invalid state of path parts."
-                    + "The Schema Path MUST contain at least ONE QName which defines namespace and Local name"
-                    + "of path.");
-        }
-
-        if (type instanceof ExtendedType) {
-            final QName qname = qnamedPath.get(qnamedPath.size() - 1);
-            if ((qname != null) && (qname.getNamespace() != null)) {
-                return context.findModuleByNamespace(qname.getNamespace());
-            }
-        } else {
-            final QName qname = qnamedPath.get(qnamedPath.size() - 2);
-            if ((qname != null) && (qname.getNamespace() != null)) {
-                return context.findModuleByNamespace(qname.getNamespace());
-            }
-        }
         return null;
     }
 
@@ -342,7 +303,7 @@ public final class SchemaContextUtil {
             if (childNodeQName != null) {
                 final URI childNodeNamespace = childNodeQName.getNamespace();
 
-                schemaNode = nextNode.getDataChildByName(childNodeQName);
+                schemaNode = nextNode.getDataChildByName(childNodeQName.getLocalName());
                 if (schemaNode != null) {
                     if (schemaNode instanceof ContainerSchemaNode) {
                         nextNode = (ContainerSchemaNode) schemaNode;
@@ -503,7 +464,7 @@ public final class SchemaContextUtil {
      * @return
      */
     private static Queue<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
-            final RevisionAwareXPath relativeXPath, final SchemaPath leafrefSchemaPath) {
+            final RevisionAwareXPath relativeXPath, final SchemaNode leafrefParentNode) {
         final Queue<QName> absolutePath = new LinkedList<>();
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
@@ -518,7 +479,7 @@ public final class SchemaContextUtil {
             throw new IllegalArgumentException("Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                     + "for non relative Revision Aware XPath use findDataSchemaNode method!");
         }
-        if (leafrefSchemaPath == null) {
+        if (leafrefParentNode.getPath() == null) {
             throw new IllegalArgumentException("Schema Path reference for Leafref cannot be NULL!");
         }
 
@@ -530,9 +491,9 @@ public final class SchemaContextUtil {
                 while (xpaths[colCount].contains("..")) {
                     ++colCount;
                 }
-                final List<QName> path = leafrefSchemaPath.getPath();
+                final List<QName> path = leafrefParentNode.getPath().getPath();
                 if (path != null) {
-                    int lenght = path.size() - colCount - 1;
+                    int lenght = path.size() - colCount;
                     for (int i = 0; i < lenght; ++i) {
                         absolutePath.add(path.get(i));
                     }

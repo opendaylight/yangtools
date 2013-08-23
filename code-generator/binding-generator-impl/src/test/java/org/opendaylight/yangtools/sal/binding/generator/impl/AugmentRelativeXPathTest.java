@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
@@ -28,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
-public class AugmentRleativeXPathTest {
+public class AugmentRelativeXPathTest {
 
     private final static List<File> augmentModels = new ArrayList<>();
     private final static String augmentFolderPath = AugmentedTypeTest.class
@@ -45,7 +44,6 @@ public class AugmentRleativeXPathTest {
         }
     }
 
-    @Ignore
     @Test
     public void AugmentationWithRelativeXPathTest() {
         final YangModelParser parser = new YangParserImpl();
@@ -82,7 +80,7 @@ public class AugmentRleativeXPathTest {
         assertNotNull("gtInterfaceMethods is null", gtInterfaceMethods);
         MethodSignature getIfcKeyMethod = null;
         for (final MethodSignature method : gtInterfaceMethods) {
-            if (method.getName().equals("getInterfaceKey")) {
+            if (method.getName().equals("getKey")) {
                 getIfcKeyMethod = method;
                 break;
             }
@@ -118,7 +116,7 @@ public class AugmentRleativeXPathTest {
         assertNotNull("tunnelMethods is null", tunnelMethods);
         MethodSignature getTunnelKeyMethod = null;
         for (MethodSignature method : tunnelMethods) {
-            if (method.getName().equals("getTunnelKey")) {
+            if (method.getName().equals("getKey")) {
                 getTunnelKeyMethod = method;
                 break;
             }

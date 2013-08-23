@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
+import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
+import static org.opendaylight.yangtools.binding.generator.util.Types.BOOLEAN;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
 
 import java.util.ArrayList;
@@ -36,7 +38,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.sal.binding.yang.types.GroupingDefinitionDependencySort;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
@@ -65,18 +66,13 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-import static org.opendaylight.yangtools.binding.generator.util.Types.*;
-import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
-
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
 
 public final class BindingGeneratorImpl implements BindingGenerator {
 
@@ -260,7 +256,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         final List<Type> generatedTypes = new ArrayList<>();
         for (final TypeDefinition<?> typedef : typeDefinitions) {
             if (typedef != null) {
-                final Type type = ((TypeProviderImpl) typeProvider).generatedTypeForExtendedDefinitionType(typedef);
+                final Type type = ((TypeProviderImpl) typeProvider).generatedTypeForExtendedDefinitionType(typedef, typedef);
                 if ((type != null) && !generatedTypes.contains(type)) {
                     generatedTypes.add(type);
                 }
@@ -555,7 +551,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                     addImplementedInterfaceFromUses(output, outType);
                     outType.addImplementsType(DATA_OBJECT);
                     outType.addImplementsType(augmentable(outType));
-                    
+
                     resolveDataSchemaNodes(basePackageName, outType, output.getChildNodes());
                     outTypeInstance = outType.toInstance();
                     genRPCTypes.add(outTypeInstance);
@@ -961,7 +957,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     }
 
     /**
-     * 
+     *
      * @param unknownSchemaNodes
      * @return
      */
@@ -1389,7 +1385,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
                 Type returnType = null;
                 if (typeDef instanceof EnumTypeDefinition) {
-                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef);
+                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
                     final EnumTypeDefinition enumTypeDef = enumTypeDefFromExtendedType(typeDef);
                     final EnumBuilder enumBuilder = resolveInnerEnumFromTypeDefinition(enumTypeDef, leafName,
                             typeBuilder);
@@ -1399,17 +1395,17 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                     }
                     ((TypeProviderImpl) typeProvider).putReferencedType(leaf.getPath(), returnType);
                 } else if (typeDef instanceof UnionType) {
-                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, parentModule);
+                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, leaf, parentModule);
                     if (genTOBuilder != null) {
                         returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
                     }
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, parentModule);
+                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, leaf, parentModule);
                     if (genTOBuilder != null) {
                         returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
                     }
                 } else {
-                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef);
+                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
                 }
                 if (returnType != null) {
                     constructGetter(typeBuilder, leafName, leafDesc, returnType);
@@ -1452,7 +1448,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                 final TypeDefinition<?> typeDef = leaf.getType();
 
                 // TODO: properly resolve enum types
-                final Type returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef);
+                final Type returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
 
                 if (returnType != null) {
                     final GeneratedPropertyBuilder propBuilder = toBuilder.addProperty(parseToClassName(leafName));
@@ -1499,7 +1495,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
             if (nodeName != null && !node.isAddedByUses()) {
                 final TypeDefinition<?> type = node.getType();
-                final Type listType = Types.listTypeFor(typeProvider.javaTypeForSchemaDefinitionType(type));
+                final Type listType = Types.listTypeFor(typeProvider.javaTypeForSchemaDefinitionType(type, node));
 
                 constructGetter(typeBuilder, nodeName, nodeDesc, listType);
                 return true;
@@ -1749,7 +1745,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private MethodSignatureBuilder constructGetter(final GeneratedTypeBuilder interfaceBuilder,
             final String schemaNodeName, final String comment, final Type returnType) {
-        
+
         final MethodSignatureBuilder getMethod = interfaceBuilder.addMethod(getterMethodName(schemaNodeName,returnType));
 
         getMethod.setComment(comment);
@@ -1904,7 +1900,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * If more then one generated TO builder is created for enclosing then all
      * of the generated TO builders are added to <code>typeBuilder</code> as
      * enclosing transfer objects.
-     * 
+     *
      * @param typeDef
      *            type definition which can be of type <code>UnionType</code> or
      *            <code>BitsTypeDefinition</code>
@@ -1916,13 +1912,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * @return generated TO builder for <code>typeDef</code>
      */
     private GeneratedTOBuilder addTOToTypeBuilder(TypeDefinition<?> typeDef, GeneratedTypeBuilder typeBuilder,
-            String leafName, Module parentModule) {
+            String leafName, LeafSchemaNode leaf, Module parentModule) {
         final String classNameFromLeaf = parseToClassName(leafName);
         List<GeneratedTOBuilder> genTOBuilders = new ArrayList<>();
         final String packageName = typeBuilder.getFullyQualifiedName();
         if (typeDef instanceof UnionTypeDefinition) {
             genTOBuilders.addAll(((TypeProviderImpl) typeProvider).provideGeneratedTOBuildersForUnionTypeDef(
-                    packageName, typeDef, classNameFromLeaf));
+                    packageName, typeDef, classNameFromLeaf, leaf));
         } else if (typeDef instanceof BitsTypeDefinition) {
             genTOBuilders.add(((TypeProviderImpl) typeProvider).provideGeneratedTOBuilderForBitsTypeDefinition(
                     packageName, typeDef, classNameFromLeaf));

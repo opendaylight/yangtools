@@ -24,124 +24,62 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
  * @see LeafrefTypeDefinition
  */
 public final class Leafref implements LeafrefTypeDefinition {
-    private static final QName name = BaseTypes.constructQName("leafref");
-    private static final String description = "The leafref type is used to reference a "
-            + "particular leaf instance in the data tree.";
-    private static final String reference = "https://tools.ietf.org/html/rfc6020#section-9.9";
-    private final SchemaPath path;
-    private final RevisionAwareXPath xpath;
-    private final String units = "";
-    private final LeafrefTypeDefinition baseType;
+    private static final QName NAME = BaseTypes.constructQName("leafref");
+    private static final SchemaPath PATH = BaseTypes.schemaPath(NAME);
+    private static final String DESCRIPTION = "The leafref type is used to reference a particular leaf instance in the data tree.";
+    private static final String REF = "https://tools.ietf.org/html/rfc6020#section-9.9";
 
-    public Leafref(final SchemaPath path, final RevisionAwareXPath xpath) {
-        this.path = path;
+    private final RevisionAwareXPath xpath;
+
+    public Leafref(final RevisionAwareXPath xpath) {
         this.xpath = xpath;
-        baseType = this;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
-     */
     @Override
     public LeafrefTypeDefinition getBaseType() {
-        return baseType;
+        return this;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
-     */
     @Override
     public String getUnits() {
-        return units;
+        return "";
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
-     * ()
-     */
     @Override
     public Object getDefaultValue() {
         return this;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
-     */
     @Override
     public QName getQName() {
-        return name;
+        return NAME;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
-     */
     @Override
     public SchemaPath getPath() {
-        return path;
+        return PATH;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
-     */
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
-     */
     @Override
     public String getReference() {
-        return reference;
+        return REF;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
-     */
     @Override
     public Status getStatus() {
         return Status.CURRENT;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.SchemaNode#getExtensionSchemaNodes
-     * ()
-     */
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return Collections.emptyList();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition
-     * #getPathStatement()
-     */
     @Override
     public RevisionAwareXPath getPathStatement() {
         return xpath;
@@ -151,8 +89,6 @@ public final class Leafref implements LeafrefTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
         result = prime * result + ((xpath == null) ? 0 : xpath.hashCode());
         return result;
     }
@@ -169,20 +105,6 @@ public final class Leafref implements LeafrefTypeDefinition {
             return false;
         }
         Leafref other = (Leafref) obj;
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        if (units == null) {
-            if (other.units != null) {
-                return false;
-            }
-        } else if (!units.equals(other.units)) {
-            return false;
-        }
         if (xpath == null) {
             if (other.xpath != null) {
                 return false;
@@ -196,12 +118,10 @@ public final class Leafref implements LeafrefTypeDefinition {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Leafref [path=");
-        builder.append(path);
-        builder.append(", xpath=");
+        builder.append("type ");
+        builder.append(NAME);
+        builder.append(" [xpath=");
         builder.append(xpath);
-        builder.append(", units=");
-        builder.append(units);
         builder.append("]");
         return builder.toString();
     }

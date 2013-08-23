@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public final class BaseYangTypes {
@@ -112,7 +111,7 @@ public final class BaseYangTypes {
         /**
          * Searches <code>Type</code> value to which is YANG <code>type</code>
          * mapped.
-         * 
+         *
          * @param type
          *            string with YANG type name
          * @return java <code>Type</code> representation of <code>type</code>
@@ -125,7 +124,7 @@ public final class BaseYangTypes {
         /**
          * Searches <code>Type</code> value to which is YANG <code>type</code>
          * mapped.
-         * 
+         *
          * @param type
          *            type definition representation of YANG type
          * @return java <code>Type</code> representation of <code>type</code>.
@@ -133,7 +132,7 @@ public final class BaseYangTypes {
          *          returned.
          */
         @Override
-        public Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type) {
+        public Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode) {
             if (type != null) {
                 return typeMap.get(type.getQName().getLocalName());
             }

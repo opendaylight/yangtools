@@ -1128,7 +1128,7 @@ public final class ParserListenerUtils {
             final String path = parseLeafrefPath(typeBody);
             final boolean absolute = path.startsWith("/");
             RevisionAwareXPath xpath = new RevisionAwareXPathImpl(path, absolute);
-            return new Leafref(baseTypePath, xpath);
+            return new Leafref(xpath);
         } else if ("binary".equals(typeName)) {
             BinaryTypeDefinition binaryType = BinaryType.getInstance();
             constraints.addLengths(binaryType.getLengthConstraints());
