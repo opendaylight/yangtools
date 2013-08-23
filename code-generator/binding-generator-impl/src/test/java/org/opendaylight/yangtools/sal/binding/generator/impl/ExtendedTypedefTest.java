@@ -67,7 +67,7 @@ public class ExtendedTypedefTest {
         assertNotNull("TypedefFromImport not found", typedefFromImport);
         List<GeneratedProperty> properties = typedefFromImport.getProperties();
         assertTrue("Properties of TypedefFromImport should be empty", properties.isEmpty());
-        assertEquals("TypedefFromImport should be extended", "Ipv4Address", typedefFromImport.getExtends().getName());
+        assertEquals("TypedefFromImport should be extended", "Ipv4Address", typedefFromImport.getSuperType().getName());
 
         // simple-typedef4
         assertNotNull("SimpleTypedef4 not found", simpleTypedef4);
@@ -77,19 +77,19 @@ public class ExtendedTypedefTest {
         properties = simpleTypedef4.getProperties();
         assertTrue("SimpleTypedef4 shouldn't have properties.", properties.isEmpty());
 
-        GeneratedTransferObject extendTO = simpleTypedef4.getExtends();
+        GeneratedTransferObject extendTO = simpleTypedef4.getSuperType();
         assertNotNull("SimpleTypedef4 should have extend.", extendTO);
         assertEquals("Incorrect extension for SimpleTypedef4.", "SimpleTypedef3", extendTO.getName());
         properties = extendTO.getProperties();
         assertTrue("SimpleTypedef3 shouldn't have properties.", properties.isEmpty());
 
-        extendTO = extendTO.getExtends();
+        extendTO = extendTO.getSuperType();
         assertNotNull("SimpleTypedef3 should have extend.", extendTO);
         assertEquals("Incorrect extension for SimpleTypedef3.", "SimpleTypedef2", extendTO.getName());
         properties = extendTO.getProperties();
         assertTrue("SimpleTypedef2 shouldn't have properties.", properties.isEmpty());
 
-        extendTO = extendTO.getExtends();
+        extendTO = extendTO.getSuperType();
         assertNotNull("SimpleTypedef2 should have extend.", extendTO);
         assertEquals("SimpleTypedef2 should be extended with SimpleTypedef1.", "SimpleTypedef1", extendTO.getName());
         properties = extendTO.getProperties();
@@ -98,7 +98,7 @@ public class ExtendedTypedefTest {
         assertEquals("Incorrect property's name", "value", properties.get(0).getName());
         assertEquals("Property's incorrect type", BaseYangTypes.UINT8_TYPE, properties.get(0).getReturnType());
 
-        extendTO = extendTO.getExtends();
+        extendTO = extendTO.getSuperType();
         assertNull("SimpleTypedef1 shouldn't have extend.", extendTO);
 
         // extended-typedef-union
@@ -106,9 +106,9 @@ public class ExtendedTypedefTest {
         properties = extendedTypedefUnion.getProperties();
         assertTrue("ExtendedTypedefUnion shouldn't have any property", properties.isEmpty());
 
-        extendTO = extendedTypedefUnion.getExtends();
+        extendTO = extendedTypedefUnion.getSuperType();
         assertEquals("Incorrect extension fo ExtendedTypedefUnion.", "UnionTypedef", extendTO.getName());
-        assertNull("UnionTypedef shouldn't be extended", extendTO.getExtends());
+        assertNull("UnionTypedef shouldn't be extended", extendTO.getSuperType());
         assertEquals("Incorrect number of properties for UnionTypedef.", 4, extendTO.getProperties().size());
 
         GeneratedProperty simpleTypedef4Property = null;

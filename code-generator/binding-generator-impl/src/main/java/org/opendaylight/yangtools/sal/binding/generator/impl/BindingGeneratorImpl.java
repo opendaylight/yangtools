@@ -1749,46 +1749,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private MethodSignatureBuilder constructGetter(final GeneratedTypeBuilder interfaceBuilder,
             final String schemaNodeName, final String comment, final Type returnType) {
+        
         final MethodSignatureBuilder getMethod = interfaceBuilder.addMethod(getterMethodName(schemaNodeName,returnType));
 
         getMethod.setComment(comment);
         getMethod.setReturnType(returnType);
 
         return getMethod;
-    }
-
-    /**
-     * Creates a method signature builder as a part of
-     * <code>interfaceBuilder</code> for <code>schemaNodeName</code>
-     *
-     * The method signature builder is created for the setter method of
-     * <code>schemaNodeName</code>. Also <code>comment</code>
-     * <code>parameterType</code> data are added to the builder. The return type
-     * of the method is set to <code>void</code>.
-     *
-     * @param interfaceBuilder
-     *            generated type builder for which the setter method should be
-     *            created
-     * @param schemaNodeName
-     *            string with schema node name. The name will be the part of the
-     *            setter method name.
-     * @param comment
-     *            string with comment for the setter method
-     * @param parameterType
-     *            type which represents the type of the setter method input
-     *            parameter
-     * @return method signature builder which represents the setter method of
-     *         <code>interfaceBuilder</code>
-     */
-    private MethodSignatureBuilder constructSetter(final GeneratedTypeBuilder interfaceBuilder,
-            final String schemaNodeName, final String comment, final Type parameterType) {
-        final MethodSignatureBuilder setMethod = interfaceBuilder.addMethod(setterMethodName(schemaNodeName));
-
-        setMethod.setComment(comment);
-        setMethod.addParameter(parameterType, parseToValidParamName(schemaNodeName));
-        setMethod.setReturnType(Types.voidType());
-
-        return setMethod;
     }
 
     private List<Type> listToGenType(final String basePackageName, final ListSchemaNode list) {

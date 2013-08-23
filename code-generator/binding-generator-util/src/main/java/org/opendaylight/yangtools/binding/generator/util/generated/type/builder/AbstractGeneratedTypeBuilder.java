@@ -18,9 +18,7 @@ import java.util.List;
 
 abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements GeneratedTypeBuilder {
 
-    private final String packageName;
     private String comment = "";
-    private final String name;
 
     private final List<AnnotationTypeBuilder> annotationBuilders = new ArrayList<>();
     private final List<Type> implementsTypes = new ArrayList<>();
@@ -29,18 +27,11 @@ abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements 
     private final List<MethodSignatureBuilder> methodDefinitions = new ArrayList<>();
     private final List<GeneratedTypeBuilder> enclosedTypes = new ArrayList<>();
     private final List<GeneratedTOBuilder> enclosingTransferObjects = new ArrayList<>();
+    private final List<GeneratedPropertyBuilder> properties = new ArrayList<>();
     private boolean isAbstract;
 
     public AbstractGeneratedTypeBuilder(final String packageName, final String name) {
         super(packageName, name);
-        if (packageName == null) {
-            throw new IllegalArgumentException("Package Name for Generated Type cannot be null!");
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("Name of Generated Type cannot be null!");
-        }
-        this.packageName = packageName;
-        this.name = name;
     }
 
     protected String getComment() {
@@ -187,6 +178,27 @@ abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements 
         }
         return false;
     }
+    
+    @Override
+    public GeneratedPropertyBuilder addProperty(String name) {
+        final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);
+        builder.setAccessModifier(AccessModifier.PUBLIC);
+        properties.add(builder);
+        return builder;
+    }
+
+    @Override
+    public boolean containsProperty(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Parameter name can't be null");
+        }
+        for (GeneratedPropertyBuilder property : properties) {
+            if (name.equals(property.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public int hashCode() {
@@ -224,5 +236,13 @@ abstract class AbstractGeneratedTypeBuilder extends AbstractBaseType implements 
             return false;
         }
         return true;
+    }
+
+    public Type getParent() {
+        return null;
+    }
+
+    protected List<GeneratedPropertyBuilder> getProperties() {
+        return properties;
     }
 }

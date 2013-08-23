@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.generator.util.AbstractBaseType;
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -427,6 +428,11 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         @Override
         public List<MethodSignature> getMethodDefinitions() {
             // TODO Auto-generated method stub
+            return Collections.emptyList();
+        }
+        
+        @Override
+        public List<GeneratedProperty> getProperties() {
             return Collections.emptyList();
         }
     }

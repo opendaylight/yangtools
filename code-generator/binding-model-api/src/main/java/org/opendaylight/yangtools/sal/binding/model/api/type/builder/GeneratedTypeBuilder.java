@@ -170,6 +170,28 @@ public interface GeneratedTypeBuilder extends Type {
      *            is method name
      */
     public boolean containsMethod(final String methodName);
+    
+    /**
+     * Add new Generated Property definition for Generated Transfer Object
+     * Builder and returns Generated Property Builder for specifying Property. <br>
+     * Name of Property cannot be <code>null</code>, if it is <code>null</code>
+     * the method SHOULD throw {@link IllegalArgumentException}
+     * 
+     * @param name
+     *            Name of Property
+     * @return <code>new</code> instance of Generated Property Builder.
+     */
+    public GeneratedPropertyBuilder addProperty(final String name);
+
+    /**
+     * Check whether GeneratedTOBuilder contains property with name
+     * <code>name</code>
+     * 
+     * @param name
+     *            of property which existance is checked
+     * @return true if property <code>name</code> exists in list of properties.
+     */
+    public boolean containsProperty(final String name);
 
     /**
      * Returns the <code>new</code> <i>immutable</i> instance of Generated Type.

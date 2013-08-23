@@ -7,12 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import org.opendaylight.yangtools.sal.binding.model.api.Constant;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.*;
 
-import java.util.List;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 
 public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder {
 
@@ -23,9 +19,7 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
 
     @Override
     public GeneratedType toInstance() {
-        return new GeneratedTypeImpl(null, getPackageName(), getName(), getComment(), getAnnotations(), isAbstract(),
-                getImplementsTypes(), getEnclosedTypes(), getEnclosedTransferObjects(), getEnumerations(),
-                getConstants(), getMethodDefinitions());
+        return new GeneratedTypeImpl(this);
     }
 
     @Override
@@ -56,15 +50,8 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
 
     private static final class GeneratedTypeImpl extends AbstractGeneratedType {
 
-        public GeneratedTypeImpl(final Type parent, final String packageName, final String name, final String comment,
-                                 final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
-                                 final List<Type> implementsTypes,
-                                 final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
-                                 final List<GeneratedTOBuilder> enclosedGenTOBuilders,
-                                 final List<EnumBuilder> enumBuilders, final List<Constant> constants,
-                                 final List<MethodSignatureBuilder> methodBuilders) {
-            super(parent, packageName, name, comment, annotationBuilders, isAbstract, implementsTypes,
-                    enclosedGenTypeBuilders, enclosedGenTOBuilders, enumBuilders, constants, methodBuilders);
+        public GeneratedTypeImpl(GeneratedTypeBuilderImpl builder) {
+            super(builder);
         }
     }
 }
