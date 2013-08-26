@@ -5,13 +5,14 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import java.util.Map
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.binding.generator.util.Types
+import com.google.common.base.Splitter
 
 abstract class BaseTemplate {
     
     
     protected val GeneratedType type;
     protected val Map<String,String> importMap;
-    
+    static val paragraphSplitter = Splitter.on("\n\n").omitEmptyStrings();
     new(GeneratedType _type) {
          if (_type== null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
@@ -107,4 +108,23 @@ abstract class BaseTemplate {
     def final protected asArguments(Iterable<GeneratedProperty> parameters) 
     '''«IF !parameters.empty»«FOR parameter : parameters SEPARATOR ", "»«parameter.fieldName»«ENDFOR»«ENDIF»'''
     
+    
+        /**
+     * Template method which generates JAVA comments.
+     * 
+     * @param string with the comment for whole JAVA class
+     * @return string with comment in JAVA format
+     */
+    def protected CharSequence asJavadoc(String comment) {
+        if (comment==null) return '';
+        val paragraphs = paragraphSplitter.split(comment)
+        
+        return '''
+            /**
+              «FOR p : paragraphs SEPARATOR "<p>"»
+              «p»
+              «ENDFOR»
+            **/
+            '''
+    }
 }

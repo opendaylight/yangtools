@@ -651,9 +651,7 @@ public final class TypeProviderImpl implements TypeProvider {
             final String propertyName = "value";
 
             final GeneratedTOBuilder genTOBuilder = typedefToTransferObject(basePackageName, typedef);
-
             final GeneratedPropertyBuilder genPropBuilder = genTOBuilder.addProperty(propertyName);
-
             genPropBuilder.setReturnType(javaType);
             genTOBuilder.addEqualsIdentity(genPropBuilder);
             genTOBuilder.addHashIdentity(genPropBuilder);
@@ -741,7 +739,6 @@ public final class TypeProviderImpl implements TypeProvider {
             }
             generatedTOBuilders.add(unionGenTOBuilder);
             unionGenTOBuilder.setIsUnion(true);
-
             final List<String> regularExpressions = new ArrayList<String>();
             for (final TypeDefinition<?> unionType : unionTypes) {
                 final String unionTypeName = unionType.getQName().getLocalName();
@@ -937,7 +934,7 @@ public final class TypeProviderImpl implements TypeProvider {
         if ((packageName != null) && (typedef != null) && (typeDefTOName != null)) {
             final String genTOName = parseToClassName(typeDefTOName);
             final GeneratedTOBuilder newType = new GeneratedTOBuilderImpl(packageName, genTOName);
-
+            newType.addComment(typedef.getDescription());
             return newType;
         }
         return null;

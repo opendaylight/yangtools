@@ -83,7 +83,7 @@ class ClassTemplate extends BaseTemplate {
      * @return string with class source code in JAVA format
      */
     def protected generateBody(boolean isInnerClass) '''
-        «type.comment.generateComment»
+        «type.comment.asJavadoc»
         «generateClassDeclaration(isInnerClass)» {
         	«innerClassesDeclarations»
             «enumDeclarations»
@@ -171,19 +171,7 @@ class ClassTemplate extends BaseTemplate {
     }
     '''
     
-    /**
-     * Template method which generates JAVA comments.
-     * 
-     * @param string with the comment for whole JAVA class
-     * @return string with comment in JAVA format
-     */
-    def protected generateComment(String comment) '''
-        «IF comment != null && !comment.empty»
-            /**
-            «comment»
-            **/
-        «ENDIF»
-    '''
+
     
     /**
      * Template method which generates JAVA class declaration.
@@ -202,8 +190,8 @@ class ClassTemplate extends BaseTemplate {
         ENDIF»class «type.name»«
         IF (genTO.superType != null)»«
             " extends "»«genTO.superType.importedName»«
-        ENDIF»«
-        IF (!type.implements.empty)»«
+        ENDIF»
+        «IF (!type.implements.empty)»«
             " implements "»«
             FOR type : type.implements SEPARATOR ", "»«
                 type.importedName»«
