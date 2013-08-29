@@ -25,6 +25,7 @@
         <module>iana</module>
         <module>ietf</module>
         <!-- <module>model-topology-bgp</module> -->
+        <module>l2-types</module>
     </modules>
 
     <build>
