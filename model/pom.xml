@@ -24,6 +24,7 @@
     <modules>
         <module>iana</module>
         <module>ietf</module>
+        <module>enum</module>
         <!-- <module>model-topology-bgp</module> -->
     </modules>
 
