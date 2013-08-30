@@ -15,6 +15,7 @@ import java.util.Map;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -91,6 +92,10 @@ public final class BaseYangTypes {
      */
     public static final Type BINARY_TYPE = Types.primitiveType("byte[]");
 
+    
+    public static final Type INSTANCE_IDENTIFIER = Types.typeForClass(InstanceIdentifier.class);
+    
+    
     static {
         typeMap.put("boolean", BOOLEAN_TYPE);
         typeMap.put("empty", EMPTY_TYPE);
@@ -105,6 +110,7 @@ public final class BaseYangTypes {
         typeMap.put("uint32", UINT32_TYPE);
         typeMap.put("uint64", UINT64_TYPE);
         typeMap.put("binary", BINARY_TYPE);
+        typeMap.put("instance-identifier", INSTANCE_IDENTIFIER );
     }
 
     public static final TypeProvider BASE_YANG_TYPES_PROVIDER = new TypeProvider() {

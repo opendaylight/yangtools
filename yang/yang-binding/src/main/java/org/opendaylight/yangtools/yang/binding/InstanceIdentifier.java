@@ -16,19 +16,19 @@ import java.util.List;
  *
  *
  */
-public class InstanceIdentifier <T extends DataObject> {
+public class InstanceIdentifier {
 
     
     private final List<PathArgument> path;
-    private final Class<T> targetType;
+    private final Class<? extends DataObject> targetType;
     
-    public InstanceIdentifier(Class<T> type) {
+    public InstanceIdentifier(Class<? extends DataObject> type) {
         path = Collections.emptyList();
         this.targetType = type;
     }
     
     
-    public InstanceIdentifier(List<PathArgument> path,Class<T> type) {
+    public InstanceIdentifier(List<PathArgument> path,Class<? extends DataObject> type) {
         this.path = Collections.<PathArgument>unmodifiableList(new ArrayList<>(path));
         this.targetType = type;
     }
@@ -42,7 +42,7 @@ public class InstanceIdentifier <T extends DataObject> {
         return this.path;
     }
     
-    public Class<T> getTargetType() {
+    public Class<?> getTargetType() {
         return this.targetType;
     }
     
