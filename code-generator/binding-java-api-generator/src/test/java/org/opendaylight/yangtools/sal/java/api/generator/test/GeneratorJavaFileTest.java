@@ -24,7 +24,6 @@ import javax.tools.ToolProvider;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -58,26 +57,23 @@ public class GeneratorJavaFileTest {
 
     @After
     public void cleanUp() {
-        if(testDir.exists()) {
+        if (testDir.exists()) {
             deleteTestDir(testDir);
         }
-        if(COMPILER_OUTPUT.exists()) {
+        if (COMPILER_OUTPUT.exists()) {
             deleteTestDir(COMPILER_OUTPUT);
         }
-        if(GENERATOR_OUTPUT.exists()) {
+        if (GENERATOR_OUTPUT.exists()) {
             deleteTestDir(GENERATOR_OUTPUT);
         }
     }
 
     @Test
     public void test() throws IOException {
-    	final Set<GeneratedType> types = new HashSet<GeneratedType>();
-        GeneratedType t1 = createGeneratedType(
-                "org.opendaylight.controller.gen", "Type1");
-        GeneratedType t2 = createGeneratedType(
-                "org.opendaylight.controller.gen", "Type2");
-        GeneratedType t3 = createGeneratedType(
-                "org.opendaylight.controller.gen", "Type3");
+        final Set<GeneratedType> types = new HashSet<GeneratedType>();
+        GeneratedType t1 = createGeneratedType("org.opendaylight.controller.gen", "Type1");
+        GeneratedType t2 = createGeneratedType("org.opendaylight.controller.gen", "Type2");
+        GeneratedType t3 = createGeneratedType("org.opendaylight.controller.gen", "Type3");
         types.add(t1);
         types.add(t2);
         types.add(t3);
@@ -87,11 +83,10 @@ public class GeneratorJavaFileTest {
         GeneratorJavaFile generator = new GeneratorJavaFile(types);
         generator.generateToFile(new File(PATH));
 
-        String[] files = new File(PATH + FS + "org" + FS + "opendaylight" + FS
-                + "controller" + FS + "gen").list();
+        String[] files = new File(PATH + FS + "org" + FS + "opendaylight" + FS + "controller" + FS + "gen").list();
         List<String> filesList = Arrays.asList(files);
 
-        //assertEquals(5, files.length);
+        // assertEquals(5, files.length);
         assertTrue(filesList.contains("Type1.java"));
         assertTrue(filesList.contains("Type2.java"));
         assertTrue(filesList.contains("Type3.java"));
@@ -99,7 +94,6 @@ public class GeneratorJavaFileTest {
         assertTrue(filesList.contains("Type4Builder.java"));
     }
 
-    @Ignore
     @Test
     public void compilationTest() throws Exception {
         final YangParserImpl parser = new YangParserImpl();
@@ -122,27 +116,23 @@ public class GeneratorJavaFileTest {
         generator.generateToFile(new File(GENERATOR_OUTPUT_PATH));
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        StandardJavaFileManager fileManager = compiler.getStandardFileManager(
-                null, null, null);
+        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 
         List<File> filesList = getJavaFiles(new File(GENERATOR_OUTPUT_PATH));
         File current = new File(System.getProperty("user.dir"));
         File parentPath = current.getParentFile().getParentFile();
-        File f = new File(parentPath,"yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/DataObject.java"
-        );
+        File f = new File(parentPath,
+                "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/DataObject.java");
         filesList.add(f);
 
-        Iterable<? extends JavaFileObject> compilationUnits = fileManager
-                .getJavaFileObjectsFromFiles(filesList);
-        Iterable<String> options = Arrays.asList(new String[]{"-d", COMPILER_OUTPUT_PATH});
-        boolean compiled = compiler.getTask(null, null, null, options, null,
-                compilationUnits).call();
+        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
+        Iterable<String> options = Arrays.asList(new String[] { "-d", COMPILER_OUTPUT_PATH });
+        boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
         assertTrue(compiled);
     }
 
     private GeneratedType createGeneratedType(String pkgName, String name) {
-        GeneratedTypeBuilder builder = new GeneratedTypeBuilderImpl(pkgName,
-                name);
+        GeneratedTypeBuilder builder = new GeneratedTypeBuilderImpl(pkgName, name);
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         return builder.toInstance();
     }
@@ -161,7 +151,8 @@ public class GeneratorJavaFileTest {
     /**
      * Search recursively given directory for *.java files.
      *
-     * @param directory directory to search
+     * @param directory
+     *            directory to search
      * @return List of java files found
      */
     private List<File> getJavaFiles(File directory) {
@@ -179,4 +170,3 @@ public class GeneratorJavaFileTest {
         return result;
     }
 }
-

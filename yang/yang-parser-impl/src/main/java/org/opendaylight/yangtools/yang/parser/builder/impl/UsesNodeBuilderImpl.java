@@ -56,7 +56,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private boolean dataCollected;
     private boolean parentUpdated;
 
-
     @Override
     public boolean isCopy() {
         return isCopy;
@@ -148,11 +147,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void setGroupingPath(SchemaPath groupingPath) {
-        this.groupingPath = groupingPath;
-    }
-
-    @Override
     public GroupingDefinition getGroupingDefinition() {
         return groupingDefinition;
     }
@@ -160,6 +154,9 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void setGroupingDefinition(GroupingDefinition groupingDefinition) {
         this.groupingDefinition = groupingDefinition;
+        if (groupingDefinition != null) {
+            this.groupingPath = groupingDefinition.getPath();
+        }
     }
 
     @Override
@@ -170,6 +167,9 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void setGrouping(GroupingBuilder grouping) {
         this.groupingBuilder = grouping;
+        if (groupingBuilder != null) {
+            this.groupingPath = groupingBuilder.getPath();
+        }
     }
 
     @Override

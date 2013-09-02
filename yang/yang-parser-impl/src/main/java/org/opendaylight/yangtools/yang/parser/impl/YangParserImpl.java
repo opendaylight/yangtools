@@ -272,15 +272,9 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     private Map<ModuleBuilder, Module> build(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        findUsesTargets(modules, null);
-
         // fix unresolved nodes
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
-            for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
-                final ModuleBuilder moduleBuilder = childEntry.getValue();
-                fixUnresolvedNodes(modules, moduleBuilder);
-            }
-        }
+        findUsesTargets(modules, null);
+        resolveDirtyNodes(modules);
         resolveAugments(modules);
         resolveUses(modules);
         resolveDeviations(modules);
@@ -300,16 +294,10 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     private Map<ModuleBuilder, Module> buildWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            SchemaContext context) {
-        findUsesTargets(modules, context);
-
+            final SchemaContext context) {
         // fix unresolved nodes
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
-            for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
-                final ModuleBuilder moduleBuilder = childEntry.getValue();
-                fixUnresolvedNodesWithContext(modules, moduleBuilder, context);
-            }
-        }
+        findUsesTargets(modules, context);
+        resolvedDirtyNodesWithContext(modules, context);
         resolveAugmentsWithContext(modules, context);
         resolveUsesWithContext(modules, context);
         resolveDeviationsWithContext(modules, context);
@@ -328,17 +316,27 @@ public final class YangParserImpl implements YangModelParser {
         return result;
     }
 
-    private void fixUnresolvedNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder builder) {
-        resolveDirtyNodes(modules, builder);
-        resolveIdentities(modules, builder);
-        resolveUnknownNodes(modules, builder);
+    private void resolveDirtyNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
+                final ModuleBuilder module = childEntry.getValue();
+                resolveDirtyNodes(modules, module);
+                resolveIdentities(modules, module);
+                resolveUnknownNodes(modules, module);
+            }
+        }
     }
 
-    private void fixUnresolvedNodesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder builder, final SchemaContext context) {
-        resolveDirtyNodesWithContext(modules, builder, context);
-        resolveIdentitiesWithContext(modules, builder, context);
-        resolveUnknownNodesWithContext(modules, builder, context);
+    private void resolvedDirtyNodesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final SchemaContext context) {
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
+                final ModuleBuilder module = childEntry.getValue();
+                resolveDirtyNodesWithContext(modules, module, context);
+                resolveIdentitiesWithContext(modules, module, context);
+                resolveUnknownNodesWithContext(modules, module, context);
+            }
+        }
     }
 
     /**
@@ -649,7 +647,7 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     /**
-     * Find target grouping for all uses nodes.
+     * Find and add reference of uses target grouping.
      *
      * @param modules
      *            all loaded modules
@@ -676,11 +674,9 @@ public final class YangParserImpl implements YangModelParser {
                     GroupingDefinition targetGroupingDefinition = GroupingUtils.getTargetGroupingFromContext(usesNode,
                             module, context);
                     usesNode.setGroupingDefinition(targetGroupingDefinition);
-                    usesNode.setGroupingPath(targetGroupingDefinition.getPath());
                 }
             } else {
                 usesNode.setGrouping(targetGroupingBuilder);
-                usesNode.setGroupingPath(targetGroupingBuilder.getPath());
             }
         }
     }
@@ -819,7 +815,8 @@ public final class YangParserImpl implements YangModelParser {
                             usnb.getLine());
                     for (ExtensionDefinition e : dependentModule.getExtensionSchemaNodes()) {
                         if (e.getQName().getLocalName().equals(nodeType.getLocalName())) {
-                            usnb.setNodeType(new QName(e.getQName().getNamespace(),e.getQName().getRevision() , nodeType.getPrefix(), e.getQName().getLocalName()));
+                            usnb.setNodeType(new QName(e.getQName().getNamespace(), e.getQName().getRevision(),
+                                    nodeType.getPrefix(), e.getQName().getLocalName()));
                             usnb.setExtensionDefinition(e);
                             break;
                         }

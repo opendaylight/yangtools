@@ -27,8 +27,6 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
 
     SchemaPath getGroupingPath();
 
-    void setGroupingPath(SchemaPath groupingPath);
-
     GroupingDefinition getGroupingDefinition();
 
     void setGroupingDefinition(GroupingDefinition groupingDefinition);

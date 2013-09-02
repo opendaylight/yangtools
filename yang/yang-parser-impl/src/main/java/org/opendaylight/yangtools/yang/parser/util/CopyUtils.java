@@ -413,8 +413,7 @@ public class CopyUtils {
         UsesNodeBuilder copy = new UsesNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
                 old.getGroupingName(), true);
         copy.setParent(newParent);
-        copy.setGroupingPath(old.getGroupingPath());
-        // TODO grouping vs grouping path?
+        copy.setGroupingDefinition(old.getGroupingDefinition());
         copy.setGrouping(old.getGroupingBuilder());
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
