@@ -62,26 +62,10 @@ public class TypeUtils {
         final int line = nodeToResolve.getLine();
         final TypeDefinition<?> nodeToResolveType = nodeToResolve.getType();
         final QName unknownTypeQName = nodeToResolveType.getBaseType().getQName();
-        final ModuleBuilder dependentModule = findDependentModuleBuilder(modules, module, unknownTypeQName.getPrefix(),
-                line);
+        final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, module,
+                unknownTypeQName.getPrefix(), line);
 
-        final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(nodeToResolve, dependentModule,
-                unknownTypeQName.getLocalName(), module.getName(), line);
-
-        if (nodeToResolveType instanceof ExtendedType) {
-            final ExtendedType extType = (ExtendedType) nodeToResolveType;
-            final TypeDefinitionBuilder newType = extendedTypeWithNewBaseTypeBuilder(targetTypeBuilder, extType,
-                    modules, module, nodeToResolve.getLine());
-            resolvedType = newType;
-        } else {
-            resolvedType = targetTypeBuilder;
-        }
-
-        // validate constraints
-        final TypeConstraints constraints = findConstraintsFromTypeBuilder(nodeToResolve,
-                new TypeConstraints(module.getName(), nodeToResolve.getLine()), modules, module, null);
-        constraints.validateConstraints();
-
+        resolvedType = findUnknownTypeDefinition(nodeToResolve, dependentModuleBuilder, modules, module);
         nodeToResolve.setTypedef(resolvedType);
     }
 
@@ -115,7 +99,7 @@ public class TypeUtils {
 
             if (nodeToResolveType instanceof ExtendedType) {
                 final ExtendedType extType = (ExtendedType) nodeToResolveType;
-                final TypeDefinitionBuilder newType = extendedTypeWithNewBaseType(type, extType, module,
+                final TypeDefinitionBuilder newType = extendedTypeWithNewBase(null, type, extType, modules, module,
                         nodeToResolve.getLine());
 
                 nodeToResolve.setTypedef(newType);
@@ -133,23 +117,7 @@ public class TypeUtils {
             }
 
         } else {
-            final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(nodeToResolve,
-                    dependentModuleBuilder, unknownTypeQName.getLocalName(), module.getName(), line);
-
-            if (nodeToResolveType instanceof ExtendedType) {
-                final ExtendedType extType = (ExtendedType) nodeToResolveType;
-                final TypeDefinitionBuilder newType = extendedTypeWithNewBaseTypeBuilder(targetTypeBuilder, extType,
-                        modules, module, nodeToResolve.getLine());
-                resolvedType = newType;
-            } else {
-                resolvedType = targetTypeBuilder;
-            }
-
-            // validate constraints
-            final TypeConstraints constraints = findConstraintsFromTypeBuilder(nodeToResolve, new TypeConstraints(
-                    module.getName(), nodeToResolve.getLine()), modules, module, context);
-            constraints.validateConstraints();
-
+            resolvedType = findUnknownTypeDefinition(nodeToResolve, dependentModuleBuilder, modules, module);
             nodeToResolve.setTypedef(resolvedType);
         }
     }
@@ -178,8 +146,8 @@ public class TypeUtils {
                     final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(union, dependentModule,
                             ut.getQName().getLocalName(), builder.getName(), union.getLine());
 
-                    final TypeDefinitionBuilder newType = extendedTypeWithNewBaseTypeBuilder(targetTypeBuilder,
-                            extType, modules, builder, union.getLine());
+                    final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null, extType,
+                            modules, builder, union.getLine());
 
                     union.setTypedef(newType);
                     toRemove.add(extType);
@@ -190,7 +158,7 @@ public class TypeUtils {
     }
 
     public static void resolveTypeUnionWithContext(final UnionTypeBuilder union,
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder builder,
+            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module,
             final SchemaContext context) {
 
         final List<TypeDefinition<?>> unionTypes = union.getTypes();
@@ -199,11 +167,11 @@ public class TypeUtils {
             if (unionType instanceof UnknownType) {
                 final UnknownType ut = (UnknownType) unionType;
                 final QName utQName = ut.getQName();
-                final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, builder,
+                final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, module,
                         utQName.getPrefix(), union.getLine());
 
                 if (dependentModuleBuilder == null) {
-                    Module dependentModule = findModuleFromContext(context, builder, utQName.getPrefix(),
+                    Module dependentModule = findModuleFromContext(context, module, utQName.getPrefix(),
                             union.getLine());
                     Set<TypeDefinition<?>> types = dependentModule.getTypeDefinitions();
                     TypeDefinition<?> type = findTypeByName(types, utQName.getLocalName());
@@ -211,7 +179,7 @@ public class TypeUtils {
                     toRemove.add(ut);
                 } else {
                     final TypeDefinitionBuilder resolvedType = findTypeDefinitionBuilder(union, dependentModuleBuilder,
-                            utQName.getLocalName(), builder.getName(), union.getLine());
+                            utQName.getLocalName(), module.getName(), union.getLine());
                     union.setTypedef(resolvedType);
                     toRemove.add(ut);
                 }
@@ -222,24 +190,25 @@ public class TypeUtils {
                 if (extTypeBase instanceof UnknownType) {
                     final UnknownType ut = (UnknownType) extTypeBase;
                     final QName utQName = ut.getQName();
-                    final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, builder,
+                    final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, module,
                             utQName.getPrefix(), union.getLine());
 
                     if (dependentModuleBuilder == null) {
-                        final Module dependentModule = findModuleFromContext(context, builder, utQName.getPrefix(),
+                        final Module dependentModule = findModuleFromContext(context, module, utQName.getPrefix(),
                                 union.getLine());
                         Set<TypeDefinition<?>> types = dependentModule.getTypeDefinitions();
                         TypeDefinition<?> type = findTypeByName(types, utQName.getLocalName());
-                        final TypeDefinitionBuilder newType = extendedTypeWithNewBaseType(type, extType, builder, 0);
+                        final TypeDefinitionBuilder newType = extendedTypeWithNewBase(null, type, extType, modules,
+                                module, 0);
 
                         union.setTypedef(newType);
                         toRemove.add(extType);
                     } else {
                         final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(union,
-                                dependentModuleBuilder, utQName.getLocalName(), builder.getName(), union.getLine());
+                                dependentModuleBuilder, utQName.getLocalName(), module.getName(), union.getLine());
 
-                        final TypeDefinitionBuilder newType = extendedTypeWithNewBaseTypeBuilder(targetTypeBuilder,
-                                extType, modules, builder, union.getLine());
+                        final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null, extType,
+                                modules, module, union.getLine());
 
                         union.setTypedef(newType);
                         toRemove.add(extType);
@@ -248,6 +217,46 @@ public class TypeUtils {
             }
         }
         unionTypes.removeAll(toRemove);
+    }
+
+    /**
+     * Find type definition of type of unresolved node.
+     *
+     * @param nodeToResolve
+     *            node with unresolved type
+     * @param dependentModuleBuilder
+     *            module in which type definition is present
+     * @param modules
+     *            all loaded modules
+     * @param module
+     *            current module
+     * @return TypeDefinitionBuilder of node type
+     */
+    private static TypeDefinitionBuilder findUnknownTypeDefinition(final TypeAwareBuilder nodeToResolve,
+            final ModuleBuilder dependentModuleBuilder, final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final ModuleBuilder module) {
+        final int line = nodeToResolve.getLine();
+        final TypeDefinition<?> nodeToResolveType = nodeToResolve.getType();
+        final QName unknownTypeQName = nodeToResolveType.getBaseType().getQName();
+        TypeDefinitionBuilder resolvedType = null;
+        final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(nodeToResolve,
+                dependentModuleBuilder, unknownTypeQName.getLocalName(), module.getName(), line);
+
+        if (nodeToResolveType instanceof ExtendedType) {
+            final ExtendedType extType = (ExtendedType) nodeToResolveType;
+            final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null, extType, modules,
+                    module, nodeToResolve.getLine());
+            resolvedType = newType;
+        } else {
+            resolvedType = targetTypeBuilder;
+        }
+
+        // validate constraints
+        final TypeConstraints constraints = findConstraintsFromTypeBuilder(nodeToResolve,
+                new TypeConstraints(module.getName(), nodeToResolve.getLine()), modules, module, null);
+        constraints.validateConstraints();
+
+        return resolvedType;
     }
 
     /**
@@ -291,7 +300,9 @@ public class TypeUtils {
      * Pull restriction from type and add them to constraints.
      *
      * @param type
+     *            type from which constraints will be read
      * @param constraints
+     *            constraints object to which constraints will be added
      */
     private static void mergeConstraints(final TypeDefinition<?> type, final TypeConstraints constraints) {
         if (type instanceof DecimalTypeDefinition) {
@@ -308,10 +319,13 @@ public class TypeUtils {
     }
 
     /**
-     * Create new type builder based on old type with new base type.
+     * Create new type builder based on old type with new base type. Note: only
+     * one of newBaseTypeBuilder or newBaseType can be specified.
      *
+     * @param newBaseTypeBuilder
+     *            new base type builder or null
      * @param newBaseType
-     *            new base type builder
+     *            new base type or null
      * @param oldExtendedType
      *            old type
      * @param modules
@@ -322,56 +336,30 @@ public class TypeUtils {
      *            current line in module
      * @return new type builder based on old type with new base type
      */
-    private static TypeDefinitionBuilder extendedTypeWithNewBaseTypeBuilder(final TypeDefinitionBuilder newBaseType,
-            final ExtendedType oldExtendedType, final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder module, final int line) {
-        final TypeConstraints tc = new TypeConstraints(module.getName(), line);
-        tc.addFractionDigits(oldExtendedType.getFractionDigits());
-        tc.addLengths(oldExtendedType.getLengths());
-        tc.addPatterns(oldExtendedType.getPatterns());
-        tc.addRanges(oldExtendedType.getRanges());
+    private static TypeDefinitionBuilder extendedTypeWithNewBase(final TypeDefinitionBuilder newBaseTypeBuilder,
+            final TypeDefinition<?> newBaseType, final ExtendedType oldExtendedType,
+            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module, final int line) {
+        if ((newBaseTypeBuilder == null && newBaseType == null) || (newBaseTypeBuilder != null && newBaseType != null)) {
+            throw new YangParseException(module.getName(), line,
+                    "only one of newBaseTypeBuilder or newBaseType can be specified");
+        }
 
-        final TypeConstraints constraints = findConstraintsFromTypeBuilder(newBaseType, tc, modules, module, null);
         final TypeDefinitionBuilderImpl newType = new TypeDefinitionBuilderImpl(module.getModuleName(), line,
                 oldExtendedType.getQName());
-        newType.setTypedef(newBaseType);
-        newType.setPath(oldExtendedType.getPath());
-        newType.setDescription(oldExtendedType.getDescription());
-        newType.setReference(oldExtendedType.getReference());
-        newType.setStatus(oldExtendedType.getStatus());
-        newType.setLengths(constraints.getLength());
-        newType.setPatterns(constraints.getPatterns());
-        newType.setRanges(constraints.getRange());
-        newType.setFractionDigits(constraints.getFractionDigits());
-        newType.setUnits(oldExtendedType.getUnits());
-        newType.setDefaultValue(oldExtendedType.getDefaultValue());
-        newType.setUnknownNodes(oldExtendedType.getUnknownSchemaNodes());
-        return newType;
-    }
-
-    /**
-     * Create new type builder based on old type with new base type.
-     *
-     * @param newBaseType
-     *            new base type
-     * @param oldExtendedType
-     *            old type
-     * @param modules
-     *            all loaded modules
-     * @param module
-     *            current module
-     * @param line
-     *            current line in module
-     * @return new type builder based on old type with new base type
-     */
-    private static TypeDefinitionBuilder extendedTypeWithNewBaseType(final TypeDefinition<?> newBaseType,
-            final ExtendedType oldExtendedType, final ModuleBuilder module, final int line) {
         final TypeConstraints tc = new TypeConstraints(module.getName(), line);
+        TypeConstraints constraints = null;
+        if (newBaseType == null) {
+            tc.addFractionDigits(oldExtendedType.getFractionDigits());
+            tc.addLengths(oldExtendedType.getLengths());
+            tc.addPatterns(oldExtendedType.getPatterns());
+            tc.addRanges(oldExtendedType.getRanges());
+            constraints = findConstraintsFromTypeBuilder(newBaseTypeBuilder, tc, modules, module, null);
+            newType.setTypedef(newBaseTypeBuilder);
+        } else {
+            constraints = findConstraintsFromTypeDefinition(newBaseType, tc);
+            newType.setType(newBaseType);
+        }
 
-        final TypeConstraints constraints = findConstraintsFromTypeDefinition(newBaseType, tc);
-        final TypeDefinitionBuilderImpl newType = new TypeDefinitionBuilderImpl(module.getModuleName(), line,
-                oldExtendedType.getQName());
-        newType.setType(newBaseType);
         newType.setPath(oldExtendedType.getPath());
         newType.setDescription(oldExtendedType.getDescription());
         newType.setReference(oldExtendedType.getReference());
