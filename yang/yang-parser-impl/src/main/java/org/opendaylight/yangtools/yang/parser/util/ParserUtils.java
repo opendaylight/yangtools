@@ -248,6 +248,14 @@ public final class ParserUtils {
         }
     }
 
+    /**
+     * Create new schema path of node based on parent node schema path.
+     *
+     * @param node
+     *            node to correct
+     * @param parentSchemaPath
+     *            schema path of node parent
+     */
     static void correctNodePath(final SchemaNodeBuilder node, final SchemaPath parentSchemaPath) {
         // set correct path
         List<QName> targetNodePath = new ArrayList<QName>(parentSchemaPath.getPath());
@@ -279,7 +287,7 @@ public final class ParserUtils {
      *            parent of first node in path
      * @param path
      *            path to augment target
-     * @return true if augment process succeed, false otherwise
+     * @return true if augmentation process succeed, false otherwise
      */
     public static boolean processAugmentation(final AugmentationSchemaBuilder augment, final Builder firstNodeParent,
             final List<QName> path) {
@@ -344,6 +352,15 @@ public final class ParserUtils {
         return true;
     }
 
+    /**
+     * Find node with given name in uses target.
+     *
+     * @param localName
+     *            name of node to find
+     * @param uses
+     *            uses node which target grouping should be searched
+     * @return node with given name if found, null otherwise
+     */
     private static DataSchemaNodeBuilder findNodeInUses(String localName, UsesNodeBuilder uses) {
         GroupingBuilder target = uses.getGroupingBuilder();
         for (DataSchemaNodeBuilder child : target.getChildNodeBuilders()) {
@@ -497,8 +514,8 @@ public final class ParserUtils {
      * @return builder of module where this node is defined
      */
     public static ModuleBuilder getParentModule(Builder node) {
-        if(node instanceof ModuleBuilder) {
-            return (ModuleBuilder)node;
+        if (node instanceof ModuleBuilder) {
+            return (ModuleBuilder) node;
         }
 
         Builder parent = node.getParent();

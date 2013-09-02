@@ -465,9 +465,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             if (!(parent instanceof DataNodeContainerBuilder)) {
                 throw new YangParseException(name, line, "Unresolved parent of uses '" + groupingPathStr + "'.");
             }
-            if (parent instanceof AugmentationSchemaBuilder) {
-                usesBuilder.setAugmenting(true);
-            }
             ((DataNodeContainerBuilder) parent).addUsesNode(usesBuilder);
         }
         allUsesNodes.add(usesBuilder);

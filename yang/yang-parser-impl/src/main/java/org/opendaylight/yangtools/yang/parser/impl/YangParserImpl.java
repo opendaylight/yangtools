@@ -669,7 +669,7 @@ public final class YangParserImpl implements YangModelParser {
             if (targetGroupingBuilder == null) {
                 if (context == null) {
                     throw new YangParseException(module.getName(), usesNode.getLine(), "Referenced grouping '"
-                            + usesNode.getGroupingName() + "' not found.");
+                            + usesNode.getGroupingPathAsString() + "' not found.");
                 } else {
                     GroupingDefinition targetGroupingDefinition = GroupingUtils.getTargetGroupingFromContext(usesNode,
                             module, context);
@@ -707,7 +707,7 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
 
-        // new cycle is must because in collecting data process new uses could
+        // new loop is must because in collecting data process new uses could
         // be created
         final List<UsesNodeBuilder> allModulesUses = new ArrayList<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
@@ -764,7 +764,7 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
 
-        // new cycle is must because in collecting data process new uses could
+        // new loop is must because in collecting data process new uses could
         // be created
         final List<UsesNodeBuilder> allModulesUses = new ArrayList<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {

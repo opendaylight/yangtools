@@ -41,7 +41,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private SchemaPath groupingPath;
     private GroupingDefinition groupingDefinition;
     private GroupingBuilder groupingBuilder;
-    private boolean augmenting;
     private boolean addedByUses;
     private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<AugmentationSchemaBuilder>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<SchemaNodeBuilder>();
@@ -54,7 +53,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     private final boolean isCopy;
     private boolean dataCollected;
-    private boolean parentUpdated;
 
     @Override
     public boolean isCopy() {
@@ -69,16 +67,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void setDataCollected(boolean dataCollected) {
         this.dataCollected = dataCollected;
-    }
-
-    @Override
-    public boolean isParentUpdated() {
-        return parentUpdated;
-    }
-
-    @Override
-    public void setParentUpdated(boolean parentUpdated) {
-        this.parentUpdated = parentUpdated;
     }
 
     public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
@@ -97,7 +85,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     public UsesNode build() {
         if (!isBuilt) {
             instance = new UsesNodeImpl(groupingPath);
-            instance.setAugmenting(augmenting);
             instance.setAddedByUses(addedByUses);
 
             // AUGMENTATIONS
@@ -136,7 +123,8 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void setParent(Builder parent) {
         if (!(parent instanceof DataNodeContainerBuilder)) {
-            throw new YangParseException(moduleName, line, "Unresolved parent of uses '" + groupingName + "'.");
+            throw new YangParseException(moduleName, line,
+                    "Parent of 'uses' has to be instance of DataNodeContainerBuilder, but was: '" + parent + "'.");
         }
         this.parent = (DataNodeContainerBuilder) parent;
     }
@@ -173,7 +161,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public String getGroupingName() {
+    public String getGroupingPathAsString() {
         return groupingName;
     }
 
@@ -185,16 +173,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void addAugment(final AugmentationSchemaBuilder augmentBuilder) {
         addedAugments.add(augmentBuilder);
-    }
-
-    @Override
-    public boolean isAugmenting() {
-        return augmenting;
-    }
-
-    @Override
-    public void setAugmenting(final boolean augmenting) {
-        this.augmenting = augmenting;
     }
 
     @Override
@@ -272,6 +250,8 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         final int prime = 31;
         int result = 1;
         result = prime * result + ((groupingName == null) ? 0 : groupingName.hashCode());
+        result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+        result = prime * result + ((refines == null) ? 0 : refines.hashCode());
         return result;
     }
 
@@ -289,7 +269,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
                 return false;
         } else if (!groupingName.equals(other.groupingName))
             return false;
-
         if (parent == null) {
             if (other.parent != null)
                 return false;
@@ -311,7 +290,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     public final class UsesNodeImpl implements UsesNode {
         private final SchemaPath groupingPath;
         private Set<AugmentationSchema> augmentations = Collections.emptySet();
-        private boolean augmenting;
         private boolean addedByUses;
         private Map<SchemaPath, SchemaNode> refines = Collections.emptyMap();
         private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
@@ -338,11 +316,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
         @Override
         public boolean isAugmenting() {
-            return augmenting;
-        }
-
-        private void setAugmenting(final boolean augmenting) {
-            this.augmenting = augmenting;
+            return false;
         }
 
         @Override
@@ -385,7 +359,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             int result = 1;
             result = prime * result + ((groupingPath == null) ? 0 : groupingPath.hashCode());
             result = prime * result + ((augmentations == null) ? 0 : augmentations.hashCode());
-            result = prime * result + (augmenting ? 1231 : 1237);
             return result;
         }
 
@@ -413,9 +386,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
                     return false;
                 }
             } else if (!augmentations.equals(other.augmentations)) {
-                return false;
-            }
-            if (augmenting != other.augmenting) {
                 return false;
             }
             return true;

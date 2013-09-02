@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.createSchemaPath;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +43,9 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuil
 
 public class GroupingUtils {
 
+    private GroupingUtils() {
+    }
+
     /**
      * Search given modules for grouping by name defined in uses node.
      *
@@ -59,7 +60,7 @@ public class GroupingUtils {
     public static GroupingBuilder getTargetGroupingFromModules(final UsesNodeBuilder usesBuilder,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         final int line = usesBuilder.getLine();
-        final String groupingString = usesBuilder.getGroupingName();
+        final String groupingString = usesBuilder.getGroupingPathAsString();
         String groupingPrefix;
         String groupingName;
 
@@ -130,7 +131,7 @@ public class GroupingUtils {
     public static GroupingDefinition getTargetGroupingFromContext(final UsesNodeBuilder usesBuilder,
             final ModuleBuilder module, final SchemaContext context) {
         final int line = usesBuilder.getLine();
-        String groupingString = usesBuilder.getGroupingName();
+        String groupingString = usesBuilder.getGroupingPathAsString();
         String groupingPrefix;
         String groupingName;
 
@@ -221,15 +222,28 @@ public class GroupingUtils {
         }
     }
 
+    /**
+     * Read data defined in target grouping builder, make a copy and add them to
+     * uses node builder.
+     *
+     * @param usesNode
+     *            uses node builder
+     */
     public static void collectUsesData(UsesNodeBuilder usesNode) {
-        usesNode.setTargetChildren(collectUsesChildNodes(usesNode));
-        usesNode.setTargetTypedefs(collectUsesTypedefs(usesNode));
-        usesNode.setTargetGroupings(collectUsesGroupings(usesNode));
-        usesNode.setTargetUnknownNodes(collectUsesUnknownNodes(usesNode));
+        usesNode.setTargetChildren(collectTargetChildNodes(usesNode));
+        usesNode.setTargetTypedefs(collectTargetTypedefs(usesNode));
+        usesNode.setTargetGroupings(collectTargetGroupings(usesNode));
+        usesNode.setTargetUnknownNodes(collectTargetUnknownNodes(usesNode));
         usesNode.setDataCollected(true);
     }
 
-    private static Set<DataSchemaNodeBuilder> collectUsesChildNodes(UsesNodeBuilder usesNode) {
+    /**
+     * Read child nodes defined in target grouping and make a copy of them.
+     *
+     * @param usesNode
+     * @return copy of child nodes defined in uses target grouping
+     */
+    private static Set<DataSchemaNodeBuilder> collectTargetChildNodes(UsesNodeBuilder usesNode) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         Set<DataSchemaNodeBuilder> childNodes = target.getChildNodeBuilders();
         Set<DataSchemaNodeBuilder> copies = new HashSet<>();
@@ -237,12 +251,18 @@ public class GroupingUtils {
             copies.add(CopyUtils.copy(childNode, usesNode.getParent(), true));
         }
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
-            copies.addAll(collectUsesChildNodes(targetUses));
+            copies.addAll(collectTargetChildNodes(targetUses));
         }
         return copies;
     }
 
-    private static Set<TypeDefinitionBuilder> collectUsesTypedefs(UsesNodeBuilder usesNode) {
+    /**
+     * Read typedefs defined in target grouping and make a copy of them.
+     *
+     * @param usesNode
+     * @return copy of typedefs defined in uses target grouping
+     */
+    private static Set<TypeDefinitionBuilder> collectTargetTypedefs(UsesNodeBuilder usesNode) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         Set<TypeDefinitionBuilder> typedefs = target.getTypeDefinitionBuilders();
         Set<TypeDefinitionBuilder> copies = new HashSet<>();
@@ -250,12 +270,18 @@ public class GroupingUtils {
             copies.add(CopyUtils.copy(typedef, usesNode.getParent(), true));
         }
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
-            copies.addAll(collectUsesTypedefs(targetUses));
+            copies.addAll(collectTargetTypedefs(targetUses));
         }
         return copies;
     }
 
-    private static Set<GroupingBuilder> collectUsesGroupings(UsesNodeBuilder usesNode) {
+    /**
+     * Read groupings defined in target grouping and make a copy of them.
+     *
+     * @param usesNode
+     * @return copy of groupings defined in uses target grouping
+     */
+    private static Set<GroupingBuilder> collectTargetGroupings(UsesNodeBuilder usesNode) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         Set<GroupingBuilder> groupings = target.getGroupingBuilders();
         Set<GroupingBuilder> copies = new HashSet<>();
@@ -263,12 +289,18 @@ public class GroupingUtils {
             copies.add(CopyUtils.copy(grouping, usesNode.getParent(), true));
         }
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
-            copies.addAll(collectUsesGroupings(targetUses));
+            copies.addAll(collectTargetGroupings(targetUses));
         }
         return copies;
     }
 
-    private static List<UnknownSchemaNodeBuilder> collectUsesUnknownNodes(UsesNodeBuilder usesNode) {
+    /**
+     * Read unknown nodes defined in target grouping and make a copy of them.
+     *
+     * @param usesNode
+     * @return copy of unknown nodes defined in uses target grouping
+     */
+    private static List<UnknownSchemaNodeBuilder> collectTargetUnknownNodes(UsesNodeBuilder usesNode) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         List<UnknownSchemaNodeBuilder> unknownNodes = target.getUnknownNodeBuilders();
         List<UnknownSchemaNodeBuilder> copies = new ArrayList<>();
@@ -276,17 +308,24 @@ public class GroupingUtils {
             copies.add(CopyUtils.copy(unknownNode, usesNode.getParent(), true));
         }
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
-            copies.addAll(collectUsesUnknownNodes(targetUses));
+            copies.addAll(collectTargetUnknownNodes(targetUses));
         }
         return copies;
     }
 
+    /**
+     * Read data defined in target grouping definition, make a copy and add them
+     * to uses node builder.
+     *
+     * @param usesNode
+     *            uses node builder
+     */
     public static void collectUsesDataFromContext(UsesNodeBuilder usesNode) {
         DataNodeContainerBuilder parent = usesNode.getParent();
         URI namespace = parent.getQName().getNamespace();
         Date revision = parent.getQName().getRevision();
         String prefix = parent.getQName().getPrefix();
-        String  moduleName = parent.getModuleName();
+        String moduleName = parent.getModuleName();
         int line = parent.getLine();
 
         // child nodes
@@ -317,7 +356,6 @@ public class GroupingUtils {
                     ((GroupingMember) newChild).setAddedByUses(true);
                 }
 
-                newChild.setPath(createSchemaPath(parent.getPath(), newQName));
                 newChildren.add(newChild);
             }
         }
@@ -329,7 +367,6 @@ public class GroupingUtils {
             QName newQName = new QName(namespace, revision, prefix, g.getQName().getLocalName());
             GroupingBuilder newGrouping = CopyUtils.createGrouping(g, newQName, moduleName, line);
             newGrouping.setAddedByUses(true);
-            newGrouping.setPath(createSchemaPath(parent.getPath(), newQName));
             newGroupings.add(newGrouping);
         }
         usesNode.setTargetGroupings(newGroupings);
@@ -340,7 +377,6 @@ public class GroupingUtils {
             QName newQName = new QName(namespace, revision, prefix, td.getQName().getLocalName());
             TypeDefinitionBuilder newType = CopyUtils.createTypedef((ExtendedType) td, newQName, moduleName, line);
             newType.setAddedByUses(true);
-            newType.setPath(createSchemaPath(parent.getPath(), newQName));
             newTypedefs.add(newType);
         }
         usesNode.setTargetTypedefs(newTypedefs);
@@ -351,7 +387,6 @@ public class GroupingUtils {
             QName newQName = new QName(namespace, revision, prefix, un.getQName().getLocalName());
             UnknownSchemaNodeBuilder newNode = CopyUtils.createUnknownSchemaNode(un, newQName, moduleName, line);
             newNode.setAddedByUses(true);
-            newNode.setPath(createSchemaPath(parent.getPath(), newQName));
             newUnknownNodes.add(newNode);
         }
         usesNode.setTargetUnknownNodes(newUnknownNodes);
@@ -359,6 +394,11 @@ public class GroupingUtils {
         usesNode.setDataCollected(true);
     }
 
+    /**
+     * Fix schema path of all nodes which were defined by this usesNode.
+     *
+     * @param usesNode
+     */
     public static void fixUsesNodesPath(UsesNodeBuilder usesNode) {
         DataNodeContainerBuilder parent = usesNode.getParent();
 

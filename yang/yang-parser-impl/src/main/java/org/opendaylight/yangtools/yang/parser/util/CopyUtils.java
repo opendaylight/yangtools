@@ -54,6 +54,9 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UsesNodeBuilderImpl;
 
 public class CopyUtils {
 
+    private CopyUtils() {
+    }
+
     /**
      * Create copy of DataSchemaNodeBuilder with new parent. If updateQName is
      * true, qname of node will be corrected based on new parent.
@@ -411,11 +414,10 @@ public class CopyUtils {
 
     static UsesNodeBuilder copyUses(UsesNodeBuilder old, Builder newParent) {
         UsesNodeBuilder copy = new UsesNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
-                old.getGroupingName(), true);
+                old.getGroupingPathAsString(), true);
         copy.setParent(newParent);
         copy.setGroupingDefinition(old.getGroupingDefinition());
         copy.setGrouping(old.getGroupingBuilder());
-        copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.getAugmentations().addAll(old.getAugmentations());
         copy.getRefineNodes().addAll(old.getRefineNodes());
