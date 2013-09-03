@@ -25,6 +25,10 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
+import java.io.ObjectOutputStream.PutField
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
 
 /**
  * The Schema Context Util contains support methods for searching through Schema Context modules for specified schema
@@ -33,9 +37,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  *
  * @author Lukas Sedlak <lsedlak@cisco.com>
  */
-public final class SchemaContextUtil {
+public  class SchemaContextUtil {
 
-    private SchemaContextUtil() {
+    private new() {
     }
 
     /**
@@ -55,19 +59,16 @@ public final class SchemaContextUtil {
      * @return DataSchemaNode from the end of the Schema Path or
      *         <code>null</code> if the Node is not present.
      */
-    public static DataSchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
+    public static def SchemaNode findDataSchemaNode( SchemaContext context,  SchemaPath schemaPath) {
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
         if (schemaPath == null) {
             throw new IllegalArgumentException("Schema Path reference cannot be NULL");
         }
-
-        final Module module = resolveModuleFromSchemaPath(context, schemaPath);
-        final Queue<QName> prefixedPath = new LinkedList<>(schemaPath.getPath());
-
-        if ((module != null) && (prefixedPath != null)) {
-            return findSchemaNodeForGivenPath(context, module, prefixedPath);
+        val prefixedPath = (schemaPath.getPath());
+        if (prefixedPath != null) {
+            return findNodeInSchemaContext(context,prefixedPath);
         }
         return null;
     }
@@ -96,8 +97,8 @@ public final class SchemaContextUtil {
      * @return Returns Data Schema Node for specified Schema Context for given Non-conditional Revision Aware XPath,
      * or <code>null</code> if the DataSchemaNode is not present in Schema Context.
      */
-    public static DataSchemaNode findDataSchemaNode(final SchemaContext context, final Module module,
-            final RevisionAwareXPath nonCondXPath) {
+    public static def SchemaNode findDataSchemaNode( SchemaContext context,  Module module,
+             RevisionAwareXPath nonCondXPath) {
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
@@ -108,16 +109,15 @@ public final class SchemaContextUtil {
             throw new IllegalArgumentException("Non Conditional Revision Aware XPath cannot be NULL!");
         }
 
-        final String strXPath = nonCondXPath.toString();
+         val  strXPath = nonCondXPath.toString();
         if (strXPath != null) {
             if (strXPath.contains("[")) {
                 throw new IllegalArgumentException("Revision Aware XPath cannot contains condition!");
             }
             if (nonCondXPath.isAbsolute()) {
-                final Queue<QName> qnamedPath = xpathToQNamePath(context, module, strXPath);
+                 val qnamedPath = xpathToQNamePath(context, module, strXPath);
                 if (qnamedPath != null) {
-                    final DataSchemaNode dataNode = findSchemaNodeForGivenPath(context, module, qnamedPath);
-                    return dataNode;
+                    return findNodeInSchemaContext(context,qnamedPath);
                 }
             }
         }
@@ -157,8 +157,8 @@ public final class SchemaContextUtil {
      * @return DataSchemaNode if is present in specified Schema Context for given relative Revision Aware XPath,
      * otherwise will return <code>null</code>.
      */
-    public static DataSchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
-            final SchemaNode actualSchemaNode, final RevisionAwareXPath relativeXPath) {
+    public static def SchemaNode findDataSchemaNodeForRelativeXPath( SchemaContext context,  Module module,
+             SchemaNode actualSchemaNode,  RevisionAwareXPath relativeXPath) {
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
@@ -176,50 +176,14 @@ public final class SchemaContextUtil {
                     + "for non relative Revision Aware XPath use findDataSchemaNode method!");
         }
 
-        final SchemaPath actualNodePath = actualSchemaNode.getPath();
+         val actualNodePath = actualSchemaNode.getPath();
         if (actualNodePath != null) {
-            final Queue<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
+             val qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
 
             if (qnamePath != null) {
-                final DataSchemaNode dataNode = findSchemaNodeForGivenPath(context, module, qnamePath);
-                return dataNode;
+                return findNodeInSchemaContext(context,qnamePath);
             }
         }
-        return null;
-    }
-
-    /**
-     * Retrieve information from Schema Path and returns the module reference to which Schema Node belongs. The
-     * search for correct Module is based on namespace within the last item in Schema Path. If schema context
-     * contains module with namespace specified in last item of Schema Path, then operation will returns Module
-     * reference, otherwise returns <code>null</code>
-     * <br>
-     * If Schema Context or Schema Node contains <code>null</code> references the method will throw IllegalArgumentException
-     *
-     * @throws IllegalArgumentException
-     *
-     * @param context Schema Context
-     * @param schemaPath Schema Path
-     * @return Module reference for given Schema Path if module is present in Schema Context,
-     * otherwise returns <code>null</code>
-     */
-    private static Module resolveModuleFromSchemaPath(final SchemaContext context, final SchemaPath schemaPath) {
-        if (context == null) {
-            throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
-        }
-        if (schemaPath == null) {
-            throw new IllegalArgumentException("Schema Path reference cannot be NULL");
-        }
-
-        final List<QName> path = schemaPath.getPath();
-        if (!path.isEmpty()) {
-            final QName qname = path.get(path.size() - 1);
-
-            if ((qname != null) && (qname.getNamespace() != null)) {
-                return context.findModuleByNamespace(qname.getNamespace());
-            }
-        }
-
         return null;
     }
 
@@ -236,7 +200,7 @@ public final class SchemaContextUtil {
      * @return Yang Module for specified Schema Context and Schema Node, if Schema Node is NOT present,
      * the method will returns <code>null</code>
      */
-    public static Module findParentModule(final SchemaContext context, final SchemaNode schemaNode) {
+    public static def Module findParentModule( SchemaContext context,  SchemaNode schemaNode) {
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
@@ -244,18 +208,18 @@ public final class SchemaContextUtil {
             throw new IllegalArgumentException("Schema Node cannot be NULL!");
         }
 
-        final SchemaPath schemaPath = schemaNode.getPath();
+        val schemaPath = schemaNode.getPath();
         if (schemaPath == null) {
             throw new IllegalStateException("Schema Path for Schema Node is not "
                     + "set properly (Schema Path is NULL)");
         }
-        final List<QName> qnamedPath = schemaPath.getPath();
+        val qnamedPath = schemaPath.getPath();
         if (qnamedPath == null || qnamedPath.isEmpty()) {
             throw new IllegalStateException("Schema Path contains invalid state of path parts."
                     + "The Schema Path MUST contain at least ONE QName which defines namespace and Local name"
                     + "of path.");
         }
-        final QName qname = qnamedPath.get(qnamedPath.size() - 1);
+        val qname = qnamedPath.get(qnamedPath.size() - 1);
         return context.findModuleByNamespace(qname.getNamespace());
     }
 
@@ -276,8 +240,8 @@ public final class SchemaContextUtil {
      * @return DataSchemaNode if is present in Module(s) for specified Schema Context and given QNamed Path,
      * otherwise will return <code>null</code>.
      */
-    private static DataSchemaNode findSchemaNodeForGivenPath(final SchemaContext context, final Module module,
-            final Queue<QName> qnamedPath) {
+    private static def SchemaNode findSchemaNodeForGivenPath( SchemaContext context,  Module module,
+             Queue<QName> qnamedPath) {
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
@@ -293,35 +257,41 @@ public final class SchemaContextUtil {
                     + "of path.");
         }
 
-        DataNodeContainer nextNode = module;
-        final URI moduleNamespace = module.getNamespace();
+        var DataNodeContainer nextNode = module;
+        val moduleNamespace = module.getNamespace();
 
-        QName childNodeQName;
-        DataSchemaNode schemaNode = null;
+        var QName childNodeQName;
+        var SchemaNode schemaNode = null;
         while ((nextNode != null) && !qnamedPath.isEmpty()) {
             childNodeQName = qnamedPath.peek();
             if (childNodeQName != null) {
-                final URI childNodeNamespace = childNodeQName.getNamespace();
+                val URI childNodeNamespace = childNodeQName.getNamespace();
 
                 schemaNode = nextNode.getDataChildByName(childNodeQName.getLocalName());
+                if(schemaNode == null && nextNode instanceof Module) {
+                    schemaNode = (nextNode as Module).getNotificationByName(childNodeQName);
+                }
+                if(schemaNode == null && nextNode instanceof Module) {
+                    
+                }
                 if (schemaNode != null) {
                     if (schemaNode instanceof ContainerSchemaNode) {
-                        nextNode = (ContainerSchemaNode) schemaNode;
+                        nextNode = schemaNode as ContainerSchemaNode;
                     } else if (schemaNode instanceof ListSchemaNode) {
-                        nextNode = (ListSchemaNode) schemaNode;
+                        nextNode = schemaNode as ListSchemaNode;
                     } else if (schemaNode instanceof ChoiceNode) {
-                        final ChoiceNode choice = (ChoiceNode) schemaNode;
+                        val choice =  schemaNode as ChoiceNode;
                         qnamedPath.poll();
                         if (!qnamedPath.isEmpty()) {
                             childNodeQName = qnamedPath.peek();
                             nextNode = choice.getCaseNodeByName(childNodeQName);
-                            schemaNode = (DataSchemaNode) nextNode;
+                            schemaNode = nextNode as DataSchemaNode;
                         }
                     } else {
                         nextNode = null;
                     }
                 } else if (!childNodeNamespace.equals(moduleNamespace)) {
-                    final Module nextModule = context.findModuleByNamespace(childNodeNamespace);
+                    val Module nextModule = context.findModuleByNamespace(childNodeNamespace);
                     schemaNode = findSchemaNodeForGivenPath(context, nextModule, qnamedPath);
                     return schemaNode;
                 }
@@ -329,6 +299,107 @@ public final class SchemaContextUtil {
             }
         }
         return schemaNode;
+    }
+    
+    
+    private static def SchemaNode findNodeInSchemaContext(SchemaContext context, List<QName> path) {
+        val current = path.get(0);
+        val module = context.findModuleByNamespace(current.namespace);
+        if(module == null) return null;
+        return findNodeInModule(module,path);
+    }
+    
+    private static def SchemaNode findNodeInModule(Module module, List<QName> path) {
+        val current = path.get(0);
+        var SchemaNode node = module.getDataChildByName(current);
+        if (node != null) return findNode(node as DataSchemaNode,path.nextLevel);
+        node = module.getRpcByName(current);
+        if (node != null) return findNodeInRpc(node as RpcDefinition,path.nextLevel)
+        node = module.getNotificationByName(current);
+        if (node != null) return findNodeInNotification(node as NotificationDefinition,path.nextLevel)
+        return null
+    }
+     
+    private static def SchemaNode findNodeInRpc(RpcDefinition rpc,List<QName> path) {
+        if(path.empty) return rpc;
+        val current = path.get(0);
+        switch (current.localName) {
+            case "input": return findNode(rpc.input,path.nextLevel)
+            case "output": return  findNode(rpc.output,path.nextLevel)
+        }
+        return null
+    }
+    
+    private static def SchemaNode findNodeInNotification(NotificationDefinition rpc,List<QName> path) {
+        if(path.empty) return rpc;
+        val current = path.get(0);
+        val node = rpc.getDataChildByName(current)
+        if(node != null) return findNode(node,path.nextLevel)
+        return null
+    }
+    
+    private static dispatch def SchemaNode findNode(ChoiceNode parent,List<QName> path) {
+        if(path.empty) return parent;
+        val current = path.get(0);
+        val node = parent.getCaseNodeByName(current)
+        if (node != null) return findNodeInCase(node,path.nextLevel)
+        return null
+    }
+    
+    private static dispatch def SchemaNode findNode(ContainerSchemaNode parent,List<QName> path) {
+        if(path.empty) return parent;
+         val current = path.get(0);
+        val node = parent.getDataChildByName(current)
+        if (node != null) return findNode(node,path.nextLevel)
+        return null
+    }
+    
+    private static dispatch def SchemaNode findNode(ListSchemaNode parent,List<QName> path) {
+        if(path.empty) return parent;
+         val current = path.get(0);
+        val node = parent.getDataChildByName(current)
+        if (node != null) return findNode(node,path.nextLevel)
+        return null
+    }
+    
+    private static dispatch def SchemaNode findNode(DataSchemaNode parent,List<QName> path){
+        if(path.empty) {
+            return parent
+        } else {
+            throw new IllegalArgumentException("Path nesting violation");
+        }
+    }
+    
+    public static  def SchemaNode findNodeInCase(ChoiceCaseNode parent,List<QName> path) {
+        if(path.empty) return parent;
+         val current = path.get(0);
+        val node = parent.getDataChildByName(current)
+        if (node != null) return findNode(node,path.nextLevel)
+        return null
+    }
+    
+     
+    public static def RpcDefinition getRpcByName(Module module, QName name) {
+        for(notification : module.rpcs) {
+            if(notification.QName == name) {
+                return notification;
+            }
+        }
+        return null;
+    }
+    
+    
+    private static def nextLevel(List<QName> path){
+        return path.subList(1,path.size)
+    }
+    
+    public static def NotificationDefinition getNotificationByName(Module module, QName name) {
+        for(notification : module.notifications) {
+            if(notification.QName == name) {
+                return notification;
+            }
+        }
+        return null;
     }
 
     /**
@@ -345,8 +416,8 @@ public final class SchemaContextUtil {
      * @param xpath XPath String
      * @return
      */
-    private static Queue<QName> xpathToQNamePath(final SchemaContext context, final Module parentModule,
-            final String xpath) {
+    private static def xpathToQNamePath( SchemaContext context,  Module parentModule,
+             String xpath) {
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
@@ -357,11 +428,11 @@ public final class SchemaContextUtil {
             throw new IllegalArgumentException("XPath string reference cannot be NULL!");
         }
 
-        final Queue<QName> path = new LinkedList<>();
-        final String[] prefixedPath = xpath.split("/");
-        for (int i = 0; i < prefixedPath.length; ++i) {
-            if (!prefixedPath[i].isEmpty()) {
-                path.add(stringPathPartToQName(context, parentModule, prefixedPath[i]));
+        val path = new LinkedList<QName>();
+        val String[] prefixedPath = xpath.split("/");
+        for (pathComponent : prefixedPath) {
+            if (!pathComponent.isEmpty()) {
+                path.add(stringPathPartToQName(context, parentModule, pathComponent));
             }
         }
         return path;
@@ -387,8 +458,8 @@ public final class SchemaContextUtil {
      * @param prefixedPathPart Prefixed Path Part string
      * @return QName from prefixed Path Part String.
      */
-    private static QName stringPathPartToQName(final SchemaContext context, final Module parentModule,
-            final String prefixedPathPart) {
+    private static def QName stringPathPartToQName( SchemaContext context,  Module parentModule,
+             String prefixedPathPart) {
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
@@ -400,10 +471,10 @@ public final class SchemaContextUtil {
         }
 
         if (prefixedPathPart.contains(":")) {
-            final String[] prefixedName = prefixedPathPart.split(":");
-            final Module module = resolveModuleForPrefix(context, parentModule, prefixedName[0]);
+             val String[] prefixedName = prefixedPathPart.split(":");
+             val module = resolveModuleForPrefix(context, parentModule, prefixedName.get(0));
             if (module != null) {
-                return new QName(module.getNamespace(), module.getRevision(), prefixedName[1]);
+                return new QName(module.getNamespace(), module.getRevision(), prefixedName.get(1));
             }
         } else {
             return new QName(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
@@ -430,7 +501,7 @@ public final class SchemaContextUtil {
      * @param prefix Module Prefix
      * @return Module for given prefix in specified Schema Context if is present, otherwise returns <code>null</code>
      */
-    private static Module resolveModuleForPrefix(final SchemaContext context, final Module module, final String prefix) {
+    private static def Module resolveModuleForPrefix( SchemaContext context,  Module module,  String prefix) {
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
@@ -445,8 +516,8 @@ public final class SchemaContextUtil {
             return module;
         }
 
-        final Set<ModuleImport> imports = module.getImports();
-        for (final ModuleImport mi : imports) {
+        val imports = module.getImports();
+        for ( ModuleImport mi : imports) {
             if (prefix.equals(mi.getPrefix())) {
                 return context.findModuleByName(mi.getModuleName(), mi.getRevision());
             }
@@ -463,9 +534,9 @@ public final class SchemaContextUtil {
      * @param leafrefSchemaPath Schema Path for Leafref
      * @return
      */
-    private static Queue<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
-            final RevisionAwareXPath relativeXPath, final SchemaNode leafrefParentNode) {
-        final Queue<QName> absolutePath = new LinkedList<>();
+    private static def resolveRelativeXPath( SchemaContext context,  Module module,
+             RevisionAwareXPath relativeXPath,  SchemaNode leafrefParentNode) {
+
         if (context == null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
@@ -482,24 +553,22 @@ public final class SchemaContextUtil {
         if (leafrefParentNode.getPath() == null) {
             throw new IllegalArgumentException("Schema Path reference for Leafref cannot be NULL!");
         }
-
-        final String strXPath = relativeXPath.toString();
+        val absolutePath = new LinkedList<QName>();
+        val String strXPath = relativeXPath.toString();
         if (strXPath != null) {
-            final String[] xpaths = strXPath.split("/");
+            val String[] xpaths = strXPath.split("/");
             if (xpaths != null) {
-                int colCount = 0;
-                while (xpaths[colCount].contains("..")) {
-                    ++colCount;
+                var int colCount = 0;
+                while (xpaths.get(colCount).contains("..")) {
+                    colCount = colCount+ 1;
                 }
-                final List<QName> path = leafrefParentNode.getPath().getPath();
+                val path = leafrefParentNode.getPath().getPath();
                 if (path != null) {
-                    int lenght = path.size() - colCount;
-                    for (int i = 0; i < lenght; ++i) {
-                        absolutePath.add(path.get(i));
-                    }
-                    for (int i = colCount; i < xpaths.length; ++i) {
-                        absolutePath.add(stringPathPartToQName(context, module, xpaths[i]));
-                    }
+                    val int lenght = path.size() - colCount;
+                    absolutePath.addAll(path.subList(0,lenght));
+                    absolutePath.addAll(
+                        xpaths.subList(colCount,xpaths.length).map[stringPathPartToQName(context, module,it)]
+                    )
                 }
             }
         }

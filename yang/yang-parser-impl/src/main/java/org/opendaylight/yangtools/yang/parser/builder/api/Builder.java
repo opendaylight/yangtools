@@ -77,4 +77,8 @@ public interface Builder {
      */
     Object build();
 
+    
+    public interface Rebuildable<T extends Builder> {
+        T toBuilder();
+    }
 }

@@ -365,7 +365,7 @@ public final class TypeProviderImpl implements TypeProvider {
             } else {
                 final Module module = findParentModule(schemaContext, parentNode);
                 if (module != null) {
-                    final DataSchemaNode dataNode;
+                    final SchemaNode dataNode;
                     if (xpath.isAbsolute()) {
                         dataNode = findDataSchemaNode(schemaContext, module, xpath);
                     } else {
@@ -398,7 +398,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *         <li>false - other cases</li>
      *         </ul>
      */
-    private boolean leafContainsEnumDefinition(final DataSchemaNode dataNode) {
+    private boolean leafContainsEnumDefinition(final SchemaNode dataNode) {
         if (dataNode instanceof LeafSchemaNode) {
             final LeafSchemaNode leaf = (LeafSchemaNode) dataNode;
             if (leaf.getType() instanceof EnumTypeDefinition) {
@@ -422,7 +422,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *         <li>false - other cases</li>
      *         </ul>
      */
-    private boolean leafListContainsEnumDefinition(final DataSchemaNode dataNode) {
+    private boolean leafListContainsEnumDefinition(final SchemaNode dataNode) {
         if (dataNode instanceof LeafListSchemaNode) {
             final LeafListSchemaNode leafList = (LeafListSchemaNode) dataNode;
             if (leafList.getType() instanceof EnumTypeDefinition) {
@@ -516,7 +516,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *            contains information about YANG type
      * @return JAVA <code>Type</code> representation of <code>dataNode</code>
      */
-    private Type resolveTypeFromDataSchemaNode(final DataSchemaNode dataNode) {
+    private Type resolveTypeFromDataSchemaNode(final SchemaNode dataNode) {
         Type returnType = null;
         if (dataNode != null) {
             if (dataNode instanceof LeafSchemaNode) {
