@@ -788,7 +788,15 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         return builder;
     }
+    
+    public Set<RpcDefinitionBuilder> getRpcs() {
+        return addedRpcs;
+    }
 
+    public Set<NotificationBuilder> getNotifications() {
+        return addedNotifications;
+    }
+    
     @Override
     public String toString() {
         return "module " + name;
