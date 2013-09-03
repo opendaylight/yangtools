@@ -56,7 +56,7 @@ public class GroupingDefinitionDependencySort {
      *             if <code>groupingDefinitions</code>
      * 
      */
-    public static List<GroupingDefinition> sort(final Set<GroupingDefinition> groupingDefinitions) {
+    public List<GroupingDefinition> sort(final Set<GroupingDefinition> groupingDefinitions) {
         if (groupingDefinitions == null) {
             throw new IllegalArgumentException("Set of Type Definitions " + "cannot be NULL!");
         }
@@ -90,7 +90,7 @@ public class GroupingDefinitionDependencySort {
      * 
      * @return set of nodes where every one contains wrapped grouping definition
      */
-    private static Set<Node> groupingDefinitionsToNodes(final Set<GroupingDefinition> groupingDefinitions) {
+    private Set<Node> groupingDefinitionsToNodes(final Set<GroupingDefinition> groupingDefinitions) {
         final Map<SchemaPath, Node> nodeMap = Maps.newHashMap();
         final Set<Node> resultNodes = Sets.newHashSet();
 
@@ -113,8 +113,6 @@ public class GroupingDefinitionDependencySort {
                     if (nodeTo != null) {
                         nodeWrappedType.addEdge(nodeTo);
                     }
-                
-
                 }
             }
         }
@@ -132,7 +130,7 @@ public class GroupingDefinitionDependencySort {
      *            data node container which can contain some uses of grouping
      * @return set of uses nodes which were find in <code>container</code>.
      */
-    private static Set<UsesNode> getAllUsesNodes(DataNodeContainer container) {
+    private Set<UsesNode> getAllUsesNodes(DataNodeContainer container) {
         Set<UsesNode> ret = new HashSet<>();
         ret.addAll(container.getUses());
 
@@ -149,12 +147,9 @@ public class GroupingDefinitionDependencySort {
                 for (ChoiceCaseNode choiceCaseNode : cases) {
                     ret.addAll(getAllUsesNodes(choiceCaseNode));
                 }
-
             }
         }
-
         return ret;
-
     }
 
 }

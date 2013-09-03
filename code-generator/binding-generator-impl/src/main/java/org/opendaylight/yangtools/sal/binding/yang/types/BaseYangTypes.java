@@ -96,6 +96,13 @@ public final class BaseYangTypes {
     public static final Type INSTANCE_IDENTIFIER = Types.typeForClass(InstanceIdentifier.class);
     
     
+    /**
+     * It is undesirable to create instance of this class.
+     */
+    private BaseYangTypes() {
+
+    }
+
     static {
         typeMap.put("boolean", BOOLEAN_TYPE);
         typeMap.put("empty", EMPTY_TYPE);
@@ -117,7 +124,7 @@ public final class BaseYangTypes {
         /**
          * Searches <code>Type</code> value to which is YANG <code>type</code>
          * mapped.
-         *
+         * 
          * @param type
          *            string with YANG type name
          * @return java <code>Type</code> representation of <code>type</code>
@@ -130,12 +137,12 @@ public final class BaseYangTypes {
         /**
          * Searches <code>Type</code> value to which is YANG <code>type</code>
          * mapped.
-         *
+         * 
          * @param type
          *            type definition representation of YANG type
          * @return java <code>Type</code> representation of <code>type</code>.
-         *          If <code>type</code> isn't found then <code>null</code> is
-         *          returned.
+         *         If <code>type</code> isn't found then <code>null</code> is
+         *         returned.
          */
         @Override
         public Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode) {
