@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
  *
@@ -7,17 +8,12 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
-import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
-import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -63,6 +59,10 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import static com.google.common.base.Preconditions.*;
 import static extension org.opendaylight.yangtools.binding.generator.util.Types.*;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
+import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
+
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -738,8 +738,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val List<Type> genTypes = new ArrayList();
         val basePackageName = moduleNamespaceToPackageName(module);
         val Set<GroupingDefinition> groupings = module.groupings;
-        val GroupingDefinitionDependencySort groupingSort = new GroupingDefinitionDependencySort();
-        val List<GroupingDefinition> groupingsSortedByDependencies = groupingSort.sort(groupings);
+        val List<GroupingDefinition> groupingsSortedByDependencies = new GroupingDefinitionDependencySort().sort(groupings);
 
         for (grouping : groupingsSortedByDependencies) {
             val genType = groupingToGenType(basePackageName, grouping);
@@ -873,38 +872,37 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if target path of <code>augSchema</code> equals null</li>
      *             </ul>
      */
-    private def List<Type> augmentationToGenTypes( String augmentPackageName, AugmentationSchema augSchema) {
+    private def List<Type> augmentationToGenTypes(String augmentPackageName, AugmentationSchema augSchema) {
         checkArgument(augmentPackageName !== null,"Package Name cannot be NULL.");
         checkArgument(augSchema !== null,"Augmentation Schema cannot be NULL.");
         checkState(augSchema.targetPath !== null,"Augmentation Schema does not contain Target Path (Target Path is NULL).");
-
         val List<Type> genTypes = new ArrayList();
-
         // EVERY augmented interface will extends Augmentation<T> interface
         // and DataObject interface!!!
         val targetPath = augSchema.targetPath;
         val targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
-        val targetType = yangToJavaMapping.get(targetSchemaNode.path);
-        if ((targetSchemaNode !== null) && (targetSchemaNode.QName !== null)
-                && (targetSchemaNode.QName.localName !== null)) {
-            
-            val targetPackageName = targetType.packageName;
-            val targetSchemaNodeName = targetType.name;
-            
-            
+        var targetType = yangToJavaMapping.get(targetSchemaNode.path);
+        if(targetType == null) {
+            // FIXME: augmentation should be added as last, all types should already be generated
+            // and have assigned Java Types,
+            val targetModule = findParentModule(schemaContext, targetSchemaNode);
+            val targetBasePackage = moduleNamespaceToPackageName(targetModule);
+            val typePackage = packageNameForGeneratedType(targetBasePackage, targetSchemaNode.getPath());
+            val targetSchemaNodeName = targetSchemaNode.getQName().getLocalName();
+            val typeName = parseToClassName(targetSchemaNodeName);
+            targetType = new ReferencedTypeImpl(typePackage,typeName);
+        }
+        if (targetSchemaNode !== null) {
             val augChildNodes = augSchema.childNodes;
-
             if (!(targetSchemaNode instanceof ChoiceNode)) {
                 val augTypeBuilder = addRawAugmentGenTypeDefinition(augmentPackageName,
                         targetType, augSchema);
                 val augType = augTypeBuilder.toInstance();
                 genTypes.add(augType);
             } else {
-                val refChoiceType = new ReferencedTypeImpl(targetPackageName,
-                        parseToClassName(targetSchemaNodeName));
                 val choiceTarget = targetSchemaNode as ChoiceNode;
                 val choiceCaseNodes = choiceTarget.cases;
-                genTypes.addAll(generateTypesFromAugmentedChoiceCases(augmentPackageName, refChoiceType,
+                genTypes.addAll(generateTypesFromAugmentedChoiceCases(augmentPackageName, targetType,
                         choiceCaseNodes));
             }
             genTypes.addAll(augmentationBodyToGenTypes(augmentPackageName, augChildNodes));
