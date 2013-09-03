@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 
 public final class Types {
     private static final Type SET_TYPE = typeForClass(Set.class);
@@ -50,6 +49,12 @@ public final class Types {
     public static final ConcreteType EXCEPTION = typeForClass(Exception.class);
 
     /**
+     * It is not desirable to create instance of this class
+     */
+    private Types() {
+    }
+
+    /**
      * Creates the instance of type
      * {@link org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
      * ConcreteType} which represents JAVA <code>void</code> type.
@@ -73,7 +78,7 @@ public final class Types {
      * @return <code>ConcreteType</code> instance which represents programatic
      *         construction with primitive JAVA type
      */
-    public static final Type primitiveType(final String primitiveType) {
+    public static Type primitiveType(final String primitiveType) {
         return new ConcreteTypeImpl("", primitiveType);
     }
 
@@ -212,7 +217,7 @@ public final class Types {
      * Represents concrete JAVA type.
      * 
      */
-    private static class ConcreteTypeImpl extends AbstractBaseType implements ConcreteType {
+    private static final class ConcreteTypeImpl extends AbstractBaseType implements ConcreteType {
         /**
          * Creates instance of this class with package <code>pkName</code> and
          * with the type name <code>name</code>.

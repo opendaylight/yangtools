@@ -32,21 +32,21 @@ public interface EnumBuilder extends Type {
      *            Name of Annotation Type
      * @return <code>new</code> instance of Annotation Type Builder.
      */
-    public AnnotationTypeBuilder addAnnotation(final String packageName, final String name);
+    AnnotationTypeBuilder addAnnotation(final String packageName, final String name);
 
     /**
      * 
      * @param name
      * @param value
      */
-    public void addValue(final String name, final Integer value);
+    void addValue(final String name, final Integer value);
 
     /**
      * 
      * @param definingType
      * @return
      */
-    public Enumeration toInstance(final Type definingType);
+    Enumeration toInstance(final Type definingType);
 
     /**
      * Updates this builder with data from <code>enumTypeDef</code>.
@@ -56,6 +56,6 @@ public interface EnumBuilder extends Type {
      *            enum type definition as source of enum data for
      *            <code>enumBuilder</code>
      */
-    public void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef);
+    void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef);
 
 }

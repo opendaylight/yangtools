@@ -76,23 +76,30 @@ public class AbstractBaseType implements Type {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Type other = (Type) obj;
         if (name == null) {
-            if (other.getName() != null)
+            if (other.getName() != null) {
                 return false;
-        } else if (!name.equals(other.getName()))
+            }
+        } else if (!name.equals(other.getName())) {
             return false;
+        }
         if (packageName == null) {
-            if (other.getPackageName() != null)
+            if (other.getPackageName() != null) {
                 return false;
-        } else if (!packageName.equals(other.getPackageName()))
+            }
+        } else if (!packageName.equals(other.getPackageName())) {
             return false;
+        }
         return true;
     }
 

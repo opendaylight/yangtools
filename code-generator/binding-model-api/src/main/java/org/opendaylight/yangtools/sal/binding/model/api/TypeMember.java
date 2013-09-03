@@ -13,50 +13,50 @@ public interface TypeMember {
 
     /**
      * Returns List of annotation definitions associated with generated type.
-     *
+     * 
      * @return List of annotation definitions associated with generated type.
      */
-    public List<AnnotationType> getAnnotations();
+    List<AnnotationType> getAnnotations();
 
     /**
      * Returns the name of method.
-     *
+     * 
      * @return the name of method.
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns comment string associated with method.
-     *
+     * 
      * @return comment string associated with method.
      */
-    public String getComment();
+    String getComment();
 
     /**
      * Returns the Type that declares method.
-     *
+     * 
      * @return the Type that declares method.
      */
-    public Type getDefiningType();
+    Type getDefiningType();
 
     /**
      * Returns the access modifier of method.
-     *
+     * 
      * @return the access modifier of method.
      */
-    public AccessModifier getAccessModifier();
+    AccessModifier getAccessModifier();
 
     /**
      * Returns the returning Type that methods returns.
-     *
+     * 
      * @return the returning Type that methods returns.
      */
-    public Type getReturnType();
+    Type getReturnType();
 
     /**
      * Returns <code>true</code> if method is declared as final.
-     *
+     * 
      * @return <code>true</code> if method is declared as final.
      */
-    public boolean isFinal();
+    boolean isFinal();
 }

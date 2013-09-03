@@ -25,7 +25,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
      * @return list of <code>Bit</code> type instastances with data about all
      *         individual bits of <code>bits</code> YANG built-in type
      */
-    public List<Bit> getBits();
+    List<Bit> getBits();
 
     /**
      * 
@@ -39,13 +39,13 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
          * 
          * @return The position value of bit in range from 0 to 4294967295.
          */
-        public Long getPosition();
+        Long getPosition();
 
         /**
          * Returns the name of the concrete bit.
          * 
          * @return string with the name of the concrete bit
          */
-        public String getName();
+        String getName();
     }
 }

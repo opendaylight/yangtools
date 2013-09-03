@@ -9,5 +9,5 @@ package org.opendaylight.yangtools.sal.binding.generator.spi;
 
 public interface BindingGeneratorServiceProvider {
 
-    public void registerTypeProvider(final TypeProvider provider);
+    void registerTypeProvider(final TypeProvider provider);
 }

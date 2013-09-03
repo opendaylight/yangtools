@@ -1,10 +1,9 @@
 package org.opendaylight.yangtools.sal.binding.model.api.type.builder;
 
 import org.opendaylight.yangtools.sal.binding.model.api.Constant;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
-public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>> extends Type {
+public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>> extends Type {
 
     /**
      * Adds new Enclosing Transfer Object into definition of Generated Type and
@@ -21,7 +20,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      *            Name of Enclosing Type
      * @return <code>new</code> Instance of Generated Type Builder.
      */
-    public GeneratedTOBuilder addEnclosingTransferObject(final String name);
+    GeneratedTOBuilder addEnclosingTransferObject(final String name);
 
     /**
      * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into
@@ -39,7 +38,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      * 
      * @param <code>genTOBuilder</code> Name of Enclosing Type
      */
-    public T addEnclosingTransferObject(final GeneratedTOBuilder genTOBuilder);
+    T addEnclosingTransferObject(final GeneratedTOBuilder genTOBuilder);
 
     /**
      * Adds String definition of comment into Method Signature definition. <br>
@@ -49,7 +48,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      * @param comment
      *            Comment String.
      */
-    public T addComment(final String comment);
+    T addComment(final String comment);
 
     /**
      * The method creates new AnnotationTypeBuilder containing specified package
@@ -64,7 +63,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      *            Name of Annotation Type
      * @return <code>new</code> instance of Annotation Type Builder.
      */
-    public AnnotationTypeBuilder addAnnotation(final String packageName, final String name);
+    AnnotationTypeBuilder addAnnotation(final String packageName, final String name);
 
     /**
      * Sets the <code>abstract</code> flag to define Generated Type as
@@ -73,7 +72,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      * @param isAbstract
      *            abstract flag
      */
-    public T setAbstract(boolean isAbstract);
+    T setAbstract(boolean isAbstract);
 
     /**
      * Add Type to implements.
@@ -82,7 +81,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      *            Type to implement
      * @return <code>true</code> if the addition of type is successful.
      */
-    public T addImplementsType(final Type genType);
+    T addImplementsType(final Type genType);
 
     /**
      * Adds Constant definition and returns <code>new</code> Constant instance. <br>
@@ -99,7 +98,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      *            Assigned Value
      * @return <code>new</code> Constant instance.
      */
-    public Constant addConstant(final Type type, final String name, final Object value);
+    Constant addConstant(final Type type, final String name, final Object value);
 
     /**
      * Adds new Enumeration definition for Generated Type Builder and returns
@@ -114,7 +113,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      *            Enumeration Name
      * @return <code>new</code> instance of Enumeration Builder.
      */
-    public EnumBuilder addEnumeration(final String name);
+    EnumBuilder addEnumeration(final String name);
 
     /**
      * Add new Method Signature definition for Generated Type Builder and
@@ -130,7 +129,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      *            Name of Method
      * @return <code>new</code> instance of Method Signature Builder.
      */
-    public MethodSignatureBuilder addMethod(final String name);
+    MethodSignatureBuilder addMethod(final String name);
 
     /**
      * Checks if GeneratedTypeBuilder contains method with name
@@ -139,8 +138,8 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      * @param methodName
      *            is method name
      */
-    public boolean containsMethod(final String methodName);
-    
+    boolean containsMethod(final String methodName);
+
     /**
      * Add new Generated Property definition for Generated Transfer Object
      * Builder and returns Generated Property Builder for specifying Property. <br>
@@ -151,7 +150,7 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      *            Name of Property
      * @return <code>new</code> instance of Generated Property Builder.
      */
-    public GeneratedPropertyBuilder addProperty(final String name);
+    GeneratedPropertyBuilder addProperty(final String name);
 
     /**
      * Check whether GeneratedTOBuilder contains property with name
@@ -161,8 +160,6 @@ public interface GeneratedTypeBuilderBase <T extends GeneratedTypeBuilderBase<T>
      *            of property which existance is checked
      * @return true if property <code>name</code> exists in list of properties.
      */
-    public boolean containsProperty(final String name);
+    boolean containsProperty(final String name);
 
-
-    
 }
