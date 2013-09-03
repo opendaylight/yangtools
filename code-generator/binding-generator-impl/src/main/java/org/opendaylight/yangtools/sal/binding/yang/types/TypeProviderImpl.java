@@ -7,8 +7,13 @@
  */
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
-import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.moduleNamespaceToPackageName;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.packageNameForGeneratedType;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToClassName;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToValidParamName;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +37,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -79,7 +83,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
     /**
      * Creates new instance of class <code>TypeProviderImpl</code>.
-     *
+     * 
      * @param schemaContext
      *            contains the schema data red from YANG files
      * @throws IllegalArgumentException
@@ -96,7 +100,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
     /**
      * Puts <code>refType</code> to map with key <code>refTypePath</code>
-     *
+     * 
      * @param refTypePath
      *            schema path used as the map key
      * @param refType
@@ -106,7 +110,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *             <li>if <code>refTypePath</code> equal null</li>
      *             <li>if <code>refType</code> equal null</li>
      *             </ul>
-     *
+     * 
      */
     public void putReferencedType(final SchemaPath refTypePath, final Type refType) {
         Preconditions.checkArgument(refTypePath != null,
@@ -117,9 +121,9 @@ public final class TypeProviderImpl implements TypeProvider {
     }
 
     /**
-     *
+     * 
      * Converts basic YANG type <code>type</code> to JAVA <code>Type</code>.
-     *
+     * 
      * @param type
      *            string with YANG name of type
      * @returns JAVA <code>Type</code> for YANG type <code>type</code>
@@ -134,7 +138,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Converts schema definition type <code>typeDefinition</code> to JAVA
      * <code>Type</code>
-     *
+     * 
      * @param typeDefinition
      *            type definition which is converted to JAVA type
      * @throws IllegalArgumentException
@@ -160,7 +164,8 @@ public final class TypeProviderImpl implements TypeProvider {
         } else {
             returnType = javaTypeForLeafrefOrIdentityRef(typeDefinition, parentNode);
             if (returnType == null) {
-                returnType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(typeDefinition, parentNode);
+                returnType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(typeDefinition,
+                        parentNode);
             }
         }
         // TODO: add throw exception when we will be able to resolve ALL yang
@@ -176,7 +181,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * Returns JAVA <code>Type</code> for instances of the type
      * <code>LeafrefTypeDefinition</code> or
      * <code>IdentityrefTypeDefinition</code>.
-     *
+     * 
      * @param typeDefinition
      *            type definition which is converted to JAVA <code>Type</code>
      * @return JAVA <code>Type</code> instance for <code>typeDefinition</code>
@@ -196,7 +201,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Returns JAVA <code>Type</code> for instances of the type
      * <code>ExtendedType</code>.
-     *
+     * 
      * @param typeDefinition
      *            type definition which is converted to JAVA <code>Type</code>
      * @return JAVA <code>Type</code> instance for <code>typeDefinition</code>
@@ -218,8 +223,8 @@ public final class TypeProviderImpl implements TypeProvider {
                         returnType = genTOs.get(typedefName);
                     }
                     if (returnType == null) {
-                        returnType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER
-                                .javaTypeForSchemaDefinitionType(baseTypeDef, typeDefinition);
+                        returnType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(
+                                baseTypeDef, typeDefinition);
                     }
                 }
             }
@@ -237,11 +242,11 @@ public final class TypeProviderImpl implements TypeProvider {
      * Seeks for identity reference <code>idref</code> the JAVA
      * <code>type</code>.<br />
      * <br />
-     *
+     * 
      * <i>Example:<br />
      * If identy which is referenced via <code>idref</code> has name <b>Idn</b>
      * then returning type is <b>{@code Class<? extends Idn>}</b></i>
-     *
+     * 
      * @param idref
      *            identityref type definition for which JAVA <code>Type</code>
      *            is sought
@@ -270,7 +275,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
     /**
      * Converts <code>typeDefinition</code> to concrete JAVA <code>Type</code>.
-     *
+     * 
      * @param typeDefinition
      *            type definition which should be converted to JAVA
      *            <code>Type</code>
@@ -283,7 +288,8 @@ public final class TypeProviderImpl implements TypeProvider {
      *             <li>if name of <code>typeDefinition</code></li>
      *             </ul>
      */
-    public Type generatedTypeForExtendedDefinitionType(final TypeDefinition<?> typeDefinition, final SchemaNode parentNode) {
+    public Type generatedTypeForExtendedDefinitionType(final TypeDefinition<?> typeDefinition,
+            final SchemaNode parentNode) {
         Type returnType = null;
         Preconditions.checkArgument(typeDefinition != null, "Type Definition cannot be NULL!");
         if (typeDefinition.getQName() == null) {
@@ -314,7 +320,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Gets base type definition for <code>extendTypeDef</code>. The method is
      * recursivelly called until non <code>ExtendedType</code> type is found.
-     *
+     * 
      * @param extendTypeDef
      *            type definition for which is the base type definition sought
      * @return type definition which is base type for <code>extendTypeDef</code>
@@ -334,10 +340,10 @@ public final class TypeProviderImpl implements TypeProvider {
 
     /**
      * Converts <code>leafrefType</code> to JAVA <code>Type</code>.
-     *
+     * 
      * The path of <code>leafrefType</code> is followed to find referenced node
      * and its <code>Type</code> is returned.
-     *
+     * 
      * @param leafrefType
      *            leafref type definition for which is the type sought
      * @return JAVA <code>Type</code> of data schema node which is referenced in
@@ -347,7 +353,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *             <li>if <code>leafrefType</code> equal null</li>
      *             <li>if path statement of <code>leafrefType</code> equal null</li>
      *             </ul>
-     *
+     * 
      */
     public Type provideTypeForLeafref(final LeafrefTypeDefinition leafrefType, final SchemaNode parentNode) {
         Type returnType = null;
@@ -388,7 +394,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Checks if <code>dataNode</code> is <code>LeafSchemaNode</code> and if it
      * so then checks if it is of type <code>EnumTypeDefinition</code>.
-     *
+     * 
      * @param dataNode
      *            data schema node for which is checked if it is leaf and if it
      *            is of enum type
@@ -411,7 +417,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Checks if <code>dataNode</code> is <code>LeafListSchemaNode</code> and if
      * it so then checks if it is of type <code>EnumTypeDefinition</code>.
-     *
+     * 
      * @param dataNode
      *            data schema node for which is checked if it is leaflist and if
      *            it is of enum type
@@ -436,7 +442,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * Converts <code>enumTypeDef</code> to
      * {@link org.opendaylight.yangtools.sal.binding.model.api.Enumeration
      * enumeration}.
-     *
+     * 
      * @param enumTypeDef
      *            enumeration type definition which is converted to enumeration
      * @param enumName
@@ -451,7 +457,8 @@ public final class TypeProviderImpl implements TypeProvider {
      *             <li>if name of <code>enumTypeDef</code> equal null</li>
      *             </ul>
      */
-    private Enumeration provideTypeForEnum(final EnumTypeDefinition enumTypeDef, final String enumName, final SchemaNode parentNode) {
+    private Enumeration provideTypeForEnum(final EnumTypeDefinition enumTypeDef, final String enumName,
+            final SchemaNode parentNode) {
         Preconditions.checkArgument(enumTypeDef != null, "EnumTypeDefinition reference cannot be NULL!");
         Preconditions.checkArgument(enumTypeDef.getValues() != null,
                 "EnumTypeDefinition MUST contain at least ONE value definition!");
@@ -472,7 +479,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Adds enumeration to <code>typeBuilder</code>. The enumeration data are
      * taken from <code>enumTypeDef</code>.
-     *
+     * 
      * @param enumTypeDef
      *            enumeration type definition is source of enumeration data for
      *            <code>typeBuilder</code>
@@ -490,7 +497,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *             <li>if name of <code>enumTypeDef</code> equal null</li>
      *             <li>if name of <code>typeBuilder</code> equal null</li>
      *             </ul>
-     *
+     * 
      */
     private Enumeration addInnerEnumerationToTypeBuilder(final EnumTypeDefinition enumTypeDef, final String enumName,
             final GeneratedTypeBuilderBase<?> typeBuilder) {
@@ -511,7 +518,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
     /**
      * Converts <code>dataNode</code> to JAVA <code>Type</code>.
-     *
+     * 
      * @param dataNode
      *            contains information about YANG type
      * @return JAVA <code>Type</code> representation of <code>dataNode</code>
@@ -533,7 +540,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Passes through all modules and through all its type definitions and
      * convert it to generated types.
-     *
+     * 
      * The modules are firstly sorted by mutual dependencies. The modules are
      * sequentially passed. All type definitions of a module are at the
      * beginning sorted so that type definition with less amount of references
@@ -542,7 +549,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * {@link TypeProviderImpl#genTypeDefsContextMap genTypeDefsContextMap}
      * which map current module name to the map which maps type names to
      * returned types (generated types).
-     *
+     * 
      */
     private void resolveTypeDefsFromContext() {
         final Set<Module> modules = schemaContext.getModules();
@@ -576,7 +583,7 @@ public final class TypeProviderImpl implements TypeProvider {
     }
 
     /**
-     *
+     * 
      * @param basePackageName
      *            string with name of package to which the module belongs
      * @param moduleName
@@ -617,8 +624,8 @@ public final class TypeProviderImpl implements TypeProvider {
                     returnType = genTOBuilder.toInstance();
 
                 } else {
-                    final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER
-                            .javaTypeForSchemaDefinitionType(innerTypeDefinition, typedef);
+                    final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(
+                            innerTypeDefinition, typedef);
 
                     returnType = wrapJavaTypeIntoTO(basePackageName, typedef, javaType);
                 }
@@ -636,7 +643,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
     /**
      * Wraps base YANG type to generated TO.
-     *
+     * 
      * @param basePackageName
      *            string with name of package to which the module belongs
      * @param typedef
@@ -668,7 +675,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Converts output list of generated TO builders to one TO builder (first
      * from list) which contains the remaining builders as its enclosing TO.
-     *
+     * 
      * @param basePackageName
      *            string with name of package to which the module belongs
      * @param typedef
@@ -698,7 +705,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * Converts <code>typedef</code> to generated TO with
      * <code>typeDefName</code>. Every union type from <code>typedef</code> is
      * added to generated TO builder as property.
-     *
+     * 
      * @param basePackageName
      *            string with name of package to which the module belongs
      * @param typedef
@@ -718,10 +725,8 @@ public final class TypeProviderImpl implements TypeProvider {
             final TypeDefinition<?> typedef, final String typeDefName, final SchemaNode parentNode) {
         Preconditions.checkArgument(basePackageName != null, "Base Package Name cannot be NULL!");
         Preconditions.checkArgument(typedef != null, "Type Definition cannot be NULL!");
-        if (typedef.getQName() == null) {
-            throw new IllegalArgumentException(
-                    "Type Definition cannot have non specified QName (QName cannot be NULL!)");
-        }
+        Preconditions.checkArgument(typedef.getQName() != null,
+                "Type Definition cannot have non specified QName (QName cannot be NULL!)");
 
         final List<GeneratedTOBuilder> generatedTOBuilders = new ArrayList<>();
 
@@ -743,8 +748,8 @@ public final class TypeProviderImpl implements TypeProvider {
             for (final TypeDefinition<?> unionType : unionTypes) {
                 final String unionTypeName = unionType.getQName().getLocalName();
                 if (unionType instanceof UnionType) {
-                    generatedTOBuilders
-                            .addAll(resolveUnionSubtypeAsUnion(unionGenTOBuilder, unionType, basePackageName, parentNode));
+                    generatedTOBuilders.addAll(resolveUnionSubtypeAsUnion(unionGenTOBuilder, unionType,
+                            basePackageName, parentNode));
                 } else if (unionType instanceof ExtendedType) {
                     resolveExtendedSubtypeAsUnion(unionGenTOBuilder, (ExtendedType) unionType, unionTypeName,
                             regularExpressions, parentNode);
@@ -753,11 +758,9 @@ public final class TypeProviderImpl implements TypeProvider {
                             unionTypeName, unionGenTOBuilder);
                     updateUnionTypeAsProperty(unionGenTOBuilder, enumeration, unionTypeName);
                 } else {
-                    final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER
-                            .javaTypeForSchemaDefinitionType(unionType, parentNode);
-                    if (javaType != null) {
-                        updateUnionTypeAsProperty(unionGenTOBuilder, javaType, unionTypeName);
-                    }
+                    final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(
+                            unionType, parentNode);
+                    updateUnionTypeAsProperty(unionGenTOBuilder, javaType, unionTypeName);
                 }
             }
             if (!regularExpressions.isEmpty()) {
@@ -772,14 +775,14 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Wraps code which handle case when union subtype is also of the type
      * <code>UnionType</code>.
-     *
+     * 
      * In this case the new generated TO is created for union subtype (recursive
      * call of method
      * {@link #provideGeneratedTOBuilderForUnionTypeDef(String, TypeDefinition, String)
      * provideGeneratedTOBuilderForUnionTypeDef} and in parent TO builder
      * <code>parentUnionGenTOBuilder</code> is created property which type is
      * equal to new generated TO.
-     *
+     * 
      * @param parentUnionGenTOBuilder
      *            generated TO builder to which is the property with the child
      *            union subtype added
@@ -810,11 +813,11 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Wraps code which handle case when union subtype is of the type
      * <code>ExtendedType</code>.
-     *
+     * 
      * If TO for this type already exists it is used for the creation of the
      * property in <code>parentUnionGenTOBuilder</code>. In other case the base
      * type is used for the property creation.
-     *
+     * 
      * @param parentUnionGenTOBuilder
      *            generated TO builder in which new property is created
      * @param unionSubtype
@@ -826,14 +829,16 @@ public final class TypeProviderImpl implements TypeProvider {
      *            list of strings with the regular expressions
      */
     private void resolveExtendedSubtypeAsUnion(final GeneratedTOBuilder parentUnionGenTOBuilder,
-            final ExtendedType unionSubtype, final String unionTypeName, final List<String> regularExpressions, final SchemaNode parentNode) {
-        final Type genTO = findGenTO(unionSubtype, unionTypeName, parentNode);
+            final ExtendedType unionSubtype, final String unionTypeName, final List<String> regularExpressions,
+            final SchemaNode parentNode) {
+        final Type genTO = findGenTO(unionTypeName, parentNode);
         if (genTO != null) {
             updateUnionTypeAsProperty(parentUnionGenTOBuilder, genTO, genTO.getName());
         } else {
             final TypeDefinition<?> baseType = baseTypeDefForExtendedType(unionSubtype);
             if (unionTypeName.equals(baseType.getQName().getLocalName())) {
-                final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(baseType, parentNode);
+                final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(baseType,
+                        parentNode);
                 if (javaType != null) {
                     updateUnionTypeAsProperty(parentUnionGenTOBuilder, javaType, unionTypeName);
                 }
@@ -847,15 +852,13 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Searches for generated TO for <code>searchedTypeDef</code> type
      * definition in {@link #genTypeDefsContextMap genTypeDefsContextMap}
-     *
-     * @param searchedTypeDef
-     *            type definition for which is generatet TO sought
+     * 
      * @param searchedTypeName
      *            string with name of <code>searchedTypeDef</code>
      * @return generated TO for <code>searchedTypeDef</code> or
      *         <code>null</code> it it doesn't exist
      */
-    private Type findGenTO(final TypeDefinition<?> searchedTypeDef, final String searchedTypeName, final SchemaNode parentNode) {
+    private Type findGenTO(final String searchedTypeName, final SchemaNode parentNode) {
         final Module typeModule = findParentModule(schemaContext, parentNode);
         if (typeModule != null && typeModule.getName() != null) {
             final Map<String, Type> genTOs = genTypeDefsContextMap.get(typeModule.getName());
@@ -870,7 +873,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * Stores generated TO created from <code>genTOBuilder</code> for
      * <code>newTypeDef</code> to {@link #genTypeDefsContextMap
      * genTypeDefsContextMap} if the module for <code>newTypeDef</code> exists
-     *
+     * 
      * @param newTypeDef
      *            type definition for which is <code>genTOBuilder</code> created
      * @param genTOBuilder
@@ -891,7 +894,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Adds a new property with the name <code>propertyName</code> and with type
      * <code>type</code> to <code>unonGenTransObject</code>.
-     *
+     * 
      * @param unionGenTransObject
      *            generated TO to which should be property added
      * @param type
@@ -903,22 +906,20 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private void updateUnionTypeAsProperty(final GeneratedTOBuilder unionGenTransObject, final Type type,
             final String propertyName) {
-        if (unionGenTransObject != null && type != null) {
-            if (!unionGenTransObject.containsProperty(propertyName)) {
-                final GeneratedPropertyBuilder propBuilder = unionGenTransObject
-                        .addProperty(parseToValidParamName(propertyName));
-                propBuilder.setReturnType(type);
+        if (unionGenTransObject != null && type != null && !unionGenTransObject.containsProperty(propertyName)) {
+            final GeneratedPropertyBuilder propBuilder = unionGenTransObject
+                    .addProperty(parseToValidParamName(propertyName));
+            propBuilder.setReturnType(type);
 
-                unionGenTransObject.addEqualsIdentity(propBuilder);
-                unionGenTransObject.addHashIdentity(propBuilder);
-                unionGenTransObject.addToStringProperty(propBuilder);
-            }
+            unionGenTransObject.addEqualsIdentity(propBuilder);
+            unionGenTransObject.addHashIdentity(propBuilder);
+            unionGenTransObject.addToStringProperty(propBuilder);
         }
     }
 
     /**
      * Converts <code>typedef</code> to the generated TO builder.
-     *
+     * 
      * @param basePackageName
      *            string with name of package to which the module belongs
      * @param typedef
@@ -943,10 +944,10 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Converts <code>typeDef</code> which should be of the type
      * <code>BitsTypeDefinition</code> to <code>GeneratedTOBuilder</code>.
-     *
+     * 
      * All the bits of the typeDef are added to returning generated TO as
      * properties.
-     *
+     * 
      * @param basePackageName
      *            string with name of package to which the module belongs
      * @param typeDef
@@ -993,13 +994,13 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Converts the pattern constraints from <code>typedef</code> to the list of
      * the strings which represents these constraints.
-     *
+     * 
      * @param typedef
      *            extended type in which are the pattern constraints sought
      * @return list of strings which represents the constraint patterns
      * @throws IllegalArgumentException
      *             if <code>typedef</code> equals null
-     *
+     * 
      */
     private List<String> resolveRegExpressionsFromTypedef(ExtendedType typedef) {
         final List<String> regExps = new ArrayList<String>();
@@ -1021,10 +1022,10 @@ public final class TypeProviderImpl implements TypeProvider {
     }
 
     /**
-     *
+     * 
      * Adds to the <code>genTOBuilder</code> the constant which contains regular
      * expressions from the <code>regularExpressions</code>
-     *
+     * 
      * @param genTOBuilder
      *            generated TO builder to which are
      *            <code>regular expressions</code> added
@@ -1037,11 +1038,12 @@ public final class TypeProviderImpl implements TypeProvider {
      *             </ul>
      */
     private void addStringRegExAsConstant(GeneratedTOBuilder genTOBuilder, List<String> regularExpressions) {
-        if (genTOBuilder == null)
-            throw new IllegalArgumentException("genTOBuilder can't be null");
-        if (regularExpressions == null)
-            throw new IllegalArgumentException("regularExpressions can't be null");
-
+        if (genTOBuilder == null) {
+            throw new IllegalArgumentException("Generated transfer object builder can't be null");
+        }
+        if (regularExpressions == null) {
+            throw new IllegalArgumentException("List of regular expressions can't be null");
+        }
         if (!regularExpressions.isEmpty()) {
             genTOBuilder.addConstant(Types.listTypeFor(BaseYangTypes.STRING_TYPE), TypeConstants.PATTERN_CONSTANT_NAME,
                     regularExpressions);
@@ -1053,11 +1055,11 @@ public final class TypeProviderImpl implements TypeProvider {
      * <code>innerExtendedType</code>, about the package name
      * <code>typedefName</code> and about the generated TO name
      * <code>typedefName</code>.
-     *
+     * 
      * It is supposed that <code>innerExtendedType</code> is already present in
      * {@link TypeProviderImpl#genTypeDefsContextMap genTypeDefsContextMap} to
      * be possible set it as extended type for the returning generated TO.
-     *
+     * 
      * @param innerExtendedType
      *            extended type which is part of some other extended type
      * @param basePackageName
@@ -1107,7 +1109,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * equal depth. In next step are lists from this map concatenated to one
      * list in ascending order according to their depth. All type definitions
      * are in the list behind all type definitions on which depends.
-     *
+     * 
      * @param unsortedTypeDefinitions
      *            list of type definitions which should be sorted by depth
      * @return list of type definitions sorted according their each other
@@ -1128,9 +1130,8 @@ public final class TypeProviderImpl implements TypeProvider {
             }
             typeDefinitionsConcreteDepth.add(unsortedTypeDefinition);
         }
-
-        Set<Integer> depths = typeDefinitionsDepths.keySet(); // keys are in
-                                                              // ascending order
+        // keys are in ascending order
+        Set<Integer> depths = typeDefinitionsDepths.keySet();
         for (Integer depth : depths) {
             sortedTypeDefinition.addAll(typeDefinitionsDepths.get(depth));
         }
@@ -1141,7 +1142,7 @@ public final class TypeProviderImpl implements TypeProvider {
     /**
      * Returns how many immersion is necessary to get from the type definition
      * to the base type.
-     *
+     * 
      * @param typeDefinition
      *            type definition for which is depth sought.
      * @return number of immersions which are necessary to get from the type
@@ -1173,7 +1174,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * Returns string which contains the same value as <code>name</code> but
      * integer suffix is incremented by one. If <code>name</code> contains no
      * number suffix then number 1 is added.
-     *
+     * 
      * @param name
      *            string with name of augmented node
      * @return string with the number suffix incremented by one (or 1 is added)

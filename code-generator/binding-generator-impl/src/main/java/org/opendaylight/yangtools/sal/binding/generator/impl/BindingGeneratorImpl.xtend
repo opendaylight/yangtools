@@ -738,7 +738,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val List<Type> genTypes = new ArrayList();
         val basePackageName = moduleNamespaceToPackageName(module);
         val Set<GroupingDefinition> groupings = module.groupings;
-        val List<GroupingDefinition> groupingsSortedByDependencies = GroupingDefinitionDependencySort.sort(groupings);
+        val GroupingDefinitionDependencySort groupingSort = new GroupingDefinitionDependencySort();
+        val List<GroupingDefinition> groupingsSortedByDependencies = groupingSort.sort(groupings);
 
         for (grouping : groupingsSortedByDependencies) {
             val genType = groupingToGenType(basePackageName, grouping);

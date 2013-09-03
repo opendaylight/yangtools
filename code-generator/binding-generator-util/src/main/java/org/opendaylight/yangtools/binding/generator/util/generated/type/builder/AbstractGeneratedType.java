@@ -28,9 +28,8 @@ abstract class AbstractGeneratedType extends AbstractBaseType implements Generat
     private final List<GeneratedProperty> properties;
     private final boolean isAbstract;
 
-    
     public AbstractGeneratedType(AbstractGeneratedTypeBuilder builder) {
-        super(builder.getPackageName(),builder.getName());
+        super(builder.getPackageName(), builder.getName());
         this.parent = builder.getParent();
         this.comment = builder.getComment();
         this.annotations = toUnmodifiableAnnotations(builder.getAnnotations());
@@ -38,16 +37,18 @@ abstract class AbstractGeneratedType extends AbstractBaseType implements Generat
         this.constants = Collections.unmodifiableList(builder.getConstants());
         this.enumerations = toUnmodifiableEnumerations(builder.getEnumerations());
         this.methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
-        this.enclosedTypes = toUnmodifiableEnclosedTypes(builder.getEnclosedTypes(), builder.getEnclosedTransferObjects());
+        this.enclosedTypes = toUnmodifiableEnclosedTypes(builder.getEnclosedTypes(),
+                builder.getEnclosedTransferObjects());
         this.properties = toUnmodifiableProperties(builder.getProperties());
         this.isAbstract = builder.isAbstract();
     }
-    
+
     public AbstractGeneratedType(final Type parent, final String packageName, final String name, final String comment,
             final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
             final List<Type> implementsTypes, final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
             final List<GeneratedTOBuilder> enclosedGenTOBuilders, final List<EnumBuilder> enumBuilders,
-            final List<Constant> constants, final List<MethodSignatureBuilder> methodBuilders,final List<GeneratedPropertyBuilder> propertyBuilders) {
+            final List<Constant> constants, final List<MethodSignatureBuilder> methodBuilders,
+            final List<GeneratedPropertyBuilder> propertyBuilders) {
         super(packageName, name);
         this.parent = parent;
         this.comment = comment;
@@ -59,7 +60,7 @@ abstract class AbstractGeneratedType extends AbstractBaseType implements Generat
         this.enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders, enclosedGenTOBuilders);
         this.properties = toUnmodifiableProperties(propertyBuilders);
         this.isAbstract = isAbstract;
-        
+
     }
 
     private List<GeneratedType> toUnmodifiableEnclosedTypes(final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
@@ -80,11 +81,11 @@ abstract class AbstractGeneratedType extends AbstractBaseType implements Generat
     }
 
     protected final List<AnnotationType> toUnmodifiableAnnotations(final List<AnnotationTypeBuilder> annotationBuilders) {
-        final List<AnnotationType> annotations = new ArrayList<>();
+        final List<AnnotationType> annotationList = new ArrayList<>();
         for (final AnnotationTypeBuilder builder : annotationBuilders) {
-            annotations.add(builder.toInstance());
+            annotationList.add(builder.toInstance());
         }
-        return Collections.unmodifiableList(annotations);
+        return Collections.unmodifiableList(annotationList);
     }
 
     protected final List<MethodSignature> toUnmodifiableMethods(List<MethodSignatureBuilder> methodBuilders) {
@@ -110,8 +111,7 @@ abstract class AbstractGeneratedType extends AbstractBaseType implements Generat
         }
         return Collections.unmodifiableList(methods);
     }
-    
-    
+
     @Override
     public final Type getParentType() {
         return parent;
@@ -156,12 +156,10 @@ abstract class AbstractGeneratedType extends AbstractBaseType implements Generat
     public final List<MethodSignature> getMethodDefinitions() {
         return methodSignatures;
     }
-    
+
     public final List<GeneratedProperty> getProperties() {
         return properties;
     }
-    
-    
 
     @Override
     public String toString() {

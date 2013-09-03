@@ -177,6 +177,7 @@ public class BitAndUnionTOEnclosingTest {
                 "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626", typeUnion1.getPackageName());
 
         assertEquals("TypeUnion1 generated TO has incorrect number of properties", 4, typeUnion1.getProperties().size());
+       
         containsAttributes(typeUnion1, true, true, true, new NameTypePattern("uint32", "Long"));
         containsAttributes(typeUnion1, true, true, true, new NameTypePattern("int8", "Byte"));
         containsAttributes(typeUnion1, true, true, true, new NameTypePattern("string", "String"));

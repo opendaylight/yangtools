@@ -28,10 +28,14 @@ import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
 public final class CodeGeneratorImpl implements CodeGenerator {
 
     @Override
-    public Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> yangModules)
-            throws IOException {
-        if (outputBaseDir == null) {
-            outputBaseDir = new File("target" + File.separator + "generated-sources" + File.separator + "maven-sal-api-gen");
+    public Collection<File> generateSources(final SchemaContext context, final File outputDir,
+            final Set<Module> yangModules) throws IOException {
+        final File outputBaseDir;
+        if (outputDir == null) {
+            outputBaseDir = new File("target" + File.separator + "generated-sources" + File.separator
+                    + "maven-sal-api-gen");
+        } else {
+            outputBaseDir = outputDir;
         }
 
         final BindingGenerator bindingGenerator = new BindingGeneratorImpl();

@@ -6,7 +6,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 
 /**
  * 
@@ -40,8 +39,7 @@ public final class BuilderGenerator implements CodeGenerator {
                 } else if (t.getFullyQualifiedName().equals(Augmentation.class.getName())) {
                     return true;
                 }
-                
-                
+
             }
         }
         return false;

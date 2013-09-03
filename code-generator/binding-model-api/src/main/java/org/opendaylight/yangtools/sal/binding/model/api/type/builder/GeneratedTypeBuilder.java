@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.binding.model.api.type.builder;
 
-import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
 /**
  * Generated Type Builder interface is helper interface for building and
@@ -18,7 +16,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
  * @see GeneratedType
  */
 public interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<GeneratedTypeBuilder> {
-   
+
     /**
      * Returns the <code>new</code> <i>immutable</i> instance of Generated Type.
      * 
