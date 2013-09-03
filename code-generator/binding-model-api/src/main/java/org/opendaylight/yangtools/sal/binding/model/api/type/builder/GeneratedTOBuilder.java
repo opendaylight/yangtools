@@ -30,7 +30,7 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      *            Generated Transfer Object
      * @return This instance of builder
      */
-    public GeneratedTOBuilder setExtendsType(final GeneratedTransferObject genTransObj);
+    GeneratedTOBuilder setExtendsType(final GeneratedTransferObject genTransObj);
 
     /**
      * Add Property that will be part of <code>equals</code> definition. <br>
@@ -41,7 +41,7 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      *            Generated Property Builder
      * @return This instance of builder
      */
-    public GeneratedTOBuilder addEqualsIdentity(final GeneratedPropertyBuilder property);
+    GeneratedTOBuilder addEqualsIdentity(final GeneratedPropertyBuilder property);
 
     /**
      * Add Property that will be part of <code>hashCode</code> definition. <br>
@@ -52,7 +52,7 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      *            Generated Property Builder
      * @return This instance of builder
      */
-    public GeneratedTOBuilder addHashIdentity(final GeneratedPropertyBuilder property);
+    GeneratedTOBuilder addHashIdentity(final GeneratedPropertyBuilder property);
 
     /**
      * Add Property that will be part of <code>toString</code> definition. <br>
@@ -63,9 +63,15 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      *            Generated Property Builder
      * @return This instance of builder
      */
-    public GeneratedTOBuilder addToStringProperty(final GeneratedPropertyBuilder property);
+    GeneratedTOBuilder addToStringProperty(final GeneratedPropertyBuilder property);
 
-    public GeneratedTransferObject toInstance();
+    /**
+     * Returns instance of <code>GeneratedTransferObject</code> which data are
+     * build from the data of this builder
+     * 
+     * @return generated transfer object instance
+     */
+    GeneratedTransferObject toInstance();
 
     /**
      * Set original YANG type for GeneratedTOBuilder. It is YANG type from which
@@ -74,5 +80,5 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      * @param yangType
      *            YangType enum value of original YANG type
      */
-    public void setIsUnion(boolean isUnion);
+    void setIsUnion(boolean isUnion);
 }

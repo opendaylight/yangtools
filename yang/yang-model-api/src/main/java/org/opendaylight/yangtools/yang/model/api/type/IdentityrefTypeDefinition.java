@@ -24,6 +24,6 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
      * @return QName of referenced identity which is specified with the
      *         <code>identity</code> YANG statement
      */
-    public QName getIdentity();
+    QName getIdentity();
 
 }

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.sal.binding.model.api;
 
-import java.io.IOException;
-
 /**
  * Transformates virtual data to the concrete code in programming language.
  * 

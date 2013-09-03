@@ -24,6 +24,12 @@ import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
  */
 final class ValidationUtil {
 
+    /**
+     * It isn't desirable to create instance of this class
+     */
+    private ValidationUtil() {
+    }
+
     static void ex(String message) {
         throw new YangValidationException(message);
     }
@@ -33,8 +39,9 @@ final class ValidationUtil {
         Set<String> duplicates = new HashSet<String>();
 
         for (String key : keyList) {
-            if (!all.add(key))
+            if (!all.add(key)) {
                 duplicates.add(key);
+            }
         }
         return duplicates;
     }
@@ -51,9 +58,9 @@ final class ValidationUtil {
     private static ParseTree getRootParent(ParseTree ctx) {
         ParseTree root = ctx;
         while (root.getParent() != null) {
-            if (root.getClass().equals(Module_stmtContext.class)
-                    || root.getClass().equals(Submodule_stmtContext.class))
+            if (root.getClass().equals(Module_stmtContext.class) || root.getClass().equals(Submodule_stmtContext.class)) {
                 break;
+            }
             root = root.getParent();
         }
         return root;
@@ -70,20 +77,17 @@ final class ValidationUtil {
     /**
      * Get simple name from statement class e.g. Module from Module_stmt_context
      */
-    static String getSimpleStatementName(
-            Class<? extends ParseTree> typeOfStatement) {
+    static String getSimpleStatementName(Class<? extends ParseTree> typeOfStatement) {
 
         String className = typeOfStatement.getSimpleName();
         int lastIndexOf = className.indexOf('$');
-        className = lastIndexOf == -1 ? className : className
-                .substring(lastIndexOf + 1);
+        className = lastIndexOf == -1 ? className : className.substring(lastIndexOf + 1);
         int indexOfStmt = className.indexOf("_stmt");
         int index = indexOfStmt == -1 ? className.indexOf("_arg") : indexOfStmt;
         return className.substring(0, index).replace('_', '-');
     }
 
-    static int countPresentChildrenOfType(ParseTree parent,
-            Set<Class<? extends ParseTree>> expectedChildTypes) {
+    static int countPresentChildrenOfType(ParseTree parent, Set<Class<? extends ParseTree>> expectedChildTypes) {
         int foundChildrenOfType = 0;
 
         for (Class<? extends ParseTree> type : expectedChildTypes) {
@@ -92,14 +96,14 @@ final class ValidationUtil {
         return foundChildrenOfType;
     }
 
-    static int countPresentChildrenOfType(ParseTree parent,
-            Class<? extends ParseTree> expectedChildType) {
+    static int countPresentChildrenOfType(ParseTree parent, Class<? extends ParseTree> expectedChildType) {
         int foundChildrenOfType = 0;
 
         for (int i = 0; i < parent.getChildCount(); i++) {
             ParseTree child = parent.getChild(i);
-            if (expectedChildType.isInstance(child))
+            if (expectedChildType.isInstance(child)) {
                 foundChildrenOfType++;
+            }
         }
         return foundChildrenOfType;
     }

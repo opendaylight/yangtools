@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPr
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;

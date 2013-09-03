@@ -194,8 +194,9 @@ public final class GeneratorUtil {
      *             </ul>
      */
     public static boolean isConstantInTO(String constName, GeneratedTransferObject genTO) {
-        if (constName == null || genTO == null)
+        if (constName == null || genTO == null) {
             throw new IllegalArgumentException();
+        }
         List<Constant> consts = genTO.getConstantDefinitions();
         for (Constant cons : consts) {
             if (cons.getName().equals(constName)) {

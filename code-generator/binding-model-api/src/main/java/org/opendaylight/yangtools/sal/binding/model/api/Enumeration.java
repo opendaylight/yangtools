@@ -21,23 +21,23 @@ public interface Enumeration extends GeneratedType {
      * @return list of annotation definitions associated with enumeration type.
      * 
      */
-    public List<AnnotationType> getAnnotations();
+    List<AnnotationType> getAnnotations();
 
-    public Type getParentType();
+    Type getParentType();
 
     /**
      * Returns list of the couples - name and value.
      * 
      * @return list of the enumeration pairs.
      */
-    public List<Pair> getValues();
+    List<Pair> getValues();
 
     /**
      * Formats enumeration according to rules of the programming language.
      * 
      * @return string with source code in some programming language
      */
-    public String toFormattedString();
+    String toFormattedString();
 
     /**
      * Interface is used for reading enumeration item. It means item's name and
@@ -50,13 +50,13 @@ public interface Enumeration extends GeneratedType {
          * 
          * @return the name of the enumeration item.
          */
-        public String getName();
+        String getName();
 
         /**
          * Returns value of the enumeration item.
          * 
          * @return the value of the enumeration item.
          */
-        public Integer getValue();
+        Integer getValue();
     }
 }

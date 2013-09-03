@@ -14,12 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class YangErrorListener extends BaseErrorListener {
-    private final static Logger logger = LoggerFactory.getLogger(YangErrorListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(YangErrorListener.class);
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
             String msg, RecognitionException e) {
-        logger.warn("line " + line + ":" + charPositionInLine + " " + msg);
+        LOGGER.warn("line " + line + ":" + charPositionInLine + " " + msg);
     }
 
 }

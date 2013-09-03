@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.*;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractBaseType implements GeneratedTypeBuilderBase<T> {
+abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractBaseType implements
+        GeneratedTypeBuilderBase<T> {
 
     private String comment = "";
 
@@ -70,8 +71,8 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         return enclosedTransferObjects;
     }
 
-    abstract protected T thisInstance();
-    
+    protected abstract T thisInstance();
+
     @Override
     public GeneratedTOBuilder addEnclosingTransferObject(String name) {
         if (name == null) {
@@ -174,7 +175,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         }
         return false;
     }
-    
+
     @Override
     public GeneratedPropertyBuilder addProperty(String name) {
         final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);

@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -91,38 +89,10 @@ public final class BindingGeneratorUtil {
      * @return string with the admissible parameter name
      */
     public static String validateParameterName(final String parameterName) {
-        if (parameterName != null) {
-            if (JAVA_RESERVED_WORDS.contains(parameterName)) {
-                return "_" + parameterName;
-            }
+        if (parameterName != null && JAVA_RESERVED_WORDS.contains(parameterName)) {
+            return "_" + parameterName;
         }
         return parameterName;
-    }
-
-    /**
-     * Creates generated TO builder from <code>packageName</code> and
-     * <code>transObjectName</code>.
-     * 
-     * @param packageName
-     *            string with name of package to which the returned object
-     *            belongs
-     * @param transObjectName
-     *            string with name which the returned object has
-     * @return generated TO builder or <code>null</code> value if
-     *         <code>packageName</code> or <code>transObjectName</code> equal
-     *         <code>null</code>
-     */
-    public static GeneratedTOBuilder schemaNodeToTransferObjectBuilder(final String packageName,
-            final String transObjectName) {
-        if (packageName != null && transObjectName != null) {
-
-            final String genTOName = BindingGeneratorUtil.parseToClassName(transObjectName);
-            final GeneratedTOBuilder newType = new GeneratedTOBuilderImpl(packageName, genTOName);
-
-            return newType;
-
-        }
-        return null;
     }
 
     /**
@@ -254,13 +224,13 @@ public final class BindingGeneratorUtil {
      *         name.
      */
     public static String parseToClassName(String token) {
-        token = token.replace(".", "");
-        String correctStr = parseToCamelCase(token);
+        String correctStr = token.replace(".", "");
+        correctStr = parseToCamelCase(correctStr);
 
         // make first char upper-case
         char first = Character.toUpperCase(correctStr.charAt(0));
-        if(first >= '0' && first <= '9') {
-            
+        if (first >= '0' && first <= '9') {
+
             correctStr = "_" + correctStr;
         } else {
             correctStr = first + correctStr.substring(1);
@@ -310,14 +280,15 @@ public final class BindingGeneratorUtil {
      * @param token
      *            string which should be converted to the cammel case format
      * @return string in the cammel case format
-     * @throws NullPointerException
-     *             - if <code>token</code> equals null
      * @throws IllegalArgumentException
-     *             - if <code>token</code> without white spaces is empty
+     *             <ul>
+     *             <li>if <code>token</code> without white spaces is empty</li>
+     *             <li>if <code>token</code> equals null</li>
+     *             </ul>
      */
     private static String parseToCamelCase(String token) {
         if (token == null) {
-            throw new NullPointerException("Name can not be null");
+            throw new IllegalArgumentException("Name can not be null");
         }
 
         String correctStr = token.trim();
