@@ -31,7 +31,7 @@ public interface GeneratedTransferObject extends GeneratedType {
      * @return the extending Generated Transfer Object or <code>null</code> if
      *         there is no extending Generated Transfer Object.
      */
-    public GeneratedTransferObject getSuperType();
+    GeneratedTransferObject getSuperType();
 
     /**
      * Returns List of Properties that are designated to define equality for
@@ -40,7 +40,7 @@ public interface GeneratedTransferObject extends GeneratedType {
      * @return List of Properties that are designated to define equality for
      *         Generated Transfer Object.
      */
-    public List<GeneratedProperty> getEqualsIdentifiers();
+    List<GeneratedProperty> getEqualsIdentifiers();
 
     /**
      * Returns List of Properties that are designated to define identity for
@@ -49,7 +49,7 @@ public interface GeneratedTransferObject extends GeneratedType {
      * @return List of Properties that are designated to define identity for
      *         Generated Transfer Object.
      */
-    public List<GeneratedProperty> getHashCodeIdentifiers();
+    List<GeneratedProperty> getHashCodeIdentifiers();
 
     /**
      * Returns List of Properties that will be members of toString definition
@@ -58,7 +58,7 @@ public interface GeneratedTransferObject extends GeneratedType {
      * @return List of Properties that will be members of toString definition
      *         for Generated Transfer Object.
      */
-    public List<GeneratedProperty> getToStringIdentifiers();
+    List<GeneratedProperty> getToStringIdentifiers();
 
     /**
      * Return boolean value which describe whether Generated Transfer Object
@@ -68,5 +68,5 @@ public interface GeneratedTransferObject extends GeneratedType {
      *         YANG type.
      */
     @Deprecated
-    public boolean isUnionType();
+    boolean isUnionType();
 }

@@ -72,6 +72,8 @@ import com.google.common.collect.Sets;
 
 public final class YangParserImpl implements YangModelParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
+    
+    private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
 
     @Override
     public Set<Module> parseYangModels(final List<File> yangFiles) {
@@ -299,7 +301,7 @@ public final class YangParserImpl implements YangModelParser {
         findUsesTargets(modules, context);
         resolvedDirtyNodesWithContext(modules, context);
         resolveAugmentsWithContext(modules, context);
-        resolveUsesWithContext(modules, context);
+        resolveUsesWithContext(modules);
         resolveDeviationsWithContext(modules, context);
 
         // build
@@ -737,11 +739,8 @@ public final class YangParserImpl implements YangModelParser {
      *
      * @param modules
      *            all loaded modules
-     * @param context
-     *            SchemaContext containing already resolved modules
      */
-    private void resolveUsesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final SchemaContext context) {
+    private void resolveUsesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 ModuleBuilder module = inner.getValue();
@@ -797,7 +796,7 @@ public final class YangParserImpl implements YangModelParser {
                 }
             } catch (YangParseException e) {
                 throw new YangParseException(module.getName(), usnb.getLine(), "Failed to resolve node " + usnb
-                        + ": no such extension definition found.");
+                        + ": no such extension definition found.",e);
             }
         }
     }
@@ -832,7 +831,7 @@ public final class YangParserImpl implements YangModelParser {
 
             } catch (YangParseException e) {
                 throw new YangParseException(module.getName(), usnb.getLine(), "Failed to resolve node " + usnb
-                        + ": no such extension definition found.");
+                        + ": no such extension definition found.", e);
             }
 
         }
@@ -927,7 +926,7 @@ public final class YangParserImpl implements YangModelParser {
 
                 for (int i = 0; i < path.size(); i++) {
                     if (currentParent == null) {
-                        throw new YangParseException(module.getName(), line, "Failed to find deviation target.");
+                        throw new YangParseException(module.getName(), line, FAIL_DEVIATION_TARGET);
                     }
                     QName q = path.get(i);
                     name = q.getLocalName();
@@ -937,7 +936,7 @@ public final class YangParserImpl implements YangModelParser {
                 }
 
                 if (currentParent == null) {
-                    throw new YangParseException(module.getName(), line, "Failed to find deviation target.");
+                    throw new YangParseException(module.getName(), line, FAIL_DEVIATION_TARGET);
                 }
                 if (currentParent instanceof SchemaNode) {
                     dev.setTargetPath(((SchemaNode) currentParent).getPath());
@@ -968,7 +967,7 @@ public final class YangParserImpl implements YangModelParser {
 
         for (int i = 0; i < path.size(); i++) {
             if (currentParent == null) {
-                throw new YangParseException(module.getName(), line, "Failed to find deviation target.");
+                throw new YangParseException(module.getName(), line, FAIL_DEVIATION_TARGET);
             }
             QName q = path.get(i);
             String name = q.getLocalName();
@@ -977,8 +976,8 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
 
-        if (currentParent == null || !(currentParent instanceof SchemaNodeBuilder)) {
-            throw new YangParseException(module.getName(), line, "Failed to find deviation target.");
+        if (!(currentParent instanceof SchemaNodeBuilder)) {
+            throw new YangParseException(module.getName(), line, FAIL_DEVIATION_TARGET);
         }
         dev.setTargetPath(((SchemaNodeBuilder) currentParent).getPath());
     }

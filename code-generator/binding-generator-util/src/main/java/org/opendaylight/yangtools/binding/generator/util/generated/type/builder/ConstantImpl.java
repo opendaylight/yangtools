@@ -12,13 +12,12 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
 final class ConstantImpl implements Constant {
 
-    final Type definingType;
+    private final Type definingType;
     private final Type type;
     private final String name;
     private final Object value;
 
-    public ConstantImpl(final Type definingType, final Type type,
-                        final String name, final Object value) {
+    public ConstantImpl(final Type definingType, final Type type, final String name, final Object value) {
         super();
         this.definingType = definingType;
         this.type = type;
@@ -59,7 +58,7 @@ final class ConstantImpl implements Constant {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -73,7 +72,7 @@ final class ConstantImpl implements Constant {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

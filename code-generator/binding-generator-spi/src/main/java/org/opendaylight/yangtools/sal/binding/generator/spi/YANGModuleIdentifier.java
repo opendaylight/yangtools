@@ -10,8 +10,36 @@ package org.opendaylight.yangtools.sal.binding.generator.spi;
 import java.net.URI;
 import java.util.Date;
 
+
 public class YANGModuleIdentifier {
-    String name;
-    URI namespace;
-    Date revision;
+    private String name;
+    private URI namespace;
+    private Date revision;
+
+    /**
+     * Returns name.
+     * 
+     * @return string with name
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Returns URI namespace.
+     * 
+     * @return URI with namespace
+     */
+    public URI getNamespace() {
+        return this.namespace;
+    }
+
+    /**
+     * Returns the revision date.
+     * 
+     * @return date of revision
+     */
+    public Date getRevision() {
+        return this.revision;
+    }
 }

@@ -24,5 +24,5 @@ public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition>
      * 
      * @return list of the type definition which contains the union items.
      */
-    public List<TypeDefinition<?>> getTypes();
+    List<TypeDefinition<?>> getTypes();
 }

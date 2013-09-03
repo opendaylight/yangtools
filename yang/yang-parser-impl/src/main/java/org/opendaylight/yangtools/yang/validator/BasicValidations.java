@@ -30,53 +30,43 @@ final class BasicValidations {
 
     static final String SUPPORTED_YANG_VERSION = "1";
 
-    static void checkNotPresentBoth(ParseTree parent,
-            Class<? extends ParseTree> childType1,
-            Class<? extends ParseTree> childType2) {
-        if (BasicValidations.checkPresentChildOfTypeSafe(parent, childType1,
-                true)
-                && BasicValidations.checkPresentChildOfTypeSafe(parent,
-                        childType2, false))
-            ValidationUtil
-                    .ex(ValidationUtil
-                            .f("(In (sub)module:%s) Both %s and %s statement present in %s:%s",
-                                    ValidationUtil.getRootParentName(parent),
-                                    ValidationUtil
-                                            .getSimpleStatementName(childType1),
-                                    ValidationUtil
-                                            .getSimpleStatementName(childType2),
-                                    ValidationUtil
-                                            .getSimpleStatementName(parent
-                                                    .getClass()),
-                                    ValidationUtil.getName(parent)));
+    /**
+     * It isn't desirable to create instance of this class.
+     */
+    private BasicValidations() {
     }
 
-    static void checkOnlyPermittedValues(ParseTree ctx,
-            Set<String> permittedValues) {
+    static void checkNotPresentBoth(ParseTree parent, Class<? extends ParseTree> childType1,
+            Class<? extends ParseTree> childType2) {
+        if (BasicValidations.checkPresentChildOfTypeSafe(parent, childType1, true)
+                && BasicValidations.checkPresentChildOfTypeSafe(parent, childType2, false)) {
+            ValidationUtil.ex(ValidationUtil.f("(In (sub)module:%s) Both %s and %s statement present in %s:%s",
+                    ValidationUtil.getRootParentName(parent), ValidationUtil.getSimpleStatementName(childType1),
+                    ValidationUtil.getSimpleStatementName(childType2),
+                    ValidationUtil.getSimpleStatementName(parent.getClass()), ValidationUtil.getName(parent)));
+        }
+    }
+
+    static void checkOnlyPermittedValues(ParseTree ctx, Set<String> permittedValues) {
         String mandatory = ValidationUtil.getName(ctx);
         String rootParentName = ValidationUtil.getRootParentName(ctx);
 
-        if (!permittedValues.contains(mandatory))
-            ValidationUtil
-                    .ex(ValidationUtil
-                            .f("(In (sub)module:%s) %s:%s, illegal value for %s statement, only permitted:%s",
-                                    rootParentName, ValidationUtil
-                                            .getSimpleStatementName(ctx
-                                                    .getClass()), mandatory,
-                                    ValidationUtil.getSimpleStatementName(ctx
-                                            .getClass()), permittedValues));
+        if (!permittedValues.contains(mandatory)) {
+            ValidationUtil.ex(ValidationUtil.f(
+                    "(In (sub)module:%s) %s:%s, illegal value for %s statement, only permitted:%s", rootParentName,
+                    ValidationUtil.getSimpleStatementName(ctx.getClass()), mandatory,
+                    ValidationUtil.getSimpleStatementName(ctx.getClass()), permittedValues));
+        }
     }
 
     static void checkUniquenessInNamespace(ParseTree stmt, Set<String> uniques) {
         String name = ValidationUtil.getName(stmt);
         String rootParentName = ValidationUtil.getRootParentName(stmt);
 
-        if (uniques.contains(name))
-            ValidationUtil.ex(ValidationUtil.f(
-                    "(In (sub)module:%s) %s:%s not unique in (sub)module",
-                    rootParentName,
-                    ValidationUtil.getSimpleStatementName(stmt.getClass()),
-                    name));
+        if (uniques.contains(name)) {
+            ValidationUtil.ex(ValidationUtil.f("(In (sub)module:%s) %s:%s not unique in (sub)module", rootParentName,
+                    ValidationUtil.getSimpleStatementName(stmt.getClass()), name));
+        }
         uniques.add(name);
     }
 
@@ -85,37 +75,32 @@ final class BasicValidations {
      * file)
      */
     static void checkOnlyOneModulePresent(String moduleName, String globalId) {
-        if (globalId != null)
-            ValidationUtil.ex(ValidationUtil
-                    .f("Multiple (sub)modules per file"));
+        if (globalId != null) {
+            ValidationUtil.ex(ValidationUtil.f("Multiple (sub)modules per file"));
+        }
     }
 
     static void checkPresentYangVersion(ParseTree ctx, String moduleName) {
-        if (!checkPresentChildOfTypeSafe(ctx, Yang_version_stmtContext.class,
-                true))
-            ValidationUtil
-                    .ex(ValidationUtil
-                            .f("Yang version statement not present in module:%s, Validating as yang version:%s",
-                                    moduleName, SUPPORTED_YANG_VERSION));
+        if (!checkPresentChildOfTypeSafe(ctx, Yang_version_stmtContext.class, true)) {
+            ValidationUtil.ex(ValidationUtil.f(
+                    "Yang version statement not present in module:%s, Validating as yang version:%s", moduleName,
+                    SUPPORTED_YANG_VERSION));
+        }
     }
 
     static void checkDateFormat(ParseTree stmt, DateFormat format) {
         try {
             format.parse(ValidationUtil.getName(stmt));
         } catch (ParseException e) {
-            String exceptionMessage = ValidationUtil
-                    .f("(In (sub)module:%s) %s:%s, invalid date format expected date format is:%s",
-                            ValidationUtil.getRootParentName(stmt),
-                            ValidationUtil.getSimpleStatementName(stmt
-                                    .getClass()), ValidationUtil.getName(stmt),
-                            YangParserListenerImpl.simpleDateFormat
-                                    .format(new Date()));
+            String exceptionMessage = ValidationUtil.f(
+                    "(In (sub)module:%s) %s:%s, invalid date format expected date format is:%s",
+                    ValidationUtil.getRootParentName(stmt), ValidationUtil.getSimpleStatementName(stmt.getClass()),
+                    ValidationUtil.getName(stmt), YangParserListenerImpl.simpleDateFormat.format(new Date()));
             ValidationUtil.ex(exceptionMessage);
         }
     }
 
-    static Pattern identifierPattern = Pattern
-            .compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
+    static private Pattern identifierPattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
 
     static void checkIdentifier(ParseTree statement) {
         checkIdentifierInternal(statement, ValidationUtil.getName(statement));
@@ -124,32 +109,26 @@ final class BasicValidations {
     static void checkIdentifierInternal(ParseTree statement, String name) {
         if (!identifierPattern.matcher(name).matches()) {
 
-            String message = ValidationUtil
-                    .f("%s statement identifier:%s is not in required format:%s",
-                            ValidationUtil.getSimpleStatementName(statement
-                                    .getClass()), name, identifierPattern
-                                    .toString());
+            String message = ValidationUtil.f("%s statement identifier:%s is not in required format:%s",
+                    ValidationUtil.getSimpleStatementName(statement.getClass()), name, identifierPattern.toString());
             String parent = ValidationUtil.getRootParentName(statement);
-            message = parent.equals(name) ? message : ValidationUtil.f(
-                    "(In (sub)module:%s) %s", parent, message);
+            message = parent.equals(name) ? message : ValidationUtil.f("(In (sub)module:%s) %s", parent, message);
 
-            if(statement instanceof ParserRuleContext) {
-                message = "Error on line "+ ((ParserRuleContext)statement).getStart().getLine() + ": "+ message;
+            if (statement instanceof ParserRuleContext) {
+                message = "Error on line " + ((ParserRuleContext) statement).getStart().getLine() + ": " + message;
             }
 
             ValidationUtil.ex(message);
         }
     }
 
-    static Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
+    static private Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
 
     static void checkPrefixedIdentifier(ParseTree statement) {
-        checkPrefixedIdentifierInternal(statement,
-                ValidationUtil.getName(statement));
+        checkPrefixedIdentifierInternal(statement, ValidationUtil.getName(statement));
     }
 
-    private static void checkPrefixedIdentifierInternal(ParseTree statement,
-            String id) {
+    private static void checkPrefixedIdentifierInternal(ParseTree statement, String id) {
         Matcher matcher = prefixedIdentifierPattern.matcher(id);
 
         if (matcher.matches()) {
@@ -159,12 +138,12 @@ final class BasicValidations {
                 // check ID
                 checkIdentifierInternal(statement, matcher.group(2));
             } catch (YangValidationException e) {
-                ValidationUtil.ex(ValidationUtil.f(
-                        "Prefixed id:%s not in required format, details:%s",
-                        id, e.getMessage()));
+                ValidationUtil.ex(ValidationUtil.f("Prefixed id:%s not in required format, details:%s", id,
+                        e.getMessage()));
             }
-        } else
+        } else {
             checkIdentifierInternal(statement, id);
+        }
     }
 
     static void checkSchemaNodeIdentifier(ParseTree statement) {
@@ -172,33 +151,30 @@ final class BasicValidations {
 
         try {
             for (String oneOfId : id.split("/")) {
-                if (oneOfId.isEmpty())
+                if (oneOfId.isEmpty()) {
                     continue;
+                }
                 checkPrefixedIdentifierInternal(statement, oneOfId);
             }
         } catch (YangValidationException e) {
-            ValidationUtil.ex(ValidationUtil.f(
-                    "Schema node id:%s not in required format, details:%s", id,
+            ValidationUtil.ex(ValidationUtil.f("Schema node id:%s not in required format, details:%s", id,
                     e.getMessage()));
         }
     }
 
-    private static interface MessageProvider {
+    private interface MessageProvider {
         String getMessage();
     }
 
-    static void checkPresentChildOfTypeInternal(ParseTree parent,
-            Set<Class<? extends ParseTree>> expectedChildType,
+    static void checkPresentChildOfTypeInternal(ParseTree parent, Set<Class<? extends ParseTree>> expectedChildType,
             MessageProvider message, boolean atMostOne) {
         if (!checkPresentChildOfTypeSafe(parent, expectedChildType, atMostOne)) {
-            String str = atMostOne ? "(Expected exactly one statement) "
-                    + message.getMessage() : message.getMessage();
+            String str = atMostOne ? "(Expected exactly one statement) " + message.getMessage() : message.getMessage();
             ValidationUtil.ex(str);
         }
     }
 
-    static void checkPresentChildOfType(final ParseTree parent,
-            final Class<? extends ParseTree> expectedChildType,
+    static void checkPresentChildOfType(final ParseTree parent, final Class<? extends ParseTree> expectedChildType,
             boolean atMostOne) {
 
         // Construct message in checkPresentChildOfTypeInternal only if
@@ -207,84 +183,80 @@ final class BasicValidations {
 
             @Override
             public String getMessage() {
-                String message = ValidationUtil
-                        .f("Missing %s statement in %s:%s", ValidationUtil
-                                .getSimpleStatementName(expectedChildType),
-                                ValidationUtil.getSimpleStatementName(parent
-                                        .getClass()), ValidationUtil
-                                        .getName(parent));
+                String message = ValidationUtil.f("Missing %s statement in %s:%s",
+                        ValidationUtil.getSimpleStatementName(expectedChildType),
+                        ValidationUtil.getSimpleStatementName(parent.getClass()), ValidationUtil.getName(parent));
 
                 String root = ValidationUtil.getRootParentName(parent);
-                message = parent.equals(ValidationUtil
-                        .getRootParentName(parent)) ? message : ValidationUtil
-                        .f("(In (sub)module:%s) %s", root, message);
+                message = parent.equals(ValidationUtil.getRootParentName(parent)) ? message : ValidationUtil.f(
+                        "(In (sub)module:%s) %s", root, message);
                 return message;
             }
         };
 
-        Set<Class<? extends ParseTree>> expectedChildTypeSet = Sets
-                .newHashSet();
+        Set<Class<? extends ParseTree>> expectedChildTypeSet = Sets.newHashSet();
         expectedChildTypeSet.add(expectedChildType);
 
-        checkPresentChildOfTypeInternal(parent, expectedChildTypeSet, message,
-                atMostOne);
+        checkPresentChildOfTypeInternal(parent, expectedChildTypeSet, message, atMostOne);
     }
 
+    /**
+     * 
+     * Implementation of interface <code>MessageProvider</code> for method
+     * {@link BasicValidations#checkPresentChildOfTypeSafe(ParseTree, Set, boolean)
+     * checkPresentChildOfTypeSafe(ParseTree, Set, boolean) * }
+     */
+    private static class MessageProviderForSetOfChildTypes implements MessageProvider {
+
+        private Set<Class<? extends ParseTree>> expectedChildTypes;
+        private ParseTree parent;
+
+        public MessageProviderForSetOfChildTypes(Set<Class<? extends ParseTree>> expectedChildTypes, ParseTree parent) {
+            this.expectedChildTypes = expectedChildTypes;
+            this.parent = parent;
+        }
+
+        @Override
+        public String getMessage() {
+            StringBuilder childTypes = new StringBuilder();
+            String orStr = " OR ";
+            for (Class<? extends ParseTree> type : expectedChildTypes) {
+                childTypes.append(ValidationUtil.getSimpleStatementName(type));
+                childTypes.append(orStr);
+            }
+            String message = ValidationUtil.f("Missing %s statement in %s:%s", childTypes.toString(),
+                    ValidationUtil.getSimpleStatementName(parent.getClass()), ValidationUtil.getName(parent));
+
+            String root = ValidationUtil.getRootParentName(parent);
+            message = parent.equals(ValidationUtil.getRootParentName(parent)) ? message : ValidationUtil.f(
+                    "(In (sub)module:%s) %s", root, message);
+            return message;
+        }
+    };
+
     static void checkPresentChildOfTypes(final ParseTree parent,
-            final Set<Class<? extends ParseTree>> expectedChildTypes,
-            boolean atMostOne) {
+            final Set<Class<? extends ParseTree>> expectedChildTypes, boolean atMostOne) {
 
         // Construct message in checkPresentChildOfTypeInternal only if
         // validaiton fails, not in advance
-        MessageProvider message = new MessageProvider() {
-
-            @Override
-            public String getMessage() {
-                StringBuilder childTypes = new StringBuilder();
-                String orStr = " OR ";
-                for (Class<? extends ParseTree> type : expectedChildTypes) {
-                    childTypes.append(ValidationUtil
-                            .getSimpleStatementName(type));
-                    childTypes.append(orStr);
-                }
-
-                String message = ValidationUtil
-                        .f("Missing %s statement in %s:%s", childTypes
-                                .toString(), ValidationUtil
-                                .getSimpleStatementName(parent.getClass()),
-                                ValidationUtil.getName(parent));
-
-                String root = ValidationUtil.getRootParentName(parent);
-                message = parent.equals(ValidationUtil
-                        .getRootParentName(parent)) ? message : ValidationUtil
-                        .f("(In (sub)module:%s) %s", root, message);
-
-                return message;
-            }
-        };
-
-        checkPresentChildOfTypeInternal(parent, expectedChildTypes, message,
-                atMostOne);
+        MessageProvider message = new MessageProviderForSetOfChildTypes(expectedChildTypes, parent);
+        checkPresentChildOfTypeInternal(parent, expectedChildTypes, message, atMostOne);
     }
 
-    static boolean checkPresentChildOfTypeSafe(ParseTree parent,
-            Set<Class<? extends ParseTree>> expectedChildType, boolean atMostOne) {
+    static boolean checkPresentChildOfTypeSafe(ParseTree parent, Set<Class<? extends ParseTree>> expectedChildType,
+            boolean atMostOne) {
 
-        int foundChildrenOfType = ValidationUtil.countPresentChildrenOfType(
-                parent, expectedChildType);
+        int foundChildrenOfType = ValidationUtil.countPresentChildrenOfType(parent, expectedChildType);
 
-        return atMostOne ? foundChildrenOfType == 1 ? true : false
-                : foundChildrenOfType != 0 ? true : false;
+        return atMostOne ? foundChildrenOfType == 1 ? true : false : foundChildrenOfType != 0 ? true : false;
     }
 
-    static boolean checkPresentChildOfTypeSafe(ParseTree parent,
-            Class<? extends ParseTree> expectedChildType, boolean atMostOne) {
+    static boolean checkPresentChildOfTypeSafe(ParseTree parent, Class<? extends ParseTree> expectedChildType,
+            boolean atMostOne) {
 
-        int foundChildrenOfType = ValidationUtil.countPresentChildrenOfType(
-                parent, expectedChildType);
+        int foundChildrenOfType = ValidationUtil.countPresentChildrenOfType(parent, expectedChildType);
 
-        return atMostOne ? foundChildrenOfType == 1 ? true : false
-                : foundChildrenOfType != 0 ? true : false;
+        return atMostOne ? foundChildrenOfType == 1 ? true : false : foundChildrenOfType != 0 ? true : false;
     }
 
     static List<String> getAndCheckUniqueKeys(ParseTree ctx) {
@@ -295,14 +267,12 @@ final class BasicValidations {
         List<String> keyList = ValidationUtil.listKeysFromId(key);
         Set<String> duplicates = ValidationUtil.getDuplicates(keyList);
 
-        if (duplicates.size() != 0)
-            ValidationUtil.ex(ValidationUtil.f(
-                    "(In (sub)module:%s) %s:%s, %s:%s contains duplicates:%s",
-                    rootParentName,
-                    ValidationUtil.getSimpleStatementName(parent.getClass()),
-                    ValidationUtil.getName(parent),
-                    ValidationUtil.getSimpleStatementName(ctx.getClass()), key,
+        if (duplicates.size() != 0) {
+            ValidationUtil.ex(ValidationUtil.f("(In (sub)module:%s) %s:%s, %s:%s contains duplicates:%s",
+                    rootParentName, ValidationUtil.getSimpleStatementName(parent.getClass()),
+                    ValidationUtil.getName(parent), ValidationUtil.getSimpleStatementName(ctx.getClass()), key,
                     duplicates));
+        }
         return keyList;
     }
 }

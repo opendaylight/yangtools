@@ -22,5 +22,5 @@ public interface PatternConstraint extends ConstraintMetaDefinition {
      * @return string with regular expression which is equal to the argument of
      *         the YANG <code>pattern</code> substatement
      */
-    public String getRegularExpression();
+    String getRegularExpression();
 }

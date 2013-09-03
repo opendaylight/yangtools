@@ -22,6 +22,6 @@ public interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<Generated
      * 
      * @return the <code>new</code> <i>immutable</i> instance of Generated Type.
      */
-    public GeneratedType toInstance();
+    GeneratedType toInstance();
 
 }

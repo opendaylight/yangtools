@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
  */
 public interface ConstantBuilder {
 
-    public void assignValue(final Object value);
+    void assignValue(final Object value);
 
-    public Constant toInstance(Type definingType);
+    Constant toInstance(Type definingType);
 }
