@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.WildcardType;
+import com.google.common.base.Preconditions;
 
 public final class GeneratorUtil {
 
@@ -78,12 +79,11 @@ public final class GeneratorUtil {
         }
 
         // REGULAR EXPRESSION
-        if (genType instanceof GeneratedTransferObject) {
-            if (isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, (GeneratedTransferObject) genType)) {
-                putTypeIntoImports(genType, Types.typeForClass(java.util.regex.Pattern.class), imports);
-                putTypeIntoImports(genType, Types.typeForClass(java.util.Arrays.class), imports);
-                putTypeIntoImports(genType, Types.typeForClass(java.util.ArrayList.class), imports);
-            }
+        if (genType instanceof GeneratedTransferObject
+                && isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, (GeneratedTransferObject) genType)) {
+            putTypeIntoImports(genType, Types.typeForClass(java.util.regex.Pattern.class), imports);
+            putTypeIntoImports(genType, Types.typeForClass(java.util.Arrays.class), imports);
+            putTypeIntoImports(genType, Types.typeForClass(java.util.ArrayList.class), imports);
         }
 
         // METHODS
@@ -142,25 +142,15 @@ public final class GeneratorUtil {
      */
     public static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
             final Map<String, String> imports) {
-        if (parentGenType == null) {
-            throw new IllegalArgumentException("Parent Generated Type parameter MUST be specified and cannot be "
-                    + "NULL!");
-        }
-        if (parentGenType.getName() == null) {
-            throw new IllegalArgumentException("Parent Generated Type name cannot be NULL!");
-        }
-        if (parentGenType.getPackageName() == null) {
-            throw new IllegalArgumentException("Parent Generated Type cannot have Package Name referenced as NULL!");
-        }
-        if (type == null) {
-            throw new IllegalArgumentException("Type parameter MUST be specified and cannot be NULL!");
-        }
-        if (type.getName() == null) {
-            throw new IllegalArgumentException("Type name cannot be NULL!");
-        }
-        if (type.getPackageName() == null) {
-            throw new IllegalArgumentException("Type cannot have Package Name referenced as NULL!");
-        }
+        Preconditions.checkArgument(parentGenType != null,
+                "Parent Generated Type parameter MUST be specified and cannot be " + "NULL!");
+        Preconditions.checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
+        Preconditions.checkArgument(parentGenType.getPackageName() != null,
+                "Parent Generated Type cannot have Package Name referenced as NULL!");
+        Preconditions.checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
+
+        Preconditions.checkArgument(type.getName() != null, "Type name cannot be NULL!");
+        Preconditions.checkArgument(type.getPackageName() != null, "Type cannot have Package Name referenced as NULL!");
 
         final String typeName = type.getName();
         final String typePackageName = type.getPackageName();
@@ -263,37 +253,24 @@ public final class GeneratorUtil {
      */
     public static String getExplicitType(final GeneratedType parentGenType, final Type type,
             final Map<String, String> imports) {
-        if (type == null) {
-            throw new IllegalArgumentException("Type parameter MUST be specified and cannot be NULL!");
-        }
-        if (type.getName() == null) {
-            throw new IllegalArgumentException("Type name cannot be NULL!");
-        }
-        if (type.getPackageName() == null) {
-            throw new IllegalArgumentException("Type cannot have Package Name referenced as NULL!");
-        }
-        if (imports == null) {
-            throw new IllegalArgumentException("Imports Map cannot be NULL!");
-        }
+
+        Preconditions.checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
+        Preconditions.checkArgument(type.getName() != null, "Type name cannot be NULL!");
+        Preconditions.checkArgument(type.getPackageName() != null, "Type cannot have Package Name referenced as NULL!");
+        Preconditions.checkArgument(imports != null, "Imports Map cannot be NULL!");
 
         final String typePackageName = type.getPackageName();
         final String typeName = type.getName();
         final String importedPackageName = imports.get(typeName);
+        final StringBuilder builder;
         if (typePackageName.equals(importedPackageName) || typePackageName.equals(parentGenType.getPackageName())) {
-            final StringBuilder builder = new StringBuilder(type.getName());
-            if (type instanceof ParameterizedType) {
-                final ParameterizedType pType = (ParameterizedType) type;
-                final Type[] pTypes = pType.getActualTypeArguments();
-                builder.append("<");
-                builder.append(getParameters(parentGenType, pTypes, imports));
-                builder.append(">");
-            }
+            builder = new StringBuilder(type.getName());
+            addActualTypeParameters(builder, type, parentGenType, imports);
             if (builder.toString().equals("Void")) {
                 return "void";
             }
-            return builder.toString();
         } else {
-            final StringBuilder builder = new StringBuilder();
+            builder = new StringBuilder();
             if (typePackageName.startsWith("java.lang")) {
                 builder.append(type.getName());
             } else {
@@ -306,15 +283,40 @@ public final class GeneratorUtil {
             if (type.equals(Types.voidType())) {
                 return "void";
             }
-            if (type instanceof ParameterizedType) {
-                final ParameterizedType pType = (ParameterizedType) type;
-                final Type[] pTypes = pType.getActualTypeArguments();
-                builder.append("<");
-                builder.append(getParameters(parentGenType, pTypes, imports));
-                builder.append(">");
-            }
-            return builder.toString();
+            addActualTypeParameters(builder, type, parentGenType, imports);
         }
+        return builder.toString();
+
+    }
+
+    /**
+     * Adds actual type parameters from <code>type</code> to
+     * <code>builder</code> if <code>type</code> is
+     * <code>ParametrizedType</code>.
+     * 
+     * @param builder
+     *            string builder which contains type name
+     * @param type
+     *            JAVA <code>Type</code> for which is the string with type info
+     *            generated
+     * @param parentGenType
+     *            generated type which contains <code>type</code>
+     * @param imports
+     *            map of necessary imports for <code>parentGenType</code>
+     * @return if <code>type</code> is of the type <code>ParametrizedType</code> <br />
+     *         <li>then <code>builder</code> + actual <code>type</code>
+     *         parameters</li> <li>else only <code>builder</code></li>
+     */
+    private static StringBuilder addActualTypeParameters(StringBuilder builder, final Type type,
+            final GeneratedType parentGenType, final Map<String, String> imports) {
+        if (type instanceof ParameterizedType) {
+            final ParameterizedType pType = (ParameterizedType) type;
+            final Type[] pTypes = pType.getActualTypeArguments();
+            builder.append("<");
+            builder.append(getParameters(parentGenType, pTypes, imports));
+            builder.append(">");
+        }
+        return builder;
     }
 
     /**

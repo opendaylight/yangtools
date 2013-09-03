@@ -110,12 +110,27 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Constant with the concrete name of namespace.
      */
-    private final static String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
+    private static final String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
 
     /**
      * Constant with the concrete name of identifier.
      */
-    private final static String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
+    private static final String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
+
+    /**
+     * Constant with the error message.
+     */
+    private static final String BASE_PCG_NAME_NOT_NULL = "Base Package Name cannot be NULL.";
+
+    /**
+     * Constant with the error message.
+     */
+    private static final String MODUL_NAME_NOT_NULL = "Module name cannot be NULL.";
+
+    /**
+     * Constant with the error message.
+     */
+    private static final String MODUL_REF_NOT_NULL = "Module reference cannot be NULL.";
 
     /**
      * Only parent constructor is invoked.
@@ -127,10 +142,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Resolves generated types from <code>context</code> schema nodes of all
      * modules.
-     *
+     * 
      * Generated types are created for modules, groupings, types, containers,
      * lists, choices, augments, rpcs, notification, identities.
-     *
+     * 
      * @param context
      *            schema context which contains data about all schema nodes
      *            saved in modules
@@ -144,8 +159,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     @Override
     public List<Type> generateTypes(final SchemaContext context) {
-        Preconditions.checkArgument(context != null,"Schema Context reference cannot be NULL.");
-        Preconditions.checkState(context.getModules() != null,"Schema Context does not contain defined modules.");
+        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL.");
+        Preconditions.checkState(context.getModules() != null, "Schema Context does not contain defined modules.");
         final List<Type> generatedTypes = new ArrayList<>();
         schemaContext = context;
         typeProvider = new TypeProviderImpl(context);
@@ -155,7 +170,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
             generatedTypes.addAll(allGroupingsToGenTypes(module));
 
-            if (false == module.getChildNodes().isEmpty()) {
+            if (!module.getChildNodes().isEmpty()) {
                 generatedTypes.add(moduleToDataType(module));
             }
             generatedTypes.addAll(allTypeDefinitionsToGenTypes(module));
@@ -174,10 +189,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Resolves generated types from <code>context</code> schema nodes only for
      * modules specified in <code>modules</code>
-     *
+     * 
      * Generated types are created for modules, groupings, types, containers,
      * lists, choices, augments, rpcs, notification, identities.
-     *
+     * 
      * @param context
      *            schema context which contains data about all schema nodes
      *            saved in modules
@@ -201,9 +216,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     @Override
     public List<Type> generateTypes(final SchemaContext context, final Set<Module> modules) {
-        Preconditions.checkArgument(context != null,"Schema Context reference cannot be NULL.");
-        Preconditions.checkState(context.getModules() != null,"Schema Context does not contain defined modules.");
-        Preconditions.checkArgument(modules != null,"Sef of Modules cannot be NULL.");
+        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL.");
+        Preconditions.checkState(context.getModules() != null, "Schema Context does not contain defined modules.");
+        Preconditions.checkArgument(modules != null, "Sef of Modules cannot be NULL.");
 
         final List<Type> filteredGenTypes = new ArrayList<>();
         schemaContext = context;
@@ -214,7 +229,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
             final List<Type> generatedTypes = new ArrayList<>();
 
             generatedTypes.addAll(allGroupingsToGenTypes(contextModule));
-            if (false == contextModule.getChildNodes().isEmpty()) {
+            if (!contextModule.getChildNodes().isEmpty()) {
                 generatedTypes.add(moduleToDataType(contextModule));
             }
             generatedTypes.addAll(allTypeDefinitionsToGenTypes(contextModule));
@@ -236,7 +251,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all extended type definitions of module to the list of
      * <code>Type</code> objects.
-     *
+     * 
      * @param module
      *            module from which is obtained set of type definitions
      * @return list of <code>Type</code> which are generated from extended
@@ -247,18 +262,20 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if name of module equals null</li>
      *             <li>if type definitions of module equal null</li>
      *             </ul>
-     *
+     * 
      */
     private List<Type> allTypeDefinitionsToGenTypes(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
-        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
-        Preconditions.checkArgument(module.getTypeDefinitions() != null,"Type Definitions for module " + module.getName() + " cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
+        Preconditions.checkArgument(module.getName() != null, MODUL_NAME_NOT_NULL);
+        Preconditions.checkArgument(module.getTypeDefinitions() != null,
+                "Type Definitions for module " + module.getName() + " cannot be NULL.");
 
         final Set<TypeDefinition<?>> typeDefinitions = module.getTypeDefinitions();
         final List<Type> generatedTypes = new ArrayList<>();
         for (final TypeDefinition<?> typedef : typeDefinitions) {
             if (typedef != null) {
-                final Type type = ((TypeProviderImpl) typeProvider).generatedTypeForExtendedDefinitionType(typedef, typedef);
+                final Type type = ((TypeProviderImpl) typeProvider).generatedTypeForExtendedDefinitionType(typedef,
+                        typedef);
                 if ((type != null) && !generatedTypes.contains(type)) {
                     generatedTypes.add(type);
                 }
@@ -270,7 +287,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>containers</b> of the module to the list of
      * <code>Type</code> objects.
-     *
+     * 
      * @param module
      *            module from which is obtained DataNodeIterator to iterate over
      *            all containers
@@ -282,12 +299,12 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     *
+     * 
      */
     private List<Type> allContainersToGenTypes(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
 
-        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
+        Preconditions.checkArgument(module.getName() != null, MODUL_NAME_NOT_NULL);
 
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of Child Nodes in module " + module.getName()
@@ -309,7 +326,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>lists</b> of the module to the list of <code>Type</code>
      * objects.
-     *
+     * 
      * @param module
      *            module from which is obtained DataNodeIterator to iterate over
      *            all lists
@@ -321,12 +338,12 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     *
+     * 
      */
     private List<Type> allListsToGenTypes(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
 
-        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
+        Preconditions.checkArgument(module.getName() != null, MODUL_NAME_NOT_NULL);
 
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of Child Nodes in module " + module.getName()
@@ -350,7 +367,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>choices</b> of the module to the list of
      * <code>Type</code> objects.
-     *
+     * 
      * @param module
      *            module from which is obtained DataNodeIterator to iterate over
      *            all choices
@@ -361,11 +378,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the module equals null</li>
      *             <li>if the name of module equals null</li> *
      *             </ul>
-     *
+     * 
      */
     private List<GeneratedType> allChoicesToGenTypes(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
-        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
+        Preconditions.checkArgument(module.getName() != null, MODUL_NAME_NOT_NULL);
 
         final DataNodeIterator it = new DataNodeIterator(module);
         final List<ChoiceNode> choiceNodes = it.allChoices();
@@ -383,7 +400,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>augmentation</b> of the module to the list
      * <code>Type</code> objects.
-     *
+     * 
      * @param module
      *            module from which is obtained list of all augmentation objects
      *            to iterate over them
@@ -395,11 +412,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     *
+     * 
      */
     private List<Type> allAugmentsToGenTypes(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
-        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
+        Preconditions.checkArgument(module.getName() != null, MODUL_NAME_NOT_NULL);
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of Augmentation Definitions in module "
                     + module.getName() + " cannot be NULL.");
@@ -418,7 +435,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Returns list of <code>AugmentationSchema</code> objects. The objects are
      * sorted according to the length of their target path from the shortest to
      * the longest.
-     *
+     * 
      * @param module
      *            module from which is obtained list of all augmentation objects
      * @return list of sorted <code>AugmentationSchema</code> objects obtained
@@ -428,11 +445,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the module equals null</li>
      *             <li>if the set of augmentation equals null</li>
      *             </ul>
-     *
+     * 
      */
     private List<AugmentationSchema> resolveAugmentations(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
-        Preconditions.checkState(module.getAugmentations() != null,"Augmentations Set cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
+        Preconditions.checkState(module.getAugmentations() != null, "Augmentations Set cannot be NULL.");
 
         final Set<AugmentationSchema> augmentations = module.getAugmentations();
         final List<AugmentationSchema> sortedAugmentations = new ArrayList<>(augmentations);
@@ -458,7 +475,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Converts whole <b>module</b> to <code>GeneratedType</code> object.
      * Firstly is created the module builder object from which is finally
      * obtained reference to <code>GeneratedType</code> object.
-     *
+     * 
      * @param module
      *            module from which are obtained the module name, child nodes,
      *            uses and is derived package name
@@ -466,10 +483,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *         the module
      * @throws IllegalArgumentException
      *             if the module equals null
-     *
+     * 
      */
     private GeneratedType moduleToDataType(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
 
         final GeneratedTypeBuilder moduleDataTypeBuilder = moduleTypeBuilder(module, "Data");
         addImplementedInterfaceFromUses(module, moduleDataTypeBuilder);
@@ -487,7 +504,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Converts all <b>rpcs</b> inputs and outputs substatements of the module
      * to the list of <code>Type</code> objects. In addition are to containers
      * and lists which belong to input or output also part of returning list.
-     *
+     * 
      * @param module
      *            module from which is obtained set of all rpc objects to
      *            iterate over them
@@ -499,17 +516,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     *
+     * 
      */
     private List<Type> allRPCMethodsToGenType(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
-
-        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
-
-        if (module.getChildNodes() == null) {
-            throw new IllegalArgumentException("Reference to Set of RPC Method Definitions in module "
-                    + module.getName() + " cannot be NULL.");
-        }
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
+        Preconditions.checkArgument(module.getName() != null, MODUL_NAME_NOT_NULL);
+        Preconditions.checkArgument(module.getChildNodes() != null,
+                "Reference to Set of RPC Method Definitions in module " + module.getName() + " cannot be NULL.");
 
         final String basePackageName = moduleNamespaceToPackageName(module);
         final Set<RpcDefinition> rpcDefinitions = module.getRpcs();
@@ -531,55 +544,21 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
                 final List<DataNodeIterator> rpcInOut = new ArrayList<>();
 
-                ContainerSchemaNode input = rpc.getInput();
-                ContainerSchemaNode output = rpc.getOutput();
+                // resolve RPC input
+                Type inTypeInstance = resolveRpcInOutNode(rpc.getInput(), basePackageName, rpcInOut, rpcName);
+                genRPCTypes.add(inTypeInstance);
+                method.addParameter(inTypeInstance, "input");
 
-                if (input != null) {
-                    rpcInOut.add(new DataNodeIterator(input));
-                    GeneratedTypeBuilder inType = addRawInterfaceDefinition(basePackageName, input, rpcName);
-                    addImplementedInterfaceFromUses(input, inType);
-                    inType.addImplementsType(DATA_OBJECT);
-                    inType.addImplementsType(augmentable(inType));
-                    resolveDataSchemaNodes(basePackageName, inType, input.getChildNodes());
-                    Type inTypeInstance = inType.toInstance();
-                    genRPCTypes.add(inTypeInstance);
-                    method.addParameter(inTypeInstance, "input");
-                }
-
+                // resolve RPC output
                 Type outTypeInstance = Types.typeForClass(Void.class);
-                if (output != null) {
-                    rpcInOut.add(new DataNodeIterator(output));
-                    GeneratedTypeBuilder outType = addRawInterfaceDefinition(basePackageName, output, rpcName);
-                    addImplementedInterfaceFromUses(output, outType);
-                    outType.addImplementsType(DATA_OBJECT);
-                    outType.addImplementsType(augmentable(outType));
-
-                    resolveDataSchemaNodes(basePackageName, outType, output.getChildNodes());
-                    outTypeInstance = outType.toInstance();
-                    genRPCTypes.add(outTypeInstance);
-
-                }
+                outTypeInstance = resolveRpcInOutNode(rpc.getOutput(), basePackageName, rpcInOut, rpcName);
+                genRPCTypes.add(outTypeInstance);
 
                 final Type rpcRes = Types.parameterizedTypeFor(Types.typeForClass(RpcResult.class), outTypeInstance);
                 method.setReturnType(Types.parameterizedTypeFor(future, rpcRes));
-                for (DataNodeIterator it : rpcInOut) {
-                    List<ContainerSchemaNode> nContainers = it.allContainers();
-                    if ((nContainers != null) && !nContainers.isEmpty()) {
-                        for (final ContainerSchemaNode container : nContainers) {
-                            if (!container.isAddedByUses()) {
-                                genRPCTypes.add(containerToGenType(basePackageName, container));
-                            }
-                        }
-                    }
-                    List<ListSchemaNode> nLists = it.allLists();
-                    if ((nLists != null) && !nLists.isEmpty()) {
-                        for (final ListSchemaNode list : nLists) {
-                            if (!list.isAddedByUses()) {
-                                genRPCTypes.addAll(listToGenType(basePackageName, list));
-                            }
-                        }
-                    }
-                }
+
+                genRPCTypes.addAll(resolveInOutRpcSubnodesToGenTypes(basePackageName, rpcInOut));
+
             }
         }
         genRPCTypes.add(interfaceBuilder.toInstance());
@@ -587,10 +566,77 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     }
 
     /**
+     * Converts container and list subnodes of input and output substatements of
+     * rpc statement to generated types.
+     * 
+     * @param basePackageName
+     *            string with the package name of the module
+     * @param rpcInOut
+     *            list of the data node iterators over subnodes of input and
+     *            output statements
+     * @return list of generated types for container and list subnodes of input
+     *         and output nodes
+     */
+    private List<Type> resolveInOutRpcSubnodesToGenTypes(String basePackageName, List<DataNodeIterator> rpcInOut) {
+        final List<Type> genTypes = new ArrayList<>();
+        for (DataNodeIterator it : rpcInOut) {
+            List<ContainerSchemaNode> nContainers = it.allContainers();
+            if ((nContainers != null) && !nContainers.isEmpty()) {
+                for (final ContainerSchemaNode container : nContainers) {
+                    if (!container.isAddedByUses()) {
+                        genTypes.add(containerToGenType(basePackageName, container));
+                    }
+                }
+            }
+            List<ListSchemaNode> nLists = it.allLists();
+            if ((nLists != null) && !nLists.isEmpty()) {
+                for (final ListSchemaNode list : nLists) {
+                    if (!list.isAddedByUses()) {
+                        genTypes.addAll(listToGenType(basePackageName, list));
+                    }
+                }
+            }
+        }
+        return genTypes;
+    }
+
+    /**
+     * 
+     * Converts schema node for rpc input or output to generated type.
+     * 
+     * @param node
+     *            container schema node which contains <code>input</code> or
+     *            <code>output</code> YANG <code>rpc</code> substatement data
+     * @param basePackageName
+     *            string with the name of the module package
+     * @param rpcInOut
+     *            list of data node iterators to which is <code>node</code>
+     *            added
+     * @param rpcName
+     *            string with rpc name which is used as prefix for the name of
+     *            <code>GeneratedTypeBuilder</code>
+     * @return generated type for <code>node</code>
+     */
+    private Type resolveRpcInOutNode(final ContainerSchemaNode node, final String basePackageName,
+            final List<DataNodeIterator> rpcInOut, final String rpcName) {
+        if (node != null) {
+            rpcInOut.add(new DataNodeIterator(node));
+            GeneratedTypeBuilder genType = addRawInterfaceDefinition(basePackageName, node, rpcName);
+            addImplementedInterfaceFromUses(node, genType);
+            genType.addImplementsType(DATA_OBJECT);
+            genType.addImplementsType(augmentable(genType));
+            resolveDataSchemaNodes(basePackageName, genType, node.getChildNodes());
+            return genType.toInstance();
+        }
+        return null;
+
+    }
+
+    /**
      * Converts all <b>notifications</b> of the module to the list of
      * <code>Type</code> objects. In addition are to this list added containers
      * and lists which are part of this notification.
-     *
+     * 
      * @param module
      *            module from which is obtained set of all notification objects
      *            to iterate over them
@@ -602,29 +648,28 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if the name of module equals null</li>
      *             <li>if the set of child nodes equals null</li>
      *             </ul>
-     *
+     * 
      */
     private List<Type> allNotificationsToGenType(final Module module) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
 
-        Preconditions.checkArgument(module.getName() != null,"Module name cannot be NULL.");
+        Preconditions.checkArgument(module.getName() != null, MODUL_NAME_NOT_NULL);
 
         if (module.getChildNodes() == null) {
             throw new IllegalArgumentException("Reference to Set of Notification Definitions in module "
                     + module.getName() + " cannot be NULL.");
         }
         final Set<NotificationDefinition> notifications = module.getNotifications();
-        if(notifications.isEmpty()) return Collections.emptyList();
-        
+        if (notifications.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         final GeneratedTypeBuilder listenerInterface = moduleTypeBuilder(module, "Listener");
         listenerInterface.addImplementsType(BindingTypes.NOTIFICATION_LISTENER);
-        
-        
-        
+
         final String basePackageName = moduleNamespaceToPackageName(module);
         final List<Type> generatedTypes = new ArrayList<>();
-        
-        
+
         for (final NotificationDefinition notification : notifications) {
             if (notification != null) {
                 DataNodeIterator it = new DataNodeIterator(notification);
@@ -647,12 +692,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                         .typeForClass(org.opendaylight.yangtools.yang.binding.Notification.class));
                 // Notification object
                 resolveDataSchemaNodes(basePackageName, notificationInterface, notification.getChildNodes());
-                
-                listenerInterface.addMethod("on"+notificationInterface.getName()) //
-                    .setAccessModifier(AccessModifier.PUBLIC)
-                    .addParameter(notificationInterface, "notification")
-                    .setReturnType(Types.VOID);
-                
+
+                listenerInterface.addMethod("on" + notificationInterface.getName())
+                        .setAccessModifier(AccessModifier.PUBLIC).addParameter(notificationInterface, "notification")
+                        .setReturnType(Types.VOID);
+
                 generatedTypes.add(notificationInterface.toInstance());
             }
         }
@@ -663,7 +707,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>identities</b> of the module to the list of
      * <code>Type</code> objects.
-     *
+     * 
      * @param module
      *            module from which is obtained set of all identity objects to
      *            iterate over them
@@ -672,7 +716,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *            {@link identityToGenType}
      * @return list of <code>Type</code> which are generated from identities
      *         (object of type <code>IdentitySchemaNode</code>
-     *
+     * 
      */
     private List<Type> allIdentitiesToGenTypes(final Module module, final SchemaContext context) {
         List<Type> genTypes = new ArrayList<>();
@@ -696,7 +740,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * If identity doesn't contain base identity then only reference to abstract
      * class {@link org.opendaylight.yangtools.yang.model.api.BaseIdentity
      * BaseIdentity} is added
-     *
+     * 
      * @param basePackageName
      *            string contains the module package name
      * @param identity
@@ -704,10 +748,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * @param context
      *            SchemaContext which is used to get package and name
      *            information about base of identity
-     *
+     * 
      * @return GeneratedType which is generated from identity (object of type
      *         <code>IdentitySchemaNode</code>
-     *
+     * 
      */
     private GeneratedType identityToGenType(final String basePackageName, final IdentitySchemaNode identity,
             final SchemaContext context) {
@@ -741,22 +785,23 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * dependencies. At least dependend (indepedent) groupings are in the list
      * saved at first positions. For every grouping the record is added to map
      * {@link BindingGeneratorImpl#allGroupings allGroupings}
-     *
+     * 
      * @param module
      *            module from which is obtained set of all grouping objects to
      *            iterate over them
      * @return list of <code>Type</code> which are generated from groupings
      *         (object of type <code>GroupingDefinition</code>)
-     *
+     * 
      */
     private List<Type> allGroupingsToGenTypes(final Module module) {
-        Preconditions.checkArgument(module != null,"Module parameter can not be null");
+        Preconditions.checkArgument(module != null, "Module parameter can not be null");
         final List<Type> genTypes = new ArrayList<>();
         final String basePackageName = moduleNamespaceToPackageName(module);
         final Set<GroupingDefinition> groupings = module.getGroupings();
         List<GroupingDefinition> groupingsSortedByDependencies;
 
-        groupingsSortedByDependencies = GroupingDefinitionDependencySort.sort(groupings);
+        GroupingDefinitionDependencySort groupingSort = new GroupingDefinitionDependencySort();
+        groupingsSortedByDependencies = groupingSort.sort(groupings);
 
         for (final GroupingDefinition grouping : groupingsSortedByDependencies) {
             GeneratedType genType = groupingToGenType(basePackageName, grouping);
@@ -771,7 +816,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Converts individual grouping to GeneratedType. Firstly generated type
      * builder is created and every child node of grouping is resolved to the
      * method.
-     *
+     * 
      * @param basePackageName
      *            string contains the module package name
      * @param grouping
@@ -796,7 +841,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Tries to find EnumTypeDefinition in <code>typeDefinition</code>. If base
      * type of <code>typeDefinition</code> is of the type ExtendedType then this
      * method is recursivelly called with this base type.
-     *
+     * 
      * @param typeDefinition
      *            TypeDefinition in which should be EnumTypeDefinition found as
      *            base type
@@ -817,10 +862,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds enumeration builder created from <code>enumTypeDef</code> to
      * <code>typeBuilder</code>.
-     *
+     * 
      * Each <code>enumTypeDef</code> item is added to builder with its name and
      * value.
-     *
+     * 
      * @param enumTypeDef
      *            EnumTypeDefinition contains enum data
      * @param enumName
@@ -847,7 +892,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Generates type builder for <code>module</code>.
-     *
+     * 
      * @param module
      *            Module which is source of package name for generated type
      *            builder
@@ -860,7 +905,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             if <code>module</code> equals null
      */
     private GeneratedTypeBuilder moduleTypeBuilder(final Module module, final String postfix) {
-        Preconditions.checkArgument(module != null,"Module reference cannot be NULL.");
+        Preconditions.checkArgument(module != null, MODUL_REF_NOT_NULL);
         String packageName = moduleNamespaceToPackageName(module);
         final String moduleName = parseToClassName(module.getName()) + postfix;
 
@@ -874,7 +919,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * generated types for all containers, list and choices which are child of
      * <code>augSchema</code> node or a generated types for cases are added if
      * augmented node is choice.
-     *
+     * 
      * @param augmentPackageName
      *            string with the name of the package to which the augmentation
      *            belongs
@@ -891,9 +936,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             </ul>
      */
     private List<Type> augmentationToGenTypes(final String augmentPackageName, final AugmentationSchema augSchema) {
-        Preconditions.checkArgument(augmentPackageName != null,"Package Name cannot be NULL.");
-        Preconditions.checkArgument(augSchema != null,"Augmentation Schema cannot be NULL.");
-        Preconditions.checkState(augSchema.getTargetPath() != null,"Augmentation Schema does not contain Target Path (Target Path is NULL).");
+        Preconditions.checkArgument(augmentPackageName != null, "Package Name cannot be NULL.");
+        Preconditions.checkArgument(augSchema != null, "Augmentation Schema cannot be NULL.");
+        Preconditions.checkState(augSchema.getTargetPath() != null,
+                "Augmentation Schema does not contain Target Path (Target Path is NULL).");
 
         final List<Type> genTypes = new ArrayList<>();
 
@@ -929,10 +975,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Returns a generated type builder for an augmentation.
-     *
+     * 
      * The name of the type builder is equal to the name of augmented node with
      * serial number as suffix.
-     *
+     * 
      * @param augmentPackageName
      *            string with contains the package name to which the augment
      *            belongs
@@ -973,7 +1019,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     }
 
     /**
-     *
+     * 
      * @param unknownSchemaNodes
      * @return
      */
@@ -992,13 +1038,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Convert a container, list and choice subnodes (and recursivelly their
      * subnodes) of augment to generated types
-     *
+     * 
      * @param augBasePackageName
      *            string with the augment package name
      * @param augChildNodes
      *            set of data schema nodes which represents child nodes of the
      *            augment
-     *
+     * 
      * @return list of <code>Type</code> which represents container, list and
      *         choice subnodes of augment
      */
@@ -1024,6 +1070,25 @@ public final class BindingGeneratorImpl implements BindingGenerator {
             }
         }
 
+        genTypes.addAll(augmentationBodySubnodesToGenTypes(augSchemaIts, augBasePackageName));
+        return genTypes;
+    }
+
+    /**
+     * Passes through all containers, lists, choices of containers and cases of
+     * augmentation and convert them to generated types.
+     * 
+     * @param augSchemaIts
+     *            list of data node iterators from which is reference to
+     *            containers, lists and choices got
+     * @param augBasePackageName
+     *            string with package name of the module
+     * @return list of generated types for child nodes of augmentation subnodes
+     *         - cases and containers
+     */
+    private List<Type> augmentationBodySubnodesToGenTypes(List<DataNodeIterator> augSchemaIts,
+            final String augBasePackageName) {
+        final List<Type> genTypes = new ArrayList<>();
         for (final DataNodeIterator it : augSchemaIts) {
             final List<ContainerSchemaNode> augContainers = it.allContainers();
             final List<ListSchemaNode> augLists = it.allLists();
@@ -1052,7 +1117,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * Returns first unique name for the augment generated type builder. The
      * generated type builder name for augment consists from name of augmented
      * node and serial number of its augmentation.
-     *
+     * 
      * @param builders
      *            map of builders which were created in the package to which the
      *            augmentation belongs
@@ -1076,7 +1141,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * generated type builder is created. The subnodes of
      * <code>containerNode</code> are added as methods and the instance of
      * <code>GeneratedType</code> is returned.
-     *
+     * 
      * @param basePackageName
      *            string contains the module package name
      * @param containerNode
@@ -1100,10 +1165,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds the methods to <code>typeBuilder</code> which represent subnodes of
      * node for which <code>typeBuilder</code> was created.
-     *
+     * 
      * The subnodes aren't mapped to the methods if they are part of grouping or
      * augment (in this case are already part of them).
-     *
+     * 
      * @param basePackageName
      *            string contains the module package name
      * @param typeBuilder
@@ -1134,7 +1199,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds the methods to <code>typeBuilder</code> what represents subnodes of
      * node for which <code>typeBuilder</code> was created.
-     *
+     * 
      * @param basePackageName
      *            string contains the module package name
      * @param typeBuilder
@@ -1164,7 +1229,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds to <code>typeBuilder</code> a method which is derived from
      * <code>schemaNode</code>.
-     *
+     * 
      * @param basePackageName
      *            string with the module package name
      * @param schemaNode
@@ -1193,14 +1258,14 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates a getter method for a choice node.
-     *
+     * 
      * Firstly generated type builder for choice is created or found in
      * {@link BindingGeneratorImpl#allGroupings allGroupings}. The package name
      * in the builder is created as concatenation of module package name and
      * names of all parent nodes. In the end the getter method for choice is
      * added to <code>typeBuilder</code> and return type is set to choice
      * builder.
-     *
+     * 
      * @param basePackageName
      *            string with the module package name
      * @param typeBuilder
@@ -1214,13 +1279,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if <code>typeBuilder</code> equals null</li>
      *             <li>if <code>choiceNode</code> equals null</li>
      *             </ul>
-     *
+     * 
      */
     private void resolveChoiceSchemaNode(final String basePackageName, final GeneratedTypeBuilder typeBuilder,
             final ChoiceNode choiceNode) {
-        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL.");
-        Preconditions.checkArgument(typeBuilder != null,"Generated Type Builder cannot be NULL.");
-        Preconditions.checkArgument(choiceNode != null,"Choice Schema Node cannot be NULL.");
+        Preconditions.checkArgument(basePackageName != null, BASE_PCG_NAME_NOT_NULL);
+        Preconditions.checkArgument(typeBuilder != null, "Generated Type Builder cannot be NULL.");
+        Preconditions.checkArgument(choiceNode != null, "Choice Schema Node cannot be NULL.");
 
         final String choiceName = choiceNode.getQName().getLocalName();
         if (choiceName != null && !choiceNode.isAddedByUses()) {
@@ -1233,11 +1298,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>choiceNode</code> to the list of generated types for
      * choice and its cases.
-     *
+     * 
      * The package names for choice and for its cases are created as
      * concatenation of the module package (<code>basePackageName</code>) and
      * names of all parents node.
-     *
+     * 
      * @param basePackageName
      *            string with the module package name
      * @param choiceNode
@@ -1251,11 +1316,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if <code>basePackageName</code> equals null</li>
      *             <li>if <code>choiceNode</code> equals null</li>
      *             </ul>
-     *
+     * 
      */
     private List<GeneratedType> choiceToGeneratedType(final String basePackageName, final ChoiceNode choiceNode) {
-        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL.");
-        Preconditions.checkArgument(choiceNode != null,"Choice Schema Node cannot be NULL.");
+        Preconditions.checkArgument(basePackageName != null, BASE_PCG_NAME_NOT_NULL);
+        Preconditions.checkArgument(choiceNode != null, "Choice Schema Node cannot be NULL.");
 
         final List<GeneratedType> generatedTypes = new ArrayList<>();
         final String packageName = packageNameForGeneratedType(basePackageName, choiceNode.getPath());
@@ -1274,14 +1339,14 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>caseNodes</code> set to list of corresponding generated
      * types.
-     *
+     * 
      * For every <i>case</i> which isn't added through augment or <i>uses</i> is
      * created generated type builder. The package names for the builder is
      * created as concatenation of the module package (
      * <code>basePackageName</code>) and names of all parents nodes of the
      * concrete <i>case</i>. There is also relation "<i>implements type</i>"
      * between every case builder and <i>choice</i> type
-     *
+     * 
      * @param basePackageName
      *            string with the module package name
      * @param refChoiceType
@@ -1299,9 +1364,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private List<GeneratedType> generateTypesFromChoiceCases(final String basePackageName, final Type refChoiceType,
             final Set<ChoiceCaseNode> caseNodes) {
-        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL.");
-        Preconditions.checkArgument(refChoiceType != null,"Referenced Choice Type cannot be NULL.");
-        Preconditions.checkArgument(caseNodes != null,"Set of Choice Case Nodes cannot be NULL.");
+        Preconditions.checkArgument(basePackageName != null, BASE_PCG_NAME_NOT_NULL);
+        Preconditions.checkArgument(refChoiceType != null, "Referenced Choice Type cannot be NULL.");
+        Preconditions.checkArgument(caseNodes != null, "Set of Choice Case Nodes cannot be NULL.");
 
         final List<GeneratedType> generatedTypes = new ArrayList<>();
         for (final ChoiceCaseNode caseNode : caseNodes) {
@@ -1324,8 +1389,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Generates list of generated types for all the cases of a choice which are
      * added to the choice through the augment.
-     *
-     *
+     * 
+     * 
      * @param basePackageName
      *            string contains name of package to which augment belongs. If
      *            an augmented choice is from an other package (pcg1) than an
@@ -1348,9 +1413,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private List<GeneratedType> generateTypesFromAugmentedChoiceCases(final String basePackageName,
             final Type refChoiceType, final Set<ChoiceCaseNode> caseNodes) {
-        Preconditions.checkArgument(basePackageName != null,"Base Package Name cannot be NULL.");
-        Preconditions.checkArgument(refChoiceType != null,"Referenced Choice Type cannot be NULL.");
-        Preconditions.checkArgument(caseNodes != null,"Set of Choice Case Nodes cannot be NULL.");
+        Preconditions.checkArgument(basePackageName != null, BASE_PCG_NAME_NOT_NULL);
+        Preconditions.checkArgument(refChoiceType != null, "Referenced Choice Type cannot be NULL.");
+        Preconditions.checkArgument(caseNodes != null, "Set of Choice Case Nodes cannot be NULL.");
 
         final List<GeneratedType> generatedTypes = new ArrayList<>();
         for (final ChoiceCaseNode caseNode : caseNodes) {
@@ -1373,7 +1438,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>leaf</code> to the getter method which is added to
      * <code>typeBuilder</code>.
-     *
+     * 
      * @param typeBuilder
      *            generated type builder to which is added getter method as
      *            <code>leaf</code> mapping
@@ -1391,11 +1456,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
         if ((leaf != null) && (typeBuilder != null)) {
             final String leafName = leaf.getQName().getLocalName();
             String leafDesc = leaf.getDescription();
-            if (leafDesc == null) {
-                leafDesc = "";
-            }
 
-            final Module parentModule = findParentModule(schemaContext, leaf);
             if (leafName != null && !leaf.isAddedByUses()) {
                 final TypeDefinition<?> typeDef = leaf.getType();
 
@@ -1411,15 +1472,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
                     }
                     ((TypeProviderImpl) typeProvider).putReferencedType(leaf.getPath(), returnType);
                 } else if (typeDef instanceof UnionType) {
-                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, leaf, parentModule);
-                    if (genTOBuilder != null) {
-                        returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
-                    }
+                    returnType = addTOToTypeBuilder(typeDef, typeBuilder, leafName, leaf);
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, leaf, parentModule);
-                    if (genTOBuilder != null) {
-                        returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
-                    }
+                    returnType = addTOToTypeBuilder(typeDef, typeBuilder, leafName, leaf);
                 } else {
                     returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
                 }
@@ -1435,7 +1490,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>leaf</code> schema node to property of generated TO
      * builder.
-     *
+     * 
      * @param toBuilder
      *            generated TO builder to which is <code>leaf</code> added as
      *            property
@@ -1487,7 +1542,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts <code>node</code> leaf list schema node to getter method of
      * <code>typeBuilder</code>.
-     *
+     * 
      * @param typeBuilder
      *            generated type builder to which is <code>node</code> added as
      *            getter method
@@ -1522,14 +1577,14 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates a getter method for a container node.
-     *
+     * 
      * Firstly generated type builder for container is created or found in
      * {@link BindingGeneratorImpl#allGroupings allGroupings}. The package name
      * in the builder is created as concatenation of module package name and
      * names of all parent nodes. In the end the getter method for container is
      * added to <code>typeBuilder</code> and return type is set to container
      * type builder.
-     *
+     * 
      * @param basePackageName
      *            string with the module package name
      * @param typeBuilder
@@ -1565,13 +1620,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates a getter method for a list node.
-     *
+     * 
      * Firstly generated type builder for list is created or found in
      * {@link BindingGeneratorImpl#allGroupings allGroupings}. The package name
      * in the builder is created as concatenation of module package name and
      * names of all parent nodes. In the end the getter method for list is added
      * to <code>typeBuilder</code> and return type is set to list type builder.
-     *
+     * 
      * @param basePackageName
      *            string with the module package name
      * @param typeBuilder
@@ -1606,7 +1661,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Instantiates generated type builder with <code>packageName</code> and
      * <code>schemaNode</code>.
-     *
+     * 
      * The new builder always implements
      * {@link org.opendaylight.yangtools.yang.binding.DataObject DataObject}.<br />
      * If <code>schemaNode</code> is instance of GroupingDefinition it also
@@ -1616,7 +1671,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer
      * DataNodeContainer} it can also implement nodes which are specified in
      * <i>uses</i>.
-     *
+     * 
      * @param packageName
      *            string with the name of the package to which
      *            <code>schemaNode</code> belongs.
@@ -1640,7 +1695,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Wraps the calling of the same overloaded method.
-     *
+     * 
      * @param packageName
      *            string with the package name to which returning generated type
      *            builder belongs
@@ -1655,11 +1710,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Returns reference to generated type builder for specified
      * <code>schemaNode</code> with <code>packageName</code>.
-     *
+     * 
      * Firstly the generated type builder is searched in
      * {@link BindingGeneratorImpl#genTypeBuilders genTypeBuilders}. If it isn't
      * found it is created and added to <code>genTypeBuilders</code>.
-     *
+     * 
      * @param packageName
      *            string with the package name to which returning generated type
      *            builder belongs
@@ -1673,15 +1728,15 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if Q name of schema node is null</li>
      *             <li>if schema node name is nul</li>
      *             </ul>
-     *
+     * 
      */
     private GeneratedTypeBuilder addRawInterfaceDefinition(final String packageName, final SchemaNode schemaNode,
             final String prefix) {
-        Preconditions.checkArgument(schemaNode != null,"Data Schema Node cannot be NULL.");
-        Preconditions.checkArgument(packageName != null,"Package Name for Generated Type cannot be NULL.");
-        Preconditions.checkArgument(schemaNode.getQName() != null,"QName for Data Schema Node cannot be NULL.");
+        Preconditions.checkArgument(schemaNode != null, "Data Schema Node cannot be NULL.");
+        Preconditions.checkArgument(packageName != null, "Package Name for Generated Type cannot be NULL.");
+        Preconditions.checkArgument(schemaNode.getQName() != null, "QName for Data Schema Node cannot be NULL.");
         final String schemaNodeName = schemaNode.getQName().getLocalName();
-        Preconditions.checkArgument(schemaNodeName != null,"Local Name of QName for Data Schema Node cannot be NULL.");
+        Preconditions.checkArgument(schemaNodeName != null, "Local Name of QName for Data Schema Node cannot be NULL.");
 
         final String genTypeName;
         if (prefix == null) {
@@ -1706,15 +1761,15 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates the name of the getter method from <code>methodName</code>.
-     *
+     * 
      * @param methodName
      *            string with the name of the getter method
      * @return string with the name of the getter method for
      *         <code>methodName</code> in JAVA method format
      */
-    private String getterMethodName(final String methodName,Type returnType) {
+    private String getterMethodName(final String methodName, Type returnType) {
         final StringBuilder method = new StringBuilder();
-        if(BOOLEAN.equals(returnType)) {
+        if (BOOLEAN.equals(returnType)) {
             method.append("is");
         } else {
             method.append("get");
@@ -1725,7 +1780,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Creates the name of the setter method from <code>methodName</code>.
-     *
+     * 
      * @param methodName
      *            string with the name of the setter method
      * @return string with the name of the setter method for
@@ -1741,11 +1796,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Created a method signature builder as part of
      * <code>interfaceBuilder</code>.
-     *
+     * 
      * The method signature builder is created for the getter method of
      * <code>schemaNodeName</code>. Also <code>comment</code> and
      * <code>returnType</code> information are added to the builder.
-     *
+     * 
      * @param interfaceBuilder
      *            generated type builder for which the getter method should be
      *            created
@@ -1762,7 +1817,8 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     private MethodSignatureBuilder constructGetter(final GeneratedTypeBuilder interfaceBuilder,
             final String schemaNodeName, final String comment, final Type returnType) {
 
-        final MethodSignatureBuilder getMethod = interfaceBuilder.addMethod(getterMethodName(schemaNodeName,returnType));
+        final MethodSignatureBuilder getMethod = interfaceBuilder
+                .addMethod(getterMethodName(schemaNodeName, returnType));
 
         getMethod.setComment(comment);
         getMethod.setReturnType(returnType);
@@ -1771,12 +1827,10 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     }
 
     private List<Type> listToGenType(final String basePackageName, final ListSchemaNode list) {
-        Preconditions.checkArgument(basePackageName != null,"Package Name for Generated Type cannot be NULL.");
-        Preconditions.checkArgument(list != null,"List Schema Node cannot be NULL.");
+        Preconditions.checkArgument(basePackageName != null, "Package Name for Generated Type cannot be NULL.");
+        Preconditions.checkArgument(list != null, "List Schema Node cannot be NULL.");
 
         final String packageName = packageNameForGeneratedType(basePackageName, list.getPath());
-        // final GeneratedTypeBuilder typeBuilder =
-        // resolveListTypeBuilder(packageName, list);
         final GeneratedTypeBuilder typeBuilder = addDefaultInterfaceDefinition(packageName, list);
 
         final List<String> listKeys = listKeys(list);
@@ -1804,7 +1858,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Adds <code>schemaNode</code> to <code>typeBuilder</code> as getter method
      * or to <code>genTOBuilder</code> as property.
-     *
+     * 
      * @param basePackageName
      *            string contains the module package name
      * @param schemaNode
@@ -1825,9 +1879,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private void addSchemaNodeToListBuilders(final String basePackageName, final DataSchemaNode schemaNode,
             final GeneratedTypeBuilder typeBuilder, final GeneratedTOBuilder genTOBuilder, final List<String> listKeys) {
-        Preconditions.checkArgument(schemaNode != null,"Data Schema Node cannot be NULL.");
+        Preconditions.checkArgument(schemaNode != null, "Data Schema Node cannot be NULL.");
 
-        Preconditions.checkArgument(typeBuilder != null,"Generated Type Builder cannot be NULL.");
+        Preconditions.checkArgument(typeBuilder != null, "Generated Type Builder cannot be NULL.");
 
         if (schemaNode instanceof LeafSchemaNode) {
             final LeafSchemaNode leaf = (LeafSchemaNode) schemaNode;
@@ -1848,7 +1902,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     private List<Type> typeBuildersToGenTypes(final GeneratedTypeBuilder typeBuilder, GeneratedTOBuilder genTOBuilder) {
         final List<Type> genTypes = new ArrayList<>();
-        Preconditions.checkArgument(typeBuilder != null,"Generated Type Builder cannot be NULL.");
+        Preconditions.checkArgument(typeBuilder != null, "Generated Type Builder cannot be NULL.");
 
         if (genTOBuilder != null) {
             final GeneratedTransferObject genTO = genTOBuilder.toInstance();
@@ -1862,7 +1916,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Selects the names of the list keys from <code>list</code> and returns
      * them as the list of the strings
-     *
+     * 
      * @param list
      *            of string with names of the list keys
      * @return list of string which represents names of the list keys. If the
@@ -1885,7 +1939,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Generates for the <code>list</code> which contains any list keys special
      * generated TO builder.
-     *
+     * 
      * @param packageName
      *            string with package name to which the list belongs
      * @param list
@@ -1896,11 +1950,9 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      */
     private GeneratedTOBuilder resolveListKeyTOBuilder(final String packageName, final ListSchemaNode list) {
         GeneratedTOBuilder genTOBuilder = null;
-        if ((list.getKeyDefinition() != null) && (!list.getKeyDefinition().isEmpty())) {
-            if (list != null) {
-                final String listName = list.getQName().getLocalName() + "Key";
-                genTOBuilder = schemaNodeToTransferObjectBuilder(packageName, listName);
-            }
+        if ((list.getKeyDefinition() != null) && (!list.getKeyDefinition().isEmpty()) && (list != null)) {
+            final String listName = list.getQName().getLocalName() + "Key";
+            genTOBuilder = schemaNodeToTransferObjectBuilder(packageName, listName);
         }
         return genTOBuilder;
 
@@ -1912,11 +1964,11 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * {@link org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
      * BitsTypeDefinition} which are also added to <code>typeBuilder</code> as
      * enclosing transfer object.
-     *
+     * 
      * If more then one generated TO builder is created for enclosing then all
      * of the generated TO builders are added to <code>typeBuilder</code> as
      * enclosing transfer objects.
-     *
+     * 
      * @param typeDef
      *            type definition which can be of type <code>UnionType</code> or
      *            <code>BitsTypeDefinition</code>
@@ -1928,7 +1980,7 @@ public final class BindingGeneratorImpl implements BindingGenerator {
      * @return generated TO builder for <code>typeDef</code>
      */
     private GeneratedTOBuilder addTOToTypeBuilder(TypeDefinition<?> typeDef, GeneratedTypeBuilder typeBuilder,
-            String leafName, LeafSchemaNode leaf, Module parentModule) {
+            String leafName, LeafSchemaNode leaf) {
         final String classNameFromLeaf = parseToClassName(leafName);
         List<GeneratedTOBuilder> genTOBuilders = new ArrayList<>();
         final String packageName = typeBuilder.getFullyQualifiedName();
@@ -1951,13 +2003,13 @@ public final class BindingGeneratorImpl implements BindingGenerator {
 
     /**
      * Adds the implemented types to type builder.
-     *
+     * 
      * The method passes through the list of <i>uses</i> in
      * {@code dataNodeContainer}. For every <i>use</i> is obtained coresponding
      * generated type from {@link BindingGeneratorImpl#allGroupings
      * allGroupings} which is adde as <i>implements type</i> to
      * <code>builder</code>
-     *
+     * 
      * @param dataNodeContainer
      *            element which contains the list of used YANG groupings
      * @param builder

@@ -25,7 +25,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class UnionDependencySort {
-    private static final Logger logger = LoggerFactory.getLogger(UnionDependencySort.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnionDependencySort.class);
 
     /**
      * Sorts union types by mutual dependencies.
@@ -40,9 +40,9 @@ public class UnionDependencySort {
      * @throws IllegalArgumentException
      *             if <code>typeDefinitions</code> equals <code>null</code>
      */
-    public static List<ExtendedType> sort(final Set<TypeDefinition<?>> typeDefinitions) {
+    public List<ExtendedType> sort(final Set<TypeDefinition<?>> typeDefinitions) {
         if (typeDefinitions == null) {
-            logger.error("Set of Type Definitions cannot be NULL!");
+            LOGGER.error("Set of Type Definitions cannot be NULL!");
             throw new IllegalArgumentException("Set of Type Definitions " + "cannot be NULL!");
         }
 
@@ -66,14 +66,13 @@ public class UnionDependencySort {
      *            set of all type definitions
      * @return set of extended type which are union type definition
      */
-    private static Set<ExtendedType> unionsFromTypeDefinitions(final Set<TypeDefinition<?>> typeDefinitions) {
+    private Set<ExtendedType> unionsFromTypeDefinitions(final Set<TypeDefinition<?>> typeDefinitions) {
         final Set<ExtendedType> unions = Sets.newHashSet();
 
         for (final TypeDefinition<?> typedef : typeDefinitions) {
-            if ((typedef != null) && (typedef.getBaseType() != null)) {
-                if (typedef instanceof ExtendedType && typedef.getBaseType() instanceof UnionTypeDefinition) {
-                    unions.add((ExtendedType) typedef);
-                }
+            if ((typedef != null) && (typedef.getBaseType() != null) && (typedef instanceof ExtendedType)
+                    && (typedef.getBaseType() instanceof UnionTypeDefinition)) {
+                unions.add((ExtendedType) typedef);
             }
         }
         return unions;
@@ -97,7 +96,7 @@ public class UnionDependencySort {
      * @return set of nodes which contains wrapped union types set of node where
      *         each one contains wrapped one union type
      */
-    private static Set<Node> unionTypesToNodes(final Set<ExtendedType> extUnionTypes) {
+    private Set<Node> unionTypesToNodes(final Set<ExtendedType> extUnionTypes) {
         final Map<ExtendedType, Node> nodeMap = Maps.newHashMap();
         final Set<Node> resultNodes = Sets.newHashSet();
 
