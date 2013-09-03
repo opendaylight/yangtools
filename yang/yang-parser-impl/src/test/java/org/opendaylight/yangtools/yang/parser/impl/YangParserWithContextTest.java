@@ -105,7 +105,7 @@ public class YangParserWithContextTest {
         // suffix _g = defined in grouping from context
 
         // get grouping
-        Module contextModule = context.findModuleByNamespace(URI.create("urn:custom.nodes.test"));
+        Module contextModule = context.findModuleByNamespace(URI.create("urn:custom.nodes.test")).iterator().next();
         assertNotNull(contextModule);
         Set<GroupingDefinition> groupings = contextModule.getGroupings();
         assertEquals(1, groupings.size());

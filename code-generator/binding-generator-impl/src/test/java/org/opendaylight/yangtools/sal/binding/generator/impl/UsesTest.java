@@ -71,17 +71,17 @@ public class UsesTest {
         assertNotNull("Generated type for grouping-U wasn't generated.", groupingU);
         assertEquals("GroupingU interface generated more than one time.", 1, groupingUCounter);
         assertEquals("GroupingU is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev2013718", groupingU.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingU.getPackageName());
 
         assertNotNull("Generated type for grouping-V wasn't generated.", groupingV);
         assertEquals("GroupingV interface generated more than one time.", 1, groupingVCounter);
         assertEquals("GroupingV is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev2013718", groupingV.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingV.getPackageName());
 
         assertNotNull("Generated type for grouping-X wasn't generated.", groupingX);
         assertEquals("GroupingX interface generated more than one time.", 1, groupingXCounter);
         assertEquals("GroupingX is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev2013718", groupingX.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingX.getPackageName());
 
         containsInterface("GroupingV", groupingU);
         containsInterface("GroupingX", groupingU);
@@ -122,13 +122,13 @@ public class UsesTest {
         assertEquals("Case C interface generated more than one time.", 1, caseCCounter);
         assertEquals(
                 "Case C is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses._case.rev2013718.container.with.choicetest.choice.test",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses._case.rev130718.container.with.choicetest.choice.test",
                 caseC.getPackageName());
 
         assertNotNull("Generated type for grouping-case-test wasn't generated.", groupingCaseTest);
         assertEquals("GroupingCaseTest interface generated more than one time.", 1, groupingCaseTestCounter);
         assertEquals("GroupingCaseTest is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses._case.rev2013718", groupingCaseTest.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses._case.rev130718", groupingCaseTest.getPackageName());
 
         containsInterface("GroupingCaseTest", caseC);
         assertTrue("Case C shouldn't contain any method.", caseC.getMethodDefinitions().isEmpty());
@@ -172,13 +172,13 @@ public class UsesTest {
         assertEquals("GroupingContainerTest interface - incorrect number of occurences", 1,
                 groupingContainerTestCounter);
         assertEquals("GroupingContainerTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.container.rev2013718",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.container.rev130718",
                 groupingContainerTest.getPackageName());
 
         assertNotNull("Generated type for container-test wasn't generated", containerTest);
         assertEquals("ContainerTest interface - incorrect number of occurences", 1, containerTestCount);
         assertEquals("ContainerTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.container.rev2013718", containerTest.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.container.rev130718", containerTest.getPackageName());
 
         containsInterface("GroupingContainerTest", containerTest);
 
@@ -225,13 +225,13 @@ public class UsesTest {
         assertNotNull("Generated type for grouping-grouping-test wasn't generated", groupingGroupingTest);
         assertEquals("GroupingGroupingTest interface - incorrect number of occurences", 1, groupingGroupingTestCounter);
         assertEquals("GroupingGroupingTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.grouping.rev2013718",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.grouping.rev130718",
                 groupingGroupingTest.getPackageName());
 
         assertNotNull("Generated type for grouping-test wasn't generated", groupingTest);
         assertEquals("GroupingTest interface - incorrect number of occurences", 1, groupingTestCount);
         assertEquals("GroupingTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.grouping.rev2013718", groupingTest.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.grouping.rev130718", groupingTest.getPackageName());
 
         containsInterface("GroupingGroupingTest", groupingTest);
 
@@ -287,24 +287,24 @@ public class UsesTest {
         assertNotNull("Generated type for grouping-list-test wasn't generated", groupingListTest);
         assertEquals("GroupingListTest interface - incorrect number of occurences", 1, groupingListTestCounter);
         assertEquals("GroupingListTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev2013718", groupingListTest.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718", groupingListTest.getPackageName());
 
         assertNotNull("Generated type for list-test wasn't generated", listTest);
         assertEquals("ListTest interface - incorrect number of occurences", 1, listTestCounter);
         assertEquals("ListTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev2013718", listTest.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718", listTest.getPackageName());
 
         assertNotNull("Generated type for container-grouping-list-test wasn't generated", containerGroupingListTest);
         assertEquals("ContainerGroupingListTest interface - incorrect number of occurences", 1,
                 containerGroupingListTestCounter);
         assertEquals("ContainerGroupingListTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev2013718.grouping.list.test",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718.grouping.list.test",
                 containerGroupingListTest.getPackageName());
 
         assertNotNull("Generated type for list-grouping-list-test wasn't generated", listGroupingListTest);
         assertEquals("ListGroupingListTest interface - incorrect number of occurences", 1, listGroupingListTestCounter);
         assertEquals("ListGroupingListTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev2013718.grouping.list.test",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718.grouping.list.test",
                 listGroupingListTest.getPackageName());
 
         containsInterface("GroupingListTest", listTest);
@@ -360,13 +360,13 @@ public class UsesTest {
         assertNotNull("Generated type for grouping-list-test wasn't generated", groupingModulTest);
         assertEquals("GroupingModulTest interface - incorrect number of occurences", 1, groupingModulTestCounter);
         assertEquals("GroupingModulTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.modul.rev2013718", groupingModulTest.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.modul.rev130718", groupingModulTest.getPackageName());
 
         assertNotNull("Generated type for modul wasn't generated", groupingUsesModulData);
         assertEquals("GroupingUsesModulData interface - incorrect number of occurences", 1,
                 groupingUsesModulDataCounter);
         assertEquals("GroupingUsesModulData isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.modul.rev2013718",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.modul.rev130718",
                 groupingUsesModulData.getPackageName());
 
         containsInterface("GroupingModulTest", groupingUsesModulData);
@@ -428,29 +428,29 @@ public class UsesTest {
         assertNotNull("Generated type for RPC test input wasn't generated", rpcTestInput);
         assertEquals("RpcTestInput interface - incorrect number of occurences", 1, rpcTestInputCounter);
         assertEquals("RpcTestInput isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev2013718", rpcTestInput.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718", rpcTestInput.getPackageName());
 
         assertNotNull("Generated type for RPC test output wasn't generated", rpcTestOutput);
         assertEquals("RpcTestOutput interface - incorrect number of occurences", 1, rpcTestOutputCounter);
         assertEquals("RpcTestOutput isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev2013718", rpcTestOutput.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718", rpcTestOutput.getPackageName());
 
         assertNotNull("Generated type for grouping-rpc-input-test wasn't generated", groupingRpcInputTest);
         assertEquals("RpcTestOutput interface - incorrect number of occurences", 1, groupingRpcInputTestCounter);
         assertEquals("GroupingRpcInputTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev2013718", groupingRpcInputTest.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718", groupingRpcInputTest.getPackageName());
 
         assertNotNull("Generated type for grouping-rpc-output-test wasn't generated", groupingRpcOutputTest);
         assertEquals("RpcTestOutput interface - incorrect number of occurences", 1, groupingRpcOutputTestCounter);
         assertEquals("GroupingRpcOutputTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev2013718", groupingRpcOutputTest.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718", groupingRpcOutputTest.getPackageName());
 
         assertNotNull("Generated type for container-grouping-rpc-input-test wasn't generated",
                 containerGroupingRpcInputTest);
         assertEquals("ContainerGroupingRpcInputTest interface - incorrect number of occurences", 1,
                 containerGroupingRpcInputTestCounter);
         assertEquals("ContainerGroupingRpcInputTest isn't in correct package",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev2013718.grouping.rpc.input.test",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718.grouping.rpc.input.test",
                 containerGroupingRpcInputTest.getPackageName());
 
         containsInterface("GroupingRpcInputTest", rpcTestInput);
@@ -506,12 +506,12 @@ public class UsesTest {
         assertNotNull("Generated type for augment /container-augment wasn't generated.", containerAugment1);
         assertEquals("ContainerAugment1 interface generated more than one time.", 1, containerAugment1Counter);
         assertEquals("ContainerAugment1 is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.augment.rev2013718", containerAugment1.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.augment.rev130718", containerAugment1.getPackageName());
 
         assertNotNull("Generated type for grouping-augment-test wasn't generated.", groupingAugmentTest);
         assertEquals("GroupingAugmentTest interface generated more than one time.", 1, groupingAugmentTestCounter);
         assertEquals("groupingAugmentTest is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.augment.rev2013718",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.augment.rev130718",
                 groupingAugmentTest.getPackageName());
 
         containsInterface("GroupingAugmentTest", containerAugment1);
@@ -565,14 +565,14 @@ public class UsesTest {
         assertNotNull("Generated type for notification-test wasn't generated.", notificationTest);
         assertEquals("NotificationTest interface generated more than one time.", 1, notificationTestCounter);
         assertEquals("NotificationTest is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev2013718",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718",
                 notificationTest.getPackageName());
 
         assertNotNull("Generated type for grouping-notification-test wasn't generated.", groupingNotificationTest);
         assertEquals("GroupingNotificationTest interface generated more than one time.", 1,
                 groupingNotificationTestCounter);
         assertEquals("groupingNotificationTest is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev2013718",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718",
                 groupingNotificationTest.getPackageName());
 
         assertNotNull("Generated type for container-grouping-notification-test wasn't generated.",
@@ -580,7 +580,7 @@ public class UsesTest {
         assertEquals("ContainerGroupingNotificationTest interface generated more than one time.", 1,
                 containerGroupingNotificationTestCounter);
         assertEquals("ContainerGroupingNotificationTest is in wrong package.",
-                "org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev2013718.grouping.notification.test",
+                "org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718.grouping.notification.test",
                 containerGroupingNotificationTest.getPackageName());
 
         containsInterface("GroupingNotificationTest", notificationTest);

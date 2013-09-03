@@ -169,7 +169,7 @@ public class GenEnumResolvingTest {
         GeneratedType genInterface = null;
         for (final Type type : genTypes) {
             if (type instanceof GeneratedType) {
-                if (type.getPackageName().equals("org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev201328.topology.interfaces")
+                if (type.getPackageName().equals("org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces")
                         && type.getName().equals("Interface")) {
                     genInterface = (GeneratedType) type;
                 }
@@ -198,13 +198,13 @@ public class GenEnumResolvingTest {
         assertTrue("Expected LinkUpDownTrapEnable of type ReferencedTypeImpl",
                 linkUpDownTrapEnable instanceof ReferencedTypeImpl);
         assertEquals(linkUpDownTrapEnable.getPackageName(),
-                "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev20121115.interfaces.Interface");
+                "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface");
 
         assertNotNull("Expected Referenced Enum OperStatus, but was NULL!",
                 operStatus);
         assertTrue("Expected OperStatus of type ReferencedTypeImpl",
                 operStatus instanceof  ReferencedTypeImpl);
         assertEquals(operStatus.getPackageName(),
-                "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev20121115.interfaces.Interface");
+                "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface");
     }
 }

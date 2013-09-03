@@ -80,7 +80,7 @@ public class ChoiceCaseGenTypesTest {
         assertFalse("genTypes is empty", genTypes.isEmpty());
 
         // test for file choice-monitoring
-        String pcgPref = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.choice.monitoring.rev201371.netconf.state.datastores.datastore.locks";
+        String pcgPref = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.choice.monitoring.rev130701.netconf.state.datastores.datastore.locks";
         GeneratedType genType = null;
 
         checkGeneratedType(genTypes, "LockType", pcgPref); // choice
@@ -126,7 +126,7 @@ public class ChoiceCaseGenTypesTest {
         // test for file augment-monitoring
         // augment
         // "/nm:netconf-state/nm:datastores/nm:datastore/nm:locks/nm:lock-type"
-        pcgPref = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.augment.monitoring.rev201371";
+        pcgPref = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.augment.monitoring.rev130701";
         genType = null;
 
         genType = checkGeneratedType(genTypes, "AutonomousLock", pcgPref

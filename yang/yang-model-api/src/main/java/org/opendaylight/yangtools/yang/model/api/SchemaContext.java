@@ -88,5 +88,7 @@ public interface SchemaContext {
      * @return module instance which has namespace equal to the
      *         <code>namespace</code> or <code>null</code> in other cases
      */
-    Module findModuleByNamespace(final URI namespace);
+    Set<Module> findModuleByNamespace(final URI namespace);
+    
+    Module findModuleByNamespaceAndRevision(final URI namespace,final Date revision);
 }

@@ -90,7 +90,7 @@ public class BitAndUnionTOEnclosingTest {
         assertNotNull("Lf TO wasn't found.", lfLeaf);
         assertEquals("Lf TO has incorrect number of occurences.", 1, lfLeafCounter);
         assertEquals("Lf has incorrect package name.",
-                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626.ParentContainer",
+                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
                 lfLeaf.getPackageName());
 
         assertEquals("Lf generated TO has incorrect number of properties", 2, lfLeaf.getProperties().size());
@@ -101,7 +101,7 @@ public class BitAndUnionTOEnclosingTest {
         assertNotNull("Lf1 TO wasn't found.", lf1Leaf);
         assertEquals("Lf1 TO has incorrect number of occurences.", 1, lf1LeafCounter);
         assertEquals("Lf1 has incorrect package name.",
-                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626.ParentContainer",
+                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
                 lf1Leaf.getPackageName());
 
         assertEquals("Lf generated TO has incorrect number of properties", 4, lf1Leaf.getProperties().size());
@@ -114,7 +114,7 @@ public class BitAndUnionTOEnclosingTest {
         assertNotNull("Lf2 TO wasn't found.", lf2Leaf);
         assertEquals("Lf2 TO has incorrect number of occurences.", 1, lf2LeafCounter);
         assertEquals("Lf2 has incorrect package name.",
-                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626.ParentContainer",
+                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
                 lf2Leaf.getPackageName());
 
         assertEquals("Lf generated TO has incorrect number of properties", 2, lf2Leaf.getProperties().size());
@@ -144,7 +144,7 @@ public class BitAndUnionTOEnclosingTest {
         assertNotNull("TypeUnion TO wasn't found.", typeUnionTypedef);
         assertEquals("TypeUnion TO has incorrect number of occurences.", 1, typeUnionTypedefCounter);
         assertEquals("TypeUnion has incorrect package name.",
-                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626", typeUnionTypedef.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnionTypedef.getPackageName());
 
         assertEquals("TypeUnion generated TO has incorrect number of properties", 2, typeUnionTypedef.getProperties()
                 .size());
@@ -174,7 +174,7 @@ public class BitAndUnionTOEnclosingTest {
         assertEquals("TypeUnion1 TO has incorrect number of occurences.", 1, typeUnion1Counter);
 
         assertEquals("TypeUnion1 has incorrect package name.",
-                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626", typeUnion1.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion1.getPackageName());
 
         assertEquals("TypeUnion1 generated TO has incorrect number of properties", 4, typeUnion1.getProperties().size());
        
@@ -187,7 +187,7 @@ public class BitAndUnionTOEnclosingTest {
         assertEquals("TypeUnion2 TO has incorrect number of occurences.", 1, typeUnion2Counter);
 
         assertEquals("TypeUnion2 has incorrect package name.",
-                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626", typeUnion2.getPackageName());
+                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion2.getPackageName());
 
         assertEquals("TypeUnion2 generated TO has incorrect number of properties", 2, typeUnion2.getProperties().size());
         containsAttributes(typeUnion2, true, true, true, new NameTypePattern("string", "String"));
@@ -218,10 +218,10 @@ public class BitAndUnionTOEnclosingTest {
         assertNotNull("UnionLeaf TO wasn't found.", unionLeaf);
 
         assertEquals("BitLeaf has incorrect package name.",
-                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626.ParentContainer",
+                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
                 bitLeaf.getPackageName());
         assertEquals("UnionLeaf has incorrect package name.",
-                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev2013626.ParentContainer",
+                "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
                 bitLeaf.getPackageName());
 
         List<GeneratedProperty> propertiesBitLeaf = bitLeaf.getProperties();

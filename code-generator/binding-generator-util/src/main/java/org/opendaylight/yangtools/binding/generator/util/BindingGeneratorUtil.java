@@ -1,5 +1,7 @@
 package org.opendaylight.yangtools.binding.generator.util;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -21,6 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public final class BindingGeneratorUtil {
 
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyMMdd");
+    
     /**
      * Array of strings values which represents JAVA reserved words.
      */
@@ -143,7 +147,6 @@ public final class BindingGeneratorUtil {
     public static String moduleNamespaceToPackageName(final Module module) {
         final StringBuilder packageNameBuilder = new StringBuilder();
 
-        final Calendar calendar = Calendar.getInstance();
         if (module.getRevision() == null) {
             throw new IllegalArgumentException("Module " + module.getName() + " does not specify revision date!");
         }
@@ -167,12 +170,9 @@ public final class BindingGeneratorUtil {
         namespace = namespace.replace("=", ".");
 
         packageNameBuilder.append(namespace);
-        calendar.setTime(module.getRevision());
         packageNameBuilder.append(".rev");
-        packageNameBuilder.append(calendar.get(Calendar.YEAR));
-        packageNameBuilder.append((calendar.get(Calendar.MONTH) + 1));
-        packageNameBuilder.append(calendar.get(Calendar.DAY_OF_MONTH));
-
+        packageNameBuilder.append(DATE_FORMAT.format(module.getRevision()));
+        
         return validateJavaPackage(packageNameBuilder.toString());
     }
 

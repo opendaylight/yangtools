@@ -84,11 +84,24 @@ final class SchemaContextImpl implements SchemaContext {
     }
 
     @Override
-    public Module findModuleByNamespace(final URI namespace) {
+    public Set<Module> findModuleByNamespace(final URI namespace) {
+        final Set<Module> ret = new HashSet<Module>();
         if (namespace != null) {
             for (final Module module : modules) {
                 if (module.getNamespace().equals(namespace)) {
-                    return module;
+                    ret.add(module);
+                }
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public Module findModuleByNamespaceAndRevision(URI namespace, Date revision) {
+        if (namespace != null) {
+            for (final Module module : modules) {
+                if (module.getNamespace().equals(namespace) && module.getRevision().equals(revision)) {
+                    return(module);
                 }
             }
         }

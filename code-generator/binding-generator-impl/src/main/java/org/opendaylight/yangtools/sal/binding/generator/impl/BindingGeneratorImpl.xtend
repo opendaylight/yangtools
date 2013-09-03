@@ -62,7 +62,7 @@ import static extension org.opendaylight.yangtools.binding.generator.util.Types.
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
-
+import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -134,27 +134,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         schemaContext = context;
         typeProvider = new TypeProviderImpl(context);
         val Set<Module> modules = context.modules;
-        genTypeBuilders = new HashMap();
-        for (module : modules) {
-
-            generatedTypes.addAll(allGroupingsToGenTypes(module));
-
-            if (false == module.childNodes.isEmpty()) {
-                generatedTypes.add(moduleToDataType(module));
-            }
-            generatedTypes.addAll(allTypeDefinitionsToGenTypes(module));
-            generatedTypes.addAll(allContainersToGenTypes(module));
-            generatedTypes.addAll(allListsToGenTypes(module));
-            generatedTypes.addAll(allChoicesToGenTypes(module));
-            generatedTypes.addAll(allRPCMethodsToGenType(module));
-            generatedTypes.addAll(allNotificationsToGenType(module));
-            generatedTypes.addAll(allIdentitiesToGenTypes(module, context));
-        }
-        for (module : modules) {
-            generatedTypes.addAll(allAugmentsToGenTypes(module));
-            
-        }
-        return generatedTypes;
+        return generateTypes(context,modules);
     }
 
     /**
@@ -191,19 +171,19 @@ public class BindingGeneratorImpl implements BindingGenerator {
         checkArgument(modules !== null,"Set of Modules cannot be NULL.");
 
         val List<Type> filteredGenTypes = new ArrayList();
+        
         schemaContext = context;
         typeProvider = new TypeProviderImpl(context);
-        val Set<Module> contextModules = context.modules;
+        val contextModules = ModuleDependencySort.sort(context.modules);
         genTypeBuilders = new HashMap();
         
         for (contextModule : contextModules) {
             val List<Type> generatedTypes = new ArrayList();
-
+            generatedTypes.addAll(allTypeDefinitionsToGenTypes(contextModule));
             generatedTypes.addAll(allGroupingsToGenTypes(contextModule));
             if (false == contextModule.childNodes.isEmpty()) {
                 generatedTypes.add(moduleToDataType(contextModule));
             }
-            generatedTypes.addAll(allTypeDefinitionsToGenTypes(contextModule));
             generatedTypes.addAll(allContainersToGenTypes(contextModule));
             generatedTypes.addAll(allListsToGenTypes(contextModule));
             generatedTypes.addAll(allChoicesToGenTypes(contextModule));
@@ -246,7 +226,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
         checkArgument(module.name !== null,"Module name cannot be NULL.");
         val Set<TypeDefinition<?>> typeDefinitions = module.typeDefinitions;
         checkState(typeDefinitions !== null,'''Type Definitions for module «module.name» cannot be NULL.''');
-
         
         val List<Type> generatedTypes = new ArrayList();
         for ( TypeDefinition<?> typedef : typeDefinitions) {
@@ -881,18 +860,18 @@ public class BindingGeneratorImpl implements BindingGenerator {
         // and DataObject interface!!!
         val targetPath = augSchema.targetPath;
         val targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
-        var targetType = yangToJavaMapping.get(targetSchemaNode.path);
-        if(targetType == null) {
-            // FIXME: augmentation should be added as last, all types should already be generated
-            // and have assigned Java Types,
-            val targetModule = findParentModule(schemaContext, targetSchemaNode);
-            val targetBasePackage = moduleNamespaceToPackageName(targetModule);
-            val typePackage = packageNameForGeneratedType(targetBasePackage, targetSchemaNode.getPath());
-            val targetSchemaNodeName = targetSchemaNode.getQName().getLocalName();
-            val typeName = parseToClassName(targetSchemaNodeName);
-            targetType = new ReferencedTypeImpl(typePackage,typeName);
-        }
         if (targetSchemaNode !== null) {
+            var targetType = yangToJavaMapping.get(targetSchemaNode.path);
+            if(targetType == null) {
+                // FIXME: augmentation should be added as last, all types should already be generated
+                // and have assigned Java Types,
+                val targetModule = findParentModule(schemaContext, targetSchemaNode);
+                val targetBasePackage = moduleNamespaceToPackageName(targetModule);
+                val typePackage = packageNameForGeneratedType(targetBasePackage, targetSchemaNode.getPath());
+                val targetSchemaNodeName = targetSchemaNode.getQName().getLocalName();
+                val typeName = parseToClassName(targetSchemaNodeName);
+                targetType = new ReferencedTypeImpl(typePackage,typeName);
+            }
             val augChildNodes = augSchema.childNodes;
             if (!(targetSchemaNode instanceof ChoiceNode)) {
                 val augTypeBuilder = addRawAugmentGenTypeDefinition(augmentPackageName,

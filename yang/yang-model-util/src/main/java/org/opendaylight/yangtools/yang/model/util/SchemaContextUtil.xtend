@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import java.io.ObjectOutputStream.PutField
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
+import java.util.Date
 
 /**
  * The Schema Context Util contains support methods for searching through Schema Context modules for specified schema
@@ -60,10 +61,10 @@ public  class SchemaContextUtil {
      *         <code>null</code> if the Node is not present.
      */
     public static def SchemaNode findDataSchemaNode( SchemaContext context,  SchemaPath schemaPath) {
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (schemaPath == null) {
+        if (schemaPath === null) {
             throw new IllegalArgumentException("Schema Path reference cannot be NULL");
         }
         val prefixedPath = (schemaPath.getPath());
@@ -99,13 +100,13 @@ public  class SchemaContextUtil {
      */
     public static def SchemaNode findDataSchemaNode( SchemaContext context,  Module module,
              RevisionAwareXPath nonCondXPath) {
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (module == null) {
+        if (module === null) {
             throw new IllegalArgumentException("Module reference cannot be NULL!");
         }
-        if (nonCondXPath == null) {
+        if (nonCondXPath === null) {
             throw new IllegalArgumentException("Non Conditional Revision Aware XPath cannot be NULL!");
         }
 
@@ -159,16 +160,16 @@ public  class SchemaContextUtil {
      */
     public static def SchemaNode findDataSchemaNodeForRelativeXPath( SchemaContext context,  Module module,
              SchemaNode actualSchemaNode,  RevisionAwareXPath relativeXPath) {
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (module == null) {
+        if (module === null) {
             throw new IllegalArgumentException("Module reference cannot be NULL!");
         }
-        if (actualSchemaNode == null) {
+        if (actualSchemaNode === null) {
             throw new IllegalArgumentException("Actual Schema Node reference cannot be NULL!");
         }
-        if (relativeXPath == null) {
+        if (relativeXPath === null) {
             throw new IllegalArgumentException("Non Conditional Revision Aware XPath cannot be NULL!");
         }
         if (relativeXPath.isAbsolute()) {
@@ -201,26 +202,26 @@ public  class SchemaContextUtil {
      * the method will returns <code>null</code>
      */
     public static def Module findParentModule( SchemaContext context,  SchemaNode schemaNode) {
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (schemaNode == null) {
+        if (schemaNode === null) {
             throw new IllegalArgumentException("Schema Node cannot be NULL!");
         }
 
         val schemaPath = schemaNode.getPath();
-        if (schemaPath == null) {
+        if (schemaPath === null) {
             throw new IllegalStateException("Schema Path for Schema Node is not "
                     + "set properly (Schema Path is NULL)");
         }
-        val qnamedPath = schemaPath.getPath();
-        if (qnamedPath == null || qnamedPath.isEmpty()) {
+        val qnamedPath = schemaPath.path;
+        if (qnamedPath === null || qnamedPath.empty) {
             throw new IllegalStateException("Schema Path contains invalid state of path parts."
                     + "The Schema Path MUST contain at least ONE QName which defines namespace and Local name"
                     + "of path.");
         }
         val qname = qnamedPath.get(qnamedPath.size() - 1);
-        return context.findModuleByNamespace(qname.getNamespace());
+        return context.findModuleByNamespaceAndRevision(qname.namespace,qname.revision);
     }
 
     /**
@@ -242,16 +243,16 @@ public  class SchemaContextUtil {
      */
     private static def SchemaNode findSchemaNodeForGivenPath( SchemaContext context,  Module module,
              Queue<QName> qnamedPath) {
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (module == null) {
+        if (module === null) {
             throw new IllegalArgumentException("Module reference cannot be NULL!");
         }
-        if (module.getNamespace() == null) {
+        if (module.getNamespace() === null) {
             throw new IllegalArgumentException("Namespace for Module cannot contains NULL reference!");
         }
-        if (qnamedPath == null || qnamedPath.isEmpty()) {
+        if (qnamedPath === null || qnamedPath.isEmpty()) {
             throw new IllegalStateException("Schema Path contains invalid state of path parts."
                     + "The Schema Path MUST contain at least ONE QName which defines namespace and Local name"
                     + "of path.");
@@ -265,15 +266,16 @@ public  class SchemaContextUtil {
         while ((nextNode != null) && !qnamedPath.isEmpty()) {
             childNodeQName = qnamedPath.peek();
             if (childNodeQName != null) {
-                val URI childNodeNamespace = childNodeQName.getNamespace();
-
                 schemaNode = nextNode.getDataChildByName(childNodeQName.getLocalName());
-                if(schemaNode == null && nextNode instanceof Module) {
+                if(schemaNode === null && nextNode instanceof Module) {
                     schemaNode = (nextNode as Module).getNotificationByName(childNodeQName);
                 }
-                if(schemaNode == null && nextNode instanceof Module) {
+                if(schemaNode === null && nextNode instanceof Module) {
                     
                 }
+                val URI childNamespace = childNodeQName.getNamespace();
+                val Date childRevision = childNodeQName.getRevision();
+                
                 if (schemaNode != null) {
                     if (schemaNode instanceof ContainerSchemaNode) {
                         nextNode = schemaNode as ContainerSchemaNode;
@@ -290,8 +292,8 @@ public  class SchemaContextUtil {
                     } else {
                         nextNode = null;
                     }
-                } else if (!childNodeNamespace.equals(moduleNamespace)) {
-                    val Module nextModule = context.findModuleByNamespace(childNodeNamespace);
+                } else if (!childNamespace.equals(moduleNamespace)) {
+                    val Module nextModule = context.findModuleByNamespaceAndRevision(childNamespace,childRevision);
                     schemaNode = findSchemaNodeForGivenPath(context, nextModule, qnamedPath);
                     return schemaNode;
                 }
@@ -304,8 +306,8 @@ public  class SchemaContextUtil {
     
     private static def SchemaNode findNodeInSchemaContext(SchemaContext context, List<QName> path) {
         val current = path.get(0);
-        val module = context.findModuleByNamespace(current.namespace);
-        if(module == null) return null;
+        val module = context.findModuleByNamespaceAndRevision(current.namespace,current.revision);
+        if(module === null) return null;
         return findNodeInModule(module,path);
     }
     
@@ -418,13 +420,13 @@ public  class SchemaContextUtil {
      */
     private static def xpathToQNamePath( SchemaContext context,  Module parentModule,
              String xpath) {
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (parentModule == null) {
+        if (parentModule === null) {
             throw new IllegalArgumentException("Parent Module reference cannot be NULL!");
         }
-        if (xpath == null) {
+        if (xpath === null) {
             throw new IllegalArgumentException("XPath string reference cannot be NULL!");
         }
 
@@ -460,13 +462,13 @@ public  class SchemaContextUtil {
      */
     private static def QName stringPathPartToQName( SchemaContext context,  Module parentModule,
              String prefixedPathPart) {
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (parentModule == null) {
+        if (parentModule === null) {
             throw new IllegalArgumentException("Parent Module reference cannot be NULL!");
         }
-        if (prefixedPathPart == null) {
+        if (prefixedPathPart === null) {
             throw new IllegalArgumentException("Prefixed Path Part cannot be NULL!");
         }
 
@@ -502,13 +504,13 @@ public  class SchemaContextUtil {
      * @return Module for given prefix in specified Schema Context if is present, otherwise returns <code>null</code>
      */
     private static def Module resolveModuleForPrefix( SchemaContext context,  Module module,  String prefix) {
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (module == null) {
+        if (module === null) {
             throw new IllegalArgumentException("Module reference cannot be NULL!");
         }
-        if (prefix == null) {
+        if (prefix === null) {
             throw new IllegalArgumentException("Prefix string cannot be NULL!");
         }
 
@@ -537,20 +539,20 @@ public  class SchemaContextUtil {
     private static def resolveRelativeXPath( SchemaContext context,  Module module,
              RevisionAwareXPath relativeXPath,  SchemaNode leafrefParentNode) {
 
-        if (context == null) {
+        if (context === null) {
             throw new IllegalArgumentException("Schema Context reference cannot be NULL!");
         }
-        if (module == null) {
+        if (module === null) {
             throw new IllegalArgumentException("Module reference cannot be NULL!");
         }
-        if (relativeXPath == null) {
+        if (relativeXPath === null) {
             throw new IllegalArgumentException("Non Conditional Revision Aware XPath cannot be NULL!");
         }
         if (relativeXPath.isAbsolute()) {
             throw new IllegalArgumentException("Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                     + "for non relative Revision Aware XPath use findDataSchemaNode method!");
         }
-        if (leafrefParentNode.getPath() == null) {
+        if (leafrefParentNode.getPath() === null) {
             throw new IllegalArgumentException("Schema Path reference for Leafref cannot be NULL!");
         }
         val absolutePath = new LinkedList<QName>();
