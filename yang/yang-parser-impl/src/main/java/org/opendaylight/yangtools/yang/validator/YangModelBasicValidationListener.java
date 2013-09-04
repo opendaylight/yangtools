@@ -69,8 +69,7 @@ import com.google.common.collect.Sets;
  */
 final class YangModelBasicValidationListener extends YangParserBaseListener {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(YangModelBasicValidationListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(YangModelBasicValidationListener.class);
 
     private final Set<String> uniquePrefixes;
     private final Set<String> uniqueImports;
@@ -99,8 +98,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
 
         BasicValidations.checkIdentifier(ctx);
 
-        BasicValidations.checkPresentChildOfType(ctx,
-                Module_header_stmtsContext.class, true);
+        BasicValidations.checkPresentChildOfType(ctx, Module_header_stmtsContext.class, true);
 
         String moduleName = ValidationUtil.getName(ctx);
         BasicValidations.checkOnlyOneModulePresent(moduleName, globalModuleId);
@@ -121,12 +119,10 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
 
         BasicValidations.checkIdentifier(ctx);
 
-        BasicValidations.checkPresentChildOfType(ctx,
-                Submodule_header_stmtsContext.class, true);
+        BasicValidations.checkPresentChildOfType(ctx, Submodule_header_stmtsContext.class, true);
 
         String submoduleName = ValidationUtil.getName(ctx);
-        BasicValidations.checkOnlyOneModulePresent(submoduleName,
-                globalModuleId);
+        BasicValidations.checkOnlyOneModulePresent(submoduleName, globalModuleId);
         globalModuleId = submoduleName;
 
     }
@@ -139,15 +135,13 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterSubmodule_header_stmts(Submodule_header_stmtsContext ctx) {
-        BasicValidations.checkPresentChildOfType(ctx,
-                Belongs_to_stmtContext.class, true);
+        BasicValidations.checkPresentChildOfType(ctx, Belongs_to_stmtContext.class, true);
 
         // check Yang version present, if not log
         try {
-            BasicValidations.checkPresentYangVersion(ctx,
-                    ValidationUtil.getRootParentName(ctx));
+            BasicValidations.checkPresentYangVersion(ctx, ValidationUtil.getRootParentName(ctx));
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            LOGGER.debug(e.getMessage());
         }
     }
 
@@ -162,16 +156,14 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
     public void enterModule_header_stmts(Module_header_stmtsContext ctx) {
         String moduleName = ValidationUtil.getRootParentName(ctx);
 
-        BasicValidations.checkPresentChildOfType(ctx,
-                Namespace_stmtContext.class, true);
-        BasicValidations.checkPresentChildOfType(ctx, Prefix_stmtContext.class,
-                true);
+        BasicValidations.checkPresentChildOfType(ctx, Namespace_stmtContext.class, true);
+        BasicValidations.checkPresentChildOfType(ctx, Prefix_stmtContext.class, true);
 
         // check Yang version present, if not log
         try {
             BasicValidations.checkPresentYangVersion(ctx, moduleName);
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            LOGGER.debug(e.getMessage());
         }
     }
 
@@ -183,8 +175,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterRevision_stmt(Revision_stmtContext ctx) {
-        BasicValidations.checkDateFormat(ctx,
-                YangParserListenerImpl.simpleDateFormat);
+        BasicValidations.checkDateFormat(ctx, YangParserListenerImpl.SIMPLE_DATE_FORMAT);
 
     }
 
@@ -199,8 +190,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
     public void enterBelongs_to_stmt(Belongs_to_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
 
-        BasicValidations.checkPresentChildOfType(ctx, Prefix_stmtContext.class,
-                true);
+        BasicValidations.checkPresentChildOfType(ctx, Prefix_stmtContext.class, true);
     }
 
     /**
@@ -217,9 +207,8 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
         try {
             new URI(namespaceName);
         } catch (URISyntaxException e) {
-            ValidationUtil.ex(ValidationUtil.f(
-                    "(In module:%s) Namespace:%s cannot be parsed as URI",
-                    rootParentName, namespaceName));
+            ValidationUtil.ex(ValidationUtil.f("(In module:%s) Namespace:%s cannot be parsed as URI", rootParentName,
+                    namespaceName));
         }
     }
 
@@ -239,8 +228,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
 
         BasicValidations.checkUniquenessInNamespace(ctx, uniqueImports);
 
-        BasicValidations.checkPresentChildOfType(ctx, Prefix_stmtContext.class,
-                true);
+        BasicValidations.checkPresentChildOfType(ctx, Prefix_stmtContext.class, true);
 
     }
 
@@ -252,8 +240,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterRevision_date_stmt(Revision_date_stmtContext ctx) {
-        BasicValidations.checkDateFormat(ctx,
-                YangParserListenerImpl.simpleDateFormat);
+        BasicValidations.checkDateFormat(ctx, YangParserListenerImpl.SIMPLE_DATE_FORMAT);
     }
 
     /**
@@ -283,11 +270,8 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
         String version = ValidationUtil.getName(ctx);
         String rootParentName = ValidationUtil.getRootParentName(ctx);
         if (!version.equals(BasicValidations.SUPPORTED_YANG_VERSION)) {
-            ValidationUtil
-                    .ex(ValidationUtil
-                            .f("(In (sub)module:%s) Unsupported yang version:%s, supported version:%s",
-                                    rootParentName, version,
-                                    BasicValidations.SUPPORTED_YANG_VERSION));
+            ValidationUtil.ex(ValidationUtil.f("(In (sub)module:%s) Unsupported yang version:%s, supported version:%s",
+                    rootParentName, version, BasicValidations.SUPPORTED_YANG_VERSION));
         }
     }
 
@@ -319,8 +303,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
 
         BasicValidations.checkIdentifier(ctx);
 
-        BasicValidations.checkPresentChildOfType(ctx, Type_stmtContext.class,
-                true);
+        BasicValidations.checkPresentChildOfType(ctx, Type_stmtContext.class, true);
     }
 
     /**
@@ -357,11 +340,9 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
     public void enterLeaf_stmt(Leaf_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
 
-        BasicValidations.checkPresentChildOfType(ctx, Type_stmtContext.class,
-                true);
+        BasicValidations.checkPresentChildOfType(ctx, Type_stmtContext.class, true);
 
-        BasicValidations.checkNotPresentBoth(ctx, Mandatory_stmtContext.class,
-                Default_stmtContext.class);
+        BasicValidations.checkNotPresentBoth(ctx, Mandatory_stmtContext.class, Default_stmtContext.class);
     }
 
     /**
@@ -376,12 +357,10 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
 
         BasicValidations.checkIdentifier(ctx);
 
-        BasicValidations.checkPresentChildOfType(ctx, Type_stmtContext.class,
-                true);
+        BasicValidations.checkPresentChildOfType(ctx, Type_stmtContext.class, true);
     }
 
-    private static final Set<String> permittedOrderByArgs = Sets.newHashSet(
-            "system", "user");
+    private static final Set<String> PERMITTED_ORDER_BY_ARGS = Sets.newHashSet("system", "user");
 
     /**
      * Constraints:
@@ -391,7 +370,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterOrdered_by_arg(Ordered_by_argContext ctx) {
-        BasicValidations.checkOnlyPermittedValues(ctx, permittedOrderByArgs);
+        BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_ORDER_BY_ARGS);
     }
 
     /**
@@ -440,8 +419,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
     public void enterChoice_stmt(Choice_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
 
-        BasicValidations.checkNotPresentBoth(ctx, Mandatory_stmtContext.class,
-                Default_stmtContext.class);
+        BasicValidations.checkNotPresentBoth(ctx, Mandatory_stmtContext.class, Default_stmtContext.class);
 
     }
 
@@ -456,8 +434,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
         BasicValidations.checkIdentifier(ctx);
     }
 
-    private static final Set<String> permittedBooleanArgs = Sets.newHashSet(
-            "true", "false");
+    private static final Set<String> PERMITTED_BOOLEAN_ARGS = Sets.newHashSet("true", "false");
 
     /**
      * Constraints:
@@ -467,7 +444,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterMandatory_arg(Mandatory_argContext ctx) {
-        BasicValidations.checkOnlyPermittedValues(ctx, permittedBooleanArgs);
+        BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_BOOLEAN_ARGS);
     }
 
     /**
@@ -578,7 +555,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterYin_element_arg(Yin_element_argContext ctx) {
-        BasicValidations.checkOnlyPermittedValues(ctx, permittedBooleanArgs);
+        BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_BOOLEAN_ARGS);
     }
 
     /**
@@ -651,11 +628,10 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterConfig_arg(Config_argContext ctx) {
-        BasicValidations.checkOnlyPermittedValues(ctx, permittedBooleanArgs);
+        BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_BOOLEAN_ARGS);
     }
 
-    private static final Set<String> permittedStatusArgs = Sets.newHashSet(
-            "current", "deprecated", "obsolete");
+    private static final Set<String> PERMITTED_STATUS_ARGS = Sets.newHashSet("current", "deprecated", "obsolete");
 
     /**
      * Constraints:
@@ -665,7 +641,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterStatus_arg(Status_argContext ctx) {
-        BasicValidations.checkOnlyPermittedValues(ctx, permittedStatusArgs);
+        BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_STATUS_ARGS);
     }
 
 }

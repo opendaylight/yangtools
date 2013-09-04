@@ -87,24 +87,26 @@ public final class TypeConstraints {
         return resolved;
     }
 
-    private Number resolveMinRange(Number min) {
+    private Number resolveMinRange(final Number min) {
         int i = 1;
-        while (min instanceof UnknownBoundaryNumber) {
+        Number newMin = min;
+        while (newMin instanceof UnknownBoundaryNumber) {
             final List<RangeConstraint> act = ranges.get(i);
-            min = act.get(0).getMin();
+            newMin = act.get(0).getMin();
             i++;
         }
-        return min;
+        return newMin;
     }
 
-    private Number resolveMaxRange(Number max) {
+    private Number resolveMaxRange(final Number max) {
         int i = 1;
-        while (max instanceof UnknownBoundaryNumber) {
+        Number newMax = max;
+        while (newMax instanceof UnknownBoundaryNumber) {
             final List<RangeConstraint> act = ranges.get(i);
-            max = act.get(act.size() - 1).getMax();
+            newMax = act.get(act.size() - 1).getMax();
             i++;
         }
-        return max;
+        return newMax;
     }
 
     public void addRanges(final List<RangeConstraint> ranges) {
@@ -169,24 +171,26 @@ public final class TypeConstraints {
         return resolved;
     }
 
-    private Number resolveMinLength(Number min) {
+    private Number resolveMinLength(final Number min) {
         int i = 1;
-        while (min instanceof UnknownBoundaryNumber) {
+        Number newMin = min;
+        while (newMin instanceof UnknownBoundaryNumber) {
             final List<LengthConstraint> act = lengths.get(i);
-            min = act.get(0).getMin();
+            newMin = act.get(0).getMin();
             i++;
         }
-        return min;
+        return newMin;
     }
 
-    private Number resolveMaxLength(Number max) {
+    private Number resolveMaxLength(final Number max) {
         int i = 1;
-        while (max instanceof UnknownBoundaryNumber) {
+        Number newMax = max;
+        while (newMax instanceof UnknownBoundaryNumber) {
             final List<LengthConstraint> act = lengths.get(i);
-            max = act.get(act.size() - 1).getMax();
+            newMax = act.get(act.size() - 1).getMax();
             i++;
         }
-        return max;
+        return newMax;
     }
 
     public void addLengths(final List<LengthConstraint> lengths) {
@@ -196,7 +200,7 @@ public final class TypeConstraints {
     }
 
     public List<PatternConstraint> getPatterns() {
-        if(patterns.isEmpty()) {
+        if (patterns.isEmpty()) {
             return Collections.emptyList();
         }
         return patterns.get(0);
@@ -223,43 +227,7 @@ public final class TypeConstraints {
     }
 
     private void validateRange() {
-        if (ranges.size() < 2) {
-            return;
-        }
-        List<RangeConstraint> typeRange = getRange();
-
-        for (RangeConstraint range : typeRange) {
-            if (range.getMin() instanceof UnknownBoundaryNumber || range.getMax() instanceof UnknownBoundaryNumber) {
-                throw new YangParseException(moduleName, line, "Unresolved range constraints");
-            }
-            final long min = range.getMin().longValue();
-            final long max = range.getMax().longValue();
-
-            List<RangeConstraint> parentRanges = ranges.get(1);
-            boolean check = false;
-            for (RangeConstraint r : parentRanges) {
-                Number parentMinNumber = r.getMin();
-                if (parentMinNumber instanceof UnknownBoundaryNumber) {
-                    parentMinNumber = resolveMinRange(parentMinNumber);
-                }
-                long parentMin = parentMinNumber.longValue();
-
-                Number parentMaxNumber = r.getMax();
-                if (parentMaxNumber instanceof UnknownBoundaryNumber) {
-                    parentMaxNumber = resolveMaxRange(parentMaxNumber);
-                }
-                long parentMax = parentMaxNumber.longValue();
-
-                if (parentMin <= min && parentMax >= max) {
-                    check = true;
-                    break;
-                }
-            }
-            if (!check) {
-                throw new YangParseException(moduleName, line, "Invalid range constraint: <" + min + ", " + max
-                        + "> (parent: " + parentRanges + ").");
-            }
-        }
+        validateRange(getRange());
     }
 
     private void validateRange(List<RangeConstraint> typeRange) {
@@ -275,70 +243,39 @@ public final class TypeConstraints {
             final BigDecimal max = new BigDecimal(range.getMax().toString());
 
             List<RangeConstraint> parentRanges = ranges.get(1);
-            boolean check = false;
-            for (RangeConstraint r : parentRanges) {
-                Number parentMinNumber = r.getMin();
-                if (parentMinNumber instanceof UnknownBoundaryNumber) {
-                    parentMinNumber = resolveMinRange(parentMinNumber);
-                }
-                BigDecimal parentMin = new BigDecimal(parentMinNumber.toString());
-
-                Number parentMaxNumber = r.getMax();
-                if (parentMaxNumber instanceof UnknownBoundaryNumber) {
-                    parentMaxNumber = resolveMaxRange(parentMaxNumber);
-                }
-                BigDecimal parentMax = new BigDecimal(parentMaxNumber.toString());
-
-                if(parentMin.compareTo(min) <=0 && parentMax.compareTo(max) >= 0) {
-                    check = true;
-                    break;
-                }
-            }
-            if (!check) {
+            if (!areRangesSubintervalsOfParentRanges(parentRanges, min, max)) {
                 throw new YangParseException(moduleName, line, "Invalid range constraint: <" + min + ", " + max
                         + "> (parent: " + parentRanges + ").");
             }
         }
     }
 
+    private boolean areRangesSubintervalsOfParentRanges(List<RangeConstraint> parentRanges, final BigDecimal min,
+            final BigDecimal max) {
+        boolean check = false;
+        for (RangeConstraint r : parentRanges) {
+            Number parentMinNumber = r.getMin();
+            if (parentMinNumber instanceof UnknownBoundaryNumber) {
+                parentMinNumber = resolveMinRange(parentMinNumber);
+            }
+            BigDecimal parentMin = new BigDecimal(parentMinNumber.toString());
+
+            Number parentMaxNumber = r.getMax();
+            if (parentMaxNumber instanceof UnknownBoundaryNumber) {
+                parentMaxNumber = resolveMaxRange(parentMaxNumber);
+            }
+            BigDecimal parentMax = new BigDecimal(parentMaxNumber.toString());
+
+            if (parentMin.compareTo(min) <= 0 && parentMax.compareTo(max) >= 0) {
+                check = true;
+                break;
+            }
+        }
+        return check;
+    }
+
     private void validateLength() {
-        if (lengths.size() < 2) {
-            return;
-        }
-        List<LengthConstraint> typeLength = getLength();
-
-        for (LengthConstraint length : typeLength) {
-            if (length.getMin() instanceof UnknownBoundaryNumber || length.getMax() instanceof UnknownBoundaryNumber) {
-                throw new YangParseException(moduleName, line, "Unresolved length constraints");
-            }
-            final long min = length.getMin().longValue();
-            final long max = length.getMax().longValue();
-
-            List<LengthConstraint> parentLengths = lengths.get(1);
-            boolean check = false;
-            for (LengthConstraint lc : parentLengths) {
-                Number parentMinNumber = lc.getMin();
-                if (parentMinNumber instanceof UnknownBoundaryNumber) {
-                    parentMinNumber = resolveMinLength(parentMinNumber);
-                }
-                long parentMin = parentMinNumber.longValue();
-
-                Number parentMaxNumber = lc.getMax();
-                if (parentMaxNumber instanceof UnknownBoundaryNumber) {
-                    parentMaxNumber = resolveMaxLength(parentMaxNumber);
-                }
-                long parentMax = parentMaxNumber.longValue();
-
-                if (parentMin <= min && parentMax >= max) {
-                    check = true;
-                    break;
-                }
-            }
-            if (!check) {
-                throw new YangParseException(moduleName, line, "Invalid length constraint: <" + min + ", " + max
-                        + "> (parent: " + parentLengths + ").");
-            }
-        }
+        validateLength(getLength());
     }
 
     private void validateLength(List<LengthConstraint> typeLength) {
@@ -354,30 +291,35 @@ public final class TypeConstraints {
             final long max = length.getMax().longValue();
 
             List<LengthConstraint> parentLengths = lengths.get(1);
-            boolean check = false;
-            for (LengthConstraint lc : parentLengths) {
-                Number parentMinNumber = lc.getMin();
-                if (parentMinNumber instanceof UnknownBoundaryNumber) {
-                    parentMinNumber = resolveMinLength(parentMinNumber);
-                }
-                long parentMin = parentMinNumber.longValue();
-
-                Number parentMaxNumber = lc.getMax();
-                if (parentMaxNumber instanceof UnknownBoundaryNumber) {
-                    parentMaxNumber = resolveMaxLength(parentMaxNumber);
-                }
-                long parentMax = parentMaxNumber.longValue();
-
-                if (parentMin <= min && parentMax >= max) {
-                    check = true;
-                    break;
-                }
-            }
-            if (!check) {
+            if (!areLengthRangesSubintervalsOfParentLengthRanges(parentLengths, min, max)) {
                 throw new YangParseException(moduleName, line, "Invalid length constraint: <" + min + ", " + max
                         + "> (parent: " + parentLengths + ").");
             }
         }
+    }
+
+    private boolean areLengthRangesSubintervalsOfParentLengthRanges(final List<LengthConstraint> parentLengths,
+            final long min, final long max) {
+        boolean check = false;
+        for (LengthConstraint lc : parentLengths) {
+            Number parentMinNumber = lc.getMin();
+            if (parentMinNumber instanceof UnknownBoundaryNumber) {
+                parentMinNumber = resolveMinLength(parentMinNumber);
+            }
+            long parentMin = parentMinNumber.longValue();
+
+            Number parentMaxNumber = lc.getMax();
+            if (parentMaxNumber instanceof UnknownBoundaryNumber) {
+                parentMaxNumber = resolveMaxLength(parentMaxNumber);
+            }
+            long parentMax = parentMaxNumber.longValue();
+
+            if (parentMin <= min && parentMax >= max) {
+                check = true;
+                break;
+            }
+        }
+        return check;
     }
 
 }

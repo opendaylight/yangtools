@@ -54,7 +54,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private final Set<UsesNodeBuilder> usesNodes = new HashSet<UsesNodeBuilder>();
     private boolean resolved;
 
-    private final static SchemaPath path = new SchemaPath(Collections.<QName> emptyList(), true);
+    private static final SchemaPath PATH = new SchemaPath(Collections.<QName> emptyList(), true);
 
     public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr) {
         super(moduleName, line, null);
@@ -91,7 +91,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
     @Override
     public SchemaPath getPath() {
-        return path;
+        return PATH;
     }
 
     @Override

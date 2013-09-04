@@ -41,14 +41,14 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
-public class GroupingUtils {
+public final class GroupingUtils {
 
     private GroupingUtils() {
     }
 
     /**
      * Search given modules for grouping by name defined in uses node.
-     *
+     * 
      * @param usesBuilder
      *            builder of uses statement
      * @param modules
@@ -119,7 +119,7 @@ public class GroupingUtils {
 
     /**
      * Search context for grouping by name defined in uses node.
-     *
+     * 
      * @param usesBuilder
      *            builder of uses statement
      * @param module
@@ -153,7 +153,7 @@ public class GroupingUtils {
 
     /**
      * Find grouping by name.
-     *
+     * 
      * @param groupings
      *            collection of grouping builders to search
      * @param name
@@ -171,7 +171,7 @@ public class GroupingUtils {
 
     /**
      * Find grouping by name.
-     *
+     * 
      * @param groupings
      *            collection of grouping definitions to search
      * @param name
@@ -189,7 +189,7 @@ public class GroupingUtils {
 
     /**
      * Add nodes defined in uses target grouping to uses parent.
-     *
+     * 
      * @param usesNode
      */
     public static void updateUsesParent(UsesNodeBuilder usesNode) {
@@ -225,7 +225,7 @@ public class GroupingUtils {
     /**
      * Read data defined in target grouping builder, make a copy and add them to
      * uses node builder.
-     *
+     * 
      * @param usesNode
      *            uses node builder
      */
@@ -239,7 +239,7 @@ public class GroupingUtils {
 
     /**
      * Read child nodes defined in target grouping and make a copy of them.
-     *
+     * 
      * @param usesNode
      * @return copy of child nodes defined in uses target grouping
      */
@@ -258,7 +258,7 @@ public class GroupingUtils {
 
     /**
      * Read typedefs defined in target grouping and make a copy of them.
-     *
+     * 
      * @param usesNode
      * @return copy of typedefs defined in uses target grouping
      */
@@ -277,7 +277,7 @@ public class GroupingUtils {
 
     /**
      * Read groupings defined in target grouping and make a copy of them.
-     *
+     * 
      * @param usesNode
      * @return copy of groupings defined in uses target grouping
      */
@@ -296,7 +296,7 @@ public class GroupingUtils {
 
     /**
      * Read unknown nodes defined in target grouping and make a copy of them.
-     *
+     * 
      * @param usesNode
      * @return copy of unknown nodes defined in uses target grouping
      */
@@ -316,7 +316,7 @@ public class GroupingUtils {
     /**
      * Read data defined in target grouping definition, make a copy and add them
      * to uses node builder.
-     *
+     * 
      * @param usesNode
      *            uses node builder
      */
@@ -329,37 +329,7 @@ public class GroupingUtils {
         int line = parent.getLine();
 
         // child nodes
-        final Set<DataSchemaNodeBuilder> newChildren = new HashSet<>();
-        for (DataSchemaNode child : usesNode.getGroupingDefinition().getChildNodes()) {
-            if (child != null) {
-                DataSchemaNodeBuilder newChild = null;
-                QName newQName = new QName(namespace, revision, prefix, child.getQName().getLocalName());
-                if (child instanceof AnyXmlSchemaNode) {
-                    newChild = CopyUtils.createAnyXml((AnyXmlSchemaNode) child, newQName, moduleName, line);
-                } else if (child instanceof ChoiceNode) {
-                    newChild = CopyUtils.createChoice((ChoiceNode) child, newQName, moduleName, line);
-                } else if (child instanceof ContainerSchemaNode) {
-                    newChild = CopyUtils.createContainer((ContainerSchemaNode) child, newQName, moduleName, line);
-                } else if (child instanceof LeafListSchemaNode) {
-                    newChild = CopyUtils.createLeafList((LeafListSchemaNode) child, newQName, moduleName, line);
-                } else if (child instanceof LeafSchemaNode) {
-                    newChild = CopyUtils.createLeafBuilder((LeafSchemaNode) child, newQName, moduleName, line);
-                } else if (child instanceof ListSchemaNode) {
-                    newChild = CopyUtils.createList((ListSchemaNode) child, newQName, moduleName, line);
-                }
-
-                if (newChild == null) {
-                    throw new YangParseException(moduleName, line,
-                            "Unknown member of target grouping while resolving uses node.");
-                }
-                if (newChild instanceof GroupingMember) {
-                    ((GroupingMember) newChild).setAddedByUses(true);
-                }
-
-                newChildren.add(newChild);
-            }
-        }
-        usesNode.setTargetChildren(newChildren);
+        copyGroupingNodesToUsesNode(usesNode, namespace, revision, prefix, moduleName, line);
 
         // groupings
         final Set<GroupingBuilder> newGroupings = new HashSet<>();
@@ -395,8 +365,62 @@ public class GroupingUtils {
     }
 
     /**
+     * Read data defined in target grouping definition, make a copy and add them
+     * to uses node builder.
+     * 
+     * @param usesNode
+     *            used node builder to which are copied nodes from its
+     *            <code>GroupingDefinition</code>
+     * @param namespace
+     *            URI with parent namespace
+     * @param revision
+     *            date with parent revision date
+     * @param prefix
+     *            string with parent prefix
+     * @param moduleName
+     *            string with parent module name
+     * @param lineNumber
+     *            number with YANG file row where is the parent defined
+     */
+    private static void copyGroupingNodesToUsesNode(final UsesNodeBuilder usesNode, final URI namespace,
+            final Date revision, final String prefix, final String moduleName, final int lineNumber) {
+        final Set<DataSchemaNodeBuilder> newChildren = new HashSet<>();
+        for (DataSchemaNode child : usesNode.getGroupingDefinition().getChildNodes()) {
+            if (child != null) {
+                DataSchemaNodeBuilder newChild = null;
+                QName newQName = new QName(namespace, revision, prefix, child.getQName().getLocalName());
+                if (child instanceof AnyXmlSchemaNode) {
+                    newChild = CopyUtils.createAnyXml((AnyXmlSchemaNode) child, newQName, moduleName, lineNumber);
+                } else if (child instanceof ChoiceNode) {
+                    newChild = CopyUtils.createChoice((ChoiceNode) child, newQName, moduleName, lineNumber);
+                } else if (child instanceof ContainerSchemaNode) {
+                    newChild = CopyUtils.createContainer((ContainerSchemaNode) child, newQName, moduleName, lineNumber);
+                } else if (child instanceof LeafListSchemaNode) {
+                    newChild = CopyUtils.createLeafList((LeafListSchemaNode) child, newQName, moduleName, lineNumber);
+                } else if (child instanceof LeafSchemaNode) {
+                    newChild = CopyUtils.createLeafBuilder((LeafSchemaNode) child, newQName, moduleName, lineNumber);
+                } else if (child instanceof ListSchemaNode) {
+                    newChild = CopyUtils.createList((ListSchemaNode) child, newQName, moduleName, lineNumber);
+                }
+
+                if (newChild == null) {
+                    throw new YangParseException(moduleName, lineNumber,
+                            "Unknown member of target grouping while resolving uses node.");
+                }
+                if (newChild instanceof GroupingMember) {
+                    ((GroupingMember) newChild).setAddedByUses(true);
+                }
+
+                newChildren.add(newChild);
+            }
+        }
+        usesNode.setTargetChildren(newChildren);
+
+    }
+
+    /**
      * Fix schema path of all nodes which were defined by this usesNode.
-     *
+     * 
      * @param usesNode
      */
     public static void fixUsesNodesPath(UsesNodeBuilder usesNode) {
@@ -443,7 +467,7 @@ public class GroupingUtils {
     /**
      * Perform refinement of uses target grouping nodes. Uses process has to be
      * already performed.
-     *
+     * 
      * @param usesNode
      */
     public static void performRefine(UsesNodeBuilder usesNode) {

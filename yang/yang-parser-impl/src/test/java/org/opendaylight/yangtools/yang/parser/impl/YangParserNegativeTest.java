@@ -117,7 +117,7 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'container' at line 10: Can not add 'container foo': node with same name already declared at line 6";
+            String expected = "Error in module 'container' at line 10: Can not add 'container foo': node with same name 'foo' already declared at line 6.";
             assertEquals(expected, e.getMessage());
         }
     }
@@ -131,7 +131,7 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'container-list' at line 10: Can not add 'list foo': node with same name already declared at line 6";
+            String expected = "Error in module 'container-list' at line 10: Can not add 'list foo': node with same name 'foo' already declared at line 6.";
             assertEquals(expected, e.getMessage());
         }
     }
@@ -145,7 +145,7 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'container-leaf' at line 10: Can not add 'leaf foo': node with same name already declared at line 6";
+            String expected = "Error in module 'container-leaf' at line 10: Can not add 'leaf foo': node with same name 'foo' already declared at line 6.";
             assertEquals(expected, e.getMessage());
         }
     }
@@ -159,7 +159,7 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'typedef' at line 10: typedef with same name 'int-ext' already declared at line 6";
+            String expected = "Error in module 'typedef' at line 10: typedef with same name 'int-ext' already declared at line 6.";
             assertEquals(expected, e.getMessage());
         }
     }

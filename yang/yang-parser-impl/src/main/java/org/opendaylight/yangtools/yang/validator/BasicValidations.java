@@ -95,12 +95,12 @@ final class BasicValidations {
             String exceptionMessage = ValidationUtil.f(
                     "(In (sub)module:%s) %s:%s, invalid date format expected date format is:%s",
                     ValidationUtil.getRootParentName(stmt), ValidationUtil.getSimpleStatementName(stmt.getClass()),
-                    ValidationUtil.getName(stmt), YangParserListenerImpl.simpleDateFormat.format(new Date()));
+                    ValidationUtil.getName(stmt), YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(new Date()));
             ValidationUtil.ex(exceptionMessage);
         }
     }
 
-    static private Pattern identifierPattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
+    private static Pattern identifierPattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
 
     static void checkIdentifier(ParseTree statement) {
         checkIdentifierInternal(statement, ValidationUtil.getName(statement));
@@ -122,7 +122,7 @@ final class BasicValidations {
         }
     }
 
-    static private Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
+    private static Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
 
     static void checkPrefixedIdentifier(ParseTree statement) {
         checkPrefixedIdentifierInternal(statement, ValidationUtil.getName(statement));

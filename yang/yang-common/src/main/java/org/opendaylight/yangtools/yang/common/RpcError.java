@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-//import org.opendaylight.controller.yang.model.api.RevisionAwareXPath;
-
 public interface RpcError {
     ErrorSeverity getSeverity();
 
@@ -19,8 +17,6 @@ public interface RpcError {
     String getMessage();
 
     String getInfo();
-
-    // RevisionAwareXPath getPath();
 
     public enum ErrorSeverity {
         ERROR, WARNING,

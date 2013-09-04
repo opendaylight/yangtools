@@ -20,8 +20,14 @@ import com.google.common.collect.Sets;
 public final class TopologicalSort {
 
     /**
+     * It isn't desirable to create instance of this class
+     */
+    private TopologicalSort() {
+    }
+
+    /**
      * Topological sort of dependent nodes in acyclic graphs.
-     *
+     * 
      * @return Sorted {@link List} of {@link Node}s. Order: Nodes with no
      *         dependencies starting.
      * @throws IllegalStateException
@@ -54,13 +60,13 @@ public final class TopologicalSort {
     }
 
     private static Set<Node> getDependentNodes(Set<Node> nodes) {
-        Set<Node> S = Sets.newHashSet();
+        Set<Node> dependentNodes = Sets.newHashSet();
         for (Node n : nodes) {
             if (n.getOutEdges().size() == 0) {
-                S.add(n);
+                dependentNodes.add(n);
             }
         }
-        return S;
+        return dependentNodes;
     }
 
     private static void detectCycles(Set<Node> nodes) {
@@ -75,14 +81,13 @@ public final class TopologicalSort {
                 break;
             }
         }
-        Preconditions.checkState(cycle == false,
-                "Cycle detected in graph around node: " + cycledNode);
+        Preconditions.checkState(!cycle, "Cycle detected in graph around node: " + cycledNode);
     }
 
     /**
      * Interface for nodes in graph that can be sorted topologically
      */
-    public static interface Node {
+    public interface Node {
         Set<Edge> getInEdges();
 
         Set<Edge> getOutEdges();
@@ -91,7 +96,7 @@ public final class TopologicalSort {
     /**
      * Interface for edges in graph that can be sorted topologically
      */
-    public static interface Edge {
+    public interface Edge {
         Node getFrom();
 
         Node getTo();
@@ -160,23 +165,30 @@ public final class TopologicalSort {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             EdgeImpl other = (EdgeImpl) obj;
             if (from == null) {
-                if (other.from != null)
+                if (other.from != null) {
                     return false;
-            } else if (!from.equals(other.from))
+                }
+            } else if (!from.equals(other.from)) {
                 return false;
+            }
             if (to == null) {
-                if (other.to != null)
+                if (other.to != null) {
                     return false;
-            } else if (!to.equals(other.to))
+                }
+            } else if (!to.equals(other.to)) {
                 return false;
+            }
             return true;
         }
     }

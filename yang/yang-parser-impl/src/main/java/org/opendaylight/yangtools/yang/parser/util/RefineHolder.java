@@ -129,73 +129,100 @@ public final class RefineHolder extends AbstractBuilder {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         RefineHolder other = (RefineHolder) obj;
         if (addedUnknownNodes == null) {
-            if (other.addedUnknownNodes != null)
+            if (other.addedUnknownNodes != null) {
                 return false;
-        } else if (!addedUnknownNodes.equals(other.addedUnknownNodes))
+            }
+        } else if (!addedUnknownNodes.equals(other.addedUnknownNodes)) {
             return false;
+        }
         if (config == null) {
-            if (other.config != null)
+            if (other.config != null) {
                 return false;
-        } else if (!config.equals(other.config))
+            }
+        } else if (!config.equals(other.config)) {
             return false;
+        }
         if (defaultStr == null) {
-            if (other.defaultStr != null)
+            if (other.defaultStr != null) {
                 return false;
-        } else if (!defaultStr.equals(other.defaultStr))
+            }
+        } else if (!defaultStr.equals(other.defaultStr)) {
             return false;
+        }
         if (description == null) {
-            if (other.description != null)
+            if (other.description != null) {
                 return false;
-        } else if (!description.equals(other.description))
+            }
+        } else if (!description.equals(other.description)) {
             return false;
+        }
         if (mandatory == null) {
-            if (other.mandatory != null)
+            if (other.mandatory != null) {
                 return false;
-        } else if (!mandatory.equals(other.mandatory))
+            }
+        } else if (!mandatory.equals(other.mandatory)) {
             return false;
+        }
         if (maxElements == null) {
-            if (other.maxElements != null)
+            if (other.maxElements != null) {
                 return false;
-        } else if (!maxElements.equals(other.maxElements))
+            }
+        } else if (!maxElements.equals(other.maxElements)) {
             return false;
+        }
         if (minElements == null) {
-            if (other.minElements != null)
+            if (other.minElements != null) {
                 return false;
-        } else if (!minElements.equals(other.minElements))
+            }
+        } else if (!minElements.equals(other.minElements)) {
             return false;
+        }
         if (must == null) {
-            if (other.must != null)
+            if (other.must != null) {
                 return false;
-        } else if (!must.equals(other.must))
+            }
+        } else if (!must.equals(other.must)) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (parent == null) {
-            if (other.parent != null)
+            if (other.parent != null) {
                 return false;
-        } else if (!parent.equals(other.parent))
+            }
+        } else if (!parent.equals(other.parent)) {
             return false;
+        }
         if (presence == null) {
-            if (other.presence != null)
+            if (other.presence != null) {
                 return false;
-        } else if (!presence.equals(other.presence))
+            }
+        } else if (!presence.equals(other.presence)) {
             return false;
+        }
         if (reference == null) {
-            if (other.reference != null)
+            if (other.reference != null) {
                 return false;
-        } else if (!reference.equals(other.reference))
+            }
+        } else if (!reference.equals(other.reference)) {
             return false;
+        }
         return true;
     }
 

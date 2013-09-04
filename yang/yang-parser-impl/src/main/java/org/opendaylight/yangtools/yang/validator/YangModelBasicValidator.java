@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 /**
  * Exposed basic yang validation.
- *
+ * 
  * Every file is validated using {@link YangModelBasicValidationListener}.
  */
 public final class YangModelBasicValidator {
@@ -37,8 +37,7 @@ public final class YangModelBasicValidator {
                 walker.walk(yangModelParser, trees.get(i));
             } catch (YangValidationException e) {
                 // wrap exception to add information about which file failed
-                throw new YangValidationException(
-                        "Yang validation failed for file" + e);
+                throw new YangValidationException("Yang validation failed for file" + e);
             }
         }
     }

@@ -7,33 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-
 /**
  * @author michal.rehak
- *
+ * 
  */
 public interface NodeModificationBuilder {
 
-    public abstract Node<?> getMutableEquivalent(Node<?> originalNode);
+    abstract Node<?> getMutableEquivalent(Node<?> originalNode);
 
-    public abstract CompositeNode buildDiffTree();
+    abstract CompositeNode buildDiffTree();
 
-    public abstract void mergeNode(MutableCompositeNode alteredNode);
+    abstract void mergeNode(MutableCompositeNode alteredNode);
 
-    public abstract void removeNode(MutableCompositeNode deadNode);
+    abstract void removeNode(MutableCompositeNode deadNode);
 
-    public abstract void removeNode(MutableSimpleNode<?> deadNode);
+    abstract void removeNode(MutableSimpleNode<?> deadNode);
 
-    public abstract void deleteNode(MutableSimpleNode<?> deadNode);
+    abstract void deleteNode(MutableSimpleNode<?> deadNode);
 
-    public abstract void deleteNode(MutableCompositeNode deadNode);
+    abstract void deleteNode(MutableCompositeNode deadNode);
 
-    public abstract void replaceNode(MutableCompositeNode replacementNode);
+    abstract void replaceNode(MutableCompositeNode replacementNode);
 
-    public abstract void replaceNode(MutableSimpleNode<?> replacementNode);
+    abstract void replaceNode(MutableSimpleNode<?> replacementNode);
 
-    public abstract void addNode(MutableCompositeNode newNode);
+    abstract void addNode(MutableCompositeNode newNode);
 
-    public abstract void addNode(MutableSimpleNode<?> newNode);
+    abstract void addNode(MutableSimpleNode<?> newNode);
 
 }

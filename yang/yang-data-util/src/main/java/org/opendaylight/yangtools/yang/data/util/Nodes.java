@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 
-public class Nodes {
+public final class Nodes {
 
     private Nodes() {
     }
@@ -32,13 +32,11 @@ public class Nodes {
         return containerNode(name, children, null);
     }
 
-    public static CompositeNode containerNode(QName name,
-            List<Node<?>> children, CompositeNode parent) {
+    public static CompositeNode containerNode(QName name, List<Node<?>> children, CompositeNode parent) {
         return new ContainerNodeTO(name, parent, nodeMapFromList(children));
     }
 
-    public static Map<QName, List<Node<?>>> nodeMapFromList(
-            List<Node<?>> children) {
+    public static Map<QName, List<Node<?>>> nodeMapFromList(List<Node<?>> children) {
         Map<QName, List<Node<?>>> map = new HashMap<QName, List<Node<?>>>();
         for (Node<?> node : children) {
 
@@ -62,8 +60,7 @@ public class Nodes {
             this.nodeMap = nodeMap;
         }
 
-        public ContainerNodeTO(QName name, CompositeNode parent,
-                Map<QName, List<Node<?>>> nodeMap) {
+        public ContainerNodeTO(QName name, CompositeNode parent, Map<QName, List<Node<?>>> nodeMap) {
             super(name, parent);
             this.nodeMap = nodeMap;
         }
@@ -74,8 +71,11 @@ public class Nodes {
             return nodeMap;
         }
 
-        /* (non-Javadoc)
-         * @see org.opendaylight.yangtools.yang.data.api.CompositeNode#asMutable()
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.opendaylight.yangtools.yang.data.api.CompositeNode#asMutable()
          */
         @Override
         public MutableCompositeNode asMutable() {
@@ -85,8 +85,7 @@ public class Nodes {
 
     }
 
-    private static class SimpleNodeTO<T> extends AbstractNode<T> implements
-            SimpleNode<T> {
+    private static class SimpleNodeTO<T> extends AbstractNode<T> implements SimpleNode<T> {
 
         private final T value;
 
@@ -101,7 +100,9 @@ public class Nodes {
             return value;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.opendaylight.yangtools.yang.data.api.SimpleNode#asMutable()
          */
         @Override

@@ -20,20 +20,19 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 
 /**
  * @author michal.rehak
- *
+ * 
  */
-public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>>
-        implements CompositeNode {
+public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implements CompositeNode {
 
     private Map<QName, List<Node<?>>> nodeMap;
 
     /**
      * @param qname
-     * @param parent use null to create top composite node (without parent)
+     * @param parent
+     *            use null to create top composite node (without parent)
      * @param value
      */
-    public CompositeNodeTOImpl(QName qname, CompositeNode parent,
-            List<Node<?>> value) {
+    public CompositeNodeTOImpl(QName qname, CompositeNode parent, List<Node<?>> value) {
         super(qname, parent, value);
         if (value != null) {
             nodeMap = NodeUtils.buildNodeMap(getValue());
@@ -43,16 +42,15 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>>
 
     /**
      * @param qname
-     * @param parent use null to create top composite node (without parent)
+     * @param parent
+     *            use null to create top composite node (without parent)
      * @param value
      * @param modifyAction
      */
-    public CompositeNodeTOImpl(QName qname, CompositeNode parent,
-            List<Node<?>> value, ModifyAction modifyAction) {
+    public CompositeNodeTOImpl(QName qname, CompositeNode parent, List<Node<?>> value, ModifyAction modifyAction) {
         super(qname, parent, value, modifyAction);
         init();
     }
-
 
     /**
      * @return the nodeMap
@@ -69,8 +67,9 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>>
     @Override
     public SimpleNode<?> getFirstSimpleByName(QName leafQName) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leafQName);
-        if (list.isEmpty())
+        if (list.isEmpty()) {
             return null;
+        }
         return list.get(0);
     }
 
@@ -79,8 +78,9 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>>
         List<Node<?>> toFilter = getNodeMap().get(children);
         List<CompositeNode> list = new ArrayList<CompositeNode>();
         for (Node<?> node : toFilter) {
-            if (node instanceof CompositeNode)
+            if (node instanceof CompositeNode) {
                 list.add((CompositeNode) node);
+            }
         }
         return list;
     }
@@ -139,15 +139,12 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>>
 
     @Override
     public MutableCompositeNode asMutable() {
-        throw new IllegalAccessError("cast to mutable is not supported - "+getClass().getSimpleName());
+        throw new IllegalAccessError("cast to mutable is not supported - " + getClass().getSimpleName());
     }
 
     @Override
     public String toString() {
-        return super.toString() + ", children.size = "
-                + (getChildren() != null ? getChildren().size() : "n/a");
+        return super.toString() + ", children.size = " + (getChildren() != null ? getChildren().size() : "n/a");
     }
-
-
 
 }

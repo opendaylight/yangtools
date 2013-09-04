@@ -11,6 +11,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -56,6 +57,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * otherwise result may not be valid.
  */
 public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
+
     private final ModuleImpl instance;
     private final String name;
     private final SchemaPath schemaPath;
@@ -63,7 +65,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private String prefix;
     private Date revision;
 
-    private final LinkedList<Builder> actualPath = new LinkedList<Builder>();
+    private final Deque<Builder> actualPath = new LinkedList<Builder>();
     private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<TypeAwareBuilder>();
 
     private final Set<ModuleImport> imports = new HashSet<ModuleImport>();
@@ -83,7 +85,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     public ModuleBuilder(final String name) {
         super(name, 0, null);
         this.name = name;
-        schemaPath = new SchemaPath(Collections.<QName>emptyList(), true);
+        schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
         instance = new ModuleImpl(name);
         actualPath.push(this);
     }
@@ -188,8 +190,8 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     public boolean isAllUsesDataCollected() {
-        for(UsesNodeBuilder usesNode : allUsesNodes) {
-            if(!usesNode.isDataCollected()) {
+        for (UsesNodeBuilder usesNode : allUsesNodes) {
+            if (!usesNode.isDataCollected()) {
                 return false;
             }
         }
@@ -223,7 +225,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         if (actualPath.isEmpty()) {
             return null;
         } else {
-            return actualPath.get(0);
+            return actualPath.peekFirst();
         }
     }
 
@@ -231,7 +233,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         if (actualPath.size() < 2) {
             return null;
         } else {
-            return actualPath.get(1);
+            Builder builderChild = actualPath.removeFirst();
+            Builder builderParent = actualPath.peekFirst();
+            actualPath.addFirst(builderChild);
+            return builderParent;
         }
     }
 
@@ -329,8 +334,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         final String extName = qname.getLocalName();
         for (ExtensionBuilder addedExtension : addedExtensions) {
             if (addedExtension.getQName().getLocalName().equals(extName)) {
-                throw new YangParseException(moduleName, line, "Can not add extension '" + extName
-                        + "': extension with same name already declared at line " + addedExtension.getLine());
+                raiseYangParserException("extension", "node", extName, line, addedExtension.getLine());
             }
         }
         final ExtensionBuilder builder = new ExtensionBuilder(name, line, qname);
@@ -388,8 +392,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         if (parent.equals(this)) {
             for (GroupingBuilder addedGrouping : addedGroupings) {
                 if (addedGrouping.getQName().getLocalName().equals(groupingName)) {
-                    throw new YangParseException(name, line, "grouping with same name '" + groupingName
-                            + "' already declared at line " + addedGrouping.getLine());
+                    raiseYangParserException("", "Grouping", groupingName, line, addedGrouping.getLine());
                 }
             }
             addedGroupings.add(builder);
@@ -398,8 +401,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                 DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parent;
                 for (GroupingBuilder addedGrouping : parentNode.getGroupingBuilders()) {
                     if (addedGrouping.getQName().getLocalName().equals(groupingName)) {
-                        throw new YangParseException(name, line, "grouping with same name '" + groupingName
-                                + "' already declared at line " + addedGrouping.getLine());
+                        raiseYangParserException("", "Grouping", groupingName, line, addedGrouping.getLine());
                     }
                 }
                 parentNode.addGrouping(builder);
@@ -407,8 +409,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                 RpcDefinitionBuilder parentNode = (RpcDefinitionBuilder) parent;
                 for (GroupingBuilder child : parentNode.getGroupings()) {
                     if (child.getQName().getLocalName().equals(groupingName)) {
-                        throw new YangParseException(name, line, "grouping with same name '" + groupingName
-                                + "' already declared at line " + child.getLine());
+                        raiseYangParserException("", "Grouping", groupingName, line, child.getLine());
                     }
                 }
                 parentNode.addGrouping(builder);
@@ -492,20 +493,17 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         String rpcName = qname.getLocalName();
         for (RpcDefinitionBuilder rpc : addedRpcs) {
             if (rpc.getQName().getLocalName().equals(rpcName)) {
-                throw new YangParseException(name, line, "rpc with same name '" + rpcName
-                        + "' already declared at line " + rpc.getLine());
+                raiseYangParserException("", "rpc", rpcName, line, rpc.getLine());
             }
         }
         for (DataSchemaNodeBuilder addedChild : addedChildNodes) {
             if (addedChild.getQName().getLocalName().equals(rpcName)) {
-                throw new YangParseException(name, line, "Can not add rpc: node with same name '" + rpcName
-                        + "' already declared at line " + addedChild.getLine());
+                raiseYangParserException("rpc", "node", rpcName, line, addedChild.getLine());
             }
         }
         for (NotificationBuilder addedNotification : addedNotifications) {
             if (addedNotification.getQName().getLocalName().equals(rpcName)) {
-                throw new YangParseException(name, line, "Can not add rpc: notification with same name '" + rpcName
-                        + "' already declared at line " + addedNotification.getLine());
+                raiseYangParserException("rpc", "notification", rpcName, line, addedNotification.getLine());
             }
         }
         addedRpcs.add(rpcBuilder);
@@ -549,20 +547,17 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         String notificationName = qname.getLocalName();
         for (NotificationBuilder nb : addedNotifications) {
             if (nb.getQName().equals(qname)) {
-                throw new YangParseException(name, line, "notification with same name '" + notificationName
-                        + "' already declared at line " + nb.getLine());
+                raiseYangParserException("", "notification", notificationName, line, nb.getLine());
             }
         }
         for (RpcDefinitionBuilder rpc : addedRpcs) {
             if (rpc.getQName().getLocalName().equals(notificationName)) {
-                throw new YangParseException(name, line, "Can not add notification: rpc with same name '"
-                        + notificationName + "' already declared at line " + rpc.getLine());
+                raiseYangParserException("notification", "rpc", notificationName, line, rpc.getLine());
             }
         }
         for (DataSchemaNodeBuilder addedChild : addedChildNodes) {
             if (addedChild.getQName().getLocalName().equals(notificationName)) {
-                throw new YangParseException(name, line, "Can not add notification: node with same name '"
-                        + notificationName + "' already declared at line " + addedChild.getLine());
+                raiseYangParserException("notification", "node", notificationName, line, addedChild.getLine());
             }
         }
 
@@ -585,8 +580,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         String featureName = qname.getLocalName();
         for (FeatureBuilder addedFeature : addedFeatures) {
             if (addedFeature.getQName().getLocalName().equals(featureName)) {
-                throw new YangParseException(name, line, "feature with same name '" + featureName
-                        + "' already declared at line " + addedFeature.getLine());
+                raiseYangParserException("", "feature", featureName, line, addedFeature.getLine());
             }
         }
         addedFeatures.add(builder);
@@ -638,8 +632,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         String nodeName = typedefBuilder.getQName().getLocalName();
         for (TypeDefinitionBuilder tdb : addedTypedefs) {
             if (tdb.getQName().getLocalName().equals(nodeName)) {
-                throw new YangParseException(name, typedefBuilder.getLine(), "typedef with same name '" + nodeName
-                        + "' already declared at line " + tdb.getLine());
+                raiseYangParserException("", "typedef", nodeName, typedefBuilder.getLine(), tdb.getLine());
             }
         }
         addedTypedefs.add(typedefBuilder);
@@ -655,8 +648,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         if (parent.equals(this)) {
             for (TypeDefinitionBuilder tdb : addedTypedefs) {
                 if (tdb.getQName().getLocalName().equals(typedefName)) {
-                    throw new YangParseException(name, line, "typedef with same name '" + typedefName
-                            + "' already declared at line " + tdb.getLine());
+                    raiseYangParserException("", "typedef", typedefName, line, tdb.getLine());
                 }
             }
             addedTypedefs.add(builder);
@@ -665,8 +657,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                 DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parent;
                 for (TypeDefinitionBuilder child : parentNode.getTypeDefinitionBuilders()) {
                     if (child.getQName().getLocalName().equals(typedefName)) {
-                        throw new YangParseException(name, line, "typedef with same name '" + typedefName
-                                + "' already declared at line " + child.getLine());
+                        raiseYangParserException("", "typedef", typedefName, line, child.getLine());
                     }
                 }
                 parentNode.addTypedef(builder);
@@ -674,8 +665,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                 RpcDefinitionBuilder rpcParent = (RpcDefinitionBuilder) parent;
                 for (TypeDefinitionBuilder tdb : rpcParent.getTypeDefinitions()) {
                     if (tdb.getQName().getLocalName().equals(builder.getQName().getLocalName())) {
-                        throw new YangParseException(name, line, "typedef with same name '" + typedefName
-                                + "' already declared at line " + tdb.getLine());
+                        raiseYangParserException("", "typedef", typedefName, line, tdb.getLine());
                     }
                 }
                 rpcParent.addTypedef(builder);
@@ -689,7 +679,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     public void setType(final TypeDefinition<?> type) {
         Builder parent = getActualNode();
-        if (parent == null || !(parent instanceof TypeAwareBuilder)) {
+        if (!(parent instanceof TypeAwareBuilder)) {
             throw new YangParseException("Failed to set type '" + type.getQName().getLocalName()
                     + "'. Invalid parent node: " + parent);
         }
@@ -748,8 +738,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         String identityName = qname.getLocalName();
         for (IdentitySchemaNodeBuilder idBuilder : addedIdentities) {
             if (idBuilder.getQName().equals(qname)) {
-                throw new YangParseException(name, line, "identity with same name '" + identityName
-                        + "' already declared at line " + idBuilder.getLine());
+                raiseYangParserException("", "identity", identityName, line, idBuilder.getLine());
             }
         }
 
@@ -788,7 +777,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         return builder;
     }
-    
+
     public Set<RpcDefinitionBuilder> getRpcs() {
         return addedRpcs;
     }
@@ -796,7 +785,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     public Set<NotificationBuilder> getNotifications() {
         return addedNotifications;
     }
-    
+
     @Override
     public String toString() {
         return "module " + name;
@@ -1147,137 +1136,207 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
      * Add child to parent. Method checks for duplicates and add given child
      * node to parent. If node with same name is found, throws exception. If
      * parent is null, child node will be added directly to module.
-     *
+     * 
      * @param parent
      * @param child
      * @param childName
      */
     private void addChildToParent(final Builder parent, final DataSchemaNodeBuilder child, final String childName) {
-        final int line = child.getLine();
+        final int lineNum = child.getLine();
         if (parent.equals(this)) {
-            // if parent == null => node is defined under module
-            // All leafs, leaf-lists, lists, containers, choices, rpcs,
-            // notifications, and anyxmls defined within a parent node or at the
-            // top level of the module or its submodules share the same
-            // identifier namespace.
-            for (DataSchemaNodeBuilder childNode : addedChildNodes) {
-                if (childNode.getQName().getLocalName().equals(childName)) {
-                    throw new YangParseException(name, line, "Can not add '" + child
-                            + "': node with same name already declared at line " + childNode.getLine());
-                }
-            }
-            for (RpcDefinitionBuilder rpc : addedRpcs) {
-                if (rpc.getQName().getLocalName().equals(childName)) {
-                    throw new YangParseException(name, line, "Can not add '" + child
-                            + "': rpc with same name already declared at line " + rpc.getLine());
-                }
-            }
-            for (NotificationBuilder notification : addedNotifications) {
-                if (notification.getQName().getLocalName().equals(childName)) {
-                    throw new YangParseException(name, line, "Can not add '" + child
-                            + "': notification with same name already declared at line " + notification.getLine());
-                }
-            }
-            addedChildNodes.add(child);
+            addChildToModule(child, childName, lineNum);
         } else {
-            if(parent instanceof AugmentationSchemaBuilder) {
-                child.setAugmenting(true);
+            addChildToSubnodeOfModule(parent, child, childName, lineNum);
+        }
+    }
+
+    /**
+     * Adds child node <code>child</code> to the set of nodes child nodes.
+     * 
+     * The method reduces the complexity of the method
+     * {@link #addChildToParent(Builder, DataSchemaNodeBuilder, String)
+     * addChildToParent}.
+     * 
+     * @param child
+     *            data schema node builder for child node
+     * @param childName
+     *            string with name of child node
+     * @param lineNum
+     *            line number in YANG file where is the node with the name equal
+     *            to <code>childName</code> is defined
+     */
+    private void addChildToModule(final DataSchemaNodeBuilder child, final String childName, final int lineNum) {
+        // if parent == null => node is defined under module
+        // All leafs, leaf-lists, lists, containers, choices, rpcs,
+        // notifications, and anyxmls defined within a parent node or at the
+        // top level of the module or its submodules share the same
+        // identifier namespace.
+        for (DataSchemaNodeBuilder childNode : addedChildNodes) {
+            if (childNode.getQName().getLocalName().equals(childName)) {
+                raiseYangParserException("'"+child+"'", "node", childName, lineNum, childNode.getLine());
             }
-            // no need for checking rpc and notification because they can be
-            // defined only under module or submodule
-            if (parent instanceof DataNodeContainerBuilder) {
-                DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parent;
-                for (DataSchemaNodeBuilder childNode : parentNode.getChildNodeBuilders()) {
-                    if (childNode.getQName().getLocalName().equals(childName)) {
-                        throw new YangParseException(name, line, "Can not add '" + child + "': node with same name '"
-                                + childName + "' already declared at line " + childNode.getLine());
-                    }
-                }
-                parentNode.addChildNode(child);
-            } else if (parent instanceof ChoiceBuilder) {
-                ChoiceBuilder parentNode = (ChoiceBuilder) parent;
-                for (ChoiceCaseBuilder caseBuilder : parentNode.getCases()) {
-                    if (caseBuilder.getQName().getLocalName().equals(childName)) {
-                        throw new YangParseException(name, line, "Can not add '" + child + "': case with same name '"
-                                + childName + "' already declared at line " + caseBuilder.getLine());
-                    }
-                }
-                parentNode.addCase(child);
-            } else {
-                throw new YangParseException(name, line, "Unresolved parent of node '" + childName + "'.");
+        }
+        for (RpcDefinitionBuilder rpc : addedRpcs) {
+            if (rpc.getQName().getLocalName().equals(childName)) {
+                raiseYangParserException("'"+child+"'", "rpc", childName, lineNum, rpc.getLine());
             }
+        }
+        for (NotificationBuilder notification : addedNotifications) {
+            if (notification.getQName().getLocalName().equals(childName)) {
+                raiseYangParserException("'"+child+"'", "notification", childName, lineNum, notification.getLine());
+            }
+        }
+        addedChildNodes.add(child);
+    }
+
+    /**
+     * Adds child node <code>child</code> to the group of child nodes of the
+     * <code>parent</code>
+     * 
+     * The method reduces the complexity of the method
+     * {@link #addChildToParent(Builder, DataSchemaNodeBuilder, String)
+     * addChildToParent}. *
+     * 
+     * @param parent
+     *            builder of node which is parent for <code>child</code>
+     * @param child
+     *            data schema node builder for child node
+     * @param childName
+     *            string with name of child node
+     * @param lineNum
+     *            line number in YANG file where is the node with the name equal
+     *            to <code>childName</code> is defined
+     */
+    private void addChildToSubnodeOfModule(final Builder parent, final DataSchemaNodeBuilder child,
+            final String childName, final int lineNum) {
+        if (parent instanceof AugmentationSchemaBuilder) {
+            child.setAugmenting(true);
+        }
+        // no need for checking rpc and notification because they can be
+        // defined only under module or submodule
+        if (parent instanceof DataNodeContainerBuilder) {
+            DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parent;
+            for (DataSchemaNodeBuilder childNode : parentNode.getChildNodeBuilders()) {
+                if (childNode.getQName().getLocalName().equals(childName)) {
+                    raiseYangParserException("'"+child+"'", "node", childName, lineNum, childNode.getLine());
+                }
+            }
+            parentNode.addChildNode(child);
+        } else if (parent instanceof ChoiceBuilder) {
+            ChoiceBuilder parentNode = (ChoiceBuilder) parent;
+            for (ChoiceCaseBuilder caseBuilder : parentNode.getCases()) {
+                if (caseBuilder.getQName().getLocalName().equals(childName)) {
+                    raiseYangParserException("'"+child+"'", "node", childName, lineNum, caseBuilder.getLine());
+                }
+            }
+            parentNode.addCase(child);
+        } else {
+            throw new YangParseException(name, lineNum, "Unresolved parent of node '" + childName + "'.");
+        }
+    }
+
+    /**
+     * 
+     * Implementation of <code>ModuleImport</code> interface only for the method
+     * {@link ModuleBuilder#createModuleImport(String, Date, String)
+     * createModuleImport}.
+     * 
+     */
+    private class ModuleImportImpl implements ModuleImport {
+        final String moduleName;
+        final Date revision;
+        final String prefix;
+
+        private ModuleImportImpl(final String moduleName, final Date revision, final String prefix) {
+            this.moduleName = moduleName;
+            this.revision = revision;
+            this.prefix = prefix;
+        }
+
+        @Override
+        public String getModuleName() {
+            return moduleName;
+        }
+
+        @Override
+        public Date getRevision() {
+            return revision;
+        }
+
+        @Override
+        public String getPrefix() {
+            return prefix;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
+            result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+            result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            ModuleImport other = (ModuleImport) obj;
+            if (getModuleName() == null) {
+                if (other.getModuleName() != null) {
+                    return false;
+                }
+            } else if (!getModuleName().equals(other.getModuleName())) {
+                return false;
+            }
+            if (getRevision() == null) {
+                if (other.getRevision() != null) {
+                    return false;
+                }
+            } else if (!getRevision().equals(other.getRevision())) {
+                return false;
+            }
+            if (getPrefix() == null) {
+                if (other.getPrefix() != null) {
+                    return false;
+                }
+            } else if (!getPrefix().equals(other.getPrefix())) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "ModuleImport[moduleName=" + moduleName + ", revision=" + revision + ", prefix=" + prefix + "]";
         }
     }
 
     private ModuleImport createModuleImport(final String moduleName, final Date revision, final String prefix) {
-        final ModuleImport moduleImport = new ModuleImport() {
-            @Override
-            public String getModuleName() {
-                return moduleName;
-            }
-
-            @Override
-            public Date getRevision() {
-                return revision;
-            }
-
-            @Override
-            public String getPrefix() {
-                return prefix;
-            }
-
-            @Override
-            public int hashCode() {
-                final int prime = 31;
-                int result = 1;
-                result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
-                result = prime * result + ((revision == null) ? 0 : revision.hashCode());
-                result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
-                return result;
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (this == obj) {
-                    return true;
-                }
-                if (obj == null) {
-                    return false;
-                }
-                if (getClass() != obj.getClass()) {
-                    return false;
-                }
-                ModuleImport other = (ModuleImport) obj;
-                if (getModuleName() == null) {
-                    if (other.getModuleName() != null) {
-                        return false;
-                    }
-                } else if (!getModuleName().equals(other.getModuleName())) {
-                    return false;
-                }
-                if (getRevision() == null) {
-                    if (other.getRevision() != null) {
-                        return false;
-                    }
-                } else if (!getRevision().equals(other.getRevision())) {
-                    return false;
-                }
-                if (getPrefix() == null) {
-                    if (other.getPrefix() != null) {
-                        return false;
-                    }
-                } else if (!getPrefix().equals(other.getPrefix())) {
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "ModuleImport[moduleName=" + moduleName + ", revision=" + revision + ", prefix=" + prefix + "]";
-            }
-        };
+        final ModuleImport moduleImport = new ModuleImportImpl(moduleName, revision, prefix);
         return moduleImport;
     }
 
+    private void raiseYangParserException(final String cantAddType, final String type, final String name,
+            final int currentLine, final int duplicateLine) {
+
+        StringBuilder msgPrefix = new StringBuilder("");
+        if (cantAddType != null && !cantAddType.isEmpty()) {
+            msgPrefix.append("Can not add ");
+            msgPrefix.append(cantAddType);
+            msgPrefix.append(": ");
+        }
+
+        String msg = String.format("%s%s with same name '%s' already declared at line %d.", msgPrefix, type, name,
+                duplicateLine);
+        throw new YangParseException(moduleName, currentLine, msg);
+    }
 }

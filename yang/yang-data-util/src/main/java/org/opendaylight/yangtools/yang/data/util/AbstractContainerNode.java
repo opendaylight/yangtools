@@ -17,13 +17,13 @@ import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 
-public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>>
-        implements CompositeNode {
+public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> implements CompositeNode {
 
     public SimpleNode<?> getFirstSimpleByName(QName leaf) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leaf);
-        if (list.size() == 0)
+        if (list.size() == 0) {
             return null;
+        }
         return list.get(0);
     }
 
@@ -41,8 +41,9 @@ public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>>
 
     public List<Node<?>> getValue() {
         Map<QName, List<Node<?>>> map = getNodeMap();
-        if (map == null)
+        if (map == null) {
             throw new IllegalStateException("nodeMap should not be null");
+        }
         List<Node<?>> ret = new ArrayList<Node<?>>();
         Collection<List<Node<?>>> values = map.values();
         for (List<Node<?>> list : values) {
@@ -55,42 +56,48 @@ public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>>
 
     public List<CompositeNode> getCompositesByName(QName children) {
         Map<QName, List<Node<?>>> map = getNodeMap();
-        if (map == null)
+        if (map == null) {
             throw new IllegalStateException("nodeMap should not be null");
+        }
         List<Node<?>> toFilter = map.get(children);
         List<CompositeNode> list = new ArrayList<CompositeNode>();
         for (Node<?> node : toFilter) {
-            if (node instanceof CompositeNode)
+            if (node instanceof CompositeNode) {
                 list.add((CompositeNode) node);
+            }
         }
         return list;
     }
 
     public List<SimpleNode<?>> getSimpleNodesByName(QName children) {
         Map<QName, List<Node<?>>> map = getNodeMap();
-        if (map == null)
+        if (map == null) {
             throw new IllegalStateException("nodeMap should not be null");
+        }
         List<Node<?>> toFilter = map.get(children);
         List<SimpleNode<?>> list = new ArrayList<SimpleNode<?>>();
 
         for (Node<?> node : toFilter) {
-            if (node instanceof SimpleNode<?>)
+            if (node instanceof SimpleNode<?>) {
                 list.add((SimpleNode<?>) node);
+            }
         }
         return list;
     }
 
     public CompositeNode getFirstCompositeByName(QName container) {
         List<CompositeNode> list = getCompositesByName(container);
-        if (list.size() == 0)
+        if (list.size() == 0) {
             return null;
+        }
         return list.get(0);
     }
 
     public SimpleNode<?> getFirstLeafByName(QName leaf) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leaf);
-        if (list.size() == 0)
+        if (list.size() == 0) {
             return null;
+        }
         return list.get(0);
     }
 

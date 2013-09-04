@@ -37,15 +37,14 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class QName {
-    protected static final Logger logger = LoggerFactory
-        .getLogger(QName.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
     private SimpleDateFormat revisionFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    final URI namespace;
-    final String localName;
-    final String prefix;
-    final Date revision;
+    private final URI namespace;
+    private final String localName;
+    private final String prefix;
+    private final Date revision;
 
     /**
      * QName Constructor.
@@ -93,8 +92,7 @@ public final class QName {
     }
 
     public QName(QName base, String localName) {
-        this(base.getNamespace(), base.getRevision(), base.getPrefix(),
-                localName);
+        this(base.getNamespace(), base.getRevision(), base.getPrefix(), localName);
     }
 
     /**
@@ -141,39 +139,45 @@ public final class QName {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((localName == null) ? 0 : localName.hashCode());
-        result = prime * result
-                + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result
-                + ((revision == null) ? 0 : revision.hashCode());
+        result = prime * result + ((localName == null) ? 0 : localName.hashCode());
+        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         QName other = (QName) obj;
         if (localName == null) {
-            if (other.localName != null)
+            if (other.localName != null) {
                 return false;
-        } else if (!localName.equals(other.localName))
+            }
+        } else if (!localName.equals(other.localName)) {
             return false;
+        }
         if (namespace == null) {
-            if (other.namespace != null)
+            if (other.namespace != null) {
                 return false;
-        } else if (!namespace.equals(other.namespace))
+            }
+        } else if (!namespace.equals(other.namespace)) {
             return false;
+        }
         if (revision == null) {
-            if (other.revision != null)
+            if (other.revision != null) {
                 return false;
-        } else if (!revision.equals(other.revision))
+            }
+        } else if (!revision.equals(other.revision)) {
             return false;
+        }
         return true;
     }
 
@@ -205,8 +209,9 @@ public final class QName {
      */
     URI getRevisionNamespace() {
 
-        if (namespace == null)
+        if (namespace == null) {
             return null;
+        }
 
         String query = "";
         if (revision != null) {
@@ -215,12 +220,10 @@ public final class QName {
 
         URI compositeURI = null;
         try {
-            compositeURI = new URI(namespace.getScheme(),
-                    namespace.getUserInfo(), namespace.getHost(),
-                    namespace.getPort(), namespace.getPath(), query,
-                    namespace.getFragment());
+            compositeURI = new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(),
+                    namespace.getPort(), namespace.getPath(), query, namespace.getFragment());
         } catch (URISyntaxException e) {
-            logger.error("",e);
+            LOGGER.error("", e);
         }
         return compositeURI;
     }

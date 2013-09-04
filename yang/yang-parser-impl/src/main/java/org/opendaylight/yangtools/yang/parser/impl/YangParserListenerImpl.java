@@ -80,7 +80,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class YangParserListenerImpl extends YangParserBaseListener {
-    private static final Logger logger = LoggerFactory.getLogger(YangParserListenerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
+    private static final String AUGMENT_STR = "augment";
 
     private ModuleBuilder moduleBuilder;
     private String moduleName;
@@ -88,7 +89,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private String yangModelPrefix;
     private Date revision = new Date(0L);
 
-    public final static DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private final Stack<Stack<QName>> actualPath = new Stack<>();
 
     private void addNodeToPath(QName name) {
@@ -102,7 +103,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void enterModule_stmt(YangParser.Module_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
-        logger.debug("entering module " + moduleName);
+        LOGGER.debug("entering module " + moduleName);
         enterLog("module", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
@@ -213,9 +214,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private void updateRevisionForRevisionStatement(final ParseTree treeNode) {
         final String revisionDateStr = stringFromNode(treeNode);
         try {
-            final Date revision = simpleDateFormat.parse(revisionDateStr);
-            if ((revision != null) && (this.revision.compareTo(revision) < 0)) {
-                this.revision = revision;
+            final Date revisionDate = SIMPLE_DATE_FORMAT.parse(revisionDateStr);
+            if ((revisionDate != null) && (this.revision.compareTo(revisionDate) < 0)) {
+                this.revision = revisionDate;
                 moduleBuilder.setRevision(this.revision);
                 setLog("revision", this.revision.toString());
                 for (int i = 0; i < treeNode.getChildCount(); ++i) {
@@ -227,7 +228,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             }
         } catch (ParseException e) {
             final String message = "Failed to parse revision string: " + revisionDateStr;
-            logger.warn(message);
+            LOGGER.warn(message);
         }
     }
 
@@ -248,9 +249,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             if (treeNode instanceof Revision_date_stmtContext) {
                 String importRevisionStr = stringFromNode(treeNode);
                 try {
-                    importRevision = simpleDateFormat.parse(importRevisionStr);
+                    importRevision = SIMPLE_DATE_FORMAT.parse(importRevisionStr);
                 } catch (ParseException e) {
-                    logger.warn("Failed to parse import revision-date at line " + line + ": " + importRevisionStr);
+                    LOGGER.warn("Failed to parse import revision-date at line " + line + ": " + importRevisionStr);
                 }
             }
         }
@@ -267,7 +268,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     public void enterAugment_stmt(YangParser.Augment_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String augmentPath = stringFromNode(ctx);
-        enterLog("augment", augmentPath, line);
+        enterLog(AUGMENT_STR, augmentPath, line);
         actualPath.push(new Stack<QName>());
 
         AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath);
@@ -291,7 +292,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitAugment_stmt(YangParser.Augment_stmtContext ctx) {
         moduleBuilder.exitNode();
-        exitLog("augment", "");
+        exitLog(AUGMENT_STR, "");
         actualPath.pop();
     }
 
@@ -394,14 +395,15 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     SchemaPath path = createActualSchemaPath(actualPath.peek());
                     moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
                 } else {
-                    type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision, yangModelPrefix, moduleBuilder.getActualNode());
+                    type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
+                            yangModelPrefix, moduleBuilder.getActualNode());
                     moduleBuilder.setType(type);
                     addNodeToPath(type.getQName());
                 }
             }
         } else {
-            type = parseUnknownTypeWithBody(typeQName, typeBody, actualPath.peek(), namespace, revision, yangModelPrefix,
-                    moduleBuilder.getActualNode());
+            type = parseUnknownTypeWithBody(typeQName, typeBody, actualPath.peek(), namespace, revision,
+                    yangModelPrefix, moduleBuilder.getActualNode());
             // add parent node of this type statement to dirty nodes
             moduleBuilder.markActualNodeDirty();
             moduleBuilder.setType(type);
@@ -549,7 +551,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         actualPath.push(new Stack<QName>());
         final int line = ctx.getStart().getLine();
         final String augmentPath = stringFromNode(ctx);
-        enterLog("augment", augmentPath, line);
+        enterLog(AUGMENT_STR, augmentPath, line);
 
         AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath);
 
@@ -572,7 +574,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitUses_augment_stmt(YangParser.Uses_augment_stmtContext ctx) {
         moduleBuilder.exitNode();
-        exitLog("augment", "");
+        exitLog(AUGMENT_STR, "");
         actualPath.pop();
     }
 
@@ -978,19 +980,19 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     private void enterLog(String p1, String p2, int line) {
-        logger.trace("entering {} {} ({})", p1, p2, line);
+        LOGGER.trace("entering {} {} ({})", p1, p2, line);
     }
 
     private void exitLog(String p1, String p2) {
-        logger.trace("exiting {} {}", p1, p2);
+        LOGGER.trace("exiting {} {}", p1, p2);
     }
 
     private void exitLog(String p1, QName p2) {
-        logger.trace("exiting {} {}", p1, p2.getLocalName());
+        LOGGER.trace("exiting {} {}", p1, p2.getLocalName());
     }
 
     private void setLog(String p1, String p2) {
-        logger.trace("setting {} {}", p1, p2);
+        LOGGER.trace("setting {} {}", p1, p2);
     }
 
 }
