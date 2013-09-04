@@ -131,8 +131,8 @@ public class ModuleDependencySortTest {
             ModuleDependencySort.sort(builders);
         } catch (YangValidationException e) {
             assertThat(e.getMessage(), containsString("Module:b imported twice with different revisions:"
-                    + YangParserListenerImpl.simpleDateFormat.format(date1) + ", "
-                    + YangParserListenerImpl.simpleDateFormat.format(date2)));
+                    + YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(date1) + ", "
+                    + YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(date2)));
             throw e;
         }
     }
@@ -156,7 +156,7 @@ public class ModuleDependencySortTest {
             ModuleDependencySort.sort(builders);
         } catch (YangValidationException e) {
             assertThat(e.getMessage(), containsString("Module:a with revision:"
-                    + YangParserListenerImpl.simpleDateFormat.format(rev) + " declared twice"));
+                    + YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(rev) + " declared twice"));
             throw e;
         }
     }

@@ -18,35 +18,35 @@ public interface Builder {
 
     /**
      * Get name of module in which this node is declared.
-     *
+     * 
      * @return module name
      */
     String getModuleName();
 
     /**
      * Set name of module in which this node is declared.
-     *
+     * 
      * @param moduleName
      */
     void setModuleName(String moduleName);
 
     /**
      * Get current line in yang file.
-     *
+     * 
      * @return current line in yang file
      */
     int getLine();
 
     /**
      * Get parent node of this node.
-     *
+     * 
      * @return parent node builder or null if this is top level node
      */
     Builder getParent();
 
     /**
      * Set parent of this node.
-     *
+     * 
      * @param parent
      *            parent node builder
      */
@@ -54,31 +54,30 @@ public interface Builder {
 
     /**
      * Add unknown node to this builder.
-     *
+     * 
      * @param unknownNode
      */
     void addUnknownNodeBuilder(UnknownSchemaNodeBuilder unknownNode);
 
     /**
      * Get builders of unknown nodes defined in this node.
-     *
+     * 
      * @return collection of UnknownSchemaNodeBuilder objects
      */
     List<UnknownSchemaNodeBuilder> getUnknownNodeBuilders();
 
     /**
      * Build YANG data model node.
-     *
+     * 
      * This method should create an instance of YANG data model node. After
      * creating an instance, this instance should be returned for each call
      * without repeating build process.
-     *
+     * 
      * @return YANG data model node
      */
     Object build();
 
-    
-    public interface Rebuildable<T extends Builder> {
+    interface Rebuildable<T extends Builder> {
         T toBuilder();
     }
 }

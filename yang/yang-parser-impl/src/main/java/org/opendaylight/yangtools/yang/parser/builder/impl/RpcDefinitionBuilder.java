@@ -38,11 +38,11 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     public ContainerSchemaNodeBuilder getInput() {
         return inputBuilder;
     }
-    
+
     public ContainerSchemaNodeBuilder getOutput() {
         return outputBuilder;
     }
-    
+
     RpcDefinitionBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line, qname);
         this.instance = new RpcDefinitionImpl(qname);
@@ -299,11 +299,17 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(RpcDefinitionImpl.class.getSimpleName() + "[");
-            sb.append("qname=" + qname);
-            sb.append(", path=" + path);
-            sb.append(", input=" + input);
-            sb.append(", output=" + output + "]");
+            StringBuilder sb = new StringBuilder(RpcDefinitionImpl.class.getSimpleName());
+            sb.append("[");
+            sb.append("qname=");
+            sb.append(qname);
+            sb.append(", path=");
+            sb.append(path);
+            sb.append(", input=");
+            sb.append(input);
+            sb.append(", output=");
+            sb.append(output);
+            sb.append("]");
             return sb.toString();
         }
     }

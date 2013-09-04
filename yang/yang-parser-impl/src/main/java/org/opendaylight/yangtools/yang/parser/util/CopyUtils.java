@@ -52,7 +52,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UsesNodeBuilderImpl;
 
-public class CopyUtils {
+public final class CopyUtils {
 
     private CopyUtils() {
     }
@@ -60,7 +60,7 @@ public class CopyUtils {
     /**
      * Create copy of DataSchemaNodeBuilder with new parent. If updateQName is
      * true, qname of node will be corrected based on new parent.
-     *
+     * 
      * @param old
      * @param newParent
      * @param updateQName
@@ -177,8 +177,8 @@ public class CopyUtils {
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        ContainerSchemaNodeBuilder copy = new ContainerSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
-                newQName, newSchemaPath);
+        ContainerSchemaNodeBuilder copy = new ContainerSchemaNodeBuilder(newParent.getModuleName(),
+                newParent.getLine(), newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setPath(newSchemaPath);
@@ -218,8 +218,8 @@ public class CopyUtils {
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        LeafSchemaNodeBuilder copy = new LeafSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(), newQName,
-                newSchemaPath);
+        LeafSchemaNodeBuilder copy = new LeafSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
+                newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setPath(newSchemaPath);
@@ -281,8 +281,8 @@ public class CopyUtils {
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        ListSchemaNodeBuilder copy = new ListSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(), newQName,
-                newSchemaPath);
+        ListSchemaNodeBuilder copy = new ListSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
+                newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setPath(newSchemaPath);
@@ -359,13 +359,13 @@ public class CopyUtils {
         TypeDefinitionBuilder type = null;
 
         if (old instanceof UnionTypeBuilder) {
-            UnionTypeBuilder oldUnion = (UnionTypeBuilder)old;
+            UnionTypeBuilder oldUnion = (UnionTypeBuilder) old;
             type = new UnionTypeBuilder(newParent.getModuleName(), newParent.getLine());
             type.setParent(newParent);
-            for(TypeDefinition<?> td : oldUnion.getTypes()) {
+            for (TypeDefinition<?> td : oldUnion.getTypes()) {
                 type.setType(td);
             }
-            for(TypeDefinitionBuilder tdb : oldUnion.getTypedefs()) {
+            for (TypeDefinitionBuilder tdb : oldUnion.getTypedefs()) {
                 type.setTypedef(copy(tdb, type, updateQName));
             }
         } else if (old instanceof IdentityrefTypeBuilder) {
@@ -522,7 +522,7 @@ public class CopyUtils {
         return new DataBean(newQName, newSchemaPath);
     }
 
-    private static class DataBean {
+    private static final class DataBean {
         private QName qname;
         private SchemaPath schemaPath;
 
@@ -532,10 +532,9 @@ public class CopyUtils {
         }
     }
 
-
     /**
      * Create AnyXmlBuilder from given AnyXmlSchemaNode.
-     *
+     * 
      * @param anyxml
      * @param qname
      * @param moduleName
@@ -554,7 +553,7 @@ public class CopyUtils {
 
     /**
      * Create GroupingBuilder from given GroupingDefinition.
-     *
+     * 
      * @param grouping
      * @param qname
      * @param moduleName
@@ -579,7 +578,7 @@ public class CopyUtils {
 
     /**
      * Create TypeDefinitionBuilder from given ExtendedType.
-     *
+     * 
      * @param typedef
      * @param qname
      * @param moduleName
@@ -609,7 +608,7 @@ public class CopyUtils {
 
     /**
      * Create UnknownSchemaNodeBuilder from given UnknownSchemaNode.
-     *
+     * 
      * @param unknownNode
      * @param qname
      * @param moduleName
@@ -632,10 +631,9 @@ public class CopyUtils {
         return builder;
     }
 
-
     /**
      * Create LeafSchemaNodeBuilder from given LeafSchemaNode.
-     *
+     * 
      * @param leaf
      *            leaf from which to create builder
      * @param qname
@@ -660,7 +658,7 @@ public class CopyUtils {
 
     /**
      * Create ContainerSchemaNodeBuilder from given ContainerSchemaNode.
-     *
+     * 
      * @param container
      * @param qname
      * @param moduleName
@@ -687,7 +685,7 @@ public class CopyUtils {
 
     /**
      * Create ListSchemaNodeBuilder from given ListSchemaNode.
-     *
+     * 
      * @param list
      * @param qname
      * @param moduleName
@@ -712,7 +710,7 @@ public class CopyUtils {
 
     /**
      * Create LeafListSchemaNodeBuilder from given LeafListSchemaNode.
-     *
+     * 
      * @param leafList
      * @param qname
      * @param moduleName
@@ -735,7 +733,7 @@ public class CopyUtils {
 
     /**
      * Create ChoiceBuilder from given ChoiceNode.
-     *
+     * 
      * @param choice
      * @param qname
      * @param moduleName
@@ -754,10 +752,9 @@ public class CopyUtils {
         return builder;
     }
 
-
     /**
      * Set DataSchemaNode arguments to builder object
-     *
+     * 
      * @param node
      *            node from which arguments should be read
      * @param builder
@@ -774,7 +771,7 @@ public class CopyUtils {
 
     /**
      * Copy constraints from constraints definition to constraints builder.
-     *
+     * 
      * @param nodeConstraints
      *            definition from which constraints will be copied
      * @param constraints

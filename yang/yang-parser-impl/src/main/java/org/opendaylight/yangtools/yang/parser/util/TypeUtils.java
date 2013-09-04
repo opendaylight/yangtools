@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 /**
  * Utility class which contains helper methods for dealing with type operations.
  */
-public class TypeUtils {
+public final class TypeUtils {
 
     private TypeUtils() {
     }
@@ -48,7 +48,7 @@ public class TypeUtils {
     /**
      * Resolve unknown type of node. It is assumed that type of node is either
      * UnknownType or ExtendedType with UnknownType as base type.
-     *
+     * 
      * @param nodeToResolve
      *            node with type to resolve
      * @param modules
@@ -72,7 +72,7 @@ public class TypeUtils {
     /**
      * Resolve unknown type of node. It is assumed that type of node is either
      * UnknownType or ExtendedType with UnknownType as base type.
-     *
+     * 
      * @param nodeToResolve
      *            node with type to resolve
      * @param modules
@@ -221,7 +221,7 @@ public class TypeUtils {
 
     /**
      * Find type definition of type of unresolved node.
-     *
+     * 
      * @param nodeToResolve
      *            node with unresolved type
      * @param dependentModuleBuilder
@@ -261,7 +261,7 @@ public class TypeUtils {
 
     /**
      * Search types for type with given name.
-     *
+     * 
      * @param types
      *            types to search
      * @param name
@@ -279,7 +279,7 @@ public class TypeUtils {
 
     /**
      * Find type by name.
-     *
+     * 
      * @param types
      *            collection of types
      * @param typeName
@@ -298,13 +298,13 @@ public class TypeUtils {
 
     /**
      * Pull restriction from type and add them to constraints.
-     *
+     * 
      * @param type
      *            type from which constraints will be read
      * @param constraints
      *            constraints object to which constraints will be added
      */
-    private static void mergeConstraints(final TypeDefinition<?> type, final TypeConstraints constraints) {
+    private static TypeConstraints mergeConstraints(final TypeDefinition<?> type, final TypeConstraints constraints) {
         if (type instanceof DecimalTypeDefinition) {
             constraints.addRanges(((DecimalTypeDefinition) type).getRangeStatements());
             constraints.addFractionDigits(((DecimalTypeDefinition) type).getFractionDigits());
@@ -315,13 +315,19 @@ public class TypeUtils {
             constraints.addLengths(((StringTypeDefinition) type).getLengthStatements());
         } else if (type instanceof BinaryTypeDefinition) {
             constraints.addLengths(((BinaryTypeDefinition) type).getLengthConstraints());
+        } else if (type instanceof ExtendedType) {
+            constraints.addFractionDigits(((ExtendedType) type).getFractionDigits());
+            constraints.addLengths(((ExtendedType) type).getLengths());
+            constraints.addPatterns(((ExtendedType) type).getPatterns());
+            constraints.addRanges(((ExtendedType) type).getRanges());
         }
+        return constraints;
     }
 
     /**
      * Create new type builder based on old type with new base type. Note: only
      * one of newBaseTypeBuilder or newBaseType can be specified.
-     *
+     * 
      * @param newBaseTypeBuilder
      *            new base type builder or null
      * @param newBaseType
@@ -376,7 +382,7 @@ public class TypeUtils {
 
     /**
      * Pull restrictions from type and add them to constraints.
-     *
+     * 
      * @param typeToResolve
      *            type from which constraints will be read
      * @param constraints
@@ -436,30 +442,17 @@ public class TypeUtils {
                     Module dm = ParserUtils.findModuleFromContext(context, builder, qname.getPrefix(),
                             nodeToResolve.getLine());
                     TypeDefinition<?> t = findTypeByName(dm.getTypeDefinitions(), qname.getLocalName());
-                    if (t instanceof ExtendedType) {
-                        ExtendedType extType = (ExtendedType) t;
-                        constraints.addFractionDigits(extType.getFractionDigits());
-                        constraints.addLengths(extType.getLengths());
-                        constraints.addPatterns(extType.getPatterns());
-                        constraints.addRanges(extType.getRanges());
-                        return constraints;
-                    } else {
-                        mergeConstraints(t, constraints);
-                        return constraints;
-                    }
+                    return mergeConstraints(t, constraints);
+
                 } else {
                     TypeDefinitionBuilder tdb = findTypeDefinitionBuilder(nodeToResolve, dependentModuleBuilder,
                             qname.getLocalName(), builder.getName(), nodeToResolve.getLine());
                     return findConstraintsFromTypeBuilder(tdb, constraints, modules, dependentModuleBuilder, context);
                 }
             } else if (type instanceof ExtendedType) {
-                ExtendedType extType = (ExtendedType) type;
-                constraints.addFractionDigits(extType.getFractionDigits());
-                constraints.addLengths(extType.getLengths());
-                constraints.addPatterns(extType.getPatterns());
-                constraints.addRanges(extType.getRanges());
+                mergeConstraints(type, constraints);
 
-                TypeDefinition<?> base = extType.getBaseType();
+                TypeDefinition<?> base = ((ExtendedType) type).getBaseType();
                 if (base instanceof UnknownType) {
                     ModuleBuilder dependentModule = ParserUtils.findDependentModuleBuilder(modules, builder, base
                             .getQName().getPrefix(), nodeToResolve.getLine());
@@ -468,20 +461,18 @@ public class TypeUtils {
                     return findConstraintsFromTypeBuilder(tdb, constraints, modules, dependentModule, context);
                 } else {
                     // it has to be base yang type
-                    mergeConstraints(type, constraints);
-                    return constraints;
+                    return mergeConstraints(type, constraints);
                 }
             } else {
                 // it is base yang type
-                mergeConstraints(type, constraints);
-                return constraints;
+                return mergeConstraints(type, constraints);
             }
         }
     }
 
     /**
      * Search for type definition builder by name.
-     *
+     * 
      * @param dirtyNodeSchemaPath
      *            schema path of node which contains unresolved type
      * @param dependentModule

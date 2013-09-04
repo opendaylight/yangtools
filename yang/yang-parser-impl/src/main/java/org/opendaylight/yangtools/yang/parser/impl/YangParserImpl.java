@@ -72,7 +72,7 @@ import com.google.common.collect.Sets;
 
 public final class YangParserImpl implements YangModelParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
-    
+
     private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
 
     @Override
@@ -278,7 +278,7 @@ public final class YangParserImpl implements YangModelParser {
         findUsesTargets(modules, null);
         resolveDirtyNodes(modules);
         resolveAugments(modules);
-        resolveUses(modules);
+        resolveUses(modules, false);
         resolveDeviations(modules);
 
         // build
@@ -301,7 +301,7 @@ public final class YangParserImpl implements YangModelParser {
         findUsesTargets(modules, context);
         resolvedDirtyNodesWithContext(modules, context);
         resolveAugmentsWithContext(modules, context);
-        resolveUsesWithContext(modules);
+        resolveUses(modules, true);
         resolveDeviationsWithContext(modules, context);
 
         // build
@@ -344,7 +344,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Search for dirty nodes (node which contains UnknownType) and resolve
      * unknown types.
-     *
+     * 
      * @param modules
      *            all available modules
      * @param module
@@ -390,7 +390,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Go through all augment definitions and perform augmentation. It is
      * expected that modules are already sorted by their dependencies.
-     *
+     * 
      * @param modules
      *            all loaded modules
      */
@@ -432,7 +432,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Search for augment target and perform augmentation.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param augmentBuilder
@@ -475,7 +475,7 @@ public final class YangParserImpl implements YangModelParser {
      * Go through all augment definitions and resolve them. This method works in
      * same way as {@link #resolveAugments(Map)} except that if target node is
      * not found in loaded modules, it search for target node in given context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -515,7 +515,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Search for augment target and perform augmentation.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param augment
@@ -561,7 +561,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Go through identity statements defined in current module and resolve
      * their 'base' statement if present.
-     *
+     * 
      * @param modules
      *            all modules
      * @param module
@@ -599,7 +599,7 @@ public final class YangParserImpl implements YangModelParser {
      * Go through identity statements defined in current module and resolve
      * their 'base' statement. Method tries to find base identity in given
      * modules. If base identity is not found, method will search it in context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -650,7 +650,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Find and add reference of uses target grouping.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -684,13 +684,17 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     /**
-     * Copy data from uses target, update uses parent and perform refinement.
-     * Augmentations have to be resolved already.
-     *
+     * Copy data from uses target. Augmentations have to be resolved already.
+     * 
      * @param modules
      *            all loaded modules
+     * @param resolveWithContext
+     *            boolean value which says whether
+     *            {@link GroupingUtils#collectUsesDataFromContext(UsesNodeBuilder)
+     *            collectUsesDataFromContext} should be used for processing of
+     *            individual uses node.
      */
-    private void resolveUses(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+    private void resolveUses(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final boolean resolveWithContext) {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 ModuleBuilder module = inner.getValue();
@@ -701,57 +705,7 @@ public final class YangParserImpl implements YangModelParser {
                     usesNodes = new ArrayList<>(module.getAllUsesNodes());
                     for (UsesNodeBuilder usesNode : usesNodes) {
                         if (!usesNode.isDataCollected()) {
-                            GroupingUtils.collectUsesData(usesNode);
-                        }
-                    }
-                    dataCollected = module.isAllUsesDataCollected();
-                }
-            }
-        }
-
-        // new loop is must because in collecting data process new uses could
-        // be created
-        final List<UsesNodeBuilder> allModulesUses = new ArrayList<>();
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
-            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
-                allModulesUses.addAll(inner.getValue().getAllUsesNodes());
-            }
-        }
-
-        for (UsesNodeBuilder usesNode : allModulesUses) {
-            GroupingUtils.updateUsesParent(usesNode);
-            GroupingUtils.performRefine(usesNode);
-        }
-        for (UsesNodeBuilder usesNode : allModulesUses) {
-            GroupingUtils.fixUsesNodesPath(usesNode);
-        }
-
-        for (UsesNodeBuilder usesNode : allModulesUses) {
-            if (usesNode.isCopy()) {
-                usesNode.getParent().getUsesNodes().remove(usesNode);
-            }
-        }
-    }
-
-    /**
-     * Copy data from uses target, update uses parent and perform refinement.
-     * Augmentations have to be resolved already.
-     *
-     * @param modules
-     *            all loaded modules
-     */
-    private void resolveUsesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
-            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
-                ModuleBuilder module = inner.getValue();
-                List<UsesNodeBuilder> usesNodes = null;
-                boolean dataCollected = module.isAllUsesDataCollected();
-
-                while (!dataCollected) {
-                    usesNodes = new ArrayList<>(module.getAllUsesNodes());
-                    for (UsesNodeBuilder usesNode : usesNodes) {
-                        if (!usesNode.isDataCollected()) {
-                            if (usesNode.getGroupingBuilder() == null) {
+                            if (resolveWithContext && usesNode.getGroupingBuilder() == null) {
                                 GroupingUtils.collectUsesDataFromContext(usesNode);
                             } else {
                                 GroupingUtils.collectUsesData(usesNode);
@@ -762,7 +716,22 @@ public final class YangParserImpl implements YangModelParser {
                 }
             }
         }
+        resolvedUsesPostProcessing(modules, resolveWithContext);
+    }
 
+    /**
+     * Update uses parent and perform refinement.
+     * 
+     * @param modules
+     *            all loaded modules
+     * @param resolveWithContext
+     *            boolean value which says whether
+     *            {@link GroupingUtils#collectUsesDataFromContext(UsesNodeBuilder)
+     *            collectUsesDataFromContext} should be used for processing of
+     *            individual uses node.
+     */
+    private void resolvedUsesPostProcessing(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final boolean resolveWithContext) {
         // new loop is must because in collecting data process new uses could
         // be created
         final List<UsesNodeBuilder> allModulesUses = new ArrayList<>();
@@ -778,6 +747,14 @@ public final class YangParserImpl implements YangModelParser {
         }
         for (UsesNodeBuilder usesNode : allModulesUses) {
             GroupingUtils.fixUsesNodesPath(usesNode);
+        }
+
+        if (!resolveWithContext) {
+            for (UsesNodeBuilder usesNode : allModulesUses) {
+                if (usesNode.isCopy()) {
+                    usesNode.getParent().getUsesNodes().remove(usesNode);
+                }
+            }
         }
     }
 
@@ -796,7 +773,7 @@ public final class YangParserImpl implements YangModelParser {
                 }
             } catch (YangParseException e) {
                 throw new YangParseException(module.getName(), usnb.getLine(), "Failed to resolve node " + usnb
-                        + ": no such extension definition found.",e);
+                        + ": no such extension definition found.", e);
             }
         }
     }
@@ -839,7 +816,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Traverse through modules and resolve their deviation statements.
-     *
+     * 
      * @param modules
      *            all loaded modules
      */
@@ -854,7 +831,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Traverse through module and resolve its deviation statements.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -879,7 +856,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Traverse through modules and resolve their deviation statements with
      * given context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -898,7 +875,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Traverse through module and resolve its deviation statements with given
      * context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -950,7 +927,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Correct deviation target path in deviation builder.
-     *
+     * 
      * @param dev
      *            deviation
      * @param dependentModuleBuilder

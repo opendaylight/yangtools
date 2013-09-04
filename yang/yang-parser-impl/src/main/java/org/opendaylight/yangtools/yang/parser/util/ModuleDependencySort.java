@@ -40,11 +40,17 @@ import com.google.common.collect.Sets;
 public final class ModuleDependencySort {
 
     private static final Date DEFAULT_REVISION = new Date(0);
-    private static final Logger logger = LoggerFactory.getLogger(ModuleDependencySort.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModuleDependencySort.class);
+
+    /**
+     * It is not desirable to instance this class
+     */
+    private ModuleDependencySort() {
+    }
 
     /**
      * Topological sort of module builder dependency graph.
-     *
+     * 
      * @return Sorted list of Module builders. Modules can be further processed
      *         in returned order.
      */
@@ -82,7 +88,7 @@ public final class ModuleDependencySort {
 
     /**
      * Topological sort of module dependency graph.
-     *
+     * 
      * @return Sorted list of Modules. Modules can be further processed in
      *         returned order.
      */
@@ -146,8 +152,9 @@ public final class ModuleDependencySort {
             // no need to check if other Type of object, check is performed in
             // process modules
 
-            if (fromRevision == null)
+            if (fromRevision == null) {
                 fromRevision = DEFAULT_REVISION;
+            }
 
             for (ModuleImport imprt : imports) {
                 String toName = imprt.getModuleName();
@@ -161,12 +168,10 @@ public final class ModuleDependencySort {
                  * Check imports: If module is imported twice with different
                  * revisions then throw exception
                  */
-                if (imported.get(toName) != null && !imported.get(toName).equals(toRevision)) {
-                    if (!imported.get(toName).equals(DEFAULT_REVISION) && !toRevision.equals(DEFAULT_REVISION)) {
-                        ex(String.format("Module:%s imported twice with different revisions:%s, %s", toName,
-                                formatRevDate(imported.get(toName)), formatRevDate(toRevision)));
-                    }
-
+                if (imported.get(toName) != null && !imported.get(toName).equals(toRevision)
+                        && !imported.get(toName).equals(DEFAULT_REVISION) && !toRevision.equals(DEFAULT_REVISION)) {
+                    ex(String.format("Module:%s imported twice with different revisions:%s, %s", toName,
+                            formatRevDate(imported.get(toName)), formatRevDate(toRevision)));
                 }
 
                 imported.put(toName, toRevision);
@@ -189,13 +194,14 @@ public final class ModuleDependencySort {
             if (moduleGraph.get(toName) != null && !moduleGraph.get(toName).isEmpty()
                     && toRevision.equals(DEFAULT_REVISION)) {
                 to = moduleGraph.get(toName).values().iterator().next();
-                logger.warn(String
+                LOGGER.warn(String
                         .format("Import:%s:%s by module:%s:%s does not specify revision, using:%s:%s for module dependency sort",
                                 toName, formatRevDate(toRevision), fromName, formatRevDate(fromRevision), to.getName(),
                                 formatRevDate(to.getRevision())));
-            } else
+            } else {
                 ex(String.format("Not existing module imported:%s:%s by:%s:%s", toName, formatRevDate(toRevision),
                         fromName, formatRevDate(fromRevision)));
+            }
         } else {
             to = moduleGraph.get(toName).get(toRevision);
         }
@@ -230,21 +236,24 @@ public final class ModuleDependencySort {
                         ModuleBuilder.class, mb.getClass()));
             }
 
-            if (rev == null)
+            if (rev == null) {
                 rev = DEFAULT_REVISION;
+            }
 
-            if (moduleGraph.get(name) == null)
+            if (moduleGraph.get(name) == null) {
                 moduleGraph.put(name, Maps.<Date, ModuleNodeImpl> newHashMap());
+            }
 
-            if (moduleGraph.get(name).get(rev) != null)
+            if (moduleGraph.get(name).get(rev) != null) {
                 ex(String.format("Module:%s with revision:%s declared twice", name, formatRevDate(rev)));
+            }
 
             moduleGraph.get(name).put(rev, new ModuleNodeImpl(name, rev, mb));
         }
     }
 
     private static String formatRevDate(Date rev) {
-        return rev == DEFAULT_REVISION ? "default" : YangParserListenerImpl.simpleDateFormat.format(rev);
+        return rev.equals(DEFAULT_REVISION) ? "default" : YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(rev);
     }
 
     @VisibleForTesting
@@ -278,23 +287,30 @@ public final class ModuleDependencySort {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             ModuleNodeImpl other = (ModuleNodeImpl) obj;
             if (name == null) {
-                if (other.name != null)
+                if (other.name != null) {
                     return false;
-            } else if (!name.equals(other.name))
+                }
+            } else if (!name.equals(other.name)) {
                 return false;
+            }
             if (revision == null) {
-                if (other.revision != null)
+                if (other.revision != null) {
                     return false;
-            } else if (!revision.equals(other.revision))
+                }
+            } else if (!revision.equals(other.revision)) {
                 return false;
+            }
             return true;
         }
 

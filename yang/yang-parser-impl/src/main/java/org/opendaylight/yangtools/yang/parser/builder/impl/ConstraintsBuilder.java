@@ -20,6 +20,9 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class ConstraintsBuilder extends AbstractBuilder {
+    private static final int HASH_IF_BOOL_TRUE = 1231;
+    private static final int HASH_IF_BOOL_FALSE = 1237;
+
     private final ConstraintDefinitionImpl instance;
     private final Set<MustDefinition> mustDefinitions;
     private String whenCondition;
@@ -175,7 +178,7 @@ public final class ConstraintsBuilder extends AbstractBuilder {
             result = prime * result + ((mustConstraints == null) ? 0 : mustConstraints.hashCode());
             result = prime * result + ((minElements == null) ? 0 : minElements.hashCode());
             result = prime * result + ((maxElements == null) ? 0 : maxElements.hashCode());
-            result = prime * result + (mandatory ? 1231 : 1237);
+            result = prime * result + (mandatory ? HASH_IF_BOOL_TRUE : HASH_IF_BOOL_FALSE);
             return result;
         }
 

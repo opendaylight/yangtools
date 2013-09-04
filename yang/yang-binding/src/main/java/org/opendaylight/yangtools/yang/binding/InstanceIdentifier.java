@@ -12,27 +12,24 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Uniquely identifies instance of data tree. 
- *
- *
+ * Uniquely identifies instance of data tree.
+ * 
+ * 
  */
 public class InstanceIdentifier {
 
-    
     private final List<PathArgument> path;
     private final Class<? extends DataObject> targetType;
-    
+
     public InstanceIdentifier(Class<? extends DataObject> type) {
         path = Collections.emptyList();
         this.targetType = type;
     }
-    
-    
-    public InstanceIdentifier(List<PathArgument> path,Class<? extends DataObject> type) {
-        this.path = Collections.<PathArgument>unmodifiableList(new ArrayList<>(path));
+
+    public InstanceIdentifier(List<PathArgument> path, Class<? extends DataObject> type) {
+        this.path = Collections.<PathArgument> unmodifiableList(new ArrayList<>(path));
         this.targetType = type;
     }
-    
 
     /**
      * 
@@ -41,27 +38,26 @@ public class InstanceIdentifier {
     public List<PathArgument> getPath() {
         return this.path;
     }
-    
+
     public Class<?> getTargetType() {
         return this.targetType;
     }
-    
-    
+
     /**
      * Path argument of instance identifier.
      * 
-     * Interface which implementations are used as path components
-     * of the instance path.
+     * Interface which implementations are used as path components of the
+     * instance path.
      * 
      * @author ttkacik
-     *
+     * 
      */
-    public static interface PathArgument {
-        
+    interface PathArgument {
+
     }
-    
-    public static class IdentifiableItem<I extends Identifiable<T>,T extends Identifier<I>>  implements PathArgument {
-           
+
+    public static class IdentifiableItem<I extends Identifiable<T>, T extends Identifier<I>> implements PathArgument {
+
         private final T key;
         private final Class<? extends I> type;
 
@@ -69,11 +65,11 @@ public class InstanceIdentifier {
             this.type = type;
             this.key = key;
         }
-        
+
         T getKey() {
             return this.key;
         }
-        
+
         Class<? extends I> getType() {
             return this.type;
         }

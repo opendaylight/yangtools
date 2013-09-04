@@ -50,10 +50,8 @@ public class YangModelValidationTest {
 
     @Test
     public void testPrefixes() {
-        Prefix_stmtContext pref = mockStatement(Prefix_stmtContext.class,
-                "unique1");
-        Module_stmtContext module = mockStatement(Module_stmtContext.class,
-                "module1");
+        Prefix_stmtContext pref = mockStatement(Prefix_stmtContext.class, "unique1");
+        Module_stmtContext module = mockStatement(Module_stmtContext.class, "module1");
         addChild(module, pref);
 
         valid.enterPrefix_stmt(pref);
@@ -74,10 +72,8 @@ public class YangModelValidationTest {
     @Test
     public void testNamespace() {
 
-        Namespace_stmtContext namespace = mockStatement(
-                Namespace_stmtContext.class, "http://test.parsing.uri.com");
-        Module_stmtContext module = mockStatement(Module_stmtContext.class,
-                "module1");
+        Namespace_stmtContext namespace = mockStatement(Namespace_stmtContext.class, "http://test.parsing.uri.com");
+        Module_stmtContext module = mockStatement(Module_stmtContext.class, "module1");
         addChild(module, namespace);
 
         valid.enterNamespace_stmt(namespace);
@@ -89,9 +85,7 @@ public class YangModelValidationTest {
         try {
             valid.enterNamespace_stmt(namespace);
         } catch (YangValidationException e) {
-            assertThat(
-                    e.getMessage(),
-                    containsString("Namespace:invalid uri cannot be parsed as URI"));
+            assertThat(e.getMessage(), containsString("Namespace:invalid uri cannot be parsed as URI"));
             return;
         }
 
@@ -101,8 +95,7 @@ public class YangModelValidationTest {
     @Test
     public void testImports() {
         Import_stmtContext impor = mockImport("unique1", "p1");
-        Module_stmtContext mod = mockStatement(Module_stmtContext.class,
-                "module1");
+        Module_stmtContext mod = mockStatement(Module_stmtContext.class, "module1");
         addChild(mod, impor);
 
         valid.enterImport_stmt(impor);
@@ -114,8 +107,7 @@ public class YangModelValidationTest {
         try {
             valid.enterImport_stmt(impor);
         } catch (YangValidationException e) {
-            assertThat(e.getMessage(),
-                    containsString("Import:unique1 not unique"));
+            assertThat(e.getMessage(), containsString("Import:unique1 not unique"));
             return;
         }
 
@@ -125,8 +117,7 @@ public class YangModelValidationTest {
     @Test
     public void testIncludes() {
         Include_stmtContext incl = mockInclude("unique1");
-        Module_stmtContext mod = mockStatement(Module_stmtContext.class,
-                "module1");
+        Module_stmtContext mod = mockStatement(Module_stmtContext.class, "module1");
         addChild(mod, incl);
         valid.enterInclude_stmt(incl);
 
@@ -137,8 +128,7 @@ public class YangModelValidationTest {
         try {
             valid.enterInclude_stmt(incl);
         } catch (YangValidationException e) {
-            assertThat(e.getMessage(),
-                    containsString("Include:unique1 not unique in (sub)module"));
+            assertThat(e.getMessage(), containsString("Include:unique1 not unique in (sub)module"));
             return;
         }
 
@@ -163,8 +153,7 @@ public class YangModelValidationTest {
                 Module_stmtContext module = mock(Module_stmtContext.class);
                 Token token = mock(Token.class);
                 when(module.getStart()).thenReturn(token);
-                BasicValidations.checkIdentifierInternal(
-                        module, id);
+                BasicValidations.checkIdentifierInternal(module, id);
             } catch (YangValidationException e) {
                 thrown++;
             }
@@ -175,10 +164,8 @@ public class YangModelValidationTest {
 
     @Test(expected = YangValidationException.class)
     public void testAugument() {
-        Augment_stmtContext augument = mockStatement(Augment_stmtContext.class,
-                "/a:*abc/a:augument1");
-        Module_stmtContext mod1 = mockStatement(Module_stmtContext.class,
-                "mod1");
+        Augment_stmtContext augument = mockStatement(Augment_stmtContext.class, "/a:*abc/a:augument1");
+        Module_stmtContext mod1 = mockStatement(Module_stmtContext.class, "mod1");
         addChild(mod1, augument);
 
         Token token = mock(Token.class);
@@ -196,12 +183,9 @@ public class YangModelValidationTest {
 
     @Test
     public void testDeviate() {
-        Deviation_stmtContext ctx = mockStatement(Deviation_stmtContext.class,
-                "deviations");
-        Deviate_add_stmtContext add = mockStatement(
-                Deviate_add_stmtContext.class, "add");
-        Deviate_delete_stmtContext del = mockStatement(
-                Deviate_delete_stmtContext.class, "delete");
+        Deviation_stmtContext ctx = mockStatement(Deviation_stmtContext.class, "deviations");
+        Deviate_add_stmtContext add = mockStatement(Deviate_add_stmtContext.class, "add");
+        Deviate_delete_stmtContext del = mockStatement(Deviate_delete_stmtContext.class, "delete");
 
         addChild(ctx, add);
         addChild(ctx, del);
@@ -218,14 +202,11 @@ public class YangModelValidationTest {
 
     @Test(expected = YangValidationException.class)
     public void testStatus() throws Exception {
-        Status_argContext status = mockStatement(Status_argContext.class,
-                "unknown");
+        Status_argContext status = mockStatement(Status_argContext.class, "unknown");
         try {
             valid.enterStatus_arg(status);
         } catch (YangValidationException e) {
-            assertThat(
-                    e.getMessage(),
-                    containsString("illegal value for Status statement, only permitted:"));
+            assertThat(e.getMessage(), containsString("illegal value for Status statement, only permitted:"));
             throw e;
         }
     }
@@ -233,10 +214,8 @@ public class YangModelValidationTest {
     private Import_stmtContext mockImport(String name, String prefixName) {
         Import_stmtContext impor = mockStatement(Import_stmtContext.class, name);
 
-        Prefix_stmtContext prefix = mockStatement(Prefix_stmtContext.class,
-                prefixName);
-        Revision_date_stmtContext revDate = mockStatement(
-                Revision_date_stmtContext.class, getFormattedDate());
+        Prefix_stmtContext prefix = mockStatement(Prefix_stmtContext.class, prefixName);
+        Revision_date_stmtContext revDate = mockStatement(Revision_date_stmtContext.class, getFormattedDate());
 
         addChild(impor, prefix);
         addChild(impor, revDate);
@@ -244,15 +223,13 @@ public class YangModelValidationTest {
     }
 
     static String getFormattedDate() {
-        return YangParserListenerImpl.simpleDateFormat.format(new Date());
+        return YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(new Date());
     }
 
     private Include_stmtContext mockInclude(String name) {
-        Include_stmtContext incl = mockStatement(Include_stmtContext.class,
-                name);
+        Include_stmtContext incl = mockStatement(Include_stmtContext.class, name);
 
-        Revision_date_stmtContext revDate = mockStatement(
-                Revision_date_stmtContext.class, getFormattedDate());
+        Revision_date_stmtContext revDate = mockStatement(Revision_date_stmtContext.class, getFormattedDate());
 
         addChild(incl, revDate);
         return incl;

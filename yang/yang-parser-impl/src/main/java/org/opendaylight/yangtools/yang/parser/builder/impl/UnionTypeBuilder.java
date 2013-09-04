@@ -32,8 +32,8 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * types.
  */
 public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
-    private final static String NAME = "union";
-    private final static QName QNAME = BaseTypes.constructQName(NAME);
+    private static final String NAME = "union";
+    private static final QName QNAME = BaseTypes.constructQName(NAME);
 
     private final List<TypeDefinition<?>> types;
     private final List<TypeDefinitionBuilder> typedefs;
@@ -213,9 +213,12 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder(UnionTypeBuilder.class.getSimpleName() + "[");
-        result.append("types=" + types);
-        result.append(", typedefs=" + typedefs);
+        final StringBuilder result = new StringBuilder(UnionTypeBuilder.class.getSimpleName());
+        result.append("[");
+        result.append("types=");
+        result.append(types);
+        result.append(", typedefs=");
+        result.append(typedefs);
         result.append("]");
         return result.toString();
     }

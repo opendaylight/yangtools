@@ -394,10 +394,8 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
                 throw new IllegalArgumentException("Choice Case QName cannot be NULL!");
             }
             for (final ChoiceCaseNode caseNode : cases) {
-                if (caseNode != null) {
-                    if (name.equals(caseNode.getQName())) {
-                        return caseNode;
-                    }
+                if (caseNode != null && name.equals(caseNode.getQName())) {
+                    return caseNode;
                 }
             }
             return null;
@@ -409,10 +407,9 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
                 throw new IllegalArgumentException("Choice Case string Name cannot be NULL!");
             }
             for (final ChoiceCaseNode caseNode : cases) {
-                if (caseNode != null && (caseNode.getQName() != null)) {
-                    if (name.equals(caseNode.getQName().getLocalName())) {
-                        return caseNode;
-                    }
+                if (caseNode != null && (caseNode.getQName() != null)
+                        && name.equals(caseNode.getQName().getLocalName())) {
+                    return caseNode;
                 }
             }
             return null;

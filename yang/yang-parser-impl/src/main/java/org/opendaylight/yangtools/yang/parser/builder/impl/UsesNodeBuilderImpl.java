@@ -257,28 +257,37 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         UsesNodeBuilderImpl other = (UsesNodeBuilderImpl) obj;
         if (groupingName == null) {
-            if (other.groupingName != null)
+            if (other.groupingName != null) {
                 return false;
-        } else if (!groupingName.equals(other.groupingName))
+            }
+        } else if (!groupingName.equals(other.groupingName)) {
             return false;
+        }
         if (parent == null) {
-            if (other.parent != null)
+            if (other.parent != null) {
                 return false;
-        } else if (!parent.equals(other.parent))
+            }
+        } else if (!parent.equals(other.parent)) {
             return false;
+        }
         if (refines == null) {
-            if (other.refines != null)
+            if (other.refines != null) {
                 return false;
-        } else if (!refines.equals(other.refines))
+            }
+        } else if (!refines.equals(other.refines)) {
             return false;
+        }
         return true;
     }
 
@@ -394,7 +403,9 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(UsesNodeImpl.class.getSimpleName());
-            sb.append("[groupingPath=" + groupingPath + "]");
+            sb.append("[groupingPath=");
+            sb.append(groupingPath);
+            sb.append("]");
             return sb.toString();
         }
     }

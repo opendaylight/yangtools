@@ -24,7 +24,7 @@ public final class BindingTypes {
 
     }
 
-    public static final ParameterizedType augmentable(Type t) {
+    public static ParameterizedType augmentable(Type t) {
         return parameterizedTypeFor(AUGMENTABLE, t);
     }
 }
