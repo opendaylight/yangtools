@@ -1078,7 +1078,11 @@ public final class ParserListenerUtils {
 
         if ("decimal64".equals(typeName)) {
             if (rangeStatements.isEmpty()) {
-                return new Decimal64(baseTypePath, fractionDigits);
+                try {
+                    return new Decimal64(baseTypePath, fractionDigits);
+                } catch(Exception e) {
+                    throw new YangParseException(moduleName, line, e.getMessage());
+                }
             }
             Decimal64 decimalType = new Decimal64(extBaseTypePath, fractionDigits);
             constraints.addRanges(decimalType.getRangeStatements());

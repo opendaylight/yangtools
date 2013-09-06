@@ -61,7 +61,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
      * @exception IllegalArgumentException
      */
     public Decimal64(final SchemaPath path, final Integer fractionDigits) {
-        if (!((fractionDigits.intValue() > 1) && (fractionDigits.intValue() <= 18))) {
+        if (!((fractionDigits.intValue() >= 1) && (fractionDigits.intValue() <= 18))) {
             throw new IllegalArgumentException(
                     "The fraction digits outside of boundaries. Fraction digits MUST be integer between 1 and 18 inclusively");
         }
