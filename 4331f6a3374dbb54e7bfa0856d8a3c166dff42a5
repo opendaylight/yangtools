@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_40b61c8c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2013-09-06T11:51:54Z",
+      "side": 1,
+      "message": "Instead of this approach I would prefer to remove throw clause at all and replace it with helper method, e.g: \n\nex(\"grouping\", groupingName, line, addedGrouping.getLine());\n\n\nprivate void ex(String type, String name, int currentLine, int duplicateLine) {\n    String msg \u003d String.format(\"%s with same name %s already declared at line %d.\", type, name, duplicateLine);\n    throw new YangParseException(moduleName, currentLine, msg);\n}\n\n... and we can use it in all occurrences.",
+      "revId": "4331f6a3374dbb54e7bfa0856d8a3c166dff42a5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_e08508ae",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2013-09-06T11:51:54Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s necessary to convert this string to constant because of 2 occurrences.",
+      "revId": "4331f6a3374dbb54e7bfa0856d8a3c166dff42a5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
