@@ -57,4 +57,16 @@ module yang-ext {
 
         argument "context-type";
     }
+
+    extension "context-reference" {
+        argument "context-type";
+    }
+
+    extension "context-instance" {
+        argument "context-type";
+    }
+    
+    extension "instance-target" {
+    	argument "path";
+    }
 }
