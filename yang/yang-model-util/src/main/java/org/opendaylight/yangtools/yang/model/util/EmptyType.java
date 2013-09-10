@@ -17,20 +17,20 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 public final class EmptyType implements EmptyTypeDefinition {
-    private static EmptyType INSTANCE;
+    private static EmptyType instance;
     private static final QName NAME = BaseTypes.constructQName("empty");
-    private static final SchemaPath path = new SchemaPath(Collections.singletonList(NAME), true);
-    private static final String description = "The empty built-in type represents a leaf that does not have any value, it conveys information by its presence or absence.";
-    private static final String reference = "https://tools.ietf.org/html/rfc6020#page-131";
+    private static final SchemaPath PATH = new SchemaPath(Collections.singletonList(NAME), true);
+    private static final String DESCRIPTION = "The empty built-in type represents a leaf that does not have any value, it conveys information by its presence or absence.";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#page-131";
 
     private EmptyType() {
     }
 
     public static EmptyType getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new EmptyType();
+        if (instance == null) {
+            instance = new EmptyType();
         }
-        return INSTANCE;
+        return instance;
     }
 
     @Override
@@ -55,17 +55,17 @@ public final class EmptyType implements EmptyTypeDefinition {
 
     @Override
     public SchemaPath getPath() {
-        return path;
+        return PATH;
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     @Override

@@ -254,7 +254,8 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private Type provideTypeForIdentityref(IdentityrefTypeDefinition idref) {
         QName baseIdQName = idref.getIdentity();
-        Module module = schemaContext.findModuleByNamespaceAndRevision(baseIdQName.getNamespace(),baseIdQName.getRevision());
+        Module module = schemaContext.findModuleByNamespaceAndRevision(baseIdQName.getNamespace(),
+                baseIdQName.getRevision());
         IdentitySchemaNode identity = null;
         for (IdentitySchemaNode id : module.getIdentities()) {
             if (id.getQName().equals(baseIdQName)) {

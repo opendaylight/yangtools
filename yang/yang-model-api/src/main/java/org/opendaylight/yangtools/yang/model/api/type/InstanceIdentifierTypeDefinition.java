@@ -23,7 +23,7 @@ public interface InstanceIdentifierTypeDefinition extends TypeDefinition<Instanc
      * 
      * @return instance of type <code>RevisionAwareXPath</code>
      */
-    public RevisionAwareXPath getPathStatement();
+    RevisionAwareXPath getPathStatement();
 
     /**
      * Returns true|false which represents argument of
@@ -33,5 +33,5 @@ public interface InstanceIdentifierTypeDefinition extends TypeDefinition<Instanc
      * @return boolean value which is true if the <code>require-instance</code>
      *         statement is true and vice versa
      */
-    public boolean requireInstance();
+    boolean requireInstance();
 }

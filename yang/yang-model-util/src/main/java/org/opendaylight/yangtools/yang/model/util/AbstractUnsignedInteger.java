@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * interface which represents UNSIGNED Integer values defined in Yang language. <br>
  * The integer built-in types in Yang are uint8, uint16, uint32, and uint64.
  * They represent unsigned integers of different sizes:
- *
+ * 
  * <ul>
  * <li>uint8 - represents integer values between 0 and 255, inclusively.</li>
  * <li>uint16 - represents integer values between 0 and 65535, inclusively.</li>
@@ -28,19 +28,19 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * <li>uint64 - represents integer values between 0 and 18446744073709551615,
  * inclusively.</li>
  * </ul>
- *
+ * 
  */
 public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition {
     private static final long MIN_VALUE = 0;
     private final QName name;
     private final SchemaPath path;
     private final String description;
-    private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.2";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.2";
     private final String units;
     private final List<RangeConstraint> rangeStatements;
 
     /**
-     *
+     * 
      * @param name
      * @param description
      * @param maxRange
@@ -79,7 +79,7 @@ public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefi
 
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     @Override
@@ -105,7 +105,6 @@ public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefi
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((rangeStatements == null) ? 0 : rangeStatements.hashCode());
-        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
         result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;
     }
@@ -150,13 +149,6 @@ public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefi
         } else if (!rangeStatements.equals(other.rangeStatements)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
-            return false;
-        }
         if (units == null) {
             if (other.units != null) {
                 return false;
@@ -177,7 +169,7 @@ public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefi
         builder.append(", description=");
         builder.append(description);
         builder.append(", reference=");
-        builder.append(reference);
+        builder.append(REFERENCE);
         builder.append(", units=");
         builder.append(units);
         builder.append(", rangeStatements=");

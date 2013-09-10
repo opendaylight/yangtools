@@ -1,10 +1,10 @@
 /*
-  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
-  *
-  * This program and the accompanying materials are made available under the
-  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
-  * and is available at http://www.eclipse.org/legal/epl-v10.html
-  */
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.ArrayList;
@@ -21,19 +21,19 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
 /**
  * The <code>default</code> implementation of String Type Definition interface.
- *
+ * 
  * @see StringTypeDefinition
  */
 public final class StringType implements StringTypeDefinition {
     private static final StringType INSTANCE = new StringType();
     private final QName name = BaseTypes.constructQName("string");
     private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
-    private final String defaultValue = "";
-    private final String description = "";
-    private final String reference = "";
+    private static final String DEFAULT_VALUE = "";
+    private static final String DESCRIPTION = "";
+    private static final String REFERENCE = "";
     private final List<LengthConstraint> lengthStatements;
     private final List<PatternConstraint> patterns;
-    private final String units = "";
+    private static final String UNITS = "";
 
     /**
      * Default Constructor.
@@ -51,8 +51,9 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
+     * 
+     * @see
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public StringTypeDefinition getBaseType() {
@@ -61,27 +62,29 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
     public String getUnits() {
-        return units;
+        return UNITS;
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()
+     * 
+     * @see
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
+     * ()
      */
     @Override
     public Object getDefaultValue() {
-        return defaultValue;
+        return DEFAULT_VALUE;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -91,7 +94,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -101,27 +104,28 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
+     * 
+     * @see
+     * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -131,7 +135,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * com.csico.yang.model.base.type.api.StringTypeDefinition#getLengthStatements
      * ()
@@ -143,7 +147,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * com.csico.yang.model.base.type.api.StringTypeDefinition#getPatterns()
      */
@@ -161,20 +165,10 @@ public final class StringType implements StringTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime
-                * result
-                + ((lengthStatements == null) ? 0 : lengthStatements.hashCode());
+        result = prime * result + ((lengthStatements == null) ? 0 : lengthStatements.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result
-                + ((patterns == null) ? 0 : patterns.hashCode());
-        result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
+        result = prime * result + ((patterns == null) ? 0 : patterns.hashCode());
         return result;
     }
 
@@ -190,20 +184,6 @@ public final class StringType implements StringTypeDefinition {
             return false;
         }
         StringType other = (StringType) obj;
-        if (defaultValue == null) {
-            if (other.defaultValue != null) {
-                return false;
-            }
-        } else if (!defaultValue.equals(other.defaultValue)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
         if (lengthStatements == null) {
             if (other.lengthStatements != null) {
                 return false;
@@ -222,30 +202,14 @@ public final class StringType implements StringTypeDefinition {
             if (other.path != null) {
                 return false;
             }
-        } else if ((path != null) && (other.path != null)) {
-            if (!path.getPath().equals(other.path.getPath())) {
-                return false;
-            }
+        } else if (!path.getPath().equals(other.path.getPath())) {
+            return false;
         }
         if (patterns == null) {
             if (other.patterns != null) {
                 return false;
             }
         } else if (!patterns.equals(other.patterns)) {
-            return false;
-        }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
-            return false;
-        }
-        if (units == null) {
-            if (other.units != null) {
-                return false;
-            }
-        } else if (!units.equals(other.units)) {
             return false;
         }
         return true;
@@ -259,17 +223,17 @@ public final class StringType implements StringTypeDefinition {
         builder.append(", path=");
         builder.append(path);
         builder.append(", defaultValue=");
-        builder.append(defaultValue);
+        builder.append(DEFAULT_VALUE);
         builder.append(", description=");
-        builder.append(description);
+        builder.append(DESCRIPTION);
         builder.append(", reference=");
-        builder.append(reference);
+        builder.append(REFERENCE);
         builder.append(", lengthStatements=");
         builder.append(lengthStatements);
         builder.append(", patterns=");
         builder.append(patterns);
         builder.append(", units=");
-        builder.append(units);
+        builder.append(UNITS);
         builder.append("]");
         return builder.toString();
     }

@@ -19,17 +19,19 @@ import org.opendaylight.yangtools.yang.common.QName;
  * 
  */
 public class SchemaPath {
+    private final int hashBooleanTrue = 1231;
+    private final int hashBooleanFalse = 1237;
 
     /**
      * List of QName instances which represents complete path to the node.
      */
-    final List<QName> path;
+    private final List<QName> path;
 
     /**
      * Boolean value which represents type of schema path (relative or
      * absolute).
      */
-    final boolean absolute;
+    private final boolean absolute;
 
     /**
      * Constructs new instance of this class with the concrete path.
@@ -70,7 +72,7 @@ public class SchemaPath {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (absolute ? 1231 : 1237);
+        result = prime * result + (absolute ? hashBooleanTrue : hashBooleanFalse);
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         return result;
     }

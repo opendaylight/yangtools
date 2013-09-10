@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * @author michal.rehak
- *
+ * 
  */
 public class NodeModificationBuilderImpl implements NodeModificationBuilder {
 
@@ -35,10 +35,9 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
     private LazyNodeToNodeMap originalToMutable;
 
     /**
-     * @param originalTreeRootNode
      * @param context
      */
-    public NodeModificationBuilderImpl(CompositeNode originalTreeRootNode, SchemaContext context) {
+    public NodeModificationBuilderImpl(SchemaContext context) {
         this.context = context;
         originalToMutable = new LazyNodeToNodeMap();
         changeLog = new HashSet<>();
@@ -113,7 +112,7 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
         }
 
         // walk wanted and add relevant keys
-        Map<String, ListSchemaNode>  mapOfLists = NodeUtils.buildMapOfListNodes(context);
+        Map<String, ListSchemaNode> mapOfLists = NodeUtils.buildMapOfListNodes(context);
         for (Node<?> outlaw : wanted) {
             if (outlaw instanceof CompositeNode) {
                 String path = NodeUtils.buildPath(outlaw);

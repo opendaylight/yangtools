@@ -304,7 +304,7 @@ public class TypesResolutionTest {
         assertEquals("iit", identity.getPrefix());
         assertEquals("service-type", identity.getLocalName());
 
-        LeafSchemaNode type = (LeafSchemaNode)tested.getDataChildByName("type");
+        LeafSchemaNode type = (LeafSchemaNode) tested.getDataChildByName("type");
         assertNotNull(type);
     }
 

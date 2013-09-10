@@ -15,12 +15,11 @@ import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
 /**
  * Yang Model Parser interface is designed for parsing yang models and convert
  * the information to Data Schema Tree.
- *
+ * 
  */
 public interface YangModelParser {
 
@@ -29,7 +28,7 @@ public interface YangModelParser {
      * modules defined in *.yang files; <br>
      * This method SHOULD be used if user need to parse multiple yang models
      * that are referenced either through import or include statements.
-     *
+     * 
      * @param yangFiles
      *            yang files to parse
      * @return Set of Yang Modules
@@ -42,7 +41,7 @@ public interface YangModelParser {
      * This method SHOULD be used if user has already parsed context and need to
      * parse additinal yang models which can have dependencies on models in this
      * context.
-     *
+     * 
      * @param yangFiles
      *            yang files to parse
      * @param context
@@ -54,7 +53,7 @@ public interface YangModelParser {
     /**
      * Equivalent to {@link #parseYangModels(List)} that returns parsed modules
      * mapped to Files from which they were parsed.
-     *
+     * 
      * @param yangFiles
      *            yang files to parse
      * @return Map of Yang Modules
@@ -66,7 +65,7 @@ public interface YangModelParser {
      * modules defined in *.yang files; <br>
      * This method SHOULD be used if user need to parse multiple yang models
      * that are referenced either through import or include statements.
-     *
+     * 
      * @param yangModelStreams
      *            yang streams to parse
      * @return Set of Yang Modules
@@ -79,7 +78,7 @@ public interface YangModelParser {
      * This method SHOULD be used if user has already parsed context and need to
      * parse additinal yang models which can have dependencies on models in this
      * context.
-     *
+     * 
      * @param yangModelStreams
      *            yang streams to parse
      * @param context
@@ -91,7 +90,7 @@ public interface YangModelParser {
     /**
      * Equivalent to {@link #parseYangModels(List)} that returns parsed modules
      * mapped to IputStreams from which they were parsed.
-     *
+     * 
      * @param yangModelStreams
      *            yang streams to parse
      * @return Map of Yang Modules
@@ -105,7 +104,7 @@ public interface YangModelParser {
      * should not contain ANY Schema Nodes that contains
      * {@link UnknownTypeDefinition} and all dependencies although via import or
      * include definitions are resolved.
-     *
+     * 
      * @param modules
      *            Set of Yang Modules
      * @return Schema Context instance constructed from whole Set of Modules.

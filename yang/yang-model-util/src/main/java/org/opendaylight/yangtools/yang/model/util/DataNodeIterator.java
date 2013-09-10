@@ -21,7 +21,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     private final List<ContainerSchemaNode> allContainers;
     private final List<ChoiceNode> allChoices;
     private final List<DataSchemaNode> allChilds;
-    
+
     public DataNodeIterator(final DataNodeContainer container) {
         if (container == null) {
             throw new IllegalArgumentException("Data Node Container MUST be specified and cannot be NULL!");
@@ -61,9 +61,9 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
                 }
                 allChilds.add(childNode);
                 if (childNode instanceof ContainerSchemaNode) {
-                    final ContainerSchemaNode container = (ContainerSchemaNode) childNode;
-                    allContainers.add(container);
-                    traverse(container);
+                    final ContainerSchemaNode containerNode = (ContainerSchemaNode) childNode;
+                    allContainers.add(containerNode);
+                    traverse(containerNode);
                 } else if (childNode instanceof ListSchemaNode) {
                     final ListSchemaNode list = (ListSchemaNode) childNode;
                     allLists.add(list);
@@ -81,20 +81,18 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
             }
         }
 
-        if(dataNode instanceof Module) {
-            traverseModule((Module)dataNode);
-        }
-        
-        final Set<GroupingDefinition> groupings = dataNode.getGroupings();
-        if (groupings != null) {
-            for (GroupingDefinition grouping : groupings) {
-                traverse(grouping);
-            }
-        }
-    }
-    
+        traverseModule(dataNode);
+        traverseGroupings(dataNode);
 
-    private void traverseModule(Module module) {
+    }
+
+    private void traverseModule(DataNodeContainer dataNode) {
+        final Module module;
+        if (dataNode instanceof Module) {
+            module = (Module) dataNode;
+        } else {
+            return;
+        }
         final Set<NotificationDefinition> notifications = module.getNotifications();
         for (NotificationDefinition notificationDefinition : notifications) {
             traverse(notificationDefinition);
@@ -102,16 +100,25 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         final Set<RpcDefinition> rpcs = module.getRpcs();
         for (RpcDefinition rpcDefinition : rpcs) {
             ContainerSchemaNode input = rpcDefinition.getInput();
-            if(input != null) {
+            if (input != null) {
                 traverse(input);
             }
             ContainerSchemaNode output = rpcDefinition.getInput();
-            if(input != null) {
+            if (input != null) {
                 traverse(output);
             }
         }
     }
-    
+
+    private void traverseGroupings(DataNodeContainer dataNode) {
+        final Set<GroupingDefinition> groupings = dataNode.getGroupings();
+        if (groupings != null) {
+            for (GroupingDefinition grouping : groupings) {
+                traverse(grouping);
+            }
+        }
+    }
+
     @Override
     public boolean hasNext() {
         if (container.getChildNodes() != null) {

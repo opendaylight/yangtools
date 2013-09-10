@@ -54,7 +54,11 @@ class YangToSourcesProcessor {
             MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
         this.log = Util.checkNotNull(log, "log");
         this.yangFilesRootDir = Util.checkNotNull(yangFilesRootDir, "yangFilesRootDir");
-        this.excludedFiles = excludedFiles;
+        this.excludedFiles = new File[excludedFiles.length];
+        int i = 0;
+        for (File file : excludedFiles) {
+            this.excludedFiles[i++] = new File(file.getPath());
+        }
         this.codeGenerators = Collections.unmodifiableList(Util.checkNotNull(codeGenerators, "codeGenerators"));
         this.project = Util.checkNotNull(project, "project");
         this.inspectDependencies = inspectDependencies;
@@ -69,7 +73,7 @@ class YangToSourcesProcessor {
     public void execute() throws MojoExecutionException, MojoFailureException {
         ContextHolder context = processYang();
         generateSources(context);
-        yangProvider.addYangsToMETA_INF(log, project, yangFilesRootDir, excludedFiles);
+        yangProvider.addYangsToMetaInf(log, project, yangFilesRootDir, excludedFiles);
     }
 
     private ContextHolder processYang() throws MojoExecutionException {
@@ -87,7 +91,7 @@ class YangToSourcesProcessor {
                     YangsInZipsResult dependentYangResult = Util.findYangFilesInDependenciesAsStream(log, project);
                     Closeable dependentYangResult1 = dependentYangResult;
                     closeables.add(dependentYangResult1);
-                    all.addAll(dependentYangResult.yangStreams);
+                    all.addAll(dependentYangResult.getYangStreams());
                 }
 
                 allYangModules = parser.parseYangModelsFromStreamsMapped(all);
@@ -119,11 +123,11 @@ class YangToSourcesProcessor {
 
     static class YangProvider {
 
-        private static final String yangResourceDir = "target" + File.separator + "yang";
+        private static final String YANG_RESOURCE_DIR = "target" + File.separator + "yang";
 
-        void addYangsToMETA_INF(Log log, MavenProject project, File yangFilesRootDir, File[] excludedFiles)
+        void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir, File[] excludedFiles)
                 throws MojoFailureException {
-            File targetYangDir = new File(project.getBasedir(), yangResourceDir);
+            File targetYangDir = new File(project.getBasedir(), YANG_RESOURCE_DIR);
 
             try {
                 Collection<File> files = Util.listFiles(yangFilesRootDir, excludedFiles, null);
@@ -145,8 +149,9 @@ class YangToSourcesProcessor {
         private static void setResource(File targetYangDir, String targetPath, MavenProject project) {
             Resource res = new Resource();
             res.setDirectory(targetYangDir.getPath());
-            if (targetPath != null)
+            if (targetPath != null) {
                 res.setTargetPath(targetPath);
+            }
             project.addResource(res);
         }
     }

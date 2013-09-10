@@ -21,5 +21,5 @@ public interface IdentityTypeDefinition extends TypeDefinition<IdentityTypeDefin
      * 
      * @return QName of the YANG identity
      */
-    public QName getIdentityName();
+    QName getIdentityName();
 }
