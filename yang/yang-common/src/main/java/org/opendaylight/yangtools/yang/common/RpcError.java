@@ -17,6 +17,10 @@ public interface RpcError {
     String getMessage();
 
     String getInfo();
+    
+    Throwable getCause();
+    
+    ErrorType getErrorType();
 
     public enum ErrorSeverity {
         ERROR, WARNING,
