@@ -56,12 +56,16 @@ abstract class BaseTemplate {
      * @return string with the getter method source code in JAVA format 
      */
     final protected def getterMethod(GeneratedProperty field) {
-    val prefix = if(field.returnType.equals(Types.BOOLEAN)) "is" else "get"
     '''
-        public «field.returnType.importedName» «prefix»«field.name.toFirstUpper»() {
+        public «field.returnType.importedName» «field.getterMethodName»() {
             return «field.fieldName»;
         }
     '''
+    }
+    
+    final protected def getterMethodName(GeneratedProperty field) {
+        val prefix = if(field.returnType.equals(Types.BOOLEAN)) "is" else "get"
+        return '''«prefix»«field.name.toFirstUpper»'''
     }
     
     /**

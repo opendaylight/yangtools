@@ -292,7 +292,7 @@ class BuilderTemplate extends BaseTemplate {
         private «type.name»«IMPL»(«type.name»«BUILDER» builder) {
             «IF !properties.empty»
                 «FOR field : properties»
-                    this.«field.fieldName» = builder.«field.fieldName»;
+                    this.«field.fieldName» = builder.«field.getterMethodName»();
                 «ENDFOR»
             «ENDIF»
             «IF augmentField != null»
