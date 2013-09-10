@@ -1,10 +1,10 @@
 /*
-  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
-  *
-  * This program and the accompanying materials are made available under the
-  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
-  * and is available at http://www.eclipse.org/legal/epl-v10.html
-  */
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.Collections;
@@ -17,19 +17,20 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 /**
- * The <code>default</code> implementation of Enumertaion Type Definition interface.
- *
+ * The <code>default</code> implementation of Enumertaion Type Definition
+ * interface.
+ * 
  * @see EnumTypeDefinition
  */
 public final class EnumerationType implements EnumTypeDefinition {
     private final QName name = BaseTypes.constructQName("enumeration");
     private final SchemaPath path;
-    private final String description = "The enumeration built-in type represents values from a set of assigned names.";
-    private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.6";
+    private static final String DESCRIPTION = "The enumeration built-in type represents values from a set of assigned names.";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.6";
 
     private final EnumPair defaultEnum;
     private final List<EnumPair> enums;
-    private final String units = "";
+    private static final String UNITS = "";
     private final EnumTypeDefinition baseType;
 
     public EnumerationType(final SchemaPath path, final List<EnumPair> enums) {
@@ -40,8 +41,7 @@ public final class EnumerationType implements EnumTypeDefinition {
         this.baseType = this;
     }
 
-    public EnumerationType(final SchemaPath path, final EnumPair defaultEnum,
-            final List<EnumPair> enums) {
+    public EnumerationType(final SchemaPath path, final EnumPair defaultEnum, final List<EnumPair> enums) {
         super();
         this.path = path;
         this.baseType = this;
@@ -51,8 +51,9 @@ public final class EnumerationType implements EnumTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
+     * 
+     * @see
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public EnumTypeDefinition getBaseType() {
@@ -61,18 +62,20 @@ public final class EnumerationType implements EnumTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
     public String getUnits() {
-        return units;
+        return UNITS;
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()
+     * 
+     * @see
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
+     * ()
      */
     @Override
     public Object getDefaultValue() {
@@ -81,7 +84,7 @@ public final class EnumerationType implements EnumTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -91,7 +94,7 @@ public final class EnumerationType implements EnumTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -101,27 +104,28 @@ public final class EnumerationType implements EnumTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
+     * 
+     * @see
+     * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -131,8 +135,10 @@ public final class EnumerationType implements EnumTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.opendaylight.yangtools.yang.model.base.type.api.EnumTypeDefinition#getValues()
+     * 
+     * @see
+     * org.opendaylight.yangtools.yang.model.base.type.api.EnumTypeDefinition
+     * #getValues()
      */
     @Override
     public List<EnumPair> getValues() {
@@ -148,16 +154,10 @@ public final class EnumerationType implements EnumTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((defaultEnum == null) ? 0 : defaultEnum.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((defaultEnum == null) ? 0 : defaultEnum.hashCode());
         result = prime * result + ((enums == null) ? 0 : enums.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;
     }
 
@@ -178,13 +178,6 @@ public final class EnumerationType implements EnumTypeDefinition {
                 return false;
             }
         } else if (!defaultEnum.equals(other.defaultEnum)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
             return false;
         }
         if (enums == null) {
@@ -208,20 +201,6 @@ public final class EnumerationType implements EnumTypeDefinition {
         } else if (!path.equals(other.path)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
-            return false;
-        }
-        if (units == null) {
-            if (other.units != null) {
-                return false;
-            }
-        } else if (!units.equals(other.units)) {
-            return false;
-        }
         return true;
     }
 
@@ -233,15 +212,15 @@ public final class EnumerationType implements EnumTypeDefinition {
         builder.append(", path=");
         builder.append(path);
         builder.append(", description=");
-        builder.append(description);
+        builder.append(DESCRIPTION);
         builder.append(", reference=");
-        builder.append(reference);
+        builder.append(REFERENCE);
         builder.append(", defaultEnum=");
         builder.append(defaultEnum);
         builder.append(", enums=");
         builder.append(enums);
         builder.append(", units=");
-        builder.append(units);
+        builder.append(UNITS);
         builder.append("]");
         return builder.toString();
     }

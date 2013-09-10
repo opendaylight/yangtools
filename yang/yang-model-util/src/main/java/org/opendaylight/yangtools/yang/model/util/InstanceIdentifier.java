@@ -20,19 +20,22 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 /**
  * The <code>default</code> implementation of Instance Identifier Type
  * Definition interface.
- *
+ * 
  * @see InstanceIdentifierTypeDefinition
  */
 public final class InstanceIdentifier implements InstanceIdentifierTypeDefinition {
-    private static final QName name = BaseTypes.constructQName("instance-identifier");
-    private static final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
-    private static final String description = "The instance-identifier built-in type is used to "
+    private static final QName NAME = BaseTypes.constructQName("instance-identifier");
+    private static final SchemaPath PATH = new SchemaPath(Collections.singletonList(NAME), true);
+    private static final String DESCRIPTION = "The instance-identifier built-in type is used to "
             + "uniquely identify a particular instance node in the data tree.";
-    private static final String reference = "https://tools.ietf.org/html/rfc6020#section-9.13";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.13";
 
     private final RevisionAwareXPath xpath;
-    private static final String units = "";
+    private static final String UNITS = "";
     private boolean requireInstance = true;
+
+    private static final int HASH_BOOLEAN_TRUE = 1231;
+    private static final int HASH_BOOLEAN_FALSE = 1237;
 
     public InstanceIdentifier(final RevisionAwareXPath xpath) {
         this.xpath = xpath;
@@ -45,7 +48,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
@@ -56,17 +59,17 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
     public String getUnits() {
-        return units;
+        return UNITS;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -78,48 +81,48 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
     public QName getQName() {
-        return name;
+        return NAME;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
     public SchemaPath getPath() {
-        return path;
+        return PATH;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -129,7 +132,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getExtensionSchemaNodes
      * ()
@@ -141,7 +144,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.type.
      * InstanceIdentifierTypeDefinition# getPathStatement()
      */
@@ -152,7 +155,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.type.
      * InstanceIdentifierTypeDefinition# requireInstance()
      */
@@ -165,27 +168,33 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (requireInstance ? 1231 : 1237);
+        result = prime * result + (requireInstance ? HASH_BOOLEAN_TRUE : HASH_BOOLEAN_FALSE);
         result = prime * result + ((xpath == null) ? 0 : xpath.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         InstanceIdentifier other = (InstanceIdentifier) obj;
-        if (requireInstance != other.requireInstance)
+        if (requireInstance != other.requireInstance) {
             return false;
+        }
         if (xpath == null) {
-            if (other.xpath != null)
+            if (other.xpath != null) {
                 return false;
-        } else if (!xpath.equals(other.xpath))
+            }
+        } else if (!xpath.equals(other.xpath)) {
             return false;
+        }
         return true;
     }
 

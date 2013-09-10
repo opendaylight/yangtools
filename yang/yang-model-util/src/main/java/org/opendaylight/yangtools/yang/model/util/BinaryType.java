@@ -20,18 +20,18 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 /**
  * The <code>default</code> implementation of Binary Type Definition interface.
- *
+ * 
  * @see BinaryTypeDefinition
  */
 public final class BinaryType implements BinaryTypeDefinition {
     private static final BinaryType INSTANCE = new BinaryType();
     private final QName name = BaseTypes.constructQName("binary");
     private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
-    private final String description = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
-    private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.8";
+    private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";
     private final List<Byte> bytes;
     private final List<LengthConstraint> lengthConstraints;
-    private final String units = "";
+    private static final String UNITS = "";
 
     private BinaryType() {
         final List<LengthConstraint> constraints = new ArrayList<LengthConstraint>();
@@ -46,7 +46,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
@@ -57,17 +57,17 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
     public String getUnits() {
-        return units;
+        return UNITS;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -79,7 +79,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -89,7 +89,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -99,28 +99,28 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -130,7 +130,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.base.type.api.BinaryTypeDefinition
      * #getLengthConstraint ()
@@ -150,12 +150,9 @@ public final class BinaryType implements BinaryTypeDefinition {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((bytes == null) ? 0 : bytes.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((lengthConstraints == null) ? 0 : lengthConstraints.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;
     }
 
@@ -176,13 +173,6 @@ public final class BinaryType implements BinaryTypeDefinition {
                 return false;
             }
         } else if (!bytes.equals(other.bytes)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
             return false;
         }
         if (lengthConstraints == null) {
@@ -206,20 +196,6 @@ public final class BinaryType implements BinaryTypeDefinition {
         } else if (!path.equals(other.path)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
-            return false;
-        }
-        if (units == null) {
-            if (other.units != null) {
-                return false;
-            }
-        } else if (!units.equals(other.units)) {
-            return false;
-        }
         return true;
     }
 
@@ -231,15 +207,15 @@ public final class BinaryType implements BinaryTypeDefinition {
         builder.append(", path=");
         builder.append(path);
         builder.append(", description=");
-        builder.append(description);
+        builder.append(DESCRIPTION);
         builder.append(", reference=");
-        builder.append(reference);
+        builder.append(REFERENCE);
         builder.append(", bytes=");
         builder.append(bytes);
         builder.append(", lengthConstraints=");
         builder.append(lengthConstraints);
         builder.append(", units=");
-        builder.append(units);
+        builder.append(UNITS);
         builder.append("]");
         return builder.toString();
     }

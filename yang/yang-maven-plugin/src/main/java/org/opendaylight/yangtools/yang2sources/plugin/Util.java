@@ -36,22 +36,31 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 final class Util {
+
+    /**
+     * It isn't desirable to create instances of this class
+     */
+    private Util() {
+    }
+
     static final String YANG_SUFFIX = "yang";
 
+    private static final int CACHE_SIZE = 10;
     // Cache for listed directories and found yang files. Typically yang files
     // are utilized twice. First: code is generated during generate-sources
     // phase Second: yang files are copied as resources during
     // generate-resources phase. This cache ensures that yang files are listed
     // only once.
-    private static Map<File, Collection<File>> cache = Maps.newHashMapWithExpectedSize(10);
+    private static Map<File, Collection<File>> cache = Maps.newHashMapWithExpectedSize(CACHE_SIZE);
 
     /**
      * List files recursively and return as array of String paths. Use cache of
      * size 1.
      */
     static Collection<File> listFiles(File root) throws FileNotFoundException {
-        if (cache.get(root) != null)
+        if (cache.get(root) != null) {
             return cache.get(root);
+        }
 
         if (!root.exists()) {
             throw new FileNotFoundException(root.toString());
@@ -78,7 +87,7 @@ final class Util {
                 }
             }
             if (excluded) {
-                if(log != null) {
+                if (log != null) {
                     log.info(Util.message("%s file excluded %s", YangToSourcesProcessor.LOG_PREFIX,
                             Util.YANG_SUFFIX.toUpperCase(), f));
                 }
@@ -131,15 +140,17 @@ final class Util {
     private static Class<?> resolveClass(String codeGeneratorClass, Class<?> baseType) throws ClassNotFoundException {
         Class<?> clazz = Class.forName(codeGeneratorClass);
 
-        if (!isImplemented(baseType, clazz))
+        if (!isImplemented(baseType, clazz)) {
             throw new IllegalArgumentException("Code generator " + clazz + " has to implement " + baseType);
+        }
         return clazz;
     }
 
     private static boolean isImplemented(Class<?> expectedIface, Class<?> byClazz) {
         for (Class<?> iface : byClazz.getInterfaces()) {
-            if (iface.equals(expectedIface))
+            if (iface.equals(expectedIface)) {
                 return true;
+            }
         }
         return false;
     }
@@ -170,8 +181,8 @@ final class Util {
         return Preconditions.checkNotNull(obj, "Parameter " + paramName + " is null");
     }
 
-    final static class YangsInZipsResult implements Closeable {
-        final List<InputStream> yangStreams;
+    static final class YangsInZipsResult implements Closeable {
+        private final List<InputStream> yangStreams;
         private final List<Closeable> zipInputStreams;
 
         private YangsInZipsResult(List<InputStream> yangStreams, List<Closeable> zipInputStreams) {
@@ -187,6 +198,10 @@ final class Util {
             for (Closeable is : zipInputStreams) {
                 is.close();
             }
+        }
+
+        public List<InputStream> getYangStreams() {
+            return this.yangStreams;
         }
     }
 
@@ -225,14 +240,13 @@ final class Util {
                         ZipEntry entry = entries.nextElement();
                         String entryName = entry.getName();
 
-                        if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)) {
-                            if (entry.isDirectory() == false && entryName.endsWith(".yang")) {
-                                foundFilesForReporting.add(entryName);
-                                // This will be closed after all strams are
-                                // parsed.
-                                InputStream entryStream = zip.getInputStream(entry);
-                                yangsFromDependencies.add(entryStream);
-                            }
+                        if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
+                                && !entry.isDirectory() && entryName.endsWith(".yang")) {
+                            foundFilesForReporting.add(entryName);
+                            // This will be closed after all strams are
+                            // parsed.
+                            InputStream entryStream = zip.getInputStream(entry);
+                            yangsFromDependencies.add(entryStream);
                         }
                     }
                 }
@@ -248,7 +262,7 @@ final class Util {
         return new YangsInZipsResult(yangsFromDependencies, zips);
     }
 
-    final static class ContextHolder {
+    static final class ContextHolder {
         private final SchemaContext context;
         private final Set<Module> yangModules;
 

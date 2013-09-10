@@ -20,7 +20,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -56,13 +55,14 @@ public final class YangToSourcesMojo extends AbstractMojo {
      * with .yang suffix).
      */
     @Parameter(required = false)
-    private String yangFilesRootDir; // defaults to ${basedir}/src/main/yang
+    // defaults to ${basedir}/src/main/yang
+    private String yangFilesRootDir;
 
     @Parameter(required = false)
     private String[] excludeFiles;
 
     @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
+    private MavenProject project;
 
     @Parameter(property = "inspectDependencies", required = true, readonly = true)
     private boolean inspectDependencies;
@@ -71,6 +71,10 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     public YangToSourcesMojo() {
 
+    }
+
+    public void setProject(MavenProject project) {
+        this.project = project;
     }
 
     @VisibleForTesting

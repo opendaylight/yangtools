@@ -21,7 +21,7 @@ public interface SchemaNode {
      * 
      * @return QName with the name of the schema node
      */
-    public QName getQName();
+    QName getQName();
 
     /**
      * Returns the schema path of the instance of the type
@@ -29,7 +29,7 @@ public interface SchemaNode {
      * 
      * @return schema path of the schema node
      */
-    public SchemaPath getPath();
+    SchemaPath getPath();
 
     /**
      * Returns description of the instance of the type <code>SchemaNode</code>
@@ -37,7 +37,7 @@ public interface SchemaNode {
      * @return string with textual description the node which represents the
      *         argument of the YANG <code>description</code> substatement
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Returns reference of the instance of the type <code>SchemaNode</code>
@@ -49,7 +49,7 @@ public interface SchemaNode {
      *         represents the argument of the YANG <code>reference</code>
      *         substatement
      */
-    public String getReference();
+    String getReference();
 
     /**
      * Returns status of the instance of the type <code>SchemaNode</code>
@@ -57,7 +57,7 @@ public interface SchemaNode {
      * @return status of this node which represents the argument of the YANG
      *         <code>status</code> substatement
      */
-    public Status getStatus();
+    Status getStatus();
 
     /**
      * 
@@ -66,6 +66,6 @@ public interface SchemaNode {
      * 
      * @return list of unknown schema nodes defined under this schema node.
      */
-    public List<UnknownSchemaNode> getUnknownSchemaNodes();
+    List<UnknownSchemaNode> getUnknownSchemaNodes();
 
 }

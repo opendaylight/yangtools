@@ -15,11 +15,11 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 
 /**
  * @author michal.rehak
- * @param <T> type of simple node value
- *
+ * @param <T>
+ *            type of simple node value
+ * 
  */
-public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T>
-        implements MutableSimpleNode<T> {
+public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T> implements MutableSimpleNode<T> {
 
     private SimpleNode<T> original;
 
@@ -29,8 +29,7 @@ public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T>
      * @param value
      * @param modifyAction
      */
-    public MutableSimpleNodeTOImpl(QName qname, CompositeNode parent, T value,
-            ModifyAction modifyAction) {
+    public MutableSimpleNodeTOImpl(QName qname, CompositeNode parent, T value, ModifyAction modifyAction) {
         super(qname, parent, value, modifyAction);
     }
 
@@ -55,7 +54,8 @@ public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T>
     }
 
     /**
-     * @param original the original to set
+     * @param original
+     *            the original to set
      */
     public void setOriginal(SimpleNode<T> original) {
         this.original = original;

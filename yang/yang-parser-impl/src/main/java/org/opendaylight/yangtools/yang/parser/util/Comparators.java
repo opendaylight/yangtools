@@ -12,7 +12,7 @@ import java.util.Comparator;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
-public class Comparators {
+public final class Comparators {
 
     public static final QNameComparator QNAME_COMP = new QNameComparator();
     public static final SchemaNodeComparator SCHEMA_NODE_COMP = new SchemaNodeComparator();

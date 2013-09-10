@@ -50,6 +50,6 @@ public interface AugmentationSchema extends DataNodeContainer {
     /**
      * @return collection of all unknown nodes defined in this augmentation
      */
-    public List<UnknownSchemaNode> getUnknownSchemaNodes();
+    List<UnknownSchemaNode> getUnknownSchemaNodes();
 
 }

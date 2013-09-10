@@ -20,14 +20,13 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 public final class UnionType implements UnionTypeDefinition {
     private final QName name = BaseTypes.constructQName("union");
     private final SchemaPath path = BaseTypes.schemaPath(name);
-    private final String description = "The union built-in type represents a value that corresponds to one of its member types.";
-    private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.12";
+    private static final String DESCRIPTION = "The union built-in type represents a value that corresponds to one of its member types.";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.12";
     private final List<TypeDefinition<?>> types;
 
     public UnionType(List<TypeDefinition<?>> types) {
         if (types == null) {
-            throw new NullPointerException(
-                    "When the type is 'union', the 'type' statement MUST be present.");
+            throw new IllegalArgumentException("When the type is 'union', the 'type' statement MUST be present.");
         }
         this.types = types;
     }
@@ -59,12 +58,12 @@ public final class UnionType implements UnionTypeDefinition {
 
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     @Override

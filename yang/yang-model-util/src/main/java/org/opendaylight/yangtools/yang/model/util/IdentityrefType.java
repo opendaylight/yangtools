@@ -19,17 +19,17 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 /**
  * The <code>default</code> implementation of Identityref Type Definition
  * interface.
- *
+ * 
  * @see IdentityrefTypeDefinition
  */
 public final class IdentityrefType implements IdentityrefTypeDefinition {
     private final QName name = BaseTypes.constructQName("identityref");
     private final SchemaPath path;
-    private final String description = "The identityref type is used to reference an existing identity.";
-    private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.10";
+    private static final String DESCRIPTION = "The identityref type is used to reference an existing identity.";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.10";
     private final IdentityrefTypeDefinition baseType;
     private final QName identity;
-    private final String units = "";
+    private static final String UNITS = "";
 
     public IdentityrefType(QName identity, SchemaPath schemaPath) {
         this.identity = identity;
@@ -39,7 +39,7 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
 
     @Override
     public String getUnits() {
-        return units;
+        return UNITS;
     }
 
     @Override
@@ -59,12 +59,12 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
 
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     @Override

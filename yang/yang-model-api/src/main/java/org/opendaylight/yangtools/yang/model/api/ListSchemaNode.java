@@ -19,19 +19,18 @@ import org.opendaylight.yangtools.yang.common.QName;
  * if defined.
  * </p>
  */
-public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget,
-        DataSchemaNode {
+public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode {
 
     /**
      * @return List of QNames of leaf identifiers of this list
      */
-    public List<QName> getKeyDefinition();
+    List<QName> getKeyDefinition();
 
     /**
      * YANG 'ordered-by' statement. It defines whether the order of entries
      * within a list are determined by the user or the system. If not present,
      * default is false.
-     *
+     * 
      * @return true if ordered-by argument is "user", false otherwise
      */
     boolean isUserOrdered();

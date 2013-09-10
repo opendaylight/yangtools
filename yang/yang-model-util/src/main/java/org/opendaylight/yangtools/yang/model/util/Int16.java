@@ -14,11 +14,11 @@ import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
  * Implementation of Yang int16 built-in type. <br>
  * int16 represents integer values between -32768 and 32767, inclusively. The
  * Java counterpart of Yang int16 built-in type is {@link Short}.
- *
+ * 
  * @see AbstractSignedInteger
  */
 public final class Int16 extends AbstractSignedInteger {
-    private static Int16 INSTANCE;
+    private static Int16 instance;
     private static final QName NAME = BaseTypes.constructQName("int16");
     private static final String DESCRIPTION = "int16  represents integer values between -32768 and 32767, inclusively.";
 
@@ -27,10 +27,10 @@ public final class Int16 extends AbstractSignedInteger {
     }
 
     public static Int16 getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Int16();
+        if (instance == null) {
+            instance = new Int16();
         }
-        return INSTANCE;
+        return instance;
     }
 
     @Override

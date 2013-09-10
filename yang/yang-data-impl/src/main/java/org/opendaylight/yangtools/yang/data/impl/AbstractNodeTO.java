@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.NodeModification;
  * @author michal.rehak
  * @param <T>
  *            type of node value
- *
+ * 
  */
 public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
 
@@ -68,14 +68,16 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
     }
 
     /**
-     * @param parent the parent to set
+     * @param parent
+     *            the parent to set
      */
     public void setParent(CompositeNode parent) {
         this.parent = parent;
     }
 
     /**
-     * @param value the value to set
+     * @param value
+     *            the value to set
      */
     protected void setValue(T value) {
         this.value = value;
@@ -106,9 +108,8 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
     @Override
     public String toString() {
         StringBuffer out = new StringBuffer();
-        out.append(String.format("Node[%s], qName[%s], modify[%s]",
-                getClass().getSimpleName(), getQName().getLocalName(),
-                getModificationAction() == null ? "n/a" : getModificationAction()));
+        out.append(String.format("Node[%s], qName[%s], modify[%s]", getClass().getSimpleName(), getQName()
+                .getLocalName(), getModificationAction() == null ? "n/a" : getModificationAction()));
         return out.toString();
     }
 
@@ -117,9 +118,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((modifyAction == null) ? 0 : modifyAction.hashCode());
-//        result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+        result = prime * result + ((modifyAction == null) ? 0 : modifyAction.hashCode());
         result = prime * result + ((qName == null) ? 0 : qName.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result % 2;
@@ -127,32 +126,41 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         @SuppressWarnings("unchecked")
         AbstractNodeTO<T> other = (AbstractNodeTO<T>) obj;
-        if (modifyAction != other.modifyAction)
+        if (modifyAction != other.modifyAction) {
             return false;
+        }
         if (parent == null) {
-            if (other.parent != null)
+            if (other.parent != null) {
                 return false;
+            }
         } else if (other.parent == null) {
             return false;
         }
         if (qName == null) {
-            if (other.qName != null)
+            if (other.qName != null) {
                 return false;
-        } else if (!qName.equals(other.qName))
+            }
+        } else if (!qName.equals(other.qName)) {
             return false;
+        }
         if (value == null) {
-            if (other.value != null)
+            if (other.value != null) {
                 return false;
-        } else if (!value.equals(other.value))
+            }
+        } else if (!value.equals(other.value)) {
             return false;
+        }
         return true;
     }
     /* */

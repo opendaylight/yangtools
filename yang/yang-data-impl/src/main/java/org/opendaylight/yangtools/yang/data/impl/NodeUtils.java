@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,10 +40,9 @@ import org.w3c.dom.Element;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-
 /**
  * @author michal.rehak
- *
+ * 
  */
 public abstract class NodeUtils {
 
@@ -60,21 +58,20 @@ public abstract class NodeUtils {
      * @return node path up till root node
      */
     public static String buildPath(Node<?> node) {
-        Vector<String> breadCrumbs = new Vector<>();
+        List<String> breadCrumbs = new ArrayList<>();
         Node<?> tmpNode = node;
         while (tmpNode != null) {
-            breadCrumbs.insertElementAt(tmpNode.getNodeType().getLocalName(), 0);
+            breadCrumbs.add(0, tmpNode.getNodeType().getLocalName());
             tmpNode = tmpNode.getParent();
         }
 
         return Joiner.on(".").join(breadCrumbs);
     }
 
-
     /**
      * @param treeRootNode
-     * @return dom tree, containing same node structure, yang nodes are associated
-     * to dom nodes as user data
+     * @return dom tree, containing same node structure, yang nodes are
+     *         associated to dom nodes as user data
      */
     public static org.w3c.dom.Document buildShadowDomTree(CompositeNode treeRootNode) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -87,7 +84,6 @@ public abstract class NodeUtils {
             return null;
         }
 
-
         Stack<SimpleEntry<org.w3c.dom.Node, Node<?>>> jobQueue = new Stack<>();
         jobQueue.push(new SimpleEntry<org.w3c.dom.Node, Node<?>>(doc, treeRootNode));
 
@@ -96,13 +92,11 @@ public abstract class NodeUtils {
             org.w3c.dom.Node jointPlace = job.getKey();
             Node<?> item = job.getValue();
             QName nodeType = item.getNodeType();
-            Element itemEl = doc.createElementNS(nodeType.getNamespace().toString(),
-                    item.getNodeType().getLocalName());
+            Element itemEl = doc.createElementNS(nodeType.getNamespace().toString(), item.getNodeType().getLocalName());
             itemEl.setUserData(USER_KEY_NODE, item, null);
             if (item instanceof SimpleNode<?>) {
                 Object value = ((SimpleNode<?>) item).getValue();
                 itemEl.setTextContent(String.valueOf(value));
-                //itemEl.setAttribute("type", value.getClass().getSimpleName());
             }
             if (item instanceof NodeModification) {
                 ModifyAction modificationAction = ((NodeModification) item).getModificationAction();
@@ -130,8 +124,7 @@ public abstract class NodeUtils {
      * @throws XPathExpressionException
      */
     @SuppressWarnings("unchecked")
-    public static <T> T findNodeByXpath(org.w3c.dom.Document doc, String xpathEx)
-            throws XPathExpressionException {
+    public static <T> T findNodeByXpath(org.w3c.dom.Document doc, String xpathEx) throws XPathExpressionException {
         T userNode = null;
         XPathFactory xPathfactory = XPathFactory.newInstance();
         XPath xpath = xPathfactory.newXPath();
@@ -145,18 +138,17 @@ public abstract class NodeUtils {
         return userNode;
     }
 
-
     /**
      * build NodeMap, where key = qName; value = node
-     *
+     * 
      * @param value
-     * @return map of children, where key = qName and value is list of children groupped by qName
+     * @return map of children, where key = qName and value is list of children
+     *         groupped by qName
      */
     public static Map<QName, List<Node<?>>> buildNodeMap(List<Node<?>> value) {
         Map<QName, List<Node<?>>> nodeMapTmp = new HashMap<>();
         if (value == null || value.isEmpty()) {
-            throw new IllegalStateException(
-                    "nodeList should not be null or empty");
+            throw new IllegalStateException("nodeList should not be null or empty");
         }
         for (Node<?> node : value) {
             List<Node<?>> qList = nodeMapTmp.get(node.getNodeType());
@@ -169,13 +161,11 @@ public abstract class NodeUtils {
         return nodeMapTmp;
     }
 
-
     /**
      * @param context
      * @return map of lists, where key = path; value = {@link DataSchemaNode}
      */
-    public static Map<String, ListSchemaNode> buildMapOfListNodes(
-            SchemaContext context) {
+    public static Map<String, ListSchemaNode> buildMapOfListNodes(SchemaContext context) {
         Map<String, ListSchemaNode> mapOfLists = new HashMap<>();
 
         Stack<DataSchemaNode> jobQueue = new Stack<>();
@@ -209,6 +199,7 @@ public abstract class NodeUtils {
 
     /**
      * add given node to it's parent's list of children
+     * 
      * @param newNode
      */
     public static void fixParentRelation(Node<?> newNode) {
@@ -222,6 +213,7 @@ public abstract class NodeUtils {
 
     /**
      * crawl all children of given node and assign it as their parent
+     * 
      * @param parentNode
      */
     public static void fixChildrenRelation(CompositeNode parentNode) {
@@ -234,14 +226,12 @@ public abstract class NodeUtils {
         }
     }
 
-
     /**
      * @param keys
      * @param dataMap
      * @return list of values of map, found by given keys
      */
-    public static <T, K> List<K> collectMapValues(List<T> keys,
-            Map<T, K> dataMap) {
+    public static <T, K> List<K> collectMapValues(List<T> keys, Map<T, K> dataMap) {
         List<K> valueSubList = new ArrayList<>();
         for (T key : keys) {
             valueSubList.add(dataMap.get(key));
@@ -254,7 +244,7 @@ public abstract class NodeUtils {
      * @param nodes
      * @return list of children in list of appropriate type
      */
-    public static List<Node<?>> buildChildrenList(Node<?>...nodes) {
+    public static List<Node<?>> buildChildrenList(Node<?>... nodes) {
         return Lists.newArrayList(nodes);
     }
 

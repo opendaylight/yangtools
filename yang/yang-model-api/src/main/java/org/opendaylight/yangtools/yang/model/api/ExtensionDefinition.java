@@ -27,7 +27,7 @@ public interface ExtensionDefinition extends SchemaNode {
      *         Keyword. If no argument statement is present the method will
      *         return <code>null</code>
      */
-    public String getArgument();
+    String getArgument();
 
     /**
      * This statement indicates if the argument is mapped to an XML element in
@@ -46,5 +46,5 @@ public interface ExtensionDefinition extends SchemaNode {
      *         YIN or returns <code>false</code> if the argument is mapped to an
      *         XML attribute.
      */
-    public boolean isYinElement();
+    boolean isYinElement();
 }

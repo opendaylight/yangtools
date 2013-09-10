@@ -49,7 +49,7 @@ public class GenerateSourcesTest {
         yang = new File(getClass().getResource("/yang/mock.yang").getFile()).getParent();
         outDir = new File("/outputDir");
         YangProvider mock = mock(YangProvider.class);
-        doNothing().when(mock).addYangsToMETA_INF(any(Log.class), any(MavenProject.class), any(File.class),
+        doNothing().when(mock).addYangsToMetaInf(any(Log.class), any(MavenProject.class), any(File.class),
                 any(File[].class));
 
         YangToSourcesProcessor processor = new YangToSourcesProcessor(mock(Log.class), new File(yang), new File[] {},
@@ -57,7 +57,7 @@ public class GenerateSourcesTest {
                 mock);
         mojo = new YangToSourcesMojo(processor);
         doReturn(new File("")).when(project).getBasedir();
-        mojo.project = project;
+        mojo.setProject(project);
     }
 
     @Test
