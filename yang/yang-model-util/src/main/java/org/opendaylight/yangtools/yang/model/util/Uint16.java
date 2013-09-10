@@ -14,11 +14,11 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * Implementation of Yang uint16 built-in type. <br>
  * uint16 represents integer values between 0 and 65535, inclusively. The Java
  * counterpart of Yang uint16 built-in type is {@link Integer}.
- *
+ * 
  */
 public final class Uint16 extends AbstractUnsignedInteger {
     public static final int MAX_VALUE = 65535;
-    private static Uint16 INSTANCE;
+    private static Uint16 instance;
     private static final QName NAME = BaseTypes.constructQName("uint16");
     private static final String DESCRIPTION = "uint16 represents integer values between 0 and 65535, inclusively.";
 
@@ -27,10 +27,10 @@ public final class Uint16 extends AbstractUnsignedInteger {
     }
 
     public static Uint16 getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Uint16();
+        if (instance == null) {
+            instance = new Uint16();
         }
-        return INSTANCE;
+        return instance;
     }
 
     @Override

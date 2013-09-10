@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
-public class UnknownType implements UnknownTypeDefinition {
+public final class UnknownType implements UnknownTypeDefinition {
 
     private final QName name;
     private final SchemaPath path;
@@ -44,8 +44,7 @@ public class UnknownType implements UnknownTypeDefinition {
         private String description;
         private String reference;
 
-        private List<LengthConstraint> lengthStatements = Collections
-                .emptyList();
+        private List<LengthConstraint> lengthStatements = Collections.emptyList();
         private List<PatternConstraint> patterns = Collections.emptyList();
         private List<RangeConstraint> rangeStatements = Collections.emptyList();
         private List<UnknownSchemaNode> extensions = Collections.emptyList();
@@ -57,8 +56,7 @@ public class UnknownType implements UnknownTypeDefinition {
         private Object defaultValue = null;
         private boolean referenceOnly = false;
 
-        public Builder(final QName name, final String description,
-                final String reference) {
+        public Builder(final QName name, final String description, final String reference) {
             this.name = name;
             this.path = BaseTypes.schemaPath(name);
             this.description = description;
@@ -80,8 +78,7 @@ public class UnknownType implements UnknownTypeDefinition {
             return this;
         }
 
-        public Builder lengthStatements(
-                final List<LengthConstraint> lengthStatements) {
+        public Builder lengthStatements(final List<LengthConstraint> lengthStatements) {
             this.lengthStatements = lengthStatements;
             return this;
         }
@@ -91,8 +88,7 @@ public class UnknownType implements UnknownTypeDefinition {
             return this;
         }
 
-        public Builder rangeStatements(
-                final List<RangeConstraint> rangeStatements) {
+        public Builder rangeStatements(final List<RangeConstraint> rangeStatements) {
             this.rangeStatements = rangeStatements;
             return this;
         }
@@ -132,8 +128,8 @@ public class UnknownType implements UnknownTypeDefinition {
         }
 
         public void setReferenceOnly(boolean b) {
-            this.referenceOnly  = b;
-            
+            this.referenceOnly = b;
+
         }
     }
 
@@ -156,7 +152,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
@@ -167,7 +163,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
@@ -177,7 +173,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -189,7 +185,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -199,7 +195,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -209,7 +205,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
@@ -220,7 +216,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
@@ -230,7 +226,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -240,7 +236,7 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getExtensionSchemaNodes
      * ()
@@ -252,9 +248,8 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
+     * 
+     * @see org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
      * #getRangeStatements()
      */
     @Override
@@ -264,9 +259,8 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
+     * 
+     * @see org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
      * #getLengthStatements()
      */
     @Override
@@ -276,9 +270,8 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
+     * 
+     * @see org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
      * #getPatterns()
      */
     @Override
@@ -288,9 +281,8 @@ public class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
-     * @see
-     * org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
+     * 
+     * @see org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
      * #getLengthConstraint()
      */
     @Override
@@ -307,31 +299,21 @@ public class UnknownType implements UnknownTypeDefinition {
     public boolean isReferenceOnly() {
         return referenceOnly;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result
-                + ((extensions == null) ? 0 : extensions.hashCode());
-        result = prime
-                * result
-                + ((lengthConstraint == null) ? 0 : lengthConstraint.hashCode());
-        result = prime
-                * result
-                + ((lengthStatements == null) ? 0 : lengthStatements.hashCode());
+        result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((extensions == null) ? 0 : extensions.hashCode());
+        result = prime * result + ((lengthConstraint == null) ? 0 : lengthConstraint.hashCode());
+        result = prime * result + ((lengthStatements == null) ? 0 : lengthStatements.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result
-                + ((patterns == null) ? 0 : patterns.hashCode());
-        result = prime * result
-                + ((rangeStatements == null) ? 0 : rangeStatements.hashCode());
-        result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + ((patterns == null) ? 0 : patterns.hashCode());
+        result = prime * result + ((rangeStatements == null) ? 0 : rangeStatements.hashCode());
+        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;

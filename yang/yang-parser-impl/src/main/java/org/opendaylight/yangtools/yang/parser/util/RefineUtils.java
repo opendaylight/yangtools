@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuil
  * Utility class with helper methods to perform operations tied to refine
  * process.
  */
-public class RefineUtils {
+public final class RefineUtils {
 
     private RefineUtils() {
     }
@@ -155,7 +155,7 @@ public class RefineUtils {
 
     /**
      * Check if refine can be performed on given node.
-     *
+     * 
      * @param node
      *            node to refine
      * @param refine
@@ -245,9 +245,9 @@ public class RefineUtils {
      * <li>reference</li>
      * <li>config</li>
      * </ul>
-     *
+     * 
      * These parameters may be refined for any node.
-     *
+     * 
      * @param node
      *            node to refine
      * @param refine
@@ -291,7 +291,7 @@ public class RefineUtils {
 
     /**
      * Perform refine operation on given node.
-     *
+     * 
      * @param nodeToRefine
      *            builder of node to refine
      * @param refine

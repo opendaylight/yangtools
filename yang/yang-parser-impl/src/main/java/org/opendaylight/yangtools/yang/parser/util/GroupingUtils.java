@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;

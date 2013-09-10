@@ -16,18 +16,18 @@ public final class BaseConstraints {
     private BaseConstraints() {
     }
 
-    public static LengthConstraint lengthConstraint(final Number min,
-            final Number max, final String description, final String reference) {
+    public static LengthConstraint lengthConstraint(final Number min, final Number max, final String description,
+            final String reference) {
         return new LengthConstraintImpl(min, max, description, reference);
     }
 
-    public static RangeConstraint rangeConstraint(final Number min,
-            final Number max, final String description, final String reference) {
+    public static RangeConstraint rangeConstraint(final Number min, final Number max, final String description,
+            final String reference) {
         return new RangeConstraintImpl(min, max, description, reference);
     }
 
-    public static PatternConstraint patternConstraint(final String pattern,
-            final String description, final String reference) {
+    public static PatternConstraint patternConstraint(final String pattern, final String description,
+            final String reference) {
         return new PatternConstraintImpl(pattern, description, reference);
     }
 
@@ -42,8 +42,7 @@ public final class BaseConstraints {
         private final String errorAppTag;
         private final String errorMessage;
 
-        public LengthConstraintImpl(Number min, Number max,
-                final String description, final String reference) {
+        public LengthConstraintImpl(Number min, Number max, final String description, final String reference) {
             super();
             this.min = min;
             this.max = max;
@@ -51,8 +50,7 @@ public final class BaseConstraints {
             this.reference = reference;
 
             this.errorAppTag = "length-out-of-specified-bounds";
-            this.errorMessage = "The argument is out of bounds <" + min + ", "
-                    + max + ">";
+            this.errorMessage = "The argument is out of bounds <" + min + ", " + max + ">";
         }
 
         @Override
@@ -89,16 +87,12 @@ public final class BaseConstraints {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result
-                    + ((description == null) ? 0 : description.hashCode());
-            result = prime * result
-                    + ((errorAppTag == null) ? 0 : errorAppTag.hashCode());
-            result = prime * result
-                    + ((errorMessage == null) ? 0 : errorMessage.hashCode());
+            result = prime * result + ((description == null) ? 0 : description.hashCode());
+            result = prime * result + ((errorAppTag == null) ? 0 : errorAppTag.hashCode());
+            result = prime * result + ((errorMessage == null) ? 0 : errorMessage.hashCode());
             result = prime * result + ((max == null) ? 0 : max.hashCode());
             result = prime * result + ((min == null) ? 0 : min.hashCode());
-            result = prime * result
-                    + ((reference == null) ? 0 : reference.hashCode());
+            result = prime * result + ((reference == null) ? 0 : reference.hashCode());
             return result;
         }
 
@@ -171,7 +165,7 @@ public final class BaseConstraints {
         }
     }
 
-    private final static class RangeConstraintImpl implements RangeConstraint {
+    private static final class RangeConstraintImpl implements RangeConstraint {
         private final Number min;
         private final Number max;
 
@@ -181,8 +175,7 @@ public final class BaseConstraints {
         private final String errorAppTag;
         private final String errorMessage;
 
-        public RangeConstraintImpl(Number min, Number max, String description,
-                String reference) {
+        public RangeConstraintImpl(Number min, Number max, String description, String reference) {
             super();
             this.min = min;
             this.max = max;
@@ -190,8 +183,7 @@ public final class BaseConstraints {
             this.reference = reference;
 
             this.errorAppTag = "range-out-of-specified-bounds";
-            this.errorMessage = "The argument is out of bounds <" + min + ", "
-                    + max + ">";
+            this.errorMessage = "The argument is out of bounds <" + min + ", " + max + ">";
         }
 
         @Override
@@ -228,16 +220,12 @@ public final class BaseConstraints {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result
-                    + ((description == null) ? 0 : description.hashCode());
-            result = prime * result
-                    + ((errorAppTag == null) ? 0 : errorAppTag.hashCode());
-            result = prime * result
-                    + ((errorMessage == null) ? 0 : errorMessage.hashCode());
+            result = prime * result + ((description == null) ? 0 : description.hashCode());
+            result = prime * result + ((errorAppTag == null) ? 0 : errorAppTag.hashCode());
+            result = prime * result + ((errorMessage == null) ? 0 : errorMessage.hashCode());
             result = prime * result + ((max == null) ? 0 : max.hashCode());
             result = prime * result + ((min == null) ? 0 : min.hashCode());
-            result = prime * result
-                    + ((reference == null) ? 0 : reference.hashCode());
+            result = prime * result + ((reference == null) ? 0 : reference.hashCode());
             return result;
         }
 
@@ -318,8 +306,7 @@ public final class BaseConstraints {
         }
     }
 
-    private final static class PatternConstraintImpl implements
-            PatternConstraint {
+    private static final class PatternConstraintImpl implements PatternConstraint {
 
         private final String regex;
         private final String description;
@@ -328,8 +315,7 @@ public final class BaseConstraints {
         private final String errorAppTag;
         private final String errorMessage;
 
-        public PatternConstraintImpl(final String regex,
-                final String description, final String reference) {
+        public PatternConstraintImpl(final String regex, final String description, final String reference) {
             super();
             this.regex = regex;
             this.description = description;
@@ -369,14 +355,10 @@ public final class BaseConstraints {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result
-                    + ((description == null) ? 0 : description.hashCode());
-            result = prime * result
-                    + ((errorAppTag == null) ? 0 : errorAppTag.hashCode());
-            result = prime * result
-                    + ((errorMessage == null) ? 0 : errorMessage.hashCode());
-            result = prime * result
-                    + ((reference == null) ? 0 : reference.hashCode());
+            result = prime * result + ((description == null) ? 0 : description.hashCode());
+            result = prime * result + ((errorAppTag == null) ? 0 : errorAppTag.hashCode());
+            result = prime * result + ((errorMessage == null) ? 0 : errorMessage.hashCode());
+            result = prime * result + ((reference == null) ? 0 : reference.hashCode());
             result = prime * result + ((regex == null) ? 0 : regex.hashCode());
             return result;
         }

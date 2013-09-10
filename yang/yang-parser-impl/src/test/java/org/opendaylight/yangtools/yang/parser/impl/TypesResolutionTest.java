@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
@@ -304,7 +304,7 @@ public class TypesResolutionTest {
         assertEquals("iit", identity.getPrefix());
         assertEquals("service-type", identity.getLocalName());
 
-        LeafSchemaNode type = (LeafSchemaNode)tested.getDataChildByName("type");
+        LeafSchemaNode type = (LeafSchemaNode) tested.getDataChildByName("type");
         assertNotNull(type);
     }
 

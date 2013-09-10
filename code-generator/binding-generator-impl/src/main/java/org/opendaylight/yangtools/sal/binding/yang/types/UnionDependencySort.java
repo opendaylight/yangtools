@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.slf4j.Logger;

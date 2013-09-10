@@ -18,43 +18,48 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class BaseTypes {
 
-    private BaseTypes() {}
+    private BaseTypes() {
+    }
 
-    public static final URI BaseTypesNamespace = URI
-            .create("urn:ietf:params:xml:ns:yang:1");
+    public static final URI BASE_TYPES_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:1");
 
     /**
-     * Construct QName for Built-in base Yang type. The namespace for
-     * built-in base yang types is defined as: urn:ietf:params:xml:ns:yang:1
-     *
-     * @param typeName yang type name
+     * Construct QName for Built-in base Yang type. The namespace for built-in
+     * base yang types is defined as: urn:ietf:params:xml:ns:yang:1
+     * 
+     * @param typeName
+     *            yang type name
      * @return built-in base yang type QName.
      */
-    public static final QName constructQName(final String typeName) {
-        return new QName(BaseTypesNamespace, typeName);
+    public static QName constructQName(final String typeName) {
+        return new QName(BASE_TYPES_NAMESPACE, typeName);
     }
 
     /**
      * Creates Schema Path from Qname.
-     *
-     * @param typeName yang type QName
+     * 
+     * @param typeName
+     *            yang type QName
      * @return Schema Path from Qname.
      */
-    public static final SchemaPath schemaPath(final QName typeName) {
+    public static SchemaPath schemaPath(final QName typeName) {
         List<QName> pathList = Collections.singletonList(typeName);
         return new SchemaPath(pathList, true);
     }
 
     /**
-     * Creates Schema Path from List of partial paths defined as Strings, module Namespace and
-     * module latest Revision Date.
-     *
-     * @param actualPath List of partial paths
-     * @param namespace Module Namespace
-     * @param revision Revision Date
+     * Creates Schema Path from List of partial paths defined as Strings, module
+     * Namespace and module latest Revision Date.
+     * 
+     * @param actualPath
+     *            List of partial paths
+     * @param namespace
+     *            Module Namespace
+     * @param revision
+     *            Revision Date
      * @return Schema Path
      */
-    public static final SchemaPath schemaPath(final List<String> actualPath, final URI namespace, final Date revision) {
+    public static SchemaPath schemaPath(final List<String> actualPath, final URI namespace, final Date revision) {
         if (actualPath == null) {
             throw new IllegalArgumentException("The actual path List MUST be specified.");
         }

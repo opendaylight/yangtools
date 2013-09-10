@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.Int16;
 import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.StringType;

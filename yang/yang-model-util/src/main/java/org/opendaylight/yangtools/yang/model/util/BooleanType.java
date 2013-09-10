@@ -18,16 +18,16 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
 /**
  * The <code>default</code> implementation of Boolean Type Definition interface.
- *
+ * 
  * @see BooleanTypeDefinition
  */
 public final class BooleanType implements BooleanTypeDefinition {
     private static final BooleanType INSTANCE = new BooleanType();
-    private static final QName name = BaseTypes.constructQName("boolean");
-    private static final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
-    private static final String description = "The boolean built-in type represents a boolean value.";
-    private static final String reference = "https://tools.ietf.org/html/rfc6020#section-9.5";
-    private final String units = "";
+    private static final QName NAME = BaseTypes.constructQName("boolean");
+    private static final SchemaPath PATH = new SchemaPath(Collections.singletonList(NAME), true);
+    private static final String DESCRIPTION = "The boolean built-in type represents a boolean value.";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.5";
+    private static final String UNITS = "";
 
     /**
      * Default constructor with default value set to "false".
@@ -41,7 +41,7 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
@@ -52,17 +52,17 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
     public String getUnits() {
-        return units;
+        return UNITS;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -74,48 +74,48 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
     public QName getQName() {
-        return name;
+        return NAME;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
     public SchemaPath getPath() {
-        return path;
+        return PATH;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -132,9 +132,9 @@ public final class BooleanType implements BooleanTypeDefinition {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("BooleanType [name=");
-        builder.append(name);
+        builder.append(NAME);
         builder.append(", path=");
-        builder.append(path);
+        builder.append(PATH);
         builder.append("]");
         return builder.toString();
     }

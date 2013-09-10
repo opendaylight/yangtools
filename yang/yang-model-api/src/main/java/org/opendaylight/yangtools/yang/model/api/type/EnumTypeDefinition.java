@@ -41,7 +41,7 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
          * 
          * @return name of each assigned name of an enumeration type.
          */
-        public String getName();
+        String getName();
 
         /**
          * The "value" statement, which is optional, is used to associate an
@@ -51,6 +51,6 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
          * 
          * @return integer value assigned to enumeration
          */
-        public Integer getValue();
+        Integer getValue();
     }
 }

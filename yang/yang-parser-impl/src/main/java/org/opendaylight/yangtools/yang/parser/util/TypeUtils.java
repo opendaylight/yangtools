@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;

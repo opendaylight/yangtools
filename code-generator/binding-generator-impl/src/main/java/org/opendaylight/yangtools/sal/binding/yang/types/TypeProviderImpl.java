@@ -55,7 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
@@ -254,7 +254,8 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private Type provideTypeForIdentityref(IdentityrefTypeDefinition idref) {
         QName baseIdQName = idref.getIdentity();
-        Module module = schemaContext.findModuleByNamespaceAndRevision(baseIdQName.getNamespace(),baseIdQName.getRevision());
+        Module module = schemaContext.findModuleByNamespaceAndRevision(baseIdQName.getNamespace(),
+                baseIdQName.getRevision());
         IdentitySchemaNode identity = null;
         for (IdentitySchemaNode id : module.getIdentities()) {
             if (id.getQName().equals(baseIdQName)) {

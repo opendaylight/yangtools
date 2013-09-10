@@ -13,32 +13,38 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public final class YangTypesConverter {
-    private static final Set<String> baseYangTypes = new HashSet<String>();
+    private static final Set<String> BASE_YANG_TYPES = new HashSet<String>();
+
+    /**
+     * It isn't desirable to create the instances of this class
+     */
+    private YangTypesConverter() {
+    }
 
     static {
-        baseYangTypes.add("binary");
-        baseYangTypes.add("bits");
-        baseYangTypes.add("boolean");
-        baseYangTypes.add("decimal64");
-        baseYangTypes.add("empty");
-        baseYangTypes.add("enumeration");
-        baseYangTypes.add("identityref");
-        baseYangTypes.add("instance-identifier");
-        baseYangTypes.add("int8");
-        baseYangTypes.add("int16");
-        baseYangTypes.add("int32");
-        baseYangTypes.add("int64");
-        baseYangTypes.add("leafref");
-        baseYangTypes.add("string");
-        baseYangTypes.add("uint8");
-        baseYangTypes.add("uint16");
-        baseYangTypes.add("uint32");
-        baseYangTypes.add("uint64");
-        baseYangTypes.add("union");
+        BASE_YANG_TYPES.add("binary");
+        BASE_YANG_TYPES.add("bits");
+        BASE_YANG_TYPES.add("boolean");
+        BASE_YANG_TYPES.add("decimal64");
+        BASE_YANG_TYPES.add("empty");
+        BASE_YANG_TYPES.add("enumeration");
+        BASE_YANG_TYPES.add("identityref");
+        BASE_YANG_TYPES.add("instance-identifier");
+        BASE_YANG_TYPES.add("int8");
+        BASE_YANG_TYPES.add("int16");
+        BASE_YANG_TYPES.add("int32");
+        BASE_YANG_TYPES.add("int64");
+        BASE_YANG_TYPES.add("leafref");
+        BASE_YANG_TYPES.add("string");
+        BASE_YANG_TYPES.add("uint8");
+        BASE_YANG_TYPES.add("uint16");
+        BASE_YANG_TYPES.add("uint32");
+        BASE_YANG_TYPES.add("uint64");
+        BASE_YANG_TYPES.add("union");
     }
 
     public static boolean isBaseYangType(String type) {
-        return baseYangTypes.contains(type);
+        return BASE_YANG_TYPES.contains(type);
     }
 
     public static TypeDefinition<?> javaTypeForBaseYangType(String typeName) {
@@ -66,13 +72,13 @@ public final class YangTypesConverter {
             }
         } else if ("string".equals(typeName)) {
             type = StringType.getIntance();
-        } else if("binary".equals(typeName)) {
+        } else if ("binary".equals(typeName)) {
             type = BinaryType.getInstance();
-        } else if("boolean".equals(typeName)) {
+        } else if ("boolean".equals(typeName)) {
             type = BooleanType.getInstance();
-        } else if("empty".equals(typeName)) {
+        } else if ("empty".equals(typeName)) {
             type = EmptyType.getInstance();
-        } else if("instance-identifier".equals(typeName)) {
+        } else if ("instance-identifier".equals(typeName)) {
             // FIXME
             type = new InstanceIdentifier(null, true);
         }

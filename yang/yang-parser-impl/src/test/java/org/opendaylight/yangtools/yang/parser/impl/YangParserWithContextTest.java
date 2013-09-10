@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder.ExtendedType;
 
 import com.google.common.collect.Lists;
 

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 /**
  * The <code>default</code> implementation of Bits Type Definition interface.
- *
+ * 
  * @see BitsTypeDefinition
  */
 public final class BitsType implements BitsTypeDefinition {
@@ -28,15 +28,15 @@ public final class BitsType implements BitsTypeDefinition {
             + "That is, a bits value is a set of flags identified by small integer position "
             + "numbers starting at 0.  Each bit number has an assigned name.";
 
-    private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.7";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.7";
     private final BitsTypeDefinition baseType;
     private final List<Bit> bits;
-    private final String units = "";
+    private static final String UNITS = "";
 
     /**
      * Default constructor. <br>
      * Instantiates Bits type as empty bits list.
-     *
+     * 
      * @param path
      */
     public BitsType(final SchemaPath path) {
@@ -48,7 +48,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /**
      * Constructor with explicit definition of bits assigned to BitsType.
-     *
+     * 
      * @param path
      * @param bits
      */
@@ -61,7 +61,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
@@ -72,17 +72,17 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
     public String getUnits() {
-        return units;
+        return UNITS;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -94,7 +94,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -104,7 +104,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -114,7 +114,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
@@ -125,17 +125,17 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -161,8 +161,6 @@ public final class BitsType implements BitsTypeDefinition {
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;
     }
 
@@ -206,20 +204,6 @@ public final class BitsType implements BitsTypeDefinition {
         } else if (!path.equals(other.path)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
-            return false;
-        }
-        if (units == null) {
-            if (other.units != null) {
-                return false;
-            }
-        } else if (!units.equals(other.units)) {
-            return false;
-        }
         return true;
     }
 
@@ -233,11 +217,11 @@ public final class BitsType implements BitsTypeDefinition {
         builder.append(", description=");
         builder.append(description);
         builder.append(", reference=");
-        builder.append(reference);
+        builder.append(REFERENCE);
         builder.append(", bits=");
         builder.append(bits);
         builder.append(", units=");
-        builder.append(units);
+        builder.append(UNITS);
         builder.append("]");
         return builder.toString();
     }

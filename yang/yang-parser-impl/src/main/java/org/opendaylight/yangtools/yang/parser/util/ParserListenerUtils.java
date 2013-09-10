@@ -94,7 +94,7 @@ import org.opendaylight.yangtools.yang.model.util.BinaryType;
 import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.Int16;
 import org.opendaylight.yangtools.yang.model.util.Int32;
@@ -121,6 +121,9 @@ import org.slf4j.LoggerFactory;
 
 public final class ParserListenerUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ParserListenerUtils.class);
+    private static final int HIGHEST_VALUE = 2147483647;
+    private static final int LOWEST_VALUE = -2147483648;
+    private static final long MAX_POSITION = 4294967295L;
 
     private ParserListenerUtils() {
     }
@@ -352,7 +355,7 @@ public final class ParserListenerUtils {
         if (value == null) {
             value = highestValue + 1;
         }
-        if (value < -2147483648 || value > 2147483647) {
+        if (value < LOWEST_VALUE || value > HIGHEST_VALUE) {
             throw new YangParseException(moduleName, ctx.getStart().getLine(), "Error on enum '" + name
                     + "': the enum value MUST be in the range from -2147483648 to 2147483647, but was: " + value);
         }
@@ -545,7 +548,8 @@ public final class ParserListenerUtils {
             Number min;
             Number max;
             if (splittedRangeDef.length == 1) {
-                min = max = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
+                max = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
+                min = max;
             } else {
                 min = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
                 max = parseNumberConstraintValue(splittedRangeDef[1], moduleName, line);
@@ -613,7 +617,8 @@ public final class ParserListenerUtils {
             Number min;
             Number max;
             if (splittedRangeDef.length == 1) {
-                min = max = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
+                max = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
+                min = max;
             } else {
                 min = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
                 max = parseNumberConstraintValue(splittedRangeDef[1], moduleName, line);
@@ -840,7 +845,7 @@ public final class ParserListenerUtils {
         if (position == null) {
             position = highestPosition + 1;
         }
-        if (position < 0 || position > 4294967295L) {
+        if (position < 0 || position > MAX_POSITION) {
             throw new YangParseException(moduleName, ctx.getStart().getLine(), "Error on bit '" + name
                     + "': the position value MUST be in the range 0 to 4294967295");
         }
@@ -1017,11 +1022,11 @@ public final class ParserListenerUtils {
                 QName qname = new QName(namespace, revision, prefix, typeName);
                 SchemaPath schemaPath = createTypePath(actualPath, typeName);
 
-                ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, null, null, schemaPath);
-                typeBuilder.ranges(rangeStatements);
-                typeBuilder.lengths(lengthStatements);
-                typeBuilder.patterns(patternStatements);
-                typeBuilder.fractionDigits(fractionDigits);
+                ExtendedTypeBuilder typeBuilder = new ExtendedTypeBuilder(qname, baseType, null, null, schemaPath);
+                typeBuilder.setRanges(rangeStatements);
+                typeBuilder.setLengths(lengthStatements);
+                typeBuilder.setPatterns(patternStatements);
+                typeBuilder.setFractionDigits(fractionDigits);
                 result = typeBuilder.build();
 
                 return result;
@@ -1082,7 +1087,7 @@ public final class ParserListenerUtils {
             if (rangeStatements.isEmpty()) {
                 try {
                     return new Decimal64(baseTypePath, fractionDigits);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     throw new YangParseException(moduleName, line, e.getMessage());
                 }
             }
@@ -1154,19 +1159,19 @@ public final class ParserListenerUtils {
         }
 
         TypeDefinition<?> result = null;
-        ExtendedType.Builder typeBuilder = null;
+        ExtendedTypeBuilder typeBuilder = null;
 
         List<QName> path = new ArrayList<QName>(actualPath);
         path.add(new QName(namespace, revision, prefix, typeName));
         SchemaPath schemaPath = new SchemaPath(path, true);
 
         QName qname = schemaPath.getPath().get(schemaPath.getPath().size() - 1);
-        typeBuilder = new ExtendedType.Builder(qname, baseType, "", "", schemaPath);
+        typeBuilder = new ExtendedTypeBuilder(qname, baseType, "", "", schemaPath);
 
-        typeBuilder.ranges(constraints.getRange());
-        typeBuilder.lengths(constraints.getLength());
-        typeBuilder.patterns(constraints.getPatterns());
-        typeBuilder.fractionDigits(constraints.getFractionDigits());
+        typeBuilder.setRanges(constraints.getRange());
+        typeBuilder.setLengths(constraints.getLength());
+        typeBuilder.setPatterns(constraints.getPatterns());
+        typeBuilder.setFractionDigits(constraints.getFractionDigits());
 
         result = typeBuilder.build();
         return result;

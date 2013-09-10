@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;

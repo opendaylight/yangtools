@@ -48,6 +48,6 @@ public interface Deviation {
     /**
      * @return collection of all unknown nodes defined under this schema node.
      */
-    public List<UnknownSchemaNode> getUnknownSchemaNodes();
+    List<UnknownSchemaNode> getUnknownSchemaNodes();
 
 }

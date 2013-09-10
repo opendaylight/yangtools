@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
@@ -47,7 +47,7 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     @Override
     public TypeDefinition<? extends TypeDefinition<?>> build() {
         TypeDefinition<?> result = null;
-        ExtendedType.Builder typeBuilder = null;
+        ExtendedTypeBuilder typeBuilder = null;
         if ((type == null || type instanceof UnknownType) && typedef == null) {
             throw new YangParseException("Unresolved type: '" + qname.getLocalName() + "'.");
         }
@@ -55,17 +55,17 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
             type = typedef.build();
         }
 
-        typeBuilder = new ExtendedType.Builder(qname, type, description, reference, schemaPath);
+        typeBuilder = new ExtendedTypeBuilder(qname, type, description, reference, schemaPath);
 
-        typeBuilder.status(status);
-        typeBuilder.units(units);
-        typeBuilder.defaultValue(defaultValue);
-        typeBuilder.addedByUses(addedByUses);
+        typeBuilder.setStatus(status);
+        typeBuilder.setUnits(units);
+        typeBuilder.setDefaultValue(defaultValue);
+        typeBuilder.setAddedByUses(addedByUses);
 
-        typeBuilder.ranges(ranges);
-        typeBuilder.lengths(lengths);
-        typeBuilder.patterns(patterns);
-        typeBuilder.fractionDigits(fractionDigits);
+        typeBuilder.setRanges(ranges);
+        typeBuilder.setLengths(lengths);
+        typeBuilder.setPatterns(patterns);
+        typeBuilder.setFractionDigits(fractionDigits);
 
         // UNKNOWN NODES
         if (unknownNodes == null) {
@@ -75,7 +75,7 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
         }
-        typeBuilder.unknownSchemaNodes(unknownNodes);
+        typeBuilder.setUnknownSchemaNodes(unknownNodes);
         result = typeBuilder.build();
         return result;
     }

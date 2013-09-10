@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * interface which represents SIGNED Integer values defined in Yang language. <br>
  * The integer built-in types in Yang are int8, int16, int32, int64. They
  * represent signed integers of different sizes:
- *
+ * 
  * <ul>
  * <li>int8 - represents integer values between -128 and 127, inclusively.</li>
  * <li>int16 - represents integer values between -32768 and 32767, inclusively.</li>
@@ -32,13 +32,13 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * <li>int64 - represents integer values between -9223372036854775808 and
  * 9223372036854775807, inclusively.</li>
  * </ul>
- *
+ * 
  */
 public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     private final QName name;
     private final SchemaPath path;
     private final String description;
-    private final String reference = "https://tools.ietf.org/html/rfc6020#section-9.2";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.2";
     private final String units;
     private final List<RangeConstraint> rangeStatements;
 
@@ -83,7 +83,7 @@ public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
 
     @Override
     public String getReference() {
-        return reference;
+        return REFERENCE;
     }
 
     @Override
@@ -109,7 +109,6 @@ public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((rangeStatements == null) ? 0 : rangeStatements.hashCode());
-        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
         result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;
     }
@@ -154,13 +153,6 @@ public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
         } else if (!rangeStatements.equals(other.rangeStatements)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
-            return false;
-        }
         if (units == null) {
             if (other.units != null) {
                 return false;
@@ -181,7 +173,7 @@ public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
         builder.append(", description=");
         builder.append(description);
         builder.append(", reference=");
-        builder.append(reference);
+        builder.append(REFERENCE);
         builder.append(", units=");
         builder.append(units);
         builder.append(", rangeStatements=");

@@ -91,8 +91,9 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
         List<SimpleNode<?>> list = new ArrayList<SimpleNode<?>>();
 
         for (Node<?> node : toFilter) {
-            if (node instanceof SimpleNode<?>)
+            if (node instanceof SimpleNode<?>) {
                 list.add((SimpleNode<?>) node);
+            }
         }
         return list;
     }
