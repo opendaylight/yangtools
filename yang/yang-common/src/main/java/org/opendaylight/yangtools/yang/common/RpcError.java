@@ -19,6 +19,10 @@ public interface RpcError {
     String getMessage();
 
     String getInfo();
+    
+    Throwable getCause();
+    
+    ErrorType getErrorType();
 
     // RevisionAwareXPath getPath();
 
