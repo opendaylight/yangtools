@@ -27,6 +27,11 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-binding</artifactId>
         </dependency>
+        <dependency>
+        	<groupId>org.opendaylight.yangtools</groupId>
+        	<artifactId>yang-parser-impl</artifactId>
+        	<version>${yang.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public final class BindingGeneratorUtil {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyMMdd");
-    
+
     /**
      * Array of strings values which represents JAVA reserved words.
      */
@@ -87,7 +87,7 @@ public final class BindingGeneratorUtil {
      *            string with the parameter name
      * @return string with the admissible parameter name
      */
-    public static String validateParameterName(final String parameterName) {
+    public static String resolveJavaReservedWordEquivalency(final String parameterName) {
         if (parameterName != null && JAVA_RESERVED_WORDS.contains(parameterName)) {
             return "_" + parameterName;
         }
@@ -141,7 +141,7 @@ public final class BindingGeneratorUtil {
         packageNameBuilder.append(namespace);
         packageNameBuilder.append(".rev");
         packageNameBuilder.append(DATE_FORMAT.format(module.getRevision()));
-        
+
         return validateJavaPackage(packageNameBuilder.toString());
     }
 
@@ -223,18 +223,7 @@ public final class BindingGeneratorUtil {
      *         name.
      */
     public static String parseToClassName(String token) {
-        String correctStr = token.replace(".", "");
-        correctStr = parseToCamelCase(correctStr);
-
-        // make first char upper-case
-        char first = Character.toUpperCase(correctStr.charAt(0));
-        if (first >= '0' && first <= '9') {
-
-            correctStr = "_" + correctStr;
-        } else {
-            correctStr = first + correctStr.substring(1);
-        }
-        return correctStr;
+        return parseToCamelCase(token, true);
     }
 
     /**
@@ -248,28 +237,7 @@ public final class BindingGeneratorUtil {
      *         parameter name.
      */
     public static String parseToValidParamName(final String token) {
-        final String validToken = token.replace(".", "");
-        String correctStr = parseToCamelCase(validToken);
-
-        // make first char lower-case
-        char first = Character.toLowerCase(correctStr.charAt(0));
-        correctStr = first + correctStr.substring(1);
-        return validateParameterName(correctStr);
-    }
-
-    /**
-     * Converts <code>token</code> to capital letters and removes invalid
-     * characters.
-     * 
-     * @param token
-     *            string with characters which should be conversed to capital
-     * @return string with capital letters
-     */
-    public static String convertToCapitalLetters(final String token) {
-        String convertedStr = token.replace(" ", "_");
-        convertedStr = convertedStr.replace(".", "_");
-        convertedStr = convertedStr.toUpperCase();
-        return convertedStr;
+        return resolveJavaReservedWordEquivalency(parseToCamelCase(token, false));
     }
 
     /**
@@ -278,6 +246,9 @@ public final class BindingGeneratorUtil {
      * 
      * @param token
      *            string which should be converted to the cammel case format
+     * @param uppercase
+     *            boolean value which says whether the first character of the
+     *            <code>token</code> should|shuldn't be uppercased
      * @return string in the cammel case format
      * @throws IllegalArgumentException
      *             <ul>
@@ -285,12 +256,15 @@ public final class BindingGeneratorUtil {
      *             <li>if <code>token</code> equals null</li>
      *             </ul>
      */
-    private static String parseToCamelCase(String token) {
+
+    private static String parseToCamelCase(final String token, final boolean uppercase) {
         if (token == null) {
             throw new IllegalArgumentException("Name can not be null");
         }
 
         String correctStr = token.trim();
+        correctStr = correctStr.replace(".", "");
+
         if (correctStr.isEmpty()) {
             throw new IllegalArgumentException("Name can not be emty");
         }
@@ -298,6 +272,19 @@ public final class BindingGeneratorUtil {
         correctStr = replaceWithCamelCase(correctStr, ' ');
         correctStr = replaceWithCamelCase(correctStr, '-');
         correctStr = replaceWithCamelCase(correctStr, '_');
+
+        String firstChar = correctStr.substring(0, 1);
+        if (uppercase) {
+            firstChar = firstChar.toUpperCase();
+        } else {
+            firstChar = firstChar.toLowerCase();
+        }
+
+        if (firstChar.matches("[0-9]")) {
+            correctStr = "_" + correctStr;
+        } else {
+            correctStr = firstChar + correctStr.substring(1);
+        }
         return correctStr;
     }
 
