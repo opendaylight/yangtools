@@ -1,0 +1,22 @@
+module module-name-test {
+
+    namespace "urn:m*o+d,u;l=e.n/a-m@e.t$e#s't.case.1digit";
+    prefix "pref";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    revision 2013-09-10 {
+    }
+    
+    typedef tpdf {
+    	type string;
+    }
+    
+    container cont-outter {
+    	container cont-inner {
+    	}    
+    }
+    
+    
+}
