@@ -1178,17 +1178,17 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         // identifier namespace.
         for (DataSchemaNodeBuilder childNode : addedChildNodes) {
             if (childNode.getQName().getLocalName().equals(childName)) {
-                raiseYangParserException("'"+child+"'", "node", childName, lineNum, childNode.getLine());
+                raiseYangParserException("'" + child + "'", "node", childName, lineNum, childNode.getLine());
             }
         }
         for (RpcDefinitionBuilder rpc : addedRpcs) {
             if (rpc.getQName().getLocalName().equals(childName)) {
-                raiseYangParserException("'"+child+"'", "rpc", childName, lineNum, rpc.getLine());
+                raiseYangParserException("'" + child + "'", "rpc", childName, lineNum, rpc.getLine());
             }
         }
         for (NotificationBuilder notification : addedNotifications) {
             if (notification.getQName().getLocalName().equals(childName)) {
-                raiseYangParserException("'"+child+"'", "notification", childName, lineNum, notification.getLine());
+                raiseYangParserException("'" + child + "'", "notification", childName, lineNum, notification.getLine());
             }
         }
         addedChildNodes.add(child);
@@ -1223,7 +1223,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parent;
             for (DataSchemaNodeBuilder childNode : parentNode.getChildNodeBuilders()) {
                 if (childNode.getQName().getLocalName().equals(childName)) {
-                    raiseYangParserException("'"+child+"'", "node", childName, lineNum, childNode.getLine());
+                    raiseYangParserException("'" + child + "'", "node", childName, lineNum, childNode.getLine());
                 }
             }
             parentNode.addChildNode(child);
@@ -1231,7 +1231,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             ChoiceBuilder parentNode = (ChoiceBuilder) parent;
             for (ChoiceCaseBuilder caseBuilder : parentNode.getCases()) {
                 if (caseBuilder.getQName().getLocalName().equals(childName)) {
-                    raiseYangParserException("'"+child+"'", "node", childName, lineNum, caseBuilder.getLine());
+                    raiseYangParserException("'" + child + "'", "node", childName, lineNum, caseBuilder.getLine());
                 }
             }
             parentNode.addCase(child);
@@ -1344,4 +1344,60 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                 duplicateLine);
         throw new YangParseException(moduleName, currentLine, msg);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+        result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
+
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ModuleBuilder other = (ModuleBuilder) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (namespace == null) {
+            if (other.namespace != null) {
+                return false;
+            }
+        } else if (!namespace.equals(other.namespace)) {
+            return false;
+        }
+        if (prefix == null) {
+            if (other.prefix != null) {
+                return false;
+            }
+        } else if (!prefix.equals(other.prefix)) {
+            return false;
+        }
+        if (revision == null) {
+            if (other.revision != null) {
+                return false;
+            }
+        } else if (!revision.equals(other.revision)) {
+            return false;
+        }
+        return true;
+    }
+
 }

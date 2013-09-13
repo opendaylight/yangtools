@@ -35,6 +35,60 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((qname == null) ? 0 : qname.hashCode());
+        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+        result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+        result = prime * result + ((nodeParameter == null) ? 0 : nodeParameter.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        UnknownSchemaNodeBuilder other = (UnknownSchemaNodeBuilder) obj;
+        if (qname == null) {
+            if (other.qname != null) {
+                return false;
+            }
+        } else if (!qname.equals(other.qname)) {
+            return false;
+        }
+        if (schemaPath == null) {
+            if (other.schemaPath != null) {
+                return false;
+            }
+        } else if (!schemaPath.equals(other.schemaPath)) {
+            return false;
+        }
+        if (nodeType == null) {
+            if (other.nodeType != null) {
+                return false;
+            }
+        } else if (!nodeType.equals(other.nodeType)) {
+            return false;
+        }
+        if (nodeParameter == null) {
+            if (other.nodeParameter != null) {
+                return false;
+            }
+        } else if (!nodeParameter.equals(other.nodeParameter)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public UnknownSchemaNode build() {
         if (!isBuilt) {
             instance.setPath(schemaPath);
@@ -241,6 +295,61 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             sb.append(nodeParameter);
             return sb.toString();
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((qname == null) ? 0 : qname.hashCode());
+            result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+            result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+            result = prime * result + ((nodeParameter == null) ? 0 : nodeParameter.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            UnknownSchemaNodeImpl other = (UnknownSchemaNodeImpl) obj;
+            if (qname == null) {
+                if (other.qname != null) {
+                    return false;
+                }
+            } else if (!qname.equals(other.qname)) {
+                return false;
+            }
+            if (path == null) {
+                if (other.path != null) {
+                    return false;
+                }
+            } else if (!path.equals(other.path)) {
+                return false;
+            }
+            if (nodeType == null) {
+                if (other.nodeType != null) {
+                    return false;
+                }
+            } else if (!nodeType.equals(other.nodeType)) {
+                return false;
+            }
+            if (nodeParameter == null) {
+                if (other.nodeParameter != null) {
+                    return false;
+                }
+            } else if (!nodeParameter.equals(other.nodeParameter)) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }
