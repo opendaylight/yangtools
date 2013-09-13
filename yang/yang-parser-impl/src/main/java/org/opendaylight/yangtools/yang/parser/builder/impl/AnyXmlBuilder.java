@@ -66,6 +66,11 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     @Override
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    @Override
     public ConstraintsBuilder getConstraints() {
         return constraints;
     }

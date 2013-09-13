@@ -1,0 +1,89 @@
+module grouping-definitions {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:grouping-definitions";
+    prefix "gd";
+
+    organization "opendaylight";
+    contact "asdf";
+
+    revision "2013-09-04" {
+    }
+
+
+    typedef int-ext {
+        type union {
+            type uint8;
+            type protocol-version;
+        }
+    }
+
+    typedef protocol-version {
+        type uint8 {
+            range 1..7;
+        }
+    }
+
+    grouping base-header {
+        leaf delete {
+            type uint32;
+            mandatory true;
+        }
+        leaf setup {
+            type uint32;
+            mandatory true;
+        }
+    }
+
+    grouping ieee754-32 {
+        reference "IEEE 754-2008";
+        leaf fraction {
+            type uint32 {
+                range 0..1677215;
+            }
+            mandatory true;
+        }
+    }
+
+    grouping message-header {
+        leaf version {
+            type protocol-version;
+            default 1;
+        }
+        leaf type {
+            type int-ext;
+        }
+    }
+
+    grouping object {
+        uses object-header;
+
+        container box {
+        }
+    }
+
+    grouping object-header {
+        leaf processing-rule {
+            type boolean;
+        }
+        leaf ignore {
+            type boolean;
+        }
+    }
+
+    grouping rp-object {
+        uses object {
+            augment "box" {
+                container order {
+                    uses base-header;
+                }
+            }
+        }
+
+        leaf priority {
+            type uint8 {
+                range 1..7;
+            }
+        }
+    }
+
+}

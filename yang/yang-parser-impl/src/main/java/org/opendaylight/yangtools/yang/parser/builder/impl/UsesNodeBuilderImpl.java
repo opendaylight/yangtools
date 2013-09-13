@@ -42,14 +42,15 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private GroupingDefinition groupingDefinition;
     private GroupingBuilder groupingBuilder;
     private boolean addedByUses;
+    private boolean augmenting;
     private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<AugmentationSchemaBuilder>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<SchemaNodeBuilder>();
     private final List<RefineHolder> refines = new ArrayList<RefineHolder>();
 
-    private Set<DataSchemaNodeBuilder> targetChildren = new HashSet<>();
-    private Set<GroupingBuilder> targetGroupings = new HashSet<>();
-    private Set<TypeDefinitionBuilder> targetTypedefs = new HashSet<>();
-    private List<UnknownSchemaNodeBuilder> targetUnknownNodes = new ArrayList<>();
+    private final Set<DataSchemaNodeBuilder> targetChildren = new HashSet<>();
+    private final Set<GroupingBuilder> targetGroupings = new HashSet<>();
+    private final Set<TypeDefinitionBuilder> targetTypedefs = new HashSet<>();
+    private final List<UnknownSchemaNodeBuilder> targetUnknownNodes = new ArrayList<>();
 
     private final boolean isCopy;
     private boolean dataCollected;
@@ -186,6 +187,16 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
+    public boolean isAugmenting() {
+        return augmenting;
+    }
+
+    @Override
+    public void setAugmenting(boolean augmenting) {
+        this.augmenting = augmenting;
+    }
+
+    @Override
     public List<SchemaNodeBuilder> getRefineNodes() {
         return refineBuilders;
     }
@@ -211,18 +222,8 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void setTargetChildren(Set<DataSchemaNodeBuilder> targetChildren) {
-        this.targetChildren = targetChildren;
-    }
-
-    @Override
     public Set<GroupingBuilder> getTargetGroupings() {
         return targetGroupings;
-    }
-
-    @Override
-    public void setTargetGroupings(Set<GroupingBuilder> targetGroupings) {
-        this.targetGroupings = targetGroupings;
     }
 
     @Override
@@ -231,18 +232,8 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void setTargetTypedefs(Set<TypeDefinitionBuilder> targetTypedefs) {
-        this.targetTypedefs = targetTypedefs;
-    }
-
-    @Override
     public List<UnknownSchemaNodeBuilder> getTargetUnknownNodes() {
         return targetUnknownNodes;
-    }
-
-    @Override
-    public void setTargetUnknownNodes(List<UnknownSchemaNodeBuilder> targetUnknownNodes) {
-        this.targetUnknownNodes = targetUnknownNodes;
     }
 
     @Override
@@ -251,7 +242,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         int result = 1;
         result = prime * result + ((groupingName == null) ? 0 : groupingName.hashCode());
         result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-        result = prime * result + ((refines == null) ? 0 : refines.hashCode());
         return result;
     }
 
@@ -279,13 +269,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
                 return false;
             }
         } else if (!parent.equals(other.parent)) {
-            return false;
-        }
-        if (refines == null) {
-            if (other.refines != null) {
-                return false;
-            }
-        } else if (!refines.equals(other.refines)) {
             return false;
         }
         return true;

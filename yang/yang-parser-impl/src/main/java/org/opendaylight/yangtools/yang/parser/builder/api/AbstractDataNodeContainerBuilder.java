@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * Basic implementation of DataNodeContainerBuilder.
  */
 public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder implements DataNodeContainerBuilder {
-    protected final QName qname;
+    protected QName qname;
 
     protected Set<DataSchemaNode> childNodes;
     protected final Set<DataSchemaNodeBuilder> addedChildNodes = new HashSet<DataSchemaNodeBuilder>();

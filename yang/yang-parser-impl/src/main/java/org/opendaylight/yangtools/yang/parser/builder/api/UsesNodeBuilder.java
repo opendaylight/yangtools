@@ -72,6 +72,10 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
      */
     void setGrouping(GroupingBuilder grouping);
 
+    boolean isAugmenting();
+
+    void setAugmenting(boolean augmenting);
+
     /**
      * Get augmentations defined in this uses node.
      *
@@ -130,27 +134,11 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
     Set<DataSchemaNodeBuilder> getTargetChildren();
 
     /**
-     * Set reference to target grouping child nodes.
-     *
-     * @param targetChildren
-     *            set of child nodes defined in target grouping
-     */
-    void setTargetChildren(Set<DataSchemaNodeBuilder> targetChildren);
-
-    /**
      * Get groupings defined in target grouping.
      *
      * @return set of GroupingBuilder objects
      */
     Set<GroupingBuilder> getTargetGroupings();
-
-    /**
-     * Set reference to target grouping groupings.
-     *
-     * @param targetGroupings
-     *            set of groupings defined in target grouping
-     */
-    void setTargetGroupings(Set<GroupingBuilder> targetGroupings);
 
     /**
      * Get type definitions defined in target grouping.
@@ -160,27 +148,11 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
     Set<TypeDefinitionBuilder> getTargetTypedefs();
 
     /**
-     * Set reference to target grouping typedefs.
-     *
-     * @param targetTypedefs
-     *            set of typedefs defined in target grouping
-     */
-    void setTargetTypedefs(Set<TypeDefinitionBuilder> targetTypedefs);
-
-    /**
      * Get unknown nodes defined in target grouping.
      *
      * @return list of unknown nodes defined in target grouping
      */
     List<UnknownSchemaNodeBuilder> getTargetUnknownNodes();
-
-    /**
-     * Set reference to target grouping unknown nodes.
-     *
-     * @param targetUnknownNodes
-     *            list of unknown nodes defined in target grouping.
-     */
-    void setTargetUnknownNodes(List<UnknownSchemaNodeBuilder> targetUnknownNodes);
 
     /**
      *
