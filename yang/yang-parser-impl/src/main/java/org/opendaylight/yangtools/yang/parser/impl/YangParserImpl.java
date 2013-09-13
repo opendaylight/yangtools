@@ -275,10 +275,12 @@ public final class YangParserImpl implements YangModelParser {
 
     private Map<ModuleBuilder, Module> build(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
         // fix unresolved nodes
-        findUsesTargets(modules, null);
+        resolveAugmentsTargetPath(modules);
+        resolveUsesTargetGrouping(modules, null);
         resolveDirtyNodes(modules);
         resolveAugments(modules);
         resolveUses(modules, false);
+        resolvedUsesPostProcessing(modules, false);
         resolveDeviations(modules);
 
         // build
@@ -298,7 +300,9 @@ public final class YangParserImpl implements YangModelParser {
     private Map<ModuleBuilder, Module> buildWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final SchemaContext context) {
         // fix unresolved nodes
-        findUsesTargets(modules, context);
+        // TODO
+        // fixAugmentsTargetPath(modules);
+        resolveUsesTargetGrouping(modules, context);
         resolvedDirtyNodesWithContext(modules, context);
         resolveAugmentsWithContext(modules, context);
         resolveUses(modules, true);
@@ -344,7 +348,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Search for dirty nodes (node which contains UnknownType) and resolve
      * unknown types.
-     * 
+     *
      * @param modules
      *            all available modules
      * @param module
@@ -388,9 +392,51 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     /**
+     * Correct augment target path.
+     *
+     * @param modules
+     *            all loaded modules
+     */
+    private void resolveAugmentsTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+        // collect augments from all loaded modules
+        final List<AugmentationSchemaBuilder> allAugments = new ArrayList<>();
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
+                allAugments.addAll(inner.getValue().getAllAugments());
+            }
+        }
+
+        for (AugmentationSchemaBuilder augment : allAugments) {
+            setCorrectAugmentTargetPath(modules, augment);
+        }
+    }
+
+    private void setCorrectAugmentTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final AugmentationSchemaBuilder augmentBuilder) {
+        ModuleBuilder module = ParserUtils.getParentModule(augmentBuilder);
+        SchemaPath oldSchemaPath = augmentBuilder.getTargetPath();
+        List<QName> oldPath = oldSchemaPath.getPath();
+        List<QName> newPath = new ArrayList<>();
+        for (QName qn : oldPath) {
+            ModuleBuilder currentModule = null;
+            String prefix = qn.getPrefix();
+            if (prefix == null || "".equals(prefix)) {
+                currentModule = module;
+            } else {
+                currentModule = ParserUtils.findDependentModuleBuilder(modules, module, prefix,
+                        augmentBuilder.getLine());
+            }
+            QName newQName = new QName(currentModule.getNamespace(), currentModule.getRevision(), prefix,
+                    qn.getLocalName());
+            newPath.add(newQName);
+        }
+        augmentBuilder.setTargetPath(new SchemaPath(newPath, augmentBuilder.getTargetPath().isAbsolute()));
+    }
+
+    /**
      * Go through all augment definitions and perform augmentation. It is
      * expected that modules are already sorted by their dependencies.
-     * 
+     *
      * @param modules
      *            all loaded modules
      */
@@ -432,23 +478,23 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Search for augment target and perform augmentation.
-     * 
+     *
      * @param modules
      *            all loaded modules
-     * @param augmentBuilder
+     * @param augment
      *            augment to resolve
      * @return true if target node found, false otherwise
      */
     private boolean resolveAugment(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final AugmentationSchemaBuilder augmentBuilder) {
-        if (augmentBuilder.isResolved()) {
+            final AugmentationSchemaBuilder augment) {
+        if (augment.isResolved()) {
             return true;
         }
 
-        int line = augmentBuilder.getLine();
-        ModuleBuilder module = getParentModule(augmentBuilder);
-        List<QName> path = augmentBuilder.getTargetPath().getPath();
-        Builder augmentParent = augmentBuilder.getParent();
+        int line = augment.getLine();
+        ModuleBuilder module = getParentModule(augment);
+        List<QName> path = augment.getTargetPath().getPath();
+        Builder augmentParent = augment.getParent();
 
         Builder firstNodeParent = null;
         if (augmentParent instanceof ModuleBuilder) {
@@ -464,18 +510,18 @@ public final class YangParserImpl implements YangModelParser {
             firstNodeParent = augmentParent.getParent();
         } else {
             // augment can be defined only under module or uses
-            throw new YangParseException(augmentBuilder.getModuleName(), line,
+            throw new YangParseException(augment.getModuleName(), line,
                     "Failed to parse augment: Unresolved parent of augment: " + augmentParent);
         }
 
-        return processAugmentation(augmentBuilder, firstNodeParent, path);
+        return processAugmentation(augment, firstNodeParent, path);
     }
 
     /**
      * Go through all augment definitions and resolve them. This method works in
      * same way as {@link #resolveAugments(Map)} except that if target node is
      * not found in loaded modules, it search for target node in given context.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param context
@@ -515,7 +561,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Search for augment target and perform augmentation.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param augment
@@ -561,7 +607,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Go through identity statements defined in current module and resolve
      * their 'base' statement if present.
-     * 
+     *
      * @param modules
      *            all modules
      * @param module
@@ -599,7 +645,7 @@ public final class YangParserImpl implements YangModelParser {
      * Go through identity statements defined in current module and resolve
      * their 'base' statement. Method tries to find base identity in given
      * modules. If base identity is not found, method will search it in context.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param module
@@ -650,14 +696,15 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Find and add reference of uses target grouping.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param context
      *            SchemaContext containing already resolved modules or null if
      *            context is not available
      */
-    private void findUsesTargets(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
+    private void resolveUsesTargetGrouping(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final SchemaContext context) {
         final List<UsesNodeBuilder> allUses = new ArrayList<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
@@ -685,7 +732,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Copy data from uses target. Augmentations have to be resolved already.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param resolveWithContext
@@ -716,12 +763,11 @@ public final class YangParserImpl implements YangModelParser {
                 }
             }
         }
-        resolvedUsesPostProcessing(modules, resolveWithContext);
     }
 
     /**
      * Update uses parent and perform refinement.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param resolveWithContext
@@ -816,7 +862,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Traverse through modules and resolve their deviation statements.
-     * 
+     *
      * @param modules
      *            all loaded modules
      */
@@ -831,7 +877,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Traverse through module and resolve its deviation statements.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param module
@@ -856,7 +902,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Traverse through modules and resolve their deviation statements with
      * given context.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param context
@@ -875,7 +921,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Traverse through module and resolve its deviation statements with given
      * context.
-     * 
+     *
      * @param modules
      *            all loaded modules
      * @param module
@@ -927,7 +973,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Correct deviation target path in deviation builder.
-     * 
+     *
      * @param dev
      *            deviation
      * @param dependentModuleBuilder

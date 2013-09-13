@@ -468,6 +468,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             }
             ((DataNodeContainerBuilder) parent).addUsesNode(usesBuilder);
         }
+        if(parent instanceof AugmentationSchemaBuilder) {
+            usesBuilder.setAugmenting(true);
+            usesBuilder.setParentAugment((AugmentationSchemaBuilder)parent);
+        }
+
         allUsesNodes.add(usesBuilder);
         return usesBuilder;
     }
@@ -1136,7 +1141,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
      * Add child to parent. Method checks for duplicates and add given child
      * node to parent. If node with same name is found, throws exception. If
      * parent is null, child node will be added directly to module.
-     * 
+     *
      * @param parent
      * @param child
      * @param childName
@@ -1152,11 +1157,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     /**
      * Adds child node <code>child</code> to the set of nodes child nodes.
-     * 
+     *
      * The method reduces the complexity of the method
      * {@link #addChildToParent(Builder, DataSchemaNodeBuilder, String)
      * addChildToParent}.
-     * 
+     *
      * @param child
      *            data schema node builder for child node
      * @param childName
@@ -1192,11 +1197,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     /**
      * Adds child node <code>child</code> to the group of child nodes of the
      * <code>parent</code>
-     * 
+     *
      * The method reduces the complexity of the method
      * {@link #addChildToParent(Builder, DataSchemaNodeBuilder, String)
      * addChildToParent}. *
-     * 
+     *
      * @param parent
      *            builder of node which is parent for <code>child</code>
      * @param child
@@ -1236,11 +1241,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     /**
-     * 
+     *
      * Implementation of <code>ModuleImport</code> interface only for the method
      * {@link ModuleBuilder#createModuleImport(String, Date, String)
      * createModuleImport}.
-     * 
+     *
      */
     private class ModuleImportImpl implements ModuleImport {
         final String moduleName;

@@ -70,6 +70,10 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         return instance;
     }
 
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
     public boolean isAddedByUses() {
         return addedByUses;
     }

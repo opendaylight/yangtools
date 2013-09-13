@@ -102,6 +102,12 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         build();
     }
 
+    @Override
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    @Override
     public SchemaPath getPath() {
         return schemaPath;
     }

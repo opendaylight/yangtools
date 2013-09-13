@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * Basic implementation of SchemaNodeBuilder.
  */
 public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implements SchemaNodeBuilder {
-    protected final QName qname;
+    protected QName qname;
     protected SchemaPath schemaPath;
     protected String description;
     protected String reference;
