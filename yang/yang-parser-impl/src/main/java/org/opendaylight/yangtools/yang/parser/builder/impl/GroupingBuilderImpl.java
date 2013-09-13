@@ -210,6 +210,40 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     public String toString() {
         return "grouping " + qname.getLocalName();
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        final GroupingBuilderImpl other = (GroupingBuilderImpl) obj;
+        if (schemaPath == null) {
+            if (other.schemaPath != null) {
+                return false;
+            }
+        } else if (!schemaPath.equals(other.schemaPath)) {
+            return false;
+        }
+        return true;
+    }
+    
 
     private final class GroupingDefinitionImpl implements GroupingDefinition {
         private final QName qname;
@@ -390,6 +424,10 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
             sb.append("]");
             return sb.toString();
         }
+        
+        
     }
+    
+    
 
 }
