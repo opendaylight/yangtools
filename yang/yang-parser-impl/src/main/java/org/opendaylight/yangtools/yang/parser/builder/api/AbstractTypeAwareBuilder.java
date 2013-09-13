@@ -24,6 +24,16 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
     public QName getQName() {
         return qname;
     }

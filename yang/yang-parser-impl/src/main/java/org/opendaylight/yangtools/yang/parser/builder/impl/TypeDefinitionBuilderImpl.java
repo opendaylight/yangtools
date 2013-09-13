@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
+import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
@@ -211,6 +212,42 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     @Override
     public String toString() {
         return "typedef " + qname.getLocalName();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        TypeDefinitionBuilderImpl other = (TypeDefinitionBuilderImpl) obj;
+
+        if (schemaPath == null) {
+            if (other.schemaPath != null) {
+                return false;
+            }
+        } else if (!schemaPath.equals(other.schemaPath)) {
+            return false;
+        }
+
+        return true;
     }
 
 }
