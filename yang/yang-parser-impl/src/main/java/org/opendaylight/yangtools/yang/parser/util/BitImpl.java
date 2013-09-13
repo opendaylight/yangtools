@@ -26,17 +26,15 @@ final class BitImpl implements BitsTypeDefinition.Bit {
     private final Status status;
     private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
 
-    BitImpl(final Long position, final QName qname,
-            final SchemaPath schemaPath, final String description,
-            final String reference, final Status status,
-            final List<UnknownSchemaNode> unknownNodes) {
+    BitImpl(final Long position, final QName qname, final SchemaPath schemaPath, final String description,
+            final String reference, final Status status, final List<UnknownSchemaNode> unknownNodes) {
         this.position = position;
         this.qname = qname;
         this.schemaPath = schemaPath;
         this.description = description;
         this.reference = reference;
         this.status = status;
-        if(unknownNodes != null) {
+        if (unknownNodes != null) {
             this.unknownNodes = unknownNodes;
         }
     }
@@ -85,15 +83,10 @@ final class BitImpl implements BitsTypeDefinition.Bit {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((qname == null) ? 0 : qname.hashCode());
-        result = prime * result
-                + ((schemaPath == null) ? 0 : schemaPath.hashCode());
-        result = prime * result
-                + ((position == null) ? 0 : position.hashCode());
-        result = prime
-                * result
-                + ((unknownNodes == null) ? 0 : unknownNodes.hashCode());
+        result = prime * result + ((qname == null) ? 0 : qname.hashCode());
+        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+        result = prime * result + ((position == null) ? 0 : position.hashCode());
+        result = prime * result + ((unknownNodes == null) ? 0 : unknownNodes.hashCode());
         return result;
     }
 
@@ -128,8 +121,7 @@ final class BitImpl implements BitsTypeDefinition.Bit {
 
     @Override
     public String toString() {
-        return Bit.class.getSimpleName() + "[name="
-                + qname.getLocalName() + ", position=" + position + "]";
+        return Bit.class.getSimpleName() + "[name=" + qname.getLocalName() + ", position=" + position + "]";
     }
 
 }

@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 
@@ -32,6 +33,70 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     public UnknownSchemaNodeBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line, qname);
         instance = new UnknownSchemaNodeImpl(qname);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (addedByUses ? 1 : 0);
+        result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+        result = prime * result + ((nodeParameter == null) ? 0 : nodeParameter.hashCode());
+        result = prime * result + ((extensionDefinition == null) ? 0 : extensionDefinition.hashCode());
+        result = prime * result + ((extensionBuilder == null) ? 0 : extensionBuilder.hashCode());
+
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        UnknownSchemaNodeBuilder other = (UnknownSchemaNodeBuilder) obj;
+
+        if (addedByUses != other.addedByUses) {
+            return false;
+        }
+        if (nodeType == null) {
+            if (other.nodeType != null) {
+                return false;
+            }
+        } else if (!nodeType.equals(other.nodeType)) {
+            return false;
+        }
+        if (nodeParameter == null) {
+            if (other.nodeParameter != null) {
+                return false;
+            }
+        } else if (!nodeParameter.equals(other.nodeParameter)) {
+            return false;
+        }
+        if (extensionDefinition == null) {
+            if (other.extensionDefinition != null) {
+                return false;
+            }
+        } else if (!extensionDefinition.equals(other.extensionDefinition)) {
+            return false;
+        }
+        if (extensionBuilder == null) {
+            if (other.extensionBuilder != null) {
+                return false;
+            }
+        } else if (!extensionBuilder.equals(other.extensionBuilder)) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -237,6 +302,109 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             sb.append(nodeParameter);
             return sb.toString();
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+
+            result = prime * result + ((qname == null) ? 0 : qname.hashCode());
+            result = prime * result + ((path == null) ? 0 : path.hashCode());
+            result = prime * result + ((extension == null) ? 0 : extension.hashCode());
+            result = prime * result + ((description == null) ? 0 : description.hashCode());
+            result = prime * result + ((reference == null) ? 0 : reference.hashCode());
+            result = prime * result + status.ordinal();
+            result = prime * result + ((unknownNodes == null) ? 0 : unknownNodes.hashCode());
+            result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+            result = prime * result + ((nodeParameter == null) ? 0 : nodeParameter.hashCode());
+            result = prime * result + (addedByUses ? 1 : 0);
+
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            UnknownSchemaNodeImpl other = (UnknownSchemaNodeImpl) obj;
+
+            if (addedByUses != other.addedByUses) {
+                return false;
+            }
+            if (qname == null) {
+                if (other.qname != null) {
+                    return false;
+                }
+            } else if (!qname.equals(other.qname)) {
+                return false;
+            }
+            if (path == null) {
+                if (other.path != null) {
+                    return false;
+                }
+            } else if (!path.equals(other.path)) {
+                return false;
+            }
+            if (extension == null) {
+                if (other.extension != null) {
+                    return false;
+                }
+            } else if (!extension.equals(other.extension)) {
+                return false;
+            }
+            if (description == null) {
+                if (other.description != null) {
+                    return false;
+                }
+            } else if (!description.equals(other.description)) {
+                return false;
+            }
+            if (reference == null) {
+                if (other.reference != null) {
+                    return false;
+                }
+            } else if (!reference.equals(other.reference)) {
+                return false;
+            }
+            if (status == null) {
+                if (other.status != null) {
+                    return false;
+                }
+            } else if (!status.equals(other.status)) {
+                return false;
+            }
+            if (unknownNodes == null) {
+                if (other.unknownNodes != null) {
+                    return false;
+                }
+            } else if (!unknownNodes.equals(other.unknownNodes)) {
+                return false;
+            }
+            if (nodeType == null) {
+                if (other.nodeType != null) {
+                    return false;
+                }
+            } else if (!nodeType.equals(other.nodeType)) {
+                return false;
+            }
+            if (nodeParameter == null) {
+                if (other.nodeParameter != null) {
+                    return false;
+                }
+            } else if (!nodeParameter.equals(other.nodeParameter)) {
+                return false;
+            }
+
+            return true;
+        }
+
     }
 
 }
