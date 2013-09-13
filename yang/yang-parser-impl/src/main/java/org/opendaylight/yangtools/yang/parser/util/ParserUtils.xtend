@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
-import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder
 
 
 public final class ParserUtils {
@@ -278,46 +277,58 @@ public final class ParserUtils {
 
 
 
-    public static dispatch def SchemaNodeBuilder findNode(ModuleBuilder parent,List<QName> path) {
-        var node = _findNode(parent as DataNodeContainerBuilder,path);
-        if(node !== null) return node;
-        
-        val current = path.get(0);
-        node = parent.getRpc(current.localName);
-        if(node !== null) return _findNode(node as RpcDefinitionBuilder,path.nextLevel);
-        node = parent.getNotification(current.localName);
-        return node;
+    private static def Builder findNode(Builder firstNodeParent, List<QName> path, String moduleName, int line) {
+        var currentName = "";
+        var currentParent = firstNodeParent;
+
+        val max = path.size();
+        var i = 0;
+        while(i < max) {
+            var qname = path.get(i);
+
+            currentName = qname.getLocalName();
+            if (currentParent instanceof DataNodeContainerBuilder) {
+                var dataNodeContainerParent = currentParent as DataNodeContainerBuilder;
+                var nodeFound = dataNodeContainerParent.getDataChildByName(currentName);
+                // if not found as regular child, search in uses
+                if (nodeFound == null) {
+                    var found = searchUses(dataNodeContainerParent, currentName);
+                    if(found == null) {
+                        return null;
+                    } else {
+                        currentParent = found;
+                    }
+                } else {
+                    currentParent = nodeFound;
+                }
+            } else if (currentParent instanceof ChoiceBuilder) {
+                val choiceParent = currentParent as ChoiceBuilder;
+                currentParent = choiceParent.getCaseNodeByName(currentName);
+            } else {
+                throw new YangParseException(moduleName, line,
+                        "Error in augment parsing: failed to find node " + currentName);
+            }
+
+            // if node in path not found, return null
+            if (currentParent == null) {
+                return null;
+            }
+            i = i + 1; 
+        }
+        return currentParent;
     }
     
-    public static dispatch def SchemaNodeBuilder findNode(DataNodeContainerBuilder parent,List<QName> path) {
-        if(path.empty) return parent as SchemaNodeBuilder;
-        
-        var current = path.get(0);
-        var node = parent.getDataChildByName(current.localName)
-        if(node !== null) return findNode(node,path.nextLevel);
-        for (UsesNodeBuilder unb : parent.usesNodes) {
-            node  = findNodeInUses(current.localName, unb);
-            if (node !== null) {
-                 return findNode(node,path.nextLevel);
+    private static def searchUses(DataNodeContainerBuilder dataNodeContainerParent, String name) {
+        var currentName = name;
+        for (unb : dataNodeContainerParent.usesNodes) {
+            val result = findNodeInUses(currentName, unb);
+            if (result != null) {
+                var copy = CopyUtils.copy(result, unb.getParent(), true);
+                unb.getTargetChildren().add(copy);
+                return copy;
             }
         }
-    }
-    
-    public static dispatch def SchemaNodeBuilder findNode(RpcDefinitionBuilder parent,List<QName> path) {
-        val current = path.get(0);
-        switch(current.localName) {
-            case "input": return findNode(parent.input,path.nextLevel)
-            case "output": return findNode(parent.output,path.nextLevel)
-        }
         return null;
-    }
-    
-    public static dispatch def SchemaNodeBuilder findNode(ChoiceBuilder parent,List<QName> path) {
-        if(path.empty) return parent as SchemaNodeBuilder;
-        var current = path.get(0);
-        val node = parent.getCaseNodeByName(current.localName);
-        if(node === null) return null;
-        return findNode(node,path.nextLevel);
     }
     
     public static def getRpc(ModuleBuilder module,String name) {
@@ -355,7 +366,7 @@ public final class ParserUtils {
         List<QName> path) {
 
             // traverse augment target path and try to reach target node
-            val currentParent = findNode(firstNodeParent,path);
+            val currentParent = findNode(firstNodeParent,path,augment.moduleName,augment.line);
             if (currentParent === null) return false;
             
             if ((currentParent instanceof DataNodeContainerBuilder)) {
@@ -367,8 +378,6 @@ public final class ParserUtils {
                     "Error in augment parsing: The target node MUST be either a container, list, choice, case, input, output, or notification node.");
             }
             (currentParent as AugmentationTargetBuilder).addAugmentation(augment);
-            val oldPath = (currentParent as SchemaNodeBuilder).getPath();
-            augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
             augment.setResolved(true);
             return true;
         }
@@ -382,21 +391,27 @@ public final class ParserUtils {
      *            uses node which target grouping should be searched
      * @return node with given name if found, null otherwise
      */
-        private static def DataSchemaNodeBuilder findNodeInUses(String localName, UsesNodeBuilder uses) {
-            val target = uses.getGroupingBuilder();
-            for (DataSchemaNodeBuilder child : target.getChildNodeBuilders()) {
-                if (child.getQName().getLocalName().equals(localName)) {
-                    return child;
-                }
+    private static def DataSchemaNodeBuilder findNodeInUses(String localName, UsesNodeBuilder uses) {
+        for(child : uses.targetChildren) {
+            if (child.getQName().getLocalName().equals(localName)) {
+                return child;
             }
-            for (UsesNodeBuilder usesNode : target.getUsesNodes()) {
-                val result = findNodeInUses(localName, usesNode);
-                if (result !== null) {
-                    return result;
-                }
-            }
-            return null;
         }
+
+        val target = uses.groupingBuilder;
+        for (child : target.childNodeBuilders) {
+            if (child.getQName().getLocalName().equals(localName)) {
+                return child;
+            }
+        }
+        for (usesNode : target.usesNodes) {
+            val result = findNodeInUses(localName, usesNode);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
 
         /**
      * Find augment target node in given context and perform augmentation.

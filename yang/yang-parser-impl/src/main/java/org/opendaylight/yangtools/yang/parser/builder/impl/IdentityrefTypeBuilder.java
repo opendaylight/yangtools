@@ -42,6 +42,11 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    @Override
     public IdentityrefType build() {
         return new IdentityrefType(baseQName, schemaPath);
     }

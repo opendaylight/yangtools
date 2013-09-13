@@ -158,6 +158,11 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     @Override
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    @Override
     public Set<TypeDefinitionBuilder> getTypeDefinitionBuilders() {
         return addedTypedefs;
     }
@@ -176,6 +181,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         this.typedefs = typedefs;
     }
 
+    @Override
     public SchemaPath getPath() {
         return schemaPath;
     }
@@ -185,6 +191,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         this.schemaPath = schemaPath;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -194,6 +201,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         this.description = description;
     }
 
+    @Override
     public String getReference() {
         return reference;
     }
@@ -203,6 +211,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         this.reference = reference;
     }
 
+    @Override
     public Status getStatus() {
         return status;
     }
@@ -214,6 +223,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         }
     }
 
+    @Override
     public Set<UsesNodeBuilder> getUsesNodes() {
         return addedUsesNodes;
     }

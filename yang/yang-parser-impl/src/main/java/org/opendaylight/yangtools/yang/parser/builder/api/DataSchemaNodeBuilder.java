@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
 
@@ -15,6 +16,8 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
  * list, module, notification].
  */
 public interface DataSchemaNodeBuilder extends SchemaNodeBuilder {
+
+    void setQName(QName qname);
 
     /**
      * Build DataSchemaNode object from this builder.

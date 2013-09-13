@@ -40,13 +40,6 @@ module custom {
         }
     }
 
-    augment "/types:interfaces/types:ifEntry/t3:augment-holder/t1:schemas" {
-        when "if:leafType='ds1'";
-        leaf linkleaf {
-            type binary;
-        }
-    }
-
     container network {
         c-define point {
         }

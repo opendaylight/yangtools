@@ -14,7 +14,6 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -136,22 +135,18 @@ public class AugmentTest {
         // testfile3
         Module module3 = TestUtils.findModule(modules, "custom");
         augmentations = module3.getAugmentations();
-        assertEquals(3, augmentations.size());
+        assertEquals(2, augmentations.size());
         AugmentationSchema augment1 = null;
         AugmentationSchema augment2 = null;
-        AugmentationSchema augment3 = null;
         for (AugmentationSchema as : augmentations) {
             if("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
                 augment1 = as;
             } else if("if:ifType='ds2'".equals(as.getWhenCondition().toString())) {
                 augment2 = as;
-            } else if ("if:leafType='ds1'".equals(as.getWhenCondition().toString())) {
-                augment3 = as;
             }
         }
         assertNotNull(augment1);
         assertNotNull(augment2);
-        assertNotNull(augment3);
 
         assertEquals(1, augment1.getChildNodes().size());
         ContainerSchemaNode augmentHolder = (ContainerSchemaNode) augment1.getDataChildByName("augment-holder");
@@ -160,10 +155,6 @@ public class AugmentTest {
         assertEquals(1, augment2.getChildNodes().size());
         ContainerSchemaNode augmentHolder2 = (ContainerSchemaNode) augment2.getDataChildByName("augment-holder2");
         assertTrue(augmentHolder2.isAugmenting());
-
-        assertEquals(1, augment3.getChildNodes().size());
-        LeafSchemaNode linkleaf = (LeafSchemaNode) augment3.getDataChildByName("linkleaf");
-        assertTrue(linkleaf.isAugmenting());
     }
 
     @Test
@@ -219,20 +210,6 @@ public class AugmentTest {
         qnames[3] = new QName(types1NS, types1Rev, t1, "odl");
         expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
         assertEquals(expectedPath, odl.getPath());
-
-        // custom.yang
-        // augment "/data:interfaces/data:ifEntry/t3:augment-holder/t1:schemas"
-        LeafSchemaNode linkleaf = (LeafSchemaNode) schemas.getDataChildByName("linkleaf");
-        assertNotNull(linkleaf);
-
-        qnames = new QName[5];
-        qnames[0] = q0;
-        qnames[1] = q1;
-        qnames[2] = q2;
-        qnames[3] = new QName(types1NS, types1Rev, t1, "schemas");
-        qnames[4] = new QName(types3NS, types3Rev, t3, "linkleaf");
-        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
-        assertEquals(expectedPath, linkleaf.getPath());
     }
 
     @Test

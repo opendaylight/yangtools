@@ -468,6 +468,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             }
             ((DataNodeContainerBuilder) parent).addUsesNode(usesBuilder);
         }
+        if(parent instanceof AugmentationSchemaBuilder) {
+            usesBuilder.setAugmenting(true);
+        }
+
         allUsesNodes.add(usesBuilder);
         return usesBuilder;
     }

@@ -82,6 +82,12 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         return instance;
     }
 
+    @Override
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    @Override
     public SchemaPath getPath() {
         return schemaPath;
     }
@@ -91,6 +97,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         this.schemaPath = schemaPath;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -100,6 +107,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         this.description = description;
     }
 
+    @Override
     public String getReference() {
         return reference;
     }
@@ -109,6 +117,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         this.reference = reference;
     }
 
+    @Override
     public Status getStatus() {
         return status;
     }
@@ -120,6 +129,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         }
     }
 
+    @Override
     public boolean isAugmenting() {
         return augmenting;
     }
@@ -139,6 +149,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         this.addedByUses = addedByUses;
     }
 
+    @Override
     public Boolean isConfiguration() {
         return configuration;
     }

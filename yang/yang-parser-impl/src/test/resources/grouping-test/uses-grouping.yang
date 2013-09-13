@@ -4,6 +4,7 @@ module uses-grouping {
 	prefix "ug";
 
 	import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
+	import grouping-definitions { prefix gd; revision-date 2013-09-04; }
 
 	organization "opendaylight";
 	contact "asdf";
@@ -11,40 +12,17 @@ module uses-grouping {
 	revision "2013-07-30" {
 	}
 	
-	typedef int-ext {
-	    type union {
-	        type uint8;
-	        type protocol-version;
-	    }
-	}
-
-	typedef protocol-version {
-		type uint8 {
-			range 1..7;
-		}
-	}
 
 	grouping bandwidth-object {
-		uses object-header;
+		uses gd:object-header;
 
 		container bandwidth {
-			uses ieee754-32;
-		}
-	}
-
-	grouping base-header {
-		leaf delete {
-			type uint32;
-			mandatory true;
-		}
-		leaf setup {
-			type uint32;
-			mandatory true;
+			uses gd:ieee754-32;
 		}
 	}
 
 	grouping endpoints-object {
-		uses object;
+		uses gd:object;
 
 		choice address-family {
 			case ipv4 {
@@ -62,88 +40,36 @@ module uses-grouping {
 		}
 	}
 
-	grouping ieee754-32 {
-		reference "IEEE 754-2008";
-		leaf fraction {
-			type uint32 {
-				range 0..1677215;
-			}
-			mandatory true;
-		}
-	}
-
 	grouping lsp-attributes {
 		container bandwidth {
 			uses bandwidth-object;
 		}
 	}
 
-	grouping message-header {
-		leaf version {
-			type protocol-version;
-			default 1;
-		}
-		leaf type {
-		    type int-ext;
-		}
-	}
-
 	grouping metric-object {
-		uses object;
+		uses gd:object;
 		leaf metric-type {
 			type uint8;
 			mandatory true;
 		}
 	}
 	
-	grouping object {
-		uses object-header;
-
-		container box {
-		}
-	}
-
-	grouping object-header {
-		leaf processing-rule {
-			type boolean;
-		}
-		leaf ignore {
-			type boolean;
-		}
-	}
-	
 	grouping path-key-object {
-		uses object-header;
+		uses gd:object-header;
 
 		list path-keys {
 		}
 	}
-	
+
 	grouping route-object {
-		uses object-header;
+		uses gd:object-header;
 
 		list subobjects {
 		}
 	}
 
-	grouping rp-object {
-		uses object {
-			augment "box" {
-				container order {
-					uses base-header;
-				}
-			}
-		}
-
-		leaf priority {
-			type uint8 {
-				range 1..7;
-			}
-		}
-	}
-	
 	grouping svec-object {
-		uses object-header;
+		uses gd:object-header;
 
 		leaf link-diverse {
 			type boolean;
@@ -153,18 +79,18 @@ module uses-grouping {
 
 
 	notification pcreq {
-		uses message-header;
+		uses gd:message-header;
 
 		list requests {
 			container rp {
-				uses rp-object;
+				uses gd:rp-object;
 			}
 			container path-key-expansion {
 				when "rp/path-key = true";
 				container path-key {
 					uses path-key-object {
 					    augment path-keys {
-					        uses message-header;
+					        uses gd:message-header;
 					    }
 					}
 				}

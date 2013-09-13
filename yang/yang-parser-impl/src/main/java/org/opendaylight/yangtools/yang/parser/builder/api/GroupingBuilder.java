@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 
 /**
@@ -18,5 +19,7 @@ public interface GroupingBuilder extends DataNodeContainerBuilder, SchemaNodeBui
      * Build GroupingDefinition object from this builder.
      */
     GroupingDefinition build();
+
+    void setQName(QName qname);
 
 }

@@ -164,6 +164,11 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     }
 
     @Override
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    @Override
     public Set<TypeDefinitionBuilder> getTypeDefinitionBuilders() {
         return addedTypedefs;
     }

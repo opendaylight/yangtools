@@ -11,11 +11,14 @@ import java.util.Comparator;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 
 public final class Comparators {
 
     public static final QNameComparator QNAME_COMP = new QNameComparator();
     public static final SchemaNodeComparator SCHEMA_NODE_COMP = new SchemaNodeComparator();
+    public static final UsesNodeComparator USES_NODE_COMP = new UsesNodeComparator();
 
     private Comparators() {
     }
@@ -32,6 +35,24 @@ public final class Comparators {
         public int compare(SchemaNode o1, SchemaNode o2) {
             return o1.getQName().getLocalName().compareTo(o2.getQName().getLocalName());
         }
+    }
+
+    private static final class UsesNodeComparator implements Comparator<UsesNodeBuilder> {
+        @Override
+        public int compare(UsesNodeBuilder o1, UsesNodeBuilder o2) {
+            int x = countChildUses(o1);
+            int y = countChildUses(o2);
+            return x - y;
+        }
+    }
+
+    private static int countChildUses(UsesNodeBuilder usesNode) {
+        GroupingBuilder grouping = usesNode.getGroupingBuilder();
+        int x = grouping.getUsesNodes().size();
+        for(UsesNodeBuilder u : grouping.getUsesNodes()) {
+            x += countChildUses(u);
+        }
+        return x;
     }
 
 }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import java.util.List;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -19,6 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * Interface for builders of 'typedef' statement.
  */
 public interface TypeDefinitionBuilder extends TypeAwareBuilder, SchemaNodeBuilder, GroupingMember {
+
+    void setQName(QName qname);
 
     TypeDefinition<?> build();
 

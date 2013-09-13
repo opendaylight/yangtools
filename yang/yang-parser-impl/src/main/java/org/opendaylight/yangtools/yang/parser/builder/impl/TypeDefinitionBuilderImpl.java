@@ -81,6 +81,11 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     }
 
     @Override
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    @Override
     public SchemaPath getPath() {
         return schemaPath;
     }

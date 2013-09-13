@@ -119,6 +119,11 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
 
 
     @Override
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    @Override
     public Set<TypeDefinitionBuilder> getTypeDefinitionBuilders() {
         return addedTypedefs;
     }
