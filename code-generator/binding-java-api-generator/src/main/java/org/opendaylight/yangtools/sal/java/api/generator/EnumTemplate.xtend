@@ -2,6 +2,9 @@ package org.opendaylight.yangtools.sal.java.api.generator
 
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
+import java.util.Map
+import java.util.HashMap
+
 /**
  * Template for generating JAVA enumeration type. 
  */
@@ -45,9 +48,26 @@ class EnumTemplate extends BaseTemplate {
         ENDFOR»;
         
             int value;
+            static java.util.Map<java.lang.Integer, «enums.name»> valueMap;
+
+            static {
+                valueMap = new java.util.HashMap<>();
+                for («enums.name» enumItem : «enums.name».values())
+                {
+                    valueMap.put(enumItem.value, enumItem);
+                }
+            }
         
             private «enums.name»(int value) {
                 this.value = value;
+            }
+            
+            /**
+             * @param valueArg
+             * @return corresponding «enums.name» item
+             */
+            public static «enums.name» forValue(int valueArg) {
+                return valueMap.get(valueArg);
             }
         }
     '''
