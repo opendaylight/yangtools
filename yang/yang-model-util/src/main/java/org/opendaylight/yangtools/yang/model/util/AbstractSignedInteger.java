@@ -92,7 +92,7 @@ public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     }
 
     @Override
-    public List<RangeConstraint> getRangeStatements() {
+    public List<RangeConstraint> getRangeConstraints() {
         return rangeStatements;
     }
 

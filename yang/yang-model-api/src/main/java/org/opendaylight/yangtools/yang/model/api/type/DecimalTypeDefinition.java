@@ -25,7 +25,7 @@ public interface DecimalTypeDefinition extends TypeDefinition<DecimalTypeDefinit
      *         the <code>range</code> which is substatement of the
      *         <code>type</code> statement
      */
-    List<RangeConstraint> getRangeStatements();
+    List<RangeConstraint> getRangeConstraints();
 
     /**
      * Returns integer between 1 and 18 inclusively. <br>

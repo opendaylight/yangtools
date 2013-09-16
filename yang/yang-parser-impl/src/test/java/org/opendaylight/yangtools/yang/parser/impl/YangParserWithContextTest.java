@@ -82,7 +82,7 @@ public class YangParserWithContextTest {
         assertEquals("port-number", qname.getLocalName());
 
         ExtendedType dscpExt = (ExtendedType) TestUtils.findTypedef(module.getTypeDefinitions(), "dscp-ext");
-        List<RangeConstraint> ranges = dscpExt.getRanges();
+        List<RangeConstraint> ranges = dscpExt.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
         assertEquals(0L, range.getMin());

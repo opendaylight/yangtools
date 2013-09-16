@@ -238,9 +238,9 @@ public class YangParserTest {
         assertEquals(nodesRev, leafTypeQName.getRevision());
         assertNull(leafType.getUnits());
         assertNull(leafType.getDefaultValue());
-        assertTrue(leafType.getLengths().isEmpty());
-        assertTrue(leafType.getPatterns().isEmpty());
-        List<RangeConstraint> ranges = leafType.getRanges();
+        assertTrue(leafType.getLengthConstraints().isEmpty());
+        assertTrue(leafType.getPatternConstraints().isEmpty());
+        List<RangeConstraint> ranges = leafType.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
         assertEquals(12L, range.getMin());
@@ -254,9 +254,9 @@ public class YangParserTest {
         assertEquals(typesRev, baseTypeQName.getRevision());
         assertEquals("mile", baseType.getUnits());
         assertEquals("11", baseType.getDefaultValue());
-        assertTrue(leafType.getLengths().isEmpty());
-        assertTrue(leafType.getPatterns().isEmpty());
-        List<RangeConstraint> baseTypeRanges = baseType.getRanges();
+        assertTrue(leafType.getLengthConstraints().isEmpty());
+        assertTrue(leafType.getPatternConstraints().isEmpty());
+        List<RangeConstraint> baseTypeRanges = baseType.getRangeConstraints();
         assertEquals(2, baseTypeRanges.size());
         RangeConstraint baseTypeRange1 = baseTypeRanges.get(0);
         assertEquals(3L, baseTypeRange1.getMin());
@@ -273,9 +273,9 @@ public class YangParserTest {
         assertEquals(typesRev, baseQName.getRevision());
         assertNull(base.getUnits());
         assertNull(base.getDefaultValue());
-        assertTrue(leafType.getLengths().isEmpty());
-        assertTrue(leafType.getPatterns().isEmpty());
-        List<RangeConstraint> baseRanges = base.getRanges();
+        assertTrue(leafType.getLengthConstraints().isEmpty());
+        assertTrue(leafType.getPatternConstraints().isEmpty());
+        List<RangeConstraint> baseRanges = base.getRangeConstraints();
         assertEquals(1, baseRanges.size());
         RangeConstraint baseRange = baseRanges.get(0);
         assertEquals(2L, baseRange.getMin());
@@ -297,12 +297,12 @@ public class YangParserTest {
         assertEquals(typesRev, typeQName.getRevision());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
-        List<PatternConstraint> patterns = type.getPatterns();
+        List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
         assertEquals("[e-z]*", pattern.getRegularExpression());
-        assertTrue(type.getLengths().isEmpty());
-        assertTrue(type.getRanges().isEmpty());
+        assertTrue(type.getLengthConstraints().isEmpty());
+        assertTrue(type.getRangeConstraints().isEmpty());
 
         ExtendedType baseType1 = (ExtendedType) type.getBaseType();
         QName baseType1QName = baseType1.getQName();
@@ -312,12 +312,12 @@ public class YangParserTest {
         assertEquals(typesRev, baseType1QName.getRevision());
         assertNull(baseType1.getUnits());
         assertNull(baseType1.getDefaultValue());
-        patterns = baseType1.getPatterns();
+        patterns = baseType1.getPatternConstraints();
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
         assertEquals("[b-u]*", pattern.getRegularExpression());
-        assertTrue(baseType1.getLengths().isEmpty());
-        assertTrue(baseType1.getRanges().isEmpty());
+        assertTrue(baseType1.getLengthConstraints().isEmpty());
+        assertTrue(baseType1.getRangeConstraints().isEmpty());
 
         ExtendedType baseType2 = (ExtendedType) baseType1.getBaseType();
         QName baseType2QName = baseType2.getQName();
@@ -327,13 +327,13 @@ public class YangParserTest {
         assertEquals(typesRev, baseType2QName.getRevision());
         assertNull(baseType2.getUnits());
         assertNull(baseType2.getDefaultValue());
-        assertTrue(baseType2.getPatterns().isEmpty());
-        List<LengthConstraint> baseType2Lengths = baseType2.getLengths();
+        assertTrue(baseType2.getPatternConstraints().isEmpty());
+        List<LengthConstraint> baseType2Lengths = baseType2.getLengthConstraints();
         assertEquals(1, baseType2Lengths.size());
         LengthConstraint length = baseType2Lengths.get(0);
         assertEquals(6L, length.getMin());
         assertEquals(10L, length.getMax());
-        assertTrue(baseType2.getRanges().isEmpty());
+        assertTrue(baseType2.getRangeConstraints().isEmpty());
 
         ExtendedType baseType3 = (ExtendedType) baseType2.getBaseType();
         QName baseType3QName = baseType3.getQName();
@@ -343,16 +343,16 @@ public class YangParserTest {
         assertEquals(typesRev, baseType3QName.getRevision());
         assertNull(baseType3.getUnits());
         assertNull(baseType3.getDefaultValue());
-        patterns = baseType3.getPatterns();
+        patterns = baseType3.getPatternConstraints();
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
         assertEquals("[a-k]*", pattern.getRegularExpression());
-        List<LengthConstraint> baseType3Lengths = baseType3.getLengths();
+        List<LengthConstraint> baseType3Lengths = baseType3.getLengthConstraints();
         assertEquals(1, baseType3Lengths.size());
         length = baseType3Lengths.get(0);
         assertEquals(5L, length.getMin());
         assertEquals(11L, length.getMax());
-        assertTrue(baseType3.getRanges().isEmpty());
+        assertTrue(baseType3.getRangeConstraints().isEmpty());
 
         assertTrue(baseType3.getBaseType() instanceof StringType);
     }
@@ -371,13 +371,13 @@ public class YangParserTest {
         assertEquals(nodesRev, typeQName.getRevision());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
-        assertTrue(type.getPatterns().isEmpty());
-        List<LengthConstraint> typeLengths = type.getLengths();
+        assertTrue(type.getPatternConstraints().isEmpty());
+        List<LengthConstraint> typeLengths = type.getLengthConstraints();
         assertEquals(1, typeLengths.size());
         LengthConstraint length = typeLengths.get(0);
         assertEquals(7L, length.getMin());
         assertEquals(10L, length.getMax());
-        assertTrue(type.getRanges().isEmpty());
+        assertTrue(type.getRangeConstraints().isEmpty());
 
         ExtendedType baseType1 = (ExtendedType) type.getBaseType();
         QName baseType1QName = baseType1.getQName();
@@ -387,13 +387,13 @@ public class YangParserTest {
         assertEquals(typesRev, baseType1QName.getRevision());
         assertNull(baseType1.getUnits());
         assertNull(baseType1.getDefaultValue());
-        assertTrue(baseType1.getPatterns().isEmpty());
-        List<LengthConstraint> baseType2Lengths = baseType1.getLengths();
+        assertTrue(baseType1.getPatternConstraints().isEmpty());
+        List<LengthConstraint> baseType2Lengths = baseType1.getLengthConstraints();
         assertEquals(1, baseType2Lengths.size());
         length = baseType2Lengths.get(0);
         assertEquals(6L, length.getMin());
         assertEquals(10L, length.getMax());
-        assertTrue(baseType1.getRanges().isEmpty());
+        assertTrue(baseType1.getRangeConstraints().isEmpty());
 
         ExtendedType baseType2 = (ExtendedType) baseType1.getBaseType();
         QName baseType2QName = baseType2.getQName();
@@ -403,16 +403,16 @@ public class YangParserTest {
         assertEquals(typesRev, baseType2QName.getRevision());
         assertNull(baseType2.getUnits());
         assertNull(baseType2.getDefaultValue());
-        List<PatternConstraint> patterns = baseType2.getPatterns();
+        List<PatternConstraint> patterns = baseType2.getPatternConstraints();
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
         assertEquals("[a-k]*", pattern.getRegularExpression());
-        List<LengthConstraint> baseType3Lengths = baseType2.getLengths();
+        List<LengthConstraint> baseType3Lengths = baseType2.getLengthConstraints();
         assertEquals(1, baseType3Lengths.size());
         length = baseType3Lengths.get(0);
         assertEquals(5L, length.getMin());
         assertEquals(11L, length.getMax());
-        assertTrue(baseType2.getRanges().isEmpty());
+        assertTrue(baseType2.getRangeConstraints().isEmpty());
 
         assertTrue(baseType2.getBaseType() instanceof StringType);
     }
@@ -431,9 +431,9 @@ public class YangParserTest {
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertEquals(4, (int) type.getFractionDigits());
-        assertTrue(type.getLengths().isEmpty());
-        assertTrue(type.getPatterns().isEmpty());
-        assertTrue(type.getRanges().isEmpty());
+        assertTrue(type.getLengthConstraints().isEmpty());
+        assertTrue(type.getPatternConstraints().isEmpty());
+        assertTrue(type.getRangeConstraints().isEmpty());
 
         ExtendedType typeBase = (ExtendedType) type.getBaseType();
         QName typeBaseQName = typeBase.getQName();
@@ -444,9 +444,9 @@ public class YangParserTest {
         assertNull(typeBase.getUnits());
         assertNull(typeBase.getDefaultValue());
         assertNull(typeBase.getFractionDigits());
-        assertTrue(typeBase.getLengths().isEmpty());
-        assertTrue(typeBase.getPatterns().isEmpty());
-        assertTrue(typeBase.getRanges().isEmpty());
+        assertTrue(typeBase.getLengthConstraints().isEmpty());
+        assertTrue(typeBase.getPatternConstraints().isEmpty());
+        assertTrue(typeBase.getRangeConstraints().isEmpty());
 
         Decimal64 decimal = (Decimal64) typeBase.getBaseType();
         assertEquals(6, (int) decimal.getFractionDigits());
@@ -466,9 +466,9 @@ public class YangParserTest {
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertNull(type.getFractionDigits());
-        assertTrue(type.getLengths().isEmpty());
-        assertTrue(type.getPatterns().isEmpty());
-        assertTrue(type.getRanges().isEmpty());
+        assertTrue(type.getLengthConstraints().isEmpty());
+        assertTrue(type.getPatternConstraints().isEmpty());
+        assertTrue(type.getRangeConstraints().isEmpty());
 
         Decimal64 baseTypeDecimal = (Decimal64) type.getBaseType();
         assertEquals(6, (int) baseTypeDecimal.getFractionDigits());
@@ -488,9 +488,9 @@ public class YangParserTest {
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertNull(type.getFractionDigits());
-        assertTrue(type.getLengths().isEmpty());
-        assertTrue(type.getPatterns().isEmpty());
-        assertTrue(type.getRanges().isEmpty());
+        assertTrue(type.getLengthConstraints().isEmpty());
+        assertTrue(type.getPatternConstraints().isEmpty());
+        assertTrue(type.getRangeConstraints().isEmpty());
 
         ExtendedType baseType = (ExtendedType) type.getBaseType();
         QName baseTypeQName = baseType.getQName();
@@ -501,9 +501,9 @@ public class YangParserTest {
         assertNull(baseType.getUnits());
         assertNull(baseType.getDefaultValue());
         assertNull(baseType.getFractionDigits());
-        assertTrue(baseType.getLengths().isEmpty());
-        assertTrue(baseType.getPatterns().isEmpty());
-        assertTrue(baseType.getRanges().isEmpty());
+        assertTrue(baseType.getLengthConstraints().isEmpty());
+        assertTrue(baseType.getPatternConstraints().isEmpty());
+        assertTrue(baseType.getRangeConstraints().isEmpty());
 
         UnionType unionType = (UnionType) baseType.getBaseType();
         List<TypeDefinition<?>> unionTypes = unionType.getTypes();
@@ -518,9 +518,9 @@ public class YangParserTest {
         assertNull(unionType1.getUnits());
         assertNull(unionType1.getDefaultValue());
         assertNull(unionType1.getFractionDigits());
-        assertTrue(unionType1.getLengths().isEmpty());
-        assertTrue(unionType1.getPatterns().isEmpty());
-        List<RangeConstraint> ranges = unionType1.getRanges();
+        assertTrue(unionType1.getLengthConstraints().isEmpty());
+        assertTrue(unionType1.getPatternConstraints().isEmpty());
+        List<RangeConstraint> ranges = unionType1.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
         assertEquals(1L, range.getMin());
@@ -544,9 +544,9 @@ public class YangParserTest {
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertNull(type.getFractionDigits());
-        assertTrue(type.getLengths().isEmpty());
-        assertTrue(type.getPatterns().isEmpty());
-        assertTrue(type.getRanges().isEmpty());
+        assertTrue(type.getLengthConstraints().isEmpty());
+        assertTrue(type.getPatternConstraints().isEmpty());
+        assertTrue(type.getRangeConstraints().isEmpty());
 
         ExtendedType typeBase = (ExtendedType) type.getBaseType();
         QName typeBaseQName = typeBase.getQName();
@@ -557,9 +557,9 @@ public class YangParserTest {
         assertNull(typeBase.getUnits());
         assertNull(typeBase.getDefaultValue());
         assertNull(typeBase.getFractionDigits());
-        assertTrue(typeBase.getLengths().isEmpty());
-        assertTrue(typeBase.getPatterns().isEmpty());
-        assertTrue(typeBase.getRanges().isEmpty());
+        assertTrue(typeBase.getLengthConstraints().isEmpty());
+        assertTrue(typeBase.getPatternConstraints().isEmpty());
+        assertTrue(typeBase.getRangeConstraints().isEmpty());
 
         UnionType union = (UnionType) typeBase.getBaseType();
         List<TypeDefinition<?>> unionTypes = union.getTypes();
@@ -576,9 +576,9 @@ public class YangParserTest {
         assertNull(unionType1.getUnits());
         assertNull(unionType1.getDefaultValue());
         assertNull(unionType1.getFractionDigits());
-        assertTrue(unionType1.getLengths().isEmpty());
-        assertTrue(unionType1.getPatterns().isEmpty());
-        assertTrue(unionType1.getRanges().isEmpty());
+        assertTrue(unionType1.getLengthConstraints().isEmpty());
+        assertTrue(unionType1.getPatternConstraints().isEmpty());
+        assertTrue(unionType1.getRangeConstraints().isEmpty());
 
         UnionType nestedUnion = (UnionType) unionType1.getBaseType();
         List<TypeDefinition<?>> nestedUnion2Types = nestedUnion.getTypes();
@@ -595,9 +595,9 @@ public class YangParserTest {
         assertNull(myUnionExt.getUnits());
         assertNull(myUnionExt.getDefaultValue());
         assertNull(myUnionExt.getFractionDigits());
-        assertTrue(myUnionExt.getLengths().isEmpty());
-        assertTrue(myUnionExt.getPatterns().isEmpty());
-        assertTrue(myUnionExt.getRanges().isEmpty());
+        assertTrue(myUnionExt.getLengthConstraints().isEmpty());
+        assertTrue(myUnionExt.getPatternConstraints().isEmpty());
+        assertTrue(myUnionExt.getRangeConstraints().isEmpty());
 
         ExtendedType myUnion = (ExtendedType) myUnionExt.getBaseType();
         QName myUnionQName = myUnion.getQName();
@@ -608,9 +608,9 @@ public class YangParserTest {
         assertNull(myUnion.getUnits());
         assertNull(myUnion.getDefaultValue());
         assertNull(myUnion.getFractionDigits());
-        assertTrue(myUnion.getLengths().isEmpty());
-        assertTrue(myUnion.getPatterns().isEmpty());
-        assertTrue(myUnion.getRanges().isEmpty());
+        assertTrue(myUnion.getLengthConstraints().isEmpty());
+        assertTrue(myUnion.getPatternConstraints().isEmpty());
+        assertTrue(myUnion.getRangeConstraints().isEmpty());
 
         UnionType myUnionBase = (UnionType) myUnion.getBaseType();
         List<TypeDefinition<?>> myUnionBaseTypes = myUnionBase.getTypes();
@@ -627,9 +627,9 @@ public class YangParserTest {
         assertNull(int16Ext.getUnits());
         assertNull(int16Ext.getDefaultValue());
         assertNull(int16Ext.getFractionDigits());
-        assertTrue(int16Ext.getLengths().isEmpty());
-        assertTrue(int16Ext.getPatterns().isEmpty());
-        List<RangeConstraint> ranges = int16Ext.getRanges();
+        assertTrue(int16Ext.getLengthConstraints().isEmpty());
+        assertTrue(int16Ext.getPatternConstraints().isEmpty());
+        List<RangeConstraint> ranges = int16Ext.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
         assertEquals(1L, range.getMin());

@@ -626,9 +626,9 @@ public final class CopyUtils {
         builder.setDescription(typedef.getDescription());
         builder.setReference(typedef.getReference());
         builder.setStatus(typedef.getStatus());
-        builder.setRanges(typedef.getRanges());
-        builder.setLengths(typedef.getLengths());
-        builder.setPatterns(typedef.getPatterns());
+        builder.setRanges(typedef.getRangeConstraints());
+        builder.setLengths(typedef.getLengthConstraints());
+        builder.setPatterns(typedef.getPatternConstraints());
         builder.setFractionDigits(typedef.getFractionDigits());
         final TypeDefinition<?> type = typedef.getBaseType();
         builder.setType(type);

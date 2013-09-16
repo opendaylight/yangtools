@@ -256,15 +256,15 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
         return builder.toString();
     }
 
-    public List<RangeConstraint> getRanges() {
+    public List<RangeConstraint> getRangeConstraints() {
         return ranges;
     }
 
-    public List<LengthConstraint> getLengths() {
+    public List<LengthConstraint> getLengthConstraints() {
         return lengths;
     }
 
-    public List<PatternConstraint> getPatterns() {
+    public List<PatternConstraint> getPatternConstraints() {
         return patterns;
     }
 

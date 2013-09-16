@@ -88,7 +88,7 @@ public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefi
     }
 
     @Override
-    public List<RangeConstraint> getRangeStatements() {
+    public List<RangeConstraint> getRangeConstraints() {
         return rangeStatements;
     }
 

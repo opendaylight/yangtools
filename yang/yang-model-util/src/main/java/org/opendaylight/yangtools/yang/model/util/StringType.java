@@ -141,7 +141,7 @@ public final class StringType implements StringTypeDefinition {
      * ()
      */
     @Override
-    public List<LengthConstraint> getLengthStatements() {
+    public List<LengthConstraint> getLengthConstraints() {
         return lengthStatements;
     }
 
@@ -152,7 +152,7 @@ public final class StringType implements StringTypeDefinition {
      * com.csico.yang.model.base.type.api.StringTypeDefinition#getPatterns()
      */
     @Override
-    public List<PatternConstraint> getPatterns() {
+    public List<PatternConstraint> getPatternConstraints() {
         return patterns;
     }
 

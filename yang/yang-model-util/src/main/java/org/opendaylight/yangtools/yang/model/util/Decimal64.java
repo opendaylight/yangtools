@@ -134,7 +134,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
     }
 
     @Override
-    public List<RangeConstraint> getRangeStatements() {
+    public List<RangeConstraint> getRangeConstraints() {
         return rangeStatements;
     }
 

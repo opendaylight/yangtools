@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface EmptyTypeDefinition extends
-        TypeDefinition<EmptyTypeDefinition> {
+public interface EmptyTypeDefinition extends TypeDefinition<EmptyTypeDefinition> {
 
 }
