@@ -326,7 +326,7 @@ public class UsesAugmentTest {
         assertTrue(version.getType() instanceof ExtendedType);
         assertEquals(Uint8.getInstance(), version.getType().getBaseType());
         assertTrue(version.isAddedByUses());
-        assertFalse(version.isAugmenting());
+        assertTrue(version.isAugmenting());
         // * |-- |-- |-- |-- |-- leaf type
         type = (LeafSchemaNode) pathKeys.getDataChildByName("type");
         assertNotNull(type);
@@ -338,7 +338,7 @@ public class UsesAugmentTest {
         assertEquals(expectedPath, type.getPath());
         assertTrue(type.getType() instanceof ExtendedType);
         assertTrue(type.isAddedByUses());
-        assertFalse(type.isAugmenting());
+        assertTrue(type.isAugmenting());
         // * |-- |-- container segment-computation
         ContainerSchemaNode sc = (ContainerSchemaNode) requests.getDataChildByName("segment-computation");
         assertNotNull(sc);
