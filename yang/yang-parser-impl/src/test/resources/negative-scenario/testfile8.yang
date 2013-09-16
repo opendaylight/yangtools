@@ -1,0 +1,27 @@
+module testfile8 {
+    yang-version 1;
+    namespace "urn:simple.test8.demo";
+    prefix "t8";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+    description "This is types-data test description";
+
+    revision "2013-08-03" {
+        reference " WILL BE DEFINED LATER";
+    }
+
+    container interfaces {
+        grouping ifEntry {
+            container augment-holder;
+        }
+        list ifEntry {
+            key "ifIndex";
+            leaf ifIndex {
+                type uint32;
+                units minutes;
+            }
+        }
+    }
+
+}

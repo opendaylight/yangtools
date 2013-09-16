@@ -196,4 +196,20 @@ public class YangParserNegativeTest {
         }
     }
 
+    @Test
+    public void testMandatoryInAugment() throws IOException {
+        try {
+            try (InputStream stream1 = new FileInputStream(getClass().getResource("/negative-scenario/testfile8.yang")
+                    .getPath());
+                    InputStream stream2 = new FileInputStream(getClass().getResource(
+                            "/negative-scenario/testfile7.yang").getPath())) {
+                TestUtils.loadModules(Arrays.asList(stream1, stream2));
+                fail("YangParseException should by thrown");
+            }
+        } catch (YangParseException e) {
+            String expected = "Error in module 'testfile7' at line 18: Error in augment parsing: cannot augment mandatory node";
+            assertEquals(expected, e.getMessage());
+        }
+    }
+
 }
