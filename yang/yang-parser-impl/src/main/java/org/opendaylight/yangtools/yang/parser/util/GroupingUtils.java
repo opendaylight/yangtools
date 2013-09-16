@@ -199,30 +199,62 @@ public final class GroupingUtils {
      */
     public static void updateUsesParent(UsesNodeBuilder usesNode) {
         DataNodeContainerBuilder parent = usesNode.getParent();
+        ModuleBuilder module = ParserUtils.getParentModule(parent);
+        URI ns = module.getNamespace();
+        Date rev = module.getRevision();
+        String prefix = module.getPrefix();
+
+        SchemaPath parentPath = parent.getPath();
+        if(parent instanceof AugmentationSchemaBuilder) {
+            parentPath = ((AugmentationSchemaBuilder)parent).getTargetPath();
+        }
 
         // child nodes
         for (DataSchemaNodeBuilder child : usesNode.getTargetChildren()) {
             if (child instanceof GroupingMember) {
                 ((GroupingMember) child).setAddedByUses(true);
             }
+
+            GroupingMember gm = (GroupingMember) child;
+            if (gm.isAddedByUses()) {
+                if(usesNode.isAugmenting()) {
+                    if(child.getQName().getLocalName().equals("paths")) {
+                        System.out.println();
+                    }
+                    AugmentationSchemaBuilder parentAugment = usesNode.getParentAugment();
+                    ModuleBuilder m = ParserUtils.getParentModule(parentAugment);
+                    child.setAugmenting(true);
+                    correctNodePathForUsesNodes(child, parentPath, m);
+                } else {
+                    child.setQName(new QName(ns, rev, prefix, child.getQName().getLocalName()));
+                    correctNodePathForUsesNodes(child, parentPath, module);
+                }
+            }
+
             parent.addChildNode(child);
         }
 
         // groupings
         for (GroupingBuilder gb : usesNode.getTargetGroupings()) {
             gb.setAddedByUses(true);
+            gb.setQName(new QName(ns, rev, prefix, gb.getQName().getLocalName()));
+            correctNodePathForUsesNodes(gb, parentPath, module);
             parent.addGrouping(gb);
         }
 
         // typedefs
         for (TypeDefinitionBuilder tdb : usesNode.getTargetTypedefs()) {
             tdb.setAddedByUses(true);
+            tdb.setQName(new QName(ns, rev, prefix, tdb.getQName().getLocalName()));
+            correctNodePathForUsesNodes(tdb, parentPath, module);
             parent.addTypedef(tdb);
         }
 
         // unknown nodes
         for (UnknownSchemaNodeBuilder un : usesNode.getTargetUnknownNodes()) {
             un.setAddedByUses(true);
+            un.setQName(new QName(ns, rev, prefix, un.getQName().getLocalName()));
+            correctNodePathForUsesNodes(un, parentPath, module);
             parent.addUnknownNodeBuilder(un);
         }
     }
@@ -538,71 +570,6 @@ public final class GroupingUtils {
         }
         usesNode.getTargetChildren().addAll(newChildren);
 
-    }
-
-    /**
-     * Fix schema path of all nodes which were defined by this usesNode.
-     *
-     * @param usesNode
-     */
-    public static void fixUsesNodesPath(UsesNodeBuilder usesNode) {
-        DataNodeContainerBuilder parent = usesNode.getParent();
-        ModuleBuilder module = ParserUtils.getParentModule(parent);
-        URI ns = module.getNamespace();
-        Date rev = module.getRevision();
-        String prefix = module.getPrefix();
-
-        SchemaPath parentPath = parent.getPath();
-        if(parent instanceof AugmentationSchemaBuilder) {
-            parentPath = ((AugmentationSchemaBuilder)parent).getTargetPath();
-        }
-
-        // child nodes
-        Set<DataSchemaNodeBuilder> currentChildNodes = parent.getChildNodeBuilders();
-        for (DataSchemaNodeBuilder child : currentChildNodes) {
-            if (child instanceof GroupingMember) {
-                GroupingMember gm = (GroupingMember) child;
-                if (gm.isAddedByUses()) {
-                    if(usesNode.isAugmenting()) {
-                        AugmentationSchemaBuilder parentAugment = usesNode.getParentAugment();
-                        ModuleBuilder m = ParserUtils.getParentModule(parentAugment);
-                        correctNodePathForUsesNodes(child, parentPath, m);
-                    } else {
-                        child.setQName(new QName(ns, rev, prefix, child.getQName().getLocalName()));
-                        correctNodePathForUsesNodes(child, parentPath, module);
-                    }
-                }
-            }
-        }
-
-        // groupings
-        Set<GroupingBuilder> currentGroupings = parent.getGroupingBuilders();
-        for (GroupingBuilder grouping : currentGroupings) {
-            if (grouping.isAddedByUses()) {
-                grouping.setQName(new QName(ns, rev, prefix, grouping.getQName().getLocalName()));
-                correctNodePathForUsesNodes(grouping, parentPath, module);
-            }
-
-        }
-
-        // typedefs
-        Set<TypeDefinitionBuilder> currentTypedefs = parent.getTypeDefinitionBuilders();
-        for (TypeDefinitionBuilder typedef : currentTypedefs) {
-            if (typedef.isAddedByUses()) {
-                typedef.setQName(new QName(ns, rev, prefix, typedef.getQName().getLocalName()));
-                correctNodePathForUsesNodes(typedef, parentPath, module);
-            }
-
-        }
-
-        // unknown nodes
-        List<UnknownSchemaNodeBuilder> currentUN = parent.getUnknownNodeBuilders();
-        for (UnknownSchemaNodeBuilder un : currentUN) {
-            if (un.isAddedByUses()) {
-                un.setQName(new QName(ns, rev, prefix, un.getQName().getLocalName()));
-                correctNodePathForUsesNodes(un, parentPath, module);
-            }
-        }
     }
 
     /**
