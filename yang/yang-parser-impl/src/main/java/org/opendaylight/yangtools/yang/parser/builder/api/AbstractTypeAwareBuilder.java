@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Basic implementation for TypeAwareBuilder builders.
  */
 public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implements TypeAwareBuilder {
-    protected final QName qname;
+    protected QName qname;
     protected TypeDefinition<?> type;
     protected TypeDefinitionBuilder typedef;
 

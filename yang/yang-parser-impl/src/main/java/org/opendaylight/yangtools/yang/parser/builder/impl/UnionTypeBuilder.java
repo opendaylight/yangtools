@@ -51,6 +51,11 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
+    public void setQName(QName qname) {
+        throw new UnsupportedOperationException("Can not set qname to union type");
+    }
+
+    @Override
     public TypeDefinition<?> getType() {
         return null;
     }
