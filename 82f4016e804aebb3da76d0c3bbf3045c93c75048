@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_8ab65edb",
+        "filename": "code-generator/binding-generator-impl/src/test/java/org/opendaylight/yangtools/sal/binding/generator/impl/IdentityrefTypeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 739
+      },
+      "writtenOn": "2013-09-16T08:17:52Z",
+      "side": 1,
+      "message": "Why is the initialization done as a regular static method which is called from the test method itself and not as a @Before/@BeforeClass?\nAlso, I recommend renaming the test method to something more meaningful than \"test\". In the future you might add more test cases and it will be much more clear to understand from their name what each one does.",
+      "revId": "82f4016e804aebb3da76d0c3bbf3045c93c75048",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_caac668f",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/util/RefineHolderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 739
+      },
+      "writtenOn": "2013-09-16T08:17:52Z",
+      "side": 1,
+      "message": "I recommend breaking this very long test to several tests (several test methods).\nand giving the methods more meaningful names.",
+      "revId": "82f4016e804aebb3da76d0c3bbf3045c93c75048",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
