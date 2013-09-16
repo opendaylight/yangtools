@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
@@ -449,6 +451,8 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
 
+        checkAugmentMandatoryNodes(allAugments);
+
         for (int i = 0; i < allAugments.size(); i++) {
             // pick one augment
             final AugmentationSchemaBuilder augment = allAugments.get(i);
@@ -472,6 +476,33 @@ public final class YangParserImpl implements YangModelParser {
             if (!resolved) {
                 throw new YangParseException(augment.getModuleName(), augment.getLine(),
                         "Error in augment parsing: failed to find augment target");
+            }
+        }
+    }
+
+    /**
+     * Check augments for mandatory nodes. If the target node is in another
+     * module, then nodes added by the augmentation MUST NOT be mandatory nodes.
+     * If mandatory node is found, throw an exception.
+     *
+     * @param augments
+     *            augments to check
+     */
+    private void checkAugmentMandatoryNodes(Collection<AugmentationSchemaBuilder> augments) {
+        for (AugmentationSchemaBuilder augment : augments) {
+            String augmentPrefix = augment.getTargetPath().getPath().get(0).getPrefix();
+            ModuleBuilder module = ParserUtils.getParentModule(augment);
+            String modulePrefix = module.getPrefix();
+
+            if (augmentPrefix == null || augmentPrefix.isEmpty() || augmentPrefix.equals(modulePrefix)) {
+                continue;
+            }
+
+            for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
+                if (childNode.getConstraints().isMandatory()) {
+                    throw new YangParseException(augment.getModuleName(), augment.getLine(),
+                            "Error in augment parsing: cannot augment mandatory node");
+                }
             }
         }
     }
