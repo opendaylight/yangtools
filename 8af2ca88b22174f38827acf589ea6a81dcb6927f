@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_aa1c7ac2",
+        "filename": "code-generator/binding-generator-impl/src/test/java/org/opendaylight/yangtools/sal/binding/generator/impl/IdentityrefTypeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 739
+      },
+      "writtenOn": "2013-09-16T13:46:51Z",
+      "side": 1,
+      "message": "why both annotations are imported? \nonly one is currently used in this particular class.\nYou should decide which one is more suitable here , import it, and mark with it the loadTestResources method.\n\nPlease see the relevant documentation here:\nhttp://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html\n\nand here:\nhttp://junit.sourceforge.net/javadoc/org/junit/Before.html",
+      "revId": "8af2ca88b22174f38827acf589ea6a81dcb6927f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_8a79befe",
+        "filename": "code-generator/binding-generator-impl/src/test/java/org/opendaylight/yangtools/sal/binding/generator/impl/IdentityrefTypeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 739
+      },
+      "writtenOn": "2013-09-16T13:46:51Z",
+      "side": 1,
+      "message": "There is no need to explicitly call the loadTestResources method if it was marked as @Before.\nIt is called before each test method by the framework.\nSo currently it is called twice.\n\nPlease see here:\nhttp://junit.sourceforge.net/javadoc/org/junit/Before.html\n\nAlso, starting junit4, since the @Test was introduced, there\u0027s no need to start test methods with work \"test\". But that\u0027s just a side note.",
+      "revId": "8af2ca88b22174f38827acf589ea6a81dcb6927f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a2f8d8d_6a7e92e6",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/util/RefineHolderTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 739
+      },
+      "writtenOn": "2013-09-16T13:46:51Z",
+      "side": 1,
+      "message": "You probably misunderstood my previous comment.\nBreaking the test to several test methods doesn\u0027t mean  extracting it to a private method. It means that each test is a separate public method marked with @Test. \nIt also should not be called from the first test method here.\nThat way, each one is an independent test and is called separately by the testing framework.\nI hope it\u0027s more clear now.",
+      "revId": "8af2ca88b22174f38827acf589ea6a81dcb6927f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
