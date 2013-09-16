@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 /**
  * The <code>default</code> implementation of Binary Type Definition interface.
- * 
+ *
  * @see BinaryTypeDefinition
  */
 public final class BinaryType implements BinaryTypeDefinition {
@@ -46,18 +46,18 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public BinaryTypeDefinition getBaseType() {
-        return this;
+        return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
@@ -67,7 +67,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -79,7 +79,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -89,7 +89,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -99,7 +99,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
@@ -110,7 +110,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
@@ -120,7 +120,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -130,7 +130,7 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.base.type.api.BinaryTypeDefinition
      * #getLengthConstraint ()

@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
  * Implementation of Yang uint8 built-in type. <br>
  * uint8 represents integer values between 0 and 255, inclusively.
- * 
+ *
  * @see AbstractUnsignedInteger
  */
 public final class Uint8 extends AbstractUnsignedInteger {
@@ -31,11 +30,6 @@ public final class Uint8 extends AbstractUnsignedInteger {
             instance = new Uint8();
         }
         return instance;
-    }
-
-    @Override
-    public UnsignedIntegerTypeDefinition getBaseType() {
-        return this;
     }
 
     @Override

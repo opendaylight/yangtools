@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
 /**
  * The <code>default</code> implementation of String Type Definition interface.
- * 
+ *
  * @see StringTypeDefinition
  */
 public final class StringType implements StringTypeDefinition {
@@ -51,18 +51,18 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public StringTypeDefinition getBaseType() {
-        return this;
+        return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
@@ -72,7 +72,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -84,7 +84,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -94,7 +94,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -104,7 +104,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
@@ -115,7 +115,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
@@ -125,7 +125,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -135,7 +135,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.csico.yang.model.base.type.api.StringTypeDefinition#getLengthStatements
      * ()
@@ -147,7 +147,7 @@ public final class StringType implements StringTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.csico.yang.model.base.type.api.StringTypeDefinition#getPatterns()
      */

@@ -37,7 +37,7 @@ public final class Leafref implements LeafrefTypeDefinition {
 
     @Override
     public LeafrefTypeDefinition getBaseType() {
-        return this;
+        return null;
     }
 
     @Override

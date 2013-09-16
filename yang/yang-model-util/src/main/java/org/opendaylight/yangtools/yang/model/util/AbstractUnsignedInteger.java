@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * interface which represents UNSIGNED Integer values defined in Yang language. <br>
  * The integer built-in types in Yang are uint8, uint16, uint32, and uint64.
  * They represent unsigned integers of different sizes:
- * 
+ *
  * <ul>
  * <li>uint8 - represents integer values between 0 and 255, inclusively.</li>
  * <li>uint16 - represents integer values between 0 and 65535, inclusively.</li>
@@ -28,9 +28,9 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * <li>uint64 - represents integer values between 0 and 18446744073709551615,
  * inclusively.</li>
  * </ul>
- * 
+ *
  */
-public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition {
+abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition {
     private static final long MIN_VALUE = 0;
     private final QName name;
     private final SchemaPath path;
@@ -40,7 +40,7 @@ public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefi
     private final List<RangeConstraint> rangeStatements;
 
     /**
-     * 
+     *
      * @param name
      * @param description
      * @param maxRange
@@ -55,6 +55,11 @@ public abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefi
         final String rangeDescription = "Integer values between " + MIN_VALUE + " and " + maxRange + ", inclusively.";
         this.rangeStatements.add(BaseConstraints.rangeConstraint(MIN_VALUE, maxRange, rangeDescription,
                 "https://tools.ietf.org/html/rfc6020#section-9.2.4"));
+    }
+
+    @Override
+    public UnsignedIntegerTypeDefinition getBaseType() {
+        return null;
     }
 
     @Override

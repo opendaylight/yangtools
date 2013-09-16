@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
  * Implementation of Yang uint32 built-in type. <br>
  * uint32 represents integer values between 0 and 4294967295, inclusively.
- * 
+ *
  */
 public final class Uint32 extends AbstractUnsignedInteger {
     public static final long MAX_VALUE = 4294967295L;
@@ -30,11 +29,6 @@ public final class Uint32 extends AbstractUnsignedInteger {
             instance = new Uint32();
         }
         return instance;
-    }
-
-    @Override
-    public UnsignedIntegerTypeDefinition getBaseType() {
-        return this;
     }
 
     @Override

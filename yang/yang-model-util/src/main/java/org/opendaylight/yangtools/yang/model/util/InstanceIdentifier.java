@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 /**
  * The <code>default</code> implementation of Instance Identifier Type
  * Definition interface.
- * 
+ *
  * @see InstanceIdentifierTypeDefinition
  */
 public final class InstanceIdentifier implements InstanceIdentifierTypeDefinition {
@@ -48,18 +48,18 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public InstanceIdentifierTypeDefinition getBaseType() {
-        return this;
+        return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
@@ -69,7 +69,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -81,7 +81,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -91,7 +91,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -101,7 +101,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
@@ -112,7 +112,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
@@ -122,7 +122,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -132,7 +132,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getExtensionSchemaNodes
      * ()
@@ -144,7 +144,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.type.
      * InstanceIdentifierTypeDefinition# getPathStatement()
      */
@@ -155,7 +155,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.type.
      * InstanceIdentifierTypeDefinition# requireInstance()
      */

@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
 /**
  * Implementation of Yang int8 built-in type. <br>
  * int8 represents integer values between -128 and 127, inclusively. The Java
  * counterpart of Yang int8 built-in type is {@link Byte}.
- * 
+ *
  * @see AbstractSignedInteger
  */
 public final class Int8 extends AbstractSignedInteger {
@@ -31,11 +30,6 @@ public final class Int8 extends AbstractSignedInteger {
             instance = new Int8();
         }
         return instance;
-    }
-
-    @Override
-    public IntegerTypeDefinition getBaseType() {
-        return this;
     }
 
     @Override

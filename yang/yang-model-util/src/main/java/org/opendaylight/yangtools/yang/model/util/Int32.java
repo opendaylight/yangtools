@@ -8,16 +8,15 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
 /**
  * Implementation of Yang int32 built-in type. <br>
  * int32 represents integer values between -2147483648 and 2147483647,
  * inclusively. The Java counterpart of Yang int32 built-in type is
  * {@link Integer}.
- * 
+ *
  * @see AbstractSignedInteger
- * 
+ *
  */
 public final class Int32 extends AbstractSignedInteger {
     private static Int32 instance;
@@ -33,11 +32,6 @@ public final class Int32 extends AbstractSignedInteger {
             instance = new Int32();
         }
         return instance;
-    }
-
-    @Override
-    public IntegerTypeDefinition getBaseType() {
-        return this;
     }
 
     @Override

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 /**
  * The <code>default</code> implementation of Bits Type Definition interface.
- * 
+ *
  * @see BitsTypeDefinition
  */
 public final class BitsType implements BitsTypeDefinition {
@@ -29,26 +29,24 @@ public final class BitsType implements BitsTypeDefinition {
             + "numbers starting at 0.  Each bit number has an assigned name.";
 
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.7";
-    private final BitsTypeDefinition baseType;
     private final List<Bit> bits;
     private static final String UNITS = "";
 
     /**
      * Default constructor. <br>
      * Instantiates Bits type as empty bits list.
-     * 
+     *
      * @param path
      */
     public BitsType(final SchemaPath path) {
         super();
         this.bits = Collections.emptyList();
         this.path = path;
-        this.baseType = this;
     }
 
     /**
      * Constructor with explicit definition of bits assigned to BitsType.
-     * 
+     *
      * @param path
      * @param bits
      */
@@ -56,23 +54,22 @@ public final class BitsType implements BitsTypeDefinition {
         super();
         this.bits = Collections.unmodifiableList(bits);
         this.path = path;
-        this.baseType = this;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public BitsTypeDefinition getBaseType() {
-        return baseType;
+        return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
@@ -82,7 +79,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -94,7 +91,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -104,7 +101,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -114,7 +111,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
@@ -125,7 +122,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
@@ -135,7 +132,7 @@ public final class BitsType implements BitsTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override

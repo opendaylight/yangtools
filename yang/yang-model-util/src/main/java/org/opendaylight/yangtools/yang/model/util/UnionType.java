@@ -33,7 +33,7 @@ public final class UnionType implements UnionTypeDefinition {
 
     @Override
     public UnionTypeDefinition getBaseType() {
-        return this;
+        return null;
     }
 
     @Override
