@@ -822,9 +822,6 @@ public final class YangParserImpl implements YangModelParser {
             GroupingUtils.updateUsesParent(usesNode);
             GroupingUtils.performRefine(usesNode);
         }
-        for (UsesNodeBuilder usesNode : allModulesUses) {
-            GroupingUtils.fixUsesNodesPath(usesNode);
-        }
 
         if (!resolveWithContext) {
             for (UsesNodeBuilder usesNode : allModulesUses) {
