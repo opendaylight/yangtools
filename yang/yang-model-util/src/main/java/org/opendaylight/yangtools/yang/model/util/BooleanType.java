@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
 /**
  * The <code>default</code> implementation of Boolean Type Definition interface.
- * 
+ *
  * @see BooleanTypeDefinition
  */
 public final class BooleanType implements BooleanTypeDefinition {
@@ -41,18 +41,18 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
     @Override
     public BooleanTypeDefinition getBaseType() {
-        return this;
+        return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
@@ -62,7 +62,7 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -74,7 +74,7 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -84,7 +84,7 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -94,7 +94,7 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
@@ -105,7 +105,7 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
@@ -115,7 +115,7 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override

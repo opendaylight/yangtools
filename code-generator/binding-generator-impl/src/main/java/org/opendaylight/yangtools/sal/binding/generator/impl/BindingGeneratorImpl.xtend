@@ -1358,7 +1358,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 				var Type returnType = null;
 				if (typeDef instanceof EnumTypeDefinition) {
 					returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
-					val enumTypeDef = enumTypeDefFromExtendedType(typeDef);
+					val enumTypeDef = typeDef as EnumTypeDefinition;
 					val enumBuilder = resolveInnerEnumFromTypeDefinition(enumTypeDef, leafName, typeBuilder);
 
 					if (enumBuilder !== null) {
@@ -1875,7 +1875,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 		if (typeDef instanceof UnionTypeDefinition) {
 			genTOBuilders.addAll(
 				(typeProvider as TypeProviderImpl).
-					provideGeneratedTOBuildersForUnionTypeDef(packageName, typeDef, classNameFromLeaf, leaf));
+					provideGeneratedTOBuildersForUnionTypeDef(packageName, (typeDef as UnionTypeDefinition), classNameFromLeaf, leaf));
 		} else if (typeDef instanceof BitsTypeDefinition) {
 			genTOBuilders.add(
 				((typeProvider as TypeProviderImpl) ).

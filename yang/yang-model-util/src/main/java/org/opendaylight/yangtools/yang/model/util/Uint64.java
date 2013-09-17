@@ -10,14 +10,13 @@ package org.opendaylight.yangtools.yang.model.util;
 import java.math.BigInteger;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
  * Implementation of Yang uint64 built-in type. <br>
  * uint64 represents integer values between 0 and 18446744073709551615,
  * inclusively. The Java counterpart of Yang uint64 built-in type is
  * {@link BigInteger}.
- * 
+ *
  */
 public final class Uint64 extends AbstractUnsignedInteger {
     public static final BigInteger MAX_VALUE = new BigInteger("18446744073709551615");
@@ -34,11 +33,6 @@ public final class Uint64 extends AbstractUnsignedInteger {
             instance = new Uint64();
         }
         return instance;
-    }
-
-    @Override
-    public UnsignedIntegerTypeDefinition getBaseType() {
-        return this;
     }
 
     @Override

@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 /**
  * The <code>default</code> implementation of Decimal Type Definition interface.
- * 
- * 
+ *
+ *
  * @see DecimalTypeDefinition
  */
 public final class Decimal64 implements DecimalTypeDefinition {
@@ -40,7 +40,6 @@ public final class Decimal64 implements DecimalTypeDefinition {
 
     private final List<RangeConstraint> rangeStatements;
     private final Integer fractionDigits;
-    private final DecimalTypeDefinition baseType;
     private static final int MAX_NUMBER_OF_FRACTION_DIGITS = 18;
 
     /**
@@ -54,11 +53,11 @@ public final class Decimal64 implements DecimalTypeDefinition {
      * {@link DecimalTypeDefinition} <br>
      * If the fraction digits are not defined inner the definition boundaries
      * the constructor will throw {@link IllegalArgumentException}
-     * 
+     *
      * @param path
      * @param fractionDigits
      *            integer between 1 and 18 inclusively
-     * 
+     *
      * @see DecimalTypeDefinition
      * @exception IllegalArgumentException
      */
@@ -70,12 +69,11 @@ public final class Decimal64 implements DecimalTypeDefinition {
         this.fractionDigits = fractionDigits;
         rangeStatements = defaultRangeStatements();
         this.path = path;
-        this.baseType = this;
     }
 
     /**
      * Returns unmodifiable List with default definition of Range Statements.
-     * 
+     *
      * @return unmodifiable List with default definition of Range Statements.
      */
     private List<RangeConstraint> defaultRangeStatements() {
@@ -90,7 +88,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
 
     @Override
     public DecimalTypeDefinition getBaseType() {
-        return baseType;
+        return null;
     }
 
     @Override

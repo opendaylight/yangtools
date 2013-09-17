@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
 /**
  * Implementation of Yang int64 built-in type. <br>
  * int64 represents integer values between -9223372036854775808 and
  * 9223372036854775807, inclusively. The Java counterpart of Yang int64 built-in
  * type is {@link Long}.
- * 
+ *
  */
 public final class Int64 extends AbstractSignedInteger {
     private static Int64 instance;
@@ -31,11 +30,6 @@ public final class Int64 extends AbstractSignedInteger {
             instance = new Int64();
         }
         return instance;
-    }
-
-    @Override
-    public IntegerTypeDefinition getBaseType() {
-        return this;
     }
 
     @Override

@@ -35,7 +35,7 @@ public final class EmptyType implements EmptyTypeDefinition {
 
     @Override
     public EmptyTypeDefinition getBaseType() {
-        return this;
+        return null;
     }
 
     @Override

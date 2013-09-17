@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * interface which represents SIGNED Integer values defined in Yang language. <br>
  * The integer built-in types in Yang are int8, int16, int32, int64. They
  * represent signed integers of different sizes:
- * 
+ *
  * <ul>
  * <li>int8 - represents integer values between -128 and 127, inclusively.</li>
  * <li>int16 - represents integer values between -32768 and 32767, inclusively.</li>
@@ -32,9 +32,9 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * <li>int64 - represents integer values between -9223372036854775808 and
  * 9223372036854775807, inclusively.</li>
  * </ul>
- * 
+ *
  */
-public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
+abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     private final QName name;
     private final SchemaPath path;
     private final String description;
@@ -59,6 +59,11 @@ public abstract class AbstractSignedInteger implements IntegerTypeDefinition {
         final String rangeDescription = "Integer values between " + minRange + " and " + maxRange + ", inclusively.";
         this.rangeStatements.add(BaseConstraints.rangeConstraint(minRange, maxRange, rangeDescription,
                 "https://tools.ietf.org/html/rfc6020#section-9.2.4"));
+    }
+
+    @Override
+    public IntegerTypeDefinition getBaseType() {
+        return null;
     }
 
     @Override
