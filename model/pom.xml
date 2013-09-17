@@ -10,13 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools.model</groupId>
     <artifactId>model-parent</artifactId>
-    <version>0.5.7-SNAPSHOT</version>
+    <version>0.5.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
     <properties>
-        <yang.version>0.5.7-SNAPSHOT</yang.version>
+        <yang.version>0.5.8-SNAPSHOT</yang.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.bundle.version>2.4.0</maven.bundle.version>
     </properties>
@@ -70,7 +70,7 @@
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
                         <artifactId>maven-sal-api-gen-plugin</artifactId>
-                        <version>0.5.7-SNAPSHOT</version>
+                        <version>0.5.8-SNAPSHOT</version>
                         <type>jar</type>
                     </dependency>
                 </dependencies>
