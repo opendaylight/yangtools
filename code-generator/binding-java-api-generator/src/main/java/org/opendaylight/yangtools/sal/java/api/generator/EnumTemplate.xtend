@@ -63,6 +63,13 @@ class EnumTemplate extends BaseTemplate {
             }
             
             /**
+             * @return integer value
+             */
+            public int getIntValue() {
+                return value;
+            }
+
+            /**
              * @param valueArg
              * @return corresponding «enums.name» item
              */
