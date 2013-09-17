@@ -127,7 +127,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given tree and get first string value.
-     * 
+     *
      * @param treeNode
      *            tree to parse
      * @return first string value from given tree
@@ -148,7 +148,7 @@ public final class ParserListenerUtils {
     /**
      * Parse 'description', 'reference' and 'status' statements and fill in
      * given builder.
-     * 
+     *
      * @param ctx
      *            context to parse
      * @param builder
@@ -172,7 +172,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given context and return its value;
-     * 
+     *
      * @param ctx
      *            status context
      * @return value parsed from context
@@ -199,7 +199,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given tree and returns units statement as string.
-     * 
+     *
      * @param ctx
      *            context to parse
      * @return value of units statement as string or null if there is no units
@@ -219,7 +219,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given tree and returns default statement as string.
-     * 
+     *
      * @param ctx
      *            context to parse
      * @return value of default statement as string or null if there is no
@@ -239,7 +239,7 @@ public final class ParserListenerUtils {
 
     /**
      * Create SchemaPath from actualPath and new node name.
-     * 
+     *
      * @param actualPath
      *            current position in model
      * @return SchemaPath object
@@ -252,7 +252,7 @@ public final class ParserListenerUtils {
     /**
      * Create java.util.List of QName objects from given key definition as
      * string.
-     * 
+     *
      * @param keyDefinition
      *            key definition as string
      * @param namespace
@@ -280,7 +280,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given type body of enumeration statement.
-     * 
+     *
      * @param ctx
      *            type body context to parse
      * @param path
@@ -314,7 +314,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse enum statement context
-     * 
+     *
      * @param ctx
      *            enum statement context
      * @param highestValue
@@ -491,7 +491,7 @@ public final class ParserListenerUtils {
 
     /**
      * Get and parse range from given type body context.
-     * 
+     *
      * @param ctx
      *            type body context to parse
      * @param moduleName
@@ -516,7 +516,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given range context.
-     * 
+     *
      * @param ctx
      *            range context to parse
      * @param moduleName
@@ -559,7 +559,7 @@ public final class ParserListenerUtils {
 
     /**
      * Get and parse length from given type body context.
-     * 
+     *
      * @param ctx
      *            type body context to parse
      * @param moduleName
@@ -584,7 +584,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given length context.
-     * 
+     *
      * @param ctx
      *            length context to parse
      * @param moduleName
@@ -651,7 +651,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse type body and return pattern constraints.
-     * 
+     *
      * @param ctx
      *            type body
      * @return list of pattern constraints
@@ -675,7 +675,7 @@ public final class ParserListenerUtils {
 
     /**
      * Internal helper method.
-     * 
+     *
      * @param ctx
      *            pattern context
      * @return PatternConstraint object
@@ -697,7 +697,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given context and return pattern value.
-     * 
+     *
      * @param ctx
      *            context to parse
      * @return pattern value as String
@@ -720,7 +720,7 @@ public final class ParserListenerUtils {
 
     /**
      * Get fraction digits value from type body.
-     * 
+     *
      * @param ctx
      *            type body context to parse
      * @param moduleName
@@ -741,7 +741,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse decimal64 fraction-digits value.
-     * 
+     *
      * @param ctx
      *            decimal64 context
      * @param moduleName
@@ -768,7 +768,7 @@ public final class ParserListenerUtils {
     /**
      * Internal helper method for parsing bit statements from given type body
      * context.
-     * 
+     *
      * @param ctx
      *            type body context to parse
      * @param actualPath
@@ -801,7 +801,7 @@ public final class ParserListenerUtils {
 
     /**
      * Internal helper method for parsing bit context.
-     * 
+     *
      * @param ctx
      *            bit statement context to parse
      * @param highestPosition
@@ -852,11 +852,11 @@ public final class ParserListenerUtils {
 
     /**
      * Parse 'ordered-by' statement.
-     * 
+     *
      * The 'ordered-by' statement defines whether the order of entries within a
      * list are determined by the user or the system. The argument is one of the
      * strings "system" or "user". If not present, order defaults to "system".
-     * 
+     *
      * @param ctx
      *            Ordered_by_stmtContext
      * @return true, if ordered-by contains value 'user', false otherwise
@@ -882,7 +882,7 @@ public final class ParserListenerUtils {
     /**
      * Get config statement from given context. If there is no config statement,
      * return config value of parent
-     * 
+     *
      * @param ctx
      *            context to parse
      * @param parent
@@ -946,7 +946,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse config statement.
-     * 
+     *
      * @param ctx
      *            config context to parse
      * @param moduleName
@@ -978,7 +978,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse type body and create UnknownType definition.
-     * 
+     *
      * @param typedefQName
      *            qname of current type
      * @param ctx
@@ -1026,8 +1026,6 @@ public final class ParserListenerUtils {
 
                 return result;
             }
-        } else {
-            unknownType.setReferenceOnly(true);
         }
 
         return unknownType.build();
@@ -1035,7 +1033,7 @@ public final class ParserListenerUtils {
 
     /**
      * Create TypeDefinition object based on given type name and type body.
-     * 
+     *
      * @param typeName
      *            name of type
      * @param typeBody
@@ -1087,7 +1085,7 @@ public final class ParserListenerUtils {
                 }
             }
             Decimal64 decimalType = new Decimal64(extBaseTypePath, fractionDigits);
-            constraints.addRanges(decimalType.getRangeStatements());
+            constraints.addRanges(decimalType.getRangeConstraints());
             baseType = decimalType;
         } else if (typeName.startsWith("int")) {
             IntegerTypeDefinition intType = null;
@@ -1103,7 +1101,7 @@ public final class ParserListenerUtils {
             if (intType == null) {
                 throw new YangParseException(moduleName, line, "Unknown yang type " + typeName);
             }
-            constraints.addRanges(intType.getRangeStatements());
+            constraints.addRanges(intType.getRangeConstraints());
             baseType = intType;
         } else if (typeName.startsWith("uint")) {
             UnsignedIntegerTypeDefinition uintType = null;
@@ -1119,14 +1117,14 @@ public final class ParserListenerUtils {
             if (uintType == null) {
                 throw new YangParseException(moduleName, line, "Unknown yang type " + typeName);
             }
-            constraints.addRanges(uintType.getRangeStatements());
+            constraints.addRanges(uintType.getRangeConstraints());
             baseType = uintType;
         } else if ("enumeration".equals(typeName)) {
             List<EnumTypeDefinition.EnumPair> enumConstants = getEnumConstants(typeBody, actualPath, moduleName);
             return new EnumerationType(baseTypePath, enumConstants);
         } else if ("string".equals(typeName)) {
             StringTypeDefinition stringType = StringType.getIntance();
-            constraints.addLengths(stringType.getLengthStatements());
+            constraints.addLengths(stringType.getLengthConstraints());
             baseType = stringType;
         } else if ("bits".equals(typeName)) {
             return new BitsType(baseTypePath, getBits(typeBody, actualPath, moduleName));
@@ -1198,7 +1196,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given context and find identityref base value.
-     * 
+     *
      * @param ctx
      *            type body
      * @return identityref base value as String
@@ -1222,7 +1220,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse type body statement and find require-instance value.
-     * 
+     *
      * @param ctx
      *            type body context
      * @return require-instance value
@@ -1249,7 +1247,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse type body statement and find leafref path.
-     * 
+     *
      * @param ctx
      *            type body context
      * @return leafref path as String
@@ -1271,7 +1269,7 @@ public final class ParserListenerUtils {
 
     /**
      * Internal helper method for parsing must statement.
-     * 
+     *
      * @param ctx
      *            Must_stmtContext
      * @return MustDefinition object based on parsed context
@@ -1320,7 +1318,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given context and set constraints to constraints builder.
-     * 
+     *
      * @param ctx
      *            context to parse
      * @param constraints
@@ -1390,7 +1388,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse given context and return yin value.
-     * 
+     *
      * @param ctx
      *            context to parse
      * @return true if value is 'true', false otherwise
@@ -1417,7 +1415,7 @@ public final class ParserListenerUtils {
 
     /**
      * Check this base type.
-     * 
+     *
      * @param typeName
      *            base YANG type name
      * @param moduleName
@@ -1448,7 +1446,7 @@ public final class ParserListenerUtils {
 
     /**
      * Parse refine statement.
-     * 
+     *
      * @param refineCtx
      *            refine statement
      * @param moduleName

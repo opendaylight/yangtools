@@ -27,5 +27,5 @@ public interface UnsignedIntegerTypeDefinition extends TypeDefinition<UnsignedIn
      * @return list of <code>RangeConstraint</code> which represents the YANG
      *         <code>range</code> substatement arguments.
      */
-    List<RangeConstraint> getRangeStatements();
+    List<RangeConstraint> getRangeConstraints();
 }

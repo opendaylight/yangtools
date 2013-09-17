@@ -115,11 +115,11 @@ public class TypesResolutionTest {
         assertTrue(ipv4.getBaseType() instanceof StringTypeDefinition);
         String expectedPattern = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
                 + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?";
-        assertEquals(expectedPattern, ipv4.getPatterns().get(0).getRegularExpression());
+        assertEquals(expectedPattern, ipv4.getPatternConstraints().get(0).getRegularExpression());
 
         ExtendedType ipv6 = (ExtendedType) unionTypes.get(1);
         assertTrue(ipv6.getBaseType() instanceof StringTypeDefinition);
-        List<PatternConstraint> ipv6Patterns = ipv6.getPatterns();
+        List<PatternConstraint> ipv6Patterns = ipv6.getPatternConstraints();
         expectedPattern = "((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}"
                 + "((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|" + "(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}"
                 + "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))" + "(%[\\p{N}\\p{L}]+)?";
@@ -136,15 +136,15 @@ public class TypesResolutionTest {
         Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         ExtendedType type = (ExtendedType) TestUtils.findTypedef(typedefs, "domain-name");
         assertTrue(type.getBaseType() instanceof StringTypeDefinition);
-        List<PatternConstraint> patterns = type.getPatterns();
+        List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
         String expectedPattern = "((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*"
                 + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.";
         assertEquals(expectedPattern, patterns.get(0).getRegularExpression());
 
-        List<LengthConstraint> lengths = type.getLengths();
+        List<LengthConstraint> lengths = type.getLengthConstraints();
         assertEquals(1, lengths.size());
-        LengthConstraint length = type.getLengths().get(0);
+        LengthConstraint length = type.getLengthConstraints().get(0);
         assertEquals(1L, length.getMin());
         assertEquals(253L, length.getMax());
     }
@@ -266,7 +266,7 @@ public class TypesResolutionTest {
         Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         ExtendedType testedType = (ExtendedType) TestUtils.findTypedef(typedefs, "object-identifier-128");
 
-        List<PatternConstraint> patterns = testedType.getPatterns();
+        List<PatternConstraint> patterns = testedType.getPatternConstraints();
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.get(0);
         assertEquals("\\d*(\\.\\d*){1,127}", pattern.getRegularExpression());
@@ -278,7 +278,7 @@ public class TypesResolutionTest {
         assertEquals("object-identifier-128", testedTypeQName.getLocalName());
 
         ExtendedType testedTypeBase = (ExtendedType) testedType.getBaseType();
-        patterns = testedTypeBase.getPatterns();
+        patterns = testedTypeBase.getPatternConstraints();
         assertEquals(1, patterns.size());
 
         pattern = patterns.get(0);

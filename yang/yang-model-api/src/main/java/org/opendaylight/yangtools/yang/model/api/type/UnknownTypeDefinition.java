@@ -11,19 +11,14 @@ import java.util.List;
 
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface UnknownTypeDefinition extends
-        TypeDefinition<UnknownTypeDefinition> {
+public interface UnknownTypeDefinition extends TypeDefinition<UnknownTypeDefinition> {
 
-    List<RangeConstraint> getRangeStatements();
+    List<RangeConstraint> getRangeConstraints();
 
-    List<LengthConstraint> getLengthStatements();
+    List<LengthConstraint> getLengthConstraints();
 
-    List<PatternConstraint> getPatterns();
-
-    LengthConstraint getLengthConstraint();
+    List<PatternConstraint> getPatternConstraints();
 
     Integer getFractionDigits();
-
-    boolean isReferenceOnly();
 
 }

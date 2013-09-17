@@ -25,7 +25,6 @@ public final class UnknownType implements UnknownTypeDefinition {
     private final SchemaPath path;
     private final String description;
     private final String reference;
-    private final boolean referenceOnly;
     private final List<LengthConstraint> lengthStatements;
     private final List<PatternConstraint> patterns;
     private final List<RangeConstraint> rangeStatements;
@@ -54,7 +53,6 @@ public final class UnknownType implements UnknownTypeDefinition {
         private Status status = Status.CURRENT;
         private String units = "";
         private Object defaultValue = null;
-        private boolean referenceOnly = false;
 
         public Builder(final QName name, final String description, final String reference) {
             this.name = name;
@@ -126,15 +124,9 @@ public final class UnknownType implements UnknownTypeDefinition {
         public UnknownTypeDefinition build() {
             return new UnknownType(this);
         }
-
-        public void setReferenceOnly(boolean b) {
-            this.referenceOnly = b;
-
-        }
     }
 
     private UnknownType(Builder builder) {
-        this.referenceOnly = builder.referenceOnly;
         this.name = builder.name;
         this.path = builder.path;
         this.description = builder.description;
@@ -152,7 +144,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getBaseType()
      */
@@ -163,7 +155,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()
      */
     @Override
@@ -173,7 +165,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
      * ()
@@ -185,7 +177,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getQName()
      */
     @Override
@@ -195,7 +187,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getPath()
      */
     @Override
@@ -205,7 +197,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()
      */
@@ -216,7 +208,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()
      */
     @Override
@@ -226,7 +218,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()
      */
     @Override
@@ -236,7 +228,7 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.opendaylight.yangtools.yang.model.api.SchemaNode#getExtensionSchemaNodes
      * ()
@@ -248,56 +240,40 @@ public final class UnknownType implements UnknownTypeDefinition {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
      * #getRangeStatements()
      */
     @Override
-    public List<RangeConstraint> getRangeStatements() {
+    public List<RangeConstraint> getRangeConstraints() {
         return rangeStatements;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
      * #getLengthStatements()
      */
     @Override
-    public List<LengthConstraint> getLengthStatements() {
+    public List<LengthConstraint> getLengthConstraints() {
         return lengthStatements;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
      * #getPatterns()
      */
     @Override
-    public List<PatternConstraint> getPatterns() {
+    public List<PatternConstraint> getPatternConstraints() {
         return patterns;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition
-     * #getLengthConstraint()
-     */
-    @Override
-    public LengthConstraint getLengthConstraint() {
-        return lengthConstraint;
     }
 
     @Override
     public Integer getFractionDigits() {
         return fractionDigits;
-    }
-
-    @Override
-    public boolean isReferenceOnly() {
-        return referenceOnly;
     }
 
     @Override

@@ -25,7 +25,7 @@ public interface StringTypeDefinition extends TypeDefinition<StringTypeDefinitio
      *         <code>lenght</code> substatement of the <code>type</code>
      *         statement
      */
-    List<LengthConstraint> getLengthStatements();
+    List<LengthConstraint> getLengthConstraints();
 
     /**
      * Returns patterns specified in the string.
@@ -34,5 +34,5 @@ public interface StringTypeDefinition extends TypeDefinition<StringTypeDefinitio
      *         <code>pattern</code> substatement of the <code>type</code>
      *         statement
      */
-    List<PatternConstraint> getPatterns();
+    List<PatternConstraint> getPatternConstraints();
 }

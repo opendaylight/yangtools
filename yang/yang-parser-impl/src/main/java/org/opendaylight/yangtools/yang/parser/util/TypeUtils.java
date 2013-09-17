@@ -306,20 +306,20 @@ public final class TypeUtils {
      */
     private static TypeConstraints mergeConstraints(final TypeDefinition<?> type, final TypeConstraints constraints) {
         if (type instanceof DecimalTypeDefinition) {
-            constraints.addRanges(((DecimalTypeDefinition) type).getRangeStatements());
+            constraints.addRanges(((DecimalTypeDefinition) type).getRangeConstraints());
             constraints.addFractionDigits(((DecimalTypeDefinition) type).getFractionDigits());
         } else if (type instanceof IntegerTypeDefinition) {
-            constraints.addRanges(((IntegerTypeDefinition) type).getRangeStatements());
+            constraints.addRanges(((IntegerTypeDefinition) type).getRangeConstraints());
         } else if (type instanceof StringTypeDefinition) {
-            constraints.addPatterns(((StringTypeDefinition) type).getPatterns());
-            constraints.addLengths(((StringTypeDefinition) type).getLengthStatements());
+            constraints.addPatterns(((StringTypeDefinition) type).getPatternConstraints());
+            constraints.addLengths(((StringTypeDefinition) type).getLengthConstraints());
         } else if (type instanceof BinaryTypeDefinition) {
             constraints.addLengths(((BinaryTypeDefinition) type).getLengthConstraints());
         } else if (type instanceof ExtendedType) {
             constraints.addFractionDigits(((ExtendedType) type).getFractionDigits());
-            constraints.addLengths(((ExtendedType) type).getLengths());
-            constraints.addPatterns(((ExtendedType) type).getPatterns());
-            constraints.addRanges(((ExtendedType) type).getRanges());
+            constraints.addLengths(((ExtendedType) type).getLengthConstraints());
+            constraints.addPatterns(((ExtendedType) type).getPatternConstraints());
+            constraints.addRanges(((ExtendedType) type).getRangeConstraints());
         }
         return constraints;
     }
@@ -356,9 +356,9 @@ public final class TypeUtils {
         TypeConstraints constraints = null;
         if (newBaseType == null) {
             tc.addFractionDigits(oldExtendedType.getFractionDigits());
-            tc.addLengths(oldExtendedType.getLengths());
-            tc.addPatterns(oldExtendedType.getPatterns());
-            tc.addRanges(oldExtendedType.getRanges());
+            tc.addLengths(oldExtendedType.getLengthConstraints());
+            tc.addPatterns(oldExtendedType.getPatternConstraints());
+            tc.addRanges(oldExtendedType.getRangeConstraints());
             constraints = findConstraintsFromTypeBuilder(newBaseTypeBuilder, tc, modules, module, null);
             newType.setTypedef(newBaseTypeBuilder);
         } else {
@@ -399,9 +399,9 @@ public final class TypeUtils {
         if (typeToResolve instanceof ExtendedType) {
             ExtendedType extType = (ExtendedType) typeToResolve;
             constraints.addFractionDigits(extType.getFractionDigits());
-            constraints.addLengths(extType.getLengths());
-            constraints.addPatterns(extType.getPatterns());
-            constraints.addRanges(extType.getRanges());
+            constraints.addLengths(extType.getLengthConstraints());
+            constraints.addPatterns(extType.getPatternConstraints());
+            constraints.addRanges(extType.getRangeConstraints());
             return findConstraintsFromTypeDefinition(extType.getBaseType(), constraints);
         } else {
             mergeConstraints(typeToResolve, constraints);

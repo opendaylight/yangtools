@@ -1007,7 +1007,7 @@ public final class TypeProviderImpl implements TypeProvider {
         Preconditions.checkArgument(typedef != null, "typedef can't be null");
         final TypeDefinition<?> strTypeDef = baseTypeDefForExtendedType(typedef);
         if (strTypeDef instanceof StringType) {
-            final List<PatternConstraint> patternConstraints = typedef.getPatterns();
+            final List<PatternConstraint> patternConstraints = typedef.getPatternConstraints();
             if (!patternConstraints.isEmpty()) {
                 String regEx;
                 String modifiedRegEx;

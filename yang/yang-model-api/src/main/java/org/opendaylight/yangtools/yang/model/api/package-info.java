@@ -108,7 +108,7 @@
  *
  * <dt>length
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.LengthConstraint}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition#getLengthStatements()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition#getLengthConstraints()}
  *
  * <dt>list
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode}
@@ -164,8 +164,8 @@
  *
  * <dt>range
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.RangeConstraint}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition#getRangeStatements()}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition#getRangeStatements()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition#getRangeConstraints()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition#getRangeConstraints()}
  *
  * <dt>reference
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()}
