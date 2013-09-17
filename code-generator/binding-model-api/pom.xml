@@ -10,12 +10,34 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>binding-model-api</artifactId>
     <name>${project.artifactId}</name>
+    <packaging>bundle</packaging>
     <description>${project.artifactId}</description>
 
     <dependencies>
-    	<dependency>
-        	<groupId>org.opendaylight.yangtools</groupId>    	
-    		<artifactId>yang-model-api</artifactId>
-    	</dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-model-api</artifactId>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${maven.bundle.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Export-Package>
+                            org.opendaylight.yangtools.sal.binding.model.api,
+                            org.opendaylight.yangtools.sal.binding.model.api.type.builder
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

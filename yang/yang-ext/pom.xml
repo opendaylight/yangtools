@@ -11,6 +11,7 @@
     <artifactId>yang-ext</artifactId>
     <version>2013.09.07-SNAPSHOT</version>
     <name>${project.artifactId}</name>
+    <packaging>bundle</packaging>
     <description>${project.artifactId}</description>
 
     <build>
