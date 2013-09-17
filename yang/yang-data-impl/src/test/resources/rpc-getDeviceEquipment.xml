@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodCall xmlns="urn:ciscodaylight:controller:get.device.equipment">
+	<methodName>getDeviceEquipment</methodName>
+	<emptyTag />
+	<params>
+		<param>
+			<value>
+				<string>DeviceID123</string>
+			</value>
+		</param>
+		<param>
+			<value>
+				<string>172.23.218.75</string>
+			</value>
+		</param>
+	</params>
+</methodCall>
