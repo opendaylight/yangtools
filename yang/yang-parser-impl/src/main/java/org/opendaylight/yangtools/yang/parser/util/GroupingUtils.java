@@ -85,7 +85,7 @@ public final class GroupingUtils {
         if (groupingPrefix.equals(module.getPrefix())) {
             dependentModule = module;
         } else {
-            dependentModule = ParserUtils.findDependentModuleBuilder(modules, module, groupingPrefix, line);
+            dependentModule = ParserUtils.findModuleFromBuilders(modules, module, groupingPrefix, line);
         }
 
         if (dependentModule == null) {
@@ -206,7 +206,7 @@ public final class GroupingUtils {
 
         SchemaPath parentPath = parent.getPath();
         if(parent instanceof AugmentationSchemaBuilder) {
-            parentPath = ((AugmentationSchemaBuilder)parent).getTargetPath();
+            parentPath = ((AugmentationSchemaBuilder)parent).getTargetNodeSchemaPath();
         }
 
         // child nodes

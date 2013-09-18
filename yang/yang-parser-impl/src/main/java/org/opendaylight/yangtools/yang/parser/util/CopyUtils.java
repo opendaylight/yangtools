@@ -473,6 +473,7 @@ public final class CopyUtils {
         copy.setStatus(old.getStatus());
         copy.addWhenCondition(old.getWhenCondition());
         copy.setChildNodes(old.getChildNodes());
+        copy.setTargetNodeSchemaPath(old.getTargetNodeSchemaPath());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             copy.addChildNode(copy(childNode, copy, false));
         }
@@ -526,11 +527,11 @@ public final class CopyUtils {
             if (updateQName) {
                 newQName = new QName(parent.getNamespace(), parent.getRevision(), parent.getPrefix(), old.getQName()
                         .getLocalName());
-                newPath = new ArrayList<>(augment.getTargetPath().getPath());
+                newPath = new ArrayList<>(augment.getTargetNodeSchemaPath().getPath());
                 newPath.add(newQName);
             } else {
                 newQName = old.getQName();
-                newPath = new ArrayList<>(augment.getTargetPath().getPath());
+                newPath = new ArrayList<>(augment.getTargetNodeSchemaPath().getPath());
                 newPath.add(newQName);
             }
 

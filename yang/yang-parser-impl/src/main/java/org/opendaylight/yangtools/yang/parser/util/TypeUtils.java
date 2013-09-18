@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findDependentModuleBuilder;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,14 +58,14 @@ public final class TypeUtils {
      */
     public static void resolveType(final TypeAwareBuilder nodeToResolve,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
-        TypeDefinitionBuilder resolvedType = null;
         final int line = nodeToResolve.getLine();
         final TypeDefinition<?> nodeToResolveType = nodeToResolve.getType();
         final QName unknownTypeQName = nodeToResolveType.getBaseType().getQName();
-        final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, module,
+        final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module,
                 unknownTypeQName.getPrefix(), line);
 
-        resolvedType = findUnknownTypeDefinition(nodeToResolve, dependentModuleBuilder, modules, module);
+        TypeDefinitionBuilder resolvedType = findUnknownTypeDefinition(nodeToResolve, dependentModuleBuilder, modules,
+                module);
         nodeToResolve.setTypedef(resolvedType);
     }
 
@@ -86,11 +85,10 @@ public final class TypeUtils {
     public static void resolveTypeWithContext(final TypeAwareBuilder nodeToResolve,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module,
             final SchemaContext context) {
-        TypeDefinitionBuilder resolvedType = null;
         final int line = nodeToResolve.getLine();
         final TypeDefinition<?> nodeToResolveType = nodeToResolve.getType();
         final QName unknownTypeQName = nodeToResolveType.getBaseType().getQName();
-        final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, module,
+        final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module,
                 unknownTypeQName.getPrefix(), line);
 
         if (dependentModuleBuilder == null) {
@@ -118,106 +116,109 @@ public final class TypeUtils {
             }
 
         } else {
-            resolvedType = findUnknownTypeDefinition(nodeToResolve, dependentModuleBuilder, modules, module);
+            TypeDefinitionBuilder resolvedType = findUnknownTypeDefinition(nodeToResolve, dependentModuleBuilder,
+                    modules, module);
             nodeToResolve.setTypedef(resolvedType);
         }
     }
 
     public static void resolveTypeUnion(final UnionTypeBuilder union,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder builder) {
-
         final List<TypeDefinition<?>> unionTypes = union.getTypes();
         final List<TypeDefinition<?>> toRemove = new ArrayList<TypeDefinition<?>>();
         for (TypeDefinition<?> unionType : unionTypes) {
             if (unionType instanceof UnknownType) {
-                final UnknownType ut = (UnknownType) unionType;
-                final ModuleBuilder dependentModule = findDependentModuleBuilder(modules, builder, ut.getQName()
+                final ModuleBuilder dependentModule = findModuleFromBuilders(modules, builder, unionType.getQName()
                         .getPrefix(), union.getLine());
-                final TypeDefinitionBuilder resolvedType = findTypeDefinitionBuilder(union, dependentModule, ut
+                final TypeDefinitionBuilder resolvedType = findTypeDefinitionBuilder(union, dependentModule, unionType
                         .getQName().getLocalName(), builder.getName(), union.getLine());
                 union.setTypedef(resolvedType);
-                toRemove.add(ut);
-            } else if (unionType instanceof ExtendedType) {
-                final ExtendedType extType = (ExtendedType) unionType;
-                final TypeDefinition<?> extTypeBase = extType.getBaseType();
-                if (extTypeBase instanceof UnknownType) {
-                    final UnknownType ut = (UnknownType) extTypeBase;
-                    final ModuleBuilder dependentModule = findDependentModuleBuilder(modules, builder, ut.getQName()
-                            .getPrefix(), union.getLine());
-                    final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(union, dependentModule,
-                            ut.getQName().getLocalName(), builder.getName(), union.getLine());
-
-                    final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null, extType,
-                            modules, builder, union.getLine());
-
-                    union.setTypedef(newType);
-                    toRemove.add(extType);
-                }
+                toRemove.add(unionType);
+            } else if (unionType instanceof ExtendedType && unionType.getBaseType() instanceof UnknownType) {
+                final UnknownType ut = (UnknownType) unionType.getBaseType();
+                final ModuleBuilder dependentModule = findModuleFromBuilders(modules, builder, ut.getQName()
+                        .getPrefix(), union.getLine());
+                final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(union, dependentModule, ut
+                        .getQName().getLocalName(), builder.getName(), union.getLine());
+                final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null,
+                        (ExtendedType) unionType, modules, builder, union.getLine());
+                union.setTypedef(newType);
+                toRemove.add(unionType);
             }
         }
         unionTypes.removeAll(toRemove);
     }
 
+    /**
+     * Resolve union type which contains one or more unresolved types.
+     *
+     * @param union
+     *            union type builder to resolve
+     * @param modules
+     *            all loaded modules
+     * @param module
+     *            current module
+     * @param context
+     *            SchemaContext containing already resolved modules
+     */
     public static void resolveTypeUnionWithContext(final UnionTypeBuilder union,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module,
             final SchemaContext context) {
-
         final List<TypeDefinition<?>> unionTypes = union.getTypes();
         final List<TypeDefinition<?>> toRemove = new ArrayList<TypeDefinition<?>>();
         for (TypeDefinition<?> unionType : unionTypes) {
             if (unionType instanceof UnknownType) {
-                final UnknownType ut = (UnknownType) unionType;
-                final QName utQName = ut.getQName();
-                final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, module,
-                        utQName.getPrefix(), union.getLine());
-
-                if (dependentModuleBuilder == null) {
-                    Module dependentModule = findModuleFromContext(context, module, utQName.getPrefix(),
-                            union.getLine());
-                    Set<TypeDefinition<?>> types = dependentModule.getTypeDefinitions();
-                    TypeDefinition<?> type = findTypeByName(types, utQName.getLocalName());
-                    union.setType(type);
-                    toRemove.add(ut);
-                } else {
-                    final TypeDefinitionBuilder resolvedType = findTypeDefinitionBuilder(union, dependentModuleBuilder,
-                            utQName.getLocalName(), module.getName(), union.getLine());
-                    union.setTypedef(resolvedType);
-                    toRemove.add(ut);
-                }
-
-            } else if (unionType instanceof ExtendedType) {
-                final ExtendedType extType = (ExtendedType) unionType;
-                TypeDefinition<?> extTypeBase = extType.getBaseType();
-                if (extTypeBase instanceof UnknownType) {
-                    final UnknownType ut = (UnknownType) extTypeBase;
-                    final QName utQName = ut.getQName();
-                    final ModuleBuilder dependentModuleBuilder = findDependentModuleBuilder(modules, module,
-                            utQName.getPrefix(), union.getLine());
-
-                    if (dependentModuleBuilder == null) {
-                        final Module dependentModule = findModuleFromContext(context, module, utQName.getPrefix(),
-                                union.getLine());
-                        Set<TypeDefinition<?>> types = dependentModule.getTypeDefinitions();
-                        TypeDefinition<?> type = findTypeByName(types, utQName.getLocalName());
-                        final TypeDefinitionBuilder newType = extendedTypeWithNewBase(null, type, extType, modules,
-                                module, 0);
-
-                        union.setTypedef(newType);
-                        toRemove.add(extType);
-                    } else {
-                        final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(union,
-                                dependentModuleBuilder, utQName.getLocalName(), module.getName(), union.getLine());
-
-                        final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null, extType,
-                                modules, module, union.getLine());
-
-                        union.setTypedef(newType);
-                        toRemove.add(extType);
-                    }
-                }
+                resolveUnionUnknownType(union, (UnknownType) unionType, modules, module, context);
+                toRemove.add(unionType);
+            } else if (unionType instanceof ExtendedType && unionType.getBaseType() instanceof UnknownType) {
+                resolveUnionUnknownType(union, (ExtendedType) unionType, modules, module, context);
+                toRemove.add(unionType);
             }
         }
         unionTypes.removeAll(toRemove);
+    }
+
+    private static void resolveUnionUnknownType(final UnionTypeBuilder union, final UnknownType ut,
+            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module,
+            final SchemaContext context) {
+        final int line = union.getLine();
+        final QName utQName = ut.getQName();
+        final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module, utQName.getPrefix(), line);
+
+        if (dependentModuleBuilder == null) {
+            Module dependentModule = findModuleFromContext(context, module, utQName.getPrefix(), line);
+            Set<TypeDefinition<?>> types = dependentModule.getTypeDefinitions();
+            TypeDefinition<?> type = findTypeByName(types, utQName.getLocalName());
+            union.setType(type);
+        } else {
+            final TypeDefinitionBuilder resolvedType = findTypeDefinitionBuilder(union, dependentModuleBuilder,
+                    utQName.getLocalName(), module.getName(), union.getLine());
+            union.setTypedef(resolvedType);
+        }
+    }
+
+    private static void resolveUnionUnknownType(final UnionTypeBuilder union, final ExtendedType extType,
+            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module,
+            final SchemaContext context) {
+        final int line = union.getLine();
+        final TypeDefinition<?> extTypeBase = extType.getBaseType();
+        final UnknownType ut = (UnknownType) extTypeBase;
+        final QName utQName = ut.getQName();
+        final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module, utQName.getPrefix(), line);
+
+        if (dependentModuleBuilder == null) {
+            final Module dependentModule = findModuleFromContext(context, module, utQName.getPrefix(), line);
+            Set<TypeDefinition<?>> types = dependentModule.getTypeDefinitions();
+            TypeDefinition<?> type = findTypeByName(types, utQName.getLocalName());
+            final TypeDefinitionBuilder newType = extendedTypeWithNewBase(null, type, extType, modules, module, 0);
+            union.setTypedef(newType);
+        } else {
+            final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(union, dependentModuleBuilder,
+                    utQName.getLocalName(), module.getName(), line);
+            final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null, extType, modules,
+                    module, line);
+            union.setTypedef(newType);
+        }
     }
 
     /**
@@ -239,15 +240,14 @@ public final class TypeUtils {
         final int line = nodeToResolve.getLine();
         final TypeDefinition<?> nodeToResolveType = nodeToResolve.getType();
         final QName unknownTypeQName = nodeToResolveType.getBaseType().getQName();
-        TypeDefinitionBuilder resolvedType = null;
         final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(nodeToResolve,
                 dependentModuleBuilder, unknownTypeQName.getLocalName(), module.getName(), line);
 
+        TypeDefinitionBuilder resolvedType;
         if (nodeToResolveType instanceof ExtendedType) {
             final ExtendedType extType = (ExtendedType) nodeToResolveType;
-            final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null, extType, modules,
-                    module, nodeToResolve.getLine());
-            resolvedType = newType;
+            resolvedType = extendedTypeWithNewBase(targetTypeBuilder, null, extType, modules, module,
+                    nodeToResolve.getLine());
         } else {
             resolvedType = targetTypeBuilder;
         }
@@ -354,7 +354,7 @@ public final class TypeUtils {
         final TypeDefinitionBuilderImpl newType = new TypeDefinitionBuilderImpl(module.getModuleName(), line,
                 oldExtendedType.getQName());
         final TypeConstraints tc = new TypeConstraints(module.getName(), line);
-        TypeConstraints constraints = null;
+        TypeConstraints constraints;
         if (newBaseType == null) {
             tc.addFractionDigits(oldExtendedType.getFractionDigits());
             tc.addLengths(oldExtendedType.getLengthConstraints());
@@ -433,7 +433,7 @@ public final class TypeUtils {
         } else {
             QName qname = type.getQName();
             if (type instanceof UnknownType) {
-                ModuleBuilder dependentModuleBuilder = ParserUtils.findDependentModuleBuilder(modules, builder,
+                ModuleBuilder dependentModuleBuilder = ParserUtils.findModuleFromBuilders(modules, builder,
                         qname.getPrefix(), nodeToResolve.getLine());
                 if (dependentModuleBuilder == null) {
                     if (context == null) {
@@ -455,7 +455,7 @@ public final class TypeUtils {
 
                 TypeDefinition<?> base = ((ExtendedType) type).getBaseType();
                 if (base instanceof UnknownType) {
-                    ModuleBuilder dependentModule = ParserUtils.findDependentModuleBuilder(modules, builder, base
+                    ModuleBuilder dependentModule = ParserUtils.findModuleFromBuilders(modules, builder, base
                             .getQName().getPrefix(), nodeToResolve.getLine());
                     TypeDefinitionBuilder tdb = findTypeDefinitionBuilder(nodeToResolve, dependentModule, base
                             .getQName().getLocalName(), builder.getName(), nodeToResolve.getLine());
@@ -474,8 +474,8 @@ public final class TypeUtils {
     /**
      * Search for type definition builder by name.
      * 
-     * @param dirtyNodeSchemaPath
-     *            schema path of node which contains unresolved type
+     * @param nodeToResolve
+     *            node which contains unresolved type
      * @param dependentModule
      *            module which should contains referenced type
      * @param typeName
@@ -488,11 +488,8 @@ public final class TypeUtils {
      */
     private static TypeDefinitionBuilder findTypeDefinitionBuilder(final TypeAwareBuilder nodeToResolve,
             final ModuleBuilder dependentModule, final String typeName, final String currentModuleName, final int line) {
-
-        TypeDefinitionBuilder result = null;
-
         Set<TypeDefinitionBuilder> typedefs = dependentModule.getTypeDefinitionBuilders();
-        result = findTypedefBuilderByName(typedefs, typeName);
+        TypeDefinitionBuilder result = findTypedefBuilderByName(typedefs, typeName);
         if (result != null) {
             return result;
         }
