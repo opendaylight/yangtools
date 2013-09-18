@@ -280,7 +280,7 @@ public final class ParserUtils {
     private static def Builder findNode(Builder firstNodeParent, List<QName> path, String moduleName, int line) {
         var currentName = "";
         var currentParent = firstNodeParent;
-
+        
         val max = path.size();
         var i = 0;
         while(i < max) {
@@ -289,7 +289,10 @@ public final class ParserUtils {
             currentName = qname.getLocalName();
             if (currentParent instanceof DataNodeContainerBuilder) {
                 var dataNodeContainerParent = currentParent as DataNodeContainerBuilder;
-                var nodeFound = dataNodeContainerParent.getDataChildByName(currentName);
+                var SchemaNodeBuilder nodeFound = dataNodeContainerParent.getDataChildByName(currentName);
+                if (nodeFound == null && currentParent instanceof ModuleBuilder) {
+                	nodeFound = searchNotifications(currentParent as ModuleBuilder, currentName);
+                }
                 // if not found as regular child, search in uses
                 if (nodeFound == null) {
                     var found = searchUses(dataNodeContainerParent, currentName);
@@ -316,6 +319,15 @@ public final class ParserUtils {
             i = i + 1; 
         }
         return currentParent;
+    }
+    
+    private static def searchNotifications(ModuleBuilder parent, String name) {
+        for(notification : parent.notifications) {
+            if(notification.getQName().localName.equals(name)) {
+                return notification;
+            }
+        }
+        return null;
     }
     
     private static def searchUses(DataNodeContainerBuilder dataNodeContainerParent, String name) {
