@@ -7,4 +7,5 @@
         <version>0.5.1-SNAPSHOT</version>
     </parent>
     <artifactId>model-openflow</artifactId>
+    <packaging>bundle</packaging>
 </project>

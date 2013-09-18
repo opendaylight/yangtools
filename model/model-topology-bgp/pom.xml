@@ -7,4 +7,5 @@
         <version>0.5.1-SNAPSHOT</version>
     </parent>
     <artifactId>model-topology-bgp</artifactId>
+    <packaging>bundle</packaging>
 </project>

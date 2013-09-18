@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yang-parser-impl</artifactId>
     <name>${project.artifactId}</name>
+    <packaging>bundle</packaging>
     <description>YANG parser</description>
 
     <dependencies>
@@ -60,6 +61,24 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${maven.bundle.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Export-Package>
+                            org.opendaylight.yangtools.yang.parser.impl
+                        </Export-Package>
+                        <Private-Package>
+                            org.opendaylight.yangtools.antlrv4.code.gen,
+                            org.opendaylight.yangtools.yang.parser.builder.impl
+                        </Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>4.0</version>
@@ -95,6 +114,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
