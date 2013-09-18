@@ -48,8 +48,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private Status status = Status.CURRENT;
 
     private final String augmentTargetStr;
-    private SchemaPath dirtyAugmentTarget;
-    private SchemaPath finalAugmentTarget;
+    private SchemaPath targetPath;
+    private SchemaPath targetNodeSchemaPath;
 
     private final Set<UsesNodeBuilder> usesNodes = new HashSet<UsesNodeBuilder>();
     private boolean resolved;
@@ -57,8 +57,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr) {
         super(moduleName, line, null);
         this.augmentTargetStr = augmentTargetStr;
-        final SchemaPath targetPath = ParserUtils.parseXPathString(augmentTargetStr);
-        dirtyAugmentTarget = targetPath;
+        targetPath = ParserUtils.parseXPathString(augmentTargetStr);
         instance = new AugmentationSchemaImpl(targetPath);
     }
 
@@ -89,7 +88,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
     @Override
     public SchemaPath getPath() {
-        return finalAugmentTarget;
+        return targetNodeSchemaPath;
     }
 
     @Override
@@ -98,7 +97,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             instance.setDescription(description);
             instance.setReference(reference);
             instance.setStatus(status);
-            instance.setTargetPath(finalAugmentTarget);
+            instance.setTargetPath(targetNodeSchemaPath);
 
             RevisionAwareXPath whenStmt;
             if (whenCondition == null) {
@@ -196,22 +195,23 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public SchemaPath getTargetPath() {
-        if(finalAugmentTarget == null) {
-            return dirtyAugmentTarget;
-        } else {
-            return finalAugmentTarget;
-        }
-    }
-
-    @Override
-    public void setTargetPath(SchemaPath path) {
-        this.finalAugmentTarget = path;
-    }
-
-    @Override
     public String getTargetPathAsString() {
         return augmentTargetStr;
+    }
+
+    @Override
+    public SchemaPath getTargetPath() {
+        return targetPath;
+    }
+
+    @Override
+    public SchemaPath getTargetNodeSchemaPath() {
+        return targetNodeSchemaPath;
+    }
+
+    @Override
+    public void setTargetNodeSchemaPath(SchemaPath path) {
+        this.targetNodeSchemaPath = path;
     }
 
     @Override

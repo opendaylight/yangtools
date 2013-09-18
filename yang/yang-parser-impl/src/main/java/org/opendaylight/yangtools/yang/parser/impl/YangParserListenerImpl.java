@@ -382,23 +382,27 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 addNodeToPath(type.getQName());
                 moduleBuilder.setType(type);
             } else {
-                if ("union".equals(typeName)) {
-                    QName qname = BaseTypes.constructQName("union");
-                    addNodeToPath(qname);
-                    UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
-                    Builder parent = moduleBuilder.getActualNode();
-                    unionBuilder.setParent(parent);
-                    moduleBuilder.enterNode(unionBuilder);
-                } else if ("identityref".equals(typeName)) {
-                    QName qname = BaseTypes.constructQName("identityref");
-                    addNodeToPath(qname);
-                    SchemaPath path = createActualSchemaPath(actualPath.peek());
-                    moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
-                } else {
-                    type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
-                            yangModelPrefix, moduleBuilder.getActualNode());
-                    moduleBuilder.setType(type);
-                    addNodeToPath(type.getQName());
+                QName qname;
+                switch (typeName) {
+                    case "union":
+                        qname = BaseTypes.constructQName("union");
+                        addNodeToPath(qname);
+                        UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
+                        Builder parent = moduleBuilder.getActualNode();
+                        unionBuilder.setParent(parent);
+                        moduleBuilder.enterNode(unionBuilder);
+                        break;
+                    case "identityref":
+                        qname = BaseTypes.constructQName("identityref");
+                        addNodeToPath(qname);
+                        SchemaPath path = createActualSchemaPath(actualPath.peek());
+                        moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
+                        break;
+                    default:
+                        type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
+                                yangModelPrefix, moduleBuilder.getActualNode());
+                        moduleBuilder.setType(type);
+                        addNodeToPath(type.getQName());
                 }
             }
         } else {
@@ -778,8 +782,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String nodeParameter = stringFromNode(ctx);
         enterLog("unknown-node", nodeParameter, line);
 
-        QName nodeType = null;
-
+        QName nodeType;
         final String nodeTypeStr = ctx.getChild(0).getText();
         final String[] splittedElement = nodeTypeStr.split(":");
         if (splittedElement.length == 1) {

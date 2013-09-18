@@ -119,12 +119,6 @@ public class GeneratorJavaFileTest {
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 
         List<File> filesList = getJavaFiles(new File(GENERATOR_OUTPUT_PATH));
-        File current = new File(System.getProperty("user.dir"));
-        File parentPath = current.getParentFile().getParentFile();
-        File f = new File(parentPath,
-                "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/DataObject.java");
-        filesList.add(f);
-
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
         Iterable<String> options = Arrays.asList(new String[] { "-d", COMPILER_OUTPUT_PATH });
         boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();

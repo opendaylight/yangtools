@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -45,7 +44,6 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 import com.google.common.collect.Lists;
 
-@Ignore
 public class YangParserWithContextTest {
     private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final YangParserImpl parser = new YangParserImpl();

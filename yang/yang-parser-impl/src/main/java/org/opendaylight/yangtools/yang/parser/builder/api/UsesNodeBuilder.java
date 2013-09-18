@@ -72,12 +72,38 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
      */
     void setGrouping(GroupingBuilder grouping);
 
+    /**
+     * Get information if this uses node is defined in augment.
+     *
+     * @return true, if this node is defined under augment statement, false
+     *         otherwise
+     */
     boolean isAugmenting();
 
+    /**
+     * Set information if this uses node is defined in augment.
+     *
+     * @param augmenting
+     */
     void setAugmenting(boolean augmenting);
 
+    /**
+     * Get augment under which was this uses node was defined.
+     * <p>
+     * Note: This method may return different object than {@link #getParent()}
+     * if this node is a copy of other uses node. If the uses node is copied,
+     * its parent has changed, but parent augment is always same.
+     * </p>
+     *
+     * @return AugmentationSchemaBuilder under which was this node defined
+     */
     AugmentationSchemaBuilder getParentAugment();
 
+    /**
+     * Set augment under which was this uses node was defined.
+     *
+     * @param augment
+     */
     void setParentAugment(AugmentationSchemaBuilder augment);
 
     /**
