@@ -32,16 +32,54 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
 
     void setStatus(Status status);
 
+    /**
+     * Get path to target node as single string.
+     *
+     * @return path to target node as String
+     */
     String getTargetPathAsString();
 
+    /**
+     * Get path to target node.
+     * <p>
+     * Note that individual parts of path contain only prefix relative to
+     * current context and name of node.
+     * </p>
+     *
+     * @return path to target node as SchemaPath
+     */
     SchemaPath getTargetPath();
 
-    void setTargetPath(SchemaPath path);
+    /**
+     * Get schema path of target node.
+     *
+     * @return SchemaPath of target node
+     */
+    SchemaPath getTargetNodeSchemaPath();
+
+    /**
+     * Set schema path of target node.
+     *
+     * @param path
+     *            SchemaPath of target node
+     */
+    void setTargetNodeSchemaPath(SchemaPath path);
 
     AugmentationSchema build();
 
+    /**
+     * Get information about augmentation process.
+     *
+     * @return true, if augmentation process was performed already, false
+     *         otherwise
+     */
     boolean isResolved();
 
+    /**
+     * Set information about augmentation process.
+     *
+     * @param resolved
+     */
     void setResolved(boolean resolved);
 
 }

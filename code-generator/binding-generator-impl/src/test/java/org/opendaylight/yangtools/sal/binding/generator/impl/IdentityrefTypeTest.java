@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
@@ -56,7 +56,6 @@ public class IdentityrefTypeTest {
      */
     @Test
     public void testIdentityrefYangBuiltInType() {
-        loadTestResources();
         final YangModelParser parser = new YangParserImpl();
         final Set<Module> modules = parser.parseYangModels(testModels);
         final SchemaContext context = parser.resolveSchemaContext(modules);

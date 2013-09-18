@@ -41,7 +41,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 
-
 public final class ParserUtils {
 
     private new() {
@@ -92,7 +91,7 @@ public final class ParserUtils {
      *            current line in yang model
      * @return module builder if found, null otherwise
      */
-    public static def ModuleBuilder findDependentModuleBuilder(Map<String, TreeMap<Date, ModuleBuilder>> modules,
+    public static def ModuleBuilder findModuleFromBuilders(Map<String, TreeMap<Date, ModuleBuilder>> modules,
         ModuleBuilder module, String prefix, int line) {
         var ModuleBuilder dependentModule = null;
         var Date dependentModuleRevision = null;
@@ -135,6 +134,9 @@ public final class ParserUtils {
      */
     public static def Module findModuleFromContext(SchemaContext context, ModuleBuilder currentModule,
         String prefix, int line) {
+        if (context === null) {
+        	throw new YangParseException(currentModule.getName(), line, "Cannot find module with prefix '" + prefix + "'.");
+        }
         val modulesByRevision = new TreeMap<Date, Module>();
 
         val dependentModuleImport = ParserUtils.getModuleImport(currentModule, prefix);
@@ -379,18 +381,22 @@ public final class ParserUtils {
         List<QName> path) {
 
             // traverse augment target path and try to reach target node
-            val currentParent = findNode(firstNodeParent,path,augment.moduleName,augment.line);
-            if (currentParent === null) return false;
+            val targetNode = findNode(firstNodeParent,path,augment.moduleName,augment.line);
+            if (targetNode === null) return false;
             
-            if ((currentParent instanceof DataNodeContainerBuilder)) {
-                fillAugmentTarget(augment, currentParent as DataNodeContainerBuilder);
-            } else if (currentParent instanceof ChoiceBuilder) {
-                fillAugmentTarget(augment, currentParent as ChoiceBuilder);
+            if ((targetNode instanceof DataNodeContainerBuilder)) {
+            	val targetDataNodeContainer = targetNode as DataNodeContainerBuilder;
+            	augment.setTargetNodeSchemaPath(targetDataNodeContainer.getPath());
+                fillAugmentTarget(augment, targetDataNodeContainer);
+            } else if (targetNode instanceof ChoiceBuilder) {
+            	val targetChoiceBuilder = targetNode as ChoiceBuilder;
+            	augment.setTargetNodeSchemaPath(targetChoiceBuilder.getPath());
+                fillAugmentTarget(augment, targetChoiceBuilder);
             } else {
                 throw new YangParseException(augment.getModuleName(), augment.getLine(),
                     "Error in augment parsing: The target node MUST be either a container, list, choice, case, input, output, or notification node.");
             }
-            (currentParent as AugmentationTargetBuilder).addAugmentation(augment);
+            (targetNode as AugmentationTargetBuilder).addAugmentation(augment);
             augment.setResolved(true);
             return true;
         }
@@ -505,7 +511,7 @@ public final class ParserUtils {
                     fillAugmentTarget(augment, lb);
                     (lb as AugmentationTargetBuilder ).addAugmentation(augment);
                     lb.rebuild();
-                    augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+                    augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
                     augment.setResolved(true);
                 }
                 case (currentParent instanceof ChoiceNodeImpl): {
@@ -514,7 +520,7 @@ public final class ParserUtils {
                     fillAugmentTarget(augment, chb);
                     (chb as AugmentationTargetBuilder ).addAugmentation(augment);
                     chb.rebuild();
-                    augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+                    augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
                     augment.setResolved(true);
                 }
                 case (currentParent instanceof ChoiceCaseNodeImpl): {
@@ -523,7 +529,7 @@ public final class ParserUtils {
                     fillAugmentTarget(augment, chcb);
                     (chcb as AugmentationTargetBuilder ).addAugmentation(augment);
                     chcb.rebuild();
-                    augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+                    augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
                     augment.setResolved(true);
                 }
                 case (currentParent instanceof NotificationDefinitionImpl): {
@@ -532,11 +538,11 @@ public final class ParserUtils {
                     fillAugmentTarget(augment, nb);
                     (nb as AugmentationTargetBuilder ).addAugmentation(augment);
                     nb.rebuild();
-                    augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+                    augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
                     augment.setResolved(true);
                 }
             }
-            augment.setTargetPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+            augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
             augment.setResolved(true);
             return true;
         }
@@ -553,7 +559,7 @@ public final class ParserUtils {
                 }
                 val prefix = splittedBase.get(0);
                 val name = splittedBase.get(1);
-                val dependentModule = findDependentModuleBuilder(modules, module, prefix, idref.getLine());
+                val dependentModule = findModuleFromBuilders(modules, module, prefix, idref.getLine());
                 result = new QName(dependentModule.getNamespace(), dependentModule.getRevision(), prefix, name);
             } else {
                 result = new QName(module.getNamespace(), module.getRevision(), module.getPrefix(), baseString);
