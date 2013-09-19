@@ -6,12 +6,12 @@
 		<artifactId>yang</artifactId>
 		<version>0.5.7-SNAPSHOT</version>
 	</parent>
-	<packaging>bundle</packaging>
+
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>yang-binding</artifactId>
 	<name>${project.artifactId}</name>
 	<description>Java binding for YANG</description>
-
+    <packaging>bundle</packaging>
 
 	<build>
 		<plugins>
@@ -24,7 +24,6 @@
 					<instructions>
 						<Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
 					</instructions>
-					<manifestLocation>${project.basedir}/META-INF</manifestLocation>
 				</configuration>
 			</plugin>
 		</plugins>
