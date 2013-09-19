@@ -10,5 +10,23 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>iana-afn-safi</artifactId>
     <version>2013.07.04-SNAPSHOT</version>
-    <packaging>bundle</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

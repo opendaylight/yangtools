@@ -1,32 +1,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<parent>
-		<groupId>org.opendaylight.yangtools</groupId>
-		<artifactId>yang</artifactId>
-		<version>0.5.8-SNAPSHOT</version>
-	</parent>
-	<packaging>bundle</packaging>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>yang-binding</artifactId>
-	<name>${project.artifactId}</name>
-	<description>Java binding for YANG</description>
+    <parent>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>yang</artifactId>
+        <version>0.5.8-SNAPSHOT</version>
+    </parent>
 
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>yang-binding</artifactId>
+    <name>${project.artifactId}</name>
+    <description>Java binding for YANG</description>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${maven.bundle.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
-					</instructions>
-					<manifestLocation>${project.basedir}/META-INF</manifestLocation>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
