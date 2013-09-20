@@ -22,9 +22,6 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
-                        <Export-Package>
-                            org.opendaylight.yangtools.sal.java.api.generator
-                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

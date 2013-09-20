@@ -33,9 +33,6 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
-                        <Export-Package>
-                            org.opendaylight.yangtools.sal.binding.generator.spi
-                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

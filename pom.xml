@@ -13,6 +13,9 @@
         <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
         <yang.version>0.5.8-SNAPSHOT</yang.version>
         <maven.bundle.version>2.4.0</maven.bundle.version>
+        <maven.jar.version>2.4</maven.jar.version>
+        <maven.source.version>2.2.1</maven.source.version>
+        <maven.surefire.version>2.16</maven.surefire.version>
     </properties>
 
     <modules>
@@ -158,6 +161,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
