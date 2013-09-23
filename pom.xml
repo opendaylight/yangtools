@@ -11,14 +11,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.2</slf4j.version>
         <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
-        <yang.version>0.5.7-SNAPSHOT</yang.version>
+        <yang.version>0.5.7</yang.version>
         <maven.bundle.version>2.4.0</maven.bundle.version>
     </properties>
 
     <modules>
         <module>yang</module>
         <module>code-generator</module>
-        <module>model</module>
+        <!-- <module>model</module> -->
     </modules>
 
     <pluginRepositories>
