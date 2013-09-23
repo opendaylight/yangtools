@@ -11,7 +11,6 @@ import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
-import java.io.ObjectOutputStream.PutField
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
 import java.util.Date
 
@@ -416,7 +414,7 @@ public  class SchemaContextUtil {
      * @param context Schema Context
      * @param parentModule Parent Module
      * @param xpath XPath String
-     * @return
+     * @return return a list of QName
      */
     private static def xpathToQNamePath( SchemaContext context,  Module parentModule,
              String xpath) {
@@ -534,7 +532,7 @@ public  class SchemaContextUtil {
      * @param module Yang Module
      * @param relativeXPath Non conditional Revision Aware Relative XPath
      * @param leafrefSchemaPath Schema Path for Leafref
-     * @return
+     * @return list of QName
      */
     private static def resolveRelativeXPath( SchemaContext context,  Module module,
              RevisionAwareXPath relativeXPath,  SchemaNode leafrefParentNode) {

@@ -33,7 +33,7 @@ public class InstanceIdentifier {
 
     /**
      * 
-     * @return
+     * @return path
      */
     public List<PathArgument> getPath() {
         return this.path;
@@ -42,10 +42,7 @@ public class InstanceIdentifier {
     public Class<?> getTargetType() {
         return this.targetType;
     }
-    
-    
-    
-    
+
     @Override
     public String toString() {
         return "InstanceIdentifier [path=" + path + "]";
@@ -81,22 +78,22 @@ public class InstanceIdentifier {
         Class<? extends I> getType() {
             return this.type;
         }
-        
+
         @Override
         public boolean equals(Object obj) {
-            if(obj == null) {
+            if (obj == null) {
                 return false;
             }
-            if(obj.hashCode() != hashCode()) {
+            if (obj.hashCode() != hashCode()) {
                 return false;
             }
-            if(!(obj instanceof IdentifiableItem<?, ?>)) {
+            if (!(obj instanceof IdentifiableItem<?, ?>)) {
                 return false;
             }
             IdentifiableItem<?, ?> foreign = (IdentifiableItem<?, ?>) obj;
             return key.equals(foreign.getKey());
         }
-        
+
         @Override
         public int hashCode() {
             return key.hashCode();

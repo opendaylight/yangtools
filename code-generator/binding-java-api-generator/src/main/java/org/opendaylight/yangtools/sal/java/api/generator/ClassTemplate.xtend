@@ -1,14 +1,11 @@
 package org.opendaylight.yangtools.sal.java.api.generator
 
 import java.util.List
-import java.util.Map
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants
 import org.opendaylight.yangtools.sal.binding.model.api.Constant
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
-import org.opendaylight.yangtools.sal.binding.model.api.Type
-import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 
 

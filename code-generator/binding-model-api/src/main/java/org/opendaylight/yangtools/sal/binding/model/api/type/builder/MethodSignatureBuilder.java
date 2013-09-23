@@ -31,8 +31,7 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatur
     /**
      * Sets the flag for declaration of method as abstract or non abstract. If
      * the flag <code>isAbstract == true</code> The instantiated Method
-     * Signature MUST have return value for
-     * {@link org.opendaylight.controller.sal.binding .model.api.MethodSignature#isAbstract()}
+     * Signature MUST have return value for {@link MethodSignature#isAbstract()}
      * also equals to <code>true</code>.
      * 
      * @param isAbstract

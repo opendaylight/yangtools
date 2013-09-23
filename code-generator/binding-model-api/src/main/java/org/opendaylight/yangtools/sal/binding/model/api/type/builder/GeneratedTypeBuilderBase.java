@@ -36,7 +36,8 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}
      * 
-     * @param <code>genTOBuilder</code> Name of Enclosing Type
+     * @param genTOBuilder
+     *            Name of Enclosing Type
      */
     T addEnclosingTransferObject(final GeneratedTOBuilder genTOBuilder);
 
@@ -121,9 +122,9 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * Name of Method cannot be <code>null</code>, if it is <code>null</code>
      * the method SHOULD throw {@link IllegalArgumentException} <br>
      * By <i>Default</i> the MethodSignatureBuilder SHOULD be pre-set as
-     * {@link MethodSignatureBuilder#setAbstract(true)},
-     * {@link MethodSignatureBuilder#setFinal(false)} and
-     * {@link MethodSignatureBuilder#setAccessModifier(PUBLIC)}
+     * {@link MethodSignatureBuilder#setAbstract(boolean)},
+     * {TypeMemberBuilder#setFinal(boolean)} and
+     * {TypeMemberBuilder#setAccessModifier(boolean)}
      * 
      * @param name
      *            Name of Method

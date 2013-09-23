@@ -126,7 +126,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
 	override generateTypes(SchemaContext context) {
 		checkArgument(context !== null, "Schema Context reference cannot be NULL.");
 		checkState(context.modules !== null, "Schema Context does not contain defined modules.");
-		val List<Type> generatedTypes = new ArrayList();
 		schemaContext = context;
 		typeProvider = new TypeProviderImpl(context);
 		val Set<Module> modules = context.modules;
@@ -934,7 +933,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 	/**
      *
      * @param unknownSchemaNodes
-     * @return
+     * @return nodeParameter of UnknownSchemaNode
      */
 	private def String getAugmentIdentifier(List<UnknownSchemaNode> unknownSchemaNodes) {
 		for (unknownSchemaNode : unknownSchemaNodes) {

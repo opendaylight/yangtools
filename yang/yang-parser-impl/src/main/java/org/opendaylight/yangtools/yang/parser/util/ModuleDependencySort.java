@@ -33,9 +33,9 @@ import com.google.common.collect.Sets;
 
 /**
  * Creates a module dependency graph from provided {@link ModuleBuilder}s and
- * provides a {@link #sort()} method. It is topological sort and returns modules
- * in order in which they should be processed (e.g. if A imports B, sort returns
- * {B, A}).
+ * provides a {@link #sort(ModuleBuilder...)} method. It is topological sort and
+ * returns modules in order in which they should be processed (e.g. if A imports
+ * B, sort returns {B, A}).
  */
 public final class ModuleDependencySort {
 

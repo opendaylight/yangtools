@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 /**
  * Unchecked exception thrown if yang definition is not valid according to
- * {@link YangModelBasicValidationListener}
+ * {YangModelBasicValidationListener}
  */
 public final class YangValidationException extends RuntimeException {
 

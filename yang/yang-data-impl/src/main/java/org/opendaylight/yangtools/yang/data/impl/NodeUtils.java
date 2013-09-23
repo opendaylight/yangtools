@@ -186,8 +186,8 @@ public abstract class NodeUtils {
     }
 
     /**
-     * @param path
-     * @return
+     * @param qNamesPath
+     * @return path
      */
     private static String schemaPathToPath(List<QName> qNamesPath) {
         List<String> pathSeed = new ArrayList<>();

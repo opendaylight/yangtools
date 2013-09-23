@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.*;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findDependentModuleBuilder;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -483,7 +484,7 @@ public final class TypeUtils {
      *            name of current module
      * @param line
      *            current line in module
-     * @return
+     * @return typeDefinitionBuilder
      */
     private static TypeDefinitionBuilder findTypeDefinitionBuilder(final TypeAwareBuilder nodeToResolve,
             final ModuleBuilder dependentModule, final String typeName, final String currentModuleName, final int line) {

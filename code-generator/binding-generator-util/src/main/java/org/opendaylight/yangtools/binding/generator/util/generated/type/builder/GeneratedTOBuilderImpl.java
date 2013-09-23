@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import org.opendaylight.yangtools.sal.binding.model.api.*;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder> implements GeneratedTOBuilder {
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
+
+public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder> implements
+        GeneratedTOBuilder {
 
     private GeneratedTransferObject extendsType;
     private final List<GeneratedPropertyBuilder> properties = new ArrayList<>();
@@ -36,17 +40,15 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         return this;
     }
 
-
-
     /**
      * Add new Method Signature definition for Generated Type Builder and
      * returns Method Signature Builder for specifying all Method parameters. <br>
      * Name of Method cannot be <code>null</code>, if it is <code>null</code>
      * the method SHOULD throw {@link IllegalArgumentException} <br>
      * By <i>Default</i> the MethodSignatureBuilder SHOULD be pre-set as
-     * {@link MethodSignatureBuilder#setAbstract(false)},
-     * {@link MethodSignatureBuilder#setFinal(false)} and
-     * {@link MethodSignatureBuilder#setAccessModifier(PUBLIC)}
+     * {@link MethodSignatureBuilder#setAbstract(boolean)},
+     * {TypeMemberBuilder#setFinal(boolean)} and
+     * {TypeMemberBuilder#setAccessModifier(boolean)}
      * 
      * @param name
      *            Name of Method
@@ -81,7 +83,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     protected GeneratedTOBuilder thisInstance() {
         return this;
     }
-    
+
     @Override
     public GeneratedTransferObject toInstance() {
         return new GeneratedTransferObjectImpl(this);
@@ -143,6 +145,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         public boolean isUnionType() {
             return isUnionType;
         }
+
         @Override
         public GeneratedTransferObject getSuperType() {
             return extendsType;
