@@ -74,11 +74,8 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
     GeneratedTransferObject toInstance();
 
     /**
-     * Set original YANG type for GeneratedTOBuilder. It is YANG type from which
-     * is this transport object created.
      * 
-     * @param yangType
-     *            YangType enum value of original YANG type
+     * @param isUnion
      */
     void setIsUnion(boolean isUnion);
 }

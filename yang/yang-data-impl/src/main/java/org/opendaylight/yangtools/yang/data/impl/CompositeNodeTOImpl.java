@@ -129,9 +129,6 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
         return getSimpleNodesByName(new QName(getNodeType(), children));
     }
 
-    /**
-     * @param value
-     */
     protected void init() {
         if (getValue() != null) {
             nodeMap = NodeUtils.buildNodeMap(getValue());

@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
 /**
  * Yang Model Parser interface is designed for parsing yang models and convert

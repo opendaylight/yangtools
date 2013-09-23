@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -20,7 +21,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
+import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
 import org.slf4j.impl.StaticLoggerBinder;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -30,11 +34,11 @@ import com.google.common.annotations.VisibleForTesting;
  * {@link CodeGenerator}s. Steps of this process:
  * <ol>
  * <li>List yang files from {@link #yangFilesRootDir}</li>
- * <li>Process yang files using {@link YangModelParserImpl}</li>
+ * <li>Process yang files using {@link YangParserImpl}</li>
  * <li>For each {@link CodeGenerator} from {@link #codeGenerators}:</li>
  * <ol>
  * <li>Instantiate using default constructor</li>
- * <li>Call {@link CodeGenerator#generateSources(SchemaContext, File)}</li>
+ * <li>Call {@link CodeGenerator#generateSources(SchemaContext, File, Set)}</li>
  * </ol>
  * </ol>
  */

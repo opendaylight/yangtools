@@ -1,10 +1,10 @@
 /*
-  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
-  *
-  * This program and the accompanying materials are made available under the
-  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
-  * and is available at http://www.eclipse.org/legal/epl-v10.html
-  */
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 
 /**
  * Definition of structures and DOM Like API of processed YANG schema
@@ -16,7 +16,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode}
  *
  * <dt>argument
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ExtensionDefinition#getArgumentName()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ExtensionDefinition#getArgument()}
  *
  *
  * <dt>augment
@@ -149,7 +149,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition#getPathStatement()}
  *
  * <dt>pattern
- *   <dd>{@link org.opendaylight.yangtools.yang.model.base.type.api.PatternConstraint}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.PatternConstraint}
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition}
  *
  * <dt>position
@@ -207,7 +207,7 @@
  *
  * <dt>uses
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.UsesNode}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DataNodeContainere#getUses()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer#getUses()}
  *
  * <dt>value
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair#getValue()}

@@ -61,11 +61,11 @@ public final class CopyUtils {
     /**
      * Create copy of DataSchemaNodeBuilder with new parent. If updateQName is
      * true, qname of node will be corrected based on new parent.
-     *
+     * 
      * @param old
      * @param newParent
      * @param updateQName
-     * @return
+     * @return copy
      */
     public static DataSchemaNodeBuilder copy(DataSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
         if (old instanceof AnyXmlBuilder) {
@@ -378,7 +378,7 @@ public final class CopyUtils {
             type = new TypeDefinitionBuilderImpl(old.getModuleName(), newParent.getLine(), newQName);
             type.setParent(newParent);
             // TODO
-            //type.setPath(newSchemaPath);
+            // type.setPath(newSchemaPath);
             type.setPath(old.getPath());
 
             if (old.getType() == null) {
@@ -430,28 +430,28 @@ public final class CopyUtils {
 
         // target child nodes
         Set<DataSchemaNodeBuilder> newTargetChildren = new HashSet<>();
-        for(DataSchemaNodeBuilder dnb : old.getTargetChildren()) {
+        for (DataSchemaNodeBuilder dnb : old.getTargetChildren()) {
             newTargetChildren.add(copy(dnb, newParent, true));
         }
         copy.getTargetChildren().addAll(newTargetChildren);
 
         // target typedefs
         Set<TypeDefinitionBuilder> newTargetTypedefs = new HashSet<>();
-        for(TypeDefinitionBuilder tdb : old.getTargetTypedefs()) {
+        for (TypeDefinitionBuilder tdb : old.getTargetTypedefs()) {
             newTargetTypedefs.add(copy(tdb, newParent, true));
         }
         copy.getTargetTypedefs().addAll(newTargetTypedefs);
 
         // target groupings
         Set<GroupingBuilder> newTargetGroupings = new HashSet<>();
-        for(GroupingBuilder gb : old.getTargetGroupings()) {
+        for (GroupingBuilder gb : old.getTargetGroupings()) {
             newTargetGroupings.add(copy(gb, newParent, true));
         }
         copy.getTargetGroupings().addAll(newTargetGroupings);
 
         // target unknown nodes
         Set<UnknownSchemaNodeBuilder> newTargetUnknownNodes = new HashSet<>();
-        for(UnknownSchemaNodeBuilder unb : old.getTargetUnknownNodes()) {
+        for (UnknownSchemaNodeBuilder unb : old.getTargetUnknownNodes()) {
             newTargetUnknownNodes.add(copy(unb, newParent, true));
         }
         copy.getTargetUnknownNodes().addAll(newTargetUnknownNodes);
@@ -521,7 +521,7 @@ public final class CopyUtils {
                 newPath = Collections.singletonList(newQName);
             }
         } else if (newParent instanceof AugmentationSchemaBuilder) {
-            AugmentationSchemaBuilder augment = (AugmentationSchemaBuilder)newParent;
+            AugmentationSchemaBuilder augment = (AugmentationSchemaBuilder) newParent;
             ModuleBuilder parent = ParserUtils.getParentModule(newParent);
             if (updateQName) {
                 newQName = new QName(parent.getNamespace(), parent.getRevision(), parent.getPrefix(), old.getQName()
@@ -565,7 +565,7 @@ public final class CopyUtils {
 
     /**
      * Create AnyXmlBuilder from given AnyXmlSchemaNode.
-     *
+     * 
      * @param anyxml
      * @param qname
      * @param moduleName
@@ -584,7 +584,7 @@ public final class CopyUtils {
 
     /**
      * Create GroupingBuilder from given GroupingDefinition.
-     *
+     * 
      * @param grouping
      * @param qname
      * @param moduleName
@@ -609,7 +609,7 @@ public final class CopyUtils {
 
     /**
      * Create TypeDefinitionBuilder from given ExtendedType.
-     *
+     * 
      * @param typedef
      * @param qname
      * @param moduleName
@@ -639,7 +639,7 @@ public final class CopyUtils {
 
     /**
      * Create UnknownSchemaNodeBuilder from given UnknownSchemaNode.
-     *
+     * 
      * @param unknownNode
      * @param qname
      * @param moduleName
@@ -664,7 +664,7 @@ public final class CopyUtils {
 
     /**
      * Create LeafSchemaNodeBuilder from given LeafSchemaNode.
-     *
+     * 
      * @param leaf
      *            leaf from which to create builder
      * @param qname
@@ -689,7 +689,7 @@ public final class CopyUtils {
 
     /**
      * Create ContainerSchemaNodeBuilder from given ContainerSchemaNode.
-     *
+     * 
      * @param container
      * @param qname
      * @param moduleName
@@ -716,7 +716,7 @@ public final class CopyUtils {
 
     /**
      * Create ListSchemaNodeBuilder from given ListSchemaNode.
-     *
+     * 
      * @param list
      * @param qname
      * @param moduleName
@@ -741,7 +741,7 @@ public final class CopyUtils {
 
     /**
      * Create LeafListSchemaNodeBuilder from given LeafListSchemaNode.
-     *
+     * 
      * @param leafList
      * @param qname
      * @param moduleName
@@ -764,7 +764,7 @@ public final class CopyUtils {
 
     /**
      * Create ChoiceBuilder from given ChoiceNode.
-     *
+     * 
      * @param choice
      * @param qname
      * @param moduleName
@@ -785,7 +785,7 @@ public final class CopyUtils {
 
     /**
      * Set DataSchemaNode arguments to builder object
-     *
+     * 
      * @param node
      *            node from which arguments should be read
      * @param builder
@@ -802,7 +802,7 @@ public final class CopyUtils {
 
     /**
      * Copy constraints from constraints definition to constraints builder.
-     *
+     * 
      * @param nodeConstraints
      *            definition from which constraints will be copied
      * @param constraints

@@ -116,7 +116,7 @@ abstract class BaseTemplate {
         /**
      * Template method which generates JAVA comments.
      * 
-     * @param string with the comment for whole JAVA class
+     * @param comment string with the comment for whole JAVA class
      * @return string with comment in JAVA format
      */
     def protected CharSequence asJavadoc(String comment) {

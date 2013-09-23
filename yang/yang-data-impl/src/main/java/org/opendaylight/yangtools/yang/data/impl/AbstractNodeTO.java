@@ -90,7 +90,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
 
     /**
      * @return modification action
-     * @see org.opendaylight.yangtools.yang.data.impl.NodeModificationSupport#getModificationAction()
+     * @see NodeModification#getModificationAction()
      */
     @Override
     public ModifyAction getModificationAction() {
