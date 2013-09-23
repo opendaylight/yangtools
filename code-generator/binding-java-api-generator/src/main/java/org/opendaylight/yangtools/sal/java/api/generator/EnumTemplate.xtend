@@ -2,8 +2,6 @@ package org.opendaylight.yangtools.sal.java.api.generator
 
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import java.util.Map
-import java.util.HashMap
 
 /**
  * Template for generating JAVA enumeration type. 
@@ -19,7 +17,7 @@ class EnumTemplate extends BaseTemplate {
     /**
      * Constructs instance of this class with concrete <code>enums</code>.
      * 
-     * @param enumeration which will be transformed to JAVA source code 
+     * @param enums enumeration which will be transformed to JAVA source code 
      */
     new(Enumeration enums) {
         super(enums as GeneratedType )
