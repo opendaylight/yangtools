@@ -9,18 +9,18 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 /**
  * Unchecked exception thrown if yang definition is not valid according to
- * {@link YangModelBasicValidationListener}
+ * {YangModelBasicValidationListener}
  */
 public final class YangValidationException extends RuntimeException {
 
-    private static final long serialVersionUID = 7414330400390825381L;
+	private static final long serialVersionUID = 7414330400390825381L;
 
-    public YangValidationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public YangValidationException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public YangValidationException(String message) {
-        super(message);
-    }
+	public YangValidationException(String message) {
+		super(message);
+	}
 
 }

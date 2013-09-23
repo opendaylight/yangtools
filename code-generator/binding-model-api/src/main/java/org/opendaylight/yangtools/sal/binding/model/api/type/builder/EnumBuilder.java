@@ -19,43 +19,44 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  */
 public interface EnumBuilder extends Type {
 
-    /**
-     * The method creates new AnnotationTypeBuilder containing specified package
-     * name an annotation name. <br>
-     * Neither the package name or annotation name can contain <code>null</code>
-     * references. In case that any of parameters contains <code>null</code> the
-     * method SHOULD thrown {@link IllegalArgumentException}
-     * 
-     * @param packageName
-     *            Package Name of Annotation Type
-     * @param name
-     *            Name of Annotation Type
-     * @return <code>new</code> instance of Annotation Type Builder.
-     */
-    AnnotationTypeBuilder addAnnotation(final String packageName, final String name);
+	/**
+	 * The method creates new AnnotationTypeBuilder containing specified package
+	 * name an annotation name. <br>
+	 * Neither the package name or annotation name can contain <code>null</code>
+	 * references. In case that any of parameters contains <code>null</code> the
+	 * method SHOULD thrown {@link IllegalArgumentException}
+	 * 
+	 * @param packageName
+	 *            Package Name of Annotation Type
+	 * @param name
+	 *            Name of Annotation Type
+	 * @return <code>new</code> instance of Annotation Type Builder.
+	 */
+	AnnotationTypeBuilder addAnnotation(final String packageName,
+			final String name);
 
-    /**
-     * 
-     * @param name
-     * @param value
-     */
-    void addValue(final String name, final Integer value);
+	/**
+	 * 
+	 * @param name
+	 * @param value
+	 */
+	void addValue(final String name, final Integer value);
 
-    /**
-     * 
-     * @param definingType
-     * @return
-     */
-    Enumeration toInstance(final Type definingType);
+	/**
+	 * 
+	 * @param definingType
+	 * @return instance of defining type
+	 */
+	Enumeration toInstance(final Type definingType);
 
-    /**
-     * Updates this builder with data from <code>enumTypeDef</code>.
-     * Specifically this data represents list of value-name pairs.
-     * 
-     * @param enumTypeDef
-     *            enum type definition as source of enum data for
-     *            <code>enumBuilder</code>
-     */
-    void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef);
+	/**
+	 * Updates this builder with data from <code>enumTypeDef</code>.
+	 * Specifically this data represents list of value-name pairs.
+	 * 
+	 * @param enumTypeDef
+	 *            enum type definition as source of enum data for
+	 *            <code>enumBuilder</code>
+	 */
+	void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef);
 
 }

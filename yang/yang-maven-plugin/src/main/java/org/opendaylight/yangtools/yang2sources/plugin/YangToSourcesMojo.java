@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -20,7 +21,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
+import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
 import org.slf4j.impl.StaticLoggerBinder;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -30,109 +34,116 @@ import com.google.common.annotations.VisibleForTesting;
  * {@link CodeGenerator}s. Steps of this process:
  * <ol>
  * <li>List yang files from {@link #yangFilesRootDir}</li>
- * <li>Process yang files using {@link YangModelParserImpl}</li>
+ * <li>Process yang files using {@link YangParserImpl}</li>
  * <li>For each {@link CodeGenerator} from {@link #codeGenerators}:</li>
  * <ol>
  * <li>Instantiate using default constructor</li>
- * <li>Call {@link CodeGenerator#generateSources(SchemaContext, File)}</li>
+ * <li>Call {@link CodeGenerator#generateSources(SchemaContext, File, Set)}</li>
  * </ol>
  * </ol>
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true)
 public final class YangToSourcesMojo extends AbstractMojo {
 
-    /**
-     * Classes implementing {@link CodeGenerator} interface. An instance will be
-     * created out of every class using default constructor. Method {@link
-     * CodeGenerator#generateSources(SchemaContext, File, Set<String>
-     * yangModulesNames)} will be called on every instance.
-     */
-    @Parameter(required = false)
-    private CodeGeneratorArg[] codeGenerators;
+	/**
+	 * Classes implementing {@link CodeGenerator} interface. An instance will be
+	 * created out of every class using default constructor. Method {@link
+	 * CodeGenerator#generateSources(SchemaContext, File, Set<String>
+	 * yangModulesNames)} will be called on every instance.
+	 */
+	@Parameter(required = false)
+	private CodeGeneratorArg[] codeGenerators;
 
-    /**
-     * Source directory that will be recursively searched for yang files (ending
-     * with .yang suffix).
-     */
-    @Parameter(required = false)
-    // defaults to ${basedir}/src/main/yang
-    private String yangFilesRootDir;
+	/**
+	 * Source directory that will be recursively searched for yang files (ending
+	 * with .yang suffix).
+	 */
+	@Parameter(required = false)
+	// defaults to ${basedir}/src/main/yang
+	private String yangFilesRootDir;
 
-    @Parameter(required = false)
-    private String[] excludeFiles;
+	@Parameter(required = false)
+	private String[] excludeFiles;
 
-    @Parameter(property = "project", required = true, readonly = true)
-    private MavenProject project;
+	@Parameter(property = "project", required = true, readonly = true)
+	private MavenProject project;
 
-    @Parameter(property = "inspectDependencies", required = true, readonly = true)
-    private boolean inspectDependencies;
+	@Parameter(property = "inspectDependencies", required = true, readonly = true)
+	private boolean inspectDependencies;
 
-    private YangToSourcesProcessor yangToSourcesProcessor;
+	private YangToSourcesProcessor yangToSourcesProcessor;
 
-    public YangToSourcesMojo() {
+	public YangToSourcesMojo() {
 
-    }
+	}
 
-    public void setProject(MavenProject project) {
-        this.project = project;
-    }
+	public void setProject(MavenProject project) {
+		this.project = project;
+	}
 
-    @VisibleForTesting
-    YangToSourcesMojo(YangToSourcesProcessor processor) {
-        this.yangToSourcesProcessor = processor;
-    }
+	@VisibleForTesting
+	YangToSourcesMojo(YangToSourcesProcessor processor) {
+		this.yangToSourcesProcessor = processor;
+	}
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        StaticLoggerBinder.SINGLETON.setLog(getLog());
-        if (yangToSourcesProcessor == null) {
-            List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		StaticLoggerBinder.SINGLETON.setLog(getLog());
+		if (yangToSourcesProcessor == null) {
+			List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);
 
-            // defaults to ${basedir}/src/main/yang
-            File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
-            File[] excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
+			// defaults to ${basedir}/src/main/yang
+			File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir,
+					project.getBasedir());
+			File[] excludedFiles = processExcludeFiles(excludeFiles,
+					yangFilesRootFile);
 
-            yangToSourcesProcessor = new YangToSourcesProcessor(getLog(), yangFilesRootFile, excludedFiles,
-                    codeGeneratorArgs, project, inspectDependencies);
-        }
-        yangToSourcesProcessor.execute();
-    }
+			yangToSourcesProcessor = new YangToSourcesProcessor(getLog(),
+					yangFilesRootFile, excludedFiles, codeGeneratorArgs,
+					project, inspectDependencies);
+		}
+		yangToSourcesProcessor.execute();
+	}
 
-    private static List<CodeGeneratorArg> processCodeGenerators(CodeGeneratorArg[] codeGenerators) {
-        List<CodeGeneratorArg> codeGeneratorArgs;
-        if (codeGenerators == null) {
-            codeGeneratorArgs = Collections.emptyList();
-        } else {
-            codeGeneratorArgs = Arrays.asList(codeGenerators);
-        }
-        return codeGeneratorArgs;
-    }
+	private static List<CodeGeneratorArg> processCodeGenerators(
+			CodeGeneratorArg[] codeGenerators) {
+		List<CodeGeneratorArg> codeGeneratorArgs;
+		if (codeGenerators == null) {
+			codeGeneratorArgs = Collections.emptyList();
+		} else {
+			codeGeneratorArgs = Arrays.asList(codeGenerators);
+		}
+		return codeGeneratorArgs;
+	}
 
-    private static File processYangFilesRootDir(String yangFilesRootDir, File baseDir) {
-        File yangFilesRootFile;
-        if (yangFilesRootDir == null) {
-            yangFilesRootFile = new File(baseDir, "src" + File.separator + "main" + File.separator + "yang");
-        } else {
-            File file = new File(yangFilesRootDir);
-            if (file.isAbsolute()) {
-                yangFilesRootFile = file;
-            } else {
-                yangFilesRootFile = new File(baseDir, file.getPath());
-            }
-        }
-        return yangFilesRootFile;
-    }
+	private static File processYangFilesRootDir(String yangFilesRootDir,
+			File baseDir) {
+		File yangFilesRootFile;
+		if (yangFilesRootDir == null) {
+			yangFilesRootFile = new File(baseDir, "src" + File.separator
+					+ "main" + File.separator + "yang");
+		} else {
+			File file = new File(yangFilesRootDir);
+			if (file.isAbsolute()) {
+				yangFilesRootFile = file;
+			} else {
+				yangFilesRootFile = new File(baseDir, file.getPath());
+			}
+		}
+		return yangFilesRootFile;
+	}
 
-    private static File[] processExcludeFiles(String[] excludeFiles, File baseDir) {
-        if (excludeFiles == null) {
-            return new File[] {};
-        }
-        File[] result = new File[excludeFiles.length];
-        for (int i = 0; i < excludeFiles.length; i++) {
-            result[i] = new File(baseDir, excludeFiles[i]);
-        }
+	private static File[] processExcludeFiles(String[] excludeFiles,
+			File baseDir) {
+		if (excludeFiles == null) {
+			return new File[] {};
+		}
+		File[] result = new File[excludeFiles.length];
+		for (int i = 0; i < excludeFiles.length; i++) {
+			result[i] = new File(baseDir, excludeFiles[i]);
+		}
 
-        return result;
-    }
+		return result;
+	}
 
 }

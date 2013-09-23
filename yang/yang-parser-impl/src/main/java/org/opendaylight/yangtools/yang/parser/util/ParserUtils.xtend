@@ -52,7 +52,7 @@ public final class ParserUtils {
      *
      * @param schemaPath
      * @param qname
-     * @return
+     * @return new SchemaPath from given path and qname
      */
     public static def SchemaPath createSchemaPath(SchemaPath schemaPath, QName... qname) {
         val path = new ArrayList<QName>(schemaPath.getPath());
