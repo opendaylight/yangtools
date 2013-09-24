@@ -6,7 +6,7 @@ module module-refine {
     organization "OPEN DAYLIGHT";
     contact "http://www.opendaylight.org/";
 
-    revision 2013-11-09 {
+    revision 2013-9-11 {
     }
 
     grouping grp {
