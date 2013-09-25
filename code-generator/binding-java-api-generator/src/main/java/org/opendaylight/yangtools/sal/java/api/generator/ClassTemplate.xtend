@@ -331,10 +331,19 @@ class ClassTemplate extends BaseTemplate {
                 StringBuilder builder = new StringBuilder();
                 «val properties = genTO.toStringIdentifiers»
                 builder.append("«type.name» [«properties.get(0).fieldName»=");
+                «IF properties.get(0).returnType.name.contains("[")»
+                    builder.append(java.util.Arrays.toString(«properties.get(0).fieldName»));
+                «ELSE»
+                    builder.append(«properties.get(0).fieldName»);
+                «ENDIF»
                 builder.append(«properties.get(0).fieldName»);
                 «FOR i : 1..<genTO.toStringIdentifiers.size»
                     builder.append(", «properties.get(i).fieldName»=");
-                    builder.append(«properties.get(i).fieldName»);
+                    «IF properties.get(i).returnType.name.contains("[")»
+                        builder.append(java.util.Arrays.toString(«properties.get(i).fieldName»));
+                    «ELSE»
+                        builder.append(«properties.get(i).fieldName»);
+                    «ENDIF»
                 «ENDFOR»
                 builder.append("]");
                 return builder.toString();
