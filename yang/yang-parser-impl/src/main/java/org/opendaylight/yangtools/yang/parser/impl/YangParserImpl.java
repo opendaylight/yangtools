@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.google.common.base.Preconditions;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -77,6 +78,28 @@ public final class YangParserImpl implements YangModelParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
 
     private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
+
+    @Override
+    public Set<Module> parseYangModels(final File yangFile, final File directory) {
+        Preconditions.checkState(yangFile.exists(), yangFile + " does not exists");
+        Preconditions.checkState(directory.exists(), directory + " does not exists");
+        Preconditions.checkState(directory.isDirectory(), directory + " is not a directory");
+
+        final String yangFileName = yangFile.getName();
+        final String[] fileList = directory.list();
+        Preconditions.checkNotNull(fileList, directory + " not found");
+
+        final List<File> modules = new ArrayList<>();
+        for (String fileName : fileList) {
+            if (fileName.equals(yangFileName)) {
+                continue;
+            }
+            modules.add(new File(directory, fileName));
+        }
+        modules.add(yangFile);
+
+        return parseYangModels(modules);
+    }
 
     @Override
     public Set<Module> parseYangModels(final List<File> yangFiles) {

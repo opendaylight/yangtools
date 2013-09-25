@@ -25,6 +25,17 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 public interface YangModelParser {
 
     /**
+     * Parse yangFile file and all yang files found in directory.
+     *
+     * @param yangFile
+     *            file to parse
+     * @param directory
+     *            directory which contains additional yang files
+     * @return Set of Yang Modules
+     */
+    Set<Module> parseYangModels(final File yangFile, final File directory);
+
+    /**
      * Parse one or more Yang model files and return the definitions of Yang
      * modules defined in *.yang files; <br>
      * This method SHOULD be used if user need to parse multiple yang models

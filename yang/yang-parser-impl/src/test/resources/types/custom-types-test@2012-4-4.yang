@@ -4,6 +4,23 @@ module custom-types-test {
     namespace "urn:custom.types.demo";
     prefix "iit";
 
+    // imports added only for testing purposes
+    import iana-afn-safi {
+        prefix "afn";
+    }
+    import iana-if-type {
+        prefix "if";
+    }
+    import iana-timezones {
+        prefix "tz";
+    }
+    import ietf-inet-types {
+        prefix "inet";
+    }
+    import ietf-yang-types {
+        prefix "yang";
+    }
+
     organization "opendaylight";
     contact "WILL-BE-DEFINED-LATER";
         revision 2012-04-16 {

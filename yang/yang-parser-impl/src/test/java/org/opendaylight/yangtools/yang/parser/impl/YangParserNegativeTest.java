@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
@@ -209,6 +211,34 @@ public class YangParserNegativeTest {
         } catch (YangParseException e) {
             String expected = "Error in module 'testfile7' at line 18: Error in augment parsing: cannot augment mandatory node";
             assertEquals(expected, e.getMessage());
+        }
+    }
+
+    @Test
+    public void testWrongDependenciesDir() throws Exception {
+        try {
+            File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
+            File dependenciesDir = new File("/invalid");
+            YangModelParser parser = new YangParserImpl();
+            parser.parseYangModels(yangFile, dependenciesDir);
+            fail("Exception should by thrown");
+        } catch (IllegalStateException e) {
+            String expected = "/invalid does not exists";
+            assertEquals(expected, e.getMessage());
+        }
+    }
+
+    @Test
+    public void testWrongDependenciesDir2() throws Exception {
+        try {
+            File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
+            File dependenciesDir = new File(getClass().getResource("/model").getPath());
+            YangModelParser parser = new YangParserImpl();
+            parser.parseYangModels(yangFile, dependenciesDir);
+            fail("Exception should by thrown");
+        } catch (YangValidationException e) {
+            String expected = "Not existing module imported";
+            assertTrue(e.getMessage().contains(expected));
         }
     }
 
