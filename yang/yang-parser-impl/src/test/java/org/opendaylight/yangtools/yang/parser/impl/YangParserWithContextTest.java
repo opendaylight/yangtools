@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -40,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 import com.google.common.collect.Lists;
@@ -51,7 +53,7 @@ public class YangParserWithContextTest {
     @Test
     public void testTypeFromContext() throws Exception {
         SchemaContext context = null;
-        String resource = "/types/ietf-inet-types@2010-09-24.yang";
+        String resource = "/ietf/ietf-inet-types@2010-09-24.yang";
         InputStream stream = new FileInputStream(getClass().getResource(resource).getPath());
         context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
         stream.close();
@@ -269,10 +271,11 @@ public class YangParserWithContextTest {
     @Test
     public void testIdentity() throws Exception {
         SchemaContext context = null;
-        try (InputStream stream = new FileInputStream(getClass().getResource("/types/custom-types-test@2012-4-4.yang")
-                .getPath())) {
-            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
-        }
+        File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
+        File dependenciesDir = new File(getClass().getResource("/ietf").getPath());
+        YangModelParser parser = new YangParserImpl();
+        context = parser.resolveSchemaContext(parser.parseYangModels(yangFile, dependenciesDir));
+
         Module module = null;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test3.yang").getPath())) {
             module = TestUtils.loadModuleWithContext(stream, context);
@@ -300,10 +303,10 @@ public class YangParserWithContextTest {
     @Test
     public void testUnknownNodes() throws Exception {
         SchemaContext context = null;
-        try (InputStream stream = new FileInputStream(getClass().getResource("/types/custom-types-test@2012-4-4.yang")
-                .getPath())) {
-            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
-        }
+        File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
+        File dependenciesDir = new File(getClass().getResource("/ietf").getPath());
+        YangModelParser parser = new YangParserImpl();
+        context = parser.resolveSchemaContext(parser.parseYangModels(yangFile, dependenciesDir));
 
         Module module = null;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test3.yang").getPath())) {
