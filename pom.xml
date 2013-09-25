@@ -21,6 +21,7 @@
     <modules>
         <module>yang</module>
         <module>code-generator</module>
+        <module>restconf</module>
         <module>model</module>
     </modules>
 
