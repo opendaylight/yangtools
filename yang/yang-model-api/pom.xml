@@ -30,10 +30,6 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
-                        <Export-Package>
-                            org.opendaylight.yangtools.yang.model.api,
-                            org.opendaylight.yangtools.yang.model.api.type
-                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
