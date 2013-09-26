@@ -769,7 +769,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * 
      * In this case the new generated TO is created for union subtype (recursive
      * call of method
-     * {@link #provideGeneratedTOBuilderForUnionTypeDef(String, TypeDefinition, String)
+     * {@link #provideGeneratedTOBuildersForUnionTypeDef(String, TypeDefinition, String)
      * provideGeneratedTOBuilderForUnionTypeDef} and in parent TO builder
      * <code>parentUnionGenTOBuilder</code> is created property which type is
      * equal to new generated TO.
