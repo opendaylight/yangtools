@@ -24,6 +24,7 @@
         <module>binding-generator-util</module>
         <module>binding-generator-impl</module>
         <module>binding-java-api-generator</module>
+        <module>binding-type-provider</module>
         <module>maven-sal-api-gen-plugin</module>
     </modules>
 
