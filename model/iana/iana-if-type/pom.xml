@@ -9,7 +9,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>iana-if-type</artifactId>
-    <version>2013.07.04-SNAPSHOT</version>
+    <version>2013.07.04.0-SNAPSHOT</version>
 
     <build>
         <plugins>

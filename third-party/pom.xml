@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>yangtools</artifactId>
+        <version>0.5-SNAPSHOT</version>
+    </parent>
+    <groupId>org.opendaylight.yangtools.thirdparty</groupId>
+    <artifactId>third-party-parent</artifactId>
+    <packaging>pom</packaging>
+    <scm>
+        <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
+        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/controller.git</developerConnection>
+        <url>https://wiki.opendaylight.org/view/YANG_Tools:Third-Party</url>
+    </scm>
+
+    <modules>
+        <module>xtend-lib-osgi</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
