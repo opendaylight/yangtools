@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yangtools</artifactId>
     <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -177,6 +176,7 @@
                     <configuration>
                         <instructions>
                             <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                            <Export-Package>*</Export-Package>
                         </instructions>
                     </configuration>
                 </plugin>
@@ -226,7 +226,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute></execute>
+                                        <execute />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
