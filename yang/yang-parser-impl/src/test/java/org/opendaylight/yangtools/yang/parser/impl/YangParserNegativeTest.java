@@ -223,7 +223,7 @@ public class YangParserNegativeTest {
             parser.parseYangModels(yangFile, dependenciesDir);
             fail("Exception should by thrown");
         } catch (IllegalStateException e) {
-            String expected = "/invalid does not exists";
+            String expected = File.separator + "invalid does not exists";
             assertEquals(expected, e.getMessage());
         }
     }
