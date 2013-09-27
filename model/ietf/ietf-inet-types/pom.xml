@@ -9,7 +9,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ietf-inet-types</artifactId>
-    <version>2010.09.24-SNAPSHOT</version>
+    <version>2010.09.24.0-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 

@@ -18,6 +18,7 @@
         <module>ietf-yang-types</module>
         <module>ietf-ted</module>
         <module>ietf-topology</module>
+        <!--module>ietf-netconf</module -->
         <!-- 
         <module>ietf-topology-l3-unicast-igp</module>
         <module>ietf-topology-isis</module>

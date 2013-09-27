@@ -11,14 +11,27 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.2</slf4j.version>
         <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
-        <yang.version>0.5.8-SNAPSHOT</yang.version>
+        
+        <!-- Java Versions -->
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+
+        <!-- Build Plugin Versions -->
         <maven.bundle.version>2.4.0</maven.bundle.version>
         <maven.jar.version>2.4</maven.jar.version>
+        <maven.javadoc.version>2.9.1</maven.javadoc.version>
         <maven.source.version>2.2.1</maven.source.version>
-        <maven.surefire.version>2.16</maven.surefire.version>
+        <maven.surefire.version>2.16</maven.surefire.version>       
+
+        <!-- Supporting Libraries -->
+        <slf4j.version>1.7.2</slf4j.version>
+        <guava.version>14.0.1</guava.version>
+        <xtend.version>2.4.3</xtend.version>
+        <groovy.version>2.1.6</groovy.version>
     </properties>
 
     <modules>
+        <module>concepts</module>
         <module>yang</module>
         <module>code-generator</module>
         <module>restconf</module>
@@ -44,20 +57,6 @@
 
 
     <repositories>
-        <!-- EBR release -->
-        <!-- http://repository.springsource.com/maven/bundles/release -->
-        <repository>
-            <id>ebr-bundles-release</id>
-            <name>ebr-bundles-release</name>
-            <url>${nexusproxy}/repositories/ebr-bundles-release/</url>
-        </repository>
-        <!-- EBR external -->
-        <!-- http://repository.springsource.com/maven/bundles/external -->
-        <repository>
-            <id>ebr-bundles-external</id>
-            <name>ebr-bundles-external</name>
-            <url>${nexusproxy}/repositories/ebr-bundles-external/</url>
-        </repository>
         <!-- Maven repo2 mirror -->
         <!-- http://repo2.maven.org/maven2 -->
         <repository>
@@ -72,27 +71,7 @@
             <name>central</name>
             <url>${nexusproxy}/repositories/central/</url>
         </repository>
-        <!-- Pax mirror -->
-        <!-- https://oss.sonatype.org/content/repositories/ops4j-releases -->
-        <repository>
-            <id>ops4j-releases</id>
-            <name>ops4j-releases</name>
-            <url>${nexusproxy}/repositories/ops4j-releases/</url>
-        </repository>
-        <!-- Third Packages hosted in local maven because not available in 
-            other places -->
-        <repository>
-            <id>thirdparty</id>
-            <name>thirdparty</name>
-            <url>${nexusproxy}/repositories/thirdparty/</url>
-        </repository>
-        <!-- Jboss mirror -->
-        <!-- https://repository.jboss.org/nexus/content/repositories/releases -->
-        <repository>
-            <id>jboss.releases</id>
-            <name>jboss.releases</name>
-            <url>${nexusproxy}/repositories/jboss.releases/</url>
-        </repository>
+
         <!-- OpenDayLight Released artifact -->
         <repository>
             <id>opendaylight-release</id>
@@ -110,13 +89,21 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Testing Dependencies -->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.10</version>
                 <scope>test</scope>
-                <optional>true</optional>
             </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>1.9.5</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Supporting Libraries -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -126,6 +113,11 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>14.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.xtend</groupId>
+                <artifactId>org.eclipse.xtend.lib</artifactId>
+                <version>${xtend.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -148,16 +140,102 @@
     </distributionManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.version}</version>
+                    <configuration>
+                        <archive>
+                            <!-- Bundle OSGi Manifest created by maven-bundle-plugin into jar file -->
+                            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>${maven.bundle.version}</version>
+                    <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <id>bundle-manifest</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <goal>manifest</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <instructions>
+                            <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        </instructions>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.xtend</groupId>
+                    <artifactId>xtend-maven-plugin</artifactId>
+                    <version>${xtend.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${basedir}/src/main/xtend-gen</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.4.1</version>
+                    <configuration>
+                        <filesets>
+                            <fileset>
+                                <directory>${basedir}/src/main/xtend-gen</directory>
+                                <includes>
+                                    <include>**</include>
+                                </includes>
+                            </fileset>
+                        </filesets>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.felix</groupId>
+                                        <artifactId>maven-bundle-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>manifest</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute></execute>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -175,7 +253,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>${maven.javadoc.version}</version>
                 <configuration>
                     <stylesheet>maven</stylesheet>
                 </configuration>
@@ -216,6 +294,4 @@
             </plugin>
         </plugins>
     </reporting>
-
 </project>
-
