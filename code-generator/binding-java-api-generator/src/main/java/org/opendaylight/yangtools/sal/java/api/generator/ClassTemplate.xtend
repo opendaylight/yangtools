@@ -336,7 +336,6 @@ class ClassTemplate extends BaseTemplate {
                 «ELSE»
                     builder.append(«properties.get(0).fieldName»);
                 «ENDIF»
-                builder.append(«properties.get(0).fieldName»);
                 «FOR i : 1..<genTO.toStringIdentifiers.size»
                     builder.append(", «properties.get(i).fieldName»=");
                     «IF properties.get(i).returnType.name.contains("[")»

@@ -5,19 +5,33 @@
         <artifactId>yangtools</artifactId>
         <version>0.1.0</version>
     </parent>
-
+    <version>0.1.1</version>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools.model</groupId>
     <artifactId>model-parent</artifactId>
-    <version>0.1.0</version>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
     <properties>
-        <yang.version>0.5.8-SNAPSHOT</yang.version>
+        <yang.version>0.5.8</yang.version>
+        <codegen.version>0.5.8.1</codegen.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>opendaylight-release</id>
+            <name>opendaylight-release</name>
+            <url>${nexusproxy}/repositories/opendaylight.release/</url>
+        </pluginRepository>
+        <!-- OpenDayLight Snapshot artifact -->
+        <pluginRepository>
+            <id>opendaylight-snapshot</id>
+            <name>opendaylight-snapshot</name>
+            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <modules>
         <module>yang-ext</module>
@@ -58,7 +72,7 @@
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
                         <artifactId>maven-sal-api-gen-plugin</artifactId>
-                        <version>0.5.8-SNAPSHOT</version>
+                        <version>0.5.8.1</version>
                         <type>jar</type>
                     </dependency>
                 </dependencies>
