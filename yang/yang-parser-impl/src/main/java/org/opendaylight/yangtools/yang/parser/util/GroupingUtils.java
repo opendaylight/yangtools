@@ -205,6 +205,8 @@ public final class GroupingUtils {
         String prefix = module.getPrefix();
 
         SchemaPath parentPath = parent.getPath();
+
+
         if(parent instanceof AugmentationSchemaBuilder) {
             parentPath = ((AugmentationSchemaBuilder)parent).getTargetNodeSchemaPath();
         }
@@ -218,12 +220,11 @@ public final class GroupingUtils {
             GroupingMember gm = (GroupingMember) child;
             if (gm.isAddedByUses()) {
                 if(usesNode.isAugmenting()) {
-                    if(child.getQName().getLocalName().equals("paths")) {
-                        System.out.println();
-                    }
+                    child.setAugmenting(true);
+                }
+                if(usesNode.isAugmenting() && !(usesNode.getParentAugment().getParent() instanceof UsesNodeBuilder)) {
                     AugmentationSchemaBuilder parentAugment = usesNode.getParentAugment();
                     ModuleBuilder m = ParserUtils.getParentModule(parentAugment);
-                    child.setAugmenting(true);
                     correctNodePathForUsesNodes(child, parentPath, m);
                 } else {
                     child.setQName(new QName(ns, rev, prefix, child.getQName().getLocalName()));

@@ -202,7 +202,7 @@ public final class ParserUtils {
     public static def void fillAugmentTarget(AugmentationSchemaBuilder augment, DataNodeContainerBuilder target) {
         for (DataSchemaNodeBuilder child : augment.getChildNodeBuilders()) {
             val childCopy = CopyUtils.copy(child, target, false);
-            childCopy.setAugmenting(true);
+            setNodeAugmenting(childCopy, augment);
             correctNodePath(child, target.getPath());
             correctNodePath(childCopy, target.getPath());
             try {
@@ -213,11 +213,24 @@ public final class ParserUtils {
                 throw new YangParseException(augment.getModuleName(), augment.getLine(),
                     "Failed to perform augmentation: " + e.getMessage());
             }
-
         }
         for (UsesNodeBuilder usesNode : augment.getUsesNodes()) {
             val copy = CopyUtils.copyUses(usesNode, target);
             target.addUsesNode(copy);
+        }
+    }
+
+    private static def void setNodeAugmenting(DataSchemaNodeBuilder child, AugmentationSchemaBuilder augment) {
+        child.setAugmenting(true);
+        if (child instanceof DataNodeContainerBuilder) {
+            val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
+            for (inner : dataNodeChild.getChildNodeBuilders()) {
+                setNodeAugmenting(inner, augment);
+            }
+            for (uses : dataNodeChild.getUsesNodes()) {
+                uses.setParentAugment(augment);
+                uses.setAugmenting(true);
+            }
         }
     }
 
