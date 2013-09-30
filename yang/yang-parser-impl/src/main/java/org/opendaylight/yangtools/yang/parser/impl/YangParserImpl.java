@@ -694,12 +694,21 @@ public final class YangParserImpl implements YangModelParser {
                 final ModuleBuilder dependentModule = findModuleFromBuilders(modules, module, baseIdentityPrefix,
                         identity.getLine());
 
+                IdentitySchemaNodeBuilder baseIdentity = null;
                 final Set<IdentitySchemaNodeBuilder> dependentModuleIdentities = dependentModule.getIdentities();
                 for (IdentitySchemaNodeBuilder idBuilder : dependentModuleIdentities) {
                     if (idBuilder.getQName().getLocalName().equals(baseIdentityLocalName)) {
-                        identity.setBaseIdentity(idBuilder);
+                        baseIdentity = idBuilder;
+                        break;
                     }
                 }
+                if (baseIdentity == null) {
+                    throw new YangParseException(module.getName(), identity.getLine(),
+                            "Base identity " + baseIdentityName + " not found");
+                } else {
+                    identity.setBaseIdentity(baseIdentity);
+                }
+
             }
         }
     }
