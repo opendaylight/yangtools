@@ -240,6 +240,9 @@ class BuilderTemplate extends BaseTemplate {
 
                 «generateGetters(true)»
 
+                «generateHashCode()»
+
+                «generateEquals()»
             }
 
         }
@@ -325,6 +328,73 @@ class BuilderTemplate extends BaseTemplate {
                 return (E) «augmentField.name».get(augmentationType);
             }
         «ENDIF»
-    '''    
+    '''
+
+    /**
+     * Template method which generates the method <code>hashCode()</code>.
+     * 
+     * @return string with the <code>hashCode()</code> method definition in JAVA format
+     */
+    def protected generateHashCode() '''
+        «IF !properties.empty || augmentField != null»
+            @Override
+            public int hashCode() {
+                final int prime = 31;
+                int result = 1;
+                «FOR property : properties»
+                    result = prime * result + ((«property.fieldName» == null) ? 0 : «property.fieldName».hashCode());
+                «ENDFOR»
+                «IF augmentField != null»
+                    result = prime * result + ((«augmentField.name» == null) ? 0 : «augmentField.name».hashCode());
+                «ENDIF»
+                return result;
+            }
+        «ENDIF»
+    '''
+
+    /**
+     * Template method which generates the method <code>equals()</code>.
+     * 
+     * @return string with the <code>equals()</code> method definition in JAVA format     
+     */
+    def protected generateEquals() '''
+        «IF !properties.empty || augmentField != null»
+            @Override
+            public boolean equals(java.lang.Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (obj == null) {
+                    return false;
+                }
+                if (getClass() != obj.getClass()) {
+                    return false;
+                }
+                «type.name»«IMPL» other = («type.name»«IMPL») obj;
+                «FOR property : properties»
+                    «val fieldName = property.fieldName»
+                    if («fieldName» == null) {
+                        if (other.«fieldName» != null) {
+                            return false;
+                        }
+                    } else if(!«fieldName».equals(other.«fieldName»)) {
+                        return false;
+                    }
+                «ENDFOR»
+                «IF augmentField != null»
+                    «val fieldName = augmentField.name»
+                    if («fieldName» == null) {
+                        if (other.«fieldName» != null) {
+                            return false;
+                        }
+                    } else if(!«fieldName».equals(other.«fieldName»)) {
+                        return false;
+                    }
+                «ENDIF»
+                return true;
+            }
+        «ENDIF»
+    '''
+
 }
 
