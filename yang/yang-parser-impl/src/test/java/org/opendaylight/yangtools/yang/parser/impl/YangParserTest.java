@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.text.ParseException;
@@ -45,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.Int16;
@@ -813,6 +816,24 @@ public class YangParserTest {
         assertEquals(2, dec64Path.size());
         assertEquals(myDecTypeQName, dec64Path.get(0));
         assertEquals(dec64QName, dec64Path.get(1));
+    }
+
+    @Test
+    public void testParseMethod1() throws ParseException {
+        File yangFile = new File(getClass().getResource("/parse-methods/m1.yang").getPath());
+        File dependenciesDir = new File(getClass().getResource("/parse-methods").getPath());
+        YangModelParser parser = new YangParserImpl();
+        modules = parser.parseYangModels(yangFile, dependenciesDir);
+        assertEquals(6, modules.size());
+    }
+
+    @Test
+    public void testParseMethod2() throws ParseException {
+        File yangFile = new File(getClass().getResource("/parse-methods/m1.yang").getPath());
+        File dependenciesDir = new File(getClass().getResource("/parse-methods/dependencies").getPath());
+        YangModelParser parser = new YangParserImpl();
+        modules = parser.parseYangModels(yangFile, dependenciesDir);
+        assertEquals(6, modules.size());
     }
 
 }

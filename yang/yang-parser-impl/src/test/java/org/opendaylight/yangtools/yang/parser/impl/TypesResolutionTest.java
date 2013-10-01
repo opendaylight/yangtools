@@ -46,6 +46,7 @@ public class TypesResolutionTest {
         File dependenciesDir = new File(getClass().getResource("/ietf").getPath());
         YangModelParser parser = new YangParserImpl();
         testedModules = parser.parseYangModels(yangFile, dependenciesDir);
+        assertEquals(4, testedModules.size());
     }
 
     @Test

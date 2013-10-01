@@ -1,0 +1,10 @@
+module m6 {
+
+    yang-version 1;
+    namespace "urn:test.m6";
+    prefix "m6";
+
+     revision 2012-04-16 {
+    }
+
+}

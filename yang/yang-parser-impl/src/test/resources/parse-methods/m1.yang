@@ -1,0 +1,18 @@
+module m1 {
+
+    yang-version 1;
+    namespace "urn:test.m1";
+    prefix "m1";
+
+    import m2 {
+        prefix "m2";
+        revision-date 2013-30-09;
+    }
+    import m3 {
+        prefix "m3";
+    }
+
+     revision 2013-10-16 {
+    }
+
+}

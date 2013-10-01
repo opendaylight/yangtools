@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -89,16 +90,46 @@ public final class YangParserImpl implements YangModelParser {
         final String[] fileList = directory.list();
         Preconditions.checkNotNull(fileList, directory + " not found");
 
-        final List<File> modules = new ArrayList<>();
+        FileInputStream yangFileStream = null;
+        LinkedHashMap<InputStream, File> streamToFileMap = new LinkedHashMap<>();
+
+        try {
+            yangFileStream = new FileInputStream(yangFile);
+            streamToFileMap.put(yangFileStream, yangFile);
+        } catch(FileNotFoundException e) {
+            LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
+        }
+
         for (String fileName : fileList) {
             if (fileName.equals(yangFileName)) {
                 continue;
             }
-            modules.add(new File(directory, fileName));
+            File dependency = new File(directory, fileName);
+            try {
+                if (dependency.isFile()) {
+                    streamToFileMap.put(new FileInputStream(dependency), dependency);
+                }
+            } catch(FileNotFoundException e) {
+                LOG.warn("Exception while reading yang file: " + fileName, e);
+            }
         }
-        modules.add(yangFile);
 
-        return parseYangModels(modules);
+        Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(
+                new ArrayList<>(streamToFileMap.keySet()), new HashMap<ModuleBuilder, InputStream>());
+        ModuleBuilder main = parsedBuilders.get(yangFileStream);
+
+        List<ModuleBuilder> moduleBuilders = new ArrayList<>();
+        moduleBuilders.add(main);
+        filterImports(main, new ArrayList<>(parsedBuilders.values()), moduleBuilders);
+
+        ModuleBuilder[] builders = new ModuleBuilder[moduleBuilders.size()];
+        moduleBuilders.toArray(builders);
+
+        // module dependency graph sorted
+        List<ModuleBuilder> sorted = ModuleDependencySort.sort(builders);
+
+        final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
+        return new LinkedHashSet<>(buildWithContext(modules, null).values());
     }
 
     @Override
@@ -120,7 +151,6 @@ public final class YangParserImpl implements YangModelParser {
             }
 
             Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
-
             final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(
                     Lists.newArrayList(inputStreams.keySet()), builderToStreamMap);
 
@@ -211,26 +241,27 @@ public final class YangParserImpl implements YangModelParser {
         return new SchemaContextImpl(modules);
     }
 
-    private ModuleBuilder[] parseModuleBuilders(List<InputStream> inputStreams,
+    private Map<InputStream, ModuleBuilder> parseModuleBuilders(List<InputStream> inputStreams,
             Map<ModuleBuilder, InputStream> streamToBuilderMap) {
 
         final ParseTreeWalker walker = new ParseTreeWalker();
-        final List<ParseTree> trees = parseStreams(inputStreams);
-        final ModuleBuilder[] builders = new ModuleBuilder[trees.size()];
+        final Map<InputStream, ParseTree> trees = parseStreams(inputStreams);
+        final Map<InputStream, ModuleBuilder> builders = new LinkedHashMap<>();
 
         // validate yang
-        new YangModelBasicValidator(walker).validate(trees);
+        new YangModelBasicValidator(walker).validate(new ArrayList<ParseTree>(trees.values()));
 
         YangParserListenerImpl yangModelParser;
-        for (int i = 0; i < trees.size(); i++) {
+        for(Map.Entry<InputStream, ParseTree> entry : trees.entrySet()) {
             yangModelParser = new YangParserListenerImpl();
-            walker.walk(yangModelParser, trees.get(i));
+            walker.walk(yangModelParser, entry.getValue());
             ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
 
             // We expect the order of trees and streams has to be the same
-            streamToBuilderMap.put(moduleBuilder, inputStreams.get(i));
-            builders[i] = moduleBuilder;
+            streamToBuilderMap.put(moduleBuilder, entry.getKey());
+            builders.put(entry.getKey(), moduleBuilder);
         }
+
         return builders;
     }
 
@@ -242,10 +273,9 @@ public final class YangParserImpl implements YangModelParser {
     private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuildersWithContext(
             final List<InputStream> yangFileStreams, final Map<ModuleBuilder, InputStream> streamToBuilderMap,
             final SchemaContext context) {
-        final ModuleBuilder[] builders = parseModuleBuilders(yangFileStreams, streamToBuilderMap);
-
-        // LinkedHashMap must be used to preserve order
-        final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = new LinkedHashMap<String, TreeMap<Date, ModuleBuilder>>();
+        Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(yangFileStreams, streamToBuilderMap);
+        ModuleBuilder[] builders = new ModuleBuilder[parsedBuilders.size()];
+        final ModuleBuilder[] moduleBuilders = new ArrayList<>(parsedBuilders.values()).toArray(builders);
 
         // module dependency graph sorted
         List<ModuleBuilder> sorted;
@@ -255,7 +285,20 @@ public final class YangParserImpl implements YangModelParser {
             sorted = ModuleDependencySort.sortWithContext(context, builders);
         }
 
-        for (final ModuleBuilder builder : sorted) {
+        return orderModules(sorted);
+    }
+
+    /**
+     * Order modules by name and revision.
+     *
+     * @param modules
+     *            modules to order
+     * @return modules ordered by name and revision
+     */
+    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(List<ModuleBuilder> modules) {
+        // LinkedHashMap must be used to preserve order
+        LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
+        for (final ModuleBuilder builder : modules) {
             if (builder == null) {
                 continue;
             }
@@ -264,20 +307,42 @@ public final class YangParserImpl implements YangModelParser {
             if (builderRevision == null) {
                 builderRevision = new Date(0L);
             }
-            TreeMap<Date, ModuleBuilder> builderByRevision = modules.get(builderName);
+            TreeMap<Date, ModuleBuilder> builderByRevision = result.get(builderName);
             if (builderByRevision == null) {
                 builderByRevision = new TreeMap<Date, ModuleBuilder>();
             }
             builderByRevision.put(builderRevision, builder);
-            modules.put(builderName, builderByRevision);
+            result.put(builderName, builderByRevision);
         }
-        return modules;
+        return result;
     }
 
-    private List<ParseTree> parseStreams(final List<InputStream> yangStreams) {
-        final List<ParseTree> trees = new ArrayList<ParseTree>();
+    private void filterImports(ModuleBuilder main, List<ModuleBuilder> other, List<ModuleBuilder> filtered) {
+        for (ModuleImport mi : main.getModuleImports()) {
+            for (ModuleBuilder builder : other) {
+                if (mi.getModuleName().equals(builder.getModuleName())) {
+                    if (mi.getRevision() == null) {
+                        if (!filtered.contains(builder)) {
+                            filtered.add(builder);
+                            filterImports(builder, other, filtered);
+                        }
+                    } else {
+                        if (mi.getRevision().equals(builder.getRevision())) {
+                            if (!filtered.contains(builder)) {
+                                filtered.add(builder);
+                                filterImports(builder, other, filtered);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Map<InputStream, ParseTree> parseStreams(final List<InputStream> yangStreams) {
+        final Map<InputStream, ParseTree> trees = new HashMap<>();
         for (InputStream yangStream : yangStreams) {
-            trees.add(parseStream(yangStream));
+            trees.put(yangStream, parseStream(yangStream));
         }
         return trees;
     }

@@ -1,0 +1,10 @@
+module m5 {
+
+    yang-version 1;
+    namespace "urn:test.m5";
+    prefix "m5";
+
+     revision 2012-04-16 {
+    }
+
+}

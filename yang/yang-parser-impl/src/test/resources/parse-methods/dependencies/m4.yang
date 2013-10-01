@@ -1,0 +1,10 @@
+module m4 {
+
+    yang-version 1;
+    namespace "urn:test.m4";
+    prefix "m4";
+
+     revision 2013-09-30 {
+    }
+
+}

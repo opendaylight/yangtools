@@ -1,0 +1,17 @@
+module unused {
+
+    yang-version 1;
+    namespace "urn:test.unused";
+    prefix "u";
+
+    import m2 {
+        prefix "m2";
+    }
+    import m3 {
+        prefix "m3";
+    }
+
+     revision 2012-04-16 {
+    }
+
+}

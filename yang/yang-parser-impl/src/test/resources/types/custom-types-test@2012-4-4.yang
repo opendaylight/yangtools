@@ -5,12 +5,6 @@ module custom-types-test {
     prefix "iit";
 
     // imports added only for testing purposes
-    import iana-afn-safi {
-        prefix "afn";
-    }
-    import iana-if-type {
-        prefix "if";
-    }
     import iana-timezones {
         prefix "tz";
     }
