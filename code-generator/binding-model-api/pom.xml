@@ -31,6 +31,11 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Export-Package>
+                            org.opendaylight.yangtools.sal.binding.model.api,
+                            org.opendaylight.yangtools.sal.binding.model.api.type,
+                            org.opendaylight.yangtools.sal.binding.model.api.type.provider
+                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

@@ -53,6 +53,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Export-Package>org.opendaylight.yangtools.yang2sources.spi</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
