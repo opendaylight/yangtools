@@ -19,13 +19,13 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * Uniquely identifies instance of data tree.
  * 
  */
-public class InstanceIdentifier implements Immutable {
+public final class InstanceIdentifier implements Immutable {
 
     private final List<PathArgument> path;
     private final Class<? extends DataObject> targetType;
 
     public InstanceIdentifier(Class<? extends DataObject> type) {
-        path = Collections.emptyList();
+        path = Collections.<PathArgument> singletonList(new Item<>(type));
         this.targetType = type;
     }
 
@@ -66,7 +66,7 @@ public class InstanceIdentifier implements Immutable {
 
     }
 
-    public static class Item<T extends DataObject> implements PathArgument {
+    public static final class Item<T extends DataObject> implements PathArgument {
         private final Class<T> type;
 
         public Item(Class<T> type) {
@@ -103,13 +103,17 @@ public class InstanceIdentifier implements Immutable {
         }
     }
 
-    public static class IdentifiableItem<I extends Identifiable<T> & DataObject, T extends Identifier<I>> implements
+    public static final class IdentifiableItem<I extends Identifiable<T> & DataObject, T extends Identifier<I>> implements
             PathArgument {
 
         private final T key;
         private final Class<I> type;
 
         public IdentifiableItem(Class<I> type, T key) {
+            if (type == null)
+                throw new IllegalArgumentException("Type must not be null.");
+            if (key == null)
+                throw new IllegalArgumentException("Key must not be null.");
             this.type = type;
             this.key = key;
         }
@@ -145,7 +149,7 @@ public class InstanceIdentifier implements Immutable {
 
         @Override
         public String toString() {
-            return type.getName()+"[key=" + key + "]";
+            return type.getName() + "[key=" + key + "]";
         }
     }
 
@@ -187,6 +191,35 @@ public class InstanceIdentifier implements Immutable {
             path.add(new IdentifiableItem<I, T>(listItem, listKey));
             return this;
         }
+    }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        InstanceIdentifier other = (InstanceIdentifier) obj;
+        if (path == null) {
+            if (other.path != null) {
+                return false;
+            }
+        } else if (!path.equals(other.path)) {
+            return false;
+        }
+        return true;
     }
 }
