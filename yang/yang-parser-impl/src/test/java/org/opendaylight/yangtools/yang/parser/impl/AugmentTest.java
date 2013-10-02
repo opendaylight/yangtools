@@ -81,7 +81,7 @@ public class AugmentTest {
         Set<DataSchemaNode> augmentChildren = augment.getChildNodes();
         assertEquals(5, augmentChildren.size());
         for(DataSchemaNode dsn : augmentChildren) {
-            assertTrue(dsn.isAugmenting());
+            TestUtils.checkIsAugmenting(dsn, false);
         }
 
         LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augment.getDataChildByName("ds0ChannelNumber");
@@ -150,11 +150,11 @@ public class AugmentTest {
 
         assertEquals(1, augment1.getChildNodes().size());
         ContainerSchemaNode augmentHolder = (ContainerSchemaNode) augment1.getDataChildByName("augment-holder");
-        assertTrue(augmentHolder.isAugmenting());
+        assertNotNull(augmentHolder);
 
         assertEquals(1, augment2.getChildNodes().size());
         ContainerSchemaNode augmentHolder2 = (ContainerSchemaNode) augment2.getDataChildByName("augment-holder2");
-        assertTrue(augmentHolder2.isAugmenting());
+        assertNotNull(augmentHolder2);
     }
 
     @Test
@@ -166,6 +166,7 @@ public class AugmentTest {
         ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName("interfaces");
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
         ContainerSchemaNode augmentedContainer = (ContainerSchemaNode) ifEntry.getDataChildByName("augment-holder");
+        TestUtils.checkIsAugmenting(augmentedContainer, true);
 
         // testfile1.yang
         // augment "/data:interfaces/data:ifEntry/t3:augment-holder"
@@ -221,6 +222,7 @@ public class AugmentTest {
         ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName("interfaces");
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
         ContainerSchemaNode augmentedContainer = (ContainerSchemaNode) ifEntry.getDataChildByName("augment-holder");
+        TestUtils.checkIsAugmenting(augmentedContainer, true);
 
         // testfile1.yang
         // augment "/data:interfaces/data:ifEntry/t3:augment-holder"

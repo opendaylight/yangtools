@@ -1215,9 +1215,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
      */
     private void addChildToSubnodeOfModule(final Builder parent, final DataSchemaNodeBuilder child,
             final String childName, final int lineNum) {
-        if (parent instanceof AugmentationSchemaBuilder) {
-            child.setAugmenting(true);
-        }
         // no need for checking rpc and notification because they can be
         // defined only under module or submodule
         if (parent instanceof DataNodeContainerBuilder) {

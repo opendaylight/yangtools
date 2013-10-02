@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -144,6 +148,22 @@ final class TestUtils {
             result = null;
         }
         return result;
+    }
+
+    /**
+     * Test if node has augmenting flag set to true. In case this is
+     * DataNodeContainer, check his child nodes too.
+     *
+     * @param node
+     *            node to check
+     */
+    public static void checkIsAugmenting(DataSchemaNode node, boolean expected) {
+        assertEquals(expected, node.isAugmenting());
+        if (node instanceof DataNodeContainer) {
+            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
+                checkIsAugmenting(child, expected);
+            }
+        }
     }
 
 }

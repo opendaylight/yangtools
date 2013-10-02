@@ -881,6 +881,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
             genTypes.addAll(augmentationBodyToGenTypes(augmentPackageName, augChildNodes));
         }
+		
         return genTypes;
     }
 
@@ -1083,6 +1084,18 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         return typeBuilder;
     }
+	
+	private def GeneratedTypeBuilder resolveDataSchemaNodesAugmented(String basePackageName, GeneratedTypeBuilder typeBuilder,
+		Set<DataSchemaNode> schemaNodes) {
+		if ((schemaNodes !== null) && (typeBuilder !== null)) {
+			for (schemaNode : schemaNodes) {
+				if (!schemaNode.isAddedByUses()) {
+					addSchemaNodeToBuilderAsMethod(basePackageName, schemaNode, typeBuilder);
+				}
+			}
+		}
+		return typeBuilder;
+	}
 
     /**
      * Adds the methods to <code>typeBuilder</code> what represents subnodes of
@@ -1106,13 +1119,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
         Set<DataSchemaNode> schemaNodes) {
         if((schemaNodes !== null) && (typeBuilder !== null)) {
             for (schemaNode : schemaNodes) {
-                if(schemaNode.isAugmenting()) {
-                    addSchemaNodeToBuilderAsMethod(basePackageName, schemaNode, typeBuilder);
-                }
-            }
-        }
-        return typeBuilder;
-    }
+			    if (!schemaNode.isAugmenting()) {
+				    addSchemaNodeToBuilderAsMethod(basePackageName, schemaNode, typeBuilder);
+				}
+			}
+		}
+		return typeBuilder;
+	}
 
     /**
      * Adds to <code>typeBuilder</code> a method which is derived from
@@ -1316,7 +1329,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
                 val Set<DataSchemaNode> childNodes = caseNode.childNodes;
                 if(childNodes !== null) {
-                    resolveDataSchemaNodes(basePackageName, caseTypeBuilder, childNodes);
+					resolveDataSchemaNodesAugmented(basePackageName, caseTypeBuilder, childNodes);
                 }
                 generatedTypes.add(caseTypeBuilder.toInstance());
             }

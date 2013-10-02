@@ -208,7 +208,6 @@ public final class ParserUtils {
             try {
                 target.addChildNode(childCopy);
             } catch (YangParseException e) {
-
                 // more descriptive message
                 throw new YangParseException(augment.getModuleName(), augment.getLine(),
                     "Failed to perform augmentation: " + e.getMessage());
@@ -245,7 +244,7 @@ public final class ParserUtils {
     public static def void fillAugmentTarget(AugmentationSchemaBuilder augment, ChoiceBuilder target) {
         for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
             val childCopy = CopyUtils.copy(builder, target, false);
-            childCopy.setAugmenting(true);
+            setNodeAugmenting(childCopy, augment)
             correctNodePath(builder, target.getPath());
             correctNodePath(childCopy, target.getPath());
             target.addCase(childCopy);
