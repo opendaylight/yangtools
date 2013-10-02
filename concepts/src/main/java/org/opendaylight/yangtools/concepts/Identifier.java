@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import java.io.Serializable;
+
 /**
- * Builder object which produces a product.
- * 
- * @param <P> Product of builder
- * 
- * @author Tony Tkacik <ttkacik@cisco.com>
+ * General identifier interface. It is primarily a marker for all things that
+ * identify concepts -- such as names, addresses, classes, etc. We do not
+ * require too much, just that the identifiers are serializable (and this
+ * transferable).
  */
-public interface Builder<P> extends Mutable {
-    P toInstance();
+public interface Identifier extends Serializable {
+
 }
+

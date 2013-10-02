@@ -18,5 +18,9 @@
             <artifactId>concepts</artifactId>
             <version>0.1.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
+        </dependency>
     </dependencies>
 </project>

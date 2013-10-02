@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import java.util.EventListener;
+
 /**
  * Marker interface for generated notification listener interfaces
  *
  */
-public interface NotificationListener {
+public interface NotificationListener extends EventListener {
 
 }

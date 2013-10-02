@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+/**
+ * Data Root of YANG module
+ * 
+ */
 public interface DataRoot {
 
 }

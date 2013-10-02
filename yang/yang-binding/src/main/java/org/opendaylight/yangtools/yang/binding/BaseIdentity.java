@@ -7,9 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+/**
+ * Base Identity
+ * 
+ */
 public abstract class BaseIdentity {
 
+    public final static BaseIdentity INSTANCE = new BaseIdentity() {
+    };
+
     protected BaseIdentity() {
+
     }
 
 }

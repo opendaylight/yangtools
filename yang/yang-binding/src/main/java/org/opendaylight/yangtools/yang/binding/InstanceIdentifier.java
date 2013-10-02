@@ -13,10 +13,11 @@ import java.util.List;
 
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
- * Uniquely identifies instance of data tree.
+ * Uniquely identifies data location in the overall of data tree 
+ * modeled by YANG.
+ * 
  * 
  */
 public final class InstanceIdentifier implements Immutable {
@@ -52,13 +53,11 @@ public final class InstanceIdentifier implements Immutable {
     }
 
     /**
-     * Path argument of instance identifier.
-     * 
+     * Path argument of {@link InstanceIdentifier}.
+     * <p>
      * Interface which implementations are used as path components of the
-     * instance path.
-     * 
-     * @author ttkacik
-     * 
+     * path in overall data tree.
+     *
      */
     public interface PathArgument {
 
@@ -166,10 +165,23 @@ public final class InstanceIdentifier implements Immutable {
         return new BuilderImpl();
     }
 
-    private static class BuilderImpl implements InstanceIdentifierBuilder {
+    public static InstanceIdentifierBuilder builder(InstanceIdentifier basePath) {
+        return new BuilderImpl(basePath.path);
+    }
+
+    private static final class BuilderImpl implements InstanceIdentifierBuilder {
 
         private List<PathArgument> path;
         private Class<? extends DataObject> target = null;
+
+        public BuilderImpl() {
+            this.path = new ArrayList<>();
+        }
+        
+
+        public BuilderImpl(List<? extends PathArgument> prefix) {
+            this.path = new ArrayList<>(prefix);
+        }
 
         @Override
         public InstanceIdentifier toInstance() {
