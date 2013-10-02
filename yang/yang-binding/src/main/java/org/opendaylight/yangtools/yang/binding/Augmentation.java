@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+/**
+ * Augmentation (extension) of other interface
+ *
+ * @param <T> Class to which this implementation is extension.
+ */
 public interface Augmentation<T> {
 
 }

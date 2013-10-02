@@ -2,9 +2,7 @@ package org.opendaylight.yangtools.yang.binding;
 
 
 /**
- * Object is uniquely identifiable in its scope by key
- * 
- * 
+ * Identifiable object, which could be identified by it's key
  * 
  * @author ttkacik
  *
