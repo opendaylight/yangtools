@@ -63,7 +63,7 @@ class ClassTemplate extends BaseTemplate {
      * 
      * @return string with JAVA class body source code
      */
-    def generateAsInnerClass() {
+    def CharSequence generateAsInnerClass() {
         return generateBody(true)
     }
     
