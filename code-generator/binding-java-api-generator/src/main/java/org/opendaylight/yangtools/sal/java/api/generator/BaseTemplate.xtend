@@ -23,6 +23,10 @@ abstract class BaseTemplate {
     
     def packageDefinition () '''package «type.packageName»;'''
 
+
+    protected def getFullyQualifiedName() {
+        return type.fullyQualifiedName
+    }
     
     final public def generate() {
     val _body = body()
@@ -36,7 +40,9 @@ abstract class BaseTemplate {
     protected def imports()  ''' 
         «IF !importMap.empty»
             «FOR entry : importMap.entrySet»
-                import «entry.value».«entry.key»;
+                «IF entry.value != fullyQualifiedName»
+                    import «entry.value».«entry.key»;
+                «ENDIF»
             «ENDFOR»
         «ENDIF»
         

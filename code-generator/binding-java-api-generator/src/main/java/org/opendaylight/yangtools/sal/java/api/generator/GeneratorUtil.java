@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.WildcardType;
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.*;
 
 public final class GeneratorUtil {
 
@@ -62,13 +62,6 @@ public final class GeneratorUtil {
         final List<Constant> constants = genType.getConstantDefinitions();
         final List<MethodSignature> methods = genType.getMethodDefinitions();
         final List<Type> impl = genType.getImplements();
-
-        // IMPLEMENTATIONS
-        if (impl != null) {
-            for (final Type type : impl) {
-                putTypeIntoImports(genType, type, imports);
-            }
-        }
 
         // CONSTANTS
         if (constants != null) {
@@ -142,15 +135,15 @@ public final class GeneratorUtil {
      */
     public static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
             final Map<String, String> imports) {
-        Preconditions.checkArgument(parentGenType != null,
+        checkArgument(parentGenType != null,
                 "Parent Generated Type parameter MUST be specified and cannot be " + "NULL!");
-        Preconditions.checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
-        Preconditions.checkArgument(parentGenType.getPackageName() != null,
+        checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
+        checkArgument(parentGenType.getPackageName() != null,
                 "Parent Generated Type cannot have Package Name referenced as NULL!");
-        Preconditions.checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
+        checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
 
-        Preconditions.checkArgument(type.getName() != null, "Type name cannot be NULL!");
-        Preconditions.checkArgument(type.getPackageName() != null, "Type cannot have Package Name referenced as NULL!");
+        checkArgument(type.getName() != null, "Type name cannot be NULL!");
+        checkArgument(type.getPackageName() != null, "Type cannot have Package Name referenced as NULL!");
 
         final String typeName = type.getName();
         final String typePackageName = type.getPackageName();
@@ -255,10 +248,10 @@ public final class GeneratorUtil {
     public static String getExplicitType(final GeneratedType parentGenType, final Type type,
             final Map<String, String> imports) {
 
-        Preconditions.checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
-        Preconditions.checkArgument(type.getName() != null, "Type name cannot be NULL!");
-        Preconditions.checkArgument(type.getPackageName() != null, "Type cannot have Package Name referenced as NULL!");
-        Preconditions.checkArgument(imports != null, "Imports Map cannot be NULL!");
+        checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
+        checkArgument(type.getName() != null, "Type name cannot be NULL!");
+        checkArgument(type.getPackageName() != null, "Type cannot have Package Name referenced as NULL!");
+        checkArgument(imports != null, "Imports Map cannot be NULL!");
 
         final String typePackageName = type.getPackageName();
         final String typeName = type.getName();

@@ -22,26 +22,6 @@ import java.util.Collections
  */
 
 class BuilderTemplate extends BaseTemplate {
-	/**
-	 * Constant with prefix for getter methods.
-	 */
-    val static GET_PREFIX = "get"
-
-    
-    /**
-     * Constant with the name of the concrete package prefix. 
-     */
-    val static JAVA_UTIL = "java.util"
-    
-    /**
-     * Constant with the name of the concrete JAVA type
-     */
-    val static HASH_MAP = "HashMap"
-    
-    /**
-     * Constant with the name of the concrete JAVA interface.
-     */
-    val static MAP = "Map"
     
     /**
      * Constant with the name of the concrete method.
@@ -220,19 +200,18 @@ class BuilderTemplate extends BaseTemplate {
     override body() '''
 
         public class «type.name»«BUILDER» {
-        
+
             «generateFields(false)»
 
             «generateGetters(false)»
-            
+
             «generateSetters»
-            
 
             public «type.name» build() {
                 return new «type.name»«IMPL»(this);
             }
 
-            private static class «type.name»«IMPL» implements «type.name» {
+            private static final class «type.name»«IMPL» implements «type.name» {
 
                 «generateFields(true)»
 
@@ -396,5 +375,9 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+    override protected getFullyQualifiedName() {
+        '''«type.fullyQualifiedName»Builder'''.toString
+    }
+    
 }
 

@@ -1780,6 +1780,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
             resolveLeafListSchemaNode(typeBuilder, schemaNode as LeafListSchemaNode);
         } else if(schemaNode instanceof ContainerSchemaNode) {
             resolveContainerSchemaNode(basePackageName, typeBuilder, schemaNode as ContainerSchemaNode);
+        } else if(schemaNode instanceof ChoiceNode) {
+            resolveChoiceSchemaNode(basePackageName,typeBuilder,schemaNode as ChoiceNode);
         } else if(schemaNode instanceof ListSchemaNode) {
             resolveListSchemaNode(basePackageName, typeBuilder, schemaNode as ListSchemaNode);
         }
