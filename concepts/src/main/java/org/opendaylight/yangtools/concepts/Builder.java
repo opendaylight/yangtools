@@ -14,6 +14,6 @@ package org.opendaylight.yangtools.concepts;
  *
  * @param <P> Product of Build process
  */
-public interface Builder<P> {
+public interface Builder<P> extends Mutable {
     P toInstance();
 }
