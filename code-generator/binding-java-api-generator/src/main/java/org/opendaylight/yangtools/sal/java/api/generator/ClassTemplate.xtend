@@ -7,7 +7,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-
+import java.util.ArrayList
+import java.util.Collections
 
 /**
  * Template for generating JAVA class. 
@@ -36,7 +37,7 @@ class ClassTemplate extends BaseTemplate {
     
     
     protected val GeneratedTransferObject genTO;
-    
+
     /**
      * Creates instance of this class with concrete <code>genType</code>.
      * 
@@ -48,7 +49,13 @@ class ClassTemplate extends BaseTemplate {
         this.properties = genType.properties
         this.finalProperties = GeneratorUtil.resolveReadOnlyPropertiesFromTO(genTO.properties)
         this.parentProperties = GeneratorUtil.getPropertiesOfAllParents(genTO)
-        this.allProperties = properties + parentProperties
+
+        var List<GeneratedProperty> sorted = new ArrayList<GeneratedProperty>();
+        sorted.addAll(properties);
+        sorted.addAll(parentProperties);
+        Collections.sort(sorted, new PropertyComparator());
+        
+        this.allProperties = sorted
         this.enums = genType.enumerations
         this.consts = genType.constantDefinitions
         this.enclosedGeneratedTypes = genType.enclosedTypes

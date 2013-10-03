@@ -77,9 +77,7 @@ public class ClassCodeGeneratorTest {
                     final String outputStr = clsGen.generate(genTO);
 
                     assertNotNull(outputStr);
-                    assertTrue(outputStr
-                            .contains("public CompositeKeyListKey(String _Key2, "
-                                    + "Byte _Key1)"));
+                    assertTrue(outputStr.contains("public CompositeKeyListKey(Byte _Key1, String _Key2)"));
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;
