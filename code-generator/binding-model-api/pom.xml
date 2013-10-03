@@ -34,6 +34,7 @@
                         <Export-Package>
                             org.opendaylight.yangtools.sal.binding.model.api,
                             org.opendaylight.yangtools.sal.binding.model.api.type,
+                            org.opendaylight.yangtools.sal.binding.model.api.type.builder,
                             org.opendaylight.yangtools.sal.binding.model.api.type.provider
                         </Export-Package>
                     </instructions>

@@ -32,7 +32,9 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
-                        <Export-Package>org.opendaylight.yangtools.sal.binding.generator.api</Export-Package>
+                        <Export-Package>
+                            org.opendaylight.yangtools.sal.binding.generator.api
+                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
