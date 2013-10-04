@@ -63,6 +63,24 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Export-Package>*</Export-Package>
+                        <Import-Package>
+                            !org.antlr.v4.runtime,
+                            !org.antlr.v4.runtime.atn,
+                            !org.antlr.v4.runtime.dfa,
+                            !org.antlr.v4.runtime.tree,
+                            !org.eclipse.xtext.xbase.lib,
+                            *
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>4.0</version>

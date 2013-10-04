@@ -8,7 +8,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.2</slf4j.version>
         <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
         
         <!-- Java Versions -->
@@ -42,6 +41,7 @@
         <module>code-generator</module>
         <!--module>restconf</module -->
         <module>model</module>
+        <module>yangtools-it</module>
     </modules>
 
     <pluginRepositories>

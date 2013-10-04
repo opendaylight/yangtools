@@ -63,6 +63,11 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Import-Package>
+                            !org.eclipse.xtend2.lib,
+                            !org.eclipse.xtext.xbase.lib
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
