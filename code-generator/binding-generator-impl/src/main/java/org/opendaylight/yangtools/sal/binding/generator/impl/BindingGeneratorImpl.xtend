@@ -62,7 +62,6 @@ import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-
 public class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Outter key represents the package name. Outter value represents map of
@@ -874,10 +873,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val augType = augTypeBuilder.toInstance();
                 genTypes.add(augType);
             } else {
-                val choiceTarget = targetSchemaNode as ChoiceNode;
-                val choiceCaseNodes = choiceTarget.cases;
-                genTypes.addAll(
-                    generateTypesFromAugmentedChoiceCases(augmentPackageName, targetType, choiceCaseNodes));
+                genTypes.addAll(generateTypesFromAugmentedChoiceCases(augmentPackageName, targetType, augChildNodes, targetSchemaNode as ChoiceNode));
             }
             genTypes.addAll(augmentationBodyToGenTypes(augmentPackageName, augChildNodes));
         }
@@ -1315,22 +1311,32 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             </ul>
      */
     private def List<GeneratedType> generateTypesFromAugmentedChoiceCases(String basePackageName, Type refChoiceType,
-        Set<ChoiceCaseNode> caseNodes) {
+        Set<DataSchemaNode> caseNodes, ChoiceNode targetNode) {
         checkArgument(basePackageName !== null, "Base Package Name cannot be NULL.");
         checkArgument(refChoiceType !== null, "Referenced Choice Type cannot be NULL.");
         checkArgument(caseNodes !== null, "Set of Choice Case Nodes cannot be NULL.");
 
         val List<GeneratedType> generatedTypes = new ArrayList();
         for (caseNode : caseNodes) {
-            if(caseNode !== null && caseNode.isAugmenting()) {
+        	if(caseNode !== null) {
                 val packageName = packageNameForGeneratedType(basePackageName, caseNode.path);
                 val caseTypeBuilder = addDefaultInterfaceDefinition(packageName, caseNode);
                 caseTypeBuilder.addImplementsType(refChoiceType);
 
-                val Set<DataSchemaNode> childNodes = caseNode.childNodes;
-                if(childNodes !== null) {
-					resolveDataSchemaNodesAugmented(basePackageName, caseTypeBuilder, childNodes);
+                if (caseNode instanceof DataNodeContainer) {
+                	val DataNodeContainer dataNodeCase = caseNode as DataNodeContainer;
+                	val Set<DataSchemaNode> childNodes = dataNodeCase.childNodes;
+                    if(childNodes !== null) {
+					    resolveDataSchemaNodesAugmented(basePackageName, caseTypeBuilder, childNodes);
+                    }
+                } else {
+                	val ChoiceCaseNode node = targetNode.getCaseNodeByName(caseNode.getQName().getLocalName());
+                	val Set<DataSchemaNode> childNodes = node.childNodes;
+                    if(childNodes !== null) {
+					    resolveDataSchemaNodesAugmented(basePackageName, caseTypeBuilder, childNodes);
+                    }
                 }
+                
                 generatedTypes.add(caseTypeBuilder.toInstance());
             }
         }
