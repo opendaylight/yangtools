@@ -78,6 +78,11 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Import-Package>
+                            !org.apache.maven.plugin.logging,
+                            !org.apache.maven.project
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
