@@ -540,6 +540,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
                             }
                         }
                     }
+                    val List<ChoiceNode> nChoices = iter.allChoices();
+                    if((nChoices !== null) && !nChoices.isEmpty()) {
+                        for (choice : nChoices) {
+                            if(!choice.isAddedByUses()) {
+                                genRPCTypes.addAll(choiceToGeneratedType(basePackageName, choice));
+                            }
+                        }
+                    }
                 }
             }
         }
