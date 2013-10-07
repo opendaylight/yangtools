@@ -44,13 +44,28 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private boolean addedByUses;
     private boolean augmenting;
     private AugmentationSchemaBuilder parentAugment;
-    private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<AugmentationSchemaBuilder>();
-    private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<SchemaNodeBuilder>();
-    private final List<RefineHolder> refines = new ArrayList<RefineHolder>();
+    private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<>();
+    private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<>();
+    private final List<RefineHolder> refines = new ArrayList<>();
 
+    /**
+     * Copies of target grouping child nodes.
+     */
     private final Set<DataSchemaNodeBuilder> targetChildren = new HashSet<>();
+
+    /**
+     * Copies of target grouping groupings.
+     */
     private final Set<GroupingBuilder> targetGroupings = new HashSet<>();
+
+    /**
+     * Copies of target grouping typedefs.
+     */
     private final Set<TypeDefinitionBuilder> targetTypedefs = new HashSet<>();
+
+    /**
+     * Copies of target grouping unknown nodes.
+     */
     private final List<UnknownSchemaNodeBuilder> targetUnknownNodes = new ArrayList<>();
 
     private final boolean isCopy;
@@ -90,14 +105,14 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             instance.setAddedByUses(addedByUses);
 
             // AUGMENTATIONS
-            final Set<AugmentationSchema> augments = new HashSet<AugmentationSchema>();
+            final Set<AugmentationSchema> augments = new HashSet<>();
             for (AugmentationSchemaBuilder builder : addedAugments) {
                 augments.add(builder.build());
             }
             instance.setAugmentations(augments);
 
             // REFINES
-            final Map<SchemaPath, SchemaNode> refineNodes = new HashMap<SchemaPath, SchemaNode>();
+            final Map<SchemaPath, SchemaNode> refineNodes = new HashMap<>();
             for (SchemaNodeBuilder refineBuilder : refineBuilders) {
                 SchemaNode refineNode = refineBuilder.build();
                 refineNodes.put(refineNode.getPath(), refineNode);
@@ -105,7 +120,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             instance.setRefines(refineNodes);
 
             // UNKNOWN NODES
-            List<UnknownSchemaNode> unknownNodes = new ArrayList<UnknownSchemaNode>();
+            List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                 unknownNodes.add(b.build());
             }

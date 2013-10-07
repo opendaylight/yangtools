@@ -348,7 +348,12 @@ public final class ParserUtils {
     private static def searchUses(DataNodeContainerBuilder dataNodeContainerParent, String name) {
         var currentName = name;
         for (unb : dataNodeContainerParent.usesNodes) {
-            val result = findNodeInUses(currentName, unb);
+            var result = searchInUsesTarget(currentName, unb);
+            if (result != null) {
+                return result;
+            }
+
+            result = findNodeInUses(currentName, unb);
             if (result != null) {
                 var copy = CopyUtils.copy(result, unb.getParent(), true);
                 unb.getTargetChildren().add(copy);
@@ -413,6 +418,14 @@ public final class ParserUtils {
             return true;
         }
 
+    private static def DataSchemaNodeBuilder searchInUsesTarget(String localName, UsesNodeBuilder uses) {
+        for(child : uses.targetChildren) {
+            if (child.getQName().getLocalName().equals(localName)) {
+                return child;
+            }
+        }
+    } 
+
         /**
      * Find node with given name in uses target.
      *
@@ -423,12 +436,6 @@ public final class ParserUtils {
      * @return node with given name if found, null otherwise
      */
     private static def DataSchemaNodeBuilder findNodeInUses(String localName, UsesNodeBuilder uses) {
-        for(child : uses.targetChildren) {
-            if (child.getQName().getLocalName().equals(localName)) {
-                return child;
-            }
-        }
-
         val target = uses.groupingBuilder;
         for (child : target.childNodeBuilders) {
             if (child.getQName().getLocalName().equals(localName)) {
