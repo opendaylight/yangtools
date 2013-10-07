@@ -28,6 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
 import java.util.Date
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition
+import java.util.Set
 
 /**
  * The Schema Context Util contains support methods for searching through Schema Context modules for specified schema
@@ -302,13 +304,41 @@ public  class SchemaContextUtil {
     }
     
     
-    private static def SchemaNode findNodeInSchemaContext(SchemaContext context, List<QName> path) {
+    public static def SchemaNode findNodeInSchemaContext(SchemaContext context, List<QName> path) {
         val current = path.get(0);
         val module = context.findModuleByNamespaceAndRevision(current.namespace,current.revision);
         if(module === null) return null;
         return findNodeInModule(module,path);
     }
-    
+
+    public static def GroupingDefinition findGrouping(SchemaContext context, Module module, List<QName> path) {
+        var first = path.get(0);
+        var firstPrefix = first.getPrefix();
+        var Module m = context.findModuleByNamespace(first.namespace).iterator().next();
+        var DataNodeContainer currentParent = m;
+        for (qname : path) {
+            var boolean found = false;
+            var DataNodeContainer node = currentParent.getDataChildByName(qname.localName) as DataNodeContainer;
+            if (node == null) {
+                var Set<GroupingDefinition> groupings = currentParent.getGroupings();
+                for (gr : groupings) {
+                    if(gr.getQName().localName.equals(qname.localName)) {
+                        currentParent = gr;
+                        found = true;
+                    }
+                }
+            } else {
+                found = true;
+                currentParent = node;
+            }
+            if (!found) {
+                throw new IllegalArgumentException("Failed to find referenced grouping: " + path + "(" + qname.localName + ")");
+            }
+        }
+        
+        return currentParent as GroupingDefinition;
+    }
+
     private static def SchemaNode findNodeInModule(Module module, List<QName> path) {
         val current = path.get(0);
         var SchemaNode node = module.getDataChildByName(current);

@@ -61,7 +61,10 @@ import static org.opendaylight.yangtools.binding.generator.util.BindingGenerator
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.model.api.UsesNode
+import java.util.HashSet
+
 public class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Outter key represents the package name. Outter value represents map of
@@ -374,7 +377,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val basePackageName = moduleNamespaceToPackageName(module);
         val List<AugmentationSchema> augmentations = resolveAugmentations(module);
         for (augment : augmentations) {
-            generatedTypes.addAll(augmentationToGenTypes(basePackageName, augment));
+            generatedTypes.addAll(augmentationToGenTypes(basePackageName, augment, module));
         }
         return generatedTypes;
     }
@@ -818,7 +821,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val moduleName = parseToClassName(module.name) + postfix;
 
         return new GeneratedTypeBuilderImpl(packageName, moduleName);
-
     }
 
     /**
@@ -843,7 +845,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if target path of <code>augSchema</code> equals null</li>
      *             </ul>
      */
-    private def List<Type> augmentationToGenTypes(String augmentPackageName, AugmentationSchema augSchema) {
+    private def List<Type> augmentationToGenTypes(String augmentPackageName, AugmentationSchema augSchema, Module module) {
         checkArgument(augmentPackageName !== null, "Package Name cannot be NULL.");
         checkArgument(augSchema !== null, "Augmentation Schema cannot be NULL.");
         checkState(augSchema.targetPath !== null,
@@ -853,7 +855,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
         // EVERY augmented interface will extends Augmentation<T> interface
         // and DataObject interface!!!
         val targetPath = augSchema.targetPath;
-        val targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
+        var targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
+        if (targetSchemaNode instanceof DataSchemaNode && (targetSchemaNode as DataSchemaNode).isAddedByUses()) {
+			targetSchemaNode = findOriginalTargetFromGrouping(targetPath, module, targetSchemaNode as DataSchemaNode);
+        }
+
         if(targetSchemaNode !== null) {
             var targetType = yangToJavaMapping.get(targetSchemaNode.path);
             if(targetType == null) {
@@ -879,6 +885,44 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
 		
         return genTypes;
+    }
+
+    private def DataSchemaNode findOriginalTargetFromGrouping(SchemaPath targetPath, Module module, DataSchemaNode targetSchemaNode) {
+        val path = new ArrayList<QName>(targetPath.getPath());
+        path.remove(path.size()-1);
+        var DataNodeContainer parent = null;
+
+        if (path.isEmpty()) {
+            parent = module;
+        } else {
+            parent = findNodeInSchemaContext(schemaContext, path) as DataNodeContainer;
+        }
+
+        val Set<UsesNode> usesNodes = parent.getUses();
+        if (usesNodes == null || usesNodes.isEmpty()) {
+            return targetSchemaNode;
+        }
+        val Set<SchemaPath> groupingPaths = new HashSet<SchemaPath>();
+        for (uses : usesNodes) {
+            groupingPaths.add(uses.getGroupingPath());
+        }
+        val Set<GroupingDefinition> groupings = new HashSet<GroupingDefinition>();
+        for (gp : groupingPaths) {
+            groupings.add(findGrouping(schemaContext, module, gp.getPath()));
+        }
+
+        var DataSchemaNode result = findNodeInGroupings(groupings, targetSchemaNode.getQName().localName);
+        return result;
+    }
+
+    private def DataSchemaNode findNodeInGroupings(Set<GroupingDefinition> groupings, String name) {
+        for (gr : groupings) {
+            var DataSchemaNode node = gr.getDataChildByName(name);
+            if (node != null) {
+            	return node;
+            }
+        }
+        return null;
     }
 
     /**
