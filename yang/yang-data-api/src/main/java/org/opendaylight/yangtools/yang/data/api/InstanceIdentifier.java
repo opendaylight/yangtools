@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.yang.common.QName;
 
-
-public class InstanceIdentifier {
+public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
 
     private final List<PathArgument> path;
 
@@ -22,7 +23,7 @@ public class InstanceIdentifier {
     }
 
     private InstanceIdentifier(NodeIdentifier nodeIdentifier) {
-        this.path = Collections.<PathArgument>singletonList(nodeIdentifier);
+        this.path = Collections.<PathArgument> singletonList(nodeIdentifier);
     }
 
     @Override
@@ -49,24 +50,21 @@ public class InstanceIdentifier {
             return false;
         return true;
     }
-    
+
     // Static factories & helpers
-    
-    
+
     public InstanceIdentifier of(QName name) {
         return new InstanceIdentifier(new NodeIdentifier(name));
     }
-    
+
     public InstanceIdentifierBuilder builder() {
         return new BuilderImpl();
     }
-    
+
     public interface PathArgument {
         QName getNodeType();
 
     }
-
-
 
     public interface InstanceIdentifierBuilder {
         InstanceIdentifierBuilder node(QName nodeType);
@@ -85,8 +83,7 @@ public class InstanceIdentifier {
         public NodeIdentifier(QName node) {
             this.nodeType = node;
         }
-        
-        
+
         public QName getNodeType() {
             return nodeType;
         }
@@ -120,12 +117,12 @@ public class InstanceIdentifier {
     public static final class NodeIdentifierWithPredicates implements PathArgument {
         private final QName nodeType;
         private final Map<QName, Object> keyValues;
-        
-        public NodeIdentifierWithPredicates(QName node,Map<QName, Object> keyValues) {
+
+        public NodeIdentifierWithPredicates(QName node, Map<QName, Object> keyValues) {
             this.nodeType = node;
-            this.keyValues = Collections.unmodifiableMap(new HashMap<QName,Object>(keyValues));
+            this.keyValues = Collections.unmodifiableMap(new HashMap<QName, Object>(keyValues));
         }
-        
+
         public NodeIdentifierWithPredicates(QName node, QName key, Object value) {
             this.nodeType = node;
             this.keyValues = Collections.singletonMap(key, value);
@@ -135,8 +132,8 @@ public class InstanceIdentifier {
         public QName getNodeType() {
             return nodeType;
         }
-        
-        public Map<QName,Object> getKeyValues() {
+
+        public Map<QName, Object> getKeyValues() {
             return keyValues;
         }
 
@@ -171,32 +168,50 @@ public class InstanceIdentifier {
             return true;
         }
     }
-    
+
     private static class BuilderImpl implements InstanceIdentifierBuilder {
-        
+
         private List<PathArgument> path;
-        
+
         @Override
         public InstanceIdentifierBuilder node(QName nodeType) {
             path.add(new NodeIdentifier(nodeType));
             return this;
         }
-        
+
         @Override
         public InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value) {
             path.add(new NodeIdentifierWithPredicates(nodeType, key, value));
             return this;
         }
-        
+
         @Override
         public InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues) {
             path.add(new NodeIdentifierWithPredicates(nodeType, keyValues));
             return this;
         }
-        
+
         @Override
         public InstanceIdentifier getIdentifier() {
             return new InstanceIdentifier(path);
         }
+    }
+
+    @Override
+    public boolean contains(final InstanceIdentifier other) {
+        if (other == null) {
+            throw new IllegalArgumentException("other should not be null");
+        }
+        final int localSize = this.path.size();
+        final List<PathArgument> otherPath = other.getPath();
+        if (localSize > other.path.size()) {
+            return false;
+        }
+        for (int i = 0; i < localSize; i++) {
+            if (!path.get(i).equals(otherPath.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

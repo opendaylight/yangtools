@@ -7,15 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import java.io.Serializable;
+public interface Path<P extends Path<P>> {
 
-/**
- * General identifier interface. It is primarily a marker for all things that
- * identify concepts -- such as names, addresses, classes, etc. We do not
- * require too much, just that the identifiers are serializable (and this
- * transferable).
- */
-public interface Identifier extends Serializable, Immutable {
-
+    boolean contains(P other);
 }
-
