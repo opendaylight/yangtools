@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.yang.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.management.ImmutableDescriptor;
+
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * 
  * 
  */
-public final class QName {
+public final class QName implements Immutable {
     protected static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
     private SimpleDateFormat revisionFormat = new SimpleDateFormat("yyyy-MM-dd");

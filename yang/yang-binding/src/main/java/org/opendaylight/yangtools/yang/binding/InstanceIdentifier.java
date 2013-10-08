@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Path;
 
 /**
  * Uniquely identifies data location in the overall of data tree 
@@ -20,17 +21,17 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * 
  * 
  */
-public final class InstanceIdentifier implements Immutable {
+public final class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<?>>,Immutable {
 
     private final List<PathArgument> path;
-    private final Class<? extends DataObject> targetType;
-
-    public InstanceIdentifier(Class<? extends DataObject> type) {
+    private final Class<T> targetType;
+    
+    public InstanceIdentifier(Class<T> type) {
         path = Collections.<PathArgument> singletonList(new Item<>(type));
         this.targetType = type;
     }
 
-    public InstanceIdentifier(List<PathArgument> path, Class<? extends DataObject> type) {
+    public InstanceIdentifier(List<PathArgument> path, Class<T> type) {
         this.path = Collections.<PathArgument> unmodifiableList(new ArrayList<>(path));
         this.targetType = type;
     }
@@ -43,7 +44,7 @@ public final class InstanceIdentifier implements Immutable {
         return this.path;
     }
 
-    public Class<?> getTargetType() {
+    public Class<T> getTargetType() {
         return this.targetType;
     }
 
@@ -100,6 +101,11 @@ public final class InstanceIdentifier implements Immutable {
                 return false;
             return true;
         }
+        
+        @Override
+        public String toString() {
+            return type.getName();
+        }
     }
 
     public static final class IdentifiableItem<I extends Identifiable<T> & DataObject, T extends Identifier<I>> implements
@@ -152,24 +158,31 @@ public final class InstanceIdentifier implements Immutable {
         }
     }
 
-    public interface InstanceIdentifierBuilder extends Builder<InstanceIdentifier> {
+    public interface InstanceIdentifierBuilder<T extends DataObject> extends Builder<InstanceIdentifier<T>> {
 
-        <T extends DataObject> InstanceIdentifierBuilder node(Class<T> container);
+        <N extends DataObject> InstanceIdentifierBuilder<N> node(Class<N> container);
 
-        <I extends Identifiable<T> & DataObject, T extends Identifier<I>> InstanceIdentifierBuilder node(
-                Class<I> listItem, T listKey);
+        <N extends Identifiable<K> & DataObject, K extends Identifier<N>> InstanceIdentifierBuilder<N> node(
+                Class<N> listItem, K listKey);
+
+        <N extends ChildOf<? super T>> InstanceIdentifierBuilder<N> child(Class<N> container);
+        
+        <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilder<N> child(
+                Class<N> listItem, K listKey);
 
     }
 
-    public static InstanceIdentifierBuilder builder() {
+    @SuppressWarnings("rawtypes")
+    public static InstanceIdentifierBuilder<?> builder() {
         return new BuilderImpl();
     }
 
-    public static InstanceIdentifierBuilder builder(InstanceIdentifier basePath) {
-        return new BuilderImpl(basePath.path);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static InstanceIdentifierBuilder<?> builder(InstanceIdentifier<?> basePath) {
+        return new BuilderImpl(basePath.path,basePath.targetType);
     }
 
-    private static final class BuilderImpl implements InstanceIdentifierBuilder {
+    private static final class BuilderImpl<T extends DataObject> implements InstanceIdentifierBuilder<T> {
 
         private List<PathArgument> path;
         private Class<? extends DataObject> target = null;
@@ -179,29 +192,44 @@ public final class InstanceIdentifier implements Immutable {
         }
         
 
-        public BuilderImpl(List<? extends PathArgument> prefix) {
+        public BuilderImpl(List<? extends PathArgument> prefix,Class<? extends DataObject> target) {
             this.path = new ArrayList<>(prefix);
+            this.target = target;
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
-        public InstanceIdentifier toInstance() {
+        public InstanceIdentifier<T> toInstance() {
             List<PathArgument> immutablePath = Collections.unmodifiableList(new ArrayList<PathArgument>(path));
             return new InstanceIdentifier(immutablePath, target);
         }
 
         @Override
-        public <T extends DataObject> InstanceIdentifierBuilder node(Class<T> container) {
+        @SuppressWarnings("unchecked")
+        public <N extends DataObject> InstanceIdentifierBuilder<N> node(Class<N> container) {
             target = container;
-            path.add(new Item<T>(container));
-            return this;
+            path.add(new Item<N>(container));
+            return (InstanceIdentifierBuilder<N>) this;
         }
 
         @Override
-        public <I extends Identifiable<T> & DataObject, T extends Identifier<I>> InstanceIdentifierBuilder node(
-                Class<I> listItem, T listKey) {
+        @SuppressWarnings("unchecked")
+        public <N extends DataObject & Identifiable<K> , K extends Identifier<N>> InstanceIdentifierBuilder<N> node(
+                Class<N> listItem, K listKey) {
             target = listItem;
-            path.add(new IdentifiableItem<I, T>(listItem, listKey));
-            return this;
+            path.add(new IdentifiableItem<N, K>(listItem, listKey));
+            return (InstanceIdentifierBuilder<N>) this;
+        }
+        
+        @Override
+        public <N extends ChildOf<? super T>> InstanceIdentifierBuilder<N> child(Class<N> container) {
+            return node(container);
+        }
+        
+        @Override
+        public <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilder<N> child(
+                Class<N> listItem, K listKey) {
+            return node(listItem,listKey);
         }
     }
 
@@ -224,7 +252,7 @@ public final class InstanceIdentifier implements Immutable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        InstanceIdentifier other = (InstanceIdentifier) obj;
+        InstanceIdentifier<?> other = (InstanceIdentifier<?>) obj;
         if (path == null) {
             if (other.path != null) {
                 return false;
@@ -232,6 +260,25 @@ public final class InstanceIdentifier implements Immutable {
         } else if (!path.equals(other.path)) {
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean contains(final InstanceIdentifier<?> other) {
+        if(other == null) {
+            throw new IllegalArgumentException("other should not be null");
+        }
+        final int localSize = this.path.size();
+        final List<PathArgument> otherPath = other.getPath();
+        if(localSize > other.path.size()) {
+            return false;
+        }
+        for(int i = 0;i<localSize;i++ ) {
+            if(!path.get(i).equals(otherPath.get(i))) {
+                return false;
+            }
+        }
+        
         return true;
     }
 }

@@ -14,6 +14,6 @@ package org.opendaylight.yangtools.yang.binding;
  * @author Tony Tkacik <ttkacik@cisco.com>
  *
  */
-public interface DataObject {
+public interface DataObject extends DataContainer {
 
 }

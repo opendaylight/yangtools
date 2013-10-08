@@ -21,6 +21,8 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
+            <version>0.5.9-SNAPSHOT</version>
         </dependency>
     </dependencies>
+    <version>0.6.0-SNAPSHOT</version>
 </project>

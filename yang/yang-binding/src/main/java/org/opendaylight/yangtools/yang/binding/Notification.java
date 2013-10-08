@@ -12,7 +12,7 @@ package org.opendaylight.yangtools.yang.binding;
  *
  *
  */
-public interface Notification extends DataObject {
+public interface Notification extends DataContainer {
 
 }
 
