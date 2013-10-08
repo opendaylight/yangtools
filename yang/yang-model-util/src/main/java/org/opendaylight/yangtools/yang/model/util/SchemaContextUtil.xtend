@@ -347,9 +347,19 @@ public  class SchemaContextUtil {
         if (node != null) return findNodeInRpc(node as RpcDefinition,path.nextLevel)
         node = module.getNotificationByName(current);
         if (node != null) return findNodeInNotification(node as NotificationDefinition,path.nextLevel)
+        node = module.getGroupingByName(current);
+        if (node != null) return findNodeInGrouping(node as GroupingDefinition, path.nextLevel);
         return null
     }
-     
+
+    private static def SchemaNode findNodeInGrouping(GroupingDefinition grouping, List<QName> path) {
+        if (path.empty) return grouping;
+        val current = path.get(0);
+        val node = grouping.getDataChildByName(current);
+        if (node != null) return findNode(node, path.nextLevel);
+        return null;
+    }
+
     private static def SchemaNode findNodeInRpc(RpcDefinition rpc,List<QName> path) {
         if(path.empty) return rpc;
         val current = path.get(0);
@@ -427,6 +437,15 @@ public  class SchemaContextUtil {
         for(notification : module.notifications) {
             if(notification.QName == name) {
                 return notification;
+            }
+        }
+        return null;
+    }
+    
+    public static def GroupingDefinition getGroupingByName(Module module, QName name) {
+        for (grouping : module.groupings) {
+            if (grouping.QName.equals(name)) {
+                return grouping;
             }
         }
         return null;
