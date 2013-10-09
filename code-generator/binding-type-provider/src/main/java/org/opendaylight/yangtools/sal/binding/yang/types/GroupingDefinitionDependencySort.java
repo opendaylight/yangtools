@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,22 +32,22 @@ public class GroupingDefinitionDependencySort {
     /**
      * Sorts set <code>groupingDefinitions</code> according to the mutual
      * dependencies.<br />
-     * 
+     *
      * Elements of <code>groupingDefinitions</code> are firstly transformed to
      * {@link org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node
      * Node} interfaces and then are sorted by
      * {@link org.opendaylight.yangtools.yang.parser.util.TopologicalSort#sort(Set)
      * sort()} method of <code>TopologicalSort</code>.<br />
      * <br />
-     * 
-     * 
+     *
+     *
      * <i>Definition of dependency relation:<br />
      * The first <code>GroupingDefinition</code> object (in this context)
      * depends on second <code>GroupingDefinition</code> object if the first one
      * contains in its set of <code>UsesNode</code> (obtained through
      * {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer#getUses()
      * getUses} method) reference to the second one.</i>
-     * 
+     *
      * @param groupingDefinitions
      *            set of grouping definition which should be sorted according to
      *            mutual dependencies
@@ -54,9 +55,9 @@ public class GroupingDefinitionDependencySort {
      *         dependencies
      * @throws IllegalArgumentException
      *             if <code>groupingDefinitions</code>
-     * 
+     *
      */
-    public List<GroupingDefinition> sort(final Set<GroupingDefinition> groupingDefinitions) {
+    public List<GroupingDefinition> sort(final Collection<GroupingDefinition> groupingDefinitions) {
         if (groupingDefinitions == null) {
             throw new IllegalArgumentException("Set of Type Definitions " + "cannot be NULL!");
         }
@@ -75,7 +76,7 @@ public class GroupingDefinitionDependencySort {
     /**
      * Wraps every grouping definition to node type and adds to every node
      * information about dependencies.
-     * 
+     *
      * The map with mapping from schema path (represents grouping definition) to
      * node is created. For every created node (next <i>nodeFrom</i>) is for its
      * wrapped grouping definition passed the set of its <i>uses nodes</i>
@@ -83,14 +84,14 @@ public class GroupingDefinitionDependencySort {
      * <i>nodeTo</i>). This dependency relationship between nodeFrom and all
      * found nodesTo is modeled with creating of one edge from nodeFrom to
      * nodeTo.
-     * 
-     * 
+     *
+     *
      * @param groupingDefinitions
      *            set of goruping definition which will be wrapped to nodes
-     * 
+     *
      * @return set of nodes where every one contains wrapped grouping definition
      */
-    private Set<Node> groupingDefinitionsToNodes(final Set<GroupingDefinition> groupingDefinitions) {
+    private Set<Node> groupingDefinitionsToNodes(final Collection<GroupingDefinition> groupingDefinitions) {
         final Map<SchemaPath, Node> nodeMap = Maps.newHashMap();
         final Set<Node> resultNodes = Sets.newHashSet();
 
@@ -125,7 +126,7 @@ public class GroupingDefinitionDependencySort {
      * <code>container</code>, from uses in groupings inside
      * <code>container</code> and from uses inside child nodes of the
      * <code>container</code>.
-     * 
+     *
      * @param container
      *            data node container which can contain some uses of grouping
      * @return set of uses nodes which were find in <code>container</code>.
