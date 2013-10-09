@@ -7,8 +7,14 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-public interface Registration<T> {
+public interface Registration<T> extends AutoCloseable {
 
     T getInstance();
-    void unregister();
+
+    /**
+     * Unregisters object
+     * 
+     */
+    @Override
+    public void close() throws Exception;
 }
