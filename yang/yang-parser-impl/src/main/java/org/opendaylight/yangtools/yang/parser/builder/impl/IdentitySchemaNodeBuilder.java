@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -22,8 +24,9 @@ import org.opendaylight.yangtools.yang.parser.util.Comparators;
 public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private boolean isBuilt;
     private final IdentitySchemaNodeImpl instance;
-    private IdentitySchemaNodeBuilder baseIdentityBuilder;
     private IdentitySchemaNode baseIdentity;
+    private IdentitySchemaNodeBuilder baseIdentityBuilder;
+    private final Set<IdentitySchemaNode> derivedIdentities = new HashSet<>();
     private String baseIdentityName;
 
     IdentitySchemaNodeBuilder(final String moduleName, final int line, final QName qname) {
@@ -39,17 +42,18 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             instance.setReference(reference);
             instance.setStatus(status);
 
-            if (baseIdentity == null) {
-                if (baseIdentityBuilder != null) {
-                    instance.setBaseIdentity(baseIdentityBuilder.build());
-                }
-            } else {
+            if (baseIdentity == null && baseIdentityBuilder != null) {
+                baseIdentity = baseIdentityBuilder.build();
+            }
+            if (baseIdentity != null) {
                 instance.setBaseIdentity(baseIdentity);
             }
 
+            instance.setDerivedIdentities(derivedIdentities);
+
             // UNKNOWN NODES
             if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
+                unknownNodes = new ArrayList<>();
                 for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                     unknownNodes.add(b.build());
                 }
@@ -79,14 +83,19 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         this.baseIdentity = baseType;
     }
 
+    public void addDerivedIdentity(IdentitySchemaNode derived) {
+        derivedIdentities.add(derived);
+    }
+
     @Override
     public String toString() {
         return "identity " + qname.getLocalName();
     }
 
-    private final class IdentitySchemaNodeImpl implements IdentitySchemaNode {
+    public final class IdentitySchemaNodeImpl implements IdentitySchemaNode {
         private final QName qname;
         private IdentitySchemaNode baseIdentity;
+        private Set<IdentitySchemaNode> derivedIdentities = Collections.emptySet();
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
@@ -109,6 +118,17 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
 
         private void setBaseIdentity(final IdentitySchemaNode baseIdentity) {
             this.baseIdentity = baseIdentity;
+        }
+
+        @Override
+        public Set<IdentitySchemaNode> getDerivedIdentities() {
+            return derivedIdentities;
+        }
+
+        private void setDerivedIdentities(Set<IdentitySchemaNode> derivedIdentities) {
+            if (derivedIdentities != null) {
+                this.derivedIdentities = derivedIdentities;
+            }
         }
 
         @Override
@@ -158,6 +178,10 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             if (unknownSchemaNodes != null) {
                 this.unknownNodes = unknownSchemaNodes;
             }
+        }
+
+        public IdentitySchemaNodeBuilder toBuilder() {
+            return IdentitySchemaNodeBuilder.this;
         }
 
         @Override

@@ -129,7 +129,7 @@ public final class YangParserImpl implements YangModelParser {
         List<ModuleBuilder> sorted = ModuleDependencySort.sort(builders);
 
         final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
-        return new LinkedHashSet<>(buildWithContext(modules, null).values());
+        return new LinkedHashSet<>(build(modules).values());
     }
 
     @Override
@@ -413,8 +413,8 @@ public final class YangParserImpl implements YangModelParser {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder module = childEntry.getValue();
-                resolveDirtyNodes(modules, module);
                 resolveIdentities(modules, module);
+                resolveDirtyNodes(modules, module);
                 resolveUnknownNodes(modules, module);
             }
         }
@@ -425,8 +425,8 @@ public final class YangParserImpl implements YangModelParser {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder module = childEntry.getValue();
-                resolveDirtyNodesWithContext(modules, module, context);
                 resolveIdentitiesWithContext(modules, module, context);
+                resolveDirtyNodesWithContext(modules, module, context);
                 resolveUnknownNodesWithContext(modules, module, context);
             }
         }
@@ -451,7 +451,13 @@ public final class YangParserImpl implements YangModelParser {
                 } else if (nodeToResolve.getTypedef() instanceof IdentityrefTypeBuilder) {
                     // special handling for identityref types
                     IdentityrefTypeBuilder idref = (IdentityrefTypeBuilder) nodeToResolve.getTypedef();
-                    nodeToResolve.setType(new IdentityrefType(findFullQName(modules, module, idref), idref.getPath()));
+                    IdentitySchemaNodeBuilder identity = findBaseIdentity(modules, module, idref.getBaseString(),
+                            idref.getLine());
+                    if (identity == null) {
+                        throw new YangParseException(module.getName(), idref.getLine(), "Failed to find base identity");
+                    }
+                    idref.setBaseIdentity(identity);
+                    nodeToResolve.setType(idref.build());
                 } else {
                     resolveType(nodeToResolve, modules, module);
                 }
@@ -470,7 +476,10 @@ public final class YangParserImpl implements YangModelParser {
                 } else if (nodeToResolve.getTypedef() instanceof IdentityrefTypeBuilder) {
                     // special handling for identityref types
                     IdentityrefTypeBuilder idref = (IdentityrefTypeBuilder) nodeToResolve.getTypedef();
-                    nodeToResolve.setType(new IdentityrefType(findFullQName(modules, module, idref), idref.getPath()));
+                    IdentitySchemaNodeBuilder identity = findBaseIdentity(modules, module, idref.getBaseString(),
+                            idref.getLine());
+                    idref.setBaseIdentity(identity);
+                    nodeToResolve.setType(idref.build());
                 } else {
                     resolveTypeWithContext(nodeToResolve, modules, module, context);
                 }
@@ -745,35 +754,16 @@ public final class YangParserImpl implements YangModelParser {
         final Set<IdentitySchemaNodeBuilder> identities = module.getIdentities();
         for (IdentitySchemaNodeBuilder identity : identities) {
             final String baseIdentityName = identity.getBaseIdentityName();
+            final int line = identity.getLine();
             if (baseIdentityName != null) {
-                String baseIdentityPrefix;
-                String baseIdentityLocalName;
-                if (baseIdentityName.contains(":")) {
-                    final String[] splitted = baseIdentityName.split(":");
-                    baseIdentityPrefix = splitted[0];
-                    baseIdentityLocalName = splitted[1];
-                } else {
-                    baseIdentityPrefix = module.getPrefix();
-                    baseIdentityLocalName = baseIdentityName;
-                }
-                final ModuleBuilder dependentModule = findModuleFromBuilders(modules, module, baseIdentityPrefix,
-                        identity.getLine());
-
-                IdentitySchemaNodeBuilder baseIdentity = null;
-                final Set<IdentitySchemaNodeBuilder> dependentModuleIdentities = dependentModule.getIdentities();
-                for (IdentitySchemaNodeBuilder idBuilder : dependentModuleIdentities) {
-                    if (idBuilder.getQName().getLocalName().equals(baseIdentityLocalName)) {
-                        baseIdentity = idBuilder;
-                        break;
-                    }
-                }
+                IdentitySchemaNodeBuilder baseIdentity = findBaseIdentity(modules, module, baseIdentityName, line);
                 if (baseIdentity == null) {
-                    throw new YangParseException(module.getName(), identity.getLine(),
-                            "Base identity " + baseIdentityName + " not found");
+                    throw new YangParseException(module.getName(), identity.getLine(), "Failed to find base identity");
                 } else {
                     identity.setBaseIdentity(baseIdentity);
+                    IdentitySchemaNode built = identity.build();
+                    baseIdentity.addDerivedIdentity(built);
                 }
-
             }
         }
     }
@@ -795,37 +785,22 @@ public final class YangParserImpl implements YangModelParser {
         final Set<IdentitySchemaNodeBuilder> identities = module.getIdentities();
         for (IdentitySchemaNodeBuilder identity : identities) {
             final String baseIdentityName = identity.getBaseIdentityName();
+            final int line = identity.getLine();
             if (baseIdentityName != null) {
-                String baseIdentityPrefix;
-                String baseIdentityLocalName;
-                if (baseIdentityName.contains(":")) {
-                    final String[] splitted = baseIdentityName.split(":");
-                    baseIdentityPrefix = splitted[0];
-                    baseIdentityLocalName = splitted[1];
-                } else {
-                    baseIdentityPrefix = module.getPrefix();
-                    baseIdentityLocalName = baseIdentityName;
-                }
-                final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module,
-                        baseIdentityPrefix, identity.getLine());
-
-                if (dependentModuleBuilder == null) {
-                    final Module dependentModule = findModuleFromContext(context, module, baseIdentityPrefix,
-                            identity.getLine());
-                    final Set<IdentitySchemaNode> dependentModuleIdentities = dependentModule.getIdentities();
-                    for (IdentitySchemaNode idNode : dependentModuleIdentities) {
-                        if (idNode.getQName().getLocalName().equals(baseIdentityLocalName)) {
-                            identity.setBaseIdentity(idNode);
-                        }
+                IdentitySchemaNodeBuilder baseIdentity = findBaseIdentity(modules, module, baseIdentityName, line);
+                if (baseIdentity == null) {
+                    IdentitySchemaNode baseId = findBaseIdentityFromContext(modules, module, baseIdentityName, line,
+                            context);
+                    identity.setBaseIdentity(baseId);
+                    IdentitySchemaNode built = identity.build();
+                    if (baseId instanceof IdentitySchemaNodeBuilder.IdentitySchemaNodeImpl) {
+                        ((IdentitySchemaNodeBuilder.IdentitySchemaNodeImpl) baseId).toBuilder().addDerivedIdentity(
+                                built);
                     }
                 } else {
-                    final Set<IdentitySchemaNodeBuilder> dependentModuleIdentities = dependentModuleBuilder
-                            .getIdentities();
-                    for (IdentitySchemaNodeBuilder idBuilder : dependentModuleIdentities) {
-                        if (idBuilder.getQName().getLocalName().equals(baseIdentityLocalName)) {
-                            identity.setBaseIdentity(idBuilder);
-                        }
-                    }
+                    identity.setBaseIdentity(baseIdentity);
+                    IdentitySchemaNode built = identity.build();
+                    baseIdentity.addDerivedIdentity(built);
                 }
             }
         }

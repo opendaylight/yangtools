@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -27,10 +28,10 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
     private final SchemaPath path;
     private static final String DESCRIPTION = "The identityref type is used to reference an existing identity.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.10";
-    private final QName identity;
+    private final IdentitySchemaNode identity;
     private static final String UNITS = "";
 
-    public IdentityrefType(QName identity, SchemaPath schemaPath) {
+    public IdentityrefType(IdentitySchemaNode identity, SchemaPath schemaPath) {
         this.identity = identity;
         this.path = schemaPath;
     }
@@ -76,7 +77,7 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
     }
 
     @Override
-    public QName getIdentity() {
+    public IdentitySchemaNode getIdentity() {
         return identity;
     }
 
@@ -87,7 +88,7 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
 
     @Override
     public String toString() {
-        return "identityref " + identity.getLocalName();
+        return "identityref " + identity.getQName().getLocalName();
     }
 
 }
