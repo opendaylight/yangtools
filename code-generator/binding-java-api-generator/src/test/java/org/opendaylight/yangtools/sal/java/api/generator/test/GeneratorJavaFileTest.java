@@ -41,32 +41,6 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class GeneratorJavaFileTest {
     private static final String FS = File.separator;
     private static final String PATH = "target/test/test-dir";
-    private final File testDir = new File(PATH);
-
-    private static final String GENERATOR_OUTPUT_PATH = "target/test/src";
-    private static final File GENERATOR_OUTPUT = new File(GENERATOR_OUTPUT_PATH);
-    private static final String COMPILER_OUTPUT_PATH = "target/test/bin";
-    private static final File COMPILER_OUTPUT = new File(COMPILER_OUTPUT_PATH);
-
-    @Before
-    public void init() {
-        assertTrue(testDir.mkdirs());
-        assertTrue(COMPILER_OUTPUT.mkdirs());
-        assertTrue(GENERATOR_OUTPUT.mkdirs());
-    }
-
-    @After
-    public void cleanUp() {
-        if (testDir.exists()) {
-            deleteTestDir(testDir);
-        }
-        if (COMPILER_OUTPUT.exists()) {
-            deleteTestDir(COMPILER_OUTPUT);
-        }
-        if (GENERATOR_OUTPUT.exists()) {
-            deleteTestDir(GENERATOR_OUTPUT);
-        }
-    }
 
     @Test
     public void test() throws IOException {
@@ -94,73 +68,10 @@ public class GeneratorJavaFileTest {
         assertTrue(filesList.contains("Type4Builder.java"));
     }
 
-    @Test
-    public void compilationTest() throws Exception {
-        final YangParserImpl parser = new YangParserImpl();
-        final BindingGenerator bindingGenerator = new BindingGeneratorImpl();
-
-        final String resPath = getClass().getResource("/yang").getPath();
-        final File sourcesDir = new File(resPath);
-        final List<File> sourceFiles = new ArrayList<File>();
-        final File[] fileArray = sourcesDir.listFiles();
-
-        for (int i = 0; i < fileArray.length; ++i) {
-            sourceFiles.add(fileArray[i]);
-        }
-
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(new File(GENERATOR_OUTPUT_PATH));
-
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-
-        List<File> filesList = getJavaFiles(new File(GENERATOR_OUTPUT_PATH));
-        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
-        Iterable<String> options = Arrays.asList(new String[] { "-d", COMPILER_OUTPUT_PATH });
-        boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
-        assertTrue(compiled);
-    }
-
     private GeneratedType createGeneratedType(String pkgName, String name) {
         GeneratedTypeBuilder builder = new GeneratedTypeBuilderImpl(pkgName, name);
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         return builder.toInstance();
     }
 
-    private void deleteTestDir(File file) {
-        if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                deleteTestDir(f);
-            }
-        }
-        if (!file.delete()) {
-            throw new RuntimeException("Failed to clean up after test");
-        }
-    }
-
-    /**
-     * Search recursively given directory for *.java files.
-     *
-     * @param directory
-     *            directory to search
-     * @return List of java files found
-     */
-    private List<File> getJavaFiles(File directory) {
-        List<File> result = new ArrayList<File>();
-        for (File file : directory.listFiles()) {
-            if (file.isDirectory()) {
-                result.addAll(getJavaFiles(file));
-            } else {
-                String absPath = file.getAbsolutePath();
-                if (absPath.endsWith(".java")) {
-                    result.add(file);
-                }
-            }
-        }
-        return result;
-    }
 }
