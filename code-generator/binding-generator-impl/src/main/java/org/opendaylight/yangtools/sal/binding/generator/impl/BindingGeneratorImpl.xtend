@@ -774,7 +774,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
         checkArgument(module !== null, "Module parameter can not be null");
         val List<Type> genTypes = new ArrayList();
         val basePackageName = moduleNamespaceToPackageName(module);
-        val Set<GroupingDefinition> groupings = module.groupings;
+        val it = new DataNodeIterator(module);
+        val List<GroupingDefinition> groupings = it.allGroupings();
         val List<GroupingDefinition> groupingsSortedByDependencies = new GroupingDefinitionDependencySort().sort(
             groupings);
 

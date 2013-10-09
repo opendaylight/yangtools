@@ -1,0 +1,43 @@
+module test {
+    yang-version 1;
+    namespace "urn:opendaylight:test";
+    prefix "t";
+
+    revision "2013-10-08" {
+    }
+
+    grouping key-args {
+        leaf id {
+            type int8;
+        }
+        leaf name {
+            type string;
+        }
+        leaf size {
+            type int32;
+        }
+    }
+
+    list links {
+        uses key-args;
+        key "size name id";
+
+        anyxml text;
+        choice level;
+        container node;
+        grouping link-group {
+            leaf source {
+                type int8;
+            }
+        }
+        leaf links-id {
+            type int32;
+        }
+        list node-list {
+        }
+        typedef nodes-type {
+            type string;
+        }
+    }
+
+}

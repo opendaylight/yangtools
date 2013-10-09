@@ -12,7 +12,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 
 public class DataNodeIterator implements Iterator<DataSchemaNode> {
 
@@ -21,6 +30,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     private final List<ContainerSchemaNode> allContainers;
     private final List<ChoiceNode> allChoices;
     private final List<DataSchemaNode> allChilds;
+    private final List<GroupingDefinition> allGroupings;
 
     public DataNodeIterator(final DataNodeContainer container) {
         if (container == null) {
@@ -31,6 +41,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         this.allLists = new ArrayList<>();
         this.allChilds = new ArrayList<>();
         this.allChoices = new ArrayList<>();
+        this.allGroupings = new ArrayList<>();
 
         this.container = container;
         traverse(this.container);
@@ -46,6 +57,10 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
 
     public List<ChoiceNode> allChoices() {
         return allChoices;
+    }
+
+    public List<GroupingDefinition> allGroupings() {
+        return allGroupings;
     }
 
     private void traverse(final DataNodeContainer dataNode) {
@@ -114,6 +129,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         final Set<GroupingDefinition> groupings = dataNode.getGroupings();
         if (groupings != null) {
             for (GroupingDefinition grouping : groupings) {
+                allGroupings.add(grouping);
                 traverse(grouping);
             }
         }
