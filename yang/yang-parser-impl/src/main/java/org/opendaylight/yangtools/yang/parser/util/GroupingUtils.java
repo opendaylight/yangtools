@@ -616,13 +616,19 @@ public final class GroupingUtils {
      */
     public static void performRefine(UsesNodeBuilder usesNode) {
         for (RefineHolder refine : usesNode.getRefines()) {
-            DataSchemaNodeBuilder nodeToRefine = null;
-            for (DataSchemaNodeBuilder dataNode : usesNode.getParent().getChildNodeBuilders()) {
-                if (refine.getName().equals(dataNode.getQName().getLocalName())) {
-                    nodeToRefine = dataNode;
-                    break;
+            String refineTargetPath = refine.getName();
+
+            String[] splitted = refineTargetPath.split("/");
+            Builder currentNode = usesNode.getParent();
+            for (String pathElement : splitted) {
+                if (currentNode instanceof DataNodeContainerBuilder) {
+                    currentNode = ((DataNodeContainerBuilder) currentNode).getDataChildByName(pathElement);
+                } else if (currentNode instanceof ChoiceBuilder) {
+                    currentNode = ((ChoiceBuilder) currentNode).getCaseNodeByName(pathElement);
                 }
             }
+
+            DataSchemaNodeBuilder nodeToRefine = (DataSchemaNodeBuilder) currentNode;
             if (nodeToRefine == null) {
                 throw new YangParseException(refine.getModuleName(), refine.getLine(), "Refine target node '"
                         + refine.getName() + "' not found");

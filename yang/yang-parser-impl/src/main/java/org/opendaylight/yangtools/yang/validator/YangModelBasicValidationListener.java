@@ -488,7 +488,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterRefine_stmt(Refine_stmtContext ctx) {
-        BasicValidations.checkIdentifier(ctx);
+        BasicValidations.checkSchemaNodeIdentifier(ctx);
     }
 
     /**

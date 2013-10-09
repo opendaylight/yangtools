@@ -53,25 +53,27 @@ public class GroupingTest {
         assertEquals(1, usesNodes.size());
         UsesNode usesNode = usesNodes.iterator().next();
         Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
-        assertEquals(3, refines.size());
+        assertEquals(4, refines.size());
 
         LeafSchemaNode refineLeaf = null;
         ContainerSchemaNode refineContainer = null;
         ListSchemaNode refineList = null;
+        LeafSchemaNode refineInnerLeaf = null;
         for (Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
             SchemaNode value = entry.getValue();
-            if (value instanceof LeafSchemaNode) {
+            if ("address".equals(value.getQName().getLocalName())) {
                 refineLeaf = (LeafSchemaNode) value;
-            } else if (value instanceof ContainerSchemaNode) {
+            } else if ("port".equals(value.getQName().getLocalName())) {
                 refineContainer = (ContainerSchemaNode) value;
-            } else if (value instanceof ListSchemaNode) {
+            } else if ("addresses".equals(value.getQName().getLocalName())) {
                 refineList = (ListSchemaNode) value;
+            } else if ("id".equals(value.getQName().getLocalName())) {
+                refineInnerLeaf = (LeafSchemaNode)value;
             }
         }
 
         // leaf address
         assertNotNull(refineLeaf);
-        assertEquals("address", refineLeaf.getQName().getLocalName());
         assertEquals("IP address of target node", refineLeaf.getDescription());
         assertEquals("address reference added by refine", refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
@@ -80,6 +82,7 @@ public class GroupingTest {
         assertEquals(1, leafMustConstraints.size());
         MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("\"ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)\"", leafMust.toString());
+
 
         // container port
         assertNotNull(refineContainer);
@@ -97,6 +100,10 @@ public class GroupingTest {
         assertFalse(refineList.isConfiguration());
         assertEquals(2, (int) refineList.getConstraints().getMinElements());
         assertEquals(12, (int) refineList.getConstraints().getMaxElements());
+
+        // leaf id
+        assertNotNull(refineInnerLeaf);
+        assertEquals("id of address", refineInnerLeaf.getDescription());
     }
 
     @Test

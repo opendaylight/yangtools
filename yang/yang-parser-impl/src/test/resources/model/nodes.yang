@@ -180,12 +180,15 @@ module nodes {
                     config false;
                     presence "presence is required";
                 }
-                refine addresses {
+                refine "addresses" {
                     description "description of addresses defined by refine";
                     reference "addresses reference added by refine";
                     config false;
                     min-elements 2;
                     max-elements 12;
+                }
+                refine addresses/id {
+                    description "id of address";
                 }
             }
         }
