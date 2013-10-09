@@ -123,7 +123,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
             this.key = key;
         }
 
-        T getKey() {
+        public T getKey() {
             return this.key;
         }
 
