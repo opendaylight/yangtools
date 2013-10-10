@@ -12,7 +12,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -176,16 +175,27 @@ public class TypesResolutionTest {
     public void testIdentity() {
         Module tested = TestUtils.findModule(testedModules, "custom-types-test");
         Set<IdentitySchemaNode> identities = tested.getIdentities();
-        IdentitySchemaNode testedIdentity = null;
+        assertEquals(5, identities.size());
+        IdentitySchemaNode cryptoAlg = null;
+        IdentitySchemaNode cryptoBase = null;
         for (IdentitySchemaNode id : identities) {
             if (id.getQName().getLocalName().equals("crypto-alg")) {
-                testedIdentity = id;
-                IdentitySchemaNode baseIdentity = id.getBaseIdentity();
-                assertEquals("crypto-base", baseIdentity.getQName().getLocalName());
-                assertNull(baseIdentity.getBaseIdentity());
+                cryptoAlg = id;
+            } else if ("crypto-base".equals(id.getQName().getLocalName())) {
+                cryptoBase = id;
             }
         }
-        assertNotNull(testedIdentity);
+        assertNotNull(cryptoAlg);
+        IdentitySchemaNode baseIdentity = cryptoAlg.getBaseIdentity();
+        assertEquals("crypto-base", baseIdentity.getQName().getLocalName());
+        assertTrue(cryptoAlg.getDerivedIdentities().isEmpty());
+        assertNull(baseIdentity.getBaseIdentity());
+
+
+        assertNotNull(cryptoBase);
+        baseIdentity = cryptoAlg.getBaseIdentity();
+        assertNull(cryptoBase.getBaseIdentity());
+        assertEquals(3, cryptoBase.getDerivedIdentities().size());
     }
 
     @Test
@@ -305,7 +315,7 @@ public class TypesResolutionTest {
         Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
         IdentityrefType baseType = (IdentityrefType) testedType.getBaseType();
-        QName identity = baseType.getIdentity();
+        QName identity = baseType.getIdentity().getQName();
         assertEquals(URI.create("urn:custom.types.demo"), identity.getNamespace());
         assertEquals(TestUtils.createDate("2012-04-16"), identity.getRevision());
         assertEquals("iit", identity.getPrefix());

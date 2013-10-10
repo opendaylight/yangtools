@@ -12,11 +12,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -35,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder.ChoiceN
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder.ChoiceCaseNodeImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder.ContainerSchemaNodeImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder.ListSchemaNodeImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
@@ -566,25 +568,63 @@ public final class ParserUtils {
             return true;
         }
 
-        public static def QName findFullQName(Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            ModuleBuilder module, IdentityrefTypeBuilder idref) {
-            var QName result = null;
-            val String baseString = idref.getBaseString();
-            if (baseString.contains(":")) {
-                val String[] splittedBase = baseString.split(":");
-                if (splittedBase.length > 2) {
-                    throw new YangParseException(module.getName(), idref.getLine(),
-                        "Failed to parse identityref base: " + baseString);
-                }
-                val prefix = splittedBase.get(0);
-                val name = splittedBase.get(1);
-                val dependentModule = findModuleFromBuilders(modules, module, prefix, idref.getLine());
-                result = new QName(dependentModule.getNamespace(), dependentModule.getRevision(), prefix, name);
-            } else {
-                result = new QName(module.getNamespace(), module.getRevision(), module.getPrefix(), baseString);
+    public static def IdentitySchemaNodeBuilder findBaseIdentity(Map<String, TreeMap<Date, ModuleBuilder>> modules,
+        ModuleBuilder module, String baseString, int line) {
+        var IdentitySchemaNodeBuilder result = null;
+        if (baseString.contains(":")) {
+            val String[] splittedBase = baseString.split(":");
+            if (splittedBase.length > 2) {
+                throw new YangParseException(module.getName(), line, "Failed to parse identityref base: " +
+                    baseString);
             }
-            return result;
+            val prefix = splittedBase.get(0);
+            val name = splittedBase.get(1);
+            val dependentModule = findModuleFromBuilders(modules, module, prefix, line);
+            if (dependentModule !== null) {
+                result = findIdentity(dependentModule.identities, name);
+            }
+        } else {
+            result = findIdentity(module.identities, baseString);
         }
+        return result;
+    }
+
+    public static def IdentitySchemaNode findBaseIdentityFromContext(Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            ModuleBuilder module, String baseString, int line, SchemaContext context) {
+        var IdentitySchemaNode result = null;
+
+        val String[] splittedBase = baseString.split(":");
+        if (splittedBase.length > 2) {
+            throw new YangParseException(module.getName(), line, "Failed to parse identityref base: " + baseString);
+        }
+        val prefix = splittedBase.get(0);
+        val name = splittedBase.get(1);
+        val dependentModule = findModuleFromContext(context, module, prefix, line);
+        result = findIdentityNode(dependentModule.identities, name);
+
+        if (result == null) {
+            throw new YangParseException(module.name, line, "Failed to find base identity");
+        }
+        return result;
+    }
+
+    private static def IdentitySchemaNodeBuilder findIdentity(Set<IdentitySchemaNodeBuilder> identities, String name) {
+        for (identity : identities) {
+            if (identity.QName.localName.equals(name)) {
+                return identity;
+            }
+        }
+        return null;
+    }
+
+    private static def IdentitySchemaNode findIdentityNode(Set<IdentitySchemaNode> identities, String name) {
+        for (identity : identities) {
+            if (identity.QName.localName.equals(name)) {
+                return identity;
+            }
+        }
+        return null;
+    }
 
         /**
      * Get module in which this node is defined.

@@ -32,7 +32,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     private final String baseString;
     private final SchemaPath schemaPath;
-    private QName baseQName;
+    private IdentitySchemaNodeBuilder baseIdentity;
 
     public IdentityrefTypeBuilder(final String moduleName, final int line, final String baseString,
             final SchemaPath schemaPath) {
@@ -48,15 +48,15 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public IdentityrefType build() {
-        return new IdentityrefType(baseQName, schemaPath);
+        return new IdentityrefType(baseIdentity.build(), schemaPath);
     }
 
     public String getBaseString() {
         return baseString;
     }
 
-    public void setBaseQName(QName baseQName) {
-        this.baseQName = baseQName;
+    public void setBaseIdentity(IdentitySchemaNodeBuilder baseIdentity) {
+        this.baseIdentity = baseIdentity;
     }
 
     @Override
@@ -214,7 +214,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
         final StringBuilder result = new StringBuilder(IdentityrefTypeBuilder.class.getSimpleName());
         result.append("[");
         result.append(", base=");
-        result.append(baseQName);
+        result.append(baseIdentity);
         result.append("]");
         return result.toString();
     }

@@ -64,6 +64,11 @@ module custom-types-test {
         type service-type-ref;
     }
 
+    identity crypto-id {
+        base "crypto-base";
+        description "crypto-id description";
+    }
+
     identity crypto-base {
         description "crypto-base description";
     }
@@ -71,6 +76,11 @@ module custom-types-test {
     identity crypto-alg {
         base "crypto-base";
         description "crypto-alg description";
+    }
+
+    identity crypto-def {
+        base "crypto-base";
+        description "crypto-def description";
     }
 
     leaf mybits {

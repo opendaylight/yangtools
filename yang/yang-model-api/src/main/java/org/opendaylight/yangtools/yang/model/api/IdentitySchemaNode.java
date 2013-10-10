@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Set;
+
 /**
  * Interface describing YANG 'identity' statement.
  * <p>
@@ -23,5 +25,12 @@ public interface IdentitySchemaNode extends SchemaNode {
      *         null, if the identity is defined from scratch.
      */
     IdentitySchemaNode getBaseIdentity();
+
+    /**
+     * Get identities derived from this identity.
+     * 
+     * @return collection of identities derived from this identity
+     */
+    Set<IdentitySchemaNode> getDerivedIdentities();
 
 }

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -19,11 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTypeDefinition> {
 
     /**
-     * Returns QName of the identity to which the instance of this type refers.
+     * Returns identity to which the instance of this type refers.
      * 
-     * @return QName of referenced identity which is specified with the
-     *         <code>identity</code> YANG statement
+     * @return identity which is specified with the <code>identity</code> YANG
+     *         statement
      */
-    QName getIdentity();
+    IdentitySchemaNode getIdentity();
 
 }
