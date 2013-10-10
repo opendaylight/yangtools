@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.sal.java.api.generator.test;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -40,6 +41,9 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
  */
 public class CompilationTest {
     private static final String FS = File.separator;
+    private static final String NS_STRING = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1" + FS
+            + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
+
     private static final String TEST_PATH = "target" + FS + "test";
     private static final File TEST_DIR = new File(TEST_PATH);
 
@@ -93,8 +97,8 @@ public class CompilationTest {
         final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
         generator.generateToFile(sourcesOutputDir);
 
-        File parent = new File(sourcesOutputDir, "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1"
-                + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008");
+        // Test if all sources are generated
+        File parent = new File(sourcesOutputDir, NS_STRING);
         File linksKeyFile = new File(parent, "LinksKey.java");
         assertTrue(new File(parent, "KeyArgs.java").exists());
         assertTrue(new File(parent, "Links.java").exists());
@@ -109,9 +113,9 @@ public class CompilationTest {
         assertTrue(new File(parent, "links" + FS + "NodeListBuilder.java").exists());
         assertTrue(linksKeyFile.exists());
 
+        // Test if sources are compilable
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-
         List<File> filesList = getJavaFiles(sourcesOutputDir);
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
         Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
@@ -122,7 +126,7 @@ public class CompilationTest {
         Class<?> linksKeyClass = Class.forName("org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.LinksKey",
                 true, loader);
 
-        // test list key constructor arguments ordering
+        // Test list key constructor arguments ordering
         try {
             linksKeyClass.getConstructor(Byte.class, String.class, Integer.class);
         } catch (NoSuchMethodException e) {
@@ -146,8 +150,8 @@ public class CompilationTest {
         final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
         generator.generateToFile(sourcesOutputDir);
 
-        File parent = new File(sourcesOutputDir + FS + "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS
-                + "v1" + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008");
+        // Test if all sources are generated
+        File parent = new File(sourcesOutputDir, NS_STRING);
         assertTrue(new File(parent, "Object.java").exists());
         assertTrue(new File(parent, "OpenObject.java").exists());
         assertTrue(new File(parent, "object" + FS + "Nodes.java").exists());
@@ -156,6 +160,40 @@ public class CompilationTest {
         assertTrue(new File(parent, "open" + FS + "object" + FS + "Nodes1Builder.java").exists());
         assertTrue(new File(parent, "open" + FS + "object" + FS + "nodes" + FS + "Links.java").exists());
         assertTrue(new File(parent, "open" + FS + "object" + FS + "nodes" + FS + "LinksBuilder.java").exists());
+
+        // Test if sources are compilable
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+        List<File> filesList = getJavaFiles(sourcesOutputDir);
+        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
+        Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
+        boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
+        assertTrue(compiled);
+
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    // TODO: add test for return types, equals and hashcode
+    @Test
+    public void testLeafReturnTypes() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "leaf-return-types");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "leaf-return-types");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        final List<File> sourceFiles = getSourceFiles("/compilation/leaf-return-types");
+        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
+        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
+        final List<Type> types = bindingGenerator.generateTypes(context);
+        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        generator.generateToFile(sourcesOutputDir);
+
+        File parent = new File(sourcesOutputDir, NS_STRING);
+        assertTrue(new File(parent, "TestData.java").exists());
+        assertTrue(new File(parent, "Nodes.java").exists());
+        assertTrue(new File(parent, "NodesBuilder.java").exists());
+        assertTrue(new File(parent, "Alg.java").exists());
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
@@ -191,21 +229,33 @@ public class CompilationTest {
         Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
         boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
         assertTrue(compiled);
+
+        cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private List<File> getSourceFiles(String path) {
+    private List<File> getSourceFiles(String path) throws FileNotFoundException {
         final String resPath = getClass().getResource(path).getPath();
         final File sourcesDir = new File(resPath);
-        final List<File> sourceFiles = new ArrayList<>();
-        final File[] fileArray = sourcesDir.listFiles();
-        sourceFiles.addAll(Arrays.asList(fileArray));
-        return sourceFiles;
+        if (sourcesDir.exists()) {
+            final List<File> sourceFiles = new ArrayList<>();
+            final File[] fileArray = sourcesDir.listFiles();
+            if (fileArray == null) {
+                throw new IllegalArgumentException("Unable to locate files in " + sourcesDir);
+            }
+            sourceFiles.addAll(Arrays.asList(fileArray));
+            return sourceFiles;
+        } else {
+            throw new FileNotFoundException("Testing files were not found(" + sourcesDir.getName() + ")");
+        }
     }
 
     private static void deleteTestDir(File file) {
         if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                deleteTestDir(f);
+            File[] filesToDelete = file.listFiles();
+            if (filesToDelete != null) {
+                for (File f : filesToDelete) {
+                    deleteTestDir(f);
+                }
             }
         }
         if (!file.delete()) {
@@ -221,14 +271,17 @@ public class CompilationTest {
      * @return List of java files found
      */
     private List<File> getJavaFiles(File directory) {
-        List<File> result = new ArrayList<File>();
-        for (File file : directory.listFiles()) {
-            if (file.isDirectory()) {
-                result.addAll(getJavaFiles(file));
-            } else {
-                String absPath = file.getAbsolutePath();
-                if (absPath.endsWith(".java")) {
-                    result.add(file);
+        List<File> result = new ArrayList<>();
+        File[] filesToRead = directory.listFiles();
+        if (filesToRead != null) {
+            for (File file : filesToRead) {
+                if (file.isDirectory()) {
+                    result.addAll(getJavaFiles(file));
+                } else {
+                    String absPath = file.getAbsolutePath();
+                    if (absPath.endsWith(".java")) {
+                        result.add(file);
+                    }
                 }
             }
         }

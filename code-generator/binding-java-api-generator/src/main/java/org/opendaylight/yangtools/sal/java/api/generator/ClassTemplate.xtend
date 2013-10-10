@@ -230,13 +230,13 @@ class ClassTemplate extends BaseTemplate {
                     «IF cValue instanceof List<?>»
                         «val cValues = cValue as List<?>»
                         private static final List<Pattern> «Constants.MEMBER_PATTERN_LIST» = new ArrayList<Pattern>();
-                        public static final List<String> «TypeConstants.PATTERN_CONSTANT_NAME» = Arrays.asList(«
+                        public static final List<String> «TypeConstants.PATTERN_CONSTANT_NAME» = java.util.Arrays.asList(«
                         FOR v : cValues SEPARATOR ", "»«
                             IF v instanceof String»"«
                                 v as String»"«
                             ENDIF»«
                         ENDFOR»);
-                        
+
                         «generateStaticInicializationBlock»
                     «ENDIF»
                 «ELSE»
@@ -245,10 +245,10 @@ class ClassTemplate extends BaseTemplate {
             «ENDFOR»
         «ENDIF»
     '''
-    
+
     /**
      * Template method which generates JAVA static initialization block.
-     * 
+     *
      * @return string with static initialization block in JAVA format
      */
     def protected generateStaticInicializationBlock() '''
@@ -258,10 +258,10 @@ class ClassTemplate extends BaseTemplate {
             }
         }
     '''
-    
+
     /**
      * Template method which generates JAVA class attributes.
-     * 
+     *
      * @return string with the class attributes in JAVA format
      */
     def protected generateFields() '''
@@ -271,11 +271,11 @@ class ClassTemplate extends BaseTemplate {
             «ENDFOR»
         «ENDIF»
     '''
-    
+
 
     /**
      * Template method which generates the method <code>hashCode()</code>.
-     * 
+     *
      * @return string with the <code>hashCode()</code> method definition in JAVA format
      */
     def protected generateHashCode() '''
@@ -285,17 +285,21 @@ class ClassTemplate extends BaseTemplate {
                 final int prime = 31;
                 int result = 1;
                 «FOR property : genTO.hashCodeIdentifiers»
+                    «IF property.returnType.name.contains("[")»
+                    result = prime * result + ((«property.fieldName» == null) ? 0 : java.util.Arrays.hashCode(«property.fieldName»));
+                    «ELSE»
                     result = prime * result + ((«property.fieldName» == null) ? 0 : «property.fieldName».hashCode());
+                    «ENDIF»
                 «ENDFOR»
                 return result;
             }
         «ENDIF»
     '''
-    
+
     /**
      * Template method which generates the method <code>equals()</code>.
-     * 
-     * @return string with the <code>equals()</code> method definition in JAVA format     
+     *
+     * @return string with the <code>equals()</code> method definition in JAVA format
      */
     def protected generateEquals() '''
         «IF !genTO.equalsIdentifiers.empty»
@@ -317,7 +321,11 @@ class ClassTemplate extends BaseTemplate {
                         if (other.«fieldName» != null) {
                             return false;
                         }
+                    «IF property.returnType.name.contains("[")»
+                    } else if(!java.util.Arrays.equals(«fieldName», other.«fieldName»)) {
+                    «ELSE»
                     } else if(!«fieldName».equals(other.«fieldName»)) {
+                    «ENDIF»
                         return false;
                     }
                 «ENDFOR»
@@ -325,11 +333,11 @@ class ClassTemplate extends BaseTemplate {
             }
         «ENDIF»
     '''
-    
+
     /**
      * Template method which generates the method <code>toString()</code>.
-     * 
-     * @return string with the <code>toString()</code> method definition in JAVA format     
+     *
+     * @return string with the <code>toString()</code> method definition in JAVA format
      */
     def protected generateToString() '''
         «IF !genTO.toStringIdentifiers.empty»

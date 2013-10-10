@@ -321,7 +321,11 @@ class BuilderTemplate extends BaseTemplate {
                 final int prime = 31;
                 int result = 1;
                 «FOR property : properties»
+                    «IF property.returnType.name.contains("[")»
+                    result = prime * result + ((«property.fieldName» == null) ? 0 : java.util.Arrays.hashCode(«property.fieldName»));
+                    «ELSE»
                     result = prime * result + ((«property.fieldName» == null) ? 0 : «property.fieldName».hashCode());
+                    «ENDIF»
                 «ENDFOR»
                 «IF augmentField != null»
                     result = prime * result + ((«augmentField.name» == null) ? 0 : «augmentField.name».hashCode());
@@ -356,7 +360,11 @@ class BuilderTemplate extends BaseTemplate {
                         if (other.«fieldName» != null) {
                             return false;
                         }
+                    «IF property.returnType.name.contains("[")»
+                    } else if(!java.util.Arrays.equals(«fieldName», other.«fieldName»)) {
+                    «ELSE»
                     } else if(!«fieldName».equals(other.«fieldName»)) {
+                    «ENDIF»
                         return false;
                     }
                 «ENDFOR»
