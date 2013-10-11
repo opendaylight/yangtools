@@ -26,11 +26,4 @@ public interface IdentitySchemaNode extends SchemaNode {
      */
     IdentitySchemaNode getBaseIdentity();
 
-    /**
-     * Get identities derived from this identity.
-     * 
-     * @return collection of identities derived from this identity
-     */
-    Set<IdentitySchemaNode> getDerivedIdentities();
-
 }

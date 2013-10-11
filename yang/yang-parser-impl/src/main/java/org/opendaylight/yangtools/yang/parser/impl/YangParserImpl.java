@@ -413,9 +413,9 @@ public final class YangParserImpl implements YangModelParser {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder module = childEntry.getValue();
+                resolveUnknownNodes(modules, module);
                 resolveIdentities(modules, module);
                 resolveDirtyNodes(modules, module);
-                resolveUnknownNodes(modules, module);
             }
         }
     }
@@ -425,9 +425,9 @@ public final class YangParserImpl implements YangModelParser {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder module = childEntry.getValue();
+                resolveUnknownNodesWithContext(modules, module, context);
                 resolveIdentitiesWithContext(modules, module, context);
                 resolveDirtyNodesWithContext(modules, module, context);
-                resolveUnknownNodesWithContext(modules, module, context);
             }
         }
     }
@@ -761,8 +761,6 @@ public final class YangParserImpl implements YangModelParser {
                     throw new YangParseException(module.getName(), identity.getLine(), "Failed to find base identity");
                 } else {
                     identity.setBaseIdentity(baseIdentity);
-                    IdentitySchemaNode built = identity.build();
-                    baseIdentity.addDerivedIdentity(built);
                 }
             }
         }
@@ -792,15 +790,8 @@ public final class YangParserImpl implements YangModelParser {
                     IdentitySchemaNode baseId = findBaseIdentityFromContext(modules, module, baseIdentityName, line,
                             context);
                     identity.setBaseIdentity(baseId);
-                    IdentitySchemaNode built = identity.build();
-                    if (baseId instanceof IdentitySchemaNodeBuilder.IdentitySchemaNodeImpl) {
-                        ((IdentitySchemaNodeBuilder.IdentitySchemaNodeImpl) baseId).toBuilder().addDerivedIdentity(
-                                built);
-                    }
                 } else {
                     identity.setBaseIdentity(baseIdentity);
-                    IdentitySchemaNode built = identity.build();
-                    baseIdentity.addDerivedIdentity(built);
                 }
             }
         }
