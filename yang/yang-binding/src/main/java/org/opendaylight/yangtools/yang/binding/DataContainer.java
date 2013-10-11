@@ -25,5 +25,5 @@ package org.opendaylight.yangtools.yang.binding;
  */
 public interface DataContainer {
 
-    public Class<? extends DataObject> getImplementedInterface();
+    public Class<? extends DataContainer> getImplementedInterface();
 }
