@@ -212,6 +212,8 @@ class BuilderTemplate extends BaseTemplate {
             }
 
             private static final class «type.name»«IMPL» implements «type.name» {
+                
+                «implementedInterfaceGetter»
 
                 «generateFields(true)»
 
@@ -386,6 +388,12 @@ class BuilderTemplate extends BaseTemplate {
     override protected getFullyQualifiedName() {
         '''«type.fullyQualifiedName»Builder'''.toString
     }
+    
+    def implementedInterfaceGetter() '''
+    public «Class.importedName»<«type.importedName»> getImplementedInterface() {
+        return «type.importedName».class;
+    }
+    '''
     
 }
 
