@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
+import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder
 
 public final class ParserUtils {
 
@@ -308,7 +309,11 @@ public final class ParserUtils {
                 var SchemaNodeBuilder nodeFound = dataNodeContainerParent.getDataChildByName(currentName);
                 // if not found, search in notifications
                 if (nodeFound == null && currentParent instanceof ModuleBuilder) {
-                	nodeFound = searchNotifications(currentParent as ModuleBuilder, currentName);
+                    nodeFound = searchNotifications(currentParent as ModuleBuilder, currentName);
+                }
+                // if not found, search in rpcs
+                if (nodeFound == null && currentParent instanceof ModuleBuilder) {
+                    nodeFound = searchRpcs(currentParent as ModuleBuilder, currentName);
                 }
                 // if not found, search in uses
                 if (nodeFound == null) {
@@ -324,6 +329,13 @@ public final class ParserUtils {
             } else if (currentParent instanceof ChoiceBuilder) {
                 val choiceParent = currentParent as ChoiceBuilder;
                 currentParent = choiceParent.getCaseNodeByName(currentName);
+            } else if (currentParent instanceof RpcDefinitionBuilder) {
+                val rpc = currentParent as RpcDefinitionBuilder;
+                if ("input".equals(currentName)) {
+                    currentParent = rpc.input;
+                } else if ("output".equals(currentName)) {
+                    currentParent = rpc.output;
+                }
             } else {
                 throw new YangParseException(moduleName, line,
                         "Error in augment parsing: failed to find node " + currentName);
@@ -342,6 +354,15 @@ public final class ParserUtils {
         for(notification : parent.notifications) {
             if(notification.getQName().localName.equals(name)) {
                 return notification;
+            }
+        }
+        return null;
+    }
+
+    private static def searchRpcs(ModuleBuilder parent, String name) {
+        for(rpc : parent.rpcs) {
+            if(rpc.getQName().localName.equals(name)) {
+                return rpc;
             }
         }
         return null;

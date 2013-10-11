@@ -1,0 +1,50 @@
+module foo {
+    yang-version 1;
+    namespace "urn:opendaylight:foo";
+    prefix "f";
+
+    import bar { prefix b; revision-date 2013-10-11; }
+
+    revision "2013-10-11" {
+    }
+
+	augment "/b:submit/b:input/b:arguments" {
+        when "../type = attach-path-instruction";
+
+        case attach {
+            container attach {
+                leaf link-id {
+                    type string;
+                }
+                leaf path-id {
+                    type string;
+                }
+            }
+        }
+    }
+
+    augment "/b:submit/b:input/b:arguments" {
+        when "../type = create-path-instruction";
+
+        case create {
+            container create {
+                leaf id {
+                    type string;
+                }
+            }
+        }
+    }
+
+    augment "/b:submit/b:input/b:arguments" {
+        when "../type = destroy-path-instruction";
+
+        case destroy {
+            container destroy {
+                leaf id {
+                    type string;
+                }
+            }
+        }
+    }
+
+}

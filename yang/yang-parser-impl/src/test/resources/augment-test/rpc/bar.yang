@@ -1,0 +1,46 @@
+module bar {
+    yang-version 1;
+    namespace "urn:opendaylight:bar";
+    prefix "b";
+
+    revision "2013-10-11" {
+    }
+
+    rpc cancel {
+        input {
+            leaf id {
+                type string;
+            }
+        }
+        output {
+            leaf failure {
+                type string;
+            }
+        }
+    }
+
+
+    rpc submit {
+        input {
+            leaf id {
+                type string;
+            }
+            leaf type {
+                type string;
+            }
+            choice arguments {
+            }
+        }
+
+        output {
+            choice result {
+                case failure {
+                    leaf failure {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+}
