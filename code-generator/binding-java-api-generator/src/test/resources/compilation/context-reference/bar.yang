@@ -1,0 +1,12 @@
+module bar {
+    yang-version 1;
+    namespace "urn:opendaylight:bar";
+    prefix "b";
+
+    revision "2013-10-08" {
+    }
+
+    identity identity-class {
+    }
+
+}

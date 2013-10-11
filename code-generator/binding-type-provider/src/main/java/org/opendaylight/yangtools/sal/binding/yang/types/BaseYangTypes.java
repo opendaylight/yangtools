@@ -92,10 +92,9 @@ public final class BaseYangTypes {
      */
     public static final Type BINARY_TYPE = Types.primitiveType("byte[]");
 
-    
-    public static final Type INSTANCE_IDENTIFIER = Types.typeForClass(InstanceIdentifier.class);
-    
-    
+    public static final Type INSTANCE_IDENTIFIER = Types.parameterizedTypeFor(Types
+            .typeForClass(InstanceIdentifier.class));
+
     /**
      * It is undesirable to create instance of this class.
      */
@@ -124,7 +123,7 @@ public final class BaseYangTypes {
         /**
          * Searches <code>Type</code> value to which is YANG <code>type</code>
          * mapped.
-         * 
+         *
          * @param type
          *            string with YANG type name
          * @return java <code>Type</code> representation of <code>type</code>
@@ -137,7 +136,7 @@ public final class BaseYangTypes {
         /**
          * Searches <code>Type</code> value to which is YANG <code>type</code>
          * mapped.
-         * 
+         *
          * @param type
          *            type definition representation of YANG type
          * @return java <code>Type</code> representation of <code>type</code>.

@@ -6,8 +6,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Constant
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
-
+import org.opendaylight.yangtools.sal.binding.model.api.MethodSignatureimport org.opendaylight.yangtools.sal.binding.model.api.AnnotationType
 
 /**
  * Template for generating JAVA interfaces. 
@@ -62,7 +61,8 @@ class InterfaceTemplate extends BaseTemplate {
     override body() '''
         «type.comment.generateComment»
         public interface «type.name»
-            «superInterfaces» {
+            «superInterfaces»
+        {
         
             «generateInnerClasses»
         
@@ -90,7 +90,22 @@ class InterfaceTemplate extends BaseTemplate {
             */
         «ENDIF»
     '''
-    
+
+    def private generateAnnotations(List<AnnotationType> annotations) '''
+        «IF annotations != null && !annotations.empty»
+            «FOR annotation : annotations»
+                @«annotation.name»
+                «IF annotation.parameters != null && !annotation.parameters.empty»
+                (
+                «FOR param : annotation.parameters SEPARATOR ","»
+                    «param.name»=«param.value»
+                «ENDFOR»
+                )
+                «ENDIF»
+            «ENDFOR»
+        «ENDIF»
+    '''
+
     /**
      * Template method which generates the interface name declaration.
      * 
@@ -101,7 +116,6 @@ class InterfaceTemplate extends BaseTemplate {
     «IF (!type.implements.empty)»
          extends
          «FOR type : type.implements SEPARATOR ","»
-         
              «type.importedName»
          «ENDFOR»
      « ENDIF»
@@ -161,6 +175,7 @@ class InterfaceTemplate extends BaseTemplate {
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
                 «m.comment.generateComment»
+                «m.annotations.generateAnnotations»
                 «m.returnType.importedName» «m.name»(«m.parameters.generateParameters»);
             «ENDFOR»
         «ENDIF»
