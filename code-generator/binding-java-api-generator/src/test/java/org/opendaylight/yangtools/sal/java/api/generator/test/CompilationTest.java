@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -31,18 +34,21 @@ import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
+import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 /**
  * Test correct code generation.
- * 
+ *
  */
 public class CompilationTest {
     private static final String FS = File.separator;
-    private static final String NS_STRING = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1" + FS
+    private static final String NS_TEST = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1" + FS
             + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
+    private static final String NS_FOO = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1" + FS
+            + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
 
     private static final String TEST_PATH = "target" + FS + "test";
     private static final File TEST_DIR = new File(TEST_PATH);
@@ -98,7 +104,7 @@ public class CompilationTest {
         generator.generateToFile(sourcesOutputDir);
 
         // Test if all sources are generated
-        File parent = new File(sourcesOutputDir, NS_STRING);
+        File parent = new File(sourcesOutputDir, NS_TEST);
         File linksKeyFile = new File(parent, "LinksKey.java");
         assertTrue(new File(parent, "KeyArgs.java").exists());
         assertTrue(new File(parent, "Links.java").exists());
@@ -151,7 +157,7 @@ public class CompilationTest {
         generator.generateToFile(sourcesOutputDir);
 
         // Test if all sources are generated
-        File parent = new File(sourcesOutputDir, NS_STRING);
+        File parent = new File(sourcesOutputDir, NS_TEST);
         assertTrue(new File(parent, "Object.java").exists());
         assertTrue(new File(parent, "OpenObject.java").exists());
         assertTrue(new File(parent, "object" + FS + "Nodes.java").exists());
@@ -189,7 +195,7 @@ public class CompilationTest {
         final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
         generator.generateToFile(sourcesOutputDir);
 
-        File parent = new File(sourcesOutputDir, NS_STRING);
+        File parent = new File(sourcesOutputDir, NS_TEST);
         assertTrue(new File(parent, "TestData.java").exists());
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
@@ -203,6 +209,56 @@ public class CompilationTest {
         Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
         boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
         assertTrue(compiled);
+
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    @Test
+    public void testGenerationContextReferenceExtension() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "context-reference");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "context-reference");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        final List<File> sourceFiles = getSourceFiles("/compilation/context-reference");
+        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
+        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
+        final List<Type> types = bindingGenerator.generateTypes(context);
+        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        generator.generateToFile(sourcesOutputDir);
+
+        // Test if all sources are generated
+        File fooParent = new File(sourcesOutputDir, NS_FOO);
+        File nodes = new File(fooParent, "Nodes.java");
+        File nodesBuilder = new File(fooParent, "NodesBuilder.java");
+        assertTrue(new File(fooParent, "FooData.java").exists());
+        assertTrue(nodes.exists());
+        assertTrue(nodesBuilder.exists());
+
+        // Test if sources are compilable
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+        List<File> filesList = getJavaFiles(sourcesOutputDir);
+        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
+        Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
+        boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
+        assertTrue(compiled);
+
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        Class<?> nodesClass = Class.forName("org.opendaylight.yang.gen.v1.urn.opendaylight.foo.rev131008.Nodes", true,
+                loader);
+
+        // Test annotation
+        try {
+            Method getId = nodesClass.getMethod("getId");
+            Annotation[] annotations = getId.getAnnotations();
+            assertEquals(1, annotations.length);
+            Annotation routingContext = annotations[0];
+            assertEquals(RoutingContext.class, routingContext.annotationType());
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError("Method getId() not found");
+        }
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
@@ -265,7 +321,7 @@ public class CompilationTest {
 
     /**
      * Search recursively given directory for *.java files.
-     * 
+     *
      * @param directory
      *            directory to search
      * @return List of java files found

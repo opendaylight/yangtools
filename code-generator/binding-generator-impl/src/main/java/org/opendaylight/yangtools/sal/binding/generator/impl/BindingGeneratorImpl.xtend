@@ -64,6 +64,10 @@ import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.UsesNode
 import java.util.HashSet
+import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder
+import org.opendaylight.yangtools.yang.model.api.ModuleImport
+import org.opendaylight.yangtools.yang.binding.DataContainer
 
 public class BindingGeneratorImpl implements BindingGenerator {
     /**
@@ -1314,7 +1318,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val packageName = packageNameForGeneratedType(basePackageName, choiceNode.path);
         val choiceTypeBuilder = addRawInterfaceDefinition(packageName, choiceNode);
 
-        //choiceTypeBuilder.addImplementsType(DATA_OBJECT);
+        choiceTypeBuilder.addImplementsType(DataContainer.typeForClass);
         val choiceType = choiceTypeBuilder.toInstance();
 
         generatedTypes.add(choiceType);
@@ -1489,12 +1493,66 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
                 }
                 if(returnType !== null) {
-                    constructGetter(typeBuilder, leafName, leafDesc, returnType);
+                    val MethodSignatureBuilder getter = constructGetter(typeBuilder, leafName, leafDesc, returnType);
+                    processContextRefExtension(leaf, getter, parentModule);
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    private def void processContextRefExtension(LeafSchemaNode leaf, MethodSignatureBuilder getter, Module module) {
+        for (node : leaf.unknownSchemaNodes) {
+            val nodeType = node.nodeType;
+            if ("context-reference".equals(nodeType.localName)) {
+                val nodeParam = node.nodeParameter;
+                var IdentitySchemaNode identity = null;
+                var String basePackageName = null;
+                val String[] splittedElement = nodeParam.split(":");
+                if (splittedElement.length == 1) {
+                    identity = findIdentityByName(module.identities, splittedElement.get(0));
+                    basePackageName = moduleNamespaceToPackageName(module);
+                } else if (splittedElement.length == 2) {
+                    var prefix = splittedElement.get(0);
+                    val Module dependentModule = findModuleFromImports(module.imports, prefix)
+                    if (dependentModule == null) {
+                        throw new IllegalArgumentException("Failed to process context-reference: unknown prefix " + prefix);
+                    }
+                    identity = findIdentityByName(dependentModule.identities, splittedElement.get(1));
+                    basePackageName = moduleNamespaceToPackageName(dependentModule);
+                } else {
+                    throw new IllegalArgumentException("Failed to process context-reference: unknown identity " + nodeParam);
+                }
+                if (identity == null) {
+                    throw new IllegalArgumentException("Failed to process context-reference: unknown identity " + nodeParam);
+                }
+
+                val Class<RoutingContext> clazz = typeof(RoutingContext);
+                val AnnotationTypeBuilder rc = getter.addAnnotation(clazz.package.name, clazz.simpleName);
+                val packageName = packageNameForGeneratedType(basePackageName, identity.path);
+                val genTypeName = parseToClassName(identity.QName.localName);
+                rc.addParameter("value", packageName + "." + genTypeName + ".class");
+            }
+        }
+    }
+
+    private def IdentitySchemaNode findIdentityByName(Set<IdentitySchemaNode> identities, String name) {
+        for (id : identities) {
+            if (id.QName.localName.equals(name)) {
+                return id;
+            }
+        }
+        return null;
+    }
+
+    private def Module findModuleFromImports(Set<ModuleImport> imports, String prefix) {
+        for (imp : imports) {
+            if (imp.prefix.equals(prefix)) {
+                return schemaContext.findModuleByName(imp.moduleName, imp.revision);
+            }
+        }
+        return null;
     }
 
     /**
