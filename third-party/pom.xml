@@ -4,8 +4,9 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools</artifactId>
-        <version>0.5-SNAPSHOT</version>
+		<version>0.1.0</version>
     </parent>
+    <version>0.1.1</version>
     <groupId>org.opendaylight.yangtools.thirdparty</groupId>
     <artifactId>third-party-parent</artifactId>
     <packaging>pom</packaging>
@@ -17,6 +18,7 @@
 
     <modules>
         <module>xtend-lib-osgi</module>
+        <module>antlr4-runtime-osgi</module>
     </modules>
 
     <build>
