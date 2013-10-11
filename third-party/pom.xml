@@ -1,11 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools</artifactId>
-        <version>0.5-SNAPSHOT</version>
-    </parent>
+
+    <version>0.1.1</version>
     <groupId>org.opendaylight.yangtools.thirdparty</groupId>
     <artifactId>third-party-parent</artifactId>
     <packaging>pom</packaging>
@@ -14,18 +11,79 @@
         <developerConnection>scm:git:ssh://git.opendaylight.org:29418/controller.git</developerConnection>
         <url>https://wiki.opendaylight.org/view/YANG_Tools:Third-Party</url>
     </scm>
+    
+	<properties>
+		<nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
+	</properties>
 
     <modules>
         <module>xtend-lib-osgi</module>
+        <module>antlr4-runtime-osgi</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-            </plugin>
-        </plugins>
-    </build>
+	   <pluginRepositories>
+        <!-- Maven repo2 mirror -->
+        <!-- http://repo2.maven.org/maven2 -->
+        <pluginRepository>
+            <id>central2</id>
+            <name>central2</name>
+            <url>${nexusproxy}/repositories/central2/</url>
+        </pluginRepository>
+        <!-- Maven repo1 mirror -->
+        <!-- http://repo1.maven.org/maven2 -->
+        <pluginRepository>
+            <id>central</id>
+            <name>central</name>
+            <url>${nexusproxy}/repositories/central/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+
+    <repositories>
+        <!-- Maven repo2 mirror -->
+        <!-- http://repo2.maven.org/maven2 -->
+        <repository>
+            <id>central2</id>
+            <name>central2</name>
+            <url>${nexusproxy}/repositories/central2/</url>
+        </repository>
+        <!-- Maven repo1 mirror -->
+        <!-- http://repo1.maven.org/maven2 -->
+        <repository>
+            <id>central</id>
+            <name>central</name>
+            <url>${nexusproxy}/repositories/central/</url>
+        </repository>
+
+        <!-- OpenDayLight Released artifact -->
+        <repository>
+            <id>opendaylight-release</id>
+            <name>opendaylight-release</name>
+            <url>${nexusproxy}/repositories/opendaylight.release/</url>
+        </repository>
+        <!-- OpenDayLight Snapshot artifact -->
+        <repository>
+            <id>opendaylight-snapshot</id>
+            <name>opendaylight-snapshot</name>
+            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+        </repository>
+    </repositories>
+    
+    
+    <distributionManagement>
+        <!-- OpenDayLight Released artifact -->
+        <repository>
+            <id>opendaylight-release</id>
+            <url>${nexusproxy}/repositories/opendaylight.release/</url>
+        </repository>
+        <!-- OpenDayLight Snapshot artifact -->
+        <snapshotRepository>
+            <id>opendaylight-snapshot</id>
+            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+        </snapshotRepository>
+        <site>
+            <id>${project.artifactId}-site</id>
+            <url>./</url>
+        </site>
+    </distributionManagement>
 </project>
