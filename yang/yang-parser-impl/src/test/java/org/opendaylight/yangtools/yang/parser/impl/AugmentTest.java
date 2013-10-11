@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
@@ -80,7 +81,7 @@ public class AugmentTest {
 
         Set<DataSchemaNode> augmentChildren = augment.getChildNodes();
         assertEquals(5, augmentChildren.size());
-        for(DataSchemaNode dsn : augmentChildren) {
+        for (DataSchemaNode dsn : augmentChildren) {
             TestUtils.checkIsAugmenting(dsn, false);
         }
 
@@ -88,7 +89,7 @@ public class AugmentTest {
         LeafSchemaNode interfaceId = (LeafSchemaNode) augment.getDataChildByName("interface-id");
         LeafSchemaNode myType = (LeafSchemaNode) augment.getDataChildByName("my-type");
         ContainerSchemaNode schemas = (ContainerSchemaNode) augment.getDataChildByName("schemas");
-        ChoiceNode odl = (ChoiceNode)augment.getDataChildByName("odl");
+        ChoiceNode odl = (ChoiceNode) augment.getDataChildByName("odl");
 
         assertNotNull(ds0ChannelNumber);
         assertNotNull(interfaceId);
@@ -131,7 +132,6 @@ public class AugmentTest {
         expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
         assertEquals(expectedPath, odl.getPath());
 
-
         // testfile3
         Module module3 = TestUtils.findModule(modules, "custom");
         augmentations = module3.getAugmentations();
@@ -139,9 +139,9 @@ public class AugmentTest {
         AugmentationSchema augment1 = null;
         AugmentationSchema augment2 = null;
         for (AugmentationSchema as : augmentations) {
-            if("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
+            if ("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
                 augment1 = as;
-            } else if("if:ifType='ds2'".equals(as.getWhenCondition().toString())) {
+            } else if ("if:ifType='ds2'".equals(as.getWhenCondition().toString())) {
                 augment2 = as;
             }
         }
@@ -174,7 +174,7 @@ public class AugmentTest {
         LeafSchemaNode interfaceId = (LeafSchemaNode) augmentedContainer.getDataChildByName("interface-id");
         LeafSchemaNode myType = (LeafSchemaNode) augmentedContainer.getDataChildByName("my-type");
         ContainerSchemaNode schemas = (ContainerSchemaNode) augmentedContainer.getDataChildByName("schemas");
-        ChoiceNode odl = (ChoiceNode)augmentedContainer.getDataChildByName("odl");
+        ChoiceNode odl = (ChoiceNode) augmentedContainer.getDataChildByName("odl");
 
         assertNotNull(ds0ChannelNumber);
         assertNotNull(interfaceId);
@@ -226,7 +226,7 @@ public class AugmentTest {
 
         // testfile1.yang
         // augment "/data:interfaces/data:ifEntry/t3:augment-holder"
-        ChoiceNode odl = (ChoiceNode)augmentedContainer.getDataChildByName("odl");
+        ChoiceNode odl = (ChoiceNode) augmentedContainer.getDataChildByName("odl");
         assertNotNull(odl);
         Set<ChoiceCaseNode> cases = odl.getCases();
         assertEquals(4, cases.size());
@@ -236,14 +236,14 @@ public class AugmentTest {
         ChoiceCaseNode node2 = null;
         ChoiceCaseNode node3 = null;
 
-        for(ChoiceCaseNode ccn : cases) {
-            if("id".equals(ccn.getQName().getLocalName())) {
+        for (ChoiceCaseNode ccn : cases) {
+            if ("id".equals(ccn.getQName().getLocalName())) {
                 id = ccn;
-            } else if("node1".equals(ccn.getQName().getLocalName())) {
+            } else if ("node1".equals(ccn.getQName().getLocalName())) {
                 node1 = ccn;
-            } else if("node2".equals(ccn.getQName().getLocalName())) {
+            } else if ("node2".equals(ccn.getQName().getLocalName())) {
                 node2 = ccn;
-            } else if("node3".equals(ccn.getQName().getLocalName())) {
+            } else if ("node3".equals(ccn.getQName().getLocalName())) {
                 node3 = ccn;
             }
         }
@@ -297,7 +297,7 @@ public class AugmentTest {
         // case id child
         qnames[4] = new QName(types1NS, types1Rev, t1, "id");
         qnames[5] = new QName(types1NS, types1Rev, t1, "id");
-        LeafSchemaNode caseIdChild = (LeafSchemaNode)idChildren.iterator().next();
+        LeafSchemaNode caseIdChild = (LeafSchemaNode) idChildren.iterator().next();
         assertNotNull(caseIdChild);
         expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
         assertEquals(expectedPath, caseIdChild.getPath());
@@ -305,10 +305,94 @@ public class AugmentTest {
         // case node3 child
         qnames[4] = new QName(types1NS, types1Rev, t1, "node3");
         qnames[5] = new QName(types1NS, types1Rev, t1, "node3");
-        ContainerSchemaNode caseNode3Child = (ContainerSchemaNode)node3Children.iterator().next();
+        ContainerSchemaNode caseNode3Child = (ContainerSchemaNode) node3Children.iterator().next();
         assertNotNull(caseNode3Child);
         expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
         assertEquals(expectedPath, caseNode3Child.getPath());
+    }
+
+    @Test
+    public void testAugmentRpc() throws Exception {
+        modules = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").getPath());
+        final URI NS_BAR = URI.create("urn:opendaylight:bar");
+        final URI NS_FOO = URI.create("urn:opendaylight:foo");
+        final Date revision = simpleDateFormat.parse("2013-10-11");
+
+        Module bar = TestUtils.findModule(modules, "bar");
+        Set<RpcDefinition> rpcs = bar.getRpcs();
+        assertEquals(2, rpcs.size());
+
+        RpcDefinition submit = null;
+        for (RpcDefinition rpc : rpcs) {
+            if ("submit".equals(rpc.getQName().getLocalName())) {
+                submit = rpc;
+                break;
+            }
+        }
+        assertNotNull(submit);
+
+        QName submitQName = new QName(NS_BAR, revision, "b", "submit");
+        assertEquals(submitQName, submit.getQName());
+        ContainerSchemaNode input = submit.getInput();
+        QName inputQName = new QName(NS_BAR, revision, "b", "input");
+        assertEquals(inputQName, input.getQName());
+        ChoiceNode arguments = (ChoiceNode) input.getDataChildByName("arguments");
+        QName argumentsQName = new QName(NS_BAR, revision, "b", "arguments");
+        assertEquals(argumentsQName, arguments.getQName());
+        assertFalse(arguments.isAugmenting());
+        Set<ChoiceCaseNode> cases = arguments.getCases();
+        assertEquals(3, cases.size());
+
+        ChoiceCaseNode attach = null;
+        ChoiceCaseNode create = null;
+        ChoiceCaseNode destroy = null;
+        for (ChoiceCaseNode child : cases) {
+            if ("attach".equals(child.getQName().getLocalName())) {
+                attach = child;
+            } else if ("create".equals(child.getQName().getLocalName())) {
+                create = child;
+            } else if ("destroy".equals(child.getQName().getLocalName())) {
+                destroy = child;
+            }
+        }
+        assertNotNull(attach);
+        assertNotNull(create);
+        assertNotNull(destroy);
+
+        assertTrue(attach.isAugmenting());
+        assertTrue(create.isAugmenting());
+        assertTrue(destroy.isAugmenting());
+
+        SchemaPath expectedPath = null;
+        QName[] qnames = new QName[4];
+        qnames[0] = submitQName;
+        qnames[1] = inputQName;
+        qnames[2] = argumentsQName;
+
+        // case attach
+        qnames[3] = new QName(NS_FOO, revision, "f", "attach");
+        assertEquals(qnames[3], attach.getQName());
+        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        assertEquals(expectedPath, attach.getPath());
+        Set<DataSchemaNode> attachChildren = attach.getChildNodes();
+        assertEquals(1, attachChildren.size());
+
+        // case create
+        qnames[3] = new QName(NS_FOO, revision, "f", "create");
+        assertEquals(qnames[3], create.getQName());
+        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        assertEquals(expectedPath, create.getPath());
+        Set<DataSchemaNode> createChildren = create.getChildNodes();
+        assertEquals(1, createChildren.size());
+
+        // case attach
+        qnames[3] = new QName(NS_FOO, revision, "f", "destroy");
+        assertEquals(qnames[3], destroy.getQName());
+        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        assertEquals(expectedPath, destroy.getPath());
+        Set<DataSchemaNode> destroyChildren = destroy.getChildNodes();
+        assertEquals(1, destroyChildren.size());
+
     }
 
 }
