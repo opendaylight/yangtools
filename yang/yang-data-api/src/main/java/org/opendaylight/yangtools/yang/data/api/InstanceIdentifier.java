@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -53,11 +54,11 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
 
     // Static factories & helpers
 
-    public InstanceIdentifier of(QName name) {
+    public static InstanceIdentifier of(QName name) {
         return new InstanceIdentifier(new NodeIdentifier(name));
     }
 
-    public InstanceIdentifierBuilder builder() {
+    static public InstanceIdentifierBuilder builder() {
         return new BuilderImpl();
     }
 
@@ -66,13 +67,14 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
 
     }
 
-    public interface InstanceIdentifierBuilder {
+    public interface InstanceIdentifierBuilder extends Builder<InstanceIdentifier>{
         InstanceIdentifierBuilder node(QName nodeType);
 
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues);
 
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
 
+        @Deprecated
         InstanceIdentifier getIdentifier();
     }
 
@@ -192,8 +194,13 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
         }
 
         @Override
-        public InstanceIdentifier getIdentifier() {
+        public InstanceIdentifier toInstance() {
             return new InstanceIdentifier(path);
+        }
+        
+        @Override
+        public InstanceIdentifier getIdentifier() {
+            return toInstance();
         }
     }
 
