@@ -15,5 +15,14 @@ package org.opendaylight.yangtools.concepts;
  * @author Tony Tkacik <ttkacik@cisco.com>
  */
 public interface Builder<P> extends Mutable {
+    
+    /**
+     * Returns instance of the product.
+     * 
+     * Multiple calls to this method are not required to return
+     * same instance if the state of the builder was changed.
+     * 
+     * @return
+     */
     P toInstance();
 }

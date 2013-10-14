@@ -8,5 +8,6 @@
 package org.opendaylight.yangtools.concepts;
 
 public interface Identifiable<T> {
+    
     T getIdentifier();
 }
