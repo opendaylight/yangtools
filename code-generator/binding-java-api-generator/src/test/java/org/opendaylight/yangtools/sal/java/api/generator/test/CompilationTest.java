@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.WildcardType;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 /**
  * Test correct code generation.
- *
+ * 
  */
 public class CompilationTest {
     private static final String FS = File.separator;
@@ -180,7 +182,6 @@ public class CompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    // TODO: add test for return types, equals and hashcode
     @Test
     public void testLeafReturnTypes() throws Exception {
         final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "leaf-return-types");
@@ -209,6 +210,32 @@ public class CompilationTest {
         Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
         boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
         assertTrue(compiled);
+
+        String pkg = "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008";
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        Class<?> nodesClass = Class.forName(pkg + ".Nodes", true, loader);
+
+        // Test methods return type
+        byte[] b = new byte[] {};
+        testReturnType(nodesClass, "getIdBinary", b.getClass());
+        testReturnType(loader, nodesClass, "getIdBits", pkg + ".Nodes$IdBits");
+        testReturnType(loader, nodesClass, "isIdBoolean", "java.lang.Boolean");
+        testReturnType(loader, nodesClass, "getIdDecimal64", "java.math.BigDecimal");
+        testReturnType(loader, nodesClass, "isIdEmpty", "java.lang.Boolean");
+        testReturnType(loader, nodesClass, "getIdEnumeration", pkg + ".Nodes$IdEnumeration");
+        testReturnTypeIdentityref(nodesClass, "getIdIdentityref", pkg + ".Alg");
+        testReturnTypeInstanceIdentitifer(loader, nodesClass, "getIdInstanceIdentifier");
+        testReturnType(loader, nodesClass, "getId8", "java.lang.Byte");
+        testReturnType(loader, nodesClass, "getId16", "java.lang.Short");
+        testReturnType(loader, nodesClass, "getId32", "java.lang.Integer");
+        testReturnType(loader, nodesClass, "getId64", "java.lang.Long");
+        testReturnType(loader, nodesClass, "getIdLeafref", "java.lang.Long");
+        testReturnType(loader, nodesClass, "getIdString", "java.lang.String");
+        testReturnType(loader, nodesClass, "getIdU8", "java.lang.Short");
+        testReturnType(loader, nodesClass, "getIdU16", "java.lang.Integer");
+        testReturnType(loader, nodesClass, "getIdU32", "java.lang.Long");
+        testReturnType(loader, nodesClass, "getIdU64", "java.math.BigInteger");
+        testReturnType(loader, nodesClass, "getIdUnion", pkg + ".Nodes$IdUnion");
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
@@ -287,6 +314,70 @@ public class CompilationTest {
         assertTrue(compiled);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    private void testReturnType(Class<?> clazz, String methodName, Class<?> returnType) throws Exception {
+        Method method;
+        try {
+            method = clazz.getMethod(methodName);
+            assertEquals(returnType, method.getReturnType());
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError("Method '" + methodName + "' not found");
+        }
+    }
+
+    private void testReturnType(ClassLoader loader, Class<?> clazz, String methodName, String returnTypeStr)
+            throws Exception {
+        Class<?> returnType;
+        try {
+            returnType = Class.forName(returnTypeStr, true, loader);
+            testReturnType(clazz, methodName, returnType);
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError("Return type of method '" + methodName + "' not found");
+        }
+    }
+
+    private void testReturnTypeIdentityref(Class<?> clazz, String methodName, String returnTypeStr) throws Exception {
+        Method method;
+        java.lang.reflect.Type returnType;
+        try {
+            method = clazz.getMethod(methodName);
+            assertEquals(java.lang.Class.class, method.getReturnType());
+            returnType = method.getGenericReturnType();
+            assertTrue(returnType instanceof ParameterizedType);
+            ParameterizedType pt = (ParameterizedType) returnType;
+            java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
+            assertEquals(1, parameters.length);
+            java.lang.reflect.Type parameter = parameters[0];
+            assertTrue(parameter instanceof WildcardType);
+            WildcardType wildcardType = (WildcardType) parameter;
+            assertEquals("? extends " + returnTypeStr, wildcardType.toString());
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError("Method '" + methodName + "' not found");
+        }
+    }
+
+    private void testReturnTypeInstanceIdentitifer(ClassLoader loader, Class<?> clazz, String methodName)
+            throws Exception {
+        Method method;
+        Class<?> rawReturnType;
+        java.lang.reflect.Type returnType;
+        try {
+            method = clazz.getMethod(methodName);
+            rawReturnType = Class.forName("org.opendaylight.yangtools.yang.binding.InstanceIdentifier", true, loader);
+            assertEquals(rawReturnType, method.getReturnType());
+            returnType = method.getGenericReturnType();
+            assertTrue(returnType instanceof ParameterizedType);
+            ParameterizedType pt = (ParameterizedType) returnType;
+            java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
+            assertEquals(1, parameters.length);
+            java.lang.reflect.Type parameter = parameters[0];
+            assertTrue(parameter instanceof WildcardType);
+            WildcardType wildcardType = (WildcardType) parameter;
+            assertEquals("?", wildcardType.toString());
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError("Method '" + methodName + "' not found");
+        }
     }
 
     private List<File> getSourceFiles(String path) throws FileNotFoundException {
