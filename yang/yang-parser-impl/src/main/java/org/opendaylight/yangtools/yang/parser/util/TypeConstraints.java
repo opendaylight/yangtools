@@ -23,18 +23,14 @@ import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 public final class TypeConstraints {
     private final String moduleName;
     private final int line;
-    private final List<List<RangeConstraint>> ranges = new ArrayList<List<RangeConstraint>>();
-    private final List<List<LengthConstraint>> lengths = new ArrayList<List<LengthConstraint>>();
-    private final List<List<PatternConstraint>> patterns = new ArrayList<List<PatternConstraint>>();
-    private final List<Integer> fractionDigits = new ArrayList<Integer>();
+    private final List<List<RangeConstraint>> ranges = new ArrayList<>();
+    private final List<List<LengthConstraint>> lengths = new ArrayList<>();
+    private final List<List<PatternConstraint>> patterns = new ArrayList<>();
+    private final List<Integer> fractionDigits = new ArrayList<>();
 
     public TypeConstraints(final String moduleName, final int line) {
         this.moduleName = moduleName;
         this.line = line;
-    }
-
-    List<List<RangeConstraint>> getAllRanges() {
-        return ranges;
     }
 
     public List<RangeConstraint> getRange() {

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.*;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -121,7 +127,7 @@ public final class TypeUtils {
     public static void resolveTypeUnion(final UnionTypeBuilder union,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder builder) {
         final List<TypeDefinition<?>> unionTypes = union.getTypes();
-        final List<TypeDefinition<?>> toRemove = new ArrayList<TypeDefinition<?>>();
+        final List<TypeDefinition<?>> toRemove = new ArrayList<>();
         for (TypeDefinition<?> unionType : unionTypes) {
             if (unionType instanceof UnknownType) {
                 final ModuleBuilder dependentModule = findModuleFromBuilders(modules, builder, unionType.getQName()
@@ -147,7 +153,7 @@ public final class TypeUtils {
 
     /**
      * Resolve union type which contains one or more unresolved types.
-     *
+     * 
      * @param union
      *            union type builder to resolve
      * @param modules
@@ -161,7 +167,7 @@ public final class TypeUtils {
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module,
             final SchemaContext context) {
         final List<TypeDefinition<?>> unionTypes = union.getTypes();
-        final List<TypeDefinition<?>> toRemove = new ArrayList<TypeDefinition<?>>();
+        final List<TypeDefinition<?>> toRemove = new ArrayList<>();
         for (TypeDefinition<?> unionType : unionTypes) {
             if (unionType instanceof UnknownType) {
                 resolveUnionUnknownType(union, (UnknownType) unionType, modules, module, context);

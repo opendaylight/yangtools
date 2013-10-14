@@ -1,14 +1,14 @@
 module foo {
     yang-version 1;
     namespace "urn:opendaylight:foo";
-    prefix "f";
+    prefix "foo";
 
     import bar { prefix b; revision-date 2013-10-11; }
 
     revision "2013-10-11" {
     }
 
-	augment "/b:submit/b:input/b:arguments" {
+    augment "/b:submit/b:input/b:arguments" {
         when "../type = attach-path-instruction";
 
         case attach {

@@ -148,7 +148,7 @@ public class RefineTest {
         DataSchemaNodeBuilder builderData = new AnyXmlBuilder("module", 4, qname, createSchemaPath(qname));
 
         assertNotNull("Refine holder data wasn't initialized.", refHolderData);
-        RefineUtils.refineAnyxml((AnyXmlBuilder) builderData, refHolderData, 3);
+        RefineUtils.refineAnyxml((AnyXmlBuilder) builderData, refHolderData);
 
         // data node
         ConstraintsBuilder conDefData = builderData.getConstraints();
@@ -169,7 +169,7 @@ public class RefineTest {
         DataSchemaNodeBuilder builderChc2 = new ChoiceBuilder("module", 4, qname);
         assertNotNull("Refine holder chc2 wasn't initialized.", refHolderChc2);
 
-        RefineUtils.refineChoice((ChoiceBuilder) builderChc2, refHolderChc2, 3);
+        RefineUtils.refineChoice((ChoiceBuilder) builderChc2, refHolderChc2);
 
         // chc2 node
         ConstraintsBuilder conDefChc2 = builderChc2.getConstraints();
@@ -185,7 +185,7 @@ public class RefineTest {
 
         assertNotNull("Refine holder chc wasn't initialized.", refHolderChc);
         assertNotNull("Data schema node builder chc wasn't initialized.", builderChc);
-        RefineUtils.refineChoice((ChoiceBuilder) builderChc, refHolderChc, 2);
+        RefineUtils.refineChoice((ChoiceBuilder) builderChc, refHolderChc);
 
         ChoiceBuilder choiceBuilder = null;
         if (builderChc instanceof ChoiceBuilder) {
@@ -207,7 +207,7 @@ public class RefineTest {
 
         assertNotNull("Refine holder " + nodeName + " wasn't initialized.", refHolderLflst);
         assertNotNull("Data schema node builder " + nodeName + " wasn't initialized.", builderLflst);
-        RefineUtils.refineLeafList((LeafListSchemaNodeBuilder) builderLflst, refHolderLflst, 1);
+        RefineUtils.refineLeafList((LeafListSchemaNodeBuilder) builderLflst, refHolderLflst);
         // lflst node
 
         ConstraintsBuilder conDefLflst = builderLflst.getConstraints();

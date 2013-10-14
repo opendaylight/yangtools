@@ -1,7 +1,7 @@
 module bar {
     yang-version 1;
     namespace "urn:opendaylight:bar";
-    prefix "b";
+    prefix "bar";
 
     revision "2013-10-11" {
     }

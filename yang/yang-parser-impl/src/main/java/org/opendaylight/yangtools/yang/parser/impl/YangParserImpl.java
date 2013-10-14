@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
-import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
@@ -162,7 +161,7 @@ public final class YangParserImpl implements YangModelParser {
                 }
             }
 
-            return new LinkedHashSet<Module>(buildWithContext(modules, context).values());
+            return new LinkedHashSet<>(buildWithContext(modules, context).values());
         }
         return Collections.emptySet();
     }
@@ -178,7 +177,7 @@ public final class YangParserImpl implements YangModelParser {
             Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
             final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuildersWithContext(
                     yangModelStreams, builderToStreamMap, context);
-            return new LinkedHashSet<Module>(buildWithContext(modules, context).values());
+            return new LinkedHashSet<>(buildWithContext(modules, context).values());
         }
         return Collections.emptySet();
     }
@@ -249,7 +248,7 @@ public final class YangParserImpl implements YangModelParser {
         final Map<InputStream, ModuleBuilder> builders = new LinkedHashMap<>();
 
         // validate yang
-        new YangModelBasicValidator(walker).validate(new ArrayList<ParseTree>(trees.values()));
+        new YangModelBasicValidator(walker).validate(new ArrayList<>(trees.values()));
 
         YangParserListenerImpl yangModelParser;
         for(Map.Entry<InputStream, ParseTree> entry : trees.entrySet()) {
@@ -275,7 +274,7 @@ public final class YangParserImpl implements YangModelParser {
             final SchemaContext context) {
         Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(yangFileStreams, streamToBuilderMap);
         ModuleBuilder[] builders = new ModuleBuilder[parsedBuilders.size()];
-        final ModuleBuilder[] moduleBuilders = new ArrayList<>(parsedBuilders.values()).toArray(builders);
+        parsedBuilders.values().toArray(builders);
 
         // module dependency graph sorted
         List<ModuleBuilder> sorted;
@@ -309,7 +308,7 @@ public final class YangParserImpl implements YangModelParser {
             }
             TreeMap<Date, ModuleBuilder> builderByRevision = result.get(builderName);
             if (builderByRevision == null) {
-                builderByRevision = new TreeMap<Date, ModuleBuilder>();
+                builderByRevision = new TreeMap<>();
             }
             builderByRevision.put(builderRevision, builder);
             result.put(builderName, builderByRevision);
@@ -375,7 +374,7 @@ public final class YangParserImpl implements YangModelParser {
         resolveDeviations(modules);
 
         // build
-        final Map<ModuleBuilder, Module> result = new LinkedHashMap<ModuleBuilder, Module>();
+        final Map<ModuleBuilder, Module> result = new LinkedHashMap<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder moduleBuilder = childEntry.getValue();
@@ -398,7 +397,7 @@ public final class YangParserImpl implements YangModelParser {
         resolveDeviationsWithContext(modules, context);
 
         // build
-        final Map<ModuleBuilder, Module> result = new LinkedHashMap<ModuleBuilder, Module>();
+        final Map<ModuleBuilder, Module> result = new LinkedHashMap<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder moduleBuilder = childEntry.getValue();
@@ -1040,18 +1039,16 @@ public final class YangParserImpl implements YangModelParser {
             if (prefix == null) {
                 prefix = module.getPrefix();
             }
-            String name = null;
 
             ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module, prefix, line);
             if (dependentModuleBuilder == null) {
-                Module dependentModule = findModuleFromContext(context, module, prefix, line);
-                Object currentParent = dependentModule;
+                Object currentParent = findModuleFromContext(context, module, prefix, line);
 
                 for (QName q : path) {
                     if (currentParent == null) {
                         throw new YangParseException(module.getName(), line, FAIL_DEVIATION_TARGET);
                     }
-                    name = q.getLocalName();
+                    String name = q.getLocalName();
                     if (currentParent instanceof DataNodeContainer) {
                         currentParent = ((DataNodeContainer) currentParent).getDataChildByName(name);
                     }

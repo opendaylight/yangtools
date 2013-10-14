@@ -17,8 +17,7 @@ final class MustDefinitionImpl implements MustDefinition {
     private final String errorAppTag;
     private final String errorMessage;
 
-    MustDefinitionImpl(String mustStr, String description, String reference,
-            String errorAppTag, String errorMessage) {
+    MustDefinitionImpl(String mustStr, String description, String reference, String errorAppTag, String errorMessage) {
         this.mustStr = mustStr;
         this.description = description;
         this.reference = reference;
@@ -56,10 +55,8 @@ final class MustDefinitionImpl implements MustDefinition {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((mustStr == null) ? 0 : mustStr.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
         return result;
     }
 

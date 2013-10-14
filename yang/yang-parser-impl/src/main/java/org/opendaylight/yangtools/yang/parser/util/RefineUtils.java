@@ -55,7 +55,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineContainer(ContainerSchemaNodeBuilder container, RefineHolder refine, int line) {
+    public static void refineContainer(ContainerSchemaNodeBuilder container, RefineHolder refine) {
         Boolean presence = refine.isPresence();
         MustDefinition must = refine.getMust();
         List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
@@ -73,7 +73,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineList(ListSchemaNodeBuilder list, RefineHolder refine, int line) {
+    public static void refineList(ListSchemaNodeBuilder list, RefineHolder refine) {
         MustDefinition must = refine.getMust();
         Integer min = refine.getMinElements();
         Integer max = refine.getMaxElements();
@@ -95,7 +95,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineLeafList(LeafListSchemaNodeBuilder leafList, RefineHolder refine, int line) {
+    public static void refineLeafList(LeafListSchemaNodeBuilder leafList, RefineHolder refine) {
         MustDefinition must = refine.getMust();
         Integer min = refine.getMinElements();
         Integer max = refine.getMaxElements();
@@ -117,7 +117,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineChoice(ChoiceBuilder choice, RefineHolder refine, int line) {
+    public static void refineChoice(ChoiceBuilder choice, RefineHolder refine) {
         String defaultStr = refine.getDefaultStr();
         Boolean mandatory = refine.isMandatory();
         List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
@@ -135,7 +135,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineAnyxml(AnyXmlBuilder anyXml, RefineHolder refine, int line) {
+    public static void refineAnyxml(AnyXmlBuilder anyXml, RefineHolder refine) {
         Boolean mandatory = refine.isMandatory();
         MustDefinition must = refine.getMust();
         List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
@@ -298,21 +298,20 @@ public final class RefineUtils {
      *            refine object containing information about refine process
      */
     public static void performRefine(SchemaNodeBuilder nodeToRefine, RefineHolder refine) {
-        final int line = refine.getLine();
         checkRefine(nodeToRefine, refine);
         refineDefault(nodeToRefine, refine);
         if (nodeToRefine instanceof LeafSchemaNodeBuilder) {
             refineLeaf((LeafSchemaNodeBuilder) nodeToRefine, refine);
         } else if (nodeToRefine instanceof ContainerSchemaNodeBuilder) {
-            refineContainer((ContainerSchemaNodeBuilder) nodeToRefine, refine, line);
+            refineContainer((ContainerSchemaNodeBuilder) nodeToRefine, refine);
         } else if (nodeToRefine instanceof ListSchemaNodeBuilder) {
-            refineList((ListSchemaNodeBuilder) nodeToRefine, refine, line);
+            refineList((ListSchemaNodeBuilder) nodeToRefine, refine);
         } else if (nodeToRefine instanceof LeafListSchemaNodeBuilder) {
-            refineLeafList((LeafListSchemaNodeBuilder) nodeToRefine, refine, line);
+            refineLeafList((LeafListSchemaNodeBuilder) nodeToRefine, refine);
         } else if (nodeToRefine instanceof ChoiceBuilder) {
-            refineChoice((ChoiceBuilder) nodeToRefine, refine, line);
+            refineChoice((ChoiceBuilder) nodeToRefine, refine);
         } else if (nodeToRefine instanceof AnyXmlBuilder) {
-            refineAnyxml((AnyXmlBuilder) nodeToRefine, refine, line);
+            refineAnyxml((AnyXmlBuilder) nodeToRefine, refine);
         }
     }
 

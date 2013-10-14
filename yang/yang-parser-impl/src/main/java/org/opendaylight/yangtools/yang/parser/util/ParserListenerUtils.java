@@ -112,7 +112,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
@@ -183,13 +182,17 @@ public final class ParserListenerUtils {
             ParseTree statusArg = ctx.getChild(i);
             if (statusArg instanceof Status_argContext) {
                 String statusArgStr = stringFromNode(statusArg);
-                if ("current".equals(statusArgStr)) {
+                switch (statusArgStr) {
+                case "current":
                     result = Status.CURRENT;
-                } else if ("deprecated".equals(statusArgStr)) {
+                    break;
+                case "deprecated":
                     result = Status.DEPRECATED;
-                } else if ("obsolete".equals(statusArgStr)) {
+                    break;
+                case "obsolete":
                     result = Status.OBSOLETE;
-                } else {
+                    break;
+                default:
                     LOG.warn("Invalid 'status' statement: " + statusArgStr);
                 }
             }
@@ -245,7 +248,7 @@ public final class ParserListenerUtils {
      * @return SchemaPath object
      */
     public static SchemaPath createActualSchemaPath(final Stack<QName> actualPath) {
-        final List<QName> path = new ArrayList<QName>(actualPath);
+        final List<QName> path = new ArrayList<>(actualPath);
         return new SchemaPath(path, true);
     }
 
@@ -265,10 +268,10 @@ public final class ParserListenerUtils {
      */
     public static List<QName> createListKey(final String keyDefinition, final URI namespace, final Date revision,
             final String prefix) {
-        List<QName> key = new ArrayList<QName>();
+        List<QName> key = new ArrayList<>();
         String[] splittedKey = keyDefinition.split(" ");
 
-        QName qname = null;
+        QName qname;
         for (String keyElement : splittedKey) {
             if (keyElement.length() != 0) {
                 qname = new QName(namespace, revision, prefix, keyElement);
@@ -291,7 +294,7 @@ public final class ParserListenerUtils {
      */
     private static List<EnumTypeDefinition.EnumPair> getEnumConstants(final Type_body_stmtsContext ctx,
             final Stack<QName> path, final String moduleName) {
-        List<EnumTypeDefinition.EnumPair> enumConstants = new ArrayList<EnumTypeDefinition.EnumPair>();
+        List<EnumTypeDefinition.EnumPair> enumConstants = new ArrayList<>();
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree enumSpecChild = ctx.getChild(i);
@@ -319,7 +322,7 @@ public final class ParserListenerUtils {
      *            enum statement context
      * @param highestValue
      *            current highest value in enumeration
-     * @param path
+     * @param actualPath
      *            actual position in YANG model
      * @param moduleName
      *            current module name
@@ -495,6 +498,7 @@ public final class ParserListenerUtils {
      * @param ctx
      *            type body context to parse
      * @param moduleName
+     *            name of current module
      * @return List of RangeConstraint created from this context
      */
     private static List<RangeConstraint> getRangeConstraints(final Type_body_stmtsContext ctx, final String moduleName) {
@@ -520,11 +524,12 @@ public final class ParserListenerUtils {
      * @param ctx
      *            range context to parse
      * @param moduleName
+     *            name of current module
      * @return List of RangeConstraints parsed from this context
      */
     private static List<RangeConstraint> parseRangeConstraints(final Range_stmtContext ctx, final String moduleName) {
         final int line = ctx.getStart().getLine();
-        List<RangeConstraint> rangeConstraints = new ArrayList<RangeConstraint>();
+        List<RangeConstraint> rangeConstraints = new ArrayList<>();
         String description = null;
         String reference = null;
 
@@ -563,6 +568,7 @@ public final class ParserListenerUtils {
      * @param ctx
      *            type body context to parse
      * @param moduleName
+     *            name of current module
      * @return List of LengthConstraint created from this context
      */
     private static List<LengthConstraint> getLengthConstraints(final Type_body_stmtsContext ctx, final String moduleName) {
@@ -588,11 +594,12 @@ public final class ParserListenerUtils {
      * @param ctx
      *            length context to parse
      * @param moduleName
+     *            name of current module
      * @return List of LengthConstraints parsed from this context
      */
     private static List<LengthConstraint> parseLengthConstraints(final Length_stmtContext ctx, final String moduleName) {
         final int line = ctx.getStart().getLine();
-        List<LengthConstraint> lengthConstraints = new ArrayList<LengthConstraint>();
+        List<LengthConstraint> lengthConstraints = new ArrayList<>();
         String description = null;
         String reference = null;
 
@@ -636,7 +643,7 @@ public final class ParserListenerUtils {
      *         type is one of special YANG values 'min' or 'max'
      */
     private static Number parseNumberConstraintValue(final String value, final String moduleName, final int line) {
-        Number result = null;
+        Number result;
         if ("min".equals(value) || "max".equals(value)) {
             result = new UnknownBoundaryNumber(value);
         } else {
@@ -657,7 +664,7 @@ public final class ParserListenerUtils {
      * @return list of pattern constraints
      */
     private static List<PatternConstraint> getPatternConstraint(final Type_body_stmtsContext ctx) {
-        List<PatternConstraint> patterns = new ArrayList<PatternConstraint>();
+        List<PatternConstraint> patterns = new ArrayList<>();
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree stringRestrChild = ctx.getChild(i);
@@ -779,7 +786,7 @@ public final class ParserListenerUtils {
      */
     private static List<BitsTypeDefinition.Bit> getBits(Type_body_stmtsContext ctx, Stack<QName> actualPath,
             String moduleName) {
-        final List<BitsTypeDefinition.Bit> bits = new ArrayList<BitsTypeDefinition.Bit>();
+        final List<BitsTypeDefinition.Bit> bits = new ArrayList<>();
         for (int j = 0; j < ctx.getChildCount(); j++) {
             ParseTree bitsSpecChild = ctx.getChild(j);
             if (bitsSpecChild instanceof Bits_specificationContext) {
@@ -867,11 +874,14 @@ public final class ParserListenerUtils {
             ParseTree orderArg = ctx.getChild(j);
             if (orderArg instanceof Ordered_by_argContext) {
                 String orderStr = stringFromNode(orderArg);
-                if ("system".equals(orderStr)) {
+                switch (orderStr) {
+                case "system":
                     result = false;
-                } else if ("user".equals(orderStr)) {
+                    break;
+                case "user":
                     result = true;
-                } else {
+                    break;
+                default:
                     LOG.warn("Invalid 'ordered-by' statement.");
                 }
             }
@@ -894,7 +904,7 @@ public final class ParserListenerUtils {
      * @return config statement parsed from given context
      */
     public static Boolean getConfig(final ParseTree ctx, final Builder parent, final String moduleName, final int line) {
-        Boolean result = null;
+        Boolean result;
         // parse configuration statement
         Boolean config = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -913,18 +923,6 @@ public final class ParserListenerUtils {
                 // If the parent node is a rpc input or output, it can has
                 // config set to null
                 result = parentConfig == null ? true : parentConfig;
-            } else if (parent instanceof ChoiceCaseBuilder) {
-                // If the parent node is a 'case' node, the value is the same as
-                // the 'case' node's parent 'choice' node
-                ChoiceCaseBuilder choiceCase = (ChoiceCaseBuilder) parent;
-                Builder choice = choiceCase.getParent();
-                Boolean parentConfig = null;
-                if (choice instanceof ChoiceBuilder) {
-                    parentConfig = ((ChoiceBuilder) choice).isConfiguration();
-                } else {
-                    parentConfig = true;
-                }
-                result = parentConfig;
             } else {
                 result = true;
             }
@@ -960,13 +958,14 @@ public final class ParserListenerUtils {
                 final ParseTree configContext = ctx.getChild(i);
                 if (configContext instanceof Config_argContext) {
                     final String value = stringFromNode(configContext);
-                    if ("true".equals(value)) {
+                    switch (value) {
+                    case "true":
                         result = true;
                         break;
-                    } else if ("false".equals(value)) {
+                    case "false":
                         result = false;
                         break;
-                    } else {
+                    default:
                         throw new YangParseException(moduleName, ctx.getStart().getLine(),
                                 "Failed to parse 'config' statement value: '" + value + "'.");
                     }
@@ -984,10 +983,15 @@ public final class ParserListenerUtils {
      * @param ctx
      *            type body
      * @param actualPath
+     *            actual path in model
      * @param namespace
+     *            module namespace
      * @param revision
+     *            module revision
      * @param prefix
+     *            module prefix
      * @param parent
+     *            current node parent
      * @return UnknownType object with constraints from parsed type body
      */
     public static TypeDefinition<?> parseUnknownTypeWithBody(final QName typedefQName,
@@ -1013,7 +1017,6 @@ public final class ParserListenerUtils {
                 return unknownType.build();
             } else {
                 TypeDefinition<?> baseType = unknownType.build();
-                TypeDefinition<?> result = null;
                 QName qname = new QName(namespace, revision, prefix, typeName);
                 SchemaPath schemaPath = createTypePath(actualPath, typeName);
 
@@ -1022,9 +1025,8 @@ public final class ParserListenerUtils {
                 typeBuilder.lengths(lengthStatements);
                 typeBuilder.patterns(patternStatements);
                 typeBuilder.fractionDigits(fractionDigits);
-                result = typeBuilder.build();
 
-                return result;
+                return typeBuilder.build();
             }
         }
 
@@ -1089,14 +1091,19 @@ public final class ParserListenerUtils {
             baseType = decimalType;
         } else if (typeName.startsWith("int")) {
             IntegerTypeDefinition intType = null;
-            if ("int8".equals(typeName)) {
+            switch (typeName) {
+            case "int8":
                 intType = Int8.getInstance();
-            } else if ("int16".equals(typeName)) {
+                break;
+            case "int16":
                 intType = Int16.getInstance();
-            } else if ("int32".equals(typeName)) {
+                break;
+            case "int32":
                 intType = Int32.getInstance();
-            } else if ("int64".equals(typeName)) {
+                break;
+            case "int64":
                 intType = Int64.getInstance();
+                break;
             }
             if (intType == null) {
                 throw new YangParseException(moduleName, line, "Unknown yang type " + typeName);
@@ -1105,14 +1112,19 @@ public final class ParserListenerUtils {
             baseType = intType;
         } else if (typeName.startsWith("uint")) {
             UnsignedIntegerTypeDefinition uintType = null;
-            if ("uint8".equals(typeName)) {
+            switch (typeName) {
+            case "uint8":
                 uintType = Uint8.getInstance();
-            } else if ("uint16".equals(typeName)) {
+                break;
+            case "uint16":
                 uintType = Uint16.getInstance();
-            } else if ("uint32".equals(typeName)) {
+                break;
+            case "uint32":
                 uintType = Uint32.getInstance();
-            } else if ("uint64".equals(typeName)) {
+                break;
+            case "uint64":
                 uintType = Uint64.getInstance();
+                break;
             }
             if (uintType == null) {
                 throw new YangParseException(moduleName, line, "Unknown yang type " + typeName);
@@ -1151,35 +1163,31 @@ public final class ParserListenerUtils {
             return baseType;
         }
 
-        TypeDefinition<?> result = null;
-        ExtendedType.Builder typeBuilder = null;
-
-        List<QName> path = new ArrayList<QName>(actualPath);
+        List<QName> path = new ArrayList<>(actualPath);
         path.add(new QName(namespace, revision, prefix, typeName));
         SchemaPath schemaPath = new SchemaPath(path, true);
 
         QName qname = schemaPath.getPath().get(schemaPath.getPath().size() - 1);
-        typeBuilder = new ExtendedType.Builder(qname, baseType, "", "", schemaPath);
+        ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, "", "", schemaPath);
 
         typeBuilder.ranges(constraints.getRange());
         typeBuilder.lengths(constraints.getLength());
         typeBuilder.patterns(constraints.getPatterns());
         typeBuilder.fractionDigits(constraints.getFractionDigits());
 
-        result = typeBuilder.build();
-        return result;
+        return typeBuilder.build();
     }
 
     private static SchemaPath createTypePath(Stack<QName> actual, String typeName) {
         QName last = actual.peek();
         QName typeQName = new QName(last.getNamespace(), last.getRevision(), last.getPrefix(), typeName);
-        List<QName> path = new ArrayList<QName>(actual);
+        List<QName> path = new ArrayList<>(actual);
         path.add(typeQName);
         return new SchemaPath(path, true);
     }
 
     private static SchemaPath createBaseTypePath(Stack<QName> actual, String typeName) {
-        List<QName> path = new ArrayList<QName>(actual);
+        List<QName> path = new ArrayList<>(actual);
         path.add(BaseTypes.constructQName(typeName));
         return new SchemaPath(path, true);
     }
@@ -1188,7 +1196,7 @@ public final class ParserListenerUtils {
             String prefix, String typeName) {
         QName extTypeName = new QName(namespace, revision, prefix, typeName);
         QName baseTypeName = BaseTypes.constructQName(typeName);
-        List<QName> path = new ArrayList<QName>(actual);
+        List<QName> path = new ArrayList<>(actual);
         path.add(extTypeName);
         path.add(baseTypeName);
         return new SchemaPath(path, true);
@@ -1311,9 +1319,7 @@ public final class ParserListenerUtils {
             }
         }
 
-        MustDefinition must = new MustDefinitionImpl(mustText.toString(), description, reference, errorAppTag,
-                errorMessage);
-        return must;
+        return new MustDefinitionImpl(mustText.toString(), description, reference, errorAppTag, errorMessage);
     }
 
     /**
@@ -1427,18 +1433,19 @@ public final class ParserListenerUtils {
      *             informations in its body
      */
     public static void checkMissingBody(final String typeName, final String moduleName, final int line) {
-        if ("decimal64".equals(typeName)) {
+        switch (typeName) {
+        case "decimal64":
             throw new YangParseException(moduleName, line,
                     "The 'fraction-digits' statement MUST be present if the type is 'decimal64'.");
-        } else if ("identityref".equals(typeName)) {
+        case "identityref":
             throw new YangParseException(moduleName, line,
                     "The 'base' statement MUST be present if the type is 'identityref'.");
-        } else if ("leafref".equals(typeName)) {
+        case "leafref":
             throw new YangParseException(moduleName, line,
                     "The 'path' statement MUST be present if the type is 'leafref'.");
-        } else if ("bits".equals(typeName)) {
+        case "bits":
             throw new YangParseException(moduleName, line, "The 'bit' statement MUST be present if the type is 'bits'.");
-        } else if ("enumeration".equals(typeName)) {
+        case "enumeration":
             throw new YangParseException(moduleName, line,
                     "The 'enum' statement MUST be present if the type is 'enumeration'.");
         }

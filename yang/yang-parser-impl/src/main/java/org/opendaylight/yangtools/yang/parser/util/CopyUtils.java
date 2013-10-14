@@ -63,9 +63,13 @@ public final class CopyUtils {
      * true, qname of node will be corrected based on new parent.
      * 
      * @param old
+     *            builder to copy
      * @param newParent
+     *            new parent
      * @param updateQName
-     * @return copy
+     *            flag to indicate if qname should be updated based on new
+     *            parent location
+     * @return copy of given builder
      */
     public static DataSchemaNodeBuilder copy(DataSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
         if (old instanceof AnyXmlBuilder) {
@@ -357,7 +361,7 @@ public final class CopyUtils {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
-        TypeDefinitionBuilder type = null;
+        TypeDefinitionBuilder type;
 
         if (old instanceof UnionTypeBuilder) {
             UnionTypeBuilder oldUnion = (UnionTypeBuilder) old;
@@ -568,7 +572,9 @@ public final class CopyUtils {
      * Create AnyXmlBuilder from given AnyXmlSchemaNode.
      * 
      * @param anyxml
+     *            base anyxml
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line
@@ -587,7 +593,9 @@ public final class CopyUtils {
      * Create GroupingBuilder from given GroupingDefinition.
      * 
      * @param grouping
+     *            base grouping
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line
@@ -612,7 +620,9 @@ public final class CopyUtils {
      * Create TypeDefinitionBuilder from given ExtendedType.
      * 
      * @param typedef
+     *            base typedef
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line
@@ -642,7 +652,9 @@ public final class CopyUtils {
      * Create UnknownSchemaNodeBuilder from given UnknownSchemaNode.
      * 
      * @param unknownNode
+     *            base unknown node
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line
@@ -669,6 +681,7 @@ public final class CopyUtils {
      * @param leaf
      *            leaf from which to create builder
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line
@@ -692,7 +705,9 @@ public final class CopyUtils {
      * Create ContainerSchemaNodeBuilder from given ContainerSchemaNode.
      * 
      * @param container
+     *            base container
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line
@@ -719,7 +734,9 @@ public final class CopyUtils {
      * Create ListSchemaNodeBuilder from given ListSchemaNode.
      * 
      * @param list
+     *            base list
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line
@@ -744,7 +761,9 @@ public final class CopyUtils {
      * Create LeafListSchemaNodeBuilder from given LeafListSchemaNode.
      * 
      * @param leafList
+     *            base leaf-list
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line
@@ -767,7 +786,9 @@ public final class CopyUtils {
      * Create ChoiceBuilder from given ChoiceNode.
      * 
      * @param choice
+     *            base choice
      * @param qname
+     *            new qname
      * @param moduleName
      *            current module name
      * @param line

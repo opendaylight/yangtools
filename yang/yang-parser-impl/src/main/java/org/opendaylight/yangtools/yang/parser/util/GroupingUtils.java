@@ -81,7 +81,7 @@ public final class GroupingUtils {
             groupingName = groupingString;
         }
 
-        ModuleBuilder dependentModule = null;
+        ModuleBuilder dependentModule;
         if (groupingPrefix.equals(module.getPrefix())) {
             dependentModule = module;
         } else {
@@ -92,7 +92,7 @@ public final class GroupingUtils {
             return null;
         }
 
-        GroupingBuilder result = null;
+        GroupingBuilder result;
         Set<GroupingBuilder> groupings = dependentModule.getGroupingBuilders();
         result = findGroupingBuilder(groupings, groupingName);
         if (result != null) {
@@ -196,6 +196,7 @@ public final class GroupingUtils {
      * Add nodes defined in uses target grouping to uses parent.
      *
      * @param usesNode
+     *            yang uses node which will be instantiated in current location
      */
     public static void updateUsesParent(UsesNodeBuilder usesNode) {
         DataNodeContainerBuilder parent = usesNode.getParent();
@@ -205,10 +206,8 @@ public final class GroupingUtils {
         String prefix = module.getPrefix();
 
         SchemaPath parentPath = parent.getPath();
-
-
-        if(parent instanceof AugmentationSchemaBuilder) {
-            parentPath = ((AugmentationSchemaBuilder)parent).getTargetNodeSchemaPath();
+        if (parent instanceof AugmentationSchemaBuilder) {
+            parentPath = ((AugmentationSchemaBuilder) parent).getTargetNodeSchemaPath();
         }
 
         // child nodes
@@ -217,19 +216,25 @@ public final class GroupingUtils {
                 ((GroupingMember) child).setAddedByUses(true);
             }
 
-            GroupingMember gm = (GroupingMember) child;
-            if (gm.isAddedByUses()) {
-                if(usesNode.isAugmenting()) {
-                    child.setAugmenting(true);
+            if (child instanceof GroupingMember) {
+                GroupingMember gm = (GroupingMember) child;
+                if (gm.isAddedByUses()) {
+                    if (usesNode.isAugmenting()) {
+                        child.setAugmenting(true);
+                    }
+                    if (usesNode.isAugmenting()
+                            && !(usesNode.getParentAugment().getParent() instanceof UsesNodeBuilder)) {
+                        AugmentationSchemaBuilder parentAugment = usesNode.getParentAugment();
+                        ModuleBuilder m = ParserUtils.getParentModule(parentAugment);
+                        correctNodePathForUsesNodes(child, parentPath, m);
+                    } else {
+                        child.setQName(new QName(ns, rev, prefix, child.getQName().getLocalName()));
+                        correctNodePathForUsesNodes(child, parentPath, module);
+                    }
                 }
-                if(usesNode.isAugmenting() && !(usesNode.getParentAugment().getParent() instanceof UsesNodeBuilder)) {
-                    AugmentationSchemaBuilder parentAugment = usesNode.getParentAugment();
-                    ModuleBuilder m = ParserUtils.getParentModule(parentAugment);
-                    correctNodePathForUsesNodes(child, parentPath, m);
-                } else {
-                    child.setQName(new QName(ns, rev, prefix, child.getQName().getLocalName()));
-                    correctNodePathForUsesNodes(child, parentPath, module);
-                }
+            } else {
+                throw new YangParseException(module.getName(), usesNode.getLine(),
+                        "Failed to process uses node: unresolved child node");
             }
 
             parent.addChildNode(child);
@@ -279,17 +284,17 @@ public final class GroupingUtils {
      * Read child nodes defined in target grouping and make a copy of them.
      *
      * @param usesNode
-     * @return copy of child nodes defined in uses target grouping
+     *            uses node for which data will be collected
      */
     private static void collectTargetChildNodes(UsesNodeBuilder usesNode) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         final Set<DataSchemaNodeBuilder> collection = new HashSet<>();
-        addChildNodeToCollection(usesNode, collection, target.getChildNodeBuilders());
+        addChildNodeToCollection(usesNode, collection, target.getChildNodeBuilders(), usesNode.getParent());
 
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
             Set<DataSchemaNodeBuilder> targetUsesChildNodes = collectTargetUsesChildNodes(targetUses,
                     usesNode.getParent());
-            addChildNodeToCollection(usesNode, collection, targetUsesChildNodes);
+            addChildNodeToCollection(usesNode, collection, targetUsesChildNodes, usesNode.getParent());
         }
         usesNode.getTargetChildren().addAll(collection);
     }
@@ -298,17 +303,17 @@ public final class GroupingUtils {
             DataNodeContainerBuilder parent) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         final Set<DataSchemaNodeBuilder> collection = new HashSet<>(usesNode.getTargetChildren());
-        addChildNodeToCollection(usesNode, collection, target.getChildNodeBuilders());
+        addChildNodeToCollection(usesNode, collection, target.getChildNodeBuilders(), parent);
 
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
             Set<DataSchemaNodeBuilder> targetUsesChildNodes = collectTargetUsesChildNodes(targetUses, parent);
-            addChildNodeToCollection(usesNode, collection, targetUsesChildNodes);
+            addChildNodeToCollection(usesNode, collection, targetUsesChildNodes, parent);
         }
         return collection;
     }
 
     private static void addChildNodeToCollection(UsesNodeBuilder usesNode, Set<DataSchemaNodeBuilder> collection,
-            Set<DataSchemaNodeBuilder> allNodes) {
+            Set<DataSchemaNodeBuilder> allNodes, Builder parent) {
         for (DataSchemaNodeBuilder childNode : allNodes) {
             boolean exists = false;
             for (DataSchemaNodeBuilder usesChildNode : usesNode.getTargetChildren()) {
@@ -318,7 +323,7 @@ public final class GroupingUtils {
                 }
             }
             if (!exists) {
-                DataSchemaNodeBuilder copy = CopyUtils.copy(childNode, usesNode.getParent(), true);
+                DataSchemaNodeBuilder copy = CopyUtils.copy(childNode, parent, true);
                 collection.add(copy);
             }
         }
@@ -328,16 +333,16 @@ public final class GroupingUtils {
      * Read typedefs defined in target grouping and make a copy of them.
      *
      * @param usesNode
-     * @return copy of typedefs defined in uses target grouping
+     *            uses node for which data will be collected
      */
     private static void collectTargetTypedefs(UsesNodeBuilder usesNode) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         Set<TypeDefinitionBuilder> collection = new HashSet<>();
-        addTypedefToCollection(usesNode, collection, target.getTypeDefinitionBuilders());
+        addTypedefToCollection(usesNode, collection, target.getTypeDefinitionBuilders(), usesNode.getParent());
 
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
             Set<TypeDefinitionBuilder> targetUsesTypedefs = collectTargetUsesTypedefs(targetUses, usesNode.getParent());
-            addTypedefToCollection(usesNode, collection, targetUsesTypedefs);
+            addTypedefToCollection(usesNode, collection, targetUsesTypedefs, usesNode.getParent());
         }
         usesNode.getTargetTypedefs().addAll(collection);
     }
@@ -346,17 +351,17 @@ public final class GroupingUtils {
             DataNodeContainerBuilder parent) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         Set<TypeDefinitionBuilder> collection = new HashSet<>(usesNode.getTargetTypedefs());
-        addTypedefToCollection(usesNode, collection, target.getTypeDefinitionBuilders());
+        addTypedefToCollection(usesNode, collection, target.getTypeDefinitionBuilders(), parent);
 
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
             Set<TypeDefinitionBuilder> targetUsesTypedefs = collectTargetUsesTypedefs(targetUses, parent);
-            addTypedefToCollection(usesNode, collection, targetUsesTypedefs);
+            addTypedefToCollection(usesNode, collection, targetUsesTypedefs, parent);
         }
         return collection;
     }
 
     private static void addTypedefToCollection(UsesNodeBuilder usesNode, Set<TypeDefinitionBuilder> collection,
-            Set<TypeDefinitionBuilder> allTypedefs) {
+            Set<TypeDefinitionBuilder> allTypedefs, Builder parent) {
         for (TypeDefinitionBuilder childNode : allTypedefs) {
             boolean exists = false;
             for (TypeDefinitionBuilder usesTypedef : usesNode.getTargetTypedefs()) {
@@ -366,7 +371,7 @@ public final class GroupingUtils {
                 }
             }
             if (!exists) {
-                TypeDefinitionBuilder copy = CopyUtils.copy(childNode, usesNode.getParent(), true);
+                TypeDefinitionBuilder copy = CopyUtils.copy(childNode, parent, true);
                 collection.add(copy);
             }
         }
@@ -376,16 +381,16 @@ public final class GroupingUtils {
      * Read groupings defined in target grouping and make a copy of them.
      *
      * @param usesNode
-     * @return copy of groupings defined in uses target grouping
+     *            uses node for which data will be collected
      */
     private static void collectTargetGroupings(UsesNodeBuilder usesNode) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         Set<GroupingBuilder> collection = new HashSet<>();
-        addGroupingToCollection(usesNode, collection, target.getGroupingBuilders());
+        addGroupingToCollection(usesNode, collection, target.getGroupingBuilders(), usesNode.getParent());
 
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
             Set<GroupingBuilder> targetUsesGrouping = collectTargetGroupings(targetUses, usesNode.getParent());
-            addGroupingToCollection(usesNode, collection, targetUsesGrouping);
+            addGroupingToCollection(usesNode, collection, targetUsesGrouping, usesNode.getParent());
         }
         usesNode.getTargetGroupings().addAll(collection);
     }
@@ -393,17 +398,17 @@ public final class GroupingUtils {
     private static Set<GroupingBuilder> collectTargetGroupings(UsesNodeBuilder usesNode, DataNodeContainerBuilder parent) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         Set<GroupingBuilder> collection = new HashSet<>(usesNode.getTargetGroupings());
-        addGroupingToCollection(usesNode, collection, target.getGroupingBuilders());
+        addGroupingToCollection(usesNode, collection, target.getGroupingBuilders(), parent);
 
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
             Set<GroupingBuilder> targetUsesGroupings = collectTargetGroupings(targetUses, parent);
-            addGroupingToCollection(usesNode, collection, targetUsesGroupings);
+            addGroupingToCollection(usesNode, collection, targetUsesGroupings, parent);
         }
         return collection;
     }
 
     private static void addGroupingToCollection(UsesNodeBuilder usesNode, Set<GroupingBuilder> collection,
-            Set<GroupingBuilder> allGroupings) {
+            Set<GroupingBuilder> allGroupings, Builder parent) {
         for (GroupingBuilder childNode : allGroupings) {
             boolean exists = false;
             for (GroupingBuilder usesGrouping : usesNode.getTargetGroupings()) {
@@ -413,7 +418,7 @@ public final class GroupingUtils {
                 }
             }
             if (!exists) {
-                GroupingBuilder copy = CopyUtils.copy(childNode, usesNode.getParent(), true);
+                GroupingBuilder copy = CopyUtils.copy(childNode, parent, true);
                 collection.add(copy);
             }
         }
@@ -423,17 +428,17 @@ public final class GroupingUtils {
      * Read unknown nodes defined in target grouping and make a copy of them.
      *
      * @param usesNode
-     * @return copy of unknown nodes defined in uses target grouping
+     *            uses node for which data will be collected
      */
     private static void collectTargetUnknownNodes(UsesNodeBuilder usesNode) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         final List<UnknownSchemaNodeBuilder> collection = new ArrayList<>();
-        addUnknownNodeToCollection(usesNode, collection, target.getUnknownNodeBuilders());
+        addUnknownNodeToCollection(usesNode, collection, target.getUnknownNodeBuilders(), usesNode.getParent());
 
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
             List<UnknownSchemaNodeBuilder> targetUsesUnknownNodes = collectTargetUnknownNodes(targetUses,
                     usesNode.getParent());
-            addUnknownNodeToCollection(usesNode, collection, targetUsesUnknownNodes);
+            addUnknownNodeToCollection(usesNode, collection, targetUsesUnknownNodes, usesNode.getParent());
         }
         usesNode.getTargetUnknownNodes().addAll(collection);
     }
@@ -442,17 +447,17 @@ public final class GroupingUtils {
             DataNodeContainerBuilder parent) {
         final GroupingBuilder target = usesNode.getGroupingBuilder();
         List<UnknownSchemaNodeBuilder> collection = new ArrayList<>(usesNode.getTargetUnknownNodes());
-        addUnknownNodeToCollection(usesNode, collection, target.getUnknownNodeBuilders());
+        addUnknownNodeToCollection(usesNode, collection, target.getUnknownNodeBuilders(), parent);
 
         for (UsesNodeBuilder targetUses : target.getUsesNodes()) {
             List<UnknownSchemaNodeBuilder> targetUsesUnknownNodes = collectTargetUnknownNodes(targetUses, parent);
-            addUnknownNodeToCollection(usesNode, collection, targetUsesUnknownNodes);
+            addUnknownNodeToCollection(usesNode, collection, targetUsesUnknownNodes, parent);
         }
         return collection;
     }
 
     private static void addUnknownNodeToCollection(UsesNodeBuilder usesNode, List<UnknownSchemaNodeBuilder> collection,
-            List<UnknownSchemaNodeBuilder> allUnknownNodes) {
+            List<UnknownSchemaNodeBuilder> allUnknownNodes, Builder parent) {
         for (UnknownSchemaNodeBuilder childNode : allUnknownNodes) {
             boolean exists = false;
             for (UnknownSchemaNodeBuilder usesUnknownNode : usesNode.getTargetUnknownNodes()) {
@@ -462,7 +467,7 @@ public final class GroupingUtils {
                 }
             }
             if (!exists) {
-                UnknownSchemaNodeBuilder copy = CopyUtils.copy(childNode, usesNode.getParent(), true);
+                UnknownSchemaNodeBuilder copy = CopyUtils.copy(childNode, parent, true);
                 collection.add(copy);
             }
         }
@@ -562,10 +567,8 @@ public final class GroupingUtils {
                     throw new YangParseException(moduleName, lineNumber,
                             "Unknown member of target grouping while resolving uses node.");
                 }
-                if (newChild instanceof GroupingMember) {
-                    ((GroupingMember) newChild).setAddedByUses(true);
-                }
 
+                ((GroupingMember) newChild).setAddedByUses(true);
                 newChildren.add(newChild);
             }
         }
@@ -586,7 +589,7 @@ public final class GroupingUtils {
     private static void correctNodePathForUsesNodes(final SchemaNodeBuilder node, final SchemaPath parentSchemaPath,
             final ModuleBuilder parentModule) {
         // set correct path
-        List<QName> targetNodePath = new ArrayList<QName>(parentSchemaPath.getPath());
+        List<QName> targetNodePath = new ArrayList<>(parentSchemaPath.getPath());
         targetNodePath.add(new QName(parentModule.getNamespace(), parentModule.getRevision(), parentModule.getPrefix(),
                 node.getQName().getLocalName()));
         node.setPath(new SchemaPath(targetNodePath, true));
@@ -613,6 +616,7 @@ public final class GroupingUtils {
      * already performed.
      *
      * @param usesNode
+     *            uses node containing refine statements
      */
     public static void performRefine(UsesNodeBuilder usesNode) {
         for (RefineHolder refine : usesNode.getRefines()) {

@@ -14,6 +14,7 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -33,8 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
-
-import com.google.common.collect.Lists;
 
 public class AugmentTest {
 
@@ -70,14 +69,21 @@ public class AugmentTest {
 
     @Test
     public void testAugmentParsing() {
-        SchemaPath expectedPath = null;
-        QName[] qnames = null;
+        SchemaPath expectedSchemaPath;
+        QName[] qnames = new QName[3];
+        qnames[0] = q0;
+        qnames[1] = q1;
+        qnames[2] = q2;
 
         // testfile1
         Module module1 = TestUtils.findModule(modules, "nodes");
         Set<AugmentationSchema> augmentations = module1.getAugmentations();
         assertEquals(1, augmentations.size());
         AugmentationSchema augment = augmentations.iterator().next();
+        assertNotNull(augment);
+
+        expectedSchemaPath = new SchemaPath(Arrays.asList(qnames), true);
+        assertEquals(expectedSchemaPath, augment.getTargetPath());
 
         Set<DataSchemaNode> augmentChildren = augment.getChildNodes();
         assertEquals(5, augmentChildren.size());
@@ -104,33 +110,38 @@ public class AugmentTest {
 
         // leaf ds0ChannelNumber
         qnames[3] = new QName(types1NS, types1Rev, t1, "ds0ChannelNumber");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
-        assertEquals(expectedPath, ds0ChannelNumber.getPath());
+        expectedSchemaPath = new SchemaPath(Arrays.asList(qnames), true);
+        assertEquals(expectedSchemaPath, ds0ChannelNumber.getPath());
+        assertFalse(ds0ChannelNumber.isAugmenting());
         // type of leaf ds0ChannelNumber
         QName typeQName = BaseTypes.constructQName("string");
         List<QName> typePath = Collections.singletonList(typeQName);
-        expectedPath = new SchemaPath(typePath, true);
-        assertEquals(expectedPath, ds0ChannelNumber.getType().getPath());
+        expectedSchemaPath = new SchemaPath(typePath, true);
+        assertEquals(expectedSchemaPath, ds0ChannelNumber.getType().getPath());
 
         // leaf interface-id
         qnames[3] = new QName(types1NS, types1Rev, t1, "interface-id");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
-        assertEquals(expectedPath, interfaceId.getPath());
+        expectedSchemaPath = new SchemaPath(Arrays.asList(qnames), true);
+        assertEquals(expectedSchemaPath, interfaceId.getPath());
+        assertFalse(interfaceId.isAugmenting());
 
         // leaf my-type
         qnames[3] = new QName(types1NS, types1Rev, t1, "my-type");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
-        assertEquals(expectedPath, myType.getPath());
+        expectedSchemaPath = new SchemaPath(Arrays.asList(qnames), true);
+        assertEquals(expectedSchemaPath, myType.getPath());
+        assertFalse(myType.isAugmenting());
 
         // container schemas
         qnames[3] = new QName(types1NS, types1Rev, t1, "schemas");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
-        assertEquals(expectedPath, schemas.getPath());
+        expectedSchemaPath = new SchemaPath(Arrays.asList(qnames), true);
+        assertEquals(expectedSchemaPath, schemas.getPath());
+        assertFalse(schemas.isAugmenting());
 
         // choice odl
         qnames[3] = new QName(types1NS, types1Rev, t1, "odl");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
-        assertEquals(expectedPath, odl.getPath());
+        expectedSchemaPath = new SchemaPath(Arrays.asList(qnames), true);
+        assertEquals(expectedSchemaPath, odl.getPath());
+        assertFalse(odl.isAugmenting());
 
         // testfile3
         Module module3 = TestUtils.findModule(modules, "custom");
@@ -159,9 +170,6 @@ public class AugmentTest {
 
     @Test
     public void testAugmentResolving() throws ParseException {
-        SchemaPath expectedPath = null;
-        QName[] qnames = null;
-
         Module module2 = TestUtils.findModule(modules, "types");
         ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName("interfaces");
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
@@ -182,42 +190,40 @@ public class AugmentTest {
         assertNotNull(schemas);
         assertNotNull(odl);
 
-        qnames = new QName[4];
+        SchemaPath expectedPath;
+        QName[] qnames = new QName[4];
         qnames[0] = q0;
         qnames[1] = q1;
         qnames[2] = q2;
 
         // leaf ds0ChannelNumber
         qnames[3] = new QName(types1NS, types1Rev, t1, "ds0ChannelNumber");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, ds0ChannelNumber.getPath());
 
         // leaf interface-id
         qnames[3] = new QName(types1NS, types1Rev, t1, "interface-id");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, interfaceId.getPath());
 
         // leaf my-type
         qnames[3] = new QName(types1NS, types1Rev, t1, "my-type");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, myType.getPath());
 
         // container schemas
         qnames[3] = new QName(types1NS, types1Rev, t1, "schemas");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, schemas.getPath());
 
         // choice odl
         qnames[3] = new QName(types1NS, types1Rev, t1, "odl");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, odl.getPath());
     }
 
     @Test
     public void testAugmentChoice() throws ParseException {
-        SchemaPath expectedPath = null;
-        QName[] qnames = null;
-
         Module module2 = TestUtils.findModule(modules, "types");
         ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName("interfaces");
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
@@ -253,7 +259,8 @@ public class AugmentTest {
         assertNotNull(node2);
         assertNotNull(node3);
 
-        qnames = new QName[5];
+        SchemaPath expectedPath;
+        QName[] qnames = new QName[5];
         qnames[0] = q0;
         qnames[1] = q1;
         qnames[2] = q2;
@@ -261,28 +268,28 @@ public class AugmentTest {
 
         // case id
         qnames[4] = new QName(types1NS, types1Rev, t1, "id");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, id.getPath());
         Set<DataSchemaNode> idChildren = id.getChildNodes();
         assertEquals(1, idChildren.size());
 
         // case node1
         qnames[4] = new QName(types1NS, types1Rev, t1, "node1");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, node1.getPath());
         Set<DataSchemaNode> node1Children = node1.getChildNodes();
         assertTrue(node1Children.isEmpty());
 
         // case node2
         qnames[4] = new QName(types1NS, types1Rev, t1, "node2");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, node2.getPath());
         Set<DataSchemaNode> node2Children = node2.getChildNodes();
         assertTrue(node2Children.isEmpty());
 
         // case node3
         qnames[4] = new QName(types1NS, types1Rev, t1, "node3");
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, node3.getPath());
         Set<DataSchemaNode> node3Children = node3.getChildNodes();
         assertEquals(1, node3Children.size());
@@ -299,7 +306,7 @@ public class AugmentTest {
         qnames[5] = new QName(types1NS, types1Rev, t1, "id");
         LeafSchemaNode caseIdChild = (LeafSchemaNode) idChildren.iterator().next();
         assertNotNull(caseIdChild);
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, caseIdChild.getPath());
 
         // case node3 child
@@ -307,7 +314,7 @@ public class AugmentTest {
         qnames[5] = new QName(types1NS, types1Rev, t1, "node3");
         ContainerSchemaNode caseNode3Child = (ContainerSchemaNode) node3Children.iterator().next();
         assertNotNull(caseNode3Child);
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, caseNode3Child.getPath());
     }
 
@@ -363,7 +370,7 @@ public class AugmentTest {
         assertTrue(create.isAugmenting());
         assertTrue(destroy.isAugmenting());
 
-        SchemaPath expectedPath = null;
+        SchemaPath expectedPath;
         QName[] qnames = new QName[4];
         qnames[0] = submitQName;
         qnames[1] = inputQName;
@@ -372,7 +379,7 @@ public class AugmentTest {
         // case attach
         qnames[3] = new QName(NS_FOO, revision, "f", "attach");
         assertEquals(qnames[3], attach.getQName());
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, attach.getPath());
         Set<DataSchemaNode> attachChildren = attach.getChildNodes();
         assertEquals(1, attachChildren.size());
@@ -380,7 +387,7 @@ public class AugmentTest {
         // case create
         qnames[3] = new QName(NS_FOO, revision, "f", "create");
         assertEquals(qnames[3], create.getQName());
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, create.getPath());
         Set<DataSchemaNode> createChildren = create.getChildNodes();
         assertEquals(1, createChildren.size());
@@ -388,7 +395,7 @@ public class AugmentTest {
         // case attach
         qnames[3] = new QName(NS_FOO, revision, "f", "destroy");
         assertEquals(qnames[3], destroy.getQName());
-        expectedPath = new SchemaPath(Lists.newArrayList(qnames), true);
+        expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, destroy.getPath());
         Set<DataSchemaNode> destroyChildren = destroy.getChildNodes();
         assertEquals(1, destroyChildren.size());
