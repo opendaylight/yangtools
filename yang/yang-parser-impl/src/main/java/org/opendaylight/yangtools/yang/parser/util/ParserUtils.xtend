@@ -255,7 +255,7 @@ public final class ParserUtils {
         for (UsesNodeBuilder usesNode : augment.getUsesNodes()) {
             if (usesNode !== null) {
                 throw new YangParseException(augment.getModuleName(), augment.getLine(),
-                    "Error in augment parsing: cannot augment uses to choice");
+                    "Error in augment parsing: cannot augment choice with nodes from grouping");
             }
         }
     }
