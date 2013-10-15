@@ -41,7 +41,7 @@
         <module>yang</module>
         <module>code-generator</module>
         <module>model</module>
-        <module>third-party</module>
+        <!-- module>third-party</module -->
     </modules>
 
     <pluginRepositories>
