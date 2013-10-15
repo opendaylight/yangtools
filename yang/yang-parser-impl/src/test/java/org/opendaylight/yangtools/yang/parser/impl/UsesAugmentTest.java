@@ -235,7 +235,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = new SchemaPath(path, true);
         assertEquals(expectedPath, order.getPath());
-        assertFalse(order.isAddedByUses());
+        assertTrue(order.isAddedByUses());
         assertTrue(order.isAugmenting());
         assertEquals(2, order.getChildNodes().size());
         // * |-- |-- |-- |-- |-- leaf delete

@@ -1,15 +1,15 @@
-module nodes {
+module foo {
     yang-version 1;
-    namespace "urn:simple.nodes.test";
-    prefix "n";
+    namespace "urn:opendaylight.foo";
+    prefix "foo";
 
-    import types {
-        prefix "t";
+    import bar {
+        prefix "br";
         revision-date 2013-07-03;
     }
 
-   import custom {
-        prefix "c";
+    import baz {
+        prefix "bz";
         revision-date 2013-02-27;
     }
 
@@ -21,49 +21,49 @@ module nodes {
     }
 
     leaf int32-leaf {
-        type t:int32-ext2 {
+        type br:int32-ext2 {
             range "12..max";
         }
     }
 
     leaf string-leaf {
-        type t:string-ext4;
+        type br:string-ext4;
     }
 
     leaf length-leaf {
-        type t:string-ext2 {
+        type br:string-ext2 {
             length "7..max";
         }
     }
 
     leaf decimal-leaf {
-        type t:my-decimal-type {
+        type br:my-decimal-type {
             fraction-digits 4;
         }
     }
 
     leaf decimal-leaf2 {
-        type t:my-decimal-type;
+        type br:my-decimal-type;
     }
 
     container ext {
-        c:c-define "MY_INTERFACES";
+        bz:c-define "MY_INTERFACES";
     }
 
     leaf union-leaf {
-        type t:my-union-ext;
+        type br:my-union-ext;
     }
 
-    deviation /t:interfaces/t:ifEntry {
+    deviation /br:interfaces/br:ifEntry {
         deviate add {
-            default "admin"; // new users are 'admin' by default
+            default "admin";
             config "true";
         }
         reference "system/user ref";
     }
 
     leaf custom-union-leaf {
-        type c:union1;
+        type bz:union1;
     }
 
     container transfer {
@@ -109,7 +109,7 @@ module nodes {
         status obsolete;
     }
 
-    augment "/t:interfaces/t:ifEntry/c:augment-holder" {
+    augment "/br:interfaces/br:ifEntry/bz:augment-holder" {
         when "if:ifType='ds0'";
         leaf ds0ChannelNumber {
             type string;
@@ -120,7 +120,7 @@ module nodes {
             }
         }
         leaf my-type {
-            type t:int32-ext2;
+            type br:int32-ext2;
         }
         container schemas {
         }
@@ -151,8 +151,8 @@ module nodes {
         }
     }
 
-    uses c:target {
-        augment "/mycont/innercont" {
+    uses bz:target {
+        augment "how/interval" {
             description "inner augment";
             leaf name {
                 type string;
@@ -162,7 +162,7 @@ module nodes {
 
     container peer {
         container destination {
-            uses c:target {
+            uses bz:target {
                 refine address {
                     default "1.2.3.4";
                     description "IP address of target node";

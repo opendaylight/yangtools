@@ -213,7 +213,7 @@ public final class GroupingUtils {
         // child nodes
         for (DataSchemaNodeBuilder child : usesNode.getTargetChildren()) {
             if (child instanceof GroupingMember) {
-                ((GroupingMember) child).setAddedByUses(true);
+                setAddedByUsesToNode((GroupingMember)child);
             }
 
             if (child instanceof GroupingMember) {
@@ -262,6 +262,17 @@ public final class GroupingUtils {
             un.setQName(new QName(ns, rev, prefix, un.getQName().getLocalName()));
             correctNodePathForUsesNodes(un, parentPath, module);
             parent.addUnknownNodeBuilder(un);
+        }
+    }
+
+    private static void setAddedByUsesToNode(GroupingMember node) {
+        node.setAddedByUses(true);
+        if (node instanceof DataNodeContainerBuilder) {
+            for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder)node).getChildNodeBuilders()) {
+                if (child instanceof GroupingMember) {
+                    setAddedByUsesToNode((GroupingMember)child);
+                }
+            }
         }
     }
 
@@ -324,6 +335,9 @@ public final class GroupingUtils {
             }
             if (!exists) {
                 DataSchemaNodeBuilder copy = CopyUtils.copy(childNode, parent, true);
+                if (copy instanceof GroupingMember) {
+                    setAddedByUsesToNode((GroupingMember)copy);
+                }
                 collection.add(copy);
             }
         }

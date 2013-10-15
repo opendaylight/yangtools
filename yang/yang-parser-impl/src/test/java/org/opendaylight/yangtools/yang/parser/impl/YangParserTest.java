@@ -57,20 +57,20 @@ import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 public class YangParserTest {
-    private final URI nodesNS = URI.create("urn:simple.nodes.test");
-    private final URI typesNS = URI.create("urn:simple.types.test");
-    private final URI customNS = URI.create("urn:custom.nodes.test");
-    private Date nodesRev;
-    private Date typesRev;
-    private Date customRev;
+    private final URI fooNS = URI.create("urn:opendaylight.foo");
+    private final URI barNS = URI.create("urn:opendaylight.bar");
+    private final URI bazNS = URI.create("urn:opendaylight.baz");
+    private Date fooRev;
+    private Date barRev;
+    private Date bazRev;
 
     private Set<Module> modules;
 
     @Before
     public void init() throws FileNotFoundException, ParseException {
-        nodesRev = TestUtils.simpleDateFormat.parse("2013-02-27");
-        typesRev = TestUtils.simpleDateFormat.parse("2013-07-03");
-        customRev = TestUtils.simpleDateFormat.parse("2013-02-27");
+        fooRev = TestUtils.simpleDateFormat.parse("2013-02-27");
+        barRev = TestUtils.simpleDateFormat.parse("2013-07-03");
+        bazRev = TestUtils.simpleDateFormat.parse("2013-02-27");
 
         modules = TestUtils.loadModules(getClass().getResource("/model").getPath());
         assertEquals(3, modules.size());
@@ -78,35 +78,35 @@ public class YangParserTest {
 
     @Test
     public void testHeaders() throws ParseException {
-        Module test = TestUtils.findModule(modules, "nodes");
+        Module foo = TestUtils.findModule(modules, "foo");
 
-        assertEquals("nodes", test.getName());
-        assertEquals("1", test.getYangVersion());
-        assertEquals(nodesNS, test.getNamespace());
-        assertEquals("n", test.getPrefix());
+        assertEquals("foo", foo.getName());
+        assertEquals("1", foo.getYangVersion());
+        assertEquals(fooNS, foo.getNamespace());
+        assertEquals("foo", foo.getPrefix());
 
-        Set<ModuleImport> imports = test.getImports();
+        Set<ModuleImport> imports = foo.getImports();
         assertEquals(2, imports.size());
 
-        ModuleImport import2 = TestUtils.findImport(imports, "t");
-        assertEquals("types", import2.getModuleName());
-        assertEquals(typesRev, import2.getRevision());
+        ModuleImport import2 = TestUtils.findImport(imports, "br");
+        assertEquals("bar", import2.getModuleName());
+        assertEquals(barRev, import2.getRevision());
 
-        ModuleImport import3 = TestUtils.findImport(imports, "c");
-        assertEquals("custom", import3.getModuleName());
-        assertEquals(customRev, import3.getRevision());
+        ModuleImport import3 = TestUtils.findImport(imports, "bz");
+        assertEquals("baz", import3.getModuleName());
+        assertEquals(bazRev, import3.getRevision());
 
-        assertEquals("opendaylight", test.getOrganization());
-        assertEquals("http://www.opendaylight.org/", test.getContact());
+        assertEquals("opendaylight", foo.getOrganization());
+        assertEquals("http://www.opendaylight.org/", foo.getContact());
         Date expectedRevision = TestUtils.createDate("2013-02-27");
-        assertEquals(expectedRevision, test.getRevision());
-        assertEquals(" WILL BE DEFINED LATER", test.getReference());
+        assertEquals(expectedRevision, foo.getRevision());
+        assertEquals(" WILL BE DEFINED LATER", foo.getReference());
     }
 
     @Test
     public void testOrderingTypedef() {
-        Module test = TestUtils.findModule(modules, "types");
-        Set<TypeDefinition<?>> typedefs = test.getTypeDefinitions();
+        Module bar = TestUtils.findModule(modules, "bar");
+        Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
         String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2", "my-decimal-type", "my-union",
                 "my-union-ext", "nested-union2", "string-ext1", "string-ext2", "string-ext3", "string-ext4" };
         String[] actualOrder = new String[typedefs.size()];
@@ -121,9 +121,9 @@ public class YangParserTest {
 
     @Test
     public void testOrderingChildNodes() {
-        Module test = TestUtils.findModule(modules, "nodes");
+        Module foo = TestUtils.findModule(modules, "foo");
         AugmentationSchema augment1 = null;
-        for (AugmentationSchema as : test.getAugmentations()) {
+        for (AugmentationSchema as : foo.getAugmentations()) {
             if ("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
                 augment1 = as;
                 break;
@@ -145,9 +145,9 @@ public class YangParserTest {
 
     @Test
     public void testOrderingNestedChildNodes1() {
-        Module test = TestUtils.findModule(modules, "nodes");
+        Module foo = TestUtils.findModule(modules, "foo");
 
-        Set<DataSchemaNode> childNodes = test.getChildNodes();
+        Set<DataSchemaNode> childNodes = foo.getChildNodes();
         String[] expectedOrder = new String[] { "address", "addresses", "custom-union-leaf", "data", "datas",
                 "decimal-leaf", "decimal-leaf2", "ext", "how", "int32-leaf", "length-leaf", "mycont", "peer", "port",
                 "string-leaf", "transfer", "union-leaf" };
@@ -163,8 +163,8 @@ public class YangParserTest {
 
     @Test
     public void testOrderingNestedChildNodes2() {
-        Module test = TestUtils.findModule(modules, "custom");
-        Set<GroupingDefinition> groupings = test.getGroupings();
+        Module baz = TestUtils.findModule(modules, "baz");
+        Set<GroupingDefinition> groupings = baz.getGroupings();
         assertEquals(1, groupings.size());
         GroupingDefinition target = groupings.iterator().next();
 
@@ -182,17 +182,17 @@ public class YangParserTest {
 
     @Test
     public void testParseList() {
-        Module test = TestUtils.findModule(modules, "types");
-        URI expectedNamespace = URI.create("urn:simple.types.test");
-        String expectedPrefix = "t";
+        Module bar = TestUtils.findModule(modules, "bar");
+        URI expectedNamespace = URI.create("urn:opendaylight.bar");
+        String expectedPrefix = "bar";
 
-        ContainerSchemaNode interfaces = (ContainerSchemaNode) test.getDataChildByName("interfaces");
+        ContainerSchemaNode interfaces = (ContainerSchemaNode) bar.getDataChildByName("interfaces");
 
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
         // test SchemaNode args
-        QName expectedQName = new QName(expectedNamespace, typesRev, expectedPrefix, "ifEntry");
+        QName expectedQName = new QName(expectedNamespace, barRev, expectedPrefix, "ifEntry");
         assertEquals(expectedQName, ifEntry.getQName());
-        SchemaPath expectedPath = TestUtils.createPath(true, expectedNamespace, typesRev, expectedPrefix, "interfaces",
+        SchemaPath expectedPath = TestUtils.createPath(true, expectedNamespace, barRev, expectedPrefix, "interfaces",
                 "ifEntry");
         assertEquals(expectedPath, ifEntry.getPath());
         assertNull(ifEntry.getDescription());
@@ -212,8 +212,8 @@ public class YangParserTest {
         Set<AugmentationSchema> availableAugmentations = ifEntry.getAvailableAugmentations();
         assertEquals(2, availableAugmentations.size());
         // test ListSchemaNode args
-        List<QName> expectedKey = new ArrayList<QName>();
-        expectedKey.add(new QName(expectedNamespace, typesRev, expectedPrefix, "ifIndex"));
+        List<QName> expectedKey = new ArrayList<>();
+        expectedKey.add(new QName(expectedNamespace, barRev, expectedPrefix, "ifIndex"));
         assertEquals(expectedKey, ifEntry.getKeyDefinition());
         assertFalse(ifEntry.isUserOrdered());
         // test DataNodeContainer args
@@ -230,15 +230,15 @@ public class YangParserTest {
 
     @Test
     public void testTypedefRangesResolving() throws ParseException {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        LeafSchemaNode int32Leaf = (LeafSchemaNode) testModule.getDataChildByName("int32-leaf");
+        Module foo = TestUtils.findModule(modules, "foo");
+        LeafSchemaNode int32Leaf = (LeafSchemaNode) foo.getDataChildByName("int32-leaf");
 
         ExtendedType leafType = (ExtendedType) int32Leaf.getType();
         QName leafTypeQName = leafType.getQName();
         assertEquals("int32-ext2", leafTypeQName.getLocalName());
-        assertEquals("n", leafTypeQName.getPrefix());
-        assertEquals(nodesNS, leafTypeQName.getNamespace());
-        assertEquals(nodesRev, leafTypeQName.getRevision());
+        assertEquals("foo", leafTypeQName.getPrefix());
+        assertEquals(fooNS, leafTypeQName.getNamespace());
+        assertEquals(fooRev, leafTypeQName.getRevision());
         assertNull(leafType.getUnits());
         assertNull(leafType.getDefaultValue());
         assertTrue(leafType.getLengthConstraints().isEmpty());
@@ -252,9 +252,9 @@ public class YangParserTest {
         ExtendedType baseType = (ExtendedType) leafType.getBaseType();
         QName baseTypeQName = baseType.getQName();
         assertEquals("int32-ext2", baseTypeQName.getLocalName());
-        assertEquals("t", baseTypeQName.getPrefix());
-        assertEquals(typesNS, baseTypeQName.getNamespace());
-        assertEquals(typesRev, baseTypeQName.getRevision());
+        assertEquals("bar", baseTypeQName.getPrefix());
+        assertEquals(barNS, baseTypeQName.getNamespace());
+        assertEquals(barRev, baseTypeQName.getRevision());
         assertEquals("mile", baseType.getUnits());
         assertEquals("11", baseType.getDefaultValue());
         assertTrue(leafType.getLengthConstraints().isEmpty());
@@ -271,9 +271,9 @@ public class YangParserTest {
         ExtendedType base = (ExtendedType) baseType.getBaseType();
         QName baseQName = base.getQName();
         assertEquals("int32-ext1", baseQName.getLocalName());
-        assertEquals("t", baseQName.getPrefix());
-        assertEquals(typesNS, baseQName.getNamespace());
-        assertEquals(typesRev, baseQName.getRevision());
+        assertEquals("bar", baseQName.getPrefix());
+        assertEquals(barNS, baseQName.getNamespace());
+        assertEquals(barRev, baseQName.getRevision());
         assertNull(base.getUnits());
         assertNull(base.getDefaultValue());
         assertTrue(leafType.getLengthConstraints().isEmpty());
@@ -289,15 +289,15 @@ public class YangParserTest {
 
     @Test
     public void testTypedefPatternsResolving() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        LeafSchemaNode stringleaf = (LeafSchemaNode) testModule.getDataChildByName("string-leaf");
+        Module foo = TestUtils.findModule(modules, "foo");
+        LeafSchemaNode stringleaf = (LeafSchemaNode) foo.getDataChildByName("string-leaf");
 
         ExtendedType type = (ExtendedType) stringleaf.getType();
         QName typeQName = type.getQName();
         assertEquals("string-ext4", typeQName.getLocalName());
-        assertEquals("t", typeQName.getPrefix());
-        assertEquals(typesNS, typeQName.getNamespace());
-        assertEquals(typesRev, typeQName.getRevision());
+        assertEquals("bar", typeQName.getPrefix());
+        assertEquals(barNS, typeQName.getNamespace());
+        assertEquals(barRev, typeQName.getRevision());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         List<PatternConstraint> patterns = type.getPatternConstraints();
@@ -310,9 +310,9 @@ public class YangParserTest {
         ExtendedType baseType1 = (ExtendedType) type.getBaseType();
         QName baseType1QName = baseType1.getQName();
         assertEquals("string-ext3", baseType1QName.getLocalName());
-        assertEquals("t", baseType1QName.getPrefix());
-        assertEquals(typesNS, baseType1QName.getNamespace());
-        assertEquals(typesRev, baseType1QName.getRevision());
+        assertEquals("bar", baseType1QName.getPrefix());
+        assertEquals(barNS, baseType1QName.getNamespace());
+        assertEquals(barRev, baseType1QName.getRevision());
         assertNull(baseType1.getUnits());
         assertNull(baseType1.getDefaultValue());
         patterns = baseType1.getPatternConstraints();
@@ -325,9 +325,9 @@ public class YangParserTest {
         ExtendedType baseType2 = (ExtendedType) baseType1.getBaseType();
         QName baseType2QName = baseType2.getQName();
         assertEquals("string-ext2", baseType2QName.getLocalName());
-        assertEquals("t", baseType2QName.getPrefix());
-        assertEquals(typesNS, baseType2QName.getNamespace());
-        assertEquals(typesRev, baseType2QName.getRevision());
+        assertEquals("bar", baseType2QName.getPrefix());
+        assertEquals(barNS, baseType2QName.getNamespace());
+        assertEquals(barRev, baseType2QName.getRevision());
         assertNull(baseType2.getUnits());
         assertNull(baseType2.getDefaultValue());
         assertTrue(baseType2.getPatternConstraints().isEmpty());
@@ -341,9 +341,9 @@ public class YangParserTest {
         ExtendedType baseType3 = (ExtendedType) baseType2.getBaseType();
         QName baseType3QName = baseType3.getQName();
         assertEquals("string-ext1", baseType3QName.getLocalName());
-        assertEquals("t", baseType3QName.getPrefix());
-        assertEquals(typesNS, baseType3QName.getNamespace());
-        assertEquals(typesRev, baseType3QName.getRevision());
+        assertEquals("bar", baseType3QName.getPrefix());
+        assertEquals(barNS, baseType3QName.getNamespace());
+        assertEquals(barRev, baseType3QName.getRevision());
         assertNull(baseType3.getUnits());
         assertNull(baseType3.getDefaultValue());
         patterns = baseType3.getPatternConstraints();
@@ -362,16 +362,16 @@ public class YangParserTest {
 
     @Test
     public void testTypedefLengthsResolving() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
+        Module foo = TestUtils.findModule(modules, "foo");
 
-        LeafSchemaNode lengthLeaf = (LeafSchemaNode) testModule.getDataChildByName("length-leaf");
+        LeafSchemaNode lengthLeaf = (LeafSchemaNode) foo.getDataChildByName("length-leaf");
         ExtendedType type = (ExtendedType) lengthLeaf.getType();
 
         QName typeQName = type.getQName();
         assertEquals("string-ext2", typeQName.getLocalName());
-        assertEquals("n", typeQName.getPrefix());
-        assertEquals(nodesNS, typeQName.getNamespace());
-        assertEquals(nodesRev, typeQName.getRevision());
+        assertEquals("foo", typeQName.getPrefix());
+        assertEquals(fooNS, typeQName.getNamespace());
+        assertEquals(fooRev, typeQName.getRevision());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertTrue(type.getPatternConstraints().isEmpty());
@@ -385,9 +385,9 @@ public class YangParserTest {
         ExtendedType baseType1 = (ExtendedType) type.getBaseType();
         QName baseType1QName = baseType1.getQName();
         assertEquals("string-ext2", baseType1QName.getLocalName());
-        assertEquals("t", baseType1QName.getPrefix());
-        assertEquals(typesNS, baseType1QName.getNamespace());
-        assertEquals(typesRev, baseType1QName.getRevision());
+        assertEquals("bar", baseType1QName.getPrefix());
+        assertEquals(barNS, baseType1QName.getNamespace());
+        assertEquals(barRev, baseType1QName.getRevision());
         assertNull(baseType1.getUnits());
         assertNull(baseType1.getDefaultValue());
         assertTrue(baseType1.getPatternConstraints().isEmpty());
@@ -401,9 +401,9 @@ public class YangParserTest {
         ExtendedType baseType2 = (ExtendedType) baseType1.getBaseType();
         QName baseType2QName = baseType2.getQName();
         assertEquals("string-ext1", baseType2QName.getLocalName());
-        assertEquals("t", baseType2QName.getPrefix());
-        assertEquals(typesNS, baseType2QName.getNamespace());
-        assertEquals(typesRev, baseType2QName.getRevision());
+        assertEquals("bar", baseType2QName.getPrefix());
+        assertEquals(barNS, baseType2QName.getNamespace());
+        assertEquals(barRev, baseType2QName.getRevision());
         assertNull(baseType2.getUnits());
         assertNull(baseType2.getDefaultValue());
         List<PatternConstraint> patterns = baseType2.getPatternConstraints();
@@ -422,15 +422,15 @@ public class YangParserTest {
 
     @Test
     public void testTypedefDecimal1() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        LeafSchemaNode testleaf = (LeafSchemaNode) testModule.getDataChildByName("decimal-leaf");
+        Module foo = TestUtils.findModule(modules, "foo");
+        LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName("decimal-leaf");
 
         ExtendedType type = (ExtendedType) testleaf.getType();
         QName typeQName = type.getQName();
         assertEquals("my-decimal-type", typeQName.getLocalName());
-        assertEquals("n", typeQName.getPrefix());
-        assertEquals(nodesNS, typeQName.getNamespace());
-        assertEquals(nodesRev, typeQName.getRevision());
+        assertEquals("foo", typeQName.getPrefix());
+        assertEquals(fooNS, typeQName.getNamespace());
+        assertEquals(fooRev, typeQName.getRevision());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertEquals(4, (int) type.getFractionDigits());
@@ -441,9 +441,9 @@ public class YangParserTest {
         ExtendedType typeBase = (ExtendedType) type.getBaseType();
         QName typeBaseQName = typeBase.getQName();
         assertEquals("my-decimal-type", typeBaseQName.getLocalName());
-        assertEquals("t", typeBaseQName.getPrefix());
-        assertEquals(typesNS, typeBaseQName.getNamespace());
-        assertEquals(typesRev, typeBaseQName.getRevision());
+        assertEquals("bar", typeBaseQName.getPrefix());
+        assertEquals(barNS, typeBaseQName.getNamespace());
+        assertEquals(barRev, typeBaseQName.getRevision());
         assertNull(typeBase.getUnits());
         assertNull(typeBase.getDefaultValue());
         assertNull(typeBase.getFractionDigits());
@@ -457,15 +457,15 @@ public class YangParserTest {
 
     @Test
     public void testTypedefDecimal2() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        LeafSchemaNode testleaf = (LeafSchemaNode) testModule.getDataChildByName("decimal-leaf2");
+        Module foo = TestUtils.findModule(modules, "foo");
+        LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName("decimal-leaf2");
 
         ExtendedType type = (ExtendedType) testleaf.getType();
         QName typeQName = type.getQName();
         assertEquals("my-decimal-type", typeQName.getLocalName());
-        assertEquals("t", typeQName.getPrefix());
-        assertEquals(typesNS, typeQName.getNamespace());
-        assertEquals(typesRev, typeQName.getRevision());
+        assertEquals("bar", typeQName.getPrefix());
+        assertEquals(barNS, typeQName.getNamespace());
+        assertEquals(barRev, typeQName.getRevision());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertNull(type.getFractionDigits());
@@ -479,15 +479,15 @@ public class YangParserTest {
 
     @Test
     public void testTypedefUnion() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        LeafSchemaNode unionleaf = (LeafSchemaNode) testModule.getDataChildByName("union-leaf");
+        Module foo = TestUtils.findModule(modules, "foo");
+        LeafSchemaNode unionleaf = (LeafSchemaNode) foo.getDataChildByName("union-leaf");
 
         ExtendedType type = (ExtendedType) unionleaf.getType();
         QName typeQName = type.getQName();
         assertEquals("my-union-ext", typeQName.getLocalName());
-        assertEquals("t", typeQName.getPrefix());
-        assertEquals(typesNS, typeQName.getNamespace());
-        assertEquals(typesRev, typeQName.getRevision());
+        assertEquals("bar", typeQName.getPrefix());
+        assertEquals(barNS, typeQName.getNamespace());
+        assertEquals(barRev, typeQName.getRevision());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertNull(type.getFractionDigits());
@@ -498,9 +498,9 @@ public class YangParserTest {
         ExtendedType baseType = (ExtendedType) type.getBaseType();
         QName baseTypeQName = baseType.getQName();
         assertEquals("my-union", baseTypeQName.getLocalName());
-        assertEquals("t", baseTypeQName.getPrefix());
-        assertEquals(typesNS, baseTypeQName.getNamespace());
-        assertEquals(typesRev, baseTypeQName.getRevision());
+        assertEquals("bar", baseTypeQName.getPrefix());
+        assertEquals(barNS, baseTypeQName.getNamespace());
+        assertEquals(barRev, baseTypeQName.getRevision());
         assertNull(baseType.getUnits());
         assertNull(baseType.getDefaultValue());
         assertNull(baseType.getFractionDigits());
@@ -515,9 +515,9 @@ public class YangParserTest {
         ExtendedType unionType1 = (ExtendedType) unionTypes.get(0);
         QName unionType1QName = baseType.getQName();
         assertEquals("my-union", unionType1QName.getLocalName());
-        assertEquals("t", unionType1QName.getPrefix());
-        assertEquals(typesNS, unionType1QName.getNamespace());
-        assertEquals(typesRev, unionType1QName.getRevision());
+        assertEquals("bar", unionType1QName.getPrefix());
+        assertEquals(barNS, unionType1QName.getNamespace());
+        assertEquals(barRev, unionType1QName.getRevision());
         assertNull(unionType1.getUnits());
         assertNull(unionType1.getDefaultValue());
         assertNull(unionType1.getFractionDigits());
@@ -535,14 +535,14 @@ public class YangParserTest {
 
     @Test
     public void testNestedUnionResolving() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        LeafSchemaNode testleaf = (LeafSchemaNode) testModule.getDataChildByName("custom-union-leaf");
+        Module foo = TestUtils.findModule(modules, "foo");
+        LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName("custom-union-leaf");
 
         ExtendedType type = (ExtendedType) testleaf.getType();
         QName testleafTypeQName = type.getQName();
-        assertEquals(customNS, testleafTypeQName.getNamespace());
-        assertEquals(customRev, testleafTypeQName.getRevision());
-        assertEquals("c", testleafTypeQName.getPrefix());
+        assertEquals(bazNS, testleafTypeQName.getNamespace());
+        assertEquals(bazRev, testleafTypeQName.getRevision());
+        assertEquals("baz", testleafTypeQName.getPrefix());
         assertEquals("union1", testleafTypeQName.getLocalName());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
@@ -553,9 +553,9 @@ public class YangParserTest {
 
         ExtendedType typeBase = (ExtendedType) type.getBaseType();
         QName typeBaseQName = typeBase.getQName();
-        assertEquals(customNS, typeBaseQName.getNamespace());
-        assertEquals(customRev, typeBaseQName.getRevision());
-        assertEquals("c", typeBaseQName.getPrefix());
+        assertEquals(bazNS, typeBaseQName.getNamespace());
+        assertEquals(bazRev, typeBaseQName.getRevision());
+        assertEquals("baz", typeBaseQName.getPrefix());
         assertEquals("union2", typeBaseQName.getLocalName());
         assertNull(typeBase.getUnits());
         assertNull(typeBase.getDefaultValue());
@@ -572,9 +572,9 @@ public class YangParserTest {
 
         ExtendedType unionType1 = (ExtendedType) unionTypes.get(1);
         QName uniontType1QName = unionType1.getQName();
-        assertEquals(typesNS, uniontType1QName.getNamespace());
-        assertEquals(typesRev, uniontType1QName.getRevision());
-        assertEquals("t", uniontType1QName.getPrefix());
+        assertEquals(barNS, uniontType1QName.getNamespace());
+        assertEquals(barRev, uniontType1QName.getRevision());
+        assertEquals("bar", uniontType1QName.getPrefix());
         assertEquals("nested-union2", uniontType1QName.getLocalName());
         assertNull(unionType1.getUnits());
         assertNull(unionType1.getDefaultValue());
@@ -591,9 +591,9 @@ public class YangParserTest {
 
         ExtendedType myUnionExt = (ExtendedType) nestedUnion2Types.get(1);
         QName myUnionExtQName = myUnionExt.getQName();
-        assertEquals(typesNS, myUnionExtQName.getNamespace());
-        assertEquals(typesRev, myUnionExtQName.getRevision());
-        assertEquals("t", myUnionExtQName.getPrefix());
+        assertEquals(barNS, myUnionExtQName.getNamespace());
+        assertEquals(barRev, myUnionExtQName.getRevision());
+        assertEquals("bar", myUnionExtQName.getPrefix());
         assertEquals("my-union-ext", myUnionExtQName.getLocalName());
         assertNull(myUnionExt.getUnits());
         assertNull(myUnionExt.getDefaultValue());
@@ -604,9 +604,9 @@ public class YangParserTest {
 
         ExtendedType myUnion = (ExtendedType) myUnionExt.getBaseType();
         QName myUnionQName = myUnion.getQName();
-        assertEquals(typesNS, myUnionQName.getNamespace());
-        assertEquals(typesRev, myUnionQName.getRevision());
-        assertEquals("t", myUnionQName.getPrefix());
+        assertEquals(barNS, myUnionQName.getNamespace());
+        assertEquals(barRev, myUnionQName.getRevision());
+        assertEquals("bar", myUnionQName.getPrefix());
         assertEquals("my-union", myUnionQName.getLocalName());
         assertNull(myUnion.getUnits());
         assertNull(myUnion.getDefaultValue());
@@ -623,9 +623,9 @@ public class YangParserTest {
 
         ExtendedType int16Ext = (ExtendedType) myUnionBaseTypes.get(0);
         QName int16ExtQName = int16Ext.getQName();
-        assertEquals(typesNS, int16ExtQName.getNamespace());
-        assertEquals(typesRev, int16ExtQName.getRevision());
-        assertEquals("t", int16ExtQName.getPrefix());
+        assertEquals(barNS, int16ExtQName.getNamespace());
+        assertEquals(barRev, int16ExtQName.getRevision());
+        assertEquals("bar", int16ExtQName.getPrefix());
         assertEquals("int16", int16ExtQName.getLocalName());
         assertNull(int16Ext.getUnits());
         assertNull(int16Ext.getDefaultValue());
@@ -643,8 +643,8 @@ public class YangParserTest {
 
     @Test
     public void testChoice() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        ContainerSchemaNode transfer = (ContainerSchemaNode) testModule.getDataChildByName("transfer");
+        Module foo = TestUtils.findModule(modules, "foo");
+        ContainerSchemaNode transfer = (ContainerSchemaNode) foo.getDataChildByName("transfer");
         ChoiceNode how = (ChoiceNode) transfer.getDataChildByName("how");
         Set<ChoiceCaseNode> cases = how.getCases();
         assertEquals(5, cases.size());
@@ -665,16 +665,15 @@ public class YangParserTest {
 
     @Test
     public void testDeviation() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
-        Set<Deviation> deviations = testModule.getDeviations();
+        Module foo = TestUtils.findModule(modules, "foo");
+        Set<Deviation> deviations = foo.getDeviations();
         assertEquals(1, deviations.size());
         Deviation dev = deviations.iterator().next();
-
         assertEquals("system/user ref", dev.getReference());
 
-        List<QName> path = new ArrayList<QName>();
-        path.add(new QName(typesNS, typesRev, "t", "interfaces"));
-        path.add(new QName(typesNS, typesRev, "t", "ifEntry"));
+        List<QName> path = new ArrayList<>();
+        path.add(new QName(barNS, barRev, "br", "interfaces"));
+        path.add(new QName(barNS, barRev, "br", "ifEntry"));
         SchemaPath expectedPath = new SchemaPath(path, true);
 
         assertEquals(expectedPath, dev.getTargetPath());
@@ -683,8 +682,8 @@ public class YangParserTest {
 
     @Test
     public void testUnknownNode() {
-        Module testModule = TestUtils.findModule(modules, "custom");
-        ContainerSchemaNode network = (ContainerSchemaNode) testModule.getDataChildByName("network");
+        Module baz = TestUtils.findModule(modules, "baz");
+        ContainerSchemaNode network = (ContainerSchemaNode) baz.getDataChildByName("network");
         List<UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
         assertEquals(1, unknownNodes.size());
         UnknownSchemaNode unknownNode = unknownNodes.get(0);
@@ -694,15 +693,15 @@ public class YangParserTest {
 
     @Test
     public void testFeature() {
-        Module testModule = TestUtils.findModule(modules, "custom");
-        Set<FeatureDefinition> features = testModule.getFeatures();
+        Module baz = TestUtils.findModule(modules, "baz");
+        Set<FeatureDefinition> features = baz.getFeatures();
         assertEquals(1, features.size());
     }
 
     @Test
     public void testExtension() {
-        Module testModule = TestUtils.findModule(modules, "custom");
-        List<ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
+        Module baz = TestUtils.findModule(modules, "baz");
+        List<ExtensionDefinition> extensions = baz.getExtensionSchemaNodes();
         assertEquals(1, extensions.size());
         ExtensionDefinition extension = extensions.get(0);
         assertEquals("name", extension.getArgument());
@@ -711,17 +710,17 @@ public class YangParserTest {
 
     @Test
     public void testNotification() {
-        Module testModule = TestUtils.findModule(modules, "custom");
+        Module baz = TestUtils.findModule(modules, "baz");
         String expectedPrefix = "c";
 
-        Set<NotificationDefinition> notifications = testModule.getNotifications();
+        Set<NotificationDefinition> notifications = baz.getNotifications();
         assertEquals(1, notifications.size());
 
         NotificationDefinition notification = notifications.iterator().next();
         // test SchemaNode args
-        QName expectedQName = new QName(customNS, customRev, expectedPrefix, "event");
+        QName expectedQName = new QName(bazNS, bazRev, expectedPrefix, "event");
         assertEquals(expectedQName, notification.getQName());
-        SchemaPath expectedPath = TestUtils.createPath(true, customNS, customRev, expectedPrefix, "event");
+        SchemaPath expectedPath = TestUtils.createPath(true, bazNS, bazRev, expectedPrefix, "event");
         assertEquals(expectedPath, notification.getPath());
         assertNull(notification.getDescription());
         assertNull(notification.getReference());
@@ -743,9 +742,9 @@ public class YangParserTest {
 
     @Test
     public void testRpc() {
-        Module testModule = TestUtils.findModule(modules, "custom");
+        Module baz = TestUtils.findModule(modules, "baz");
 
-        Set<RpcDefinition> rpcs = testModule.getRpcs();
+        Set<RpcDefinition> rpcs = baz.getRpcs();
         assertEquals(1, rpcs.size());
 
         RpcDefinition rpc = rpcs.iterator().next();
@@ -761,16 +760,16 @@ public class YangParserTest {
 
     @Test
     public void testTypePath() throws ParseException {
-        Module test = TestUtils.findModule(modules, "types");
-        Set<TypeDefinition<?>> types = test.getTypeDefinitions();
+        Module bar = TestUtils.findModule(modules, "bar");
+        Set<TypeDefinition<?>> types = bar.getTypeDefinitions();
 
         // int32-ext1
         ExtendedType int32ext1 = (ExtendedType) TestUtils.findTypedef(types, "int32-ext1");
         QName int32TypedefQName = int32ext1.getQName();
 
-        assertEquals(typesNS, int32TypedefQName.getNamespace());
-        assertEquals(typesRev, int32TypedefQName.getRevision());
-        assertEquals("t", int32TypedefQName.getPrefix());
+        assertEquals(barNS, int32TypedefQName.getNamespace());
+        assertEquals(barRev, int32TypedefQName.getRevision());
+        assertEquals("bar", int32TypedefQName.getPrefix());
         assertEquals("int32-ext1", int32TypedefQName.getLocalName());
 
         SchemaPath typeSchemaPath = int32ext1.getPath();
@@ -785,16 +784,16 @@ public class YangParserTest {
 
     @Test
     public void testTypePath2() throws ParseException {
-        Module test = TestUtils.findModule(modules, "types");
-        Set<TypeDefinition<?>> types = test.getTypeDefinitions();
+        Module bar = TestUtils.findModule(modules, "bar");
+        Set<TypeDefinition<?>> types = bar.getTypeDefinitions();
 
         // my-decimal-type
         ExtendedType myDecType = (ExtendedType) TestUtils.findTypedef(types, "my-decimal-type");
         QName myDecTypeQName = myDecType.getQName();
 
-        assertEquals(typesNS, myDecTypeQName.getNamespace());
-        assertEquals(typesRev, myDecTypeQName.getRevision());
-        assertEquals("t", myDecTypeQName.getPrefix());
+        assertEquals(barNS, myDecTypeQName.getNamespace());
+        assertEquals(barRev, myDecTypeQName.getRevision());
+        assertEquals("bar", myDecTypeQName.getPrefix());
         assertEquals("my-decimal-type", myDecTypeQName.getLocalName());
 
         SchemaPath typeSchemaPath = myDecType.getPath();

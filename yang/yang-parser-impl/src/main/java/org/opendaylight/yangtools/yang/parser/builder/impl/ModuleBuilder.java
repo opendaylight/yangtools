@@ -434,6 +434,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         } else {
             // ... or 'uses' statement
             if (parent instanceof UsesNodeBuilder) {
+                if (augmentTargetStr.startsWith("/")) {
+                    throw new YangParseException(name, line,
+                            "If 'augment' statement is a substatement to the 'uses' statement, it cannot contain absolute path ("
+                                    + augmentTargetStr + ")");
+                }
                 ((UsesNodeBuilder) parent).addAugment(builder);
             } else {
                 throw new YangParseException(name, line, "Augment can be declared only under module or uses statement.");

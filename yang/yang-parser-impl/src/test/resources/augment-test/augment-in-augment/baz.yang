@@ -1,0 +1,94 @@
+module baz {
+    yang-version 1;
+    namespace "urn:opendaylight.baz";
+    prefix "baz";
+
+    import bar {
+        prefix "br";
+        revision-date 2013-10-14;
+    }
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    revision "2013-10-15" {
+        reference " WILL BE DEFINED LATER";
+    }
+
+
+    augment "/br:interfaces/br:ifEntry" {
+        when "if:ifType='ds0'";
+        container augment-holder {
+            description "Description for augment holder";
+        }
+    }
+
+    augment "/br:interfaces/br:ifEntry" {
+        when "if:ifType='ds2'";
+        container augment-holder2 {
+            description "Description for augment holder";
+        }
+    }
+
+    augment "/br:controller/br:switch" {
+        leaf pause {
+            type int32;
+        }
+    }
+
+    grouping target {
+        anyxml data {
+            config true;
+            description "Copy of the source datastore subset.";
+            mandatory false;
+            must "test-condition-text";
+            reference "test-no-reference";
+            status "obsolete";
+            when "test-when-text";
+        }
+        choice how {
+            description "test choice description";
+            default interval;
+            case interval {
+                leaf interval {
+                    type uint16;
+                    default 30;
+                    units minutes;
+                }
+            }
+            case daily {
+                leaf daily {
+                    type empty;
+                }
+                leaf time-of-day {
+                    type string;
+                    units 24-hour-clock;
+                    default 1am;
+                }
+            }
+        }
+        leaf address {
+            type string;
+            description "Target IP address";
+            mandatory true;
+        }
+        container port {
+            description "Target port container";
+        }
+        list addresses {
+            key "id";
+            leaf id {
+                type int8;
+            }
+        }
+        grouping target-inner {
+            description "target-inner default description";
+            leaf inner-grouping-id {
+                type int8;
+            }
+        }
+
+        opendaylight;
+    }
+
+}

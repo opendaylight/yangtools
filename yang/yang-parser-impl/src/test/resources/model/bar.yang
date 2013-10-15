@@ -1,11 +1,11 @@
-module types {
+module bar {
     yang-version 1;
-    namespace "urn:simple.types.test";
-    prefix "t";
+    namespace "urn:opendaylight.bar";
+    prefix "bar";
 
     organization "opendaylight";
     contact "http://www.opendaylight.org/";
-    description "This is types-data test description";
+    description "This model define custom type definitions";
 
     revision "2013-07-03" {
         reference " WILL BE DEFINED LATER";
