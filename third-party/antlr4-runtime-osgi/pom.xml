@@ -6,8 +6,8 @@
         <artifactId>third-party-parent</artifactId>
         <version>0.1.2</version>
     </parent>
-    <artifactId>xtend-lib-osgi</artifactId>
-    <version>2.4.3</version>
+    <artifactId>antlr4-runtime-osgi-nohead</artifactId>
+    <version>4.0</version>
     <packaging>bundle</packaging>
     <scm>
         <connection>scm:git:ssh://git.opendaylight.org:29418/controller.git</connection>
@@ -23,13 +23,16 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                    	<Bundle-Name>Xtend Runtime Library</Bundle-Name>
-                        <Bundle-SymbolicName>org.eclipse.xtend.lib</Bundle-SymbolicName>
-                        <Import-Package>
-                        com.google.common.base;version="[10.0.1,16)",
-                        com.google.common.collect;version="[10.0.1,16)",
-                        com.google.common.primitives;version="[10.0.1,16)"
-                        </Import-Package>
+                        <Bundle-Name>Antlr4 Runtime Library</Bundle-Name>
+                        <Bundle-SymbolicName>org.antlr.antlr4</Bundle-SymbolicName>
+                        <Export-Package>
+                            org.antlr.v4.runtime,
+                            org.antlr.v4.runtime.atn,
+                            org.antlr.v4.runtime.dfa,
+                            org.antlr.v4.runtime.misc,
+                            org.antlr.v4.runtime.tree
+                        </Export-Package>
+                        <Import-Package></Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -38,20 +41,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.xtend</groupId>
-            <artifactId>org.eclipse.xtend.lib</artifactId>
-            <version>2.4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.xtext</groupId>
-            <artifactId>org.eclipse.xtext.xbase.lib</artifactId>
-            <version>2.4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>[10.0.1,15.0)</version>
-            <scope>provided</scope>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.0</version>
+            <exclusions>
+              <exclusion>
+                <!--  UI Related Dependency -->
+                <artifactId>org.abego.treelayout.core</artifactId>
+                <groupId>org.abego.treelayout</groupId>
+              </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
