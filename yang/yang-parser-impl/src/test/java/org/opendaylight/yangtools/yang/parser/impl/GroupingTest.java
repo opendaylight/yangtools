@@ -45,7 +45,7 @@ public class GroupingTest {
 
     @Test
     public void testRefine() {
-        Module testModule = TestUtils.findModule(modules, "nodes");
+        Module testModule = TestUtils.findModule(modules, "foo");
 
         ContainerSchemaNode peer = (ContainerSchemaNode) testModule.getDataChildByName("peer");
         ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName("destination");
@@ -108,7 +108,7 @@ public class GroupingTest {
 
     @Test
     public void testGrouping() {
-        Module testModule = TestUtils.findModule(modules, "custom");
+        Module testModule = TestUtils.findModule(modules, "baz");
         Set<GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
         GroupingDefinition grouping = groupings.iterator().next();
@@ -121,14 +121,14 @@ public class GroupingTest {
         // suffix _u = added by uses
         // suffix _g = defined in grouping
 
-        Module testModule = TestUtils.findModule(modules, "custom");
+        Module testModule = TestUtils.findModule(modules, "baz");
 
         // get grouping
         Set<GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
         GroupingDefinition grouping = groupings.iterator().next();
 
-        testModule = TestUtils.findModule(modules, "nodes");
+        testModule = TestUtils.findModule(modules, "foo");
 
         // get node containing uses
         ContainerSchemaNode peer = (ContainerSchemaNode) testModule.getDataChildByName("peer");
@@ -224,7 +224,7 @@ public class GroupingTest {
         // suffix _u = added by uses
         // suffix _g = defined in grouping
 
-        Module testModule = TestUtils.findModule(modules, "custom");
+        Module testModule = TestUtils.findModule(modules, "baz");
 
         // get grouping
         Set<GroupingDefinition> groupings = testModule.getGroupings();
@@ -232,7 +232,7 @@ public class GroupingTest {
         GroupingDefinition grouping = groupings.iterator().next();
 
         // get node containing uses
-        Module destination = TestUtils.findModule(modules, "nodes");
+        Module destination = TestUtils.findModule(modules, "foo");
 
         // check uses
         Set<UsesNode> uses = destination.getUses();
@@ -341,18 +341,27 @@ public class GroupingTest {
         GroupingDefinition gz = null;
         GroupingDefinition gzz = null;
         for (GroupingDefinition gd : groupings) {
-            if ("grouping-U".equals(gd.getQName().getLocalName()))
+            String name = gd.getQName().getLocalName();
+            switch (name) {
+            case "grouping-U":
                 gu = gd;
-            if ("grouping-V".equals(gd.getQName().getLocalName()))
+                break;
+            case "grouping-V":
                 gv = gd;
-            if ("grouping-X".equals(gd.getQName().getLocalName()))
+                break;
+            case "grouping-X":
                 gx = gd;
-            if ("grouping-Y".equals(gd.getQName().getLocalName()))
+                break;
+            case "grouping-Y":
                 gy = gd;
-            if ("grouping-Z".equals(gd.getQName().getLocalName()))
+                break;
+            case "grouping-Z":
                 gz = gd;
-            if ("grouping-ZZ".equals(gd.getQName().getLocalName()))
+                break;
+            case "grouping-ZZ":
                 gzz = gd;
+                break;
+            }
         }
         assertNotNull(gu);
         assertNotNull(gv);
@@ -377,6 +386,7 @@ public class GroupingTest {
         ContainerSchemaNode containerV = (ContainerSchemaNode)gv.getDataChildByName("container-grouping-V");
         assertNotNull(containerV);
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-V", "container-grouping-V");
+        assertEquals(expectedPath, containerV.getPath());
         assertEquals(2, containerV.getChildNodes().size());
         // grouping-V/container-grouping-V/leaf-grouping-X
         LeafSchemaNode leafXinContainerV = (LeafSchemaNode)containerV.getDataChildByName("leaf-grouping-X");

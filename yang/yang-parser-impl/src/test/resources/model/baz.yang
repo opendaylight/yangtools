@@ -1,10 +1,10 @@
-module custom {
+module baz {
     yang-version 1;
-    namespace "urn:custom.nodes.test";
-    prefix "c";
+    namespace "urn:opendaylight.baz";
+    prefix "baz";
 
-    import types {
-        prefix "types";
+    import bar {
+        prefix "br";
         revision-date 2013-07-03;
     }
 
@@ -22,18 +22,18 @@ module custom {
     typedef union2 {
         type union {
             type int32;
-            type types:nested-union2;
+            type br:nested-union2;
         }
     }
 
-    augment "/types:interfaces/types:ifEntry" {
+    augment "/br:interfaces/br:ifEntry" {
         when "if:ifType='ds0'";
         container augment-holder {
             description "Description for augment holder";
         }
     }
 
-    augment "/types:interfaces/types:ifEntry" {
+    augment "/br:interfaces/br:ifEntry" {
         when "if:ifType='ds2'";
         container augment-holder2 {
             description "Description for augment holder";
@@ -59,8 +59,7 @@ module custom {
     }
 
     extension c-define {
-        description
-        "Takes as argument a name string. Makes the code generator use the given name in the #define.";
+        description "Takes as argument a name string. Makes the code generator use the given name in the #define.";
         argument "name" {
             yin-element "true";
         }
@@ -77,9 +76,7 @@ module custom {
     }
 
     rpc get-config {
-        description
-          "Retrieve all or part of a specified configuration.";
-
+        description "Retrieve all or part of a specified configuration.";
         reference "RFC 6241, Section 7.1";
 
         input {
@@ -121,9 +118,8 @@ module custom {
             }
 
             anyxml filter {
-                description
-                  "Subtree or XPath filter to use.";
-                   c:c-define element-attributes;
+                description "Subtree or XPath filter to use.";
+                baz:c-define element-attributes;
             }
         }
 
@@ -189,7 +185,7 @@ module custom {
             }
         }
         typedef group-type {
-            type types:my-decimal-type;
+            type br:my-decimal-type;
         }
 
         opendaylight;

@@ -45,12 +45,11 @@ final class TestUtils {
         YangModelParser parser = new YangParserImpl();
         final File testDir = new File(resourceDirectory);
         final String[] fileList = testDir.list();
-        final List<File> testFiles = new ArrayList<File>();
-        if(fileList == null) {
+        final List<File> testFiles = new ArrayList<>();
+        if (fileList == null) {
             throw new FileNotFoundException(resourceDirectory);
         }
-        for (int i = 0; i < fileList.length; i++) {
-            String fileName = fileList[i];
+        for (String fileName : fileList) {
             testFiles.add(new File(testDir, fileName));
         }
         return parser.parseYangModels(testFiles);
@@ -58,37 +57,36 @@ final class TestUtils {
 
     public static Set<Module> loadModules(List<InputStream> input) throws IOException {
         final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = new HashSet<Module>(
-                parser.parseYangModelsFromStreams(input));
-        for(InputStream stream : input) {
+        final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input));
+        for (InputStream stream : input) {
             stream.close();
         }
         return modules;
     }
 
-    public static Module loadModule(final InputStream stream) throws
-            IOException {
+    public static Module loadModule(final InputStream stream) throws IOException {
         final YangModelParser parser = new YangParserImpl();
         final List<InputStream> input = Collections.singletonList(stream);
-        final Set<Module> modules = new HashSet<Module>(
-                parser.parseYangModelsFromStreams(input));
+        final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input));
         stream.close();
         return modules.iterator().next();
     }
 
-    public static Module loadModuleWithContext(final InputStream stream, final SchemaContext context) throws IOException {
+    public static Module loadModuleWithContext(final InputStream stream, final SchemaContext context)
+            throws IOException {
         final YangModelParser parser = new YangParserImpl();
         final List<InputStream> input = Collections.singletonList(stream);
-        final Set<Module> modules = new HashSet<Module>(parser.parseYangModelsFromStreams(input, context));
+        final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input, context));
         stream.close();
         return modules.iterator().next();
     }
 
-    public static Set<Module> loadModulesWithContext(final List<InputStream> input, final SchemaContext context) throws IOException {
+    public static Set<Module> loadModulesWithContext(final List<InputStream> input, final SchemaContext context)
+            throws IOException {
         final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = new HashSet<Module>(parser.parseYangModelsFromStreams(input, context));
-        for(InputStream is : input) {
-            if(is != null) {
+        final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input, context));
+        for (InputStream is : input) {
+            if (is != null) {
                 is.close();
             }
         }
@@ -106,8 +104,7 @@ final class TestUtils {
         return result;
     }
 
-    public static ModuleImport findImport(Set<ModuleImport> imports,
-            String prefix) {
+    public static ModuleImport findImport(Set<ModuleImport> imports, String prefix) {
         ModuleImport result = null;
         for (ModuleImport moduleImport : imports) {
             if (moduleImport.getPrefix().equals(prefix)) {
@@ -118,8 +115,7 @@ final class TestUtils {
         return result;
     }
 
-    public static TypeDefinition<?> findTypedef(
-            Set<TypeDefinition<?>> typedefs, String name) {
+    public static TypeDefinition<?> findTypedef(Set<TypeDefinition<?>> typedefs, String name) {
         TypeDefinition<?> result = null;
         for (TypeDefinition<?> td : typedefs) {
             if (td.getQName().getLocalName().equals(name)) {
@@ -130,9 +126,8 @@ final class TestUtils {
         return result;
     }
 
-    public static SchemaPath createPath(boolean absolute, URI namespace,
-            Date revision, String prefix, String... names) {
-        List<QName> path = new ArrayList<QName>();
+    public static SchemaPath createPath(boolean absolute, URI namespace, Date revision, String prefix, String... names) {
+        List<QName> path = new ArrayList<>();
         for (String name : names) {
             path.add(new QName(namespace, revision, prefix, name));
         }

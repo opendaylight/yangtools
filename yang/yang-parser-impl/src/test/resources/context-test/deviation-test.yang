@@ -3,7 +3,7 @@ module deviation-test {
     namespace "urn:simple.deviation.test";
     prefix "dev";
 
-    import types {
+    import bar {
         prefix "t";
         revision-date 2013-07-03;
     }

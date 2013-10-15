@@ -52,16 +52,14 @@ public class YangParserWithContextTest {
 
     @Test
     public void testTypeFromContext() throws Exception {
-        SchemaContext context = null;
         String resource = "/ietf/ietf-inet-types@2010-09-24.yang";
         InputStream stream = new FileInputStream(getClass().getResource(resource).getPath());
-        context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
+        SchemaContext context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
         stream.close();
 
-        Module module = null;
         resource = "/context-test/test1.yang";
         InputStream stream2 = new FileInputStream(getClass().getResource(resource).getPath());
-        module = TestUtils.loadModuleWithContext(stream2, context);
+        Module module = TestUtils.loadModuleWithContext(stream2, context);
         stream2.close();
         assertNotNull(module);
 
@@ -91,13 +89,13 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUsesFromContext() throws Exception {
-        SchemaContext context = null;
-        try (InputStream stream1 = new FileInputStream(getClass().getResource("/model/custom.yang").getPath());
-                InputStream stream2 = new FileInputStream(getClass().getResource("/model/types.yang").getPath());
-                InputStream stream3 = new FileInputStream(getClass().getResource("/model/nodes.yang").getPath())) {
+        SchemaContext context;
+        try (InputStream stream1 = new FileInputStream(getClass().getResource("/model/baz.yang").getPath());
+                InputStream stream2 = new FileInputStream(getClass().getResource("/model/bar.yang").getPath());
+                InputStream stream3 = new FileInputStream(getClass().getResource("/model/foo.yang").getPath())) {
             context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3)));
         }
-        Module testModule = null;
+        Module testModule;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test2.yang").getPath())) {
             testModule = TestUtils.loadModuleWithContext(stream, context);
         }
@@ -107,7 +105,7 @@ public class YangParserWithContextTest {
         // suffix _g = defined in grouping from context
 
         // get grouping
-        Module contextModule = context.findModuleByNamespace(URI.create("urn:custom.nodes.test")).iterator().next();
+        Module contextModule = context.findModuleByNamespace(URI.create("urn:opendaylight.baz")).iterator().next();
         assertNotNull(contextModule);
         Set<GroupingDefinition> groupings = contextModule.getGroupings();
         assertEquals(1, groupings.size());
@@ -194,13 +192,13 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUsesRefineFromContext() throws Exception {
-        SchemaContext context = null;
-        try (InputStream stream1 = new FileInputStream(getClass().getResource("/model/custom.yang").getPath());
-                InputStream stream2 = new FileInputStream(getClass().getResource("/model/types.yang").getPath());
-                InputStream stream3 = new FileInputStream(getClass().getResource("/model/nodes.yang").getPath())) {
+        SchemaContext context;
+        try (InputStream stream1 = new FileInputStream(getClass().getResource("/model/baz.yang").getPath());
+                InputStream stream2 = new FileInputStream(getClass().getResource("/model/bar.yang").getPath());
+                InputStream stream3 = new FileInputStream(getClass().getResource("/model/foo.yang").getPath())) {
             context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3)));
         }
-        Module module = null;
+        Module module;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test2.yang").getPath())) {
             module = TestUtils.loadModuleWithContext(stream, context);
         }
@@ -213,8 +211,8 @@ public class YangParserWithContextTest {
         UsesNode usesNode = usesNodes.iterator().next();
 
         // test grouping path
-        List<QName> path = new ArrayList<QName>();
-        QName qname = new QName(URI.create("urn:custom.nodes.test"), simpleDateFormat.parse("2013-02-27"), "c",
+        List<QName> path = new ArrayList<>();
+        QName qname = new QName(URI.create("urn:opendaylight.baz"), simpleDateFormat.parse("2013-02-27"), "baz",
                 "target");
         path.add(qname);
         SchemaPath expectedPath = new SchemaPath(path, true);
@@ -270,13 +268,13 @@ public class YangParserWithContextTest {
 
     @Test
     public void testIdentity() throws Exception {
-        SchemaContext context = null;
+        SchemaContext context;
         File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
         File dependenciesDir = new File(getClass().getResource("/ietf").getPath());
         YangModelParser parser = new YangParserImpl();
         context = parser.resolveSchemaContext(parser.parseYangModels(yangFile, dependenciesDir));
 
-        Module module = null;
+        Module module;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test3.yang").getPath())) {
             module = TestUtils.loadModuleWithContext(stream, context);
         }
@@ -302,13 +300,13 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUnknownNodes() throws Exception {
-        SchemaContext context = null;
+        SchemaContext context;
         File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
         File dependenciesDir = new File(getClass().getResource("/ietf").getPath());
         YangModelParser parser = new YangParserImpl();
         context = parser.resolveSchemaContext(parser.parseYangModels(yangFile, dependenciesDir));
 
-        Module module = null;
+        Module module;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test3.yang").getPath())) {
             module = TestUtils.loadModuleWithContext(stream, context);
         }
@@ -330,7 +328,7 @@ public class YangParserWithContextTest {
     @Test
     public void testAugment() throws Exception {
         // load first module
-        SchemaContext context = null;
+        SchemaContext context;
         String resource = "/context-augment-test/test4.yang";
 
         try (InputStream stream = new FileInputStream(getClass().getResource(resource).getPath())) {
@@ -343,7 +341,7 @@ public class YangParserWithContextTest {
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
 
         // load another modules and parse them against already existing context
-        Set<Module> modules = null;
+        Set<Module> modules;
         try (InputStream stream1 = new FileInputStream(getClass().getResource("/context-augment-test/test1.yang")
                 .getPath());
                 InputStream stream2 = new FileInputStream(getClass().getResource("/context-augment-test/test2.yang")
@@ -376,15 +374,15 @@ public class YangParserWithContextTest {
     @Test
     public void testDeviation() throws Exception {
         // load first module
-        SchemaContext context = null;
-        String resource = "/model/types.yang";
+        SchemaContext context;
+        String resource = "/model/bar.yang";
 
         try (InputStream stream = new FileInputStream(getClass().getResource(resource).getPath())) {
             context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
         }
 
         // load another modules and parse them against already existing context
-        Set<Module> modules = null;
+        Set<Module> modules;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/deviation-test.yang")
                 .getPath())) {
             List<InputStream> input = Lists.newArrayList(stream);
@@ -400,12 +398,12 @@ public class YangParserWithContextTest {
 
         assertEquals("system/user ref", dev.getReference());
 
-        URI expectedNS = URI.create("urn:simple.types.test");
+        URI expectedNS = URI.create("urn:opendaylight.bar");
         DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date expectedRev = simpleDateFormat.parse("2013-07-03");
-        List<QName> path = new ArrayList<QName>();
-        path.add(new QName(expectedNS, expectedRev, "t", "interfaces"));
-        path.add(new QName(expectedNS, expectedRev, "t", "ifEntry"));
+        List<QName> path = new ArrayList<>();
+        path.add(new QName(expectedNS, expectedRev, "bar", "interfaces"));
+        path.add(new QName(expectedNS, expectedRev, "bar", "ifEntry"));
         SchemaPath expectedPath = new SchemaPath(path, true);
 
         assertEquals(expectedPath, dev.getTargetPath());
