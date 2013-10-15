@@ -38,10 +38,11 @@
 
     <modules>
         <module>concepts</module>
+        <module>concepts-util</module>
         <module>yang</module>
         <module>code-generator</module>
-        <!--module>restconf</module -->
         <module>model</module>
+        <!-- module>third-party</module-->
     </modules>
 
     <pluginRepositories>
