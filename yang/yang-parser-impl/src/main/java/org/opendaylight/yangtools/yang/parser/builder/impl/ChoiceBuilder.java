@@ -26,13 +26,12 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuil
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder,
-        AugmentationTargetBuilder, GroupingMember {
+        AugmentationTargetBuilder {
     private boolean isBuilt;
     private final ChoiceNodeImpl instance;
     // DataSchemaNode args
@@ -41,10 +40,10 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     private Boolean configuration;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
-    private final Set<AugmentationSchemaBuilder> addedAugmentations = new HashSet<AugmentationSchemaBuilder>();
+    private final Set<AugmentationSchemaBuilder> addedAugmentations = new HashSet<>();
     // ChoiceNode args
     private Set<ChoiceCaseNode> cases;
-    private final Set<ChoiceCaseBuilder> addedCases = new HashSet<ChoiceCaseBuilder>();
+    private final Set<ChoiceCaseBuilder> addedCases = new HashSet<>();
     private String defaultCase;
 
     public ChoiceBuilder(final String moduleName, final int line, final QName qname) {
@@ -68,7 +67,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
             // CASES
             if (cases == null) {
-                cases = new TreeSet<ChoiceCaseNode>(Comparators.SCHEMA_NODE_COMP);
+                cases = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
                 for (ChoiceCaseBuilder caseBuilder : addedCases) {
                     cases.add(caseBuilder.build());
                 }
@@ -76,7 +75,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             instance.setCases(cases);
 
             // AUGMENTATIONS
-            final Set<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
+            final Set<AugmentationSchema> augmentations = new HashSet<>();
             for (AugmentationSchemaBuilder builder : addedAugmentations) {
                 augmentations.add(builder.build());
             }
@@ -84,7 +83,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
             // UNKNOWN NODES
             if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
+                unknownNodes = new ArrayList<>();
                 for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                     unknownNodes.add(b.build());
                 }

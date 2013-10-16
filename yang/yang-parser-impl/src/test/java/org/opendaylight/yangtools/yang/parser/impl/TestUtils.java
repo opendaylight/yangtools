@@ -25,8 +25,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -146,17 +149,58 @@ final class TestUtils {
     }
 
     /**
-     * Test if node has augmenting flag set to true. In case this is
-     * DataNodeContainer, check his child nodes too.
-     *
+     * Test if node has augmenting flag set to expected value. In case this is
+     * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
+     * 
      * @param node
      *            node to check
+     * @param expected
+     *            expected value
      */
     public static void checkIsAugmenting(DataSchemaNode node, boolean expected) {
         assertEquals(expected, node.isAugmenting());
         if (node instanceof DataNodeContainer) {
             for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
                 checkIsAugmenting(child, expected);
+            }
+        } else if (node instanceof ChoiceNode) {
+            for (ChoiceCaseNode caseNode : ((ChoiceNode) node).getCases()) {
+                checkIsAugmenting(caseNode, expected);
+            }
+        }
+    }
+
+    /**
+     * Check if node has addedByUses flag set to expected value. In case this is
+     * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
+     * 
+     * @param node
+     *            node to check
+     * @param expected
+     *            expected value
+     */
+    public static void checkIsAddedByUses(DataSchemaNode node, boolean expected) {
+        assertEquals(expected, node.isAddedByUses());
+        if (node instanceof DataNodeContainer) {
+            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
+                checkIsAddedByUses(child, expected);
+            }
+        } else if (node instanceof ChoiceNode) {
+            for (ChoiceCaseNode caseNode : ((ChoiceNode) node).getCases()) {
+                checkIsAddedByUses(caseNode, expected);
+            }
+        }
+    }
+
+    public static void checkIsAddedByUses(GroupingDefinition node, boolean expected) {
+        assertEquals(expected, node.isAddedByUses());
+        if (node instanceof DataNodeContainer) {
+            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
+                checkIsAddedByUses(child, expected);
+            }
+        } else if (node instanceof ChoiceNode) {
+            for (ChoiceCaseNode caseNode : ((ChoiceNode) node).getCases()) {
+                checkIsAddedByUses(caseNode, expected);
             }
         }
     }

@@ -19,10 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 
-public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder, GroupingMember {
+public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder {
     private boolean built;
     private final AnyXmlSchemaNodeImpl instance;
     private final ConstraintsBuilder constraints;
@@ -52,7 +51,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
 
             // UNKNOWN NODES
             if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
+                unknownNodes = new ArrayList<>();
                 for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                     unknownNodes.add(b.build());
                 }

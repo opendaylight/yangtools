@@ -233,6 +233,11 @@ public final class ParserUtils {
                 uses.setParentAugment(augment);
                 uses.setAugmenting(true);
             }
+        } else if (child instanceof ChoiceBuilder) {
+            val ChoiceBuilder choiceChild = child as ChoiceBuilder;
+            for (inner : choiceChild.cases) {
+                setNodeAugmenting(inner, augment);
+            }
         }
     }
 

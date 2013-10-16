@@ -20,12 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
-public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder,
-        GroupingMember {
+public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder {
     private boolean isBuilt;
     private final LeafSchemaNodeImpl instance;
     // SchemaNode args
@@ -76,7 +74,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
 
             // UNKNOWN NODES
             if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
+                unknownNodes = new ArrayList<>();
                 for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                     unknownNodes.add(b.build());
                 }

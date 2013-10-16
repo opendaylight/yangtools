@@ -39,11 +39,12 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     private Status status = Status.CURRENT;
     // DataSchemaNode args
     private boolean augmenting;
+    private boolean addedByUses;
     private final ConstraintsBuilder constraints;
     // DataNodeContainer args
-    private final Set<UsesNodeBuilder> addedUsesNodes = new HashSet<UsesNodeBuilder>();
+    private final Set<UsesNodeBuilder> addedUsesNodes = new HashSet<>();
     // AugmentationTarget args
-    private final Set<AugmentationSchemaBuilder> addedAugmentations = new HashSet<AugmentationSchemaBuilder>();
+    private final Set<AugmentationSchemaBuilder> addedAugmentations = new HashSet<>();
 
     public ChoiceCaseBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line, qname);
@@ -60,23 +61,24 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
             instance.setReference(reference);
             instance.setStatus(status);
             instance.setAugmenting(augmenting);
+            instance.setAddedByUses(addedByUses);
 
             // CHILD NODES
-            final Map<QName, DataSchemaNode> childs = new TreeMap<QName, DataSchemaNode>(Comparators.QNAME_COMP);
+            final Map<QName, DataSchemaNode> childs = new TreeMap<>(Comparators.QNAME_COMP);
             for (DataSchemaNodeBuilder node : addedChildNodes) {
                 childs.put(node.getQName(), node.build());
             }
             instance.setChildNodes(childs);
 
             // USES
-            final Set<UsesNode> uses = new HashSet<UsesNode>();
+            final Set<UsesNode> uses = new HashSet<>();
             for (UsesNodeBuilder builder : addedUsesNodes) {
                 uses.add(builder.build());
             }
             instance.setUses(uses);
 
             // UNKNOWN NODES
-            final List<UnknownSchemaNode> unknownNodes = new ArrayList<UnknownSchemaNode>();
+            final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                 unknownNodes.add(b.build());
             }
@@ -84,7 +86,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
             instance.setUnknownSchemaNodes(unknownNodes);
 
             // AUGMENTATIONS
-            final Set<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
+            final Set<AugmentationSchema> augmentations = new HashSet<>();
             for (AugmentationSchemaBuilder builder : addedAugmentations) {
                 augmentations.add(builder.build());
             }
@@ -146,6 +148,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         }
     }
 
+    @Override
     public boolean isAugmenting() {
         return augmenting;
     }
@@ -153,6 +156,16 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     @Override
     public void setAugmenting(boolean augmenting) {
         this.augmenting = augmenting;
+    }
+
+    @Override
+    public boolean isAddedByUses() {
+        return addedByUses;
+    }
+
+    @Override
+    public void setAddedByUses(boolean addedByUses) {
+        this.addedByUses = addedByUses;
     }
 
     public Set<UsesNodeBuilder> getUsesNodes() {
@@ -243,6 +256,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         private String reference;
         private Status status = Status.CURRENT;
         private boolean augmenting;
+        private boolean addedByUses;
         private ConstraintDefinition constraints;
         private Map<QName, DataSchemaNode> childNodes = Collections.emptyMap();
         private Set<AugmentationSchema> augmentations = Collections.emptySet();
@@ -321,7 +335,11 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
         @Override
         public boolean isAddedByUses() {
-            return false;
+            return addedByUses;
+        }
+
+        private void setAddedByUses(boolean addedByUses) {
+            this.addedByUses = addedByUses;
         }
 
         @Override
@@ -346,7 +364,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            return new HashSet<DataSchemaNode>(childNodes.values());
+            return new HashSet<>(childNodes.values());
         }
 
         private void setChildNodes(Map<QName, DataSchemaNode> childNodes) {
@@ -445,7 +463,8 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         public String toString() {
             StringBuilder sb = new StringBuilder(ChoiceCaseNodeImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("qname=" + qname);
+            sb.append("qname=");
+            sb.append(qname);
             sb.append("]");
             return sb.toString();
         }

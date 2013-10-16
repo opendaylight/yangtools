@@ -32,14 +32,13 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuil
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilder implements DataSchemaNodeBuilder,
-        AugmentationTargetBuilder, GroupingMember {
+        AugmentationTargetBuilder {
     private boolean isBuilt;
     private final ListSchemaNodeImpl instance;
     // SchemaNode args
@@ -54,12 +53,12 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     private final ConstraintsBuilder constraints;
     // DataNodeContainer args
     private Set<TypeDefinition<?>> typedefs;
-    private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<TypeDefinitionBuilder>();
+    private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<>();
     private Set<UsesNode> usesNodes;
-    private final Set<UsesNodeBuilder> addedUsesNodes = new HashSet<UsesNodeBuilder>();
+    private final Set<UsesNodeBuilder> addedUsesNodes = new HashSet<>();
     // AugmentationTarget args
     private Set<AugmentationSchema> augmentations;
-    private final Set<AugmentationSchemaBuilder> addedAugmentations = new HashSet<AugmentationSchemaBuilder>();
+    private final Set<AugmentationSchemaBuilder> addedAugmentations = new HashSet<>();
     // ListSchemaNode args
     private List<QName> keyDefinition = Collections.emptyList();
     private boolean userOrdered;
@@ -85,7 +84,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
             instance.setUserOrdered(userOrdered);
 
             // CHILD NODES
-            final Map<QName, DataSchemaNode> childs = new TreeMap<QName, DataSchemaNode>(Comparators.QNAME_COMP);
+            final Map<QName, DataSchemaNode> childs = new TreeMap<>(Comparators.QNAME_COMP);
             if (childNodes == null || childNodes.isEmpty()) {
                 for (DataSchemaNodeBuilder node : addedChildNodes) {
                     childs.put(node.getQName(), node.build());
@@ -99,7 +98,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
             // TYPEDEFS
             if (typedefs == null) {
-                typedefs = new TreeSet<TypeDefinition<?>>(Comparators.SCHEMA_NODE_COMP);
+                typedefs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
                 for (TypeDefinitionBuilder entry : addedTypedefs) {
                     typedefs.add(entry.build());
                 }
@@ -108,7 +107,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
             // USES
             if (usesNodes == null) {
-                usesNodes = new HashSet<UsesNode>();
+                usesNodes = new HashSet<>();
                 for (UsesNodeBuilder builder : addedUsesNodes) {
                     usesNodes.add(builder.build());
                 }
@@ -117,7 +116,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
             // GROUPINGS
             if (groupings == null) {
-                groupings = new TreeSet<GroupingDefinition>(Comparators.SCHEMA_NODE_COMP);
+                groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
                 for (GroupingBuilder builder : addedGroupings) {
                     groupings.add(builder.build());
                 }
@@ -126,7 +125,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
             // AUGMENTATIONS
             if (augmentations == null) {
-                augmentations = new HashSet<AugmentationSchema>();
+                augmentations = new HashSet<>();
                 for (AugmentationSchemaBuilder builder : addedAugmentations) {
                     augmentations.add(builder.build());
                 }
@@ -135,7 +134,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
             // UNKNOWN NODES
             if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
+                unknownNodes = new ArrayList<>();
                 for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                     unknownNodes.add(b.build());
                 }
@@ -171,8 +170,10 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     public void addTypedef(final TypeDefinitionBuilder type) {
         String typeName = type.getQName().getLocalName();
         for (TypeDefinitionBuilder addedTypedef : addedTypedefs) {
-            throw new YangParseException(moduleName, type.getLine(), "Can not add typedef '" + typeName
-                    + "': typedef with same name already declared at line " + addedTypedef.getLine());
+            if (addedTypedef.getQName().getLocalName().equals(typeName)) {
+                throw new YangParseException(moduleName, type.getLine(), "Can not add typedef '" + typeName
+                        + "': typedef with same name already declared at line " + addedTypedef.getLine());
+            }
         }
         addedTypedefs.add(type);
     }
@@ -467,7 +468,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            return new HashSet<DataSchemaNode>(childNodes.values());
+            return new HashSet<>(childNodes.values());
         }
 
         private void setChildNodes(Map<QName, DataSchemaNode> childNodes) {

@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
  * Interface for all yang data-schema nodes [anyxml, case, container, grouping,
  * list, module, notification].
  */
-public interface DataSchemaNodeBuilder extends SchemaNodeBuilder {
+public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember {
 
     void setQName(QName qname);
 

@@ -212,29 +212,18 @@ public final class GroupingUtils {
 
         // child nodes
         for (DataSchemaNodeBuilder child : usesNode.getTargetChildren()) {
-            if (child instanceof GroupingMember) {
-                setAddedByUsesToNode((GroupingMember)child);
-            }
+            setAddedByUsesToNode(child);
 
-            if (child instanceof GroupingMember) {
-                GroupingMember gm = (GroupingMember) child;
-                if (gm.isAddedByUses()) {
-                    if (usesNode.isAugmenting()) {
-                        child.setAugmenting(true);
-                    }
-                    if (usesNode.isAugmenting()
-                            && !(usesNode.getParentAugment().getParent() instanceof UsesNodeBuilder)) {
-                        AugmentationSchemaBuilder parentAugment = usesNode.getParentAugment();
-                        ModuleBuilder m = ParserUtils.getParentModule(parentAugment);
-                        correctNodePathForUsesNodes(child, parentPath, m);
-                    } else {
-                        child.setQName(new QName(ns, rev, prefix, child.getQName().getLocalName()));
-                        correctNodePathForUsesNodes(child, parentPath, module);
-                    }
-                }
+            if (usesNode.isAugmenting()) {
+                child.setAugmenting(true);
+            }
+            if (usesNode.isAugmenting() && !(usesNode.getParentAugment().getParent() instanceof UsesNodeBuilder)) {
+                AugmentationSchemaBuilder parentAugment = usesNode.getParentAugment();
+                ModuleBuilder m = ParserUtils.getParentModule(parentAugment);
+                correctNodePathForUsesNodes(child, parentPath, m);
             } else {
-                throw new YangParseException(module.getName(), usesNode.getLine(),
-                        "Failed to process uses node: unresolved child node");
+                child.setQName(new QName(ns, rev, prefix, child.getQName().getLocalName()));
+                correctNodePathForUsesNodes(child, parentPath, module);
             }
 
             parent.addChildNode(child);
@@ -242,7 +231,7 @@ public final class GroupingUtils {
 
         // groupings
         for (GroupingBuilder gb : usesNode.getTargetGroupings()) {
-            gb.setAddedByUses(true);
+            setAddedByUsesToNode(gb);
             gb.setQName(new QName(ns, rev, prefix, gb.getQName().getLocalName()));
             correctNodePathForUsesNodes(gb, parentPath, module);
             parent.addGrouping(gb);
@@ -250,7 +239,7 @@ public final class GroupingUtils {
 
         // typedefs
         for (TypeDefinitionBuilder tdb : usesNode.getTargetTypedefs()) {
-            tdb.setAddedByUses(true);
+            setAddedByUsesToNode(tdb);
             tdb.setQName(new QName(ns, rev, prefix, tdb.getQName().getLocalName()));
             correctNodePathForUsesNodes(tdb, parentPath, module);
             parent.addTypedef(tdb);
@@ -268,10 +257,13 @@ public final class GroupingUtils {
     private static void setAddedByUsesToNode(GroupingMember node) {
         node.setAddedByUses(true);
         if (node instanceof DataNodeContainerBuilder) {
-            for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder)node).getChildNodeBuilders()) {
-                if (child instanceof GroupingMember) {
-                    setAddedByUsesToNode((GroupingMember)child);
-                }
+            for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder) node).getChildNodeBuilders()) {
+                setAddedByUsesToNode(child);
+
+            }
+        } else if (node instanceof ChoiceBuilder) {
+            for (ChoiceCaseBuilder caseNode : ((ChoiceBuilder) node).getCases()) {
+                setAddedByUsesToNode((caseNode));
             }
         }
     }
@@ -335,9 +327,7 @@ public final class GroupingUtils {
             }
             if (!exists) {
                 DataSchemaNodeBuilder copy = CopyUtils.copy(childNode, parent, true);
-                if (copy instanceof GroupingMember) {
-                    setAddedByUsesToNode((GroupingMember)copy);
-                }
+                setAddedByUsesToNode((GroupingMember) copy);
                 collection.add(copy);
             }
         }
