@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 /**
  * Contains the methods for converting strings to valid JAVA language strings
  * (package names, class names, attribute names).
- * 
- * 
+ *
+ *
  */
 public final class BindingGeneratorUtil {
 
@@ -46,17 +46,17 @@ public final class BindingGeneratorUtil {
 
     /**
      * Converts string <code>packageName</code> to valid JAVA package name.
-     * 
+     *
      * If some words of package name are digits of JAVA reserved words they are
      * prefixed with underscore character.
-     * 
+     *
      * @param packageName
      *            string which contains words separated by point.
      * @return package name which contains words separated by point.
      */
     private static String validateJavaPackage(final String packageName) {
         if (packageName != null) {
-            final String[] packNameParts = packageName.split("\\.");
+            final String[] packNameParts = packageName.toLowerCase().split("\\.");
             if (packNameParts != null) {
                 final StringBuilder builder = new StringBuilder();
                 for (int i = 0; i < packNameParts.length; ++i) {
@@ -79,10 +79,10 @@ public final class BindingGeneratorUtil {
 
     /**
      * Converts <code>parameterName</code> to valid JAVA parameter name.
-     * 
+     *
      * If the <code>parameterName</code> is one of the JAVA reserved words then
      * it is prefixed with underscore character.
-     * 
+     *
      * @param parameterName
      *            string with the parameter name
      * @return string with the admissible parameter name
@@ -96,7 +96,7 @@ public final class BindingGeneratorUtil {
 
     /**
      * Converts module name to valid JAVA package name.
-     * 
+     *
      * The package name consists of:
      * <ul>
      * <li>prefix - <i>org.opendaylight.yang.gen.v</i></li>
@@ -105,7 +105,7 @@ public final class BindingGeneratorUtil {
      * <li>revision prefix - <i>.rev</i></li>
      * <li>revision - YYYYMMDD (MM and DD aren't spread to the whole length)</li>
      * </ul>
-     * 
+     *
      * @param module
      *            module which contains data about namespace and revision date
      * @return string with the valid JAVA package name
@@ -148,11 +148,11 @@ public final class BindingGeneratorUtil {
     /**
      * Creates package name from specified <code>basePackageName</code> (package
      * name for module) and <code>schemaPath</code>.
-     * 
+     *
      * Resulting package name is concatenation of <code>basePackageName</code>
      * and all local names of YANG nodes which are parents of some node for
      * which <code>schemaPath</code> is specified.
-     * 
+     *
      * @param basePackageName
      *            string with package name of the module
      * @param schemaPath
@@ -186,7 +186,7 @@ public final class BindingGeneratorUtil {
     /**
      * Generates the package name for type definition from
      * <code>typeDefinition</code> and <code>basePackageName</code>.
-     * 
+     *
      * @param basePackageName
      *            string with the package name of the module
      * @param typeDefinition
@@ -215,7 +215,7 @@ public final class BindingGeneratorUtil {
     /**
      * Converts <code>token</code> to string which is in accordance with best
      * practices for JAVA class names.
-     * 
+     *
      * @param token
      *            string which contains characters which should be converted to
      *            JAVA class name
@@ -229,7 +229,7 @@ public final class BindingGeneratorUtil {
     /**
      * Converts <code>token</code> to string which is in accordance with best
      * practices for JAVA parameter names.
-     * 
+     *
      * @param token
      *            string which contains characters which should be converted to
      *            JAVA parameter name
@@ -241,9 +241,9 @@ public final class BindingGeneratorUtil {
     }
 
     /**
-     * 
+     *
      * Converts string <code>token</code> to the cammel case format.
-     * 
+     *
      * @param token
      *            string which should be converted to the cammel case format
      * @param uppercase
@@ -292,7 +292,7 @@ public final class BindingGeneratorUtil {
      * Replaces all the occurances of the <code>removalChar</code> in the
      * <code>text</code> with empty string and converts following character to
      * upper case.
-     * 
+     *
      * @param text
      *            string with source text which should be converted
      * @param removalChar
