@@ -192,6 +192,20 @@ public final class GroupingUtils {
         return null;
     }
 
+    private static void setNodeAugmenting(DataSchemaNodeBuilder node) {
+        node.setAugmenting(true);
+        if (node instanceof DataNodeContainerBuilder) {
+            for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder)node).getChildNodeBuilders()) {
+                setNodeAugmenting(child);
+            }
+        }
+        if (node instanceof ChoiceBuilder) {
+            for (ChoiceCaseBuilder child : ((ChoiceBuilder)node).getCases()) {
+                setNodeAugmenting(child);
+            }
+        }
+    }
+
     /**
      * Add nodes defined in uses target grouping to uses parent.
      *
@@ -215,7 +229,8 @@ public final class GroupingUtils {
             setAddedByUsesToNode(child);
 
             if (usesNode.isAugmenting()) {
-                child.setAugmenting(true);
+                //child.setAugmenting(true);
+                setNodeAugmenting(child);
             }
             if (usesNode.isAugmenting() && !(usesNode.getParentAugment().getParent() instanceof UsesNodeBuilder)) {
                 AugmentationSchemaBuilder parentAugment = usesNode.getParentAugment();
@@ -327,7 +342,7 @@ public final class GroupingUtils {
             }
             if (!exists) {
                 DataSchemaNodeBuilder copy = CopyUtils.copy(childNode, parent, true);
-                setAddedByUsesToNode((GroupingMember) copy);
+                setAddedByUsesToNode(copy);
                 collection.add(copy);
             }
         }

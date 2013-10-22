@@ -1,0 +1,22 @@
+module bar {
+    yang-version 1;
+    namespace "urn:opendaylight:bar";
+    prefix "bar";
+
+    revision "2013-10-08" {
+    }
+
+    grouping basic-explicit-route-subobjects {
+        choice subobject-type {
+            case ip-prefix {
+            }
+            case label {
+            }
+        }
+    }
+
+    grouping explicit-route-subobjects {
+        uses basic-explicit-route-subobjects;
+    }
+
+}

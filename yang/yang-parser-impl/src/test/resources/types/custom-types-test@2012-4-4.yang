@@ -52,8 +52,9 @@ module custom-types-test {
 
     leaf inst-id-leaf1 {
         type instance-identifier {
-     	    require-instance false;
+            require-instance false;
         }
+        iit:mountpoint "mnt-extension";
     }
 
     leaf inst-id-leaf2 {
@@ -67,6 +68,7 @@ module custom-types-test {
     identity crypto-id {
         base "crypto-base";
         description "crypto-id description";
+        iit:mountpoint "mnt-extension";
     }
 
     identity crypto-base {

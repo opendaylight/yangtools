@@ -23,7 +23,6 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
     protected String description;
     protected String reference;
     protected Status status = Status.CURRENT;
-    protected List<UnknownSchemaNode> unknownNodes;
 
     protected AbstractSchemaNodeBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line);
@@ -34,7 +33,7 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+        result = prime * result + ((parentBuilder == null) ? 0 : parentBuilder.hashCode());
         result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
         return result;
     }
@@ -54,11 +53,11 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
             return false;
         }
         AbstractSchemaNodeBuilder other = (AbstractSchemaNodeBuilder) obj;
-        if (parent == null) {
-            if (other.parent != null) {
+        if (parentBuilder == null) {
+            if (other.parentBuilder != null) {
                 return false;
             }
-        } else if (!parent.equals(other.parent)) {
+        } else if (!parentBuilder.equals(other.parentBuilder)) {
             return false;
         }
         if (schemaPath == null) {

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,12 +15,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
@@ -46,14 +45,14 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public TypeDefinition<? extends TypeDefinition<?>> build() {
+    public TypeDefinition<? extends TypeDefinition<?>> build(YangNode parent) {
         TypeDefinition<?> result = null;
         ExtendedType.Builder typeBuilder = null;
         if ((type == null || type instanceof UnknownType) && typedef == null) {
             throw new YangParseException("Unresolved type: '" + qname.getLocalName() + "'.");
         }
         if (type == null || type instanceof UnknownType) {
-            type = typedef.build();
+            type = typedef.build(parent);
         }
 
         typeBuilder = new ExtendedType.Builder(qname, type, description, reference, schemaPath);
@@ -69,13 +68,10 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
         typeBuilder.fractionDigits(fractionDigits);
 
         // UNKNOWN NODES
-        if (unknownNodes == null) {
-            unknownNodes = new ArrayList<UnknownSchemaNode>();
-            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
-            }
-            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+        for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+            unknownNodes.add(b.build(null));
         }
+        Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
         typeBuilder.unknownSchemaNodes(unknownNodes);
         result = typeBuilder.build();
         return result;

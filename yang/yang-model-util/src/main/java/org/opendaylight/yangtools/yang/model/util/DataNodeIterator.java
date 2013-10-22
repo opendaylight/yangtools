@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public class DataNodeIterator implements Iterator<DataSchemaNode> {
 
@@ -31,6 +32,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     private final List<ChoiceNode> allChoices;
     private final List<DataSchemaNode> allChilds;
     private final List<GroupingDefinition> allGroupings;
+    private final List<TypeDefinition<?>> allTypedefs;
 
     public DataNodeIterator(final DataNodeContainer container) {
         if (container == null) {
@@ -42,6 +44,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         this.allChilds = new ArrayList<>();
         this.allChoices = new ArrayList<>();
         this.allGroupings = new ArrayList<>();
+        this.allTypedefs = new ArrayList<>();
 
         this.container = container;
         traverse(this.container);
@@ -61,6 +64,10 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
 
     public List<GroupingDefinition> allGroupings() {
         return allGroupings;
+    }
+
+    public List<TypeDefinition<?>> allTypedefs() {
+        return allTypedefs;
     }
 
     private void traverse(final DataNodeContainer dataNode) {
@@ -96,6 +103,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
             }
         }
 
+        this.allTypedefs.addAll(dataNode.getTypeDefinitions());
         traverseModule(dataNode);
         traverseGroupings(dataNode);
 
@@ -108,12 +116,15 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         } else {
             return;
         }
+
         final Set<NotificationDefinition> notifications = module.getNotifications();
         for (NotificationDefinition notificationDefinition : notifications) {
             traverse(notificationDefinition);
         }
+
         final Set<RpcDefinition> rpcs = module.getRpcs();
         for (RpcDefinition rpcDefinition : rpcs) {
+            this.allTypedefs.addAll(rpcDefinition.getTypeDefinitions());
             ContainerSchemaNode input = rpcDefinition.getInput();
             if (input != null) {
                 traverse(input);

@@ -218,6 +218,7 @@ public final class ParserUtils {
         }
         for (UsesNodeBuilder usesNode : augment.getUsesNodes()) {
             val copy = CopyUtils.copyUses(usesNode, target);
+            copy.setAugmenting(true);
             target.addUsesNode(copy);
         }
     }
@@ -392,7 +393,7 @@ public final class ParserUtils {
     }
     
     public static def getRpc(ModuleBuilder module,String name) {
-        for(rpc : module.rpcs) {
+        for(rpc : module.getRpcs()) {
             if(name == rpc.QName.localName) {
                 return rpc;
             }
@@ -401,7 +402,7 @@ public final class ParserUtils {
     }
     
     public static def getNotification(ModuleBuilder module,String name) {
-        for(notification : module.notifications) {
+        for(notification : module.getNotifications()) {
             if(name == notification.QName.localName) {
                 return notification;
             }
@@ -668,5 +669,6 @@ public final class ParserUtils {
             }
             return parent as ModuleBuilder;
         }
-    }
-    
+
+}
+

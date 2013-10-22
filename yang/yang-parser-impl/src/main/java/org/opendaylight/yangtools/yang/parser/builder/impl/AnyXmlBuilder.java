@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
@@ -38,8 +38,9 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     @Override
-    public AnyXmlSchemaNode build() {
+    public AnyXmlSchemaNode build(YangNode parent) {
         if (!built) {
+            instance.setParent(parent);
             instance.setPath(schemaPath);
             instance.setConstraints(constraints.build());
             instance.setDescription(description);
@@ -50,11 +51,8 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
             instance.setAddedByUses(addedByUses);
 
             // UNKNOWN NODES
-            if (unknownNodes == null) {
-                unknownNodes = new ArrayList<>();
-                for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                    unknownNodes.add(b.build());
-                }
+            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+                unknownNodes.add(b.build(instance));
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
@@ -135,11 +133,11 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         } else if (!schemaPath.equals(other.schemaPath)) {
             return false;
         }
-        if (parent == null) {
-            if (other.parent != null) {
+        if (parentBuilder == null) {
+            if (other.parentBuilder != null) {
                 return false;
             }
-        } else if (!parent.equals(other.parent)) {
+        } else if (!parentBuilder.equals(other.parentBuilder)) {
             return false;
         }
         return true;
@@ -153,6 +151,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     private final class AnyXmlSchemaNodeImpl implements AnyXmlSchemaNode {
         private final QName qname;
         private SchemaPath path;
+        private YangNode parent;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
@@ -178,6 +177,15 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
 
         private void setPath(final SchemaPath path) {
             this.path = path;
+        }
+
+        @Override
+        public YangNode getParent() {
+            return parent;
+        }
+
+        private void setParent(YangNode parent) {
+            this.parent = parent;
         }
 
         @Override

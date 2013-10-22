@@ -12,6 +12,7 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -23,7 +24,7 @@ public interface TypeDefinitionBuilder extends TypeAwareBuilder, SchemaNodeBuild
 
     void setQName(QName qname);
 
-    TypeDefinition<?> build();
+    TypeDefinition<?> build(YangNode parent);
 
     List<RangeConstraint> getRanges();
 

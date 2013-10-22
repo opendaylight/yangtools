@@ -1,0 +1,23 @@
+module foo {
+    yang-version 1;
+    namespace "urn:opendaylight:foo";
+    prefix "foo";
+
+    revision "2013-10-08" {
+    }
+
+    grouping path-attributes {
+        container origin {
+            leaf value {
+                type string;
+            }
+        }
+    }
+
+    notification update {
+        container path-attributes {
+            uses path-attributes;
+        }
+    }
+
+}

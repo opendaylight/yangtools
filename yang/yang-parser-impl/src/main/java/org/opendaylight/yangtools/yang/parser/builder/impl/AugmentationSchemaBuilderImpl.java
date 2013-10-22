@@ -7,13 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
@@ -51,7 +49,6 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private SchemaPath targetPath;
     private SchemaPath targetNodeSchemaPath;
 
-    private final Set<UsesNodeBuilder> usesNodes = new HashSet<UsesNodeBuilder>();
     private boolean resolved;
 
     public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr) {
@@ -77,23 +74,14 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public Set<UsesNodeBuilder> getUsesNodes() {
-        return usesNodes;
-    }
-
-    @Override
-    public void addUsesNode(UsesNodeBuilder usesBuilder) {
-        usesNodes.add(usesBuilder);
-    }
-
-    @Override
     public SchemaPath getPath() {
         return targetNodeSchemaPath;
     }
 
     @Override
-    public AugmentationSchema build() {
+    public AugmentationSchema build(YangNode parent) {
         if (!built) {
+            instance.setParent(parent);
             instance.setDescription(description);
             instance.setReference(reference);
             instance.setStatus(status);
@@ -108,23 +96,21 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             instance.setWhenCondition(whenStmt);
 
             // CHILD NODES
-            final Map<QName, DataSchemaNode> childs = new TreeMap<QName, DataSchemaNode>(Comparators.QNAME_COMP);
             for (DataSchemaNodeBuilder node : addedChildNodes) {
-                childs.put(node.getQName(), node.build());
+                DataSchemaNode child = node.build(instance);
+                childNodes.put(child.getQName(), child);
             }
-            instance.setChildNodes(childs);
+            instance.setChildNodes(childNodes);
 
             // USES
-            final Set<UsesNode> usesNodeDefinitions = new HashSet<UsesNode>();
-            for (UsesNodeBuilder builder : usesNodes) {
-                usesNodeDefinitions.add(builder.build());
+            for (UsesNodeBuilder builder : addedUsesNodes) {
+                usesNodes.add(builder.build(instance));
             }
-            instance.setUses(usesNodeDefinitions);
+            instance.setUses(usesNodes);
 
             // UNKNOWN NODES
-            List<UnknownSchemaNode> unknownNodes = new ArrayList<UnknownSchemaNode>();
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
+                unknownNodes.add(b.build(instance));
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
@@ -220,7 +206,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         int result = 1;
         result = prime * result + ((augmentTargetStr == null) ? 0 : augmentTargetStr.hashCode());
         result = prime * result + ((whenCondition == null) ? 0 : whenCondition.hashCode());
-        result = prime * result + ((childNodes == null) ? 0 : childNodes.hashCode());
+        result = prime * result + ((addedChildNodes == null) ? 0 : addedChildNodes.hashCode());
         return result;
     }
 
@@ -250,11 +236,11 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         } else if (!whenCondition.equals(other.whenCondition)) {
             return false;
         }
-        if (childNodes == null) {
-            if (other.childNodes != null) {
+        if (addedChildNodes == null) {
+            if (other.addedChildNodes != null) {
                 return false;
             }
-        } else if (!childNodes.equals(other.childNodes)) {
+        } else if (!addedChildNodes.equals(other.addedChildNodes)) {
             return false;
         }
         return true;
@@ -265,6 +251,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     private final class AugmentationSchemaImpl implements AugmentationSchema {
+        private YangNode parent;
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
         private Map<QName, DataSchemaNode> childNodes = Collections.emptyMap();
@@ -276,6 +263,15 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
         private AugmentationSchemaImpl(SchemaPath targetPath) {
             this.targetPath = targetPath;
+        }
+
+        @Override
+        public YangNode getParent() {
+            return parent;
+        }
+
+        private void setParent(YangNode parent) {
+            this.parent = parent;
         }
 
         @Override

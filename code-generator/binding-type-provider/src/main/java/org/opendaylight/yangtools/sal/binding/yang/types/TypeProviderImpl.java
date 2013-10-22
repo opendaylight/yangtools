@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.binding.generator.util.BindingGenerator
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
@@ -561,7 +563,8 @@ public final class TypeProviderImpl implements TypeProvider {
             final String moduleName = module.getName();
             final String basePackageName = moduleNamespaceToPackageName(module);
 
-            final Set<TypeDefinition<?>> typeDefinitions = module.getTypeDefinitions();
+            final DataNodeIterator it = new DataNodeIterator(module);
+            final List<TypeDefinition<?>> typeDefinitions = it.allTypedefs();
             final List<TypeDefinition<?>> listTypeDefinitions = sortTypeDefinitionAccordingDepth(typeDefinitions);
 
             final Map<String, Type> typeMap = new HashMap<>();
@@ -1108,7 +1111,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *         definitions are in list behind them).
      */
     private List<TypeDefinition<?>> sortTypeDefinitionAccordingDepth(
-            final Set<TypeDefinition<?>> unsortedTypeDefinitions) {
+            final Collection<TypeDefinition<?>> unsortedTypeDefinitions) {
         List<TypeDefinition<?>> sortedTypeDefinition = new ArrayList<>();
 
         Map<Integer, List<TypeDefinition<?>>> typeDefinitionsDepths = new TreeMap<>();

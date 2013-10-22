@@ -1,0 +1,35 @@
+module baz {
+    yang-version 1;
+    namespace "urn:opendaylight.baz";
+    prefix "baz";
+
+    import foo {
+        prefix "fo";
+        revision-date 2013-10-08;
+    }
+
+    import bar {
+        prefix "br";
+        revision-date 2013-10-08;
+    }
+
+    revision "2013-10-08" {
+    }
+
+
+
+    augment "/br:network-topology/br:topology/br:link/fo:igp-link-attributes" {
+        uses link-attributes;
+    }
+
+    grouping link-attributes {
+        container ospf-link-attributes {
+            leaf multi-topology-id {
+                type uint8 {
+                    range "0..127";
+                }
+            }
+        }
+    }
+
+}

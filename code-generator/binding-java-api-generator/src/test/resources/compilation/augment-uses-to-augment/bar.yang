@@ -1,0 +1,28 @@
+module bar {
+    yang-version 1;
+    namespace "urn:opendaylight.bar";
+    prefix "bar";
+
+    revision "2013-10-08" {
+    }
+
+    container network-topology {
+        list topology {
+            key "topology-id";
+            leaf topology-id {
+                type int32;
+            }
+            list link {
+                key "link-id";
+                uses link-attributes;
+            }
+        }
+    }
+
+    grouping link-attributes {
+        leaf link-id {
+            type int8;
+        }
+    }
+
+}

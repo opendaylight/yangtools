@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 
 public final class RefineHolder extends AbstractBuilder {
@@ -104,7 +105,7 @@ public final class RefineHolder extends AbstractBuilder {
     }
 
     @Override
-    public Object build() {
+    public Object build(YangNode parent) {
         return null;
     }
 
@@ -121,7 +122,7 @@ public final class RefineHolder extends AbstractBuilder {
         result = prime * result + ((minElements == null) ? 0 : minElements.hashCode());
         result = prime * result + ((must == null) ? 0 : must.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+        result = prime * result + ((parentBuilder == null) ? 0 : parentBuilder.hashCode());
         result = prime * result + ((presence == null) ? 0 : presence.hashCode());
         result = prime * result + ((reference == null) ? 0 : reference.hashCode());
         return result;
@@ -202,11 +203,11 @@ public final class RefineHolder extends AbstractBuilder {
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (parent == null) {
-            if (other.parent != null) {
+        if (parentBuilder == null) {
+            if (other.parentBuilder != null) {
                 return false;
             }
-        } else if (!parent.equals(other.parent)) {
+        } else if (!parentBuilder.equals(other.parentBuilder)) {
             return false;
         }
         if (presence == null) {

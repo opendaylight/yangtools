@@ -1,0 +1,29 @@
+module bar {
+    yang-version 1;
+    namespace "urn:opendaylight:bar";
+    prefix "bar";
+
+    import foo { prefix fo; revision-date 2013-10-08; }
+
+    revision "2013-10-08" {
+    }
+
+    augment "/fo:update/fo:path-attributes" {
+        container mp-unreach-nlri {
+            container withdrawn-routes {
+                uses destination;
+            }
+        }
+    }
+
+    grouping destination {
+        choice destination-type {
+            case destination-ip {
+                leaf-list prefixes {
+                    type string;
+                }
+            }
+        }
+    }
+
+}

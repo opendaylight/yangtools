@@ -9,20 +9,19 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
-import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
-public final class ConstraintsBuilder extends AbstractBuilder {
+public final class ConstraintsBuilder {
     private static final int HASH_IF_BOOL_TRUE = 1231;
     private static final int HASH_IF_BOOL_FALSE = 1237;
 
+    private final String moduleName;
+    private final int line;
     private final ConstraintDefinitionImpl instance;
     private final Set<MustDefinition> mustDefinitions;
     private String whenCondition;
@@ -31,13 +30,15 @@ public final class ConstraintsBuilder extends AbstractBuilder {
     private Integer max;
 
     public ConstraintsBuilder(final String moduleName, final int line) {
-        super(moduleName, line);
+        this.moduleName = moduleName;
+        this.line = line;
         instance = new ConstraintDefinitionImpl();
         mustDefinitions = new HashSet<MustDefinition>();
     }
 
     ConstraintsBuilder(final ConstraintsBuilder b) {
-        super(b.getModuleName(), b.getLine());
+        this.moduleName = b.getModuleName();
+        this.line = b.getLine();
         instance = new ConstraintDefinitionImpl();
         mustDefinitions = new HashSet<MustDefinition>(b.getMustDefinitions());
         whenCondition = b.getWhenCondition();
@@ -46,7 +47,6 @@ public final class ConstraintsBuilder extends AbstractBuilder {
         max = b.getMaxElements();
     }
 
-    @Override
     public ConstraintDefinition build() {
         RevisionAwareXPath whenStmt;
         if (whenCondition == null) {
@@ -62,14 +62,12 @@ public final class ConstraintsBuilder extends AbstractBuilder {
         return instance;
     }
 
-    @Override
-    public void addUnknownNodeBuilder(UnknownSchemaNodeBuilder unknownNode) {
-        throw new YangParseException(moduleName, line, "Can not add unknown node to constraints.");
+    public String getModuleName() {
+        return moduleName;
     }
 
-    @Override
-    public List<UnknownSchemaNodeBuilder> getUnknownNodeBuilders() {
-        return Collections.emptyList();
+    public int getLine() {
+        return line;
     }
 
     public Integer getMinElements() {

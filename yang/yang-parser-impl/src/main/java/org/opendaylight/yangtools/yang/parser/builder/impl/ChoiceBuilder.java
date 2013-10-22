@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
@@ -34,16 +35,18 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         AugmentationTargetBuilder {
     private boolean isBuilt;
     private final ChoiceNodeImpl instance;
+    private YangNode parent;
     // DataSchemaNode args
     private boolean augmenting;
     private boolean addedByUses;
     private Boolean configuration;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
-    private final Set<AugmentationSchemaBuilder> addedAugmentations = new HashSet<>();
+    private final List<AugmentationSchema> augmentations = new ArrayList<>();
+    private final List<AugmentationSchemaBuilder> augmentationBuilders = new ArrayList<>();
     // ChoiceNode args
-    private Set<ChoiceCaseNode> cases;
-    private final Set<ChoiceCaseBuilder> addedCases = new HashSet<>();
+    private Set<ChoiceCaseNode> cases = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+    private final Set<ChoiceCaseBuilder> caseBuilders = new HashSet<>();
     private String defaultCase;
 
     public ChoiceBuilder(final String moduleName, final int line, final QName qname) {
@@ -53,8 +56,10 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     @Override
-    public ChoiceNode build() {
+    public ChoiceNode build(YangNode parent) {
         if (!isBuilt) {
+            this.parent = parent;
+            instance.setParent(parent);
             instance.setPath(schemaPath);
             instance.setDescription(description);
             instance.setReference(reference);
@@ -66,29 +71,22 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             instance.setDefaultCase(defaultCase);
 
             // CASES
-            if (cases == null) {
-                cases = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-                for (ChoiceCaseBuilder caseBuilder : addedCases) {
-                    cases.add(caseBuilder.build());
-                }
+            for (ChoiceCaseBuilder caseBuilder : caseBuilders) {
+                cases.add(caseBuilder.build(instance));
             }
             instance.setCases(cases);
 
             // AUGMENTATIONS
-            final Set<AugmentationSchema> augmentations = new HashSet<>();
-            for (AugmentationSchemaBuilder builder : addedAugmentations) {
-                augmentations.add(builder.build());
+            for (AugmentationSchemaBuilder builder : augmentationBuilders) {
+                augmentations.add(builder.build(instance));
             }
-            instance.setAvailableAugmentations(augmentations);
+            instance.setAvailableAugmentations(new HashSet<>(augmentations));
 
             // UNKNOWN NODES
-            if (unknownNodes == null) {
-                unknownNodes = new ArrayList<>();
-                for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                    unknownNodes.add(b.build());
-                }
-                Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+                unknownNodes.add(b.build(instance));
             }
+            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
@@ -99,7 +97,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     @Override
     public void rebuild() {
         isBuilt = false;
-        build();
+        build(parent);
     }
 
     @Override
@@ -108,7 +106,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     public Set<ChoiceCaseBuilder> getCases() {
-        return addedCases;
+        return caseBuilders;
     }
 
     /**
@@ -119,7 +117,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
      * @return case with given name if present, null otherwise
      */
     public ChoiceCaseBuilder getCaseNodeByName(String caseName) {
-        for (ChoiceCaseBuilder addedCase : addedCases) {
+        for (ChoiceCaseBuilder addedCase : caseBuilders) {
             if (addedCase.getQName().getLocalName().equals(caseName)) {
                 return addedCase;
             }
@@ -139,7 +137,8 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     public void addCase(DataSchemaNodeBuilder caseNode) {
         QName caseQName = caseNode.getQName();
         String caseName = caseQName.getLocalName();
-        for (ChoiceCaseBuilder addedCase : addedCases) {
+
+        for (ChoiceCaseBuilder addedCase : caseBuilders) {
             if (addedCase.getQName().getLocalName().equals(caseName)) {
                 throw new YangParseException(caseNode.getModuleName(), caseNode.getLine(), "Can not add '" + caseNode
                         + "' to node '" + qname.getLocalName() + "' in module '" + moduleName
@@ -148,7 +147,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         }
 
         if (caseNode instanceof ChoiceCaseBuilder) {
-            addedCases.add((ChoiceCaseBuilder) caseNode);
+            caseBuilders.add((ChoiceCaseBuilder) caseNode);
         } else {
             ChoiceCaseBuilder caseBuilder = new ChoiceCaseBuilder(caseNode.getModuleName(), caseNode.getLine(),
                     caseQName);
@@ -162,7 +161,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             SchemaPath newPath = ParserUtils.createSchemaPath(caseNode.getPath(), caseQName);
             caseNode.setPath(newPath);
             caseBuilder.addChildNode(caseNode);
-            addedCases.add(caseBuilder);
+            caseBuilders.add(caseBuilder);
         }
     }
 
@@ -204,13 +203,13 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         return constraints;
     }
 
-    public Set<AugmentationSchemaBuilder> getAugmentations() {
-        return addedAugmentations;
-    }
-
     @Override
     public void addAugmentation(AugmentationSchemaBuilder augment) {
-        addedAugmentations.add(augment);
+        augmentationBuilders.add(augment);
+    }
+
+    public List<AugmentationSchemaBuilder> getAugmentationBuilders() {
+        return augmentationBuilders;
     }
 
     public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
@@ -252,11 +251,11 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         } else if (!schemaPath.equals(other.schemaPath)) {
             return false;
         }
-        if (parent == null) {
-            if (other.parent != null) {
+        if (parentBuilder == null) {
+            if (other.parentBuilder != null) {
                 return false;
             }
-        } else if (!parent.equals(other.parent)) {
+        } else if (!parentBuilder.equals(other.parentBuilder)) {
             return false;
         }
         return true;
@@ -270,6 +269,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     public final class ChoiceNodeImpl implements ChoiceNode {
         private final QName qname;
         private SchemaPath path;
+        private YangNode parent;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
@@ -298,6 +298,15 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
         private void setPath(SchemaPath path) {
             this.path = path;
+        }
+
+        @Override
+        public YangNode getParent() {
+            return parent;
+        }
+
+        private void setParent(YangNode parent) {
+            this.parent = parent;
         }
 
         @Override

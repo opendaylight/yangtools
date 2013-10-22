@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 
@@ -29,7 +29,7 @@ public final class ExtensionBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
-    public ExtensionDefinition build() {
+    public ExtensionDefinition build(YangNode parent) {
         if (!isBuilt) {
             instance.setPath(schemaPath);
             instance.setDescription(description);
@@ -37,13 +37,10 @@ public final class ExtensionBuilder extends AbstractSchemaNodeBuilder {
             instance.setStatus(status);
 
             // UNKNOWN NODES
-            if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
-                for (UnknownSchemaNodeBuilder un : addedUnknownNodes) {
-                    unknownNodes.add(un.build());
-                }
-                Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+            for (UnknownSchemaNodeBuilder un : addedUnknownNodes) {
+                unknownNodes.add(un.build(null));
             }
+            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;

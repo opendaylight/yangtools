@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -18,8 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private boolean isBuilt;
@@ -36,8 +37,11 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
-    public IdentitySchemaNode build() {
+    public IdentitySchemaNode build(YangNode parent) {
         if (!isBuilt) {
+            if (!(parentBuilder instanceof ModuleBuilder)) {
+                throw new YangParseException(moduleName, line, "Identity can be defined only under module (was" + parentBuilder + ")");
+            }
             instance.setPath(schemaPath);
             instance.setDescription(description);
             instance.setReference(reference);
@@ -46,7 +50,7 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             if (baseIdentity == null) {
                 if(baseIdentityBuilder != null) {
                     baseIdentityBuilder.addDerivedIdentity(instance);
-                    baseIdentity = baseIdentityBuilder.build();
+                    baseIdentity = baseIdentityBuilder.build(null);
                 }
             } else {
                 if(baseIdentity instanceof IdentitySchemaNodeImpl) {
@@ -56,13 +60,10 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             instance.setBaseIdentity(baseIdentity);
 
             // UNKNOWN NODES
-            if (unknownNodes == null) {
-                unknownNodes = new ArrayList<>();
-                for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                    unknownNodes.add(b.build());
-                }
-                Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+                unknownNodes.add(b.build(null));
             }
+            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;

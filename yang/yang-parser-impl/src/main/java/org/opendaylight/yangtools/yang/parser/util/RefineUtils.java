@@ -50,6 +50,7 @@ public final class RefineUtils {
         }
         if (unknownNodes != null) {
             for (UnknownSchemaNodeBuilder unknown : unknownNodes) {
+                unknown.setParent(leaf);
                 leaf.addUnknownNodeBuilder(unknown);
             }
         }
@@ -68,6 +69,7 @@ public final class RefineUtils {
         }
         if (unknownNodes != null) {
             for (UnknownSchemaNodeBuilder unknown : unknownNodes) {
+                unknown.setParent(container);
                 container.addUnknownNodeBuilder(unknown);
             }
         }
@@ -90,6 +92,7 @@ public final class RefineUtils {
         }
         if (unknownNodes != null) {
             for (UnknownSchemaNodeBuilder unknown : unknownNodes) {
+                unknown.setParent(list);
                 list.addUnknownNodeBuilder(unknown);
             }
         }
@@ -112,6 +115,7 @@ public final class RefineUtils {
         }
         if (unknownNodes != null) {
             for (UnknownSchemaNodeBuilder unknown : unknownNodes) {
+                unknown.setParent(leafList);
                 leafList.addUnknownNodeBuilder(unknown);
             }
         }
@@ -130,6 +134,7 @@ public final class RefineUtils {
         }
         if (unknownNodes != null) {
             for (UnknownSchemaNodeBuilder unknown : unknownNodes) {
+                unknown.setParent(choice);
                 choice.addUnknownNodeBuilder(unknown);
             }
         }
@@ -148,6 +153,7 @@ public final class RefineUtils {
         }
         if (unknownNodes != null) {
             for (UnknownSchemaNodeBuilder unknown : unknownNodes) {
+                unknown.setParent(anyXml);
                 anyXml.addUnknownNodeBuilder(unknown);
             }
         }
@@ -155,7 +161,7 @@ public final class RefineUtils {
 
     /**
      * Check if refine can be performed on given node.
-     * 
+     *
      * @param node
      *            node to refine
      * @param refine
@@ -245,9 +251,9 @@ public final class RefineUtils {
      * <li>reference</li>
      * <li>config</li>
      * </ul>
-     * 
+     *
      * These parameters may be refined for any node.
-     * 
+     *
      * @param node
      *            node to refine
      * @param refine
@@ -291,7 +297,7 @@ public final class RefineUtils {
 
     /**
      * Perform refine operation on given node.
-     * 
+     *
      * @param nodeToRefine
      *            builder of node to refine
      * @param refine

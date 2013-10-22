@@ -1,0 +1,36 @@
+module foo {
+    yang-version 1;
+    namespace "urn:opendaylight.foo";
+    prefix "foo";
+
+    import bar {
+        prefix "br";
+        revision-date 2013-10-08;
+    }
+
+    revision "2013-10-08" {
+    }
+
+
+    augment "/br:network-topology/br:topology/br:link" {
+        uses igp-link-attributes;
+    }
+
+    grouping igp-link-attributes {
+        container igp-link-attributes {
+            leaf name {
+                type string;
+            }
+            leaf-list flag {
+                type string;
+            }
+            leaf metric {
+                type uint32 {
+                    range "0..16777215"  {
+                    }
+                }
+            }
+        }
+    }
+
+}

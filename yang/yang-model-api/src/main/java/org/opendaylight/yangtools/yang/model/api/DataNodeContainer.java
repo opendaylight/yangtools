@@ -14,7 +14,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * Node which can contains other nodes.
  */
-public interface DataNodeContainer {
+public interface DataNodeContainer extends YangNode {
+
+    YangNode getParent();
 
     /**
      * Returns set of all newly defined types within this DataNodeContainer.

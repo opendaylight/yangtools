@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
@@ -41,7 +42,7 @@ public final class DeviationBuilder extends AbstractBuilder {
     }
 
     @Override
-    public Deviation build() {
+    public Deviation build(YangNode parent) {
         if (targetPath == null) {
             throw new YangParseException(moduleName, line, "Unresolved deviation target");
         }
@@ -51,9 +52,8 @@ public final class DeviationBuilder extends AbstractBuilder {
             instance.setReference(reference);
 
             // UNKNOWN NODES
-            List<UnknownSchemaNode> unknownNodes = new ArrayList<UnknownSchemaNode>();
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
+                unknownNodes.add(b.build(instance));
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);

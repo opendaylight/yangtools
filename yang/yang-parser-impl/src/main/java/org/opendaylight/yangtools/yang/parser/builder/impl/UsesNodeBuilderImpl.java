@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -36,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNodeBuilder {
     private boolean isBuilt;
     private UsesNodeImpl instance;
-    private DataNodeContainerBuilder parent;
+    private DataNodeContainerBuilder parentBuilder;
     private final String groupingName;
     private SchemaPath groupingPath;
     private GroupingDefinition groupingDefinition;
@@ -44,6 +45,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private boolean addedByUses;
     private boolean augmenting;
     private AugmentationSchemaBuilder parentAugment;
+    private final Set<AugmentationSchema> augments = new HashSet<>();
     private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<>();
     private final List<RefineHolder> refines = new ArrayList<>();
@@ -99,30 +101,29 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public UsesNode build() {
+    public UsesNode build(YangNode parent) {
         if (!isBuilt) {
             instance = new UsesNodeImpl(groupingPath);
             instance.setAddedByUses(addedByUses);
+            instance.setParent(parent);
 
             // AUGMENTATIONS
-            final Set<AugmentationSchema> augments = new HashSet<>();
             for (AugmentationSchemaBuilder builder : addedAugments) {
-                augments.add(builder.build());
+                augments.add(builder.build(instance));
             }
             instance.setAugmentations(augments);
 
             // REFINES
             final Map<SchemaPath, SchemaNode> refineNodes = new HashMap<>();
             for (SchemaNodeBuilder refineBuilder : refineBuilders) {
-                SchemaNode refineNode = refineBuilder.build();
+                SchemaNode refineNode = refineBuilder.build(instance);
                 refineNodes.put(refineNode.getPath(), refineNode);
             }
             instance.setRefines(refineNodes);
 
             // UNKNOWN NODES
-            List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
+                unknownNodes.add(b.build(instance));
             }
             instance.setUnknownSchemaNodes(unknownNodes);
 
@@ -134,7 +135,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     @Override
     public DataNodeContainerBuilder getParent() {
-        return parent;
+        return parentBuilder;
     }
 
     @Override
@@ -143,7 +144,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             throw new YangParseException(moduleName, line,
                     "Parent of 'uses' has to be instance of DataNodeContainerBuilder, but was: '" + parent + "'.");
         }
-        this.parent = (DataNodeContainerBuilder) parent;
+        this.parentBuilder = (DataNodeContainerBuilder) parent;
     }
 
     @Override
@@ -267,7 +268,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         final int prime = 31;
         int result = 1;
         result = prime * result + ((groupingName == null) ? 0 : groupingName.hashCode());
-        result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+        result = prime * result + ((parentBuilder == null) ? 0 : parentBuilder.hashCode());
         return result;
     }
 
@@ -290,11 +291,11 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         } else if (!groupingName.equals(other.groupingName)) {
             return false;
         }
-        if (parent == null) {
-            if (other.parent != null) {
+        if (parentBuilder == null) {
+            if (other.parentBuilder != null) {
                 return false;
             }
-        } else if (!parent.equals(other.parent)) {
+        } else if (!parentBuilder.equals(other.parentBuilder)) {
             return false;
         }
         return true;
@@ -306,11 +307,21 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     public final class UsesNodeImpl implements UsesNode {
+        private YangNode parent;
         private final SchemaPath groupingPath;
         private Set<AugmentationSchema> augmentations = Collections.emptySet();
         private boolean addedByUses;
         private Map<SchemaPath, SchemaNode> refines = Collections.emptyMap();
         private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+
+        @Override
+        public YangNode getParent() {
+            return parent;
+        }
+
+        private void setParent(YangNode parent) {
+            this.parent = parent;
+        }
 
         private UsesNodeImpl(final SchemaPath groupingPath) {
             this.groupingPath = groupingPath;

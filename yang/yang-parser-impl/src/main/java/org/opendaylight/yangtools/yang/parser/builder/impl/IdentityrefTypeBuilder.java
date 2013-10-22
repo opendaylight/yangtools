@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -47,8 +48,8 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public IdentityrefType build() {
-        return new IdentityrefType(baseIdentity.build(), schemaPath);
+    public IdentityrefType build(YangNode parent) {
+        return new IdentityrefType(baseIdentity.build(parent), schemaPath);
     }
 
     public String getBaseString() {

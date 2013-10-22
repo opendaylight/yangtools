@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
 public class BitImplTest {
@@ -104,7 +105,10 @@ public class BitImplTest {
 
         List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
         UnknownSchemaNodeBuilder usnb = new UnknownSchemaNodeBuilder("module", 3, qnameB);
-        unknownNodes.add(usnb.build());
+        ModuleBuilder parent = org.mockito.Mockito.mock(ModuleBuilder.class);
+        usnb.setParent(parent);
+
+        unknownNodes.add(usnb.build(null));
 
         biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, unknownNodes);
 

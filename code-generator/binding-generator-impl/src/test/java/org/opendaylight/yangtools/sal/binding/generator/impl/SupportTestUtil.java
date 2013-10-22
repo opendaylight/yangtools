@@ -117,7 +117,7 @@ public class SupportTestUtil {
                 break;
             }
         }
-        assertTrue("Generated type " + genType.getName() + " doesn't implement inrerface " + interfaceNameSearched,
+        assertTrue("Generated type " + genType.getName() + " doesn't implement interface " + interfaceNameSearched,
                 interfaceFound);
     }
 

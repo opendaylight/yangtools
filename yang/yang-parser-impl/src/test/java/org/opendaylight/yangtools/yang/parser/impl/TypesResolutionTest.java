@@ -161,6 +161,7 @@ public class TypesResolutionTest {
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName("inst-id-leaf1");
         InstanceIdentifier leafType = (InstanceIdentifier) leaf.getType();
         assertFalse(leafType.requireInstance());
+        assertEquals(1, leaf.getUnknownSchemaNodes().size());
     }
 
     @Test
@@ -178,11 +179,14 @@ public class TypesResolutionTest {
         assertEquals(5, identities.size());
         IdentitySchemaNode cryptoAlg = null;
         IdentitySchemaNode cryptoBase = null;
+        IdentitySchemaNode cryptoId = null;
         for (IdentitySchemaNode id : identities) {
             if (id.getQName().getLocalName().equals("crypto-alg")) {
                 cryptoAlg = id;
             } else if ("crypto-base".equals(id.getQName().getLocalName())) {
                 cryptoBase = id;
+            } else if ("crypto-id".equals(id.getQName().getLocalName())) {
+                cryptoId = id;
             }
         }
         assertNotNull(cryptoAlg);
@@ -194,6 +198,9 @@ public class TypesResolutionTest {
         assertNotNull(cryptoBase);
         assertNull(cryptoBase.getBaseIdentity());
         assertEquals(3, cryptoBase.getDerivedIdentities().size());
+
+        assertNotNull(cryptoId);
+        assertEquals(1, cryptoId.getUnknownSchemaNodes().size());
     }
 
     @Test

@@ -61,7 +61,7 @@ public final class CopyUtils {
     /**
      * Create copy of DataSchemaNodeBuilder with new parent. If updateQName is
      * true, qname of node will be corrected based on new parent.
-     * 
+     *
      * @param old
      *            builder to copy
      * @param newParent
@@ -132,7 +132,7 @@ public final class CopyUtils {
         for (ChoiceCaseBuilder childNode : old.getCases()) {
             copy.addCase(copy(childNode, copy, updateQName));
         }
-        for (AugmentationSchemaBuilder augment : old.getAugmentations()) {
+        for (AugmentationSchemaBuilder augment : old.getAugmentationBuilders()) {
             copy.addAugmentation(copyAugment(augment, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
@@ -194,7 +194,6 @@ public final class CopyUtils {
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        copy.setChildNodes(old.getChildNodes());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
@@ -208,7 +207,7 @@ public final class CopyUtils {
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
-        for (AugmentationSchemaBuilder augment : old.getAugmentations()) {
+        for (AugmentationSchemaBuilder augment : old.getAugmentationBuilders()) {
             copy.addAugmentation(copyAugment(augment, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
@@ -297,7 +296,6 @@ public final class CopyUtils {
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        copy.setChildNodes(old.getChildNodes());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
@@ -311,7 +309,7 @@ public final class CopyUtils {
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
-        for (AugmentationSchemaBuilder augment : old.getAugmentations()) {
+        for (AugmentationSchemaBuilder augment : old.getAugmentationBuilders()) {
             copy.addAugmentation(copyAugment(augment, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
@@ -336,7 +334,6 @@ public final class CopyUtils {
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAddedByUses(old.isAddedByUses());
-        copy.setChildNodes(old.getChildNodes());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
@@ -476,7 +473,6 @@ public final class CopyUtils {
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.addWhenCondition(old.getWhenCondition());
-        copy.setChildNodes(old.getChildNodes());
         copy.setTargetNodeSchemaPath(old.getTargetNodeSchemaPath());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             copy.addChildNode(copy(childNode, copy, false));
@@ -570,7 +566,7 @@ public final class CopyUtils {
 
     /**
      * Create AnyXmlBuilder from given AnyXmlSchemaNode.
-     * 
+     *
      * @param anyxml
      *            base anyxml
      * @param qname
@@ -591,7 +587,7 @@ public final class CopyUtils {
 
     /**
      * Create GroupingBuilder from given GroupingDefinition.
-     * 
+     *
      * @param grouping
      *            base grouping
      * @param qname
@@ -605,7 +601,9 @@ public final class CopyUtils {
     public static GroupingBuilder createGrouping(GroupingDefinition grouping, QName qname, String moduleName, int line) {
         final GroupingBuilderImpl builder = new GroupingBuilderImpl(moduleName, line, qname);
         builder.setPath(grouping.getPath());
-        builder.setChildNodes(grouping.getChildNodes());
+        for (DataSchemaNode child : grouping.getChildNodes()) {
+            builder.addChildNode(child);
+        }
         builder.setGroupings(grouping.getGroupings());
         builder.setTypedefs(grouping.getTypeDefinitions());
         builder.setUsesnodes(grouping.getUses());
@@ -618,7 +616,7 @@ public final class CopyUtils {
 
     /**
      * Create TypeDefinitionBuilder from given ExtendedType.
-     * 
+     *
      * @param typedef
      *            base typedef
      * @param qname
@@ -650,7 +648,7 @@ public final class CopyUtils {
 
     /**
      * Create UnknownSchemaNodeBuilder from given UnknownSchemaNode.
-     * 
+     *
      * @param unknownNode
      *            base unknown node
      * @param qname
@@ -677,7 +675,7 @@ public final class CopyUtils {
 
     /**
      * Create LeafSchemaNodeBuilder from given LeafSchemaNode.
-     * 
+     *
      * @param leaf
      *            leaf from which to create builder
      * @param qname
@@ -703,7 +701,7 @@ public final class CopyUtils {
 
     /**
      * Create ContainerSchemaNodeBuilder from given ContainerSchemaNode.
-     * 
+     *
      * @param container
      *            base container
      * @param qname
@@ -721,10 +719,12 @@ public final class CopyUtils {
         convertDataSchemaNode(container, builder);
         builder.setConfiguration(container.isConfiguration());
         builder.setUnknownNodes(container.getUnknownSchemaNodes());
-        builder.setChildNodes(container.getChildNodes());
+        for (DataSchemaNode child : container.getChildNodes()) {
+            builder.addChildNode(child);
+        }
         builder.setGroupings(container.getGroupings());
         builder.setTypedefs(container.getTypeDefinitions());
-        builder.setAugmentations(container.getAvailableAugmentations());
+        builder.getAugmentations().addAll(container.getAvailableAugmentations());
         builder.setUsesnodes(container.getUses());
         builder.setPresence(container.isPresenceContainer());
         return builder;
@@ -732,7 +732,7 @@ public final class CopyUtils {
 
     /**
      * Create ListSchemaNodeBuilder from given ListSchemaNode.
-     * 
+     *
      * @param list
      *            base list
      * @param qname
@@ -749,9 +749,11 @@ public final class CopyUtils {
         builder.setConfiguration(list.isConfiguration());
         builder.setUnknownNodes(list.getUnknownSchemaNodes());
         builder.setTypedefs(list.getTypeDefinitions());
-        builder.setChildNodes(list.getChildNodes());
+        for (DataSchemaNode child : list.getChildNodes()) {
+            builder.addChildNode(child);
+        }
         builder.setGroupings(list.getGroupings());
-        builder.setAugmentations(list.getAvailableAugmentations());
+        builder.getAugmentations().addAll(list.getAvailableAugmentations());
         builder.setUsesnodes(list.getUses());
         builder.setUserOrdered(builder.isUserOrdered());
         return builder;
@@ -759,7 +761,7 @@ public final class CopyUtils {
 
     /**
      * Create LeafListSchemaNodeBuilder from given LeafListSchemaNode.
-     * 
+     *
      * @param leafList
      *            base leaf-list
      * @param qname
@@ -784,7 +786,7 @@ public final class CopyUtils {
 
     /**
      * Create ChoiceBuilder from given ChoiceNode.
-     * 
+     *
      * @param choice
      *            base choice
      * @param qname
@@ -807,7 +809,7 @@ public final class CopyUtils {
 
     /**
      * Set DataSchemaNode arguments to builder object
-     * 
+     *
      * @param node
      *            node from which arguments should be read
      * @param builder
@@ -824,7 +826,7 @@ public final class CopyUtils {
 
     /**
      * Copy constraints from constraints definition to constraints builder.
-     * 
+     *
      * @param nodeConstraints
      *            definition from which constraints will be copied
      * @param constraints
