@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
@@ -47,8 +47,9 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public LeafListSchemaNode build() {
+    public LeafListSchemaNode build(YangNode parent) {
         if (!isBuilt) {
+            instance.setParent(parent);
             instance.setConstraints(constraints.build());
             instance.setPath(schemaPath);
             instance.setDescription(description);
@@ -60,19 +61,16 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
             instance.setUserOrdered(userOrdered);
 
             if (type == null) {
-                instance.setType(typedef.build());
+                instance.setType(typedef.build(instance));
             } else {
                 instance.setType(type);
             }
 
             // UNKNOWN NODES
-            if (unknownNodes == null) {
-                unknownNodes = new ArrayList<>();
-                for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                    unknownNodes.add(b.build());
-                }
-                Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+                unknownNodes.add(b.build(instance));
             }
+            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
@@ -197,11 +195,11 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         } else if (!schemaPath.equals(other.schemaPath)) {
             return false;
         }
-        if (parent == null) {
-            if (other.parent != null) {
+        if (parentBuilder == null) {
+            if (other.parentBuilder != null) {
                 return false;
             }
-        } else if (!parent.equals(other.parent)) {
+        } else if (!parentBuilder.equals(other.parentBuilder)) {
             return false;
         }
         return true;
@@ -215,6 +213,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     private final class LeafListSchemaNodeImpl implements LeafListSchemaNode {
         private final QName qname;
         private SchemaPath path;
+        private YangNode parent;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
@@ -242,6 +241,15 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
 
         private void setPath(final SchemaPath path) {
             this.path = path;
+        }
+
+        @Override
+        public YangNode getParent() {
+            return parent;
+        }
+
+        private void setParent(YangNode parent) {
+            this.parent = parent;
         }
 
         @Override

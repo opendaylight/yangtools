@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import static org.junit.Assert.*;
-import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.*;
+import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsInterface;
+import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class ChoiceCaseGenTypesTest {
     public void choiceCaseResolvingTypeTest() {
         final YangModelParser parser = new YangParserImpl();
         final Set<Module> modules = parser.parseYangModels(yangModels);
+
         final SchemaContext context = parser.resolveSchemaContext(modules);
 
         assertNotNull("context is null", context);
@@ -141,6 +143,7 @@ public class ChoiceCaseGenTypesTest {
 
         genType = checkGeneratedType(genTypes, "LeafAugCase", pcgPref
                 + ".netconf.state.datastores.datastore.locks.lock.type"); // choice
+        // FIXME
         containsMethods(genType, new NameTypePattern("getLeafAugCase", "String"));
         containsInterface("LockType", genType);
 

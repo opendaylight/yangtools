@@ -61,13 +61,15 @@ import static org.opendaylight.yangtools.binding.generator.util.BindingGenerator
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.api.UsesNode
-import java.util.HashSet
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder
 import org.opendaylight.yangtools.yang.model.api.ModuleImport
-import org.opendaylight.yangtools.yang.binding.DataContainer
+import org.opendaylight.yangtools.yang.binding.DataContainerimport java.util.Iterator
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
+import java.util.Collection
+import org.opendaylight.yangtools.yang.model.api.YangNode
 
 public class BindingGeneratorImpl implements BindingGenerator {
     /**
@@ -225,7 +227,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def List<Type> allTypeDefinitionsToGenTypes(Module module) {
         checkArgument(module !== null, "Module reference cannot be NULL.");
         checkArgument(module.name !== null, "Module name cannot be NULL.");
-        val Set<TypeDefinition<?>> typeDefinitions = module.typeDefinitions;
+        val it = new DataNodeIterator(module);
+        val List<TypeDefinition<?>> typeDefinitions = it.allTypedefs;
         checkState(typeDefinitions !== null, '''Type Definitions for module «module.name» cannot be NULL.''');
 
         val List<Type> generatedTypes = new ArrayList();
@@ -284,7 +287,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         for (usesNode : node.uses) {
             for (augment : usesNode.augmentations) {
-                result.addAll(augmentationToGenTypes(basePackageName, augment, module, true));
+                result.addAll(augmentationToGenTypes(basePackageName, augment, module, usesNode));
                 result.addAll(processUsesAugments(augment, module));
             }
         }
@@ -433,7 +436,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val basePackageName = moduleNamespaceToPackageName(module);
         val List<AugmentationSchema> augmentations = resolveAugmentations(module);
         for (augment : augmentations) {
-            generatedTypes.addAll(augmentationToGenTypes(basePackageName, augment, module, false));
+            generatedTypes.addAll(augmentationToGenTypes(basePackageName, augment, module, null));
         }
         return generatedTypes;
     }
@@ -916,7 +919,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if target path of <code>augSchema</code> equals null</li>
      *             </ul>
      */
-    private def List<Type> augmentationToGenTypes(String augmentPackageName, AugmentationSchema augSchema, Module module, boolean addedByUses) {
+    private def List<Type> augmentationToGenTypes(String augmentPackageName, AugmentationSchema augSchema, Module module,
+        UsesNode parentUsesNode) {
         checkArgument(augmentPackageName !== null, "Package Name cannot be NULL.");
         checkArgument(augSchema !== null, "Augmentation Schema cannot be NULL.");
         checkState(augSchema.targetPath !== null,
@@ -929,13 +933,20 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val targetPath = augSchema.targetPath;
         var targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
         if (targetSchemaNode instanceof DataSchemaNode && (targetSchemaNode as DataSchemaNode).isAddedByUses()) {
-			targetSchemaNode = findOriginalTargetFromGrouping(targetPath, module, targetSchemaNode as DataSchemaNode);
+            if (parentUsesNode == null) {
+                targetSchemaNode = findOriginal(targetSchemaNode as DataSchemaNode);
+            } else {
+                targetSchemaNode = findOriginalTargetFromGrouping(targetSchemaNode.QName.localName, parentUsesNode);
+            }
+            if (targetSchemaNode == null) {
+                throw new NullPointerException(
+                    "Failed to find target node from grouping for augmentation " + augSchema + " in module " + module.name);
+            }
         }
 
-        if(targetSchemaNode !== null) {
+        if (targetSchemaNode !== null) {
             var targetType = yangToJavaMapping.get(targetSchemaNode.path);
-            if(targetType == null) {
-
+            if (targetType == null) {
                 // FIXME: augmentation should be added as last, all types should already be generated
                 // and have assigned Java Types,
                 val targetModule = findParentModule(schemaContext, targetSchemaNode);
@@ -947,59 +958,186 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
             val augChildNodes = augSchema.childNodes;
 
-            if(!(targetSchemaNode instanceof ChoiceNode)) {
+            if (!(targetSchemaNode instanceof ChoiceNode)) {
                 var packageName = augmentPackageName;
-                if (addedByUses) {
+                if (parentUsesNode != null) {
                     packageName = packageNameForGeneratedType(augmentPackageName, augSchema.targetPath);
                 }
-                val augTypeBuilder = addRawAugmentGenTypeDefinition(packageName, augmentPackageName, targetType, augSchema);
+                val augTypeBuilder = addRawAugmentGenTypeDefinition(packageName, augmentPackageName, targetType,
+                    augSchema);
                 val augType = augTypeBuilder.toInstance();
                 genTypes.add(augType);
             } else {
-                genTypes.addAll(generateTypesFromAugmentedChoiceCases(augmentPackageName, targetType, augChildNodes, targetSchemaNode as ChoiceNode));
+                genTypes.addAll(
+                    generateTypesFromAugmentedChoiceCases(augmentPackageName, targetType, augChildNodes,
+                        targetSchemaNode as ChoiceNode));
             }
             genTypes.addAll(augmentationBodyToGenTypes(augmentPackageName, augChildNodes, module));
         }
-		
+
         return genTypes;
     }
 
-    private def DataSchemaNode findOriginalTargetFromGrouping(SchemaPath targetPath, Module module, DataSchemaNode targetSchemaNode) {
-        val path = new ArrayList<QName>(targetPath.getPath());
-        path.remove(path.size()-1);
-        var DataNodeContainer parent = null;
-
-        if (path.isEmpty()) {
-            parent = module;
-        } else {
-            parent = findNodeInSchemaContext(schemaContext, path) as DataNodeContainer;
+    /**
+     * Utility method which search for original node defined in grouping.
+     */
+    private def DataSchemaNode findOriginal(DataSchemaNode node) {
+        var DataSchemaNode result = findCorrectTargetFromGrouping(node);
+        if (result == null) {
+            result = findCorrectTargetFromAugment(node);
+            if (result != null) {
+                if (result.addedByUses) {
+                    result = findOriginal(result);
+                }
+            }
         }
-
-        val Set<UsesNode> usesNodes = parent.getUses();
-        if (usesNodes == null || usesNodes.isEmpty()) {
-            return targetSchemaNode;
-        }
-        val Set<SchemaPath> groupingPaths = new HashSet<SchemaPath>();
-        for (uses : usesNodes) {
-            groupingPaths.add(uses.getGroupingPath());
-        }
-        val Set<GroupingDefinition> groupings = new HashSet<GroupingDefinition>();
-        for (gp : groupingPaths) {
-            groupings.add(findGrouping(schemaContext, module, gp.getPath()));
-        }
-
-        var DataSchemaNode result = findNodeInGroupings(groupings, targetSchemaNode.getQName().localName);
         return result;
     }
 
-    private def DataSchemaNode findNodeInGroupings(Set<GroupingDefinition> groupings, String name) {
-        for (gr : groupings) {
-            var DataSchemaNode node = gr.getDataChildByName(name);
-            if (node != null) {
-            	return node;
+    private def DataSchemaNode findCorrectTargetFromAugment(DataSchemaNode node) {
+        if (!node.augmenting) {
+            return null;
+        }
+
+        var String currentName = node.QName.localName;
+        var tmpPath = new ArrayList<String>();
+        var YangNode parent = node;
+        var AugmentationSchema augment = null;
+        do {
+            parent = (parent as DataSchemaNode).parent;
+            if (parent instanceof AugmentationTarget) {
+                tmpPath.add(currentName);
+                augment = findNodeInAugment((parent as AugmentationTarget).availableAugmentations, currentName);
+                if (augment == null) {
+                    currentName = (parent as DataSchemaNode).QName.localName; 
+                }
+            }
+        } while ((parent as DataSchemaNode).augmenting && augment == null);
+
+        if (augment == null) {
+            return null;
+        } else {
+            Collections.reverse(tmpPath);
+            var Object actualParent = augment;
+            var DataSchemaNode result = null;
+            for (name : tmpPath) {
+                if (actualParent instanceof DataNodeContainer) {
+                    result = (actualParent as DataNodeContainer).getDataChildByName(name);
+                    actualParent = (actualParent as DataNodeContainer).getDataChildByName(name);
+                } else {
+                    if (actualParent instanceof ChoiceNode) {
+                        result = (actualParent as ChoiceNode).getCaseNodeByName(name);
+                        actualParent = (actualParent as ChoiceNode).getCaseNodeByName(name); 
+                    }
+                }
+            }
+
+            if (result.addedByUses) {
+                result = findCorrectTargetFromGrouping(result);
+            }
+
+            return result;
+        }
+    }
+
+    private def AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, String name) {
+        for (augment : augments) {
+            if (augment.getDataChildByName(name) != null) {
+                return augment;
             }
         }
         return null;
+    }
+
+    private def DataSchemaNode findCorrectTargetFromGrouping(DataSchemaNode node) {
+        if (node.path.path.size == 1) {
+            // uses is under module statement
+            val Module m = findParentModule(schemaContext, node);
+            var DataSchemaNode result = null;
+            for (u : m.uses) {
+                var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.groupingPath.path);
+                if (!(targetGrouping instanceof GroupingDefinition)) {
+                    throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                }
+                var gr = targetGrouping as GroupingDefinition;
+                result = gr.getDataChildByName(node.QName.localName);
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("Failed to generate code for augment");
+            }
+            return result;
+        } else {
+            var DataSchemaNode result = null;
+            var String currentName = node.QName.localName;
+            var tmpPath = new ArrayList<String>();
+            var YangNode parent = node.parent; 
+            do {
+                tmpPath.add(currentName);
+                val dataNodeParent = parent as DataNodeContainer;
+                for (u : dataNodeParent.uses) {
+                    var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.groupingPath.path);
+                    if (!(targetGrouping instanceof GroupingDefinition)) {
+                        throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                    }
+                    var gr = targetGrouping as GroupingDefinition;
+                    result = gr.getDataChildByName(currentName);
+                }
+                if (result == null) {
+                    currentName = (parent as SchemaNode).QName.localName;
+                    if (parent instanceof DataSchemaNode) {
+                        parent = (parent as DataSchemaNode).parent;
+                    } else {
+                        parent = (parent as DataNodeContainer).parent;
+                    }
+                }
+            } while (result == null && !(parent instanceof Module));
+
+            if (result != null) {
+                if (tmpPath.size == 1) {
+                    return result;
+                } else {
+                    var DataSchemaNode newParent = result;
+                    Collections.reverse(tmpPath);
+                    tmpPath.remove(0);
+                    for (name : tmpPath) {
+                        newParent = (newParent as DataNodeContainer).getDataChildByName(name);
+                    }
+                    return newParent;
+                }
+            }
+
+            return result;
+        }
+    }
+
+    /**
+     * Convenient method to find node added by uses statement.
+     */
+    private def DataSchemaNode findOriginalTargetFromGrouping(String targetSchemaNodeName, UsesNode parentUsesNode) {
+        var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, parentUsesNode.groupingPath.path);
+        if (!(targetGrouping instanceof GroupingDefinition)) {
+            throw new IllegalArgumentException("Failed to generate code for augment in " + parentUsesNode);
+        }
+
+        var grouping = targetGrouping as GroupingDefinition;
+        var result = grouping.getDataChildByName(targetSchemaNodeName);
+        if (result == null) {
+            return null;
+        }
+        var boolean fromUses = result.addedByUses;
+
+        var Iterator<UsesNode> groupingUses = grouping.uses.iterator;
+        while (fromUses) {
+            if (groupingUses.hasNext()) {
+                grouping = findNodeInSchemaContext(schemaContext, groupingUses.next().groupingPath.path) as GroupingDefinition;
+                result = grouping.getDataChildByName(targetSchemaNodeName);
+                fromUses = result.addedByUses;
+            } else {
+                throw new NullPointerException("Failed to generate code for augment in " + parentUsesNode);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -1022,30 +1160,30 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * @return generated type builder for augment
      */
     private def GeneratedTypeBuilder addRawAugmentGenTypeDefinition(String augmentPackageName, String basePackageName,
-		Type targetTypeRef, AugmentationSchema augSchema) {
-		var Map<String, GeneratedTypeBuilder> augmentBuilders = genTypeBuilders.get(augmentPackageName);
-		if (augmentBuilders === null) {
-			augmentBuilders = new HashMap();
-			genTypeBuilders.put(augmentPackageName, augmentBuilders);
-		}
-		val augIdentifier = getAugmentIdentifier(augSchema.unknownSchemaNodes);
+        Type targetTypeRef, AugmentationSchema augSchema) {
+        var Map<String, GeneratedTypeBuilder> augmentBuilders = genTypeBuilders.get(augmentPackageName);
+        if (augmentBuilders === null) {
+            augmentBuilders = new HashMap();
+            genTypeBuilders.put(augmentPackageName, augmentBuilders);
+        }
+        val augIdentifier = getAugmentIdentifier(augSchema.unknownSchemaNodes);
 
-		val augTypeName = if (augIdentifier !== null) {
-				parseToClassName(augIdentifier)
-			} else {
-				augGenTypeName(augmentBuilders, targetTypeRef.name);
-			}
+        val augTypeName = if (augIdentifier !== null) {
+                parseToClassName(augIdentifier)
+            } else {
+                augGenTypeName(augmentBuilders, targetTypeRef.name);
+            }
 
-		val augTypeBuilder = new GeneratedTypeBuilderImpl(augmentPackageName, augTypeName);
+        val augTypeBuilder = new GeneratedTypeBuilderImpl(augmentPackageName, augTypeName);
 
-		augTypeBuilder.addImplementsType(DATA_OBJECT);
-		augTypeBuilder.addImplementsType(Types.augmentationTypeFor(targetTypeRef));
-		addImplementedInterfaceFromUses(augSchema, augTypeBuilder);
+        augTypeBuilder.addImplementsType(DATA_OBJECT);
+        augTypeBuilder.addImplementsType(Types.augmentationTypeFor(targetTypeRef));
+        addImplementedInterfaceFromUses(augSchema, augTypeBuilder);
 
-		augSchemaNodeToMethods(basePackageName, augTypeBuilder, augSchema.childNodes);
-		augmentBuilders.put(augTypeName, augTypeBuilder);
-		return augTypeBuilder;
-	}
+        augSchemaNodeToMethods(basePackageName, augTypeBuilder, augSchema.childNodes);
+        augmentBuilders.put(augTypeName, augTypeBuilder);
+        return augTypeBuilder;
+    }
 
     /**
      *
@@ -1080,6 +1218,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val List<Type> genTypes = new ArrayList();
         val List<DataNodeIterator> augSchemaIts = new ArrayList();
         for (childNode : augChildNodes) {
+            if (!childNode.addedByUses) {
+                
+            
             if(childNode instanceof DataNodeContainer) {
                 augSchemaIts.add(new DataNodeIterator(childNode as DataNodeContainer));
 
@@ -1094,6 +1235,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     augSchemaIts.add(new DataNodeIterator(caseNode));
                 }
                 genTypes.addAll(choiceToGeneratedType(augBasePackageName, childNode as ChoiceNode, module));
+            }
+            
+            
             }
         }
 
@@ -1916,14 +2060,16 @@ public class BindingGeneratorImpl implements BindingGenerator {
             } else {
                 resolveLeafSchemaNodeAsProperty(genTOBuilder, leaf, true);
             }
-        } else if(schemaNode instanceof LeafListSchemaNode) {
-            resolveLeafListSchemaNode(typeBuilder, schemaNode as LeafListSchemaNode);
-        } else if(schemaNode instanceof ContainerSchemaNode) {
-            resolveContainerSchemaNode(basePackageName, typeBuilder, schemaNode as ContainerSchemaNode);
-        } else if(schemaNode instanceof ChoiceNode) {
-            resolveChoiceSchemaNode(basePackageName,typeBuilder,schemaNode as ChoiceNode);
-        } else if(schemaNode instanceof ListSchemaNode) {
-            resolveListSchemaNode(basePackageName, typeBuilder, schemaNode as ListSchemaNode);
+        } else if (!schemaNode.addedByUses) {
+            if (schemaNode instanceof LeafListSchemaNode) {
+                resolveLeafListSchemaNode(typeBuilder, schemaNode as LeafListSchemaNode);
+            } else if(schemaNode instanceof ContainerSchemaNode) {
+                resolveContainerSchemaNode(basePackageName, typeBuilder, schemaNode as ContainerSchemaNode);
+            } else if(schemaNode instanceof ChoiceNode) {
+                resolveChoiceSchemaNode(basePackageName,typeBuilder,schemaNode as ChoiceNode);
+            } else if(schemaNode instanceof ListSchemaNode) {
+                resolveListSchemaNode(basePackageName, typeBuilder, schemaNode as ListSchemaNode);
+            }
         }
     }
 

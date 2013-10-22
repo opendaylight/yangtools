@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -17,23 +16,28 @@ import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     private boolean isBuilt;
     private final RpcDefinitionImpl instance;
     private ContainerSchemaNodeBuilder inputBuilder;
     private ContainerSchemaNodeBuilder outputBuilder;
-    private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<TypeDefinitionBuilder>();
-    private final Set<GroupingBuilder> addedGroupings = new HashSet<GroupingBuilder>();
+    private final Set<TypeDefinition<?>> typedefs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+    private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<>();
+    private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+    private final Set<GroupingBuilder> addedGroupings = new HashSet<>();
 
     public ContainerSchemaNodeBuilder getInput() {
         return inputBuilder;
@@ -49,41 +53,39 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
-    public RpcDefinition build() {
+    public RpcDefinition build(YangNode parent) {
+        if (!(parent instanceof Module)) {
+            throw new YangParseException(moduleName, line, "Rpc can be defined only under module");
+        }
         if (!isBuilt) {
             instance.setDescription(description);
             instance.setReference(reference);
             instance.setStatus(status);
 
-            final ContainerSchemaNode input = inputBuilder == null ? null : inputBuilder.build();
-            final ContainerSchemaNode output = outputBuilder == null ? null : outputBuilder.build();
+            final ContainerSchemaNode input = inputBuilder == null ? null : inputBuilder.build(instance);
+            final ContainerSchemaNode output = outputBuilder == null ? null : outputBuilder.build(instance);
             instance.setInput(input);
             instance.setOutput(output);
 
             instance.setPath(schemaPath);
 
             // TYPEDEFS
-            final Set<TypeDefinition<?>> typedefs = new TreeSet<TypeDefinition<?>>(Comparators.SCHEMA_NODE_COMP);
             for (TypeDefinitionBuilder entry : addedTypedefs) {
-                typedefs.add(entry.build());
+                typedefs.add(entry.build(instance));
             }
             instance.setTypeDefinitions(typedefs);
 
             // GROUPINGS
-            final Set<GroupingDefinition> groupings = new TreeSet<GroupingDefinition>(Comparators.SCHEMA_NODE_COMP);
             for (GroupingBuilder entry : addedGroupings) {
-                groupings.add(entry.build());
+                groupings.add(entry.build(instance));
             }
             instance.setGroupings(groupings);
 
             // UNKNOWN NODES
-            if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
-                for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                    unknownNodes.add(b.build());
-                }
-                Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+                unknownNodes.add(b.build(instance));
             }
+            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;

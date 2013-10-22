@@ -17,7 +17,7 @@ import java.util.Set;
  * are also defined.
  * </p>
  */
-public interface RpcDefinition extends SchemaNode {
+public interface RpcDefinition extends SchemaNode, YangNode {
 
     /**
      * @return Set of type definitions declared under this rpc statement.

@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import com.google.common.base.Preconditions;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -70,6 +69,7 @@ import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -456,7 +456,7 @@ public final class YangParserImpl implements YangModelParser {
                         throw new YangParseException(module.getName(), idref.getLine(), "Failed to find base identity");
                     }
                     idref.setBaseIdentity(identity);
-                    nodeToResolve.setType(idref.build());
+                    nodeToResolve.setType(idref.build(null));
                 } else {
                     resolveType(nodeToResolve, modules, module);
                 }
@@ -478,7 +478,7 @@ public final class YangParserImpl implements YangModelParser {
                     IdentitySchemaNodeBuilder identity = findBaseIdentity(modules, module, idref.getBaseString(),
                             idref.getLine());
                     idref.setBaseIdentity(identity);
-                    nodeToResolve.setType(idref.build());
+                    nodeToResolve.setType(idref.build(null));
                 } else {
                     resolveTypeWithContext(nodeToResolve, modules, module, context);
                 }

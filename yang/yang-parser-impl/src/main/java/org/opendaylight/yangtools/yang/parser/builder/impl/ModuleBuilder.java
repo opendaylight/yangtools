@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -37,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -70,17 +70,22 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<TypeAwareBuilder>();
 
     private final Set<ModuleImport> imports = new HashSet<ModuleImport>();
-    private final List<AugmentationSchemaBuilder> addedAugments = new ArrayList<AugmentationSchemaBuilder>();
+    private final Set<AugmentationSchema> augments = new HashSet<>();
+    private final List<AugmentationSchemaBuilder> augmentBuilders = new ArrayList<>();
     private final List<AugmentationSchemaBuilder> allAugments = new ArrayList<AugmentationSchemaBuilder>();
-    private final Set<UsesNodeBuilder> addedUsesNodes = new HashSet<UsesNodeBuilder>();
     private final List<UsesNodeBuilder> allUsesNodes = new ArrayList<UsesNodeBuilder>();
+    private final Set<RpcDefinition> rpcs = new TreeSet<RpcDefinition>(Comparators.SCHEMA_NODE_COMP);
     private final Set<RpcDefinitionBuilder> addedRpcs = new HashSet<RpcDefinitionBuilder>();
+    private final Set<NotificationDefinition> notifications = new TreeSet<NotificationDefinition>(Comparators.SCHEMA_NODE_COMP);
     private final Set<NotificationBuilder> addedNotifications = new HashSet<NotificationBuilder>();
+    private final Set<IdentitySchemaNode> identities = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
     private final Set<IdentitySchemaNodeBuilder> addedIdentities = new HashSet<IdentitySchemaNodeBuilder>();
-    private final Set<FeatureBuilder> addedFeatures = new HashSet<FeatureBuilder>();
-    private final Set<DeviationBuilder> addedDeviations = new HashSet<DeviationBuilder>();
-    private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<TypeDefinitionBuilder>();
-    private final List<ExtensionBuilder> addedExtensions = new ArrayList<ExtensionBuilder>();
+    private final Set<FeatureDefinition> features = new TreeSet<FeatureDefinition>(Comparators.SCHEMA_NODE_COMP);
+    private final Set<FeatureBuilder> addedFeatures = new HashSet<>();
+    private final Set<Deviation> deviations = new HashSet<>();
+    private final Set<DeviationBuilder> deviationBuilders = new HashSet<>();
+    private final List<ExtensionDefinition> extensions = new ArrayList<>();
+    private final List<ExtensionBuilder> addedExtensions = new ArrayList<>();
     private final List<UnknownSchemaNodeBuilder> allUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
     public ModuleBuilder(final String name) {
@@ -91,100 +96,93 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         actualPath.push(this);
     }
 
+    public Module build() {
+        return build(null);
+    }
+
     /**
      * Build new Module object based on this builder.
      */
     @Override
-    public Module build() {
+    public Module build(YangNode parent) {
         instance.setPrefix(prefix);
         instance.setRevision(revision);
         instance.setImports(imports);
         instance.setNamespace(namespace);
 
         // TYPEDEFS
-        final Set<TypeDefinition<?>> typedefs = new TreeSet<TypeDefinition<?>>(Comparators.SCHEMA_NODE_COMP);
         for (TypeDefinitionBuilder tdb : addedTypedefs) {
-            typedefs.add(tdb.build());
+            typedefs.add(tdb.build(instance));
         }
         instance.setTypeDefinitions(typedefs);
 
         // CHILD NODES
-        final Map<QName, DataSchemaNode> children = new TreeMap<QName, DataSchemaNode>(Comparators.QNAME_COMP);
         for (DataSchemaNodeBuilder child : addedChildNodes) {
-            children.put(child.getQName(), child.build());
+            DataSchemaNode childNode = child.build(instance);
+            childNodes.put(childNode.getQName(), childNode);
         }
-        instance.setChildNodes(children);
+        instance.setChildNodes(childNodes);
 
         // GROUPINGS
-        final Set<GroupingDefinition> groupings = new TreeSet<GroupingDefinition>(Comparators.SCHEMA_NODE_COMP);
         for (GroupingBuilder gb : addedGroupings) {
-            groupings.add(gb.build());
+            groupings.add(gb.build(instance));
         }
         instance.setGroupings(groupings);
 
         // USES
-        final Set<UsesNode> usesDefinitions = new HashSet<UsesNode>();
         for (UsesNodeBuilder unb : addedUsesNodes) {
-            usesDefinitions.add(unb.build());
+            usesNodes.add(unb.build(instance));
         }
-        instance.setUses(usesDefinitions);
+        instance.setUses(usesNodes);
 
         // FEATURES
-        final Set<FeatureDefinition> features = new TreeSet<FeatureDefinition>(Comparators.SCHEMA_NODE_COMP);
         for (FeatureBuilder fb : addedFeatures) {
-            features.add(fb.build());
+            features.add(fb.build(instance));
         }
         instance.setFeatures(features);
 
         // NOTIFICATIONS
-        final Set<NotificationDefinition> notifications = new TreeSet<NotificationDefinition>(
-                Comparators.SCHEMA_NODE_COMP);
         for (NotificationBuilder entry : addedNotifications) {
-            notifications.add(entry.build());
+            notifications.add(entry.build(instance));
         }
         instance.setNotifications(notifications);
 
         // AUGMENTATIONS
-        final Set<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
-        for (AugmentationSchemaBuilder builder : addedAugments) {
-            augmentations.add(builder.build());
+        for (AugmentationSchemaBuilder builder : augmentBuilders) {
+            augments.add(builder.build(instance));
         }
-        instance.setAugmentations(augmentations);
+        instance.setAugmentations(augments);
 
         // RPCs
-        final Set<RpcDefinition> rpcs = new TreeSet<RpcDefinition>(Comparators.SCHEMA_NODE_COMP);
         for (RpcDefinitionBuilder rpc : addedRpcs) {
-            rpcs.add(rpc.build());
+            rpcs.add(rpc.build(instance));
         }
         instance.setRpcs(rpcs);
 
         // DEVIATIONS
-        final Set<Deviation> deviations = new HashSet<Deviation>();
-        for (DeviationBuilder entry : addedDeviations) {
-            deviations.add(entry.build());
+        for (DeviationBuilder entry : deviationBuilders) {
+            deviations.add(entry.build(instance));
         }
         instance.setDeviations(deviations);
 
         // EXTENSIONS
-        final List<ExtensionDefinition> extensions = new ArrayList<ExtensionDefinition>();
         for (ExtensionBuilder eb : addedExtensions) {
-            extensions.add(eb.build());
+            extensions.add(eb.build(instance));
         }
         Collections.sort(extensions, Comparators.SCHEMA_NODE_COMP);
         instance.setExtensionSchemaNodes(extensions);
 
         // IDENTITIES
-        final Set<IdentitySchemaNode> identities = new TreeSet<IdentitySchemaNode>(Comparators.SCHEMA_NODE_COMP);
         for (IdentitySchemaNodeBuilder id : addedIdentities) {
-            identities.add(id.build());
+            identities.add(id.build(instance));
         }
         instance.setIdentities(identities);
 
         // UNKNOWN NODES
-        final List<UnknownSchemaNode> unknownNodes = new ArrayList<UnknownSchemaNode>();
         for (UnknownSchemaNodeBuilder unb : addedUnknownNodes) {
-            unknownNodes.add(unb.build());
+            unknownNodes.add(unb.build(instance));
         }
+        Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
         instance.setUnknownSchemaNodes(unknownNodes);
 
         return instance;
@@ -258,7 +256,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     public Set<DeviationBuilder> getDeviations() {
-        return addedDeviations;
+        return deviationBuilders;
     }
 
     public List<ExtensionBuilder> getExtensions() {
@@ -332,6 +330,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     public ExtensionBuilder addExtension(final QName qname, final int line) {
+        Builder parent = getActualNode();
+        if (!(parent.equals(this))) {
+            throw new YangParseException(name, line, "extension can be defined only in module or submodule");
+        }
+
         final String extName = qname.getLocalName();
         for (ExtensionBuilder addedExtension : addedExtensions) {
             if (addedExtension.getQName().getLocalName().equals(extName)) {
@@ -339,6 +342,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             }
         }
         final ExtensionBuilder builder = new ExtensionBuilder(name, line, qname);
+        builder.setParent(parent);
         addedExtensions.add(builder);
         return builder;
     }
@@ -430,7 +434,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         if (parent.equals(this)) {
             // augment can be declared only under 'module' ...
-            addedAugments.add(builder);
+            augmentBuilders.add(builder);
         } else {
             // ... or 'uses' statement
             if (parent instanceof UsesNodeBuilder) {
@@ -447,11 +451,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         allAugments.add(builder);
 
         return builder;
-    }
-
-    @Override
-    public Set<UsesNodeBuilder> getUsesNodes() {
-        return addedUsesNodes;
     }
 
     @Override
@@ -547,6 +546,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         rpc.setOutput(outputBuilder);
         return outputBuilder;
+    }
+
+    public void addNotification(NotificationDefinition notification) {
+        notifications.add(notification);
     }
 
     public NotificationBuilder addNotification(final int line, final QName qname) {
@@ -737,7 +740,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         final DeviationBuilder builder = new DeviationBuilder(name, line, targetPath);
         builder.setParent(parent);
-        addedDeviations.add(builder);
+        deviationBuilders.add(builder);
         return builder;
     }
 
@@ -828,6 +831,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         private ModuleImpl(String name) {
             this.name = name;
+        }
+
+        @Override
+        public YangNode getParent() {
+            return null;
         }
 
         @Override

@@ -7,13 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -24,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
@@ -41,20 +39,15 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     private Status status = Status.CURRENT;
     private boolean addedByUses;
 
-    private Set<TypeDefinition<?>> typedefs;
-    private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<TypeDefinitionBuilder>();
-
-    private Set<UsesNode> usesNodes;
-    private final Set<UsesNodeBuilder> addedUsesNodes = new HashSet<UsesNodeBuilder>();
-
     public GroupingBuilderImpl(final String moduleName, final int line, final QName qname) {
         super(moduleName, line, qname);
         instance = new GroupingDefinitionImpl(qname);
     }
 
     @Override
-    public GroupingDefinition build() {
+    public GroupingDefinition build(YangNode parent) {
         if (!isBuilt) {
+            instance.setParent(parent);
             instance.setPath(schemaPath);
             instance.setDescription(description);
             instance.setReference(reference);
@@ -62,53 +55,35 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
             instance.setAddedByUses(addedByUses);
 
             // CHILD NODES
-            final Map<QName, DataSchemaNode> childs = new TreeMap<QName, DataSchemaNode>(Comparators.QNAME_COMP);
-            if (childNodes == null || childNodes.isEmpty()) {
-                for (DataSchemaNodeBuilder node : addedChildNodes) {
-                    childs.put(node.getQName(), node.build());
-                }
-            } else {
-                for (DataSchemaNode node : childNodes) {
-                    childs.put(node.getQName(), node);
-                }
+            for (DataSchemaNodeBuilder node : addedChildNodes) {
+                DataSchemaNode child = node.build(instance);
+                childNodes.put(child.getQName(), child);
             }
-            instance.setChildNodes(childs);
+            instance.setChildNodes(childNodes);
 
             // GROUPINGS
-            if (groupings == null) {
-                groupings = new TreeSet<GroupingDefinition>(Comparators.SCHEMA_NODE_COMP);
-                for (GroupingBuilder builder : addedGroupings) {
-                    groupings.add(builder.build());
-                }
+            for (GroupingBuilder builder : addedGroupings) {
+                groupings.add(builder.build(instance));
             }
             instance.setGroupings(groupings);
 
             // TYPEDEFS
-            if (typedefs == null) {
-                typedefs = new TreeSet<TypeDefinition<?>>(Comparators.SCHEMA_NODE_COMP);
-                for (TypeDefinitionBuilder entry : addedTypedefs) {
-                    typedefs.add(entry.build());
-                }
+            for (TypeDefinitionBuilder entry : addedTypedefs) {
+                typedefs.add(entry.build(instance));
             }
             instance.setTypeDefinitions(typedefs);
 
             // USES
-            if (usesNodes == null) {
-                usesNodes = new HashSet<UsesNode>();
-                for (UsesNodeBuilder builder : addedUsesNodes) {
-                    usesNodes.add(builder.build());
-                }
+            for (UsesNodeBuilder builder : addedUsesNodes) {
+                usesNodes.add(builder.build(instance));
             }
             instance.setUses(usesNodes);
 
             // UNKNOWN NODES
-            if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
-                for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                    unknownNodes.add(b.build());
-                }
-                Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+                unknownNodes.add(b.build(instance));
             }
+            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
@@ -193,20 +168,6 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public Set<UsesNodeBuilder> getUsesNodes() {
-        return addedUsesNodes;
-    }
-
-    @Override
-    public void addUsesNode(final UsesNodeBuilder usesBuilder) {
-        addedUsesNodes.add(usesBuilder);
-    }
-
-    public void setUsesnodes(final Set<UsesNode> usesNodes) {
-        this.usesNodes = usesNodes;
-    }
-
-    @Override
     public String toString() {
         return "grouping " + qname.getLocalName();
     }
@@ -215,7 +176,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+        result = prime * result + ((parentBuilder == null) ? 0 : parentBuilder.hashCode());
         result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
         return result;
     }
@@ -235,11 +196,11 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
             return false;
         }
         final GroupingBuilderImpl other = (GroupingBuilderImpl) obj;
-        if (parent == null) {
-            if (other.parent != null) {
+        if (parentBuilder == null) {
+            if (other.parentBuilder != null) {
                 return false;
             }
-        } else if (!parent.equals(other.parent)) {
+        } else if (!parentBuilder.equals(other.parentBuilder)) {
             return false;
         }
         if (schemaPath == null) {
@@ -256,6 +217,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     private final class GroupingDefinitionImpl implements GroupingDefinition {
         private final QName qname;
         private SchemaPath path;
+        private YangNode parent;
         private String description;
         private String reference;
         private Status status;
@@ -282,6 +244,15 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
 
         private void setPath(SchemaPath path) {
             this.path = path;
+        }
+
+        @Override
+        public YangNode getParent() {
+            return parent;
+        }
+
+        private void setParent(YangNode parent) {
+            this.parent = parent;
         }
 
         @Override

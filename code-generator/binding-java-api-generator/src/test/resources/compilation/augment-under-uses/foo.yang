@@ -1,0 +1,51 @@
+module foo {
+    yang-version 1;
+    namespace "urn:opendaylight:foo";
+    prefix "foo";
+
+    import bar { prefix b; revision-date 2013-10-08; }
+
+    revision "2013-10-08" {
+    }
+
+    grouping object {
+        container nodes {
+        }
+    }
+
+    grouping open-object {
+        uses object {
+            augment "nodes" {
+                container links {
+                    leaf id {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    grouping explicit-route-object {
+        list subobjects {
+            leaf loose {
+                type boolean;
+            }
+            uses b:explicit-route-subobjects {
+                augment "subobject-type" {
+                    case path-key {
+                        container path-key {
+                            uses path-key-subobject;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    grouping path-key-subobject {
+        leaf path-key {
+            type string;
+        }
+    }
+
+}

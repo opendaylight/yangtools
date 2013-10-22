@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuil
 public abstract class AbstractBuilder implements Builder {
     protected String moduleName;
     protected final int line;
-    protected Builder parent;
+    protected Builder parentBuilder;
 
-    protected List<UnknownSchemaNode> unknownNodes;
+    protected List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
     protected final List<UnknownSchemaNodeBuilder> addedUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
     protected AbstractBuilder(final String moduleName, final int line) {
@@ -46,12 +46,12 @@ public abstract class AbstractBuilder implements Builder {
 
     @Override
     public Builder getParent() {
-        return parent;
+        return parentBuilder;
     }
 
     @Override
-    public void setParent(final Builder parent) {
-        this.parent = parent;
+    public void setParent(final Builder parentBuilder) {
+        this.parentBuilder = parentBuilder;
     }
 
     @Override

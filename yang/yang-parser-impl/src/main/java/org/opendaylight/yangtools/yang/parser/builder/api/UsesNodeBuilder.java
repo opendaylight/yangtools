@@ -13,6 +13,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 
@@ -154,7 +155,7 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
     /**
      * Build new UsesNode object.
      */
-    UsesNode build();
+    UsesNode build(YangNode parent);
 
     /**
      * Get child nodes defined in target grouping.

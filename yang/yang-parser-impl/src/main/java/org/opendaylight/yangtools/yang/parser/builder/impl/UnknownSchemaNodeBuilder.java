@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 
@@ -89,7 +89,7 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
-    public UnknownSchemaNode build() {
+    public UnknownSchemaNode build(YangNode parent) {
         if (!isBuilt) {
             instance.setPath(schemaPath);
             instance.setNodeType(nodeType);
@@ -104,18 +104,15 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
                 instance.setExtensionDefinition(extensionDefinition);
             } else {
                 if (extensionBuilder != null) {
-                    instance.setExtensionDefinition(extensionBuilder.build());
+                    instance.setExtensionDefinition(extensionBuilder.build(null));
                 }
             }
 
             // UNKNOWN NODES
-            if (unknownNodes == null) {
-                unknownNodes = new ArrayList<UnknownSchemaNode>();
-                for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                    unknownNodes.add(b.build());
-                }
-                Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+                unknownNodes.add(b.build(null));
             }
+            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
