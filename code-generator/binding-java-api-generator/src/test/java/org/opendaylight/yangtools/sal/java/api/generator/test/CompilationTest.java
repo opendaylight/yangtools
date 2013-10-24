@@ -11,92 +11,28 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
-import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 /**
  * Test correct code generation.
  *
  */
-public class CompilationTest {
-    private static final String FS = File.separator;
-    private static final String BASE_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1";
-    private static final String NS_TEST = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
-    private static final String NS_FOO = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
-    private static final String NS_BAR = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "bar" + FS + "rev131008";
-    private static final String NS_BAZ = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "baz" + FS + "rev131008";
-
-    private static final String BASE_PKG = "org.opendaylight.yang.gen.v1";
-
-    private static final String TEST_PATH = "target" + FS + "test";
-    private static final File TEST_DIR = new File(TEST_PATH);
-
-    private static final String GENERATOR_OUTPUT_PATH = TEST_PATH + FS + "src";
-    private static final File GENERATOR_OUTPUT_DIR = new File(GENERATOR_OUTPUT_PATH);
-    private static final String COMPILER_OUTPUT_PATH = TEST_PATH + FS + "bin";
-    private static final File COMPILER_OUTPUT_DIR = new File(COMPILER_OUTPUT_PATH);
-
-    private YangParserImpl parser;
-    private BindingGenerator bindingGenerator;
-    private JavaCompiler compiler;
-    private StandardJavaFileManager fileManager;
-
-    @BeforeClass
-    public static void createTestDirs() {
-        if (TEST_DIR.exists()) {
-            deleteTestDir(TEST_DIR);
-        }
-        assertTrue(GENERATOR_OUTPUT_DIR.mkdirs());
-        assertTrue(COMPILER_OUTPUT_DIR.mkdirs());
-    }
-
-    @Before
-    public void init() {
-        parser = new YangParserImpl();
-        bindingGenerator = new BindingGeneratorImpl();
-        compiler = ToolProvider.getSystemJavaCompiler();
-        fileManager = compiler.getStandardFileManager(null, null, null);
-    }
-
-    /**
-     * Method to clean resources. It is manually called at the end of each test
-     * instead of marking it with @After annotation to prevent removing
-     * generated code if test fails.
-     */
-    public void cleanUp(File... resourceDirs) {
-        for (File resourceDir : resourceDirs) {
-            if (resourceDir.exists()) {
-                deleteTestDir(resourceDir);
-            }
-        }
-    }
+public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testListGeneration() throws Exception {
@@ -521,37 +457,6 @@ public class CompilationTest {
     }
 
     @Test
-    public void testAugmentToUsesInAugment() throws Exception {
-        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "augment-uses-to-augment");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "augment-uses-to-augment");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
-        final List<File> sourceFiles = getSourceFiles("/compilation/augment-uses-to-augment");
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
-
-        // Test if all sources are generated
-        File fooParent = new File(sourcesOutputDir, NS_FOO);
-        assertEquals(4, fooParent.listFiles().length);
-        assertTrue(new File(fooParent, "IgpLinkAttributes.java").exists());
-        assertTrue(new File(fooParent, "Link1.java").exists());
-        assertTrue(new File(fooParent, "Link1Builder.java").exists());
-
-        File bazParent = new File(sourcesOutputDir, NS_BAZ);
-        assertEquals(4, bazParent.listFiles().length);
-        assertTrue(new File(bazParent, "IgpLinkAttributes1.java").exists());
-        assertTrue(new File(bazParent, "IgpLinkAttributes1Builder.java").exists());
-        assertTrue(new File(bazParent, "LinkAttributes.java").exists());
-
-        // Test if sources are compilable
-        testCompilation(sourcesOutputDir, compiledOutputDir);
-    }
-
-    @Test
     public void compilationTest() throws Exception {
         final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "yang");
         assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
@@ -571,36 +476,6 @@ public class CompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    /**
-     * Test if source code is compilable.
-     *
-     * @param sourcesOutputDir
-     *            directory containing source files
-     * @param compiledOutputDir
-     *            compiler output directory
-     */
-    private void testCompilation(File sourcesOutputDir, File compiledOutputDir) {
-        List<File> filesList = getJavaFiles(sourcesOutputDir);
-        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
-        Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
-        boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
-        assertTrue(compiled);
-    }
-
-    private void testImplementIfc(Class<?> classToTest, String ifc, ClassLoader loader) throws ClassNotFoundException {
-        Class<?>[] interfaces = classToTest.getInterfaces();
-        List<Class<?>> ifcsList = Arrays.asList(interfaces);
-        Class<?> ifcClass = Class.forName(ifc, true, loader);
-        testImplementIfc(classToTest, ifcClass);
-    }
-
-    private void testImplementIfc(Class<?> classToTest, Class<?> ifcClass) throws ClassNotFoundException {
-        Class<?>[] interfaces = classToTest.getInterfaces();
-        List<Class<?>> ifcsList = Arrays.asList(interfaces);
-        if (!ifcsList.contains(ifcClass)) {
-            throw new AssertionError(classToTest + " should implement " + ifcClass);
-        }
-    }
 
     private void testReturnType(Class<?> clazz, String methodName, Class<?> returnType) throws Exception {
         Method method;
@@ -666,58 +541,4 @@ public class CompilationTest {
         }
     }
 
-    private List<File> getSourceFiles(String path) throws FileNotFoundException {
-        final String resPath = getClass().getResource(path).getPath();
-        final File sourcesDir = new File(resPath);
-        if (sourcesDir.exists()) {
-            final List<File> sourceFiles = new ArrayList<>();
-            final File[] fileArray = sourcesDir.listFiles();
-            if (fileArray == null) {
-                throw new IllegalArgumentException("Unable to locate files in " + sourcesDir);
-            }
-            sourceFiles.addAll(Arrays.asList(fileArray));
-            return sourceFiles;
-        } else {
-            throw new FileNotFoundException("Testing files were not found(" + sourcesDir.getName() + ")");
-        }
-    }
-
-    private static void deleteTestDir(File file) {
-        if (file.isDirectory()) {
-            File[] filesToDelete = file.listFiles();
-            if (filesToDelete != null) {
-                for (File f : filesToDelete) {
-                    deleteTestDir(f);
-                }
-            }
-        }
-        if (!file.delete()) {
-            throw new RuntimeException("Failed to clean up after test");
-        }
-    }
-
-    /**
-     * Search recursively given directory for *.java files.
-     *
-     * @param directory
-     *            directory to search
-     * @return List of java files found
-     */
-    private List<File> getJavaFiles(File directory) {
-        List<File> result = new ArrayList<>();
-        File[] filesToRead = directory.listFiles();
-        if (filesToRead != null) {
-            for (File file : filesToRead) {
-                if (file.isDirectory()) {
-                    result.addAll(getJavaFiles(file));
-                } else {
-                    String absPath = file.getAbsolutePath();
-                    if (absPath.endsWith(".java")) {
-                        result.add(file);
-                    }
-                }
-            }
-        }
-        return result;
-    }
 }

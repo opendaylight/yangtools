@@ -6,6 +6,7 @@ import java.util.Map
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.binding.generator.util.Types
 import com.google.common.base.Splitter
+import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 
 abstract class BaseTemplate {
     
@@ -33,7 +34,7 @@ abstract class BaseTemplate {
     '''
     «packageDefinition»
     «imports»
-    
+
     «_body»
     '''.toString
     }
@@ -45,15 +46,28 @@ abstract class BaseTemplate {
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
-        
+
     '''
-    
+
     protected abstract def CharSequence body();
 
     // Helper patterns
-    
+
     final protected def fieldName(GeneratedProperty property) '''_«property.name»'''
-    
+
+
+    final protected def propertyNameFromGetter(MethodSignature getter) {
+        var int prefix;
+        if (getter.name.startsWith("is")) {
+            prefix = 2
+        } else if (getter.name.startsWith("get")) {
+            prefix = 3
+        } else {
+            throw new IllegalArgumentException("Not a getter")
+        }
+        return getter.name.substring(prefix).toFirstLower;
+    }
+
     /**
      * Template method which generates the getter method for <code>field</code>
      * 
@@ -68,7 +82,7 @@ abstract class BaseTemplate {
         }
     '''
     }
-    
+
     final protected def getterMethodName(GeneratedProperty field) {
         val prefix = if(field.returnType.equals(Types.BOOLEAN)) "is" else "get"
         return '''«prefix»«field.name.toFirstUpper»'''

@@ -203,6 +203,8 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateFields(false)»
 
+            «generateBuilderConstructor(type)»
+
             «generateGetters(false)»
 
             «generateSetters»
@@ -212,7 +214,7 @@ class BuilderTemplate extends BaseTemplate {
             }
 
             private static final class «type.name»«IMPL» implements «type.name» {
-                
+
                 «implementedInterfaceGetter»
 
                 «generateFields(true)»
@@ -227,6 +229,35 @@ class BuilderTemplate extends BaseTemplate {
             }
 
         }
+    '''
+
+
+    def private generateBuilderConstructor(Type implementedIfc) '''
+        public «type.name»«BUILDER»() {
+        }
+
+        «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
+        «val ifc = implementedIfc as GeneratedType»
+        «FOR impl : ifc.implements»
+            «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
+                public «type.name»«BUILDER»(«impl.fullyQualifiedName» arg) {
+                    «printBuilderConstructorProperties(impl)»
+                }
+            «ENDIF»
+        «ENDFOR»
+        «ENDIF»
+    '''
+
+    def private printBuilderConstructorProperties(Type implementedIfc) '''
+        «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
+        «val ifc = implementedIfc as GeneratedType»
+        «FOR getter : ifc.methodDefinitions»
+            this._«getter.propertyNameFromGetter» = arg.«getter.name»();
+        «ENDFOR»
+        «FOR impl : ifc.implements»
+        «printBuilderConstructorProperties(impl)»
+        «ENDFOR»
+        «ENDIF»
     '''
 
 	/**

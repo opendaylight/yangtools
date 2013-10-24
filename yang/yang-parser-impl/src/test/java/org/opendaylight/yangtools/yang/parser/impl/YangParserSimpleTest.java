@@ -68,6 +68,7 @@ public class YangParserSimpleTest {
         assertEquals(Status.OBSOLETE, data.getStatus());
         assertEquals(0, data.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
+        assertEquals(testModule, data.getParent());
         assertFalse(data.isAugmenting());
         assertFalse(data.isConfiguration());
         ConstraintDefinition constraints = data.getConstraints();
@@ -117,6 +118,7 @@ public class YangParserSimpleTest {
         assertEquals(Status.CURRENT, nodes.getStatus());
         assertEquals(0, nodes.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
+        assertEquals(test, nodes.getParent());
         assertFalse(nodes.isAugmenting());
         assertFalse(nodes.isConfiguration());
 
@@ -169,29 +171,30 @@ public class YangParserSimpleTest {
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
         AnyXmlSchemaNode text = (AnyXmlSchemaNode)nodes.getDataChildByName("text");
-        assertNotNull(text);
+        assertEquals(nodes, text.getParent());
         ChoiceNode level = (ChoiceNode)nodes.getDataChildByName("level");
-        assertNotNull(level);
+        assertEquals(nodes, level.getParent());
         ContainerSchemaNode node = (ContainerSchemaNode)nodes.getDataChildByName("node");
-        assertNotNull(node);
+        assertEquals(nodes, node.getParent());
         LeafSchemaNode nodesId = (LeafSchemaNode)nodes.getDataChildByName("nodes-id");
-        assertNotNull(nodesId);
+        assertEquals(nodes, nodesId.getParent());
         LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName("added");
-        assertNotNull(added);
+        assertEquals(nodes, added.getParent());
         assertEquals(createPath("nodes", "added"), added.getPath());
         assertEquals(createPath("mytype"), added.getType().getPath());
 
         ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName("links");
-        assertNotNull(links);
+        assertEquals(nodes, links.getParent());
         assertFalse(links.isUserOrdered());
         LeafSchemaNode source = (LeafSchemaNode)nodes.getDataChildByName("source");
-        assertNotNull(source);
+        assertEquals(nodes, source.getParent());
         LeafSchemaNode target = (LeafSchemaNode)nodes.getDataChildByName("target");
-        assertNotNull(target);
+        assertEquals(nodes, target.getParent());
 
         Set<GroupingDefinition> groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
         GroupingDefinition nodeGroup = groupings.iterator().next();
+        assertEquals(nodes, nodeGroup.getParent());
         QName groupQName = new QName(snNS, snRev, snPref, "node-group");
         assertEquals(groupQName, nodeGroup.getQName());
         SchemaPath nodeGroupPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "node-group");
@@ -200,6 +203,7 @@ public class YangParserSimpleTest {
         Set<UsesNode> uses = nodes.getUses();
         assertEquals(1, uses.size());
         UsesNode use = uses.iterator().next();
+        assertEquals(nodes, use.getParent());
         assertEquals(nodeGroupPath, use.getGroupingPath());
     }
 

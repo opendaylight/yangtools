@@ -199,6 +199,7 @@ public class YangParserTest {
         assertEquals(Status.CURRENT, ifEntry.getStatus());
         assertEquals(0, ifEntry.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
+        assertEquals(interfaces, ifEntry.getParent());
         assertFalse(ifEntry.isAugmenting());
         assertTrue(ifEntry.isConfiguration());
         ConstraintDefinition constraints = ifEntry.getConstraints();
@@ -645,6 +646,7 @@ public class YangParserTest {
         Module foo = TestUtils.findModule(modules, "foo");
         ContainerSchemaNode transfer = (ContainerSchemaNode) foo.getDataChildByName("transfer");
         ChoiceNode how = (ChoiceNode) transfer.getDataChildByName("how");
+        assertEquals(transfer, how.getParent());
         Set<ChoiceCaseNode> cases = how.getCases();
         assertEquals(5, cases.size());
         ChoiceCaseNode input = null;
@@ -732,10 +734,12 @@ public class YangParserTest {
         assertEquals(0, notification.getUses().size());
 
         LeafSchemaNode eventClass = (LeafSchemaNode) notification.getDataChildByName("event-class");
+        assertEquals(notification, eventClass.getParent());
         assertTrue(eventClass.getType() instanceof StringType);
         AnyXmlSchemaNode reportingEntity = (AnyXmlSchemaNode) notification.getDataChildByName("reporting-entity");
-        assertNotNull(reportingEntity);
+        assertEquals(notification, reportingEntity.getParent());
         LeafSchemaNode severity = (LeafSchemaNode) notification.getDataChildByName("severity");
+        assertEquals(notification, severity.getParent());
         assertTrue(severity.getType() instanceof StringType);
     }
 
@@ -751,10 +755,15 @@ public class YangParserTest {
         assertEquals("RFC 6241, Section 7.1", rpc.getReference());
 
         ContainerSchemaNode input = rpc.getInput();
-        assertNotNull(input.getDataChildByName("source"));
-        assertNotNull(input.getDataChildByName("filter"));
+        assertEquals(rpc, input.getParent());
+        DataSchemaNode source = input.getDataChildByName("source");
+        assertEquals(input, source.getParent());
+        DataSchemaNode filter = input.getDataChildByName("filter");
+        assertEquals(input, filter.getParent());
         ContainerSchemaNode output = rpc.getOutput();
-        assertNotNull(output.getDataChildByName("data"));
+        assertEquals(rpc, output.getParent());
+        DataSchemaNode data = output.getDataChildByName("data");
+        assertEquals(output, data.getParent());
     }
 
     @Test

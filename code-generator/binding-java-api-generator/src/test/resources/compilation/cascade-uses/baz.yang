@@ -1,0 +1,15 @@
+module baz {
+    yang-version 1;
+    namespace "urn:opendaylight:baz";
+    prefix "baz";
+
+    revision "2013-10-08" {
+    }
+
+    grouping baz_gr1 {
+        leaf baz1 {
+            type uint8;
+        }
+    }
+
+}

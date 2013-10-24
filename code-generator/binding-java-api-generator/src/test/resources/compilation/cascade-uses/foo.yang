@@ -1,0 +1,24 @@
+module foo {
+    yang-version 1;
+    namespace "urn:opendaylight:foo";
+    prefix "foo";
+
+    import bar { prefix br; revision-date 2013-10-08; }
+
+    revision "2013-10-08" {
+    }
+
+    grouping foo_gr1 {
+        container foo_gr1 {
+        }
+        leaf foo2 {
+            type binary;
+        }
+    }
+
+    container nodes {
+        uses foo_gr1;
+        uses "br:bar_gr2";
+    }
+
+}
