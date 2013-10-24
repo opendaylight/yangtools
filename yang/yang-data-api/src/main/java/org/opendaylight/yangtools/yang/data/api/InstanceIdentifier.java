@@ -173,7 +173,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
 
     private static class BuilderImpl implements InstanceIdentifierBuilder {
 
-        private List<PathArgument> path;
+        private final List<PathArgument> path = new ArrayList<>();
 
         @Override
         public InstanceIdentifierBuilder node(QName nodeType) {
