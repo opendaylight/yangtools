@@ -131,6 +131,7 @@ class InterfaceTemplate extends BaseTemplate {
                 «IF (innerClass instanceof GeneratedTransferObject)»
                     «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
                     «classTemplate.generateAsInnerClass»
+                    «this.importMap.putAll(classTemplate.importMap)»
                     
                 «ENDIF»
             «ENDFOR»

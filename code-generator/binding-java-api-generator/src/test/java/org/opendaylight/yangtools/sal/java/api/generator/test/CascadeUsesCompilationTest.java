@@ -41,7 +41,7 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated from module foo
         File parent = new File(sourcesOutputDir, NS_FOO);
-        assertEquals(5, parent.listFiles().length);
+        testFilesCount(parent, 5);
         File fooData = new File(parent, "FooData.java");
         File foo_gr1 = new File(parent, "FooGr1.java");
         File nodes = new File(parent, "Nodes.java");
@@ -53,7 +53,7 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated from module bar
         parent = new File(sourcesOutputDir, NS_BAR);
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         File barGr1 = new File(parent, "BarGr1.java");
         File barGr2 = new File(parent, "BarGr2.java");
         assertTrue(barGr1.exists());
@@ -61,7 +61,7 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated from module baz
         parent = new File(sourcesOutputDir, NS_BAZ);
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         File bazGr1 = new File(parent, "BazGr1.java");
         assertTrue(bazGr1.exists());
 
@@ -77,8 +77,8 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
         Class<?> barGr2Class = Class.forName(BASE_PKG + ".urn.opendaylight.bar.rev131008.BarGr2", true, loader);
 
         // test generated interface from 'container nodes'
-        testImplementIfc(nodesClass, fooGr1Class);
-        testImplementIfc(nodesClass, barGr2Class);
+        testImplementsIfc(nodesClass, fooGr1Class);
+        testImplementsIfc(nodesClass, barGr2Class);
 
         // test generated builder for 'container nodes'
         assertFalse(nodesBuilderClass.isInterface());

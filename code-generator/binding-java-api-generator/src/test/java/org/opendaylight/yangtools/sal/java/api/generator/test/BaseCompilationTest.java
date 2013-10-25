@@ -77,7 +77,15 @@ public abstract class BaseCompilationTest {
         }
     }
 
-    protected static void testImplementIfc(Class<?> classToTest, Class<?> ifcClass) throws ClassNotFoundException {
+    /**
+     * Test if generated source implements interface.
+     *
+     * @param classToTest
+     *            source to test
+     * @param ifcClass
+     *            expected interface type
+     */
+    protected static void testImplementsIfc(Class<?> classToTest, Class<?> ifcClass) {
         Class<?>[] interfaces = classToTest.getInterfaces();
         List<Class<?>> ifcsList = Arrays.asList(interfaces);
         if (!ifcsList.contains(ifcClass)) {
@@ -85,6 +93,15 @@ public abstract class BaseCompilationTest {
         }
     }
 
+    /**
+     * Test if interface generated from augment extends Augmentation interface
+     * with correct generic type.
+     * 
+     * @param classToTest
+     *            interface generated from augment
+     * @param paramClass
+     *            fully qualified name of expected parameter type
+     */
     protected static void testAugmentation(Class<?> classToTest, String paramClass) {
         final String augmentationIfc = "interface org.opendaylight.yangtools.yang.binding.Augmentation";
         ParameterizedType augmentation = null;
@@ -119,6 +136,15 @@ public abstract class BaseCompilationTest {
         Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
         boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
         assertTrue(compiled);
+    }
+
+    protected static void testFilesCount(File dir, int count) {
+        File[] dirContent = dir.listFiles();
+        if (dirContent == null) {
+            throw new AssertionError("File " + dir + " doesn't exists or it's not a directory");
+        } else {
+            assertEquals("Unexpected count of generated files", count, dirContent.length);
+        }
     }
 
     /**

@@ -50,7 +50,7 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated
         File parent = new File(sourcesOutputDir, NS_TEST);
-        assertEquals(6, parent.listFiles().length);
+        testFilesCount(parent, 6);
         File keyArgs = new File(parent, "KeyArgs.java");
         File links = new File(parent, "Links.java");
         File linksBuilder = new File(parent, "LinksBuilder.java");
@@ -63,7 +63,7 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(testData.exists());
 
         parent = new File(sourcesOutputDir, NS_TEST + FS + "links");
-        assertEquals(7, parent.listFiles().length);
+        testFilesCount(parent, 7);
         File level = new File(parent, "Level.java");
         File linkGroup = new File(parent, "LinkGroup.java");
         File node = new File(parent, "Node.java");
@@ -106,7 +106,7 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(linksClass.isInterface());
         // FIXME: anyxml
         assertEquals(5, linksClass.getDeclaredMethods().length);
-        testImplementIfc(linksClass, keyArgsClass);
+        testImplementsIfc(linksClass, keyArgsClass);
 
         // Test list key constructor arguments ordering
         try {
@@ -134,77 +134,77 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources were generated from 'module foo'
         File parent = new File(sourcesOutputDir, NS_FOO);
-        assertEquals(7, parent.listFiles().length);
+        testFilesCount(parent, 7);
         assertTrue(new File(parent, "Object.java").exists());
         assertTrue(new File(parent, "OpenObject.java").exists());
         assertTrue(new File(parent, "ExplicitRouteObject.java").exists());
         assertTrue(new File(parent, "PathKeySubobject.java").exists());
 
         parent = new File(parent, "object");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
 
         parent = new File(sourcesOutputDir, NS_FOO + FS + "open");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
 
         parent = new File(parent, "object");
-        assertEquals(3, parent.listFiles().length);
+        testFilesCount(parent, 3);
         assertTrue(new File(parent, "Nodes1.java").exists());
         assertTrue(new File(parent, "Nodes1Builder.java").exists());
 
         parent = new File(parent, "nodes");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         assertTrue(new File(parent, "Links.java").exists());
         assertTrue(new File(parent, "LinksBuilder.java").exists());
 
         parent = new File(sourcesOutputDir, NS_FOO + FS + "explicit");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "route");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "object");
-        assertEquals(3, parent.listFiles().length);
+        testFilesCount(parent, 3);
         assertTrue(new File(parent, "Subobjects.java").exists());
         assertTrue(new File(parent, "SubobjectsBuilder.java").exists());
 
         parent = new File(parent, "subobjects");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "subobject");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "type");
-        assertEquals(3, parent.listFiles().length);
+        testFilesCount(parent, 3);
         assertTrue(new File(parent, "PathKey.java").exists());
         assertTrue(new File(parent, "PathKeyBuilder.java").exists());
 
         parent = new File(parent, "path");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "key");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         assertTrue(new File(parent, "PathKey.java").exists());
         assertTrue(new File(parent, "PathKeyBuilder.java").exists());
 
         // Test if all sources were generated from 'module bar'
         parent = new File(sourcesOutputDir, NS_BAR);
-        assertEquals(3, parent.listFiles().length);
+        testFilesCount(parent, 3);
         assertTrue(new File(parent, "BasicExplicitRouteSubobjects.java").exists());
         assertTrue(new File(parent, "ExplicitRouteSubobjects.java").exists());
 
         parent = new File(parent, "basic");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "explicit");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "route");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
 
         parent = new File(parent, "subobjects");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         assertTrue(new File(parent, "SubobjectType.java").exists());
 
         parent = new File(parent, "subobject");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
 
         parent = new File(parent, "type");
-        assertEquals(4, parent.listFiles().length);
+        testFilesCount(parent, 4);
         assertTrue(new File(parent, "IpPrefix.java").exists());
         assertTrue(new File(parent, "IpPrefixBuilder.java").exists());
         assertTrue(new File(parent, "Label.java").exists());
@@ -232,7 +232,7 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources were generated from 'module foo'
         File parent = new File(sourcesOutputDir, NS_FOO);
-        assertEquals(6, parent.listFiles().length);
+        testFilesCount(parent, 6);
         File fooListener = new File(parent, "FooListener.java");
         File pathAttributes = new File(parent, "PathAttributes.java");
         File update = new File(parent, "Update.java");
@@ -243,16 +243,16 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(updateBuilder.exists());
 
         parent = new File(sourcesOutputDir, NS_FOO + FS + "path");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "attributes");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         File origin = new File(parent, "Origin.java");
         File originBuilder = new File(parent, "OriginBuilder.java");
         assertTrue(origin.exists());
         assertTrue(originBuilder.exists());
 
         parent = new File(sourcesOutputDir, NS_FOO + FS + "update");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         pathAttributes = new File(parent, "PathAttributes.java");
         File pathAttributesBuilder = new File(parent, "PathAttributesBuilder.java");
         assertTrue(pathAttributes.exists());
@@ -260,7 +260,7 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources were generated from 'module bar'
         parent = new File(sourcesOutputDir, NS_BAR);
-        assertEquals(5, parent.listFiles().length);
+        testFilesCount(parent, 5);
         File destination = new File(parent, "Destination.java");
         File pathAttributes1 = new File(parent, "PathAttributes1.java");
         File pathAttributes1Builder = new File(parent, "PathAttributes1Builder.java");
@@ -269,74 +269,74 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(pathAttributes1Builder.exists());
 
         parent = new File(sourcesOutputDir, NS_BAR + FS + "destination");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         File destinationType = new File(parent, "DestinationType.java");
         assertTrue(destinationType.exists());
 
         parent = new File(parent, "destination");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "type");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         File destinationIpv4 = new File(parent, "DestinationIp.java");
         File destinationIpv4Builder = new File(parent, "DestinationIpBuilder.java");
         assertTrue(destinationIpv4.exists());
         assertTrue(destinationIpv4Builder.exists());
 
         parent = new File(sourcesOutputDir, NS_BAR + FS + "update");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "path");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "attributes");
-        assertEquals(3, parent.listFiles().length);
+        testFilesCount(parent, 3);
         File mpUnreachNlri = new File(parent, "MpUnreachNlri.java");
         File mpUnreachNlriBuilder = new File(parent, "MpUnreachNlriBuilder.java");
         assertTrue(mpUnreachNlri.exists());
         assertTrue(mpUnreachNlriBuilder.exists());
 
         parent = new File(parent, "mp");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "unreach");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "nlri");
-        assertEquals(3, parent.listFiles().length);
+        testFilesCount(parent, 3);
         File withdrawnRoutes = new File(parent, "WithdrawnRoutes.java");
         File withdrawnRoutesBuilder = new File(parent, "WithdrawnRoutesBuilder.java");
         assertTrue(withdrawnRoutes.exists());
         assertTrue(withdrawnRoutesBuilder.exists());
 
         parent = new File(parent, "withdrawn");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "routes");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         destinationType = new File(parent, "DestinationType.java");
         assertTrue(destinationType.exists());
 
         // Test if all sources were generated from 'module baz'
         parent = new File(sourcesOutputDir, NS_BAZ);
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         File linkstateDestination = new File(parent, "LinkstateDestination.java");
         assertTrue(linkstateDestination.exists());
 
         parent = new File(sourcesOutputDir, NS_BAZ + FS + "update");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "path");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "attributes");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "mp");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "unreach");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "nlri");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "withdrawn");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "routes");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "destination");
-        assertEquals(1, parent.listFiles().length);
+        testFilesCount(parent, 1);
         parent = new File(parent, "type");
-        assertEquals(2, parent.listFiles().length);
+        testFilesCount(parent, 2);
         File destinationLinkstate = new File(parent, "DestinationLinkstate.java");
         File destinationLinkstateBuilder = new File(parent, "DestinationLinkstateBuilder.java");
         assertTrue(destinationLinkstate.exists());
@@ -363,6 +363,7 @@ public class CompilationTest extends BaseCompilationTest {
         generator.generateToFile(sourcesOutputDir);
 
         File parent = new File(sourcesOutputDir, NS_TEST);
+        testFilesCount(parent, 4);
         assertTrue(new File(parent, "TestData.java").exists());
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
@@ -416,13 +417,13 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated
         File fooParent = new File(sourcesOutputDir, NS_FOO);
-        assertEquals(3, fooParent.listFiles().length);
+        testFilesCount(fooParent, 3);
         assertTrue(new File(fooParent, "FooData.java").exists());
         assertTrue(new File(fooParent, "Nodes.java").exists());
         assertTrue(new File(fooParent, "NodesBuilder.java").exists());
 
         File barParent = new File(sourcesOutputDir, NS_BAR);
-        assertEquals(1, barParent.listFiles().length);
+        testFilesCount(barParent, 1);
         assertTrue(new File(barParent, "IdentityClass.java").exists());
 
         // Test if sources are compilable

@@ -8,7 +8,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import java.util.ArrayList
-import java.util.Collections
+import java.util.Collectionsimport java.util.Arrays
 
 /**
  * Template for generating JAVA class. 
@@ -230,7 +230,7 @@ class ClassTemplate extends BaseTemplate {
                     «IF cValue instanceof List<?>»
                         «val cValues = cValue as List<?>»
                         private static final List<Pattern> «Constants.MEMBER_PATTERN_LIST» = new ArrayList<Pattern>();
-                        public static final List<String> «TypeConstants.PATTERN_CONSTANT_NAME» = java.util.Arrays.asList(«
+                        public static final List<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «Arrays.importedName».asList(«
                         FOR v : cValues SEPARATOR ", "»«
                             IF v instanceof String»"«
                                 v as String»"«
@@ -286,7 +286,7 @@ class ClassTemplate extends BaseTemplate {
                 int result = 1;
                 «FOR property : genTO.hashCodeIdentifiers»
                     «IF property.returnType.name.contains("[")»
-                    result = prime * result + ((«property.fieldName» == null) ? 0 : java.util.Arrays.hashCode(«property.fieldName»));
+                    result = prime * result + ((«property.fieldName» == null) ? 0 : «Arrays.importedName».hashCode(«property.fieldName»));
                     «ELSE»
                     result = prime * result + ((«property.fieldName» == null) ? 0 : «property.fieldName».hashCode());
                     «ENDIF»
@@ -322,7 +322,7 @@ class ClassTemplate extends BaseTemplate {
                             return false;
                         }
                     «IF property.returnType.name.contains("[")»
-                    } else if(!java.util.Arrays.equals(«fieldName», other.«fieldName»)) {
+                    } else if(!«Arrays.importedName».equals(«fieldName», other.«fieldName»)) {
                     «ELSE»
                     } else if(!«fieldName».equals(other.«fieldName»)) {
                     «ENDIF»
@@ -347,14 +347,14 @@ class ClassTemplate extends BaseTemplate {
                 «val properties = genTO.toStringIdentifiers»
                 builder.append("«type.name» [«properties.get(0).fieldName»=");
                 «IF properties.get(0).returnType.name.contains("[")»
-                    builder.append(java.util.Arrays.toString(«properties.get(0).fieldName»));
+                    builder.append(«Arrays.importedName».toString(«properties.get(0).fieldName»));
                 «ELSE»
                     builder.append(«properties.get(0).fieldName»);
                 «ENDIF»
                 «FOR i : 1..<genTO.toStringIdentifiers.size»
                     builder.append(", «properties.get(i).fieldName»=");
                     «IF properties.get(i).returnType.name.contains("[")»
-                        builder.append(java.util.Arrays.toString(«properties.get(i).fieldName»));
+                        builder.append(«Arrays.importedName».toString(«properties.get(i).fieldName»));
                     «ELSE»
                         builder.append(«properties.get(i).fieldName»);
                     «ENDIF»

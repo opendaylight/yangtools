@@ -108,7 +108,7 @@ abstract class BaseTemplate {
         GeneratorUtil.getExplicitType(type, intype, importMap)
     }
     
-    final protected def importedName(Class cls) {
+    final protected def importedName(Class<?> cls) {
         importedName(Types.typeForClass(cls))
     }
     

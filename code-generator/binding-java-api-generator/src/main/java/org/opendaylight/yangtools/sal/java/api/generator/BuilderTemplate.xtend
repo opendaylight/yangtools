@@ -1,5 +1,6 @@
 package org.opendaylight.yangtools.sal.java.api.generator
 
+import java.util.Arrays;
 import java.util.LinkedHashSet
 import java.util.List
 import java.util.Map
@@ -355,7 +356,7 @@ class BuilderTemplate extends BaseTemplate {
                 int result = 1;
                 «FOR property : properties»
                     «IF property.returnType.name.contains("[")»
-                    result = prime * result + ((«property.fieldName» == null) ? 0 : java.util.Arrays.hashCode(«property.fieldName»));
+                    result = prime * result + ((«property.fieldName» == null) ? 0 : «Arrays.importedName».hashCode(«property.fieldName»));
                     «ELSE»
                     result = prime * result + ((«property.fieldName» == null) ? 0 : «property.fieldName».hashCode());
                     «ENDIF»
@@ -394,7 +395,7 @@ class BuilderTemplate extends BaseTemplate {
                             return false;
                         }
                     «IF property.returnType.name.contains("[")»
-                    } else if(!java.util.Arrays.equals(«fieldName», other.«fieldName»)) {
+                    } else if(!«Arrays.importedName».equals(«fieldName», other.«fieldName»)) {
                     «ELSE»
                     } else if(!«fieldName».equals(other.«fieldName»)) {
                     «ENDIF»

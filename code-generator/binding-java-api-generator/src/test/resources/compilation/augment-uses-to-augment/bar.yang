@@ -12,10 +12,14 @@ module bar {
             leaf topology-id {
                 type int32;
             }
-            list link {
-                key "link-id";
-                uses link-attributes;
-            }
+            uses link;
+        }
+    }
+
+    grouping link {
+        list link {
+            key "link-id";
+            uses link-attributes;
         }
     }
 
