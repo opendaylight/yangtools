@@ -70,6 +70,7 @@ import org.opendaylight.yangtools.yang.binding.DataContainerimport java.util.It
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import java.util.Collection
 import org.opendaylight.yangtools.yang.model.api.YangNode
+import java.util.LinkedHashMap
 
 public class BindingGeneratorImpl implements BindingGenerator {
     /**
@@ -99,7 +100,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * Schema node the object of type <code>Type</code> is required. So in this
      * case is used this map.
      */
-    private val allGroupings = new HashMap<SchemaPath, GeneratedType>();
+    private val allGroupings = new LinkedHashMap<SchemaPath, GeneratedType>();
 
     private val yangToJavaMapping = new HashMap<SchemaPath, Type>();
 

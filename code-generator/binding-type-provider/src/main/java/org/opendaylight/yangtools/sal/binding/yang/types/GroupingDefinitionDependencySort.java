@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -133,8 +134,14 @@ public class GroupingDefinitionDependencySort {
      */
     private Set<UsesNode> getAllUsesNodes(DataNodeContainer container) {
         Set<UsesNode> ret = new HashSet<>();
-        ret.addAll(container.getUses());
+        Set<UsesNode> usesNodes = container.getUses();
+        ret.addAll(usesNodes);
 
+        for (UsesNode usesNode : usesNodes) {
+            for (AugmentationSchema augment : usesNode.getAugmentations()) {
+                ret.addAll(getAllUsesNodes(augment));
+            }
+        }
         Set<GroupingDefinition> groupings = container.getGroupings();
         for (GroupingDefinition groupingDefinition : groupings) {
             ret.addAll(getAllUsesNodes(groupingDefinition));
