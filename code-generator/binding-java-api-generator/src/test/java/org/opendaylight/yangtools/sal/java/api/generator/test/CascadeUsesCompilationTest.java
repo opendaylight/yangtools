@@ -75,6 +75,8 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
                 loader);
         Class<?> fooGr1Class = Class.forName(BASE_PKG + ".urn.opendaylight.foo.rev131008.FooGr1", true, loader);
         Class<?> barGr2Class = Class.forName(BASE_PKG + ".urn.opendaylight.bar.rev131008.BarGr2", true, loader);
+        Class<?> barGr1Class = Class.forName(BASE_PKG + ".urn.opendaylight.bar.rev131008.BarGr1", true, loader);
+        Class<?> bazGr1Class = Class.forName(BASE_PKG + ".urn.opendaylight.baz.rev131008.BazGr1", true, loader);
 
         // test generated interface from 'container nodes'
         testImplementsIfc(nodesClass, fooGr1Class);
@@ -83,12 +85,14 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
         // test generated builder for 'container nodes'
         assertFalse(nodesBuilderClass.isInterface());
         Constructor<?>[] nodesBuilderConstructors = nodesBuilderClass.getConstructors();
-        assertEquals(3, nodesBuilderConstructors.length);
+        assertEquals(5, nodesBuilderConstructors.length);
 
         // test generation of builder constructors from uses in 'container nodes'
         Constructor<?> defaultConstructor = null;
         Constructor<?> usesFooGr1 = null;
         Constructor<?> usesBarGr2 = null;
+        Constructor<?> usesBarGr1 = null;
+        Constructor<?> usesBazGr1 = null;
         for (Constructor<?> c : nodesBuilderConstructors) {
             Class<?>[] params = c.getParameterTypes();
             if (params.length == 0) {
@@ -99,12 +103,18 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
                     usesFooGr1 = c;
                 } else if (params[0].equals(barGr2Class)) {
                     usesBarGr2 = c;
+                } else if (params[0].equals(barGr1Class)) {
+                    usesBarGr1 = c;
+                } else if (params[0].equals(bazGr1Class)) {
+                    usesBazGr1 = c;
                 }
             }
         }
         assertNotNull(defaultConstructor);
         assertNotNull(usesFooGr1);
         assertNotNull(usesBarGr2);
+        assertNotNull(usesBarGr1);
+        assertNotNull(usesBazGr1);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }

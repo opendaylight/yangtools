@@ -233,20 +233,29 @@ class BuilderTemplate extends BaseTemplate {
     '''
 
 
-    def private generateBuilderConstructor(Type implementedIfc) '''
+    def private generateBuilderConstructor(Type type) '''
         public «type.name»«BUILDER»() {
         }
-
-        «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
-        «val ifc = implementedIfc as GeneratedType»
+        «IF (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject))»
+        «val ifc = type as GeneratedType»
         «FOR impl : ifc.implements»
             «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
-                public «type.name»«BUILDER»(«impl.fullyQualifiedName» arg) {
-                    «printBuilderConstructorProperties(impl)»
-                }
+                «generateSingleBuilderConstructor(impl as GeneratedType)»
             «ENDIF»
         «ENDFOR»
         «ENDIF»
+    '''
+
+    def private generateSingleBuilderConstructor(GeneratedType implType) '''
+
+        public «type.name»«BUILDER»(«implType.fullyQualifiedName» arg) {
+            «printBuilderConstructorProperties(implType)»
+        }
+        «FOR implTypeImplement : implType.implements»
+            «IF (implTypeImplement instanceof GeneratedType) &&  !((implTypeImplement as GeneratedType).methodDefinitions.empty)»
+                «generateSingleBuilderConstructor(implTypeImplement as GeneratedType)»
+            «ENDIF»
+        «ENDFOR»
     '''
 
     def private printBuilderConstructorProperties(Type implementedIfc) '''
