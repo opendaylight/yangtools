@@ -1,5 +1,6 @@
 package org.opendaylight.yangtools.yang.data.api;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,8 +12,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
+public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
 
+    private static final long serialVersionUID = 8467409862384206193L;
     private final List<PathArgument> path;
 
     public List<PathArgument> getPath() {
@@ -62,12 +64,12 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
         return new BuilderImpl();
     }
 
-    public interface PathArgument {
+    public interface PathArgument extends Immutable, Serializable {
         QName getNodeType();
 
     }
 
-    public interface InstanceIdentifierBuilder extends Builder<InstanceIdentifier>{
+    public interface InstanceIdentifierBuilder extends Builder<InstanceIdentifier> {
         InstanceIdentifierBuilder node(QName nodeType);
 
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues);
@@ -79,6 +81,11 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
     }
 
     public static final class NodeIdentifier implements PathArgument {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -2255888212390871347L;
 
         private final QName nodeType;
 
@@ -117,6 +124,12 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
     }
 
     public static final class NodeIdentifierWithPredicates implements PathArgument {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -4787195606494761540L;
+
         private final QName nodeType;
         private final Map<QName, Object> keyValues;
 
@@ -197,7 +210,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable {
         public InstanceIdentifier toInstance() {
             return new InstanceIdentifier(path);
         }
-        
+
         @Override
         public InstanceIdentifier getIdentifier() {
             return toInstance();

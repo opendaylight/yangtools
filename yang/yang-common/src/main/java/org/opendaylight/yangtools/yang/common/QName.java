@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -38,7 +39,10 @@ import org.slf4j.LoggerFactory;
  * 
  * 
  */
-public final class QName implements Immutable {
+public final class QName implements Immutable,Serializable {
+
+    private static final long serialVersionUID = 5398411242927766414L;
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
     private SimpleDateFormat revisionFormat = new SimpleDateFormat("yyyy-MM-dd");
