@@ -62,7 +62,6 @@ public final class GeneratorUtil {
 
         final List<Constant> constants = genType.getConstantDefinitions();
         final List<MethodSignature> methods = genType.getMethodDefinitions();
-        final List<Type> impl = genType.getImplements();
 
         // CONSTANTS
         if (constants != null) {

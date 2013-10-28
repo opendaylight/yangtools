@@ -8,7 +8,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.2</slf4j.version>
         <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
         
         <!-- Java Versions -->
@@ -23,7 +22,8 @@
         <maven.surefire.version>2.16</maven.surefire.version>       
 
         <!-- Supporting Libraries -->
-        <yang.version>0.5.8-SNAPSHOT</yang.version>
+        <commons.lang.version>3.1</commons.lang.version>
+        <junit.version>4.10</junit.version>
         <slf4j.version>1.7.2</slf4j.version>
         <guava.version>14.0.1</guava.version>
         <xtend.version>2.4.3</xtend.version>
@@ -99,7 +99,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.10</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -113,17 +113,22 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.2</version>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>14.0.1</version>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.xtend</groupId>
                 <artifactId>org.eclipse.xtend.lib</artifactId>
                 <version>${xtend.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
