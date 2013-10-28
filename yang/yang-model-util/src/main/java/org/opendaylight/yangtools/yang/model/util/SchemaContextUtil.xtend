@@ -313,7 +313,6 @@ public  class SchemaContextUtil {
 
     public static def GroupingDefinition findGrouping(SchemaContext context, Module module, List<QName> path) {
         var first = path.get(0);
-        var firstPrefix = first.getPrefix();
         var Module m = context.findModuleByNamespace(first.namespace).iterator().next();
         var DataNodeContainer currentParent = m;
         for (qname : path) {
