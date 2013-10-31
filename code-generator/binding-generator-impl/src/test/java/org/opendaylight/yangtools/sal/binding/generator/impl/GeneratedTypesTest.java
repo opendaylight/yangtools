@@ -264,11 +264,17 @@ public class GeneratedTypesTest {
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        final GeneratedType simpleContainer = (GeneratedType) genTypes.get(1);
-        final GeneratedType nestedContainer = (GeneratedType) genTypes.get(2);
-
-        assertEquals("SimpleContainer", simpleContainer.getName());
-        assertEquals("NestedContainer", nestedContainer.getName());
+        GeneratedType simpleContainer = (GeneratedType) genTypes.get(1);
+        GeneratedType nestedContainer = (GeneratedType) genTypes.get(2);
+        for (Type t : genTypes) {
+            if ("SimpleContainer".equals(t.getName())) {
+                simpleContainer = (GeneratedType)t;
+            } else if ("NestedContainer".equals(t.getName())) {
+                nestedContainer = (GeneratedType)t;
+            }
+        }
+        assertNotNull(simpleContainer);
+        assertNotNull(nestedContainer);
         assertEquals(3, simpleContainer.getMethodDefinitions().size());
         assertEquals(2, nestedContainer.getMethodDefinitions().size());
 
@@ -343,11 +349,17 @@ public class GeneratedTypesTest {
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        final GeneratedType simpleContainer = (GeneratedType) genTypes.get(1);
-        final GeneratedType nestedContainer = (GeneratedType) genTypes.get(2);
-
-        assertEquals("SimpleContainer", simpleContainer.getName());
-        assertEquals("NestedContainer", nestedContainer.getName());
+        GeneratedType simpleContainer = (GeneratedType) genTypes.get(1);
+        GeneratedType nestedContainer = (GeneratedType) genTypes.get(2);
+        for (Type t : genTypes) {
+            if ("SimpleContainer".equals(t.getName())) {
+                simpleContainer = (GeneratedType)t;
+            } else if ("NestedContainer".equals(t.getName())) {
+                nestedContainer = (GeneratedType)t;
+            }
+        }
+        assertNotNull(simpleContainer);
+        assertNotNull(nestedContainer);
         assertEquals(3, simpleContainer.getMethodDefinitions().size());
         assertEquals(2, nestedContainer.getMethodDefinitions().size());
 
