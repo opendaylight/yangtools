@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.*;
 
 import java.io.File;
 import java.net.URL;

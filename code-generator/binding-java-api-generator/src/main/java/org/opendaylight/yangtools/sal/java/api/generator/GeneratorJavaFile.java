@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Generates files with JAVA source codes for every specified type.
- * 
+ *
  */
 public final class GeneratorJavaFile {
 
@@ -41,9 +41,9 @@ public final class GeneratorJavaFile {
     /**
      * Creates instance of this class with the set of <code>types</code> for
      * which the JAVA code is generated.
-     * 
+     *
      * The instances of concrete JAVA code generator are created.
-     * 
+     *
      * @param types
      *            set of types for which JAVA code should be generated
      */
@@ -58,7 +58,7 @@ public final class GeneratorJavaFile {
     /**
      * Generates list of files with JAVA source code. Only the suitable code
      * generator is used to generate the source code for the concrete type.
-     * 
+     *
      * @param parentDirectory
      *            directory to which the output source codes should be generated
      * @return list of output files
@@ -68,10 +68,12 @@ public final class GeneratorJavaFile {
     public List<File> generateToFile(final File parentDirectory) throws IOException {
         final List<File> result = new ArrayList<>();
         for (Type type : types) {
-            for (CodeGenerator generator : generators) {
-                File generatedJavaFile = generateTypeToJavaFile(parentDirectory, type, generator);
-                if (generatedJavaFile != null) {
-                    result.add(generatedJavaFile);
+            if (type != null) {
+                for (CodeGenerator generator : generators) {
+                    File generatedJavaFile = generateTypeToJavaFile(parentDirectory, type, generator);
+                    if (generatedJavaFile != null) {
+                        result.add(generatedJavaFile);
+                    }
                 }
             }
         }
@@ -84,7 +86,7 @@ public final class GeneratorJavaFile {
      * are generated according to packages to which the type belongs (e. g. if
      * type belongs to the package <i>org.pcg</i> then in <code>parentDir</code>
      * is created directory <i>org</i> which contains <i>pcg</i>).
-     * 
+     *
      * @param parentDir
      *            directory where should be the new file generated
      * @param type
@@ -145,7 +147,7 @@ public final class GeneratorJavaFile {
      * <code>parentDirectory</code> and parsed <code>packageName</code>. The
      * parsing of <code>packageName</code> is realized as replacement of the
      * package name dots with the file system separator.
-     * 
+     *
      * @param parentDirectory
      *            <code>File</code> object with reference to parent directory
      * @param packageName

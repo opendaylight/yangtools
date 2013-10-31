@@ -12,6 +12,11 @@ module baz {
     augment "/fo:update/fo:path-attributes/br:mp-unreach-nlri/br:withdrawn-routes/br:destination-type" {
         case destination-linkstate {
             uses linkstate-destination;
+            container links {
+                container source {
+                    container address {}
+                }
+            }
         }
     }
 
