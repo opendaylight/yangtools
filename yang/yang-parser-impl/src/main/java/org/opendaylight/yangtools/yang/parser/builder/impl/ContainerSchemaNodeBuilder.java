@@ -174,7 +174,6 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     @Override
     public void addAugmentation(AugmentationSchemaBuilder augment) {
         augmentationBuilders.add(augment);
-        System.out.println();
     }
 
     public SchemaPath getPath() {

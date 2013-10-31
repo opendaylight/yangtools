@@ -354,9 +354,10 @@ public final class YangParserImpl implements YangModelParser {
             final CommonTokenStream tokens = new CommonTokenStream(lexer);
             final YangParser parser = new YangParser(tokens);
             parser.removeErrorListeners();
-            parser.addErrorListener(new YangErrorListener());
-
+            YangErrorListener errorListener = new YangErrorListener();
+            parser.addErrorListener(errorListener);
             result = parser.yang();
+            errorListener.validate();
         } catch (IOException e) {
             LOG.warn("Exception while reading yang file: " + yangStream, e);
         }

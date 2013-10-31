@@ -13,13 +13,17 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 final class YangErrorListener extends BaseErrorListener {
+    private final List<Exception> exceptions = new ArrayList<>();
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
             String msg, RecognitionException e) {
         String module = getModuleName(recognizer);
-        throw new YangParseException(module, line, msg);
+        exceptions.add(new YangParseException(module, line, msg));
     }
 
     private String getModuleName(Recognizer<?, ?> recognizer) {
@@ -40,6 +44,17 @@ final class YangErrorListener extends BaseErrorListener {
             result = "";
         }
         return result;
+    }
+
+    public void validate() {
+        if (!exceptions.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (Exception e : exceptions) {
+                sb.append("\n");
+                sb.append(e.getMessage());
+            }
+            throw new YangParseException(sb.toString());
+        }
     }
 
 }
