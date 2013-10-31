@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_674b452c",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2013-10-31T12:12:05Z",
+      "side": 1,
+      "message": "Most of this could be merged into ModuleContext",
+      "revId": "4795dde99f562258e7bc9670fe418c432aeccc5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_a7413d0d",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2013-10-31T12:12:05Z",
+      "side": 1,
+      "message": "Consider using HashMultimap from Guava",
+      "revId": "4795dde99f562258e7bc9670fe418c432aeccc5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_87463922",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2013-10-31T12:12:05Z",
+      "side": 1,
+      "message": "Consider using right multimap from Guava",
+      "revId": "4795dde99f562258e7bc9670fe418c432aeccc5c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
