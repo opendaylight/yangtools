@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -116,6 +117,16 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
         assertNotNull(usesBarGr2);
         assertNotNull(usesBarGr1);
         assertNotNull(usesBazGr1);
+
+        Method fieldsFromMethod = null;
+        for (Method m : nodesBuilderClass.getDeclaredMethods()) {
+            String methodName = m.getName();
+            if ("fieldsFrom".equals(methodName)) {
+                fieldsFromMethod = m;
+            }
+        }
+        assertNotNull(fieldsFromMethod);
+        assertEquals(1, fieldsFromMethod.getParameterTypes().length);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }

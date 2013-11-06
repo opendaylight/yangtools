@@ -71,6 +71,8 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import java.util.Collection
 import org.opendaylight.yangtools.yang.model.api.YangNode
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
+import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -1323,7 +1325,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
                     }
                 } else {
-                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
+                    val Restrictions restrictions = BindingGeneratorUtil.getRestrictions(typeDef);
+                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf, restrictions);
                 }
                 if (returnType !== null) {
                     val MethodSignatureBuilder getter = constructGetter(typeBuilder, leafName, leafDesc, returnType);

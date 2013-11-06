@@ -13,4 +13,6 @@ package org.opendaylight.yangtools.sal.binding.model.api;
  */
 public interface ConcreteType extends Type {
 
+    Restrictions getRestrictions();
+
 }

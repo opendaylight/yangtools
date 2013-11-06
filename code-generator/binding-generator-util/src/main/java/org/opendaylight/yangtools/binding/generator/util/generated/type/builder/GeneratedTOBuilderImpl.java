@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
@@ -25,6 +26,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     private final List<GeneratedPropertyBuilder> hashProperties = new ArrayList<>();
     private final List<GeneratedPropertyBuilder> toStringProperties = new ArrayList<>();
     private boolean isUnionType = false;
+    private Restrictions restrictions;
 
     public GeneratedTOBuilderImpl(String packageName, String name) {
         super(packageName, name);
@@ -49,7 +51,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
      * {@link MethodSignatureBuilder#setAbstract(boolean)},
      * {TypeMemberBuilder#setFinal(boolean)} and
      * {TypeMemberBuilder#setAccessModifier(boolean)}
-     * 
+     *
      * @param name
      *            Name of Method
      * @return <code>new</code> instance of Method Signature Builder.
@@ -82,6 +84,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     @Override
     protected GeneratedTOBuilder thisInstance() {
         return this;
+    }
+
+    @Override
+    public void setRestrictions(Restrictions restrictions) {
+        this.restrictions = restrictions;
     }
 
     @Override
@@ -131,6 +138,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         private final List<GeneratedProperty> stringProperties;
         private final GeneratedTransferObject extendsType;
         private final boolean isUnionType;
+        private final Restrictions restrictions;
 
         public GeneratedTransferObjectImpl(GeneratedTOBuilderImpl builder) {
             super(builder);
@@ -139,6 +147,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             this.hashCodeProperties = toUnmodifiableProperties(builder.hashProperties);
             this.stringProperties = toUnmodifiableProperties(builder.toStringProperties);
             this.isUnionType = builder.isUnionType;
+            this.restrictions = builder.restrictions;
         }
 
         @Override
@@ -164,6 +173,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         @Override
         public List<GeneratedProperty> getToStringIdentifiers() {
             return stringProperties;
+        }
+
+        @Override
+        public Restrictions getRestrictions() {
+            return restrictions;
         }
 
         @Override
