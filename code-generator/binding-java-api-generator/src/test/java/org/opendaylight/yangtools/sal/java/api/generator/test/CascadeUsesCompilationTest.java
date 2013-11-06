@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -116,6 +117,31 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
         assertNotNull(usesBarGr2);
         assertNotNull(usesBarGr1);
         assertNotNull(usesBazGr1);
+
+        Method usesFooGr1Method = null;
+        Method usesBarGr2Method = null;
+        Method usesBarGr1Method = null;
+        Method usesBazGr1Method = null;
+        for (Method m : nodesBuilderClass.getDeclaredMethods()) {
+            Class<?>[] params = m.getParameterTypes();
+            String methodName = m.getName();
+            if (methodName.startsWith("fieldsFrom")) {
+                assertEquals(1, params.length);
+                if (params[0].equals(fooGr1Class)) {
+                    usesFooGr1Method = m;
+                } else if (params[0].equals(barGr2Class)) {
+                    usesBarGr2Method = m;
+                } else if (params[0].equals(barGr1Class)) {
+                    usesBarGr1Method = m;
+                } else if (params[0].equals(bazGr1Class)) {
+                    usesBazGr1Method = m;
+                }
+            }
+        }
+        assertNotNull(usesFooGr1Method);
+        assertNotNull(usesBarGr2Method);
+        assertNotNull(usesBarGr1Method);
+        assertNotNull(usesBazGr1Method);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }

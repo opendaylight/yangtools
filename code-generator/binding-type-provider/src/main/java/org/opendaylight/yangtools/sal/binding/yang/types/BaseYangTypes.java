@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -90,7 +91,7 @@ public final class BaseYangTypes {
     /**
      * <code>Type</code> representation of <code>binary</code> YANG type
      */
-    public static final Type BINARY_TYPE = Types.primitiveType("byte[]");
+    public static final Type BINARY_TYPE = Types.primitiveType("byte[]", null);
 
     public static final Type INSTANCE_IDENTIFIER = Types.parameterizedTypeFor(Types
             .typeForClass(InstanceIdentifier.class));
@@ -150,6 +151,25 @@ public final class BaseYangTypes {
             }
 
             return null;
+        }
+
+        @Override
+        public Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode, Restrictions restrictions) {
+            String typeName = type.getQName().getLocalName();
+            switch (typeName) {
+            case "binary" : return Types.primitiveType("byte[]", restrictions);
+            case "decimal64": return Types.typeForClass(BigDecimal.class, restrictions);
+            case "int8": return Types.typeForClass(Byte.class, restrictions);
+            case "int16": return Types.typeForClass(Short.class, restrictions);
+            case "int32": return Types.typeForClass(Integer.class, restrictions);
+            case "int64": return Types.typeForClass(Long.class, restrictions);
+            case "string": return Types.typeForClass(String.class, restrictions);
+            case "uint8": return Types.typeForClass(Short.class, restrictions);
+            case "uint16": Types.typeForClass(Integer.class, restrictions);
+            case "uint32": Types.typeForClass(Long.class, restrictions);
+            case "uint64": Types.typeForClass(BigInteger.class, restrictions);
+            default: return javaTypeForSchemaDefinitionType(type, parentNode);
+            }
         }
     };
 }

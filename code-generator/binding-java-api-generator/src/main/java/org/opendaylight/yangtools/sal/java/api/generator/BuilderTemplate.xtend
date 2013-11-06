@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.binding.Augmentable
 import static org.opendaylight.yangtools.binding.generator.util.Types.*
 import java.util.HashMap
 import java.util.Collections
-
 /**
  * Template for generating JAVA builder classes. 
  */
@@ -204,7 +203,9 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateFields(false)»
 
-            «generateBuilderConstructor(type)»
+            «generateConstructorsFromIfcs(type)»
+
+            «generateSettersFromIfcs(type)»
 
             «generateGetters(false)»
 
@@ -232,39 +233,60 @@ class BuilderTemplate extends BaseTemplate {
         }
     '''
 
-
-    def private generateBuilderConstructor(Type type) '''
+    def private generateConstructorsFromIfcs(Type type) '''
         public «type.name»«BUILDER»() {
-        }
+        } 
         «IF (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject))»
         «val ifc = type as GeneratedType»
         «FOR impl : ifc.implements»
-            «generateSingleBuilderConstructor(impl)»
+            «generateConstructorFromIfc(impl)»
         «ENDFOR»
         «ENDIF»
     '''
 
-    def private generateSingleBuilderConstructor(Type impl) '''
+    def private generateConstructorFromIfc(Type impl) '''
         «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
-        
         «val implType = impl as GeneratedType»
+
         public «type.name»«BUILDER»(«implType.fullyQualifiedName» arg) {
-            «printBuilderConstructorProperties(implType)»
+            «printSetterProperties(implType)»
         }
         «FOR implTypeImplement : implType.implements»
-            «generateSingleBuilderConstructor(implTypeImplement)»
+            «generateConstructorFromIfc(implTypeImplement)»
         «ENDFOR»
         «ENDIF»
     '''
 
-    def private printBuilderConstructorProperties(Type implementedIfc) '''
+    def private generateSettersFromIfcs(Type type) '''
+        «IF (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject))»
+        «val ifc = type as GeneratedType»
+        «FOR impl : ifc.implements»
+            «generateSetterFromIfc(impl)»
+        «ENDFOR»
+        «ENDIF»
+    '''
+
+    def private generateSetterFromIfc(Type impl) '''
+        «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
+        «val implType = impl as GeneratedType»
+        public void fieldsFrom«implType.name»(«implType.fullyQualifiedName» arg) {
+            «printSetterProperties(implType)»
+        }
+
+        «FOR implTypeImplement : implType.implements»
+            «generateSetterFromIfc(implTypeImplement)»
+        «ENDFOR»
+        «ENDIF»
+    '''
+
+    def private printSetterProperties(Type implementedIfc) '''
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
         «val ifc = implementedIfc as GeneratedType»
         «FOR getter : ifc.methodDefinitions»
             this._«getter.propertyNameFromGetter» = arg.«getter.name»();
         «ENDFOR»
         «FOR impl : ifc.implements»
-        «printBuilderConstructorProperties(impl)»
+        «printSetterProperties(impl)»
         «ENDFOR»
         «ENDIF»
     '''
@@ -294,6 +316,8 @@ class BuilderTemplate extends BaseTemplate {
     def private generateSetters() '''
         «FOR field : properties SEPARATOR '\n'»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
+                «generateLengthRestrictions(field.returnType, "value")»
+
                 this.«field.fieldName» = value;
                 return this;
             }
@@ -306,7 +330,7 @@ class BuilderTemplate extends BaseTemplate {
             }
         «ENDIF»
     '''
-    
+
     /**
      * Template method which generate constructor for IMPL class.
      * 

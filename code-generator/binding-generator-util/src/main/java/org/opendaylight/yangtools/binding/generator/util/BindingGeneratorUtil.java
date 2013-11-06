@@ -2,15 +2,21 @@ package org.opendaylight.yangtools.binding.generator.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 /**
  * Contains the methods for converting strings to valid JAVA language strings
@@ -320,4 +326,37 @@ public final class BindingGeneratorUtil {
         }
         return sb.toString();
     }
+
+    public static Restrictions getRestrictions(TypeDefinition<?> type) {
+        final List<LengthConstraint> length = new ArrayList<>();
+        final List<PatternConstraint> pattern = new ArrayList<>();
+        final List<RangeConstraint> range = new ArrayList<>();
+
+        if (type instanceof ExtendedType) {
+            ExtendedType ext = (ExtendedType)type;
+            length.addAll(ext.getLengthConstraints());
+            pattern.addAll(ext.getPatternConstraints());
+            range.addAll(ext.getRangeConstraints());
+        }
+
+        return new Restrictions() {
+            @Override
+            public List<RangeConstraint> getRangeConstraints() {
+                return range;
+            }
+            @Override
+            public List<PatternConstraint> getPatternConstraints() {
+                return pattern;
+            }
+            @Override
+            public List<LengthConstraint> getLengthConstraints() {
+                return length;
+            }
+            @Override
+            public boolean isEmpty() {
+                return range.isEmpty() && pattern.isEmpty() && length.isEmpty();
+            }
+        };
+    }
+
 }

@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -29,24 +27,10 @@ public final class Types {
     private static final Type SET_TYPE = typeForClass(Set.class);
     private static final Type LIST_TYPE = typeForClass(List.class);
     private static final Type MAP_TYPE = typeForClass(Map.class);
-    public static final ConcreteType NUMBER = typeForClass(Number.class);
-    public static final ConcreteType BIG_DECIMAL = typeForClass(BigDecimal.class);
-    public static final ConcreteType BIG_INTEGER = typeForClass(BigInteger.class);
-    public static final ConcreteType BYTE = typeForClass(Byte.class);
+
     public static final ConcreteType BOOLEAN = typeForClass(Boolean.class);
-    public static final ConcreteType DOUBLE = typeForClass(Double.class);
-    public static final ConcreteType FLOAT = typeForClass(Float.class);
-    public static final ConcreteType INTEGER = typeForClass(Integer.class);
-    public static final ConcreteType LONG = typeForClass(Long.class);
-    public static final ConcreteType SHORT = typeForClass(Short.class);
-    public static final ConcreteType STRING = typeForClass(String.class);
-    public static final ConcreteType CHAR_SEQUENCE = typeForClass(CharSequence.class);
-    public static final ConcreteType THREAD = typeForClass(Thread.class);
     public static final ConcreteType FUTURE = typeForClass(Future.class);
-    public static final ConcreteType CALLABLE = typeForClass(Callable.class);
     public static final ConcreteType VOID = typeForClass(Void.class);
-    public static final ConcreteType THROWABLE = typeForClass(Throwable.class);
-    public static final ConcreteType EXCEPTION = typeForClass(Exception.class);
 
     /**
      * It is not desirable to create instance of this class
@@ -58,7 +42,7 @@ public final class Types {
      * Creates the instance of type
      * {@link org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
      * ConcreteType} which represents JAVA <code>void</code> type.
-     * 
+     *
      * @return <code>ConcreteType</code> instance which represents JAVA
      *         <code>void</code>
      */
@@ -71,32 +55,36 @@ public final class Types {
      * {@link org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
      * ConcreteType} which represents primitive JAVA type for which package
      * doesn't exist.
-     * 
+     *
      * @param primitiveType
      *            string containing programaticall construction based on
      *            primitive type (e.g byte[])
      * @return <code>ConcreteType</code> instance which represents programatic
      *         construction with primitive JAVA type
      */
-    public static Type primitiveType(final String primitiveType) {
-        return new ConcreteTypeImpl("", primitiveType);
+    public static Type primitiveType(final String primitiveType, final Restrictions restrictions) {
+        return new ConcreteTypeImpl("", primitiveType, restrictions);
     }
 
     /**
      * Returns an instance of {@link ConcreteType} describing the class
-     * 
+     *
      * @param cls
      *            Class to describe
      * @return Description of class
      */
     public static ConcreteType typeForClass(Class<?> cls) {
-        return new ConcreteTypeImpl(cls.getPackage().getName(), cls.getSimpleName());
+        return typeForClass(cls, null);
+    }
+
+    public static ConcreteType typeForClass(Class<?> cls, Restrictions restrictions) {
+        return new ConcreteTypeImpl(cls.getPackage().getName(), cls.getSimpleName(), restrictions);
     }
 
     /**
      * Returns an instance of {@link ParameterizedType} describing the typed
      * {@link Map}<K,V>
-     * 
+     *
      * @param keyType
      *            Key Type
      * @param valueType
@@ -110,7 +98,7 @@ public final class Types {
     /**
      * Returns an instance of {@link ParameterizedType} describing the typed
      * {@link Set}<V> with concrete type of value.
-     * 
+     *
      * @param valueType
      *            Value Type
      * @return Description of generic type instance of Set
@@ -122,7 +110,7 @@ public final class Types {
     /**
      * Returns an instance of {@link ParameterizedType} describing the typed
      * {@link List}<V> with concrete type of value.
-     * 
+     *
      * @param valueType
      *            Value Type
      * @return Description of type instance of List
@@ -134,7 +122,7 @@ public final class Types {
     /**
      * Creates generated transfer object for
      * {@link org.opendaylight.yangtools.yang.binding.BaseIdentity BaseIdentity}
-     * 
+     *
      * @return generated transfer object which is used as extension when YANG
      *         <code>identity</code> is mapped to generated TO
      */
@@ -148,7 +136,7 @@ public final class Types {
      * Creates instance of type
      * {@link org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType
      * ParameterizedType}
-     * 
+     *
      * @param type
      *            JAVA <code>Type</code> for raw type
      * @param parameters
@@ -164,7 +152,7 @@ public final class Types {
      * Creates instance of type
      * {@link org.opendaylight.yangtools.sal.binding.model.api.WildcardType
      * WildcardType}
-     * 
+     *
      * @param packageName
      *            string with the package name
      * @param typeName
@@ -182,7 +170,7 @@ public final class Types {
      * ParameterizedType} where raw type is
      * {@link org.opendaylight.yangtools.yang.binding.Augmentable} and actual
      * parameter is <code>valueType</code>.
-     * 
+     *
      * @param valueType
      *            JAVA <code>Type</code> with actual parameter
      * @return <code>ParametrizedType</code> reprezentation of raw type
@@ -200,7 +188,7 @@ public final class Types {
      * ParameterizedType} where raw type is
      * {@link org.opendaylight.yangtools.yang.binding.Augmentation} and actual
      * parameter is <code>valueType</code>.
-     * 
+     *
      * @param valueType
      *            JAVA <code>Type</code> with actual parameter
      * @return <code>ParametrizedType</code> reprezentation of raw type
@@ -213,29 +201,37 @@ public final class Types {
     }
 
     /**
-     * 
+     *
      * Represents concrete JAVA type.
-     * 
+     *
      */
     private static final class ConcreteTypeImpl extends AbstractBaseType implements ConcreteType {
+        private final Restrictions restrictions;
+
         /**
          * Creates instance of this class with package <code>pkName</code> and
          * with the type name <code>name</code>.
-         * 
+         *
          * @param pkName
          *            string with package name
          * @param name
          *            string with the name of the type
          */
-        private ConcreteTypeImpl(String pkName, String name) {
+        private ConcreteTypeImpl(String pkName, String name, Restrictions restrictions) {
             super(pkName, name);
+            this.restrictions = restrictions;
+        }
+
+        @Override
+        public Restrictions getRestrictions() {
+            return restrictions;
         }
     }
 
     /**
-     * 
+     *
      * Represents parametrized JAVA type.
-     * 
+     *
      */
     private static class ParametrizedTypeImpl extends AbstractBaseType implements ParameterizedType {
         /**
@@ -262,7 +258,7 @@ public final class Types {
         /**
          * Creates instance of this class with concrete rawType and array of
          * actual parameters.
-         * 
+         *
          * @param rawType
          *            JAVA <code>Type</code> for raw type
          * @param actTypes
@@ -277,14 +273,14 @@ public final class Types {
     }
 
     /**
-     * 
+     *
      * Represents JAVA bounded wildcard type.
-     * 
+     *
      */
     private static class WildcardTypeImpl extends AbstractBaseType implements WildcardType {
         /**
          * Creates instance of this class with concrete package and type name.
-         * 
+         *
          * @param packageName
          *            string with the package name
          * @param typeName

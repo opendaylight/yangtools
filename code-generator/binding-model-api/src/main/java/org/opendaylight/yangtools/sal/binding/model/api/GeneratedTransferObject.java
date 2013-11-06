@@ -20,14 +20,14 @@ import java.util.List;
  * definitions. For this purpose retrieve definitions through
  * {@link #getEqualsIdentifiers ()}, {@link #getHashCodeIdentifiers()} and
  * {@link #getToStringIdentifiers ()}.
- * 
+ *
  */
 public interface GeneratedTransferObject extends GeneratedType {
 
     /**
      * Returns the extending Generated Transfer Object or <code>null</code> if
      * there is no extending Generated Transfer Object.
-     * 
+     *
      * @return the extending Generated Transfer Object or <code>null</code> if
      *         there is no extending Generated Transfer Object.
      */
@@ -36,7 +36,7 @@ public interface GeneratedTransferObject extends GeneratedType {
     /**
      * Returns List of Properties that are designated to define equality for
      * Generated Transfer Object.
-     * 
+     *
      * @return List of Properties that are designated to define equality for
      *         Generated Transfer Object.
      */
@@ -45,7 +45,7 @@ public interface GeneratedTransferObject extends GeneratedType {
     /**
      * Returns List of Properties that are designated to define identity for
      * Generated Transfer Object.
-     * 
+     *
      * @return List of Properties that are designated to define identity for
      *         Generated Transfer Object.
      */
@@ -54,7 +54,7 @@ public interface GeneratedTransferObject extends GeneratedType {
     /**
      * Returns List of Properties that will be members of toString definition
      * for Generated Transfer Object.
-     * 
+     *
      * @return List of Properties that will be members of toString definition
      *         for Generated Transfer Object.
      */
@@ -63,10 +63,12 @@ public interface GeneratedTransferObject extends GeneratedType {
     /**
      * Return boolean value which describe whether Generated Transfer Object
      * was/wasn't created from union YANG type.
-     * 
+     *
      * @return true value if Generated Transfer Object was created from union
      *         YANG type.
      */
     @Deprecated
     boolean isUnionType();
+
+    Restrictions getRestrictions();
 }
