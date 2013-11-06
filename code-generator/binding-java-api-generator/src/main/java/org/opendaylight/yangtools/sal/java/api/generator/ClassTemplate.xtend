@@ -142,6 +142,7 @@ class ClassTemplate extends BaseTemplate {
             super(«parentProperties.asArguments»);
         «ENDIF»
         «FOR p : properties» 
+            «generateLengthRestrictions(p.returnType, p.fieldName.toString)»
             this.«p.fieldName» = «p.fieldName»;
         «ENDFOR»
     }

@@ -7,6 +7,12 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.binding.generator.util.Types
 import com.google.common.base.Splitter
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
+import com.google.common.collect.Range
+import java.util.ArrayList
+import java.util.List
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 
 abstract class BaseTemplate {
     
@@ -151,4 +157,40 @@ abstract class BaseTemplate {
             **/
             '''
     }
+
+    def generateLengthRestrictions(Type type, String paramName) '''
+        «IF type instanceof ConcreteType»
+            «val restrictions = (type as ConcreteType).restrictions»
+            «IF restrictions !== null && !restrictions.lengthConstraints.empty»
+                «generateLengthRestriction(type, restrictions, paramName)»
+            «ENDIF»
+        «ENDIF»
+        «IF type instanceof GeneratedTransferObject»
+            «val restrictions = (type as GeneratedTransferObject).restrictions»
+            «IF restrictions !== null && !restrictions.lengthConstraints.empty»
+                «generateLengthRestriction(type, restrictions, paramName)»
+            «ENDIF»
+        «ENDIF»
+    '''
+
+    def generateLengthRestriction(Type type, Restrictions restrictions, String paramName) '''
+            boolean isValidLength = false;
+            «List.importedName»<«Range.importedName»<«Integer.importedName»>> lengthConstraints = new «ArrayList.importedName»<>(); 
+            «FOR r : restrictions.lengthConstraints»
+                lengthConstraints.add(«Range.importedName».closed(«r.min», «r.max»));
+            «ENDFOR»
+            for («Range.importedName»<«Integer.importedName»> r : lengthConstraints) {
+                «IF type.name.contains("[")»
+                if (r.contains(«paramName».length)) {
+                «ELSE»
+                if (r.contains(«paramName».length())) {
+                «ENDIF»
+                    isValidLength = true;
+                }
+            }
+            if (!isValidLength) {
+                throw new IllegalArgumentException("illegal length");
+            }
+    '''
+
 }

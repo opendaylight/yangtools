@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.spi;
 
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -33,4 +34,6 @@ public interface TypeProvider {
      * @return Resolved Type
      */
     Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> type, final SchemaNode parentNode);
+
+    Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> type, final SchemaNode parentNode, final Restrictions restrictions);
 }
