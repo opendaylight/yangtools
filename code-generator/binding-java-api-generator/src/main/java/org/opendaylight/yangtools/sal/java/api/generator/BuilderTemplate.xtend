@@ -18,6 +18,8 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.*
 import java.util.HashMap
 import java.util.Collectionsimport org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.ArrayList
+import java.util.HashSet
+import java.util.Collection
 
 /**
  * Template for generating JAVA builder classes. 
@@ -274,11 +276,19 @@ class BuilderTemplate extends BaseTemplate {
     def private generateSetterFromIfcs(Type type) '''
         «IF (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject))»
         «val ifc = type as GeneratedType»
-        «val List<Type> done = new ArrayList()»
+        «val List<Type> done = ifc.getBaseIfcs»
+        «generateCommentForSetter(ifc)»
         public void fieldsFrom(«DataObject.importedName» arg) {
-            «FOR impl : ifc.implements»
+            boolean isValidArg = false;
+            «FOR impl : ifc.getAllIfcs»
                 «generateSettersForIfc(impl, done)»
             «ENDFOR»
+            if (!isValidArg) {
+                throw new IllegalArgumentException(
+                  "expected one of: «ifc.getAllIfcs.toListOfNames» \n" +
+                  "but was: " + arg
+                );
+            }
         }
         «ENDIF»
     '''
@@ -286,33 +296,82 @@ class BuilderTemplate extends BaseTemplate {
     def private generateSettersForIfc(Type impl, List<Type> done) '''
         «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
             «val implType = impl as GeneratedType»
+            if (arg instanceof «implType.fullyQualifiedName») {
+                «printSetterProperties(implType)»
+                isValidArg = true;
+            }
+        «ENDIF»
+    '''
+
+    def private generateSettersForNestedIfc(Type impl, List<Type> done) '''
+        «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
+            «val implType = impl as GeneratedType»
             «val boolean added = done.contains(impl)»
             «IF !(added)»
                 if (arg instanceof «implType.fullyQualifiedName») {
-                    «printSetterProperties(implType, done)»
+                    «printSetterProperties(implType)»
                 }
             «ENDIF»
             «FOR implTypeImplement : implType.implements»
-                «generateSettersForIfc(implTypeImplement, done)»
+                «generateSettersForNestedIfc(implTypeImplement, done)»
             «ENDFOR»
         «ENDIF»
     '''
 
-    def private printSetterProperties(Type implementedIfc, List<Type> done) '''
+    def private printSetterProperties(Type implementedIfc) '''
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
         «val ifc = implementedIfc as GeneratedType»
-        «val boolean added = done.contains(ifc)»
-        «IF !(added)»
         «FOR getter : ifc.methodDefinitions»
             this._«getter.propertyNameFromGetter» = ((«implementedIfc.fullyQualifiedName»)arg).«getter.name»();
         «ENDFOR»
-        «val add = done.add(ifc)»
-        «ENDIF»
-        «FOR impl : ifc.implements»
-        «printSetterProperties(impl, done)»
-        «ENDFOR»
         «ENDIF»
     '''
+
+    def private generateCommentForSetter(GeneratedType type) '''
+        /**
+         Set fields from given grouping argument. Valid argument is instance of one of following types:
+         * <ul>
+         «FOR impl : type.getAllIfcs»
+         * <li>«impl.fullyQualifiedName»</li>
+         «ENDFOR»
+         * </ul>
+         *
+         * @param arg grouping object
+         * @throws IllegalArgumentException if given argument is none of valid types
+        */
+    '''
+
+    private def List<Type> getBaseIfcs(GeneratedType type) {
+        val List<Type> baseIfcs = new ArrayList();
+        for (ifc : type.implements) {
+            if (ifc instanceof GeneratedType && !(ifc as GeneratedType).methodDefinitions.empty) {
+                baseIfcs.add(ifc)
+            }
+        }
+        return baseIfcs 
+    }
+
+    private def Set<Type> getAllIfcs(Type type) {
+        val Set<Type> baseIfcs = new HashSet()
+        if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
+            val ifc = type as GeneratedType
+            for (impl : ifc.implements) {
+                if (impl instanceof GeneratedType && !(impl as GeneratedType).methodDefinitions.empty) {
+                    baseIfcs.add(impl)
+                }
+                baseIfcs.addAll(impl.getAllIfcs)
+            }
+        }
+        return baseIfcs 
+    }
+
+    private def List<String> toListOfNames(Collection<Type> types) {
+        val List<String> names = new ArrayList
+        for (type : types) {
+            names.add(type.fullyQualifiedName)
+        }
+        return names
+    }
 
 	/**
 	 * Template method which generates class attributes.
