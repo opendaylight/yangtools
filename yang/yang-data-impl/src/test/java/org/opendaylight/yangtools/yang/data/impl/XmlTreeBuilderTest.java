@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -105,5 +106,21 @@ public class XmlTreeBuilderTest {
 		
 		assertNotNull(deviceId);
 		assertNotNull(deviceIP);
+	}
+	
+	@Test
+	public void nodeMapInCompositeNodeTest() {
+	    Node<?> rootNode = null;
+            try {
+                    rootNode = XmlTreeBuilder.buildDataTree(inputStream);
+            } catch (XMLStreamException e) {
+                    e.printStackTrace();
+            }
+            
+            CompositeNode compRootNode = (CompositeNode)rootNode;
+            List<CompositeNode> params = compRootNode.getCompositesByName("params");
+            assertEquals(1, params.size());
+            List<CompositeNode> compositesByName = params.get(0).getCompositesByName("param");
+            assertEquals(2, compositesByName.size());
 	}
 }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +62,7 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
 
     @Override
     public List<Node<?>> getChildren() {
-        return getValue();
+        return Collections.unmodifiableList(getValue() == null ? new ArrayList<Node<?>>() : getValue());
     }
 
     @Override

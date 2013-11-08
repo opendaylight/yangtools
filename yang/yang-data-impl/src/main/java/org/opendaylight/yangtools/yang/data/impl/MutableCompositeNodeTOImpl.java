@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class MutableCompositeNodeTOImpl extends CompositeNodeTOImpl
     }
 
     /**
-     * update nodeMap
+     * update nodeMap - it should be invoked after children was changed
      */
     @Override
     public void init() {
@@ -46,10 +47,16 @@ public class MutableCompositeNodeTOImpl extends CompositeNodeTOImpl
             nodeMap = NodeUtils.buildNodeMap(getChildren());
         }
     }
+    
+    @Override
+    public List<Node<?>> getChildren() {
+        return getValue() == null ? new ArrayList<Node<?>>() : getValue();
+    }
 
     @Override
     public void setValue(List<Node<?>> value) {
         super.setValue(value);
+        init();
     }
 
     @Override

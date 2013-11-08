@@ -77,9 +77,9 @@ public final class XmlTreeBuilder {
                 if (!processingQueue.isEmpty()) {
                     parentNode = processingQueue.peek();
                 }
-                CompositeNode compParentNode = null;
-                if (parentNode instanceof CompositeNode) {
-                    compParentNode = (CompositeNode) parentNode;
+                MutableCompositeNode compParentNode = null;
+                if (parentNode instanceof MutableCompositeNode) {
+                    compParentNode = (MutableCompositeNode) parentNode;
                 }
                 Node<?> newNode = null;
                 if (isCompositeNodeEvent(event)) {
@@ -96,6 +96,9 @@ public final class XmlTreeBuilder {
                 }
             } else if (event.isEndElement()) {
                 root = processingQueue.pop();
+                if (root instanceof MutableCompositeNode) {
+                    ((MutableCompositeNode) root).init();
+                }
             }
         }
         return root;
@@ -218,7 +221,7 @@ public final class XmlTreeBuilder {
      * @see CompositeNode
      * @see MutableCompositeNode
      */
-    private static CompositeNode resolveCompositeNodeFromStartElement(final StartElement startElement,
+    private static MutableCompositeNode resolveCompositeNodeFromStartElement(final StartElement startElement,
             CompositeNode parent) {
         checkArgument(startElement != null, "Start Element cannot be NULL!");
 
