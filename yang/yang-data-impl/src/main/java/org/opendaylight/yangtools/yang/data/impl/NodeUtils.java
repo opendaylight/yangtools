@@ -96,7 +96,9 @@ public abstract class NodeUtils {
             itemEl.setUserData(USER_KEY_NODE, item, null);
             if (item instanceof SimpleNode<?>) {
                 Object value = ((SimpleNode<?>) item).getValue();
-                itemEl.setTextContent(String.valueOf(value));
+                if(value != null) {
+                    itemEl.setTextContent(String.valueOf(value));
+                }
             }
             if (item instanceof NodeModification) {
                 ModifyAction modificationAction = ((NodeModification) item).getModificationAction();
@@ -147,7 +149,7 @@ public abstract class NodeUtils {
      */
     public static Map<QName, List<Node<?>>> buildNodeMap(List<Node<?>> value) {
         Map<QName, List<Node<?>>> nodeMapTmp = new HashMap<>();
-        if (value == null || value.isEmpty()) {
+        if (value == null) {
             throw new IllegalStateException("nodeList should not be null or empty");
         }
         for (Node<?> node : value) {

@@ -2,23 +2,20 @@ package org.opendaylight.yangtools.concepts.util;
 
 import java.util.Collections;
 import java.util.EventListener;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.swing.text.html.HTMLDocument.Iterator;
 
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 
 public class ListenerRegistry<T extends EventListener> implements Iterable<ListenerRegistration<T>> {
 
-    final Set<ListenerRegistration<T>> listeners;
+    final ConcurrentHashMap<ListenerRegistration<T>,ListenerRegistration<T>> listeners;
     final Set<ListenerRegistration<T>> unmodifiableView;
 
     public ListenerRegistry() {
-        listeners = new HashSet<>();
-        unmodifiableView = Collections.unmodifiableSet(listeners);
+        listeners = new ConcurrentHashMap<>();
+        unmodifiableView = Collections.unmodifiableSet(listeners.keySet());
     }
 
     public Iterable<ListenerRegistration<T>> getListeners() {
@@ -30,13 +27,13 @@ public class ListenerRegistry<T extends EventListener> implements Iterable<Liste
             throw new IllegalArgumentException("Listener should not be null.");
         }
         ListenerRegistrationImpl<T> ret = new ListenerRegistrationImpl<T>(listener);
-        listeners.add(ret);
+        listeners.put(ret,ret);
         return ret;
     }
     
     @Override
     public java.util.Iterator<ListenerRegistration<T>> iterator() {
-        return listeners.iterator();
+        return unmodifiableView.iterator();
     }
 
     @SuppressWarnings("rawtypes")
