@@ -846,12 +846,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 tmpPath.add(currentName);
                 val dataNodeParent = parent as DataNodeContainer;
                 for (u : dataNodeParent.uses) {
-                    var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.groupingPath.path);
-                    if (!(targetGrouping instanceof GroupingDefinition)) {
-                        throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                    if (result == null) {
+                        var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.groupingPath.path);
+                        if (!(targetGrouping instanceof GroupingDefinition)) {
+                            throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                        }
+                        var gr = targetGrouping as GroupingDefinition;
+                        result = gr.getDataChildByName(currentName);
                     }
-                    var gr = targetGrouping as GroupingDefinition;
-                    result = gr.getDataChildByName(currentName);
                 }
                 if (result == null) {
                     currentName = (parent as SchemaNode).QName.localName;
