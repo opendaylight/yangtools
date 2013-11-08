@@ -17,6 +17,8 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     private static final long serialVersionUID = 8467409862384206193L;
     private final List<PathArgument> path;
 
+    private transient String to_string_cache = null;
+
     public List<PathArgument> getPath() {
         return path;
     }
@@ -62,6 +64,10 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     static public InstanceIdentifierBuilder builder() {
         return new BuilderImpl();
+    }
+
+    static public InstanceIdentifierBuilder builder(InstanceIdentifier origin) {
+        return new BuilderImpl(origin.getPath());
     }
 
     public interface PathArgument extends Immutable, Serializable {
@@ -120,6 +126,11 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             } else if (!nodeType.equals(other.nodeType))
                 return false;
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return nodeType.toString();
         }
     }
 
@@ -182,11 +193,24 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
                 return false;
             return true;
         }
+
+        @Override
+        public String toString() {
+            return nodeType + "[" + keyValues + "]";
+        }
     }
 
     private static class BuilderImpl implements InstanceIdentifierBuilder {
 
         private final List<PathArgument> path = new ArrayList<>();
+
+        public BuilderImpl() {
+
+        }
+
+        public BuilderImpl(List<? extends PathArgument> prefix) {
+            path.addAll(prefix);
+        }
 
         @Override
         public InstanceIdentifierBuilder node(QName nodeType) {
@@ -233,5 +257,19 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        if (to_string_cache != null) {
+            return to_string_cache;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (PathArgument argument : path) {
+            builder.append("/");
+            builder.append(argument.toString());
+        }
+        to_string_cache = builder.toString();
+        return to_string_cache;
     }
 }
