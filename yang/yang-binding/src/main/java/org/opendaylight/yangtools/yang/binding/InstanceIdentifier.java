@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.concepts.Path;
  * 
  * 
  */
-public final class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<?>>,Immutable {
+public final class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>,Immutable {
 
     private final List<PathArgument> path;
     private final Class<T> targetType;

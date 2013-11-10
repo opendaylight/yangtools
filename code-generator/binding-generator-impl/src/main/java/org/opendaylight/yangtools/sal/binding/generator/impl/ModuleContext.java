@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTO
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-final class ModuleContext {
+public final class ModuleContext {
     private GeneratedTypeBuilder moduleNode;
     private final List<GeneratedTOBuilder> genTOs = new ArrayList<GeneratedTOBuilder>();
     private final Map<SchemaPath, Type> typedefs = new HashMap<SchemaPath, Type>();
@@ -117,6 +117,34 @@ final class ModuleContext {
 
     public void addAugmentType(GeneratedTypeBuilder b) {
         augmentations.add(b);
+    }
+
+    public Map<SchemaPath, Type> getTypedefs() {
+        return typedefs;
+    }
+
+    public Map<SchemaPath, GeneratedTypeBuilder> getChildNodes() {
+        return childNodes;
+    }
+
+    public Map<SchemaPath, GeneratedTypeBuilder> getGroupings() {
+        return groupings;
+    }
+
+    public Map<SchemaPath, GeneratedTypeBuilder> getCases() {
+        return cases;
+    }
+
+    public Set<GeneratedTOBuilder> getIdentities() {
+        return identities;
+    }
+
+    public Set<GeneratedTypeBuilder> getTopLevelNodes() {
+        return topLevelNodes;
+    }
+
+    public List<GeneratedTypeBuilder> getAugmentations() {
+        return augmentations;
     }
 
 }

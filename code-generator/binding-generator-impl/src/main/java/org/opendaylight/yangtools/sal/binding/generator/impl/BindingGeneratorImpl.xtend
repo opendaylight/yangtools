@@ -73,6 +73,7 @@ import org.opendaylight.yangtools.yang.model.api.YangNode
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
+import org.opendaylight.yangtools.yang.common.QName
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -184,7 +185,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             filteredGenTypes.addAll(genCtx.get(m).generatedTypes);
 
         }
-        genCtx.clear;
+        //genCtx.clear;
 
         return filteredGenTypes;
     }
@@ -1510,21 +1511,25 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private def GeneratedTypeBuilder addDefaultInterfaceDefinition(String packageName, SchemaNode schemaNode,
         Type parent) {
-        val builder = addRawInterfaceDefinition(packageName, schemaNode, "");
+        val it = addRawInterfaceDefinition(packageName, schemaNode, "");
+        val qname = schemaNode.QName;
+        //addConstant(QName.typeForClass,"QNAME",'''
+        //    org.opendaylight.yangtools.yang.common.QName.create("«qname.namespace»","«qname.formattedRevision»","«qname.localName»");
+        //''')
         if (parent === null) {
-            builder.addImplementsType(DATA_OBJECT);
+            addImplementsType(DATA_OBJECT);
         } else {
-            builder.addImplementsType(BindingTypes.childOf(parent));
+            addImplementsType(BindingTypes.childOf(parent));
         }
         if (!(schemaNode instanceof GroupingDefinition)) {
-            builder.addImplementsType(augmentable(builder));
+            addImplementsType(augmentable(it));
         }
 
         if (schemaNode instanceof DataNodeContainer) {
-            addImplementedInterfaceFromUses(schemaNode as DataNodeContainer, builder);
+            addImplementedInterfaceFromUses(schemaNode as DataNodeContainer, it);
         }
 
-        return builder;
+        return it;
     }
 
     /**
@@ -1604,14 +1609,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * @return string with the name of the getter method for
      *         <code>methodName</code> in JAVA method format
      */
-    private def String getterMethodName(String methodName, Type returnType) {
+    public static def String getterMethodName(String localName, Type returnType) {
         val method = new StringBuilder();
         if (BOOLEAN.equals(returnType)) {
             method.append("is");
         } else {
             method.append("get");
         }
-        method.append(parseToClassName(methodName));
+        method.append(parseToClassName(localName));
         return method.toString();
     }
 
@@ -1857,4 +1862,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
         return null
     }
 
+
+    public def getModuleContexts() {
+        genCtx;
+    }
 }

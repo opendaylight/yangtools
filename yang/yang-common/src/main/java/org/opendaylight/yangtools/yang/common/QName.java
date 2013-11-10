@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -43,11 +44,12 @@ public final class QName implements Immutable,Serializable {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
-    private SimpleDateFormat revisionFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat REVISION_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private final URI namespace;
     private final String localName;
     private final String prefix;
+    private final String formattedRevision;
     private final Date revision;
 
     /**
@@ -67,6 +69,11 @@ public final class QName implements Immutable,Serializable {
         this.localName = localName;
         this.revision = revision;
         this.prefix = prefix;
+        if(revision != null) {
+            this.formattedRevision = REVISION_FORMAT.format(revision);
+        } else {
+            this.formattedRevision = null;
+        }
     }
 
     /**
@@ -145,7 +152,7 @@ public final class QName implements Immutable,Serializable {
         int result = 1;
         result = prime * result + ((localName == null) ? 0 : localName.hashCode());
         result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+        result = prime * result + ((formattedRevision == null) ? 0 : formattedRevision.hashCode());
         return result;
     }
 
@@ -175,14 +182,36 @@ public final class QName implements Immutable,Serializable {
         } else if (!namespace.equals(other.namespace)) {
             return false;
         }
-        if (revision == null) {
-            if (other.revision != null) {
+        if (formattedRevision == null) {
+            if (other.formattedRevision != null) {
                 return false;
             }
         } else if (!revision.equals(other.revision)) {
             return false;
         }
         return true;
+    }
+    
+    
+    public static QName create(QName base, String localName){
+        return new QName(base, localName);
+    }
+    
+    public static QName create(URI namespace, Date revision, String localName){
+        return new QName(namespace, revision, localName);
+    }
+    
+    
+    public static QName create(String namespace, String revision, String localName) throws IllegalArgumentException{
+        try {
+            URI namespaceUri = new URI(namespace);
+            Date revisionDate = REVISION_FORMAT.parse(revision);
+            return create(namespaceUri, revisionDate, localName);
+        } catch (ParseException pe) {
+            throw new IllegalArgumentException("Revision is not in supported format", pe);
+        } catch (URISyntaxException ue) {
+            throw new IllegalArgumentException("Namespace is is not valid URI", ue);
+        }
     }
 
     @Override
@@ -192,7 +221,7 @@ public final class QName implements Immutable,Serializable {
             sb.append("(" + namespace);
 
             if (revision != null) {
-                sb.append("?revision=" + revisionFormat.format(revision));
+                sb.append("?revision=" + REVISION_FORMAT.format(revision));
             }
             sb.append(")");
         }
@@ -219,7 +248,7 @@ public final class QName implements Immutable,Serializable {
 
         String query = "";
         if (revision != null) {
-            query = "revision=" + revisionFormat.format(revision);
+            query = "revision=" + formattedRevision;
         }
 
         URI compositeURI = null;
@@ -230,5 +259,9 @@ public final class QName implements Immutable,Serializable {
             LOGGER.error("", e);
         }
         return compositeURI;
+    }
+    
+    public String getFormattedRevision() {
+        return formattedRevision;
     }
 }

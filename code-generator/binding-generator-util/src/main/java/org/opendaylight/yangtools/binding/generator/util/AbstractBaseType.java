@@ -82,7 +82,7 @@ public class AbstractBaseType implements Type {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (false ==(obj instanceof Type)) {
             return false;
         }
         Type other = (Type) obj;
