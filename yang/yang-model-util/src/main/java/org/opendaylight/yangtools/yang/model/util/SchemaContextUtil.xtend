@@ -519,15 +519,18 @@ public  class SchemaContextUtil {
         }
 
         if (prefixedPathPart.contains(":")) {
-             val String[] prefixedName = prefixedPathPart.split(":");
-             val module = resolveModuleForPrefix(context, parentModule, prefixedName.get(0));
-            if (module != null) {
+            val String[] prefixedName = prefixedPathPart.split(":");
+            val module = resolveModuleForPrefix(context, parentModule, prefixedName.get(0));
+            if (module == null) {
+                throw new IllegalArgumentException(
+                    "Failed to resolve xpath: no module found for prefix " + prefixedName.get(0) + " in module " +
+                        parentModule.name)
+            } else {
                 return new QName(module.getNamespace(), module.getRevision(), prefixedName.get(1));
             }
         } else {
             return new QName(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
         }
-        return null;
     }
 
     /**

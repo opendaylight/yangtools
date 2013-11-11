@@ -9,6 +9,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import java.util.ArrayList
 import java.util.Collectionsimport java.util.Arrays
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
+import com.google.common.collect.Range
 
 /**
  * Template for generating JAVA class. 
@@ -19,6 +21,7 @@ class ClassTemplate extends BaseTemplate {
     protected val List<GeneratedProperty> finalProperties
     protected val List<GeneratedProperty> parentProperties
     protected val Iterable<GeneratedProperty> allProperties;
+    protected val Restrictions restrictions
     
     /**
      * List of enumeration which are generated as JAVA enum type.
@@ -49,12 +52,13 @@ class ClassTemplate extends BaseTemplate {
         this.properties = genType.properties
         this.finalProperties = GeneratorUtil.resolveReadOnlyPropertiesFromTO(genTO.properties)
         this.parentProperties = GeneratorUtil.getPropertiesOfAllParents(genTO)
+        this.restrictions = genType.restrictions
 
         var List<GeneratedProperty> sorted = new ArrayList<GeneratedProperty>();
         sorted.addAll(properties);
         sorted.addAll(parentProperties);
         Collections.sort(sorted, new PropertyComparator());
-        
+
         this.allProperties = sorted
         this.enums = genType.enumerations
         this.consts = genType.constantDefinitions
@@ -100,10 +104,15 @@ class ClassTemplate extends BaseTemplate {
                     «field.setterMethod»
                 «ENDIF»
             «ENDFOR»
+
             «generateHashCode»
+
             «generateEquals»
+
             «generateToString»
-        
+
+            «generateGetLength»
+
         }
     '''
     
@@ -127,13 +136,17 @@ class ClassTemplate extends BaseTemplate {
     
     
     def protected constructors() '''
-    «allValuesConstructor»
-    «IF !allProperties.empty»
-    «copyConstructor»
-    «ENDIF»
-    «IF properties.empty && !parentProperties.empty »
-        «parentConstructor»
-    «ENDIF»
+        «IF genTO.unionType»
+            «genUnionConstructor»
+        «ELSE»
+            «allValuesConstructor»
+        «ENDIF»
+        «IF !allProperties.empty»
+            «copyConstructor»
+        «ENDIF»
+        «IF properties.empty && !parentProperties.empty »
+            «parentConstructor»
+        «ENDIF»
     '''
     
     def protected allValuesConstructor() '''
@@ -142,13 +155,34 @@ class ClassTemplate extends BaseTemplate {
             super(«parentProperties.asArguments»);
         «ENDIF»
         «FOR p : properties» 
-            «generateLengthRestrictions(p.returnType, p.fieldName.toString)»
+            «generateLengthRestrictions(type, p.fieldName.toString, p.returnType)»
             this.«p.fieldName» = «p.fieldName»;
         «ENDFOR»
     }
     '''
-    
-    
+
+    def protected genUnionConstructor() '''
+    «FOR p : allProperties»
+        «val List<GeneratedProperty> other = new ArrayList(properties)»
+        «val added = other.remove(p)»
+        «genConstructor(p, other)»
+    «ENDFOR»
+
+    '''
+
+    def protected genConstructor(GeneratedProperty property, GeneratedProperty... other) '''
+    public «type.name»(«property.returnType.importedName + " " + property.name») {
+        «IF false == parentProperties.empty»
+            super(«parentProperties.asArguments»);
+        «ENDIF»
+            «generateLengthRestrictions(type, property.fieldName.toString, property.returnType)»
+            this.«property.fieldName» = «property.name»;
+            «FOR p : other»
+            this.«p.fieldName» = null;
+            «ENDFOR»
+    }
+    '''
+
     def protected copyConstructor() '''
     /**
      * Creates a copy from Source Object.
@@ -365,5 +399,18 @@ class ClassTemplate extends BaseTemplate {
             }
         «ENDIF»
     '''
-    
+
+    def private generateGetLength() '''
+        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
+            public static «List.importedName»<«Range.importedName»<Integer>> getLength() {
+                final «List.importedName»<«Range.importedName»<Integer>> result = new «ArrayList.importedName»<>();
+                «List.importedName»<«Range.importedName»<«Integer.importedName»>> lengthConstraints = new «ArrayList.importedName»<>(); 
+                «FOR r : restrictions.lengthConstraints»
+                    result.add(«Range.importedName».closed(«r.min», «r.max»));
+                «ENDFOR»
+                return result;
+            }
+        «ENDIF»
+    '''
+
 }

@@ -616,6 +616,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 } else if (innerTypeDefinition instanceof UnionTypeDefinition) {
                     final GeneratedTOBuilder genTOBuilder = provideGeneratedTOBuilderForUnionTypeDef(basePackageName,
                             (UnionTypeDefinition) innerTypeDefinition, typedefName, typedef);
+                    genTOBuilder.setIsUnion(true);
                     returnType = genTOBuilder.toInstance();
                 } else if (innerTypeDefinition instanceof EnumTypeDefinition) {
                     final EnumTypeDefinition enumTypeDef = (EnumTypeDefinition) innerTypeDefinition;
@@ -626,12 +627,9 @@ public final class TypeProviderImpl implements TypeProvider {
                     final GeneratedTOBuilder genTOBuilder = provideGeneratedTOBuilderForBitsTypeDefinition(
                             basePackageName, bitsTypeDefinition, typedefName);
                     returnType = genTOBuilder.toInstance();
-
                 } else {
-                    Restrictions r = BindingGeneratorUtil.getRestrictions(typedef);
                     final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(
-                            innerTypeDefinition, typedef, r);
-
+                            innerTypeDefinition, typedef);
                     returnType = wrapJavaTypeIntoTO(basePackageName, typedef, javaType);
                 }
                 if (returnType != null) {
@@ -663,6 +661,7 @@ public final class TypeProviderImpl implements TypeProvider {
             final String propertyName = "value";
 
             final GeneratedTOBuilder genTOBuilder = typedefToTransferObject(basePackageName, typedef);
+            genTOBuilder.setRestrictions(BindingGeneratorUtil.getRestrictions(typedef));
             final GeneratedPropertyBuilder genPropBuilder = genTOBuilder.addProperty(propertyName);
             genPropBuilder.setReturnType(javaType);
             genTOBuilder.addEqualsIdentity(genPropBuilder);
@@ -1090,6 +1089,10 @@ public final class TypeProviderImpl implements TypeProvider {
         Restrictions r = BindingGeneratorUtil.getRestrictions(typedef);
         genTOBuilder.setRestrictions(r);
 
+        if (baseTypeDefForExtendedType(innerExtendedType) instanceof UnionTypeDefinition) {
+            genTOBuilder.setIsUnion(true);
+        }
+
         Map<String, Type> typeMap = null;
         final Module parentModule = findParentModule(schemaContext, innerExtendedType);
         if (parentModule != null) {
@@ -1166,7 +1169,7 @@ public final class TypeProviderImpl implements TypeProvider {
             int maxChildDepth = 0;
             int childDepth = 1;
             for (TypeDefinition<?> childTypeDefinition : childTypeDefinitions) {
-                childDepth = childDepth + getTypeDefinitionDepth(childTypeDefinition.getBaseType());
+                childDepth = childDepth + getTypeDefinitionDepth(childTypeDefinition);
                 if (childDepth > maxChildDepth) {
                     maxChildDepth = childDepth;
                 }

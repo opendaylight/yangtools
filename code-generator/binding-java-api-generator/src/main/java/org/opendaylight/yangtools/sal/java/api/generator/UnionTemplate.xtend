@@ -23,6 +23,7 @@ class UnionTemplate extends ClassTemplate {
     
     
     override constructors() '''
+    «unionConstructorsParentProperties»
     «unionConstructors»
     «IF !allProperties.empty»
     «copyConstructor»
@@ -43,6 +44,14 @@ class UnionTemplate extends ClassTemplate {
                     «IF property != other»this.«other.fieldName» = null;«ENDIF»
                     «ENDFOR»
                 }
+        «ENDFOR»
+     ''' 
+
+     def unionConstructorsParentProperties() '''
+        «FOR property : parentProperties SEPARATOR "\n"»
+            public «type.name»(«property.returnType.importedName» «property.fieldName») {
+                super(«property.fieldName»);
+            }
         «ENDFOR»
      ''' 
 }

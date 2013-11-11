@@ -16,6 +16,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -89,19 +91,11 @@ public class CompilationTest extends BaseCompilationTest {
         Class<?> linksKeyClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.LinksKey", true, loader);
 
         // Test generated 'grouping key-args'
-        try {
-            assertTrue(keyArgsClass.isInterface());
-            assertEquals(3, keyArgsClass.getDeclaredMethods().length);
-
-            Method getId = keyArgsClass.getMethod("getId");
-            assertEquals(Byte.class, getId.getReturnType());
-            Method getName = keyArgsClass.getMethod("getName");
-            assertEquals(String.class, getName.getReturnType());
-            Method getSize = keyArgsClass.getMethod("getSize");
-            assertEquals(Integer.class, getSize.getReturnType());
-        } catch (NoSuchMethodException e) {
-            throw new AssertionError("Required method not found in " + keyArgsClass, e);
-        }
+        assertTrue(keyArgsClass.isInterface());
+        assertEquals(3, keyArgsClass.getDeclaredMethods().length);
+        assertContainsMethod(keyArgsClass, Byte.class, "getId");
+        assertContainsMethod(keyArgsClass, String.class, "getName");
+        assertContainsMethod(keyArgsClass, Integer.class, "getSize");
 
         // test generated 'list links'
         assertTrue(linksClass.isInterface());
@@ -110,11 +104,7 @@ public class CompilationTest extends BaseCompilationTest {
         testImplementsIfc(linksClass, keyArgsClass);
 
         // Test list key constructor arguments ordering
-        try {
-            linksKeyClass.getConstructor(Byte.class, String.class, Integer.class);
-        } catch (NoSuchMethodException e) {
-            throw new AssertionError("Parameters of list key constructor are not properly ordered");
-        }
+        assertContainsConstructor(linksKeyClass, Byte.class, String.class, Integer.class);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
@@ -392,25 +382,25 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test methods return type
         byte[] b = new byte[] {};
-        testReturnType(nodesClass, "getIdBinary", b.getClass());
-        testReturnType(nodesClass, "getIdBits", pkg + ".Nodes$IdBits", loader);
-        testReturnType(nodesClass, "isIdBoolean", "java.lang.Boolean", loader);
-        testReturnType(nodesClass, "getIdDecimal64", "java.math.BigDecimal", loader);
-        testReturnType(nodesClass, "isIdEmpty", "java.lang.Boolean", loader);
-        testReturnType(nodesClass, "getIdEnumeration", pkg + ".Nodes$IdEnumeration", loader);
+        assertContainsMethod(nodesClass, b.getClass(), "getIdBinary");
+        assertContainsMethod(nodesClass, pkg + ".Nodes$IdBits", "getIdBits", loader);
+        assertContainsMethod(nodesClass, Boolean.class, "isIdBoolean");
+        assertContainsMethod(nodesClass, BigDecimal.class, "getIdDecimal64");
+        assertContainsMethod(nodesClass, Boolean.class, "isIdEmpty");
+        assertContainsMethod(nodesClass, pkg + ".Nodes$IdEnumeration", "getIdEnumeration", loader);
         testReturnTypeIdentityref(nodesClass, "getIdIdentityref", pkg + ".Alg");
         testReturnTypeInstanceIdentitifer(loader, nodesClass, "getIdInstanceIdentifier");
-        testReturnType(nodesClass, "getId8", "java.lang.Byte", loader);
-        testReturnType(nodesClass, "getId16", "java.lang.Short", loader);
-        testReturnType(nodesClass, "getId32", "java.lang.Integer", loader);
-        testReturnType(nodesClass, "getId64", "java.lang.Long", loader);
-        testReturnType(nodesClass, "getIdLeafref", "java.lang.Long", loader);
-        testReturnType(nodesClass, "getIdString", "java.lang.String", loader);
-        testReturnType(nodesClass, "getIdU8", "java.lang.Short", loader);
-        testReturnType(nodesClass, "getIdU16", "java.lang.Integer", loader);
-        testReturnType(nodesClass, "getIdU32", "java.lang.Long", loader);
-        testReturnType(nodesClass, "getIdU64", "java.math.BigInteger", loader);
-        testReturnType(nodesClass, "getIdUnion", pkg + ".Nodes$IdUnion", loader);
+        assertContainsMethod(nodesClass, Byte.class, "getId8");
+        assertContainsMethod(nodesClass, Short.class, "getId16");
+        assertContainsMethod(nodesClass, Integer.class, "getId32");
+        assertContainsMethod(nodesClass, Long.class, "getId64");
+        assertContainsMethod(nodesClass, Long.class, "getIdLeafref");
+        assertContainsMethod(nodesClass, String.class, "getIdString");
+        assertContainsMethod(nodesClass, Short.class, "getIdU8");
+        assertContainsMethod(nodesClass, Integer.class, "getIdU16");
+        assertContainsMethod(nodesClass, Long.class, "getIdU32");
+        assertContainsMethod(nodesClass, BigInteger.class, "getIdU64");
+        assertContainsMethod(nodesClass, pkg + ".Nodes$IdUnion", "getIdUnion", loader);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
@@ -491,26 +481,6 @@ public class CompilationTest extends BaseCompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private void testReturnType(Class<?> clazz, String methodName, Class<?> returnType) throws Exception {
-        Method method;
-        try {
-            method = clazz.getMethod(methodName);
-            assertEquals(returnType, method.getReturnType());
-        } catch (NoSuchMethodException e) {
-            throw new AssertionError("Method '" + methodName + "' not found");
-        }
-    }
-
-    private void testReturnType(Class<?> clazz, String methodName, String returnTypeStr, ClassLoader loader)
-            throws Exception {
-        Class<?> returnType;
-        try {
-            returnType = Class.forName(returnTypeStr, true, loader);
-            testReturnType(clazz, methodName, returnType);
-        } catch (ClassNotFoundException e) {
-            throw new AssertionError("Return type of method '" + methodName + "' not found");
-        }
-    }
 
     private void testReturnTypeIdentityref(Class<?> clazz, String methodName, String returnTypeStr) throws Exception {
         Method method;

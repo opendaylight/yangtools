@@ -26,32 +26,32 @@ import java.util.Collection
  */
 
 class BuilderTemplate extends BaseTemplate {
-    
+
     /**
      * Constant with the name of the concrete method.
      */
     val static GET_AUGMENTATION_METHOD_NAME = "getAugmentation"
-    
+
     /**
      * Constant with the suffix for builder classes.
      */
     val static BUILDER = 'Builder'
-    
+
     /**
      * Constant with suffix for the classes which are generated from the builder classes.
      */
     val static IMPL = 'Impl'
-    
+
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME
      */
     var GeneratedProperty augmentField
-    
+
     /**
      * Set of class attributes (fields) which are derived from the getter methods names
      */
     val Set<GeneratedProperty> properties
-    
+
     /**
      * Constructs new instance of this class.
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
@@ -60,7 +60,7 @@ class BuilderTemplate extends BaseTemplate {
         super(genType)
         this.properties = propertiesFromMethods(createMethods)
     }
-    
+
     /**
      * Returns set of method signature instances which contains all the methods of the <code>genType</code>
      * and all the methods of the implemented interfaces.
@@ -73,7 +73,6 @@ class BuilderTemplate extends BaseTemplate {
         collectImplementedMethods(methods, type.implements)
         return methods
     }
-    
 
     /**
      * Adds to the <code>methods</code> set all the methods of the <code>implementedIfcs</code> 
@@ -94,12 +93,9 @@ class BuilderTemplate extends BaseTemplate {
             } else if (implementedIfc.fullyQualifiedName == Augmentable.name) {
                 for (m : Augmentable.methods) {
                     if (m.name == GET_AUGMENTATION_METHOD_NAME) {
-                        //addToImports(JAVA_UTIL, HASH_MAP)
-                        //addToImports(JAVA_UTIL, MAP)
                         val fullyQualifiedName = m.returnType.name
                         val pkg = fullyQualifiedName.package
                         val name = fullyQualifiedName.name
-                        //addToImports(pkg, name)
                         val tmpGenTO = new GeneratedTOBuilderImpl(pkg, name)
                         val refType = new ReferencedTypeImpl(pkg, name)
                         val generic = new ReferencedTypeImpl(type.packageName, type.name)
@@ -111,8 +107,7 @@ class BuilderTemplate extends BaseTemplate {
             }
         }
     }
-    
-    
+
     /**
      * Returns the first element of the list <code>elements</code>.
      * 
@@ -121,7 +116,7 @@ class BuilderTemplate extends BaseTemplate {
     def private <E> first(List<E> elements) {
         elements.get(0)
     }
-    
+
     /**
      * Returns the name of the package from <code>fullyQualifiedName</code>.
      * 
@@ -143,7 +138,6 @@ class BuilderTemplate extends BaseTemplate {
         val lastDotIndex = fullyQualifiedName.lastIndexOf(Constants.DOT)
         return if (lastDotIndex == -1) fullyQualifiedName else fullyQualifiedName.substring(lastDotIndex + 1)
     }
-    
 
     /**
      * Creates set of generated property instances from getter <code>methods</code>.
@@ -152,8 +146,6 @@ class BuilderTemplate extends BaseTemplate {
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
     def private propertiesFromMethods(Set<MethodSignature> methods) {
-        
-
         if (methods == null || methods.isEmpty()) {
             return Collections.emptySet
         }
@@ -166,7 +158,7 @@ class BuilderTemplate extends BaseTemplate {
         }
         return result
     }
-    
+
     /**
      * Creates generated property instance from the getter <code>method</code> name and return type.
      * 
@@ -180,7 +172,6 @@ class BuilderTemplate extends BaseTemplate {
      * </ul>
      */
     def private GeneratedProperty propertyFromGetter(MethodSignature method) {
-
         if (method == null || method.name == null || method.name.empty || method.returnType == null) {
             throw new IllegalArgumentException("Method, method name, method return type reference cannot be NULL or empty!")
         }
@@ -209,7 +200,7 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateConstructorsFromIfcs(type)»
 
-            «generateSetterFromIfcs(type)»
+            «generateMethodFieldsFrom(type)»
 
             «generateGetters(false)»
 
@@ -237,97 +228,74 @@ class BuilderTemplate extends BaseTemplate {
         }
     '''
 
+    /**
+     * Generate default constructor and constructor for every implemented interface from uses statements.
+     */
     def private generateConstructorsFromIfcs(Type type) '''
         public «type.name»«BUILDER»() {
         } 
         «IF (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject))»
-        «val ifc = type as GeneratedType»
-        «FOR impl : ifc.implements»
-            «generateConstructorFromIfc(impl)»
-        «ENDFOR»
+            «val ifc = type as GeneratedType»
+            «FOR impl : ifc.implements»
+                «generateConstructorFromIfc(impl)»
+            «ENDFOR»
         «ENDIF»
     '''
 
+    /**
+     * Generate constructor with argument of given type.
+     */
     def private generateConstructorFromIfc(Type impl) '''
         «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
-        «val implType = impl as GeneratedType»
+            «val implType = impl as GeneratedType»
 
-        public «type.name»«BUILDER»(«implType.fullyQualifiedName» arg) {
-            «printConstructorProperties(implType)»
-        }
-        «FOR implTypeImplement : implType.implements»
-            «generateConstructorFromIfc(implTypeImplement)»
-        «ENDFOR»
-        «ENDIF»
-    '''
-
-    def private printConstructorProperties(Type implementedIfc) '''
-        «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
-        «val ifc = implementedIfc as GeneratedType»
-        «FOR getter : ifc.methodDefinitions»
-            this._«getter.propertyNameFromGetter» = arg.«getter.name»();
-        «ENDFOR»
-        «FOR impl : ifc.implements»
-        «printConstructorProperties(impl)»
-        «ENDFOR»
-        «ENDIF»
-    '''
-
-    def private generateSetterFromIfcs(Type type) '''
-        «IF (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject))»
-        «val ifc = type as GeneratedType»
-        «val List<Type> done = ifc.getBaseIfcs»
-        «generateCommentForSetter(ifc)»
-        public void fieldsFrom(«DataObject.importedName» arg) {
-            boolean isValidArg = false;
-            «FOR impl : ifc.getAllIfcs»
-                «generateSettersForIfc(impl, done)»
+            public «type.name»«BUILDER»(«implType.fullyQualifiedName» arg) {
+                «printConstructorPropertySetter(implType)»
+            }
+            «FOR implTypeImplement : implType.implements»
+                «generateConstructorFromIfc(implTypeImplement)»
             «ENDFOR»
-            if (!isValidArg) {
-                throw new IllegalArgumentException(
-                  "expected one of: «ifc.getAllIfcs.toListOfNames» \n" +
-                  "but was: " + arg
-                );
-            }
-        }
         «ENDIF»
     '''
 
-    def private generateSettersForIfc(Type impl, List<Type> done) '''
-        «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
-            «val implType = impl as GeneratedType»
-            if (arg instanceof «implType.fullyQualifiedName») {
-                «printSetterProperties(implType)»
-                isValidArg = true;
-            }
+    def private printConstructorPropertySetter(Type implementedIfc) '''
+        «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
+            «val ifc = implementedIfc as GeneratedType»
+            «FOR getter : ifc.methodDefinitions»
+                this._«getter.propertyNameFromGetter» = arg.«getter.name»();
+            «ENDFOR»
+            «FOR impl : ifc.implements»
+                «printConstructorPropertySetter(impl)»
+            «ENDFOR»
         «ENDIF»
     '''
 
-    def private generateSettersForNestedIfc(Type impl, List<Type> done) '''
-        «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
-            «val implType = impl as GeneratedType»
-            «val boolean added = done.contains(impl)»
-            «IF !(added)»
-                if (arg instanceof «implType.fullyQualifiedName») {
-                    «printSetterProperties(implType)»
+    /**
+     * Generate 'fieldsFrom' method to set builder properties based on type of given argument.
+     */
+    def private generateMethodFieldsFrom(Type type) '''
+        «IF (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject))»
+            «val ifc = type as GeneratedType»
+            «IF ifc.hasImplementsFromUses»
+                «val List<Type> done = ifc.getBaseIfcs»
+                «generateMethodFieldsFromComment(ifc)»
+                public void fieldsFrom(«DataObject.importedName» arg) {
+                    boolean isValidArg = false;
+                    «FOR impl : ifc.getAllIfcs»
+                        «generateIfCheck(impl, done)»
+                    «ENDFOR»
+                    if (!isValidArg) {
+                        throw new IllegalArgumentException(
+                          "expected one of: «ifc.getAllIfcs.toListOfNames» \n" +
+                          "but was: " + arg
+                        );
+                    }
                 }
             «ENDIF»
-            «FOR implTypeImplement : implType.implements»
-                «generateSettersForNestedIfc(implTypeImplement, done)»
-            «ENDFOR»
         «ENDIF»
     '''
 
-    def private printSetterProperties(Type implementedIfc) '''
-        «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
-        «val ifc = implementedIfc as GeneratedType»
-        «FOR getter : ifc.methodDefinitions»
-            this._«getter.propertyNameFromGetter» = ((«implementedIfc.fullyQualifiedName»)arg).«getter.name»();
-        «ENDFOR»
-        «ENDIF»
-    '''
-
-    def private generateCommentForSetter(GeneratedType type) '''
+    def private generateMethodFieldsFromComment(GeneratedType type) '''
         /**
          Set fields from given grouping argument. Valid argument is instance of one of following types:
          * <ul>
@@ -339,6 +307,38 @@ class BuilderTemplate extends BaseTemplate {
          * @param arg grouping object
          * @throws IllegalArgumentException if given argument is none of valid types
         */
+    '''
+
+    /**
+     * Method is used to find out if given type implements any interface from uses.
+     */
+    def boolean hasImplementsFromUses(GeneratedType type) {
+        var i = 0
+        for (impl : type.getAllIfcs) {
+            if ((impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)) {
+                i = i + 1
+            }
+        }
+        return i > 0
+    }
+
+    def private generateIfCheck(Type impl, List<Type> done) '''
+        «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
+            «val implType = impl as GeneratedType»
+            if (arg instanceof «implType.fullyQualifiedName») {
+                «printPropertySetter(implType)»
+                isValidArg = true;
+            }
+        «ENDIF»
+    '''
+
+    def private printPropertySetter(Type implementedIfc) '''
+        «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
+        «val ifc = implementedIfc as GeneratedType»
+        «FOR getter : ifc.methodDefinitions»
+            this._«getter.propertyNameFromGetter» = ((«implementedIfc.fullyQualifiedName»)arg).«getter.name»();
+        «ENDFOR»
+        «ENDIF»
     '''
 
     private def List<Type> getBaseIfcs(GeneratedType type) {
@@ -382,7 +382,7 @@ class BuilderTemplate extends BaseTemplate {
     def private generateFields(boolean _final) '''
         «IF !properties.empty»
             «FOR f : properties»
-                private  «IF _final»final«ENDIF»  «f.returnType.importedName» «f.fieldName»;
+                private«IF _final» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
         «IF augmentField != null»
@@ -398,7 +398,7 @@ class BuilderTemplate extends BaseTemplate {
     def private generateSetters() '''
         «FOR field : properties SEPARATOR '\n'»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
-                «generateLengthRestrictions(field.returnType, "value")»
+                «generateLengthRestrictions(field, "value")»
 
                 this.«field.fieldName» = value;
                 return this;
@@ -430,7 +430,6 @@ class BuilderTemplate extends BaseTemplate {
             «ENDIF»
         }
     '''
-    
 
     /**
      * Template method which generate getter methods for IMPL class.
@@ -540,6 +539,6 @@ class BuilderTemplate extends BaseTemplate {
         return «type.importedName».class;
     }
     '''
-    
+
 }
 

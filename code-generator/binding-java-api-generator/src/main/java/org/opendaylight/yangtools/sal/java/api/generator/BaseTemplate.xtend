@@ -158,32 +158,60 @@ abstract class BaseTemplate {
             '''
     }
 
-    def generateLengthRestrictions(Type type, String paramName) '''
+    def generateLengthRestrictions(Type type, String paramName, Type returnType) '''
+        «val boolean isArray = returnType.name.contains("[")»
         «IF type instanceof ConcreteType»
             «val restrictions = (type as ConcreteType).restrictions»
             «IF restrictions !== null && !restrictions.lengthConstraints.empty»
-                «generateLengthRestriction(type, restrictions, paramName)»
+                «generateLengthRestriction(type, restrictions, paramName, isArray, !(returnType instanceof ConcreteType))»
             «ENDIF»
         «ENDIF»
         «IF type instanceof GeneratedTransferObject»
             «val restrictions = (type as GeneratedTransferObject).restrictions»
             «IF restrictions !== null && !restrictions.lengthConstraints.empty»
-                «generateLengthRestriction(type, restrictions, paramName)»
+                «generateLengthRestriction(type, restrictions, paramName, isArray, !(returnType instanceof ConcreteType))»
             «ENDIF»
         «ENDIF»
     '''
 
-    def generateLengthRestriction(Type type, Restrictions restrictions, String paramName) '''
+    def generateLengthRestrictions(GeneratedProperty field, String paramName) '''
+        «val Type type = field.returnType»
+        «IF type instanceof ConcreteType»
+            «val boolean isArray = type.name.contains("[")»
+            «val restrictions = (type as ConcreteType).restrictions»
+            «IF restrictions !== null && !restrictions.lengthConstraints.empty»
+                «generateLengthRestriction(type, restrictions, paramName, isArray, false)»
+            «ENDIF»
+        «ENDIF»
+        «IF type instanceof GeneratedTransferObject»
+            «var isArray = isArrayType(type as GeneratedTransferObject)»
+            «val restrictions = (type as GeneratedTransferObject).restrictions»
+            «IF restrictions !== null && !restrictions.lengthConstraints.empty»
+                «generateLengthRestriction(type, restrictions, paramName, isArray, true)»
+            «ENDIF»
+        «ENDIF»
+    '''
+
+    def generateLengthRestriction(Type type, Restrictions restrictions, String paramName, boolean isArray, boolean isNestedType) '''
+        if («paramName» != null) {
             boolean isValidLength = false;
             «List.importedName»<«Range.importedName»<«Integer.importedName»>> lengthConstraints = new «ArrayList.importedName»<>(); 
             «FOR r : restrictions.lengthConstraints»
                 lengthConstraints.add(«Range.importedName».closed(«r.min», «r.max»));
             «ENDFOR»
             for («Range.importedName»<«Integer.importedName»> r : lengthConstraints) {
-                «IF type.name.contains("[")»
-                if (r.contains(«paramName».length)) {
+                «IF isArray»
+                    «IF isNestedType»
+                        if (r.contains(«paramName».getValue().length)) {
+                    «ELSE»
+                        if (r.contains(«paramName».length)) {
+                    «ENDIF»
                 «ELSE»
-                if (r.contains(«paramName».length())) {
+                    «IF isNestedType»
+                        if (r.contains(«paramName».getValue().length())) {
+                    «ELSE»
+                        if (r.contains(«paramName».length())) {
+                    «ENDIF»
                 «ENDIF»
                     isValidLength = true;
                 }
@@ -191,6 +219,36 @@ abstract class BaseTemplate {
             if (!isValidLength) {
                 throw new IllegalArgumentException("illegal length");
             }
+        }
     '''
+
+    def GeneratedProperty getPropByName(GeneratedType gt, String name) {
+        for (GeneratedProperty prop : gt.properties) {
+            if (prop.name.equals(name)) {
+                return prop;
+            }
+        }
+        return null;
+    }
+
+    def boolean isArrayType(GeneratedTransferObject type) {
+        var isArray = false
+        val GeneratedTransferObject superType = type.findSuperType
+        val GeneratedProperty value = superType.getPropByName("value")
+        if (value != null && value.returnType.name.contains("[")) {
+            isArray = true
+        }
+        return isArray
+    }
+
+    def GeneratedTransferObject findSuperType(GeneratedTransferObject gto) {
+        var GeneratedTransferObject base = gto
+        var GeneratedTransferObject superType = base.superType
+        while (superType !== null) {
+            base = superType
+            superType = base.superType
+        }
+        return base;
+    }
 
 }

@@ -11,6 +11,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +36,7 @@ public class CompilationTestUtils {
     static final File COMPILER_OUTPUT_DIR = new File(COMPILER_OUTPUT_PATH);
 
     static final String BASE_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1";
-    static final String NS_TEST = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS
-            + "rev131008";
+    static final String NS_TEST = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
     static final String NS_FOO = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
     static final String NS_BAR = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "bar" + FS + "rev131008";
     static final String NS_BAZ = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "baz" + FS + "rev131008";
@@ -50,6 +51,91 @@ public class CompilationTestUtils {
             if (resourceDir.exists()) {
                 deleteTestDir(resourceDir);
             }
+        }
+    }
+
+    static void assertContainsField(Class<?> clazz, String name, Class<?> type) {
+        try {
+            Field f = clazz.getDeclaredField(name);
+            assertEquals(type, f.getType());
+        } catch (NoSuchFieldException e) {
+            throw new AssertionError("Field " + name + " does not exists in class " + clazz.getSimpleName());
+        }
+    }
+
+    static void assertContainsConstructor(Class<?> clazz, Class<?>... args) {
+        try {
+            clazz.getDeclaredConstructor(args);
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError("Constructor with args " + Arrays.toString(args) + " does not exists in class "
+                    + clazz.getSimpleName());
+        }
+    }
+
+    static void assertContainsMethod(Class<?> clazz, Class<?> returnType, String name, Class<?>... args) {
+        try {
+            Method m = clazz.getDeclaredMethod(name, args);
+            assertEquals(returnType, m.getReturnType());
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError("Method " + name + " with args " + Arrays.toString(args)
+                    + " does not exists in class " + clazz.getSimpleName());
+        }
+    }
+
+    static void assertContainsMethod(Class<?> clazz, String returnTypeStr, String name, ClassLoader loader)
+            throws Exception {
+        Class<?> returnType;
+        try {
+            returnType = Class.forName(returnTypeStr, true, loader);
+            Method method = clazz.getMethod(name);
+            assertEquals(returnType, method.getReturnType());
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError("Return type of method '" + name + "' not found");
+        }
+    }
+
+    /**
+     * Check for presence of hashCode, equals and toString methods.
+     *
+     * @param clazz
+     *            class to check
+     */
+    static void assertContainsDefaultMethods(Class<?> clazz) {
+        assertContainsMethod(clazz, Integer.TYPE, "hashCode");
+        assertContainsMethod(clazz, Boolean.TYPE, "equals", Object.class);
+        assertContainsMethod(clazz, String.class, "toString");
+    }
+
+    /**
+     * Check for presence of 'public static
+     * java.util.List<com.google.common.collect.Range<java.lang.Integer>>
+     * getLength()' method.
+     *
+     * @param clazz
+     *            class to check
+     */
+    static void assertContainsGetLength(Class<?> clazz) {
+        try {
+            Method m = clazz.getDeclaredMethod("getLength");
+            java.lang.reflect.Type returnType = m.getGenericReturnType();
+            assertTrue("Return type of getLength method must be ParameterizedType",
+                    returnType instanceof ParameterizedType);
+            ParameterizedType listType = (ParameterizedType) returnType;
+            assertEquals("interface java.util.List", listType.getRawType().toString());
+
+            java.lang.reflect.Type[] args = listType.getActualTypeArguments();
+            assertEquals(1, args.length);
+            java.lang.reflect.Type range = args[0];
+            assertTrue(range instanceof ParameterizedType);
+            ParameterizedType pRange = (ParameterizedType) range;
+            assertEquals("class com.google.common.collect.Range", pRange.getRawType().toString());
+
+            args = pRange.getActualTypeArguments();
+            assertEquals(1, args.length);
+            java.lang.reflect.Type integer = args[0];
+            assertEquals("class java.lang.Integer", integer.toString());
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError("Method getLength does not exists in class " + clazz.getSimpleName());
         }
     }
 
