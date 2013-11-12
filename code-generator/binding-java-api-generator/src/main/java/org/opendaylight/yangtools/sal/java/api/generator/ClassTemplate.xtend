@@ -154,8 +154,10 @@ class ClassTemplate extends BaseTemplate {
         «IF false == parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
-        «FOR p : properties» 
+        «FOR p : allProperties» 
             «generateLengthRestrictions(type, p.fieldName.toString, p.returnType)»
+        «ENDFOR»
+        «FOR p : properties» 
             this.«p.fieldName» = «p.fieldName»;
         «ENDFOR»
     }
