@@ -73,7 +73,8 @@ import org.opendaylight.yangtools.yang.model.api.YangNode
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
-import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -267,6 +268,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val genTOBuilder = resolveListKeyTOBuilder(packageName, node);
 
         if (genTOBuilder !== null) {
+            val GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
+            prop.setValue(Long.toString(computeDefaultSUID(genTOBuilder as GeneratedTOBuilderImpl)));
+            genTOBuilder.setSUID(prop);
             val identifierMarker = IDENTIFIER.parameterizedTypeFor(genType);
             val identifiableMarker = IDENTIFIABLE.parameterizedTypeFor(genTOBuilder);
             genTOBuilder.addImplementsType(identifierMarker);
@@ -1745,11 +1749,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def GeneratedTOBuilder resolveListKeyTOBuilder(String packageName, ListSchemaNode list) {
         var GeneratedTOBuilder genTOBuilder = null;
         if ((list.keyDefinition !== null) && (!list.keyDefinition.isEmpty())) {
-            if (list !== null) {
-                val listName = list.QName.localName + "Key";
-                val String genTOName = parseToClassName(listName);
-                genTOBuilder = new GeneratedTOBuilderImpl(packageName, genTOName);
-            }
+            val listName = list.QName.localName + "Key";
+            val String genTOName = parseToClassName(listName);
+            genTOBuilder = new GeneratedTOBuilderImpl(packageName, genTOName);
         }
         return genTOBuilder;
     }

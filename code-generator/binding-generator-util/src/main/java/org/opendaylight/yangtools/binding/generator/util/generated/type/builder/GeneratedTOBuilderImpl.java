@@ -27,6 +27,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     private final List<GeneratedPropertyBuilder> toStringProperties = new ArrayList<>();
     private boolean isUnionType = false;
     private Restrictions restrictions;
+    private GeneratedPropertyBuilder SUID;
 
     public GeneratedTOBuilderImpl(String packageName, String name) {
         super(packageName, name);
@@ -92,6 +93,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     }
 
     @Override
+    public void setSUID(GeneratedPropertyBuilder suid) {
+        this.SUID = suid;
+    }
+
+    @Override
     public GeneratedTransferObject toInstance() {
         return new GeneratedTransferObjectImpl(this);
     }
@@ -139,6 +145,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         private final GeneratedTransferObject extendsType;
         private final boolean isUnionType;
         private final Restrictions restrictions;
+        private final GeneratedProperty SUID;
 
         public GeneratedTransferObjectImpl(GeneratedTOBuilderImpl builder) {
             super(builder);
@@ -148,6 +155,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             this.stringProperties = toUnmodifiableProperties(builder.toStringProperties);
             this.isUnionType = builder.isUnionType;
             this.restrictions = builder.restrictions;
+            if (builder.SUID == null) {
+                this.SUID = null;
+            } else {
+                this.SUID = builder.SUID.toInstance(GeneratedTransferObjectImpl.this);
+            }
         }
 
         @Override
@@ -178,6 +190,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         @Override
         public Restrictions getRestrictions() {
             return restrictions;
+        }
+
+        @Override
+        public GeneratedProperty getSUID() {
+            return SUID;
         }
 
         @Override

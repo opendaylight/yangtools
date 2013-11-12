@@ -9,54 +9,65 @@ package org.opendaylight.yangtools.sal.binding.model.api;
 
 import java.util.List;
 
+/**
+ * Common interface for variables and methods in class.
+ */
 public interface TypeMember {
 
     /**
+     * Returns comment string associated with member.
+     *
+     * @return comment string associated with member.
+     */
+    String getComment();
+
+    /**
      * Returns List of annotation definitions associated with generated type.
-     * 
+     *
      * @return List of annotation definitions associated with generated type.
      */
     List<AnnotationType> getAnnotations();
 
     /**
-     * Returns the name of method.
-     * 
-     * @return the name of method.
-     */
-    String getName();
-
-    /**
-     * Returns comment string associated with method.
-     * 
-     * @return comment string associated with method.
-     */
-    String getComment();
-
-    /**
-     * Returns the Type that declares method.
-     * 
-     * @return the Type that declares method.
-     */
-    Type getDefiningType();
-
-    /**
-     * Returns the access modifier of method.
-     * 
-     * @return the access modifier of method.
+     * Returns the access modifier of member.
+     *
+     * @return the access modifier of member.
      */
     AccessModifier getAccessModifier();
 
     /**
-     * Returns the returning Type that methods returns.
-     * 
-     * @return the returning Type that methods returns.
+     * Returns <code>true</code> if member is declared as static.
+     *
+     * @return <code>true</code> if member is declared as static.
+     */
+    boolean isStatic();
+
+    /**
+     * Returns <code>true</code> if member is declared as final.
+     *
+     * @return <code>true</code> if member is declared as final.
+     */
+    boolean isFinal();
+
+    /**
+     * Get the returning Type of member.
+     *
+     * @return the returning Type of member.
      */
     Type getReturnType();
 
     /**
-     * Returns <code>true</code> if method is declared as final.
-     * 
-     * @return <code>true</code> if method is declared as final.
+     * Returns the name of member.
+     *
+     * @return the name of member.
      */
-    boolean isFinal();
+    String getName();
+
+    /**
+     * Returns the Type that declares member.
+     *
+     * @return the Type that declares member.
+     */
+    Type getDefiningType();
+
 }

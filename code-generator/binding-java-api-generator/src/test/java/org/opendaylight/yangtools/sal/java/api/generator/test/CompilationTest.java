@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
@@ -99,12 +100,16 @@ public class CompilationTest extends BaseCompilationTest {
 
         // test generated 'list links'
         assertTrue(linksClass.isInterface());
-        // FIXME: anyxml
+        // TODO: anyxml
         assertEquals(5, linksClass.getDeclaredMethods().length);
         testImplementsIfc(linksClass, keyArgsClass);
 
         // Test list key constructor arguments ordering
         assertContainsConstructor(linksKeyClass, Byte.class, String.class, Integer.class);
+        // Test serialVersionUID generation
+        Field suid = assertContainsField(linksKeyClass, "serialVersionUID", Long.TYPE);
+        suid.setAccessible(true);
+        assertEquals(9028898643007565383L, suid.getLong(null));
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }

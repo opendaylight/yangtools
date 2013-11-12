@@ -14,7 +14,7 @@ public interface TypeMemberBuilder<T extends TypeMemberBuilder<T>> {
      * Neither the package name or annotation name can contain <code>null</code>
      * references. In case that any of parameters contains <code>null</code> the
      * method SHOULD thrown {@link IllegalArgumentException}
-     * 
+     *
      * @param packageName
      *            Package Name of Annotation Type
      * @param name
@@ -25,7 +25,7 @@ public interface TypeMemberBuilder<T extends TypeMemberBuilder<T>> {
 
     /**
      * Returns the name of property.
-     * 
+     *
      * @return the name of property.
      */
     String getName();
@@ -34,15 +34,17 @@ public interface TypeMemberBuilder<T extends TypeMemberBuilder<T>> {
      * Adds return Type into Builder definition for Generated Property. <br>
      * The return Type MUST NOT be <code>null</code>, otherwise the method
      * SHOULD throw {@link IllegalArgumentException}
-     * 
+     *
      * @param returnType
      *            Return Type of property.
      */
     T setReturnType(final Type returnType);
 
+    AccessModifier getAccessModifier();
+
     /**
      * Sets the access modifier of property.
-     * 
+     *
      * @param modifier
      *            Access Modifier value.
      */
@@ -52,7 +54,7 @@ public interface TypeMemberBuilder<T extends TypeMemberBuilder<T>> {
      * Adds String definition of comment into Method Signature definition. <br>
      * The comment String MUST NOT contain anny comment specific chars (i.e.
      * "/**" or "//") just plain String text description.
-     * 
+     *
      * @param comment
      *            Comment String.
      */
@@ -63,9 +65,11 @@ public interface TypeMemberBuilder<T extends TypeMemberBuilder<T>> {
      * be prohibited from overriding. <br>
      * This setting is irrelevant for methods designated to be defined in
      * interface definitions because interface can't have final method.
-     * 
+     *
      * @param isFinal
      *            Is Final
      */
     T setFinal(final boolean isFinal);
+
+    T setStatic(final boolean isStatic);
 }

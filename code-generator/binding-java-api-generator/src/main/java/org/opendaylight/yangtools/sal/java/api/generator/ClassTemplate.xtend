@@ -64,11 +64,8 @@ class ClassTemplate extends BaseTemplate {
         this.consts = genType.constantDefinitions
         this.enclosedGeneratedTypes = genType.enclosedTypes
     }
-    
 
-    
-    
-    
+
     /**
      * Generates JAVA class source code (class body only).
      * 
@@ -77,9 +74,8 @@ class ClassTemplate extends BaseTemplate {
     def CharSequence generateAsInnerClass() {
         return generateBody(true)
     }
-    
 
-    
+
     override protected body() {
         generateBody(false);
     }
@@ -93,7 +89,8 @@ class ClassTemplate extends BaseTemplate {
     def protected generateBody(boolean isInnerClass) '''
         «type.comment.asJavadoc»
         «generateClassDeclaration(isInnerClass)» {
-        	«innerClassesDeclarations»
+            «suidDeclaration»
+            «innerClassesDeclarations»
             «enumDeclarations»
             «constantsDeclarations»
             «generateFields»
@@ -115,8 +112,8 @@ class ClassTemplate extends BaseTemplate {
 
         }
     '''
-    
-    
+
+
     /**
      * Template method which generates inner classes inside this interface.
      * 
@@ -253,7 +250,13 @@ class ClassTemplate extends BaseTemplate {
             «ENDFOR»
         «ENDIF»
     '''
-    
+
+    def protected suidDeclaration() '''
+        «IF genTO.SUID != null»
+            private static final long serialVersionUID = «genTO.SUID.value»L; 
+        «ENDIF»
+    '''
+
     /**
      * Template method wich generates JAVA constants.
      * 

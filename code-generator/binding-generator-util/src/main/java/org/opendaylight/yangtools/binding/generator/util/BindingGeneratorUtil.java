@@ -1,14 +1,27 @@
 package org.opendaylight.yangtools.binding.generator.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
+import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -325,6 +338,63 @@ public final class BindingGeneratorUtil {
             toBeRemovedPos = sb.indexOf(toBeRemoved);
         }
         return sb.toString();
+    }
+
+    public static long computeDefaultSUID(GeneratedTOBuilderImpl to) {
+        try {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            DataOutputStream dout = new DataOutputStream(bout);
+
+            dout.writeUTF(to.getName());
+            dout.writeInt(to.isAbstract() ? 3 : 7);
+
+            List<Type> impl = to.getImplementsTypes();
+            Collections.sort(impl, new Comparator<Type>() {
+                @Override
+                public int compare(Type o1, Type o2) {
+                    return o1.getFullyQualifiedName().compareTo(o2.getFullyQualifiedName());
+                }
+            });
+            for (Type ifc : impl) {
+                dout.writeUTF(ifc.getFullyQualifiedName());
+            }
+
+            Comparator<TypeMemberBuilder<?>> comparator = new Comparator<TypeMemberBuilder<?>>() {
+                @Override
+                public int compare(TypeMemberBuilder<?> o1, TypeMemberBuilder<?> o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            };
+
+            List<GeneratedPropertyBuilder> props = to.getProperties();
+            Collections.sort(props, comparator);
+            for (GeneratedPropertyBuilder gp : props) {
+                dout.writeUTF(gp.getName());
+            }
+
+            List<MethodSignatureBuilder> methods = to.getMethodDefinitions();
+            Collections.sort(methods, comparator);
+            for (MethodSignatureBuilder m : methods) {
+                if (!(m.getAccessModifier().equals(AccessModifier.PRIVATE))) {
+                    dout.writeUTF(m.getName());
+                    dout.write(m.getAccessModifier().ordinal());
+                }
+            }
+
+            dout.flush();
+
+            MessageDigest md = MessageDigest.getInstance("SHA");
+            byte[] hashBytes = md.digest(bout.toByteArray());
+            long hash = 0;
+            for (int i = Math.min(hashBytes.length, 8) - 1; i >= 0; i--) {
+                hash = (hash << 8) | (hashBytes[i] & 0xFF);
+            }
+            return hash;
+        } catch (IOException ex) {
+            throw new InternalError();
+        } catch (NoSuchAlgorithmException ex) {
+            throw new SecurityException(ex.getMessage());
+        }
     }
 
     public static Restrictions getRestrictions(TypeDefinition<?> type) {

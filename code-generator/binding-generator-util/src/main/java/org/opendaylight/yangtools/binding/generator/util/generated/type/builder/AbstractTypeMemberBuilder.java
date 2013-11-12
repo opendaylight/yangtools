@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.TypeMemberBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> implements TypeMemberBuilder<T> {
     private final String name;
@@ -22,6 +22,7 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
     private final List<AnnotationTypeBuilder> annotationBuilders;
     private String comment = "";
     private boolean isFinal;
+    private boolean isStatic;
     private AccessModifier accessModifier;
 
     public AbstractTypeMemberBuilder(final String name) {
@@ -59,7 +60,12 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
         return isFinal;
     }
 
-    protected AccessModifier getAccessModifier() {
+    protected boolean isStatic() {
+        return isStatic;
+    }
+
+    @Override
+    public AccessModifier getAccessModifier() {
         return accessModifier;
     }
 
@@ -69,7 +75,7 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
     }
 
     protected abstract T thisInstance();
-    
+
     @Override
     public T setReturnType(Type returnType) {
         if (returnType == null) {
@@ -100,6 +106,12 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
     @Override
     public T setFinal(boolean isFinal) {
         this.isFinal = isFinal;
+        return thisInstance();
+    }
+
+    @Override
+    public T setStatic(boolean isStatic) {
+        this.isStatic = isStatic;
         return thisInstance();
     }
 

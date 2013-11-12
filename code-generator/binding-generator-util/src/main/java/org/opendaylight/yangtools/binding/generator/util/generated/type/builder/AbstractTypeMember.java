@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
 
+import java.util.Collections;
+import java.util.List;
+
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.TypeMember;
-
-import java.util.Collections;
-import java.util.List;
 
 abstract class AbstractTypeMember implements TypeMember {
 
@@ -24,11 +24,12 @@ abstract class AbstractTypeMember implements TypeMember {
     private final Type returnType;
     private final List<AnnotationType> annotations;
     private final boolean isFinal;
+    private final boolean isStatic;
     private final AccessModifier accessModifier;
 
     public AbstractTypeMember(final Type definingType, final String name,  final List<AnnotationType> annotations,
                               final String comment, final AccessModifier accessModifier, final Type returnType,
-                              boolean isFinal) {
+                              boolean isFinal, boolean isStatic) {
         super();
         this.definingType = definingType;
         this.name = name;
@@ -37,6 +38,7 @@ abstract class AbstractTypeMember implements TypeMember {
         this.accessModifier = accessModifier;
         this.returnType = returnType;
         this.isFinal = isFinal;
+        this.isStatic = isStatic;
     }
 
     @Override
@@ -72,6 +74,11 @@ abstract class AbstractTypeMember implements TypeMember {
     @Override
     public boolean isFinal() {
         return isFinal;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return isStatic;
     }
 
     @Override

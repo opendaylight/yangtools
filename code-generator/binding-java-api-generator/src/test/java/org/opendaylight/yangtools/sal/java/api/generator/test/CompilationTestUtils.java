@@ -54,10 +54,11 @@ public class CompilationTestUtils {
         }
     }
 
-    static void assertContainsField(Class<?> clazz, String name, Class<?> type) {
+    static Field assertContainsField(Class<?> clazz, String name, Class<?> type) {
         try {
             Field f = clazz.getDeclaredField(name);
             assertEquals(type, f.getType());
+            return f;
         } catch (NoSuchFieldException e) {
             throw new AssertionError("Field " + name + " does not exists in class " + clazz.getSimpleName());
         }

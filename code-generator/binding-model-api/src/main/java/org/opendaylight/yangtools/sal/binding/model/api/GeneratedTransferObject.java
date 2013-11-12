@@ -24,6 +24,8 @@ import java.util.List;
  */
 public interface GeneratedTransferObject extends GeneratedType {
 
+    GeneratedProperty getSUID();
+
     /**
      * Returns the extending Generated Transfer Object or <code>null</code> if
      * there is no extending Generated Transfer Object.

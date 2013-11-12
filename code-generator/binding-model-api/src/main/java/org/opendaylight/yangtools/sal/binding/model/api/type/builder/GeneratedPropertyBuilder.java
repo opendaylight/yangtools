@@ -13,15 +13,17 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 /**
  * Generated Property Builder is interface that contains methods to build and
  * instantiate Generated Property definition.
- * 
+ *
  * @see GeneratedProperty
  */
 public interface GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedPropertyBuilder> {
 
+    GeneratedPropertyBuilder setValue(String value);
+
     /**
      * Sets isReadOnly flag for property. If property is marked as read only it
      * is the same as set property in java as final.
-     * 
+     *
      * @param isReadOnly
      *            Read Only property flag.
      */
@@ -34,7 +36,7 @@ public interface GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedPro
      * <code>class</code> definition. In case that defining Type will be passed
      * as <code>null</code> reference the method SHOULD thrown
      * {@link IllegalArgumentException}.
-     * 
+     *
      * @param definingType
      *            Defining Type of Generated Property
      * @return <code>new</code> <i>immutable</i> instance of Generated Property.

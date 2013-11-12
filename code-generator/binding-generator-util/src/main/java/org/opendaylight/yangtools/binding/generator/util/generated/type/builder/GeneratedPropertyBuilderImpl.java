@@ -7,20 +7,26 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
+import java.util.List;
+
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
-import java.util.List;
-
-final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilder<GeneratedPropertyBuilder> implements GeneratedPropertyBuilder {
-
+public final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilder<GeneratedPropertyBuilder> implements GeneratedPropertyBuilder {
+    private String value;
     private boolean isReadOnly;
 
     public GeneratedPropertyBuilderImpl(String name) {
         super(name);
         this.isReadOnly = true;
+    }
+
+    @Override
+    public GeneratedPropertyBuilderImpl setValue(String value) {
+        this.value = value;
+        return this;
     }
 
     @Override
@@ -33,12 +39,12 @@ final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilder<Gener
     protected GeneratedPropertyBuilderImpl thisInstance() {
         return this;
     }
-    
+
     @Override
     public GeneratedProperty toInstance(Type definingType) {
         final List<AnnotationType> annotations = toAnnotationTypes();
         return new GeneratedPropertyImpl(definingType, getName(), annotations, getComment(), getAccessModifier(),
-                getReturnType(), isFinal(), isReadOnly);
+                getReturnType(), isFinal(), isStatic(), isReadOnly, value);
     }
 
     @Override

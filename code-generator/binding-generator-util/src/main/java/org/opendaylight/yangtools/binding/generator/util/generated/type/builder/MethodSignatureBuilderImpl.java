@@ -41,12 +41,12 @@ final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodS
     protected MethodSignatureBuilder thisInstance() {
         return this;
     }
-    
+
     @Override
     public MethodSignature toInstance(Type definingType) {
         final List<AnnotationType> annotations = toAnnotationTypes();
         return new MethodSignatureImpl(definingType, getName(), annotations, getComment(), getAccessModifier(),
-                getReturnType(), parameters, isFinal(), isAbstract);
+                getReturnType(), parameters, isFinal(), isAbstract, isStatic());
     }
 
     @Override
