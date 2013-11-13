@@ -178,8 +178,8 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static InstanceIdentifierBuilder<?> builder(InstanceIdentifier<?> basePath) {
-        return new BuilderImpl(basePath.path,basePath.targetType);
+    public static <T extends DataObject> InstanceIdentifierBuilder<T> builder(InstanceIdentifier<T> basePath) {
+        return new BuilderImpl<T>(basePath.path,basePath.targetType);
     }
 
     private static final class BuilderImpl<T extends DataObject> implements InstanceIdentifierBuilder<T> {

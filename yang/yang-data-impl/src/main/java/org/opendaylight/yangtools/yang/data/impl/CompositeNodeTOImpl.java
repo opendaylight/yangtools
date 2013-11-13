@@ -79,6 +79,9 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
     @Override
     public List<CompositeNode> getCompositesByName(QName children) {
         List<Node<?>> toFilter = getNodeMap().get(children);
+        if(toFilter == null) {
+            return Collections.emptyList();
+        }
         List<CompositeNode> list = new ArrayList<CompositeNode>();
         for (Node<?> node : toFilter) {
             if (node instanceof CompositeNode) {
@@ -91,6 +94,9 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
     @Override
     public List<SimpleNode<?>> getSimpleNodesByName(QName children) {
         List<Node<?>> toFilter = getNodeMap().get(children);
+        if(toFilter == null) {
+            return Collections.emptyList();
+        }
         List<SimpleNode<?>> list = new ArrayList<SimpleNode<?>>();
 
         for (Node<?> node : toFilter) {
