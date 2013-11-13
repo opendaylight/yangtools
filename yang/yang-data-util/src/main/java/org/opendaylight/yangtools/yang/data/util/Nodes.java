@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -83,6 +85,77 @@ public final class Nodes {
             return null;
         }
 
+        @Override
+        public QName getKey() {
+            return getNodeType();
+        }
+
+        @Override
+        public List<Node<?>> setValue(List<Node<?>> value) {
+            return null;
+        }
+
+        @Override
+        public int size() {
+            return nodeMap.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return nodeMap.isEmpty();
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            return nodeMap.containsKey(key);
+        }
+
+        @Override
+        public boolean containsValue(Object value) {
+            return nodeMap.containsValue(value);
+        }
+
+        @Override
+        public List<Node<?>> get(Object key) {
+            return nodeMap.get(key);
+        }
+
+        @Override
+        public List<Node<?>> put(QName key, List<Node<?>> value) {
+            return nodeMap.put(key, value);
+        }
+
+        @Override
+        public List<Node<?>> remove(Object key) {
+            return nodeMap.remove(key);
+        }
+
+        @Override
+        public void putAll(Map<? extends QName, ? extends List<Node<?>>> m) {
+            nodeMap.putAll(m);
+        }
+
+        @Override
+        public void clear() {
+            nodeMap.clear();
+        }
+
+        @Override
+        public Set<QName> keySet() {
+            return nodeMap.keySet();
+        }
+
+        @Override
+        public Collection<List<Node<?>>> values() {
+            return nodeMap.values();
+        }
+
+        @Override
+        public Set<java.util.Map.Entry<QName, List<Node<?>>>> entrySet() {
+            
+            return nodeMap.entrySet();
+        }
+
     }
 
     private static class SimpleNodeTO<T> extends AbstractNode<T> implements SimpleNode<T> {
@@ -110,7 +183,16 @@ public final class Nodes {
             // TODO Auto-generated method stub
             return null;
         }
-
+        
+        @Override
+        public T setValue(T value) {
+            return null;
+        }
+        
+        @Override
+        public QName getKey() {
+            return getNodeType();
+        }
     }
 
 }

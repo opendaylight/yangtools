@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import java.util.Map.Entry;
+
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -16,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  * @param <T>
  */
-public interface Node<T> {
+public interface Node<T> extends Entry<QName, T> {
 
     /**
      * Returns the name of the Node

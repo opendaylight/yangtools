@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.data.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -145,5 +147,69 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
     public String toString() {
         return super.toString() + ", children.size = " + (getChildren() != null ? getChildren().size() : "n/a");
     }
+    
+    @Override
+    public void clear() {
+        nodeMap.clear();
+    }
+    
+    @Override
+    public boolean containsKey(Object key) {
+        return nodeMap.containsKey(key);
+    }
+    
+    @Override
+    public boolean containsValue(Object value) {
+        return nodeMap.containsValue(value);
+    }
+    
+    @Override
+    public Set<java.util.Map.Entry<QName, List<Node<?>>>> entrySet() {
+        return nodeMap.entrySet();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 
+    @Override
+    public int size() {
+        return nodeMap.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return nodeMap.isEmpty();
+    }
+
+    @Override
+    public List<Node<?>> get(Object key) {
+        return nodeMap.get(key);
+    }
+
+    @Override
+    public List<Node<?>> put(QName key, List<Node<?>> value) {
+        return nodeMap.put(key, value);
+    }
+
+    @Override
+    public List<Node<?>> remove(Object key) {
+        return nodeMap.remove(key);
+    }
+
+    @Override
+    public void putAll(Map<? extends QName, ? extends List<Node<?>>> m) {
+        nodeMap.putAll(m);
+    }
+
+    @Override
+    public Set<QName> keySet() {
+        return nodeMap.keySet();
+    }
+
+    @Override
+    public Collection<List<Node<?>>> values() {
+        return nodeMap.values();
+    }
 }

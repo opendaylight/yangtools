@@ -54,9 +54,10 @@ public class MutableCompositeNodeTOImpl extends CompositeNodeTOImpl
     }
 
     @Override
-    public void setValue(List<Node<?>> value) {
-        super.setValue(value);
+    public List<Node<?>> setValue(List<Node<?>> value) {
+        List<Node<?>> oldVal = super.setValue(value);
         init();
+        return oldVal;
     }
 
     @Override

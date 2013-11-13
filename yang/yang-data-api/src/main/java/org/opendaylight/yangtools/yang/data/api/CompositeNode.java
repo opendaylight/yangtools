@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  *
  */
-public interface CompositeNode extends Node<List<Node<?>>>, NodeModification {
+public interface CompositeNode extends Node<List<Node<?>>>, NodeModification, Map<QName,List<Node<?>>> {
 
     List<Node<?>> getChildren();
 
@@ -49,4 +50,5 @@ public interface CompositeNode extends Node<List<Node<?>>>, NodeModification {
      * @return cast self to mutable, if possible
      */
     MutableCompositeNode asMutable();
+    
 }

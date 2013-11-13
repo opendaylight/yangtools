@@ -34,11 +34,6 @@ public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T> implements M
     }
 
     @Override
-    public void setValue(T value) {
-        super.setValue(value);
-    }
-
-    @Override
     public void setModifyAction(ModifyAction action) {
         super.setModificationAction(action);
     }
