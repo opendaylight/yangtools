@@ -170,6 +170,8 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilder<N> child(
                 Class<N> listItem, K listKey);
 
+        <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilder<N> augmentation(Class<N> container);
+
     }
 
     @SuppressWarnings("rawtypes")
@@ -229,6 +231,12 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         public <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilder<N> child(
                 Class<N> listItem, K listKey) {
             return node(listItem,listKey);
+        }
+
+        @Override
+        public <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilder<N> augmentation(
+                Class<N> container) {
+            return node(container);
         }
     }
 
