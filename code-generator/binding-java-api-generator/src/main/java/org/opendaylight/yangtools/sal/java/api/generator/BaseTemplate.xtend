@@ -13,6 +13,7 @@ import java.util.List
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
+import java.util.Collection
 
 abstract class BaseTemplate {
     
@@ -224,6 +225,15 @@ abstract class BaseTemplate {
 
     def GeneratedProperty getPropByName(GeneratedType gt, String name) {
         for (GeneratedProperty prop : gt.properties) {
+            if (prop.name.equals(name)) {
+                return prop;
+            }
+        }
+        return null;
+    }
+
+    def GeneratedProperty getPropByName(Collection<GeneratedProperty> props, String name) {
+        for (GeneratedProperty prop : props) {
             if (prop.name.equals(name)) {
                 return prop;
             }

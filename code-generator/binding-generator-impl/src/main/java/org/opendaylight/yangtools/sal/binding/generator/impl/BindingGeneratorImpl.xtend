@@ -268,9 +268,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val genTOBuilder = resolveListKeyTOBuilder(packageName, node);
 
         if (genTOBuilder !== null) {
-            val GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
-            prop.setValue(Long.toString(computeDefaultSUID(genTOBuilder as GeneratedTOBuilderImpl)));
-            genTOBuilder.setSUID(prop);
             val identifierMarker = IDENTIFIER.parameterizedTypeFor(genType);
             val identifiableMarker = IDENTIFIABLE.parameterizedTypeFor(genTOBuilder);
             genTOBuilder.addImplementsType(identifierMarker);
@@ -281,6 +278,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
             if (!schemaNode.augmenting) {
                 addSchemaNodeToListBuilders(basePackageName, schemaNode, genType, genTOBuilder, listKeys, module);
             }
+        }
+
+        // serialVersionUID
+        if (genTOBuilder !== null) {
+            val GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
+            prop.setValue(Long.toString(computeDefaultSUID(genTOBuilder as GeneratedTOBuilderImpl)));
+            genTOBuilder.setSUID(prop);
         }
 
         typeBuildersToGenTypes(module, genType, genTOBuilder);
@@ -1434,18 +1438,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
                 // TODO: properly resolve enum types
                 val returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
-
                 if (returnType !== null) {
-                    val propBuilder = toBuilder.addProperty(parseToClassName(leafName));
-
+                    val propBuilder = toBuilder.addProperty(parseToValidParamName(leafName));
                     propBuilder.setReadOnly(isReadOnly);
                     propBuilder.setReturnType(returnType);
                     propBuilder.setComment(leafDesc);
-
                     toBuilder.addEqualsIdentity(propBuilder);
                     toBuilder.addHashIdentity(propBuilder);
                     toBuilder.addToStringProperty(propBuilder);
-
                     return true;
                 }
             }
@@ -1684,9 +1684,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
         if (schemaNode instanceof LeafSchemaNode) {
             val leaf = schemaNode as LeafSchemaNode;
             val leafName = leaf.QName.localName;
-            if (!listKeys.contains(leafName)) {
-                resolveLeafSchemaNodeAsMethod(typeBuilder, leaf);
-            } else {
+            resolveLeafSchemaNodeAsMethod(typeBuilder, leaf);
+            if (listKeys.contains(leafName)) {
                 resolveLeafSchemaNodeAsProperty(genTOBuilder, leaf, true);
             }
         } else if (!schemaNode.addedByUses) {

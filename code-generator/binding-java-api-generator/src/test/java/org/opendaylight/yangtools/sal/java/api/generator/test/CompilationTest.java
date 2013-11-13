@@ -93,15 +93,14 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test generated 'grouping key-args'
         assertTrue(keyArgsClass.isInterface());
-        assertEquals(3, keyArgsClass.getDeclaredMethods().length);
-        assertContainsMethod(keyArgsClass, Byte.class, "getId");
+        assertEquals(2, keyArgsClass.getDeclaredMethods().length);
         assertContainsMethod(keyArgsClass, String.class, "getName");
         assertContainsMethod(keyArgsClass, Integer.class, "getSize");
 
-        // test generated 'list links'
+        // Test generated 'list links'
         assertTrue(linksClass.isInterface());
         // TODO: anyxml
-        assertEquals(5, linksClass.getDeclaredMethods().length);
+        assertEquals(6, linksClass.getDeclaredMethods().length);
         testImplementsIfc(linksClass, keyArgsClass);
 
         // Test list key constructor arguments ordering
@@ -109,7 +108,7 @@ public class CompilationTest extends BaseCompilationTest {
         // Test serialVersionUID generation
         Field suid = assertContainsField(linksKeyClass, "serialVersionUID", Long.TYPE);
         suid.setAccessible(true);
-        assertEquals(9028898643007565383L, suid.getLong(null));
+        assertEquals(-8829501012356283881L, suid.getLong(null));
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }

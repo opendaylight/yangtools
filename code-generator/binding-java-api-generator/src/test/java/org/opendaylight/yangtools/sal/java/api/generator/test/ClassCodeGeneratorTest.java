@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -73,9 +71,9 @@ public class ClassCodeGeneratorTest {
                             .getProperties();
                     int propertyCount = 0;
                     for (final GeneratedProperty prop : properties) {
-                        if (prop.getName().equals("Key1")) {
+                        if (prop.getName().equals("key1")) {
                             propertyCount++;
-                        } else if (prop.getName().equals("Key2")) {
+                        } else if (prop.getName().equals("key2")) {
                             propertyCount++;
                         }
                     }
@@ -84,7 +82,7 @@ public class ClassCodeGeneratorTest {
                     final String outputStr = clsGen.generate(genTO);
 
                     assertNotNull(outputStr);
-                    assertTrue(outputStr.contains("public CompositeKeyListKey(Byte _Key1, String _Key2)"));
+                    assertTrue(outputStr.contains("public CompositeKeyListKey(Byte _key1, String _key2)"));
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;

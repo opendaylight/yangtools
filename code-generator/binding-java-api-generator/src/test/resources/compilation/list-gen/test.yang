@@ -7,9 +7,6 @@ module test {
     }
 
     grouping key-args {
-        leaf id {
-            type int8;
-        }
         leaf name {
             type string;
         }
@@ -21,6 +18,10 @@ module test {
     list links {
         uses key-args;
         key "size name id";
+
+        leaf id {
+            type int8;
+        }
 
         anyxml text;
         choice level;

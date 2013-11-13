@@ -98,7 +98,7 @@ public class AugmentRelativeXPathTest {
         assertNotNull("properties is null", properties);
         GeneratedProperty gtInterfaceId = null;
         for (final GeneratedProperty property : properties) {
-            if (property.getName().equals("InterfaceId")) {
+            if (property.getName().equals("interfaceId")) {
                 gtInterfaceId = property;
                 break;
             }
@@ -136,7 +136,7 @@ public class AugmentRelativeXPathTest {
 
         GeneratedProperty gtTunnelId = null;
         for (final GeneratedProperty property : tunnelKeyProperties) {
-            if (property.getName().equals("TunnelId")) {
+            if (property.getName().equals("tunnelId")) {
                 gtTunnelId = property;
             }
         }

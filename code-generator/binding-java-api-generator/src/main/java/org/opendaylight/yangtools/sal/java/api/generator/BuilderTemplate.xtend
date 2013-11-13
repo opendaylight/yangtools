@@ -20,6 +20,7 @@ import java.util.Collectionsimport org.opendaylight.yangtools.yang.binding.Data
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.Collection
+import org.opendaylight.yangtools.yang.binding.Identifiable
 
 /**
  * Template for generating JAVA builder classes. 
@@ -405,7 +406,7 @@ class BuilderTemplate extends BaseTemplate {
             }
         «ENDFOR»
         «IF augmentField != null»
-            
+
             public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(Class<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
                 this.«augmentField.name».put(augmentationType, augmentation);
                 return this;
@@ -420,16 +421,75 @@ class BuilderTemplate extends BaseTemplate {
      */
     def private generateConstructor() '''
         private «type.name»«IMPL»(«type.name»«BUILDER» builder) {
-            «IF !properties.empty»
-                «FOR field : properties»
-                    this.«field.fieldName» = builder.«field.getterMethodName»();
+            «val allProps = new ArrayList(properties)»
+            «val isList = implementsIfc(type, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), type))»
+            «val keyType = type.getKey»
+            «IF isList && keyType != null»
+                «val keyProps = new ArrayList((keyType as GeneratedTransferObject).properties)»
+                «Collections.sort(keyProps,
+                    [ p1, p2 |
+                        return p1.name.compareTo(p2.name)
+                    ])
+                »
+                «FOR field : keyProps»
+                    «removeProperty(allProps, field.name)»
                 «ENDFOR»
+                «removeProperty(allProps, "key")»
+                if (builder.getKey() == null) {
+                    this._key = new «keyType.importedName»(
+                        «FOR keyProp : keyProps SEPARATOR ", "»
+                            builder.«keyProp.getterMethodName»()
+                        «ENDFOR»
+                    );
+                    «FOR field : keyProps»
+                        «val genProp = getPropByName(allProps, field.name)»
+                        this.«field.fieldName» = builder.«field.getterMethodName»();
+                    «ENDFOR»
+                } else {
+                    this._key = builder.getKey();
+                    «FOR field : keyProps»
+                           this.«field.fieldName» = _key.«field.getterMethodName»();
+                    «ENDFOR»
+                }
             «ENDIF»
+            «FOR field : allProps»
+                this.«field.fieldName» = builder.«field.getterMethodName»();
+            «ENDFOR»
             «IF augmentField != null»
                 this.«augmentField.name».putAll(builder.«augmentField.name»);
             «ENDIF»
         }
     '''
+
+    private def boolean implementsIfc(GeneratedType type, Type impl) {
+        for (Type ifc : type.implements) {
+            if (ifc.equals(impl)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private def Type getKey(GeneratedType type) {
+        for (m : type.methodDefinitions) {
+            if ("getKey".equals(m.name)) {
+                return m.returnType;
+            }
+        }
+        return null;
+    }
+
+    private def void removeProperty(Collection<GeneratedProperty> props, String name) {
+        var GeneratedProperty toRemove = null
+        for (p : props) {
+            if (p.name.equals(name)) {
+                toRemove = p;
+            }
+        }
+        if (toRemove != null) {
+            props.remove(toRemove);
+        }
+    }
 
     /**
      * Template method which generate getter methods for IMPL class.

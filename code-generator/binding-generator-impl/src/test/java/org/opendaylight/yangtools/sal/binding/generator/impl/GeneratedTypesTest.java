@@ -143,7 +143,7 @@ public class GeneratedTypesTest {
         assertNotNull(gtIfcKeyProps);
         GeneratedProperty ifcIdProp = null;
         for (final GeneratedProperty property : gtIfcKeyProps) {
-            if (property.getName().equals("InterfaceId")) {
+            if (property.getName().equals("interfaceId")) {
                 ifcIdProp = property;
             }
         }
@@ -241,7 +241,7 @@ public class GeneratedTypesTest {
         assertNotNull(gtTunnelKeyProps);
         GeneratedProperty tunnelId = null;
         for (final GeneratedProperty property : gtTunnelKeyProps) {
-            if (property.getName().equals("TunnelId")) {
+            if (property.getName().equals("tunnelId")) {
                 tunnelId = property;
             }
         }
@@ -521,14 +521,14 @@ public class GeneratedTypesTest {
         assertEquals(1, listKeyClassCount);
 
         assertEquals(1, listKeyClassPropertyCount);
-        assertEquals("ListKey", listKeyClassPropertyName);
+        assertEquals("listKey", listKeyClassPropertyName);
         assertEquals("Byte", listKeyClassPropertyTypeName);
         assertEquals(true, listKeyClassPropertyReadOnly);
         assertEquals(1, hashMethodParameterCount);
-        assertEquals("ListKey", hashMethodParameterName);
+        assertEquals("listKey", hashMethodParameterName);
         assertEquals("Byte", hashMethodParameterReturnTypeName);
         assertEquals(1, equalMethodParameterCount);
-        assertEquals("ListKey", equalMethodParameterName);
+        assertEquals("listKey", equalMethodParameterName);
         assertEquals("Byte", equalMethodParameterReturnTypeName);
 
         assertEquals("SimpleListKey", getSimpleListKeyMethodReturnTypeName);
@@ -541,7 +541,7 @@ public class GeneratedTypesTest {
         assertEquals(0, setSimpleLeafListMethodCount);
         assertEquals(1, getBarMethodCount);
 
-        assertEquals(5, simpleListMethodsCount);
+        assertEquals(6, simpleListMethodsCount);
     }
 
     @Test
@@ -574,9 +574,9 @@ public class GeneratedTypesTest {
                     compositeKeyListKeyCount++;
                     final List<GeneratedProperty> properties = genTO.getProperties();
                     for (final GeneratedProperty prop : properties) {
-                        if (prop.getName().equals("Key1")) {
+                        if (prop.getName().equals("key1")) {
                             compositeKeyListKeyPropertyCount++;
-                        } else if (prop.getName().equals("Key2")) {
+                        } else if (prop.getName().equals("key2")) {
                             compositeKeyListKeyPropertyCount++;
                         }
                     }
