@@ -75,6 +75,7 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl
+import org.opendaylight.yangtools.yang.common.QName
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -1517,9 +1518,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
         Type parent) {
         val it = addRawInterfaceDefinition(packageName, schemaNode, "");
         val qname = schemaNode.QName;
-        //addConstant(QName.typeForClass,"QNAME",'''
-        //    org.opendaylight.yangtools.yang.common.QName.create("«qname.namespace»","«qname.formattedRevision»","«qname.localName»");
-        //''')
+        addConstant(QName.typeForClass,"QNAME",'''
+            org.opendaylight.yangtools.yang.common.QName.create("«qname.namespace»","«qname.formattedRevision»","«qname.localName»")
+        ''');
         if (parent === null) {
             addImplementsType(DATA_OBJECT);
         } else {

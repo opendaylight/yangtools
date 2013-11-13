@@ -25,7 +25,7 @@ public interface MutableNode<T> extends Node<T> {
     /**
      * @param value value to set (children list or leaf value)
      */
-    void setValue(T value);
+    T setValue(T value);
     
     /**
      * @param action value to set

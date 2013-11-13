@@ -79,8 +79,10 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
      * @param value
      *            the value to set
      */
-    protected void setValue(T value) {
+    public T setValue(T value) {
+        T oldValue = this.value;
         this.value = value;
+        return oldValue;
     }
 
     @Override
@@ -111,6 +113,12 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
         out.append(String.format("Node[%s], qName[%s], modify[%s]", getClass().getSimpleName(), getQName()
                 .getLocalName(), getModificationAction() == null ? "n/a" : getModificationAction()));
         return out.toString();
+    }
+    
+    
+    @Override
+    public final QName getKey() {
+        return getNodeType();
     }
 
     /* */
