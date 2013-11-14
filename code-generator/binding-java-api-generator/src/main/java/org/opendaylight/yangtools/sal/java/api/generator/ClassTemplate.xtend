@@ -11,6 +11,7 @@ import java.util.ArrayList
 import java.util.Collectionsimport java.util.Arrays
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import com.google.common.collect.Range
+import java.util.regex.Pattern
 
 /**
  * Template for generating JAVA class. 
@@ -269,8 +270,8 @@ class ClassTemplate extends BaseTemplate {
                     «val cValue = c.value»
                     «IF cValue instanceof List<?>»
                         «val cValues = cValue as List<?>»
-                        private static final List<Pattern> «Constants.MEMBER_PATTERN_LIST» = new ArrayList<Pattern>();
-                        public static final List<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «Arrays.importedName».asList(«
+                        private static final «List.importedName»<«Pattern.importedName»> «Constants.MEMBER_PATTERN_LIST» = new «ArrayList.importedName»<«Pattern.importedName»>();
+                        public static final «List.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «Arrays.importedName».asList(«
                         FOR v : cValues SEPARATOR ", "»«
                             IF v instanceof String»"«
                                 v as String»"«

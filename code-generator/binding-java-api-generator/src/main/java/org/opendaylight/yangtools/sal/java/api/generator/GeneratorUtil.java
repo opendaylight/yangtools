@@ -60,17 +60,6 @@ public final class GeneratorUtil {
             }
         }
 
-        final List<Constant> constants = genType.getConstantDefinitions();
-        final List<MethodSignature> methods = genType.getMethodDefinitions();
-
-        // CONSTANTS
-        if (constants != null) {
-            for (final Constant constant : constants) {
-                final Type constantType = constant.getType();
-                putTypeIntoImports(genType, constantType, imports);
-            }
-        }
-
         // REGULAR EXPRESSION
         if (genType instanceof GeneratedTransferObject
                 && isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, (GeneratedTransferObject) genType)) {
@@ -79,6 +68,7 @@ public final class GeneratorUtil {
             putTypeIntoImports(genType, Types.typeForClass(java.util.ArrayList.class), imports);
         }
 
+        final List<MethodSignature> methods = genType.getMethodDefinitions();
         // METHODS
         if (methods != null) {
             for (final MethodSignature method : methods) {
