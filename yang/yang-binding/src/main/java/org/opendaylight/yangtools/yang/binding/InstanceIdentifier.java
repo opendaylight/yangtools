@@ -159,9 +159,16 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     }
 
     public interface InstanceIdentifierBuilder<T extends DataObject> extends Builder<InstanceIdentifier<T>> {
-
+        /**
+         * @deprecated use {@link child(Class)} or {@link augmentation(Class)} instead.
+         */
+        @Deprecated
         <N extends DataObject> InstanceIdentifierBuilder<N> node(Class<N> container);
 
+        /**
+         * @deprecated use {@link child(Class,Identifier)} or {@link augmentation(Class,Identifier)} instead.
+         */
+        @Deprecated
         <N extends Identifiable<K> & DataObject, K extends Identifier<N>> InstanceIdentifierBuilder<N> node(
                 Class<N> listItem, K listKey);
 
@@ -174,9 +181,22 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
 
     }
 
+    /**
+     * @deprecated use {@link builder(Class)} or {@link builder(Class,Identifier)} instead.
+     */
+    @Deprecated
     @SuppressWarnings("rawtypes")
     public static InstanceIdentifierBuilder<?> builder() {
         return new BuilderImpl();
+    }
+
+    public static <T extends ChildOf<? extends DataRoot>> InstanceIdentifierBuilder<T> builder(Class<T> container) {
+        return new BuilderImpl<T>().addNode(container);
+    }
+
+    public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> InstanceIdentifierBuilder<N> builder(
+            Class<N> listItem, K listKey) {
+        return new BuilderImpl<N>().addNode(listItem, listKey);
     }
 
     public static <T extends DataObject> InstanceIdentifierBuilder<T> builder(InstanceIdentifier<T> basePath) {
@@ -192,10 +212,24 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
             this.path = new ArrayList<>();
         }
         
-
         public BuilderImpl(List<? extends PathArgument> prefix,Class<? extends DataObject> target) {
             this.path = new ArrayList<>(prefix);
             this.target = target;
+        }
+
+        @SuppressWarnings("unchecked")
+        private <N extends DataObject> InstanceIdentifierBuilder<N> addNode(Class<N> container) {
+            target = container;
+            path.add(new Item<N>(container));
+            return (InstanceIdentifierBuilder<N>) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        private <N extends DataObject & Identifiable<K> , K extends Identifier<N>> InstanceIdentifierBuilder<N> addNode(
+                Class<N> listItem, K listKey) {
+            target = listItem;
+            path.add(new IdentifiableItem<N, K>(listItem, listKey));
+            return (InstanceIdentifierBuilder<N>) this;
         }
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -206,37 +240,31 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public <N extends DataObject> InstanceIdentifierBuilder<N> node(Class<N> container) {
-            target = container;
-            path.add(new Item<N>(container));
-            return (InstanceIdentifierBuilder<N>) this;
+            return addNode(container);
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public <N extends DataObject & Identifiable<K> , K extends Identifier<N>> InstanceIdentifierBuilder<N> node(
                 Class<N> listItem, K listKey) {
-            target = listItem;
-            path.add(new IdentifiableItem<N, K>(listItem, listKey));
-            return (InstanceIdentifierBuilder<N>) this;
+            return addNode(listItem, listKey);
         }
-        
+
         @Override
         public <N extends ChildOf<? super T>> InstanceIdentifierBuilder<N> child(Class<N> container) {
-            return node(container);
+            return addNode(container);
         }
         
         @Override
         public <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilder<N> child(
                 Class<N> listItem, K listKey) {
-            return node(listItem,listKey);
+            return addNode(listItem,listKey);
         }
 
         @Override
         public <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilder<N> augmentation(
                 Class<N> container) {
-            return node(container);
+            return addNode(container);
         }
     }
 
