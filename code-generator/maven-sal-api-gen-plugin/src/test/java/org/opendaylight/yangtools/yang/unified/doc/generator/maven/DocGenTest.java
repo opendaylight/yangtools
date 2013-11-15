@@ -9,45 +9,34 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
-import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
 
 public class DocGenTest {
-
     public static final String FS = File.separator;
-    static final String BASE_PKG = "org.opendaylight.yang.gen.v1";
-
-    static final String TEST_PATH = "target" + FS + "test";
-    static final File TEST_DIR = new File(TEST_PATH);
-
-    static final File GENERATOR_OUTPUT_DIR = new File(TEST_PATH);
-    static final String COMPILER_OUTPUT_PATH = TEST_PATH + FS + "bin";
-    static final File COMPILER_OUTPUT_DIR = new File(COMPILER_OUTPUT_PATH);
-
-
-    protected YangParserImpl parser;
-    protected BindingGenerator bindingGenerator;
-
-    @BeforeClass
-    public static void createTestDirs() {
-        if (TEST_DIR.exists()) {
-            deleteTestDir(TEST_DIR);
-        }
-        assertTrue(GENERATOR_OUTPUT_DIR.mkdirs());
-        assertTrue(COMPILER_OUTPUT_DIR.mkdirs());
-    }
+    private static final String TEST_PATH = "target" + FS + "test" + FS + "site";
+    private static final File GENERATOR_OUTPUT_DIR = new File(TEST_PATH);
+    private YangParserImpl parser;
 
     @Before
     public void init() {
+        if (GENERATOR_OUTPUT_DIR.exists()) {
+            deleteTestDir(GENERATOR_OUTPUT_DIR);
+        }
+        assertTrue(GENERATOR_OUTPUT_DIR.mkdirs());
         parser = new YangParserImpl();
-        bindingGenerator = new BindingGeneratorImpl();
+    }
+
+    @After
+    public void cleanUp() {
+        if (GENERATOR_OUTPUT_DIR.exists()) {
+            deleteTestDir(GENERATOR_OUTPUT_DIR);
+        }
     }
 
     @Test
@@ -57,11 +46,9 @@ public class DocGenTest {
         final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
         final CodeGenerator generator = new DocumentationGeneratorImpl();
         generator.generateSources(context, GENERATOR_OUTPUT_DIR, modulesToBuild);
-
-
     }
 
-    static List<File> getSourceFiles(String path) throws FileNotFoundException {
+    private static List<File> getSourceFiles(String path) throws FileNotFoundException {
         final String resPath = DocGenTest.class.getResource(path).getPath();
         final File sourcesDir = new File(resPath);
         if (sourcesDir.exists()) {
@@ -77,8 +64,7 @@ public class DocGenTest {
         }
     }
 
-
-    static void deleteTestDir(File file) {
+    private static void deleteTestDir(File file) {
         if (file.isDirectory()) {
             File[] filesToDelete = file.listFiles();
             if (filesToDelete != null) {
@@ -91,4 +77,5 @@ public class DocGenTest {
             throw new RuntimeException("Failed to clean up after test");
         }
     }
+
 }

@@ -108,14 +108,30 @@ module network-topology  {
 
     typedef x {
         type binary {
-            length 5..10;
+            length 5..10|15..20|25..30;
         }
+        description "x type description";
+        reference "x type reference";
     }
 
     typedef y {
         type int32 {
             range 5..555;
         }
+    }
+
+    identity crypto-alg {
+        description "Base identity from which all crypto algorithms are derived.";
+    }
+
+    identity des {
+        base "crypto-alg";
+        description "DES crypto algorithm";
+    }
+
+    identity des3 {
+        base "crypto-alg";
+        description "Triple DES crypto algorithm";
     }
 
     grouping tp-attributes {
@@ -332,8 +348,18 @@ module network-topology  {
         }
         anyxml reporting-entity;
         container severity {
-            leaf id {
-                type string;
+            list links {
+                container endpoints {
+                    leaf start {
+                        type x;
+                    }
+                    leaf end {
+                        type y;
+                    }
+                }
+                leaf id {
+                    type string;
+                }
             }
         }
     }
@@ -374,6 +400,8 @@ module network-topology  {
     }
 
     rpc rock-the-house {
+        description "This statement is used to define a NETCONF RPC operation.";
+        reference "http://tools.ietf.org/html/rfc6020#section-7.13";
         input {
             leaf zip-code {
                 type string;
@@ -392,6 +420,13 @@ module network-topology  {
             Makes the code generator use the given name in the
             #define.";
         argument "name";
+    }
+
+    feature local-storage {
+        description
+            "This feature means the device supports local
+            storage (memory, flash or disk) that can be used to
+            store syslog messages.";
     }
 
 }

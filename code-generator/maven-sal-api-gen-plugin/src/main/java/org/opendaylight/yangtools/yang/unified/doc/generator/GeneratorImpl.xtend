@@ -82,6 +82,8 @@ class GeneratorImpl {
 
         «typeDefinitions(module)»
 
+        «identities(module)»
+
         «groupings(module)»
 
         «dataStore(module)»
@@ -94,6 +96,8 @@ class GeneratorImpl {
 
         «extensions(module)»
 
+        «features(module)»
+
     '''
 
 
@@ -104,31 +108,58 @@ class GeneratorImpl {
         }
         return '''
             <h2>Type Definitions</h2>
-            «list(typedefs)»
-
+            <ul>
             «FOR typedef : typedefs»
-            «typeDefinition(typedef)»
+                <li>
+                    «strong("typedef " + typedef.QName.localName)»
+                    <ul>
+                    «typedef.descAndRef»
+                    «typedef.restrictions»
+                    </ul>
+                </li>
             «ENDFOR»
+            </ul>
         '''
     }
 
-    private def CharSequence typeDefinition(TypeDefinition<?> type) '''
-        «header(type)»
-        «body(type)»
-        «restrictions(type)»
-    '''
+    private def identities(Module module) {
+        if (module.identities.empty) {
+            return '';
+        }
+        return '''
+            <h2>Identities</h2>
+            <ul>
+            «FOR identity : module.identities»
+                <li>
+                    «strong("identity " + identity.QName.localName)»
+                    <ul>
+                    «identity.descAndRef»
+                    «IF identity.baseIdentity != null»
+                        «listItem("base", identity.baseIdentity.QName.localName)»
+                    «ENDIF»
+                    </ul>
+                </li>
+            «ENDFOR»
+            </ul>
+        '''
+    }
 
-    def groupings(Module module) {
+    private def groupings(Module module) {
         if (module.groupings.empty) {
             return '';
         }
         return '''
             <h2>Groupings</h2>
-            «list(module.groupings)»
-
+            <ul>
             «FOR grouping : module.groupings»
-            «headerAndBody(grouping)»
+                <li>
+                    «strong("grouping " + grouping.QName.localName)»
+                    <ul>
+                        «grouping.descAndRef»
+                    </ul>
+                </li>
             «ENDFOR»
+            </ul>
         '''
     }
 
@@ -215,30 +246,25 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence headerAndBody(SchemaNode node) '''
-        «header(node)»
-        «body(node)»
-    '''
+    def features(Module module) {
+        if (module.features.empty) {
+            return '';
+        }
+        return '''
+            <h2>Features</h2>
 
-    def header(SchemaNode type) '''
-        <h3>«type.QName.localName»</h3>
-    '''
-
-    def body(SchemaNode definition) '''
-
-        «paragraphs(definition.description)»
-
-        «definition.reference»
-    '''
-
-
-    def list(Set<? extends SchemaNode> definitions) '''
-        <ul>
-        «FOR nodeDef : definitions» 
-            <li>«nodeDef.QName.localName»</li>
-        «ENDFOR»
-        </ul>
-    '''
+            <ul>
+            «FOR feature : module.features»
+                <li>
+                    «strong("feature " + feature.QName.localName)»
+                    <ul>
+                        «feature.descAndRef»
+                    </ul>
+                </li>
+            «ENDFOR»
+            </ul>
+        '''
+    }
 
     def header(Module module) '''
         <h1>«module.name»</h1>
@@ -246,18 +272,17 @@ class GeneratorImpl {
         <h2>Base Information</h2>
         <dl>
             <dt>Prefix</dt>
-            <dd><pre>«module.prefix»</pre></dd>
+            <dd>«pre(module.prefix)»</dd>
             <dt>Namespace</dt>
-            <dd><pre>«module.namespace»</pre></dd>
+            <dd>«pre(module.namespace.toString)»</dd>
             <dt>Revision</dt>
-            <dd>«REVISION_FORMAT.format(module.revision)»</dd>
+            <dd>«pre(REVISION_FORMAT.format(module.revision))»</dd>
             
             «FOR imp : module.imports BEFORE "<dt>Imports</dt>" »
                 <dd>«pre(imp.prefix)» = «pre(imp.moduleName)»</dd>
             «ENDFOR»
         </dl>
     '''
-
 
     def process(Module module) {
         throw new UnsupportedOperationException("TODO: auto-generated method stub")
@@ -268,14 +293,14 @@ class GeneratorImpl {
     /* #################### TREE STRUCTURE #################### */
     def dispatch CharSequence tree(Module module) '''
         «strong("module " + module.name)»
-        «module.childNodes.childrenToTree»
+        «module.childNodes.tree»
     '''
 
     def dispatch CharSequence tree(DataNodeContainer node) '''
         «IF node instanceof SchemaNode»
             «(node as SchemaNode).nodeName»
         «ENDIF»
-        «node.childNodes.childrenToTree»
+        «node.childNodes.tree»
     '''
 
     def dispatch CharSequence tree(DataSchemaNode node) '''
@@ -284,10 +309,10 @@ class GeneratorImpl {
 
     def dispatch CharSequence tree(ListSchemaNode node) '''
         «node.nodeName»
-        «node.childNodes.childrenToTree»
+        «node.childNodes.tree»
     '''
 
-    private def CharSequence childrenToTree(Collection<DataSchemaNode> childNodes) '''
+    def dispatch CharSequence tree(Collection<DataSchemaNode> childNodes) '''
         «IF childNodes !== null && !childNodes.empty»
             <ul>
             «FOR child : childNodes»
@@ -305,7 +330,7 @@ class GeneratorImpl {
 
     def dispatch CharSequence tree(AugmentationSchema augment) '''
         <ul>
-            «listItem("Description", augment.description)»
+            «listItem(augment.description)»
             «listItem("Reference", augment.reference)»
             «IF augment.whenCondition !== null»
                 «listItem("When", augment.whenCondition.toString)»
@@ -315,38 +340,24 @@ class GeneratorImpl {
             </li>
             <li>
                 Child nodes
-                «augment.childNodes.childrenToTree»
+                «augment.childNodes.tree»
             </li>
         </ul>
     '''
 
-    private def CharSequence pathToTree(List<QName> path) '''
-        «IF path !== null && !path.empty»
-            <ul>
-            «FOR pathElement : path»
-                <li>
-                    «pathElement.namespace» «pathElement.localName»
-                </li>
-            «ENDFOR»
-            </ul>
-        «ENDIF»
-    '''
-
     def dispatch CharSequence tree(NotificationDefinition notification) '''
         <ul>
-            «listItem("Description", notification.description)»
-            «listItem("Reference", notification.reference)»
+            «notification.descAndRef»
             <li>
                 Child nodes
-                «notification.childNodes.childrenToTree»
+                «notification.childNodes.tree»
             </li>
         </ul>
     '''
 
     def dispatch CharSequence tree(RpcDefinition rpc) '''
         <ul>
-            «listItem("Description", rpc.description)»
-            «listItem("Reference", rpc.reference)»
+            «rpc.descAndRef»
             <li>
                 «rpc.input.tree»
             </li>
@@ -358,11 +369,11 @@ class GeneratorImpl {
 
     def dispatch CharSequence tree(ExtensionDefinition ext) '''
         <ul>
-            «listItem("Description", ext.description)»
-            «listItem("Reference", ext.reference)»
+            «ext.descAndRef»
             «listItem("Argument", ext.argument)»
         </ul>
     '''
+
 
 
     /* #################### RESTRICTIONS #################### */
@@ -407,7 +418,7 @@ class GeneratorImpl {
 
     def toLengthStmt(Collection<LengthConstraint> lengths) '''
         «IF lengths != null && !lengths.empty»
-            «strong("Length restrictions")»
+            «listItem("Length restrictions")»
             <ul>
             «FOR length : lengths»
                 <li>
@@ -424,7 +435,7 @@ class GeneratorImpl {
 
     def toRangeStmt(Collection<RangeConstraint> ranges) '''
         «IF ranges != null && !ranges.empty»
-            «strong("Range restrictions")»
+            «listItem("Range restrictions")»
             <ul>
             «FOR range : ranges»
                 <li>
@@ -442,21 +453,24 @@ class GeneratorImpl {
 
 
     /* #################### UTILITY #################### */
-    def strong(String str) '''
-        <strong>«str»</strong>
+    private def strong(String str) '''<strong>«str»</strong>'''
+    private def italic(String str) '''<i>«str»</i>'''
+    private def pre(String str) '''<pre>«str»</pre>'''
+
+    def CharSequence descAndRef(SchemaNode node) '''
+        «listItem(node.description)»
+        «listItem("Reference", node.reference)»
     '''
 
-    def italic(String str) '''
-        <i>«str»</i>
+    private def listItem(String value) '''
+        «IF value !== null && !value.empty»
+            <li>
+                «value»
+            </li>
+        «ENDIF»
     '''
 
-    def pre(String string) '''<pre>«string»</pre>'''
-
-    def paragraphs(String body) '''
-        <p>«body»</p>
-    '''
-
-    def listItem(String name, String value) '''
+    private def listItem(String name, String value) '''
         «IF value !== null && !value.empty»
             <li>
                 «name»
@@ -466,6 +480,18 @@ class GeneratorImpl {
                     </li>
                 </ul>
             </li>
+        «ENDIF»
+    '''
+
+    private def CharSequence pathToTree(List<QName> path) '''
+        «IF path !== null && !path.empty»
+            <ul>
+            «FOR pathElement : path»
+                <li>
+                    «pathElement.namespace» «pathElement.localName»
+                </li>
+            «ENDFOR»
+            </ul>
         «ENDIF»
     '''
 
@@ -488,7 +514,7 @@ class GeneratorImpl {
         }
     }
 
-    def nodeName(SchemaNode node) '''
+    def dispatch nodeName(SchemaNode node) '''
         «IF node.isAddedBy»
             «italic(node.QName.localName)»«node.addedByInfo»
         «ELSE»
@@ -496,7 +522,7 @@ class GeneratorImpl {
         «ENDIF»
     '''
 
-    def nodeName(ListSchemaNode node) '''
+    def dispatch nodeName(ListSchemaNode node) '''
         «IF node.isAddedBy»
             «italic(node.QName.localName)» «IF node.keyDefinition !== null && !node.keyDefinition.empty»«node.listKeys»«ENDIF»«node.addedByInfo»
         «ELSE»
