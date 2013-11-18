@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 public class TypedefCompilationTest extends BaseCompilationTest {
     private static final String VAL = "_value";
+    private static final String UNITS = "_UNITS";
 
     @Test
     public void test() throws Exception {
@@ -66,7 +67,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertTrue(unionExt2.exists());
         assertTrue(unionExt3.exists());
         assertTrue(unionExt4.exists());
-        testFilesCount(parent, 16);
+        assertFilesCount(parent, 16);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -95,12 +96,14 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
         // typedef int32-ext2
         assertFalse(int32Ext2Class.isInterface());
-        assertEquals(0, int32Ext2Class.getDeclaredFields().length);
+        assertContainsFieldWithValue(int32Ext2Class, UNITS, String.class, "mile", Integer.class);
+        assertEquals(1, int32Ext2Class.getDeclaredFields().length);
         assertContainsConstructor(int32Ext2Class, Integer.class);
         assertContainsConstructor(int32Ext2Class, int32Ext2Class);
         assertContainsConstructor(int32Ext2Class, int32Ext1Class);
         assertEquals(3, int32Ext2Class.getDeclaredConstructors().length);
-        assertEquals(0, int32Ext2Class.getDeclaredMethods().length);
+        assertContainsMethod(int32Ext2Class, String.class, "toString");
+        assertEquals(1, int32Ext2Class.getDeclaredMethods().length);
 
         // typedef string-ext1
         assertFalse(stringExt1Class.isInterface());
@@ -171,7 +174,8 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertFalse(unionExt3Class.isInterface());
         assertContainsField(unionExt3Class, "_string", String.class);
         assertContainsField(unionExt3Class, "_unionExt2", unionExt2Class);
-        assertEquals(2, unionExt3Class.getDeclaredFields().length);
+        assertContainsFieldWithValue(unionExt3Class, UNITS, String.class, "object id", String.class);
+        assertEquals(3, unionExt3Class.getDeclaredFields().length);
         assertContainsMethod(unionExt3Class, String.class, "getString");
         assertContainsMethod(unionExt3Class, unionExt2Class, "getUnionExt2");
         assertContainsConstructor(unionExt3Class, String.class);
