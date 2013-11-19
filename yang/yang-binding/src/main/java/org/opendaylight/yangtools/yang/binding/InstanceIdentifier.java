@@ -15,6 +15,8 @@ import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 
+import com.google.common.collect.Iterables;
+
 /**
  * Uniquely identifies data location in the overall of data tree 
  * modeled by YANG.
@@ -52,6 +54,60 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     public String toString() {
         return "InstanceIdentifier [path=" + path + "]";
     }
+
+    /**
+     * Return an instance identifier trimmed at the first occurrence of a
+     * specific component type.
+     * 
+     * @param type component type
+     * @return trimmed instance identifier, or null if the component type
+     *         is not present.
+     */
+	public <T extends DataObject> InstanceIdentifier<T> firstIdentifierOf(final Class<T> type) {
+		int i = 1;
+		for (final PathArgument a : path) {
+			if (type.equals(a.getType())) {
+				return new InstanceIdentifier<>(p.subList(0, i), type);
+			}
+
+			++i;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Return the key associated with the first component of specified type in
+	 * an identifier.
+	 * 
+	 * @param listItem component type
+	 * @param listKey component key type
+	 * @return key associated with the component, or null if the component type
+	 *         is not present.
+	 */
+	public <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K firstKeyOf(final Class<N> listItem, final Class<K> listKey) {
+		for (PathArgument i : path) {
+			if (listItem.equals(i.getType())) {
+				@SuppressWarnings("unchecked")
+				final K ret = ((IdentifiableItem<N, K>)i).getKey();
+				return ret;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Return the key associated with the last component of the specified identifier.
+	 * 
+	 * @param id instance identifier
+	 * @return key associated with the last component
+	 */
+	public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K keyOf(final InstanceIdentifier<N> id) {
+		@SuppressWarnings("unchecked")
+		final K ret = ((IdentifiableItem<N, K>)Iterables.getLast(id.getPath())).getKey();
+		return ret;
+	}
 
     /**
      * Path argument of {@link InstanceIdentifier}.
