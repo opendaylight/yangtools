@@ -132,12 +132,16 @@ public final class ParserListenerUtils {
      * @return first string value from given tree
      */
     public static String stringFromNode(final ParseTree treeNode) {
-        final String result = "";
+        String result = "";
         for (int i = 0; i < treeNode.getChildCount(); ++i) {
             if (treeNode.getChild(i) instanceof StringContext) {
                 final StringContext context = (StringContext) treeNode.getChild(i);
                 if (context != null) {
-                    return context.getChild(0).getText().replace("\"", "");
+                    result = context.getChild(0).getText();
+                    if (!(result.startsWith("\"")) && result.endsWith("\"")) {
+                        LOG.error("Syntax error at line " + context.getStart().getLine() + ": missing '\"'.");
+                    }
+                    return result.replace("\"", "");
                 }
             }
         }

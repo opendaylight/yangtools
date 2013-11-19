@@ -660,24 +660,22 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private GeneratedTransferObject wrapJavaTypeIntoTO(final String basePackageName, final TypeDefinition<?> typedef,
             final Type javaType) {
-        if (javaType != null) {
-            final String propertyName = "value";
+        Preconditions.checkNotNull(javaType, "javaType cannot be null");
+        final String propertyName = "value";
 
-            final GeneratedTOBuilder genTOBuilder = typedefToTransferObject(basePackageName, typedef);
-            genTOBuilder.setRestrictions(BindingGeneratorUtil.getRestrictions(typedef));
-            final GeneratedPropertyBuilder genPropBuilder = genTOBuilder.addProperty(propertyName);
-            genPropBuilder.setReturnType(javaType);
-            genTOBuilder.addEqualsIdentity(genPropBuilder);
-            genTOBuilder.addHashIdentity(genPropBuilder);
-            genTOBuilder.addToStringProperty(genPropBuilder);
-            if (javaType instanceof ConcreteType && "String".equals(javaType.getName()) && typedef instanceof ExtendedType) {
-                final List<String> regExps = resolveRegExpressionsFromTypedef((ExtendedType) typedef);
-                addStringRegExAsConstant(genTOBuilder, regExps);
-            }
-            addUnitsToGenTO(genTOBuilder, typedef.getUnits());
-            return genTOBuilder.toInstance();
+        final GeneratedTOBuilder genTOBuilder = typedefToTransferObject(basePackageName, typedef);
+        genTOBuilder.setRestrictions(BindingGeneratorUtil.getRestrictions(typedef));
+        final GeneratedPropertyBuilder genPropBuilder = genTOBuilder.addProperty(propertyName);
+        genPropBuilder.setReturnType(javaType);
+        genTOBuilder.addEqualsIdentity(genPropBuilder);
+        genTOBuilder.addHashIdentity(genPropBuilder);
+        genTOBuilder.addToStringProperty(genPropBuilder);
+        if (javaType instanceof ConcreteType && "String".equals(javaType.getName()) && typedef instanceof ExtendedType) {
+            final List<String> regExps = resolveRegExpressionsFromTypedef((ExtendedType) typedef);
+            addStringRegExAsConstant(genTOBuilder, regExps);
         }
-        return null;
+        addUnitsToGenTO(genTOBuilder, typedef.getUnits());
+        return genTOBuilder.toInstance();
     }
 
     /**

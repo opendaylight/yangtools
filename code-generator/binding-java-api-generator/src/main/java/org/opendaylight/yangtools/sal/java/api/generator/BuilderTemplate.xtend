@@ -399,7 +399,7 @@ class BuilderTemplate extends BaseTemplate {
     def private generateSetters() '''
         «FOR field : properties SEPARATOR '\n'»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
-                «generateLengthRestrictions(field, "value")»
+                «generateRestrictions(field, "value")»
 
                 this.«field.fieldName» = value;
                 return this;
@@ -442,7 +442,6 @@ class BuilderTemplate extends BaseTemplate {
                         «ENDFOR»
                     );
                     «FOR field : keyProps»
-                        «val genProp = getPropByName(allProps, field.name)»
                         this.«field.fieldName» = builder.«field.getterMethodName»();
                     «ENDFOR»
                 } else {
