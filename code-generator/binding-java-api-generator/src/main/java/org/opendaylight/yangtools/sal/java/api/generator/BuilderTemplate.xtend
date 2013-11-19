@@ -224,6 +224,8 @@ class BuilderTemplate extends BaseTemplate {
                 «generateHashCode()»
 
                 «generateEquals()»
+                
+                «generateToString(properties)»
             }
 
         }

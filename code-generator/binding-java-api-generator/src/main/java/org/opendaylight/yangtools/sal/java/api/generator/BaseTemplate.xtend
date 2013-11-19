@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import java.util.Collection
+import java.util.Arrays
 
 abstract class BaseTemplate {
 
@@ -242,6 +243,31 @@ abstract class BaseTemplate {
                 throw new IllegalArgumentException("illegal length");
             }
         }
+    '''
+
+    def protected generateToString(Collection<GeneratedProperty> properties) '''
+        «IF !properties.empty»
+            @Override
+            public String toString() {
+                StringBuilder builder = new StringBuilder();
+                builder.append("«type.name» [«properties.get(0).fieldName»=");
+                «IF properties.get(0).returnType.name.contains("[")»
+                    builder.append(«Arrays.importedName».toString(«properties.get(0).fieldName»));
+                «ELSE»
+                    builder.append(«properties.get(0).fieldName»);
+                «ENDIF»
+                «FOR i : 1..<properties.size»
+                    builder.append(", «properties.get(i).fieldName»=");
+                    «IF properties.get(i).returnType.name.contains("[")»
+                        builder.append(«Arrays.importedName».toString(«properties.get(i).fieldName»));
+                    «ELSE»
+                        builder.append(«properties.get(i).fieldName»);
+                    «ENDIF»
+                «ENDFOR»
+                builder.append("]");
+                return builder.toString();
+            }
+        «ENDIF»
     '''
 
     def GeneratedProperty getPropByName(GeneratedType gt, String name) {

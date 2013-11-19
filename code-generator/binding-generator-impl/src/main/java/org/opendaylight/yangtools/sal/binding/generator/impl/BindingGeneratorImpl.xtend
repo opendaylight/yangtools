@@ -239,56 +239,61 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
     }
 
+    private def GeneratedTypeBuilder processDataSchemaNode(Module module, String basePackageName,
+        GeneratedTypeBuilder parent, GeneratedTypeBuilder childOf, DataSchemaNode node) {
+        if (node.augmenting || node.addedByUses) {
+            return null
+        }
+        val packageName = packageNameForGeneratedType(basePackageName, (node).path)
+        val genType = addDefaultInterfaceDefinition(packageName, node, childOf)
+        if (node instanceof DataNodeContainer) {
+            genCtx.get(module).addChildNodeType(node.path, genType)
+            groupingsToGenTypes(module, (node as DataNodeContainer).groupings)
+            processUsesAugments(node as DataNodeContainer, module)
+        }
+        return genType
+    }
+
     private def void containerToGenType(Module module, String basePackageName, GeneratedTypeBuilder parent,
         GeneratedTypeBuilder childOf, ContainerSchemaNode node) {
-        if (node.augmenting || node.addedByUses) {
-            return
+        val genType = processDataSchemaNode(module, basePackageName, parent, childOf, node)
+        if (genType != null) {
+            constructGetter(parent, node.QName.localName, node.description, genType)
+            resolveDataSchemaNodes(module, basePackageName, genType, genType, node.childNodes)
         }
-        val packageName = packageNameForGeneratedType(basePackageName, node.path)
-        val genType = addDefaultInterfaceDefinition(packageName, node, childOf)
-        constructGetter(parent, node.QName.localName, node.description, genType)
-        genCtx.get(module).addChildNodeType(node.path, genType)
-        resolveDataSchemaNodes(module, basePackageName, genType, genType, node.childNodes)
-        groupingsToGenTypes(module, node.groupings)
-        processUsesAugments(node, module)
     }
 
     private def void listToGenType(Module module, String basePackageName, GeneratedTypeBuilder parent,
         GeneratedTypeBuilder childOf, ListSchemaNode node) {
-        if (node.augmenting || node.addedByUses) {
-            return
-        }
-        val packageName = packageNameForGeneratedType(basePackageName, (node).path)
-        val genType = addDefaultInterfaceDefinition(packageName, node, childOf)
-        constructGetter(parent, node.QName.localName, node.description, Types.listTypeFor(genType))
-        genCtx.get(module).addChildNodeType(node.path, genType)
-        groupingsToGenTypes(module, node.groupings)
-        processUsesAugments(node, module)
+        val genType = processDataSchemaNode(module, basePackageName, parent, childOf, node)
+        if (genType != null) {
+            constructGetter(parent, node.QName.localName, node.description, Types.listTypeFor(genType))
 
-        val List<String> listKeys = listKeys(node);
-        val genTOBuilder = resolveListKeyTOBuilder(packageName, node);
-
-        if (genTOBuilder !== null) {
-            val identifierMarker = IDENTIFIER.parameterizedTypeFor(genType);
-            val identifiableMarker = IDENTIFIABLE.parameterizedTypeFor(genTOBuilder);
-            genTOBuilder.addImplementsType(identifierMarker);
-            genType.addImplementsType(identifiableMarker);
-        }
-
-        for (schemaNode : node.childNodes) {
-            if (!schemaNode.augmenting) {
-                addSchemaNodeToListBuilders(basePackageName, schemaNode, genType, genTOBuilder, listKeys, module);
+            val List<String> listKeys = listKeys(node);
+            val packageName = packageNameForGeneratedType(basePackageName, (node).path)
+            val genTOBuilder = resolveListKeyTOBuilder(packageName, node);
+            if (genTOBuilder !== null) {
+                val identifierMarker = IDENTIFIER.parameterizedTypeFor(genType);
+                val identifiableMarker = IDENTIFIABLE.parameterizedTypeFor(genTOBuilder);
+                genTOBuilder.addImplementsType(identifierMarker);
+                genType.addImplementsType(identifiableMarker);
             }
-        }
 
-        // serialVersionUID
-        if (genTOBuilder !== null) {
-            val GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
-            prop.setValue(Long.toString(computeDefaultSUID(genTOBuilder as GeneratedTOBuilderImpl)));
-            genTOBuilder.setSUID(prop);
-        }
+            for (schemaNode : node.childNodes) {
+                if (!schemaNode.augmenting) {
+                    addSchemaNodeToListBuilders(basePackageName, schemaNode, genType, genTOBuilder, listKeys, module);
+                }
+            }
 
-        typeBuildersToGenTypes(module, genType, genTOBuilder);
+            // serialVersionUID
+            if (genTOBuilder !== null) {
+                val GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
+                prop.setValue(Long.toString(computeDefaultSUID(genTOBuilder as GeneratedTOBuilderImpl)));
+                genTOBuilder.setSUID(prop);
+            }
+
+            typeBuildersToGenTypes(module, genType, genTOBuilder);
+        }
     }
 
     private def void processUsesAugments(DataNodeContainer node, Module module) {
@@ -1181,18 +1186,18 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         for (caseNode : caseNodes) {
             if (caseNode !== null && !caseNode.isAddedByUses() && !caseNode.isAugmenting()) {
-                val packageName = packageNameForGeneratedType(basePackageName, caseNode.path);
-                val caseTypeBuilder = addDefaultInterfaceDefinition(packageName, caseNode);
-                caseTypeBuilder.addImplementsType(refChoiceType);
+                val packageName = packageNameForGeneratedType(basePackageName, caseNode.path)
+                val caseTypeBuilder = addDefaultInterfaceDefinition(packageName, caseNode)
+                caseTypeBuilder.addImplementsType(refChoiceType)
                 genCtx.get(module).addCaseType(caseNode.path, caseTypeBuilder)
-                val Set<DataSchemaNode> caseChildNodes = caseNode.childNodes;
+                val Set<DataSchemaNode> caseChildNodes = caseNode.childNodes
                 if (caseChildNodes !== null) {
-                    val parentNode = choiceNode.parent;
-                    var SchemaNode parent;
+                    val parentNode = choiceNode.parent
+                    var SchemaNode parent
                     if (parentNode instanceof AugmentationSchema) {
                         val augSchema = parentNode as AugmentationSchema;
                         val targetPath = augSchema.targetPath;
-                        var targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
+                        var targetSchemaNode = findDataSchemaNode(schemaContext, targetPath)
                         if (targetSchemaNode instanceof DataSchemaNode &&
                             (targetSchemaNode as DataSchemaNode).isAddedByUses()) {
                             targetSchemaNode = findOriginal(targetSchemaNode as DataSchemaNode);
@@ -1202,12 +1207,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
                                         " in module " + module.name);
                             }
                         }
-                        parent = targetSchemaNode as SchemaNode
+                        parent = targetSchemaNode
                     } else {
-                        parent = choiceNode.parent as SchemaNode;
+                        parent = choiceNode.parent as SchemaNode
                     }
                     var GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.path)
-                    resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
+                    resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes)
                 }
             }
 
