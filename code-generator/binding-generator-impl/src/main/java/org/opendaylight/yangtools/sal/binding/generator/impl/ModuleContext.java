@@ -17,6 +17,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class ModuleContext {
@@ -29,6 +30,8 @@ public final class ModuleContext {
     private final Set<GeneratedTOBuilder> identities = new HashSet<GeneratedTOBuilder>();
     private final Set<GeneratedTypeBuilder> topLevelNodes = new HashSet<GeneratedTypeBuilder>();
     private final List<GeneratedTypeBuilder> augmentations = new ArrayList<GeneratedTypeBuilder>();
+    private final Map<Type,AugmentationSchema> typeToAugmentation = new HashMap<>();
+
 
 
     List<Type> getGeneratedTypes() {
@@ -145,6 +148,14 @@ public final class ModuleContext {
 
     public List<GeneratedTypeBuilder> getAugmentations() {
         return augmentations;
+    }
+
+    public Map<Type, AugmentationSchema> getTypeToAugmentation() {
+        return typeToAugmentation;
+    }
+
+    public void addTypeToAugmentation(GeneratedTypeBuilder builder, AugmentationSchema schema) {
+        typeToAugmentation.put(builder, schema);
     }
 
 }
