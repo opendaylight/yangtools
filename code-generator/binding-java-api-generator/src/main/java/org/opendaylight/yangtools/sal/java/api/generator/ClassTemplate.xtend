@@ -153,7 +153,7 @@ class ClassTemplate extends BaseTemplate {
             super(«parentProperties.asArguments»);
         «ENDIF»
         «FOR p : allProperties» 
-            «generateLengthRestrictions(type, p.fieldName.toString, p.returnType)»
+            «generateRestrictions(type, p.fieldName.toString, p.returnType)»
         «ENDFOR»
         «FOR p : properties» 
             this.«p.fieldName» = «p.fieldName»;
@@ -175,7 +175,7 @@ class ClassTemplate extends BaseTemplate {
         «IF false == parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
-            «generateLengthRestrictions(type, property.fieldName.toString, property.returnType)»
+            «generateRestrictions(type, property.fieldName.toString, property.returnType)»
             this.«property.fieldName» = «property.name»;
             «FOR p : other»
             this.«p.fieldName» = null;

@@ -22,7 +22,7 @@ public final class Int64 extends AbstractSignedInteger {
     private static final String DESCRIPTION = "int64  represents integer values between -9223372036854775808 and 9223372036854775807, inclusively.";
 
     private Int64() {
-        super(NAME, DESCRIPTION, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
+        super(NAME, DESCRIPTION, Long.MIN_VALUE, Long.MAX_VALUE, "");
     }
 
     public static Int64 getInstance() {

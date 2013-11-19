@@ -47,6 +47,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         generator.generateToFile(sourcesOutputDir);
 
         File parent = new File(sourcesOutputDir, NS_FOO);
+        File int32Ext0 = new File(parent, "Int32Ext0.java");
         File int32Ext1 = new File(parent, "Int32Ext1.java");
         File int32Ext2 = new File(parent, "Int32Ext2.java");
         File myDecimalType = new File(parent, "MyDecimalType.java");
@@ -57,6 +58,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         File unionExt2 = new File(parent, "UnionExt2.java");
         File unionExt3 = new File(parent, "UnionExt3.java");
         File unionExt4 = new File(parent, "UnionExt4.java");
+        assertTrue(int32Ext0.exists());
         assertTrue(int32Ext1.exists());
         assertTrue(int32Ext2.exists());
         assertTrue(myDecimalType.exists());
@@ -67,7 +69,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertTrue(unionExt2.exists());
         assertTrue(unionExt3.exists());
         assertTrue(unionExt4.exists());
-        assertFilesCount(parent, 16);
+        assertFilesCount(parent, 25);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);

@@ -6,9 +6,13 @@ module foo {
     revision "2013-10-08" {
     }
 
+    typedef int32-ext0 {
+        type int32;
+    }
+
     typedef int32-ext1 {
         type int32 {
-            range "2..20";
+            range "2..2147483647";
         }
     }
 
@@ -93,6 +97,41 @@ module foo {
         leaf id {
             type b3;
         }
+    }
+
+
+    typedef a {
+        type int8;
+    }
+
+    typedef b {
+        type int16;
+    }
+
+    typedef c {
+        type int32;
+    }
+
+    typedef d {
+        type int64 {
+            range 0..max;
+        }
+    }
+
+    typedef e {
+        type uint8;
+    }
+
+    typedef f {
+        type uint16;
+    }
+
+    typedef g {
+        type uint32;
+    }
+
+    typedef h {
+        type uint64;
     }
 
 }

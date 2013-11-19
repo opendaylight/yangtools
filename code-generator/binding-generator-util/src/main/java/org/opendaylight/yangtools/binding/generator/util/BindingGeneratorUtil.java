@@ -26,9 +26,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 /**
@@ -404,9 +406,17 @@ public final class BindingGeneratorUtil {
 
         if (type instanceof ExtendedType) {
             ExtendedType ext = (ExtendedType)type;
+            TypeDefinition<?> base = ext.getBaseType();
             length.addAll(ext.getLengthConstraints());
             pattern.addAll(ext.getPatternConstraints());
             range.addAll(ext.getRangeConstraints());
+
+            if (base instanceof IntegerTypeDefinition && range.isEmpty()) {
+                range.addAll(((IntegerTypeDefinition)base).getRangeConstraints());
+            } else if (base instanceof UnsignedIntegerTypeDefinition && range.isEmpty()) {
+                range.addAll(((UnsignedIntegerTypeDefinition)base).getRangeConstraints());
+            }
+
         }
 
         return new Restrictions() {
