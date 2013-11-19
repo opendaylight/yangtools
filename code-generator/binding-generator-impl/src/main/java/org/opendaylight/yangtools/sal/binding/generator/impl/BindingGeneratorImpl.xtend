@@ -751,6 +751,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val augTypeBuilder = addRawAugmentGenTypeDefinition(module, packageName, augmentPackageName,
                     targetTypeBuilder.toInstance, augSchema);
                 genCtx.get(module).addAugmentType(augTypeBuilder)
+                genCtx.get(module).addTypeToAugmentation(augTypeBuilder,augSchema);
             } else {
                 generateTypesFromAugmentedChoiceCases(module, augmentPackageName, targetTypeBuilder.toInstance,
                     targetSchemaNode as ChoiceNode, augSchema.childNodes);
