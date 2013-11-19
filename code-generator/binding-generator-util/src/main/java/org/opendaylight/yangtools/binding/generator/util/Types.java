@@ -30,6 +30,7 @@ public final class Types {
 
     public static final ConcreteType BOOLEAN = typeForClass(Boolean.class);
     public static final ConcreteType FUTURE = typeForClass(Future.class);
+    public static final ConcreteType STRING = typeForClass(String.class);
     public static final ConcreteType VOID = typeForClass(Void.class);
 
     /**

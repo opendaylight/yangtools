@@ -63,6 +63,7 @@ module foo {
             type union-ext2;
             type string;
         }
+        units "object id";
     }
 
     typedef union-ext4 {

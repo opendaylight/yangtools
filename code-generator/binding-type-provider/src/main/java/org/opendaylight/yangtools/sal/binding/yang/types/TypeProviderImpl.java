@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.EnumerationBuilderImpl;
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
@@ -617,15 +618,17 @@ public final class TypeProviderImpl implements TypeProvider {
                     final GeneratedTOBuilder genTOBuilder = provideGeneratedTOBuilderForUnionTypeDef(basePackageName,
                             (UnionTypeDefinition) innerTypeDefinition, typedefName, typedef);
                     genTOBuilder.setIsUnion(true);
+                    addUnitsToGenTO(genTOBuilder, typedef.getUnits());
                     returnType = genTOBuilder.toInstance();
                 } else if (innerTypeDefinition instanceof EnumTypeDefinition) {
                     final EnumTypeDefinition enumTypeDef = (EnumTypeDefinition) innerTypeDefinition;
+                    // TODO units for typedef enum
                     returnType = provideTypeForEnum(enumTypeDef, typedefName, typedef);
-
                 } else if (innerTypeDefinition instanceof BitsTypeDefinition) {
                     final BitsTypeDefinition bitsTypeDefinition = (BitsTypeDefinition) innerTypeDefinition;
                     final GeneratedTOBuilder genTOBuilder = provideGeneratedTOBuilderForBitsTypeDefinition(
                             basePackageName, bitsTypeDefinition, typedefName);
+                    addUnitsToGenTO(genTOBuilder, typedef.getUnits());
                     returnType = genTOBuilder.toInstance();
                 } else {
                     final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(
@@ -671,6 +674,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 final List<String> regExps = resolveRegExpressionsFromTypedef((ExtendedType) typedef);
                 addStringRegExAsConstant(genTOBuilder, regExps);
             }
+            addUnitsToGenTO(genTOBuilder, typedef.getUnits());
             return genTOBuilder.toInstance();
         }
         return null;
@@ -1105,6 +1109,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 genTOBuilder.setExtendsType((GeneratedTransferObject) type);
             }
         }
+        addUnitsToGenTO(genTOBuilder, typedef.getUnits());
 
         return genTOBuilder.toInstance();
     }
@@ -1196,6 +1201,15 @@ public final class TypeProviderImpl implements TypeProvider {
             return name.substring(0, mtch.start()) + newSuffix;
         } else {
             return name + 1;
+        }
+    }
+
+    private void addUnitsToGenTO(GeneratedTOBuilder to, String units) {
+        if (units != null && !units.isEmpty()) {
+            to.addConstant(Types.STRING, "_UNITS", "\"" + units + "\"");
+            GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("UNITS");
+            prop.setReturnType(Types.STRING);
+            to.addToStringProperty(prop);
         }
     }
 

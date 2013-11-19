@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -54,6 +55,17 @@ public class CompilationTestUtils {
         }
     }
 
+    /**
+     * Asserts that class contains field with fiven name and type.
+     *
+     * @param clazz
+     *            class to test
+     * @param name
+     *            field name
+     * @param type
+     *            field type
+     * @return field with given name if present in class
+     */
     static Field assertContainsField(Class<?> clazz, String name, Class<?> type) {
         try {
             Field f = clazz.getDeclaredField(name);
@@ -64,6 +76,71 @@ public class CompilationTestUtils {
         }
     }
 
+    /**
+     * Asserts that class contains field with given name and value. Method tries
+     * to create new instance of class and get value of field. If class
+     * constructor contains any arguments, class is instantiated with null
+     * values.
+     *
+     * @param clazz
+     *            class to test
+     * @param name
+     *            name of field
+     * @param returnType
+     *            return type of field
+     * @param expectedValue
+     *            expected value of field
+     * @param constructorArgs
+     *            constructor arguments of class to test
+     */
+    static void assertContainsFieldWithValue(Class<?> clazz, String name, Class<?> returnType, Object expectedValue,
+            Class<?>... constructorArgs) {
+        Object[] initargs = null;
+        if (constructorArgs != null && constructorArgs.length > 0) {
+            initargs = new Object[constructorArgs.length];
+            for (int i = 0; i < constructorArgs.length; i++) {
+                initargs[i] = null;
+            }
+        }
+        assertContainsFieldWithValue(clazz, name, returnType, expectedValue, constructorArgs, initargs);
+    }
+
+    /**
+     * Asserts that class contains field with given name, return type and value.
+     *
+     * @param clazz
+     *            class to test
+     * @param name
+     *            name of field
+     * @param returnType
+     *            return type of field
+     * @param expectedValue
+     *            expected value of field
+     * @param constructorArgs
+     *            array of constructor arguments classes
+     * @param initargs
+     *            array of constructor values
+     */
+    static void assertContainsFieldWithValue(Class<?> clazz, String name, Class<?> returnType, Object expectedValue,
+            Class<?>[] constructorArgs, Object... initargs) {
+        Field f = assertContainsField(clazz, name, returnType);
+        try {
+            Constructor<?> c = clazz.getDeclaredConstructor(constructorArgs);
+            Object o = c.newInstance(initargs);
+            assertEquals(expectedValue, f.get(o));
+        } catch (Exception e) {
+            throw new AssertionError("Failed to perform " + name + " field test", e);
+        }
+    }
+
+    /**
+     * Asserts that class contains constructor with parameter types.
+     *
+     * @param clazz
+     *            class to test
+     * @param args
+     *            array of argument classes
+     */
     static void assertContainsConstructor(Class<?> clazz, Class<?>... args) {
         try {
             clazz.getDeclaredConstructor(args);
@@ -73,6 +150,19 @@ public class CompilationTestUtils {
         }
     }
 
+    /**
+     * Asserts that class contains method with given name, return type and
+     * parameter types.
+     *
+     * @param clazz
+     *            class to test
+     * @param returnType
+     *            method return type
+     * @param name
+     *            method name
+     * @param args
+     *            array of parameter type classes
+     */
     static void assertContainsMethod(Class<?> clazz, Class<?> returnType, String name, Class<?>... args) {
         try {
             Method m = clazz.getDeclaredMethod(name, args);
@@ -83,8 +173,19 @@ public class CompilationTestUtils {
         }
     }
 
-    static void assertContainsMethod(Class<?> clazz, String returnTypeStr, String name, ClassLoader loader)
-            throws Exception {
+    /**
+     * Asserts that class contains method with given name and return type.
+     *
+     * @param clazz
+     *            class to test
+     * @param returnTypeStr
+     *            name of method return type
+     * @param name
+     *            method name
+     * @param loader
+     *            current class loader
+     */
+    static void assertContainsMethod(Class<?> clazz, String returnTypeStr, String name, ClassLoader loader) {
         Class<?> returnType;
         try {
             returnType = Class.forName(returnTypeStr, true, loader);
@@ -92,14 +193,16 @@ public class CompilationTestUtils {
             assertEquals(returnType, method.getReturnType());
         } catch (ClassNotFoundException e) {
             throw new AssertionError("Return type of method '" + name + "' not found");
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError("Method " + name + " does not exists in class " + clazz.getSimpleName());
         }
     }
 
     /**
-     * Check for presence of hashCode, equals and toString methods.
+     * Asserts that class containes hashCode, equals and toString methods.
      *
      * @param clazz
-     *            class to check
+     *            class to test
      */
     static void assertContainsDefaultMethods(Class<?> clazz) {
         assertContainsMethod(clazz, Integer.TYPE, "hashCode");
@@ -108,12 +211,12 @@ public class CompilationTestUtils {
     }
 
     /**
-     * Check for presence of 'public static
+     * Asserts that class contains 'public static
      * java.util.List<com.google.common.collect.Range<java.lang.Integer>>
      * getLength()' method.
      *
      * @param clazz
-     *            class to check
+     *            class to test
      */
     static void assertContainsGetLength(Class<?> clazz) {
         try {
@@ -141,18 +244,18 @@ public class CompilationTestUtils {
     }
 
     /**
-     * Test if generated source implements interface.
+     * Asserts that class implements given interface.
      *
-     * @param classToTest
+     * @param clazz
      *            source to test
-     * @param ifcClass
-     *            expected interface type
+     * @param ifc
+     *            expected interface
      */
-    static void testImplementsIfc(Class<?> classToTest, Class<?> ifcClass) {
-        Class<?>[] interfaces = classToTest.getInterfaces();
+    static void assertImplementsIfc(Class<?> clazz, Class<?> ifc) {
+        Class<?>[] interfaces = clazz.getInterfaces();
         List<Class<?>> ifcsList = Arrays.asList(interfaces);
-        if (!ifcsList.contains(ifcClass)) {
-            throw new AssertionError(classToTest + " should implement " + ifcClass);
+        if (!ifcsList.contains(ifc)) {
+            throw new AssertionError(clazz + " should implement " + ifc);
         }
     }
 
@@ -160,31 +263,42 @@ public class CompilationTestUtils {
      * Test if interface generated from augment extends Augmentation interface
      * with correct generic type.
      *
-     * @param classToTest
+     * @param clazz
      *            interface generated from augment
-     * @param genericType
+     * @param genericTypeName
      *            fully qualified name of expected parameter type
      */
-    static void testAugmentation(Class<?> classToTest, String genericType) {
-        final String ifcToImplement = "interface org.opendaylight.yangtools.yang.binding.Augmentation";
-        testImplementParameterizedIfc(classToTest, ifcToImplement, genericType);
+    static void testAugmentation(Class<?> clazz, String genericTypeName) {
+        final String ifcName = "interface org.opendaylight.yangtools.yang.binding.Augmentation";
+        assertImplementsParameterizedIfc(clazz, ifcName, genericTypeName);
     }
 
-    static void testImplementParameterizedIfc(Class<?> classToTest, String ifcToImplement, String genericType) {
-        ParameterizedType augmentation = null;
-        for (java.lang.reflect.Type ifc : classToTest.getGenericInterfaces()) {
+    /**
+     * Asserts that class implements interface with given name and generic type
+     * parameter.
+     *
+     * @param clazz
+     *            class to test
+     * @param ifcName
+     *            name of interface
+     * @param genericTypeName
+     *            name of generic type
+     */
+    static void assertImplementsParameterizedIfc(Class<?> clazz, String ifcName, String genericTypeName) {
+        ParameterizedType ifcType = null;
+        for (java.lang.reflect.Type ifc : clazz.getGenericInterfaces()) {
             if (ifc instanceof ParameterizedType) {
                 ParameterizedType pt = (ParameterizedType) ifc;
-                if (ifcToImplement.equals(pt.getRawType().toString())) {
-                    augmentation = pt;
+                if (ifcName.equals(pt.getRawType().toString())) {
+                    ifcType = pt;
                 }
             }
         }
-        assertNotNull(augmentation);
+        assertNotNull(ifcType);
 
-        java.lang.reflect.Type[] typeArguments = augmentation.getActualTypeArguments();
+        java.lang.reflect.Type[] typeArguments = ifcType.getActualTypeArguments();
         assertEquals(1, typeArguments.length);
-        assertEquals("interface " + genericType, typeArguments[0].toString());
+        assertEquals("interface " + genericTypeName, typeArguments[0].toString());
     }
 
     /**
@@ -205,7 +319,15 @@ public class CompilationTestUtils {
         assertTrue(compiled);
     }
 
-    static void testFilesCount(File dir, int count) {
+    /**
+     * Asserts that directory contains exactly given count of files.
+     *
+     * @param dir
+     *            directory to test
+     * @param count
+     *            expected count of files in directory
+     */
+    static void assertFilesCount(File dir, int count) {
         File[] dirContent = dir.listFiles();
         if (dirContent == null) {
             throw new AssertionError("File " + dir + " doesn't exists or it's not a directory");
