@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_68788d8f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserListenerUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2013-11-20T22:27:47Z",
+      "side": 1,
+      "message": "Please use string substitution, e.g.:\nLOG.error(\"Syntax error in module {} at line {}: missing \u0027\\\"\u0027.\", getParentModule(treeNode), context.getStart().getLine());",
+      "revId": "18f7ad0e1af447e2786e623e40bd23701bea77f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
