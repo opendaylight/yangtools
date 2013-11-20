@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Max_elements_stmtC
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Max_value_argContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Min_elements_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Min_value_argContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Must_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Numerical_restrictionsContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Ordered_by_argContext;
@@ -139,13 +140,31 @@ public final class ParserListenerUtils {
                 if (context != null) {
                     result = context.getChild(0).getText();
                     if (!(result.startsWith("\"")) && result.endsWith("\"")) {
-                        LOG.error("Syntax error at line " + context.getStart().getLine() + ": missing '\"'.");
+                        LOG.error("Syntax error in module {} at line {}: missing '\"'.", getParentModule(treeNode),
+                                context.getStart().getLine());
                     }
                     return result.replace("\"", "");
                 }
             }
         }
         return result;
+    }
+
+    private static String getParentModule(final ParseTree ctx) {
+        ParseTree current = ctx;
+        while (current != null && !(current instanceof Module_stmtContext)) {
+            current = current.getParent();
+        }
+        if (current instanceof Module_stmtContext) {
+            Module_stmtContext module = (Module_stmtContext) current;
+            for (int i = 0; i < module.getChildCount(); i++) {
+                if (module.getChild(i) instanceof StringContext) {
+                    final StringContext str = (StringContext) module.getChild(i);
+                    return str.getChild(0).getText();
+                }
+            }
+        }
+        return "";
     }
 
     /**
