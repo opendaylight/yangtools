@@ -50,7 +50,7 @@ public final class ModuleDependencySort {
 
     /**
      * Topological sort of module builder dependency graph.
-     * 
+     *
      * @return Sorted list of Module builders. Modules can be further processed
      *         in returned order.
      */
@@ -88,7 +88,7 @@ public final class ModuleDependencySort {
 
     /**
      * Topological sort of module dependency graph.
-     * 
+     *
      * @return Sorted list of Modules. Modules can be further processed in
      *         returned order.
      */
@@ -194,11 +194,14 @@ public final class ModuleDependencySort {
             if (moduleGraph.get(toName) != null && !moduleGraph.get(toName).isEmpty()
                     && toRevision.equals(DEFAULT_REVISION)) {
                 to = moduleGraph.get(toName).values().iterator().next();
-                LOGGER.warn(String
+                LOGGER.debug(String
                         .format("Import:%s:%s by module:%s:%s does not specify revision, using:%s:%s for module dependency sort",
                                 toName, formatRevDate(toRevision), fromName, formatRevDate(fromRevision), to.getName(),
                                 formatRevDate(to.getRevision())));
             } else {
+                LOGGER.warn(String.format("Not existing module imported:%s:%s by:%s:%s", toName,
+                        formatRevDate(toRevision), fromName, formatRevDate(fromRevision)));
+                LOGGER.warn("Available models: {}", moduleGraph);
                 ex(String.format("Not existing module imported:%s:%s by:%s:%s", toName, formatRevDate(toRevision),
                         fromName, formatRevDate(fromRevision)));
             }
