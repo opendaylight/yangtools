@@ -31,6 +31,12 @@ import java.util.List
 import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition
+import java.util.ArrayList
+import java.util.Map
+import org.opendaylight.yangtools.yang.model.api.SchemaPath
+import java.util.LinkedHashMap
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
 
 class GeneratorImpl {
 
@@ -85,6 +91,8 @@ class GeneratorImpl {
         «identities(module)»
 
         «groupings(module)»
+
+        «childNodes(module)»
 
         «dataStore(module)»
 
@@ -312,6 +320,38 @@ class GeneratorImpl {
         «node.childNodes.tree»
     '''
 
+    def CharSequence childNodes(Module module) '''
+        «val Map<SchemaPath, DataSchemaNode> childNodes = new LinkedHashMap()»
+        «collectChildNodes(module.childNodes, childNodes)»
+        «IF childNodes !== null && !childNodes.empty»
+            <h2>Child nodes</h2>
+
+            «childNodes.childNodesInfoTree»
+        «ENDIF»
+    '''
+
+    def CharSequence childNodesInfoTree(Map<SchemaPath, DataSchemaNode> childNodes) '''
+        «IF childNodes !== null && !childNodes.empty»
+            <ul>
+            «FOR child : childNodes.values»
+                «childInfo(child, childNodes)»
+            «ENDFOR»
+            </ul>
+        «ENDIF»
+    '''
+
+    def CharSequence childInfo(DataSchemaNode node, Map<SchemaPath, DataSchemaNode> childNodes) '''
+        «val String path = nodeSchemaPathToPath(node, childNodes)»
+        «IF path != null»
+            «listItem(strong(path))»
+                «IF node !== null»
+                <ul>
+                «node.descAndRef»
+                </ul>
+            «ENDIF»
+        «ENDIF»
+    '''
+
     def dispatch CharSequence tree(Collection<DataSchemaNode> childNodes) '''
         «IF childNodes !== null && !childNodes.empty»
             <ul>
@@ -453,7 +493,7 @@ class GeneratorImpl {
 
 
     /* #################### UTILITY #################### */
-    private def strong(String str) '''<strong>«str»</strong>'''
+    private def String strong(String str) '''<strong>«str»</strong>'''
     private def italic(String str) '''<i>«str»</i>'''
     private def pre(String str) '''<pre>«str»</pre>'''
 
@@ -482,6 +522,51 @@ class GeneratorImpl {
             </li>
         «ENDIF»
     '''
+
+    private def String nodeSchemaPathToPath(DataSchemaNode node, Map<SchemaPath, DataSchemaNode> childNodes) {
+        if (node instanceof ChoiceNode || node instanceof ChoiceCaseNode) {
+            return null
+        }
+
+        val path = node.path.path
+        val absolute = node.path.absolute;
+        var StringBuilder result = new StringBuilder
+        if (absolute) {
+            result.append("/")
+        }
+        if (path !== null && !path.empty) {
+            val List<QName> actual = new ArrayList()
+            var i = 0;
+            for (pathElement : path) {
+                actual.add(pathElement)
+                val DataSchemaNode nodeByPath = childNodes.get(new SchemaPath(actual, absolute)) 
+                if (!(nodeByPath instanceof ChoiceNode) && !(nodeByPath instanceof ChoiceCaseNode)) {
+                    result.append(pathElement.localName)
+                    if (i != path.size - 1) {
+                        result.append("/")
+                    }
+                }
+                i = i + 1
+            }
+        }
+        return result.toString
+    }
+
+    private def void collectChildNodes(Collection<DataSchemaNode> source, Map<SchemaPath, DataSchemaNode> destination) {
+        for (node : source) {
+            destination.put(node.path, node)
+            if (node instanceof DataNodeContainer) {
+                collectChildNodes((node as DataNodeContainer).childNodes, destination)
+            }
+            if (node instanceof ChoiceNode) {
+                val List<DataSchemaNode> choiceCases = new ArrayList()
+                for (caseNode : (node as ChoiceNode).cases) {
+                    choiceCases.add(caseNode)
+                }
+                collectChildNodes(choiceCases, destination)
+            }
+        }
+    }
 
     private def CharSequence pathToTree(List<QName> path) '''
         «IF path !== null && !path.empty»

@@ -277,6 +277,29 @@ module network-topology  {
                     that serve a purpose other than identifying a particular 
                     topology type.  
                 ";
+                choice node-type {
+                    case type1 {
+                        container c1 {
+                            leaf id {
+                                type int8;
+                            }
+                        }
+                    }
+                    case type2 {
+                        container c2 {
+                            container cc2 {}
+                        }
+                    }
+                    case type3 {
+                        list c3 {
+                            container cc3 {
+                                leaf id {
+                                    type string;
+                                }
+                            }
+                        }
+                    }
+                }
             }   
             list underlay-topology {
                 key "topology-ref";
