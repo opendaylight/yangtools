@@ -1158,7 +1158,7 @@ public final class ParserListenerUtils {
             List<EnumTypeDefinition.EnumPair> enumConstants = getEnumConstants(typeBody, actualPath, moduleName);
             return new EnumerationType(baseTypePath, enumConstants);
         } else if ("string".equals(typeName)) {
-            StringTypeDefinition stringType = StringType.getIntance();
+            StringTypeDefinition stringType = StringType.getInstance();
             constraints.addLengths(stringType.getLengthConstraints());
             baseType = stringType;
         } else if ("bits".equals(typeName)) {

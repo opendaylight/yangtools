@@ -71,7 +71,7 @@ public final class YangTypesConverter {
                 type = Uint64.getInstance();
             }
         } else if ("string".equals(typeName)) {
-            type = StringType.getIntance();
+            type = StringType.getInstance();
         } else if ("binary".equals(typeName)) {
             type = BinaryType.getInstance();
         } else if ("boolean".equals(typeName)) {

@@ -244,7 +244,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         if (node.augmenting || node.addedByUses) {
             return null
         }
-        val packageName = packageNameForGeneratedType(basePackageName, (node).path)
+        val packageName = packageNameForGeneratedType(basePackageName, node.path)
         val genType = addDefaultInterfaceDefinition(packageName, node, childOf)
         if (node instanceof DataNodeContainer) {
             genCtx.get(module).addChildNodeType(node.path, genType)

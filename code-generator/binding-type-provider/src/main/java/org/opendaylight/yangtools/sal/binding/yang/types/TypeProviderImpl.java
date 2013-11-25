@@ -10,8 +10,12 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +42,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPr
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -47,20 +53,36 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.YangNode;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.Int16;
+import org.opendaylight.yangtools.yang.model.util.Int32;
+import org.opendaylight.yangtools.yang.model.util.Int64;
+import org.opendaylight.yangtools.yang.model.util.Int8;
 import org.opendaylight.yangtools.yang.model.util.StringType;
+import org.opendaylight.yangtools.yang.model.util.Uint16;
+import org.opendaylight.yangtools.yang.model.util.Uint32;
+import org.opendaylight.yangtools.yang.model.util.Uint64;
+import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.BaseEncoding;
 
 public final class TypeProviderImpl implements TypeProvider {
     /**
@@ -1209,6 +1231,196 @@ public final class TypeProviderImpl implements TypeProvider {
             prop.setReturnType(Types.STRING);
             to.addToStringProperty(prop);
         }
+    }
+
+    @Override
+    public String getTypeDefaultConstruction(LeafSchemaNode node) {
+        return getTypeDefaultConstruction(node, node.getDefault());
+    }
+
+    public String getTypeDefaultConstruction(LeafSchemaNode node, String defaultValue) {
+        TypeDefinition<?> type = node.getType();
+        Preconditions.checkNotNull(type, "Cannot provide default construction for null type of " + node);
+        Preconditions.checkNotNull(defaultValue, "Cannot provide default construction for null default statement of "
+                + node);
+
+        Module module = getParentModule(node);
+        String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
+        String packageName = packageNameForGeneratedType(basePackageName, node.getPath());
+        String className = packageName + "." + parseToClassName(node.getQName().getLocalName());
+
+        StringBuilder sb = new StringBuilder();
+        TypeDefinition<?> base = baseTypeDefForExtendedType(type);
+        final boolean isBaseNull = base == null;
+
+        if (isBaseNull) {
+            base = type;
+        }
+
+        String result = null;
+        if (base instanceof BinaryTypeDefinition) {
+            result = binaryToDef(defaultValue);
+        } else if (base instanceof BitsTypeDefinition) {
+            String parentName;
+            YangNode parent = node.getParent();
+            if (parent instanceof Module) {
+                parentName = parseToClassName(((Module)parent).getName()) + "Data";
+                className = basePackageName + "." + parentName + "." + parseToClassName(node.getQName().getLocalName());
+            } else {
+                parentName = parseToClassName(((SchemaNode)parent).getQName().getLocalName());
+                className = packageName + "." + parentName + "." + parseToClassName(node.getQName().getLocalName());
+            }
+            result = bitsToDef((BitsTypeDefinition) base, className, defaultValue, isBaseNull);
+        } else if (base instanceof BooleanTypeDefinition) {
+            result = typeToDef(Boolean.class, defaultValue);
+        } else if (base instanceof DecimalTypeDefinition) {
+            result = typeToDef(BigDecimal.class, defaultValue);
+        } else if (base instanceof EmptyTypeDefinition) {
+            result = typeToDef(Boolean.class, defaultValue);
+        } else if (base instanceof EnumTypeDefinition) {
+            char[] defValArray = defaultValue.toCharArray();
+            char first = Character.toUpperCase(defaultValue.charAt(0));
+            defValArray[0] = first;
+            String newDefVal = new String(defValArray);
+            if (type instanceof ExtendedType) {
+                className = packageName + "." + parseToClassName(node.getType().getQName().getLocalName());
+            }
+            result = className + "." + newDefVal;
+        } else if (base instanceof IdentityrefTypeDefinition) {
+            throw new UnsupportedOperationException("Cannot get default construction for identityref type");
+        } else if (base instanceof InstanceIdentifierTypeDefinition) {
+            throw new UnsupportedOperationException("Cannot get default construction for instance-identifier type");
+        } else if (base instanceof Int8) {
+            result = typeToDef(Byte.class, defaultValue);
+        } else if (base instanceof Int16) {
+            result = typeToDef(Short.class, defaultValue);
+        } else if (base instanceof Int32) {
+            result = typeToDef(Integer.class, defaultValue);
+        } else if (base instanceof Int64) {
+            result = typeToDef(Long.class, defaultValue);
+        } else if (base instanceof LeafrefTypeDefinition) {
+            result = leafrefToDef(node, (LeafrefTypeDefinition)base);
+        } else if (base instanceof StringTypeDefinition) {
+            result = "\"" + defaultValue + "\"";
+        } else if (base instanceof Uint8) {
+            result = typeToDef(Short.class, defaultValue);
+        } else if (base instanceof Uint16) {
+            result = typeToDef(Integer.class, defaultValue);
+        } else if (base instanceof Uint32) {
+            result = typeToDef(Long.class, defaultValue);
+        } else if (base instanceof Uint64) {
+            result = typeToDef(BigInteger.class, defaultValue);
+        } else if (base instanceof UnionTypeDefinition) {
+            throw new UnsupportedOperationException("Cannot get default construction for union type");
+        } else {
+            result = "";
+        }
+        sb.append(result);
+
+        if (result != null && !result.isEmpty() && type instanceof ExtendedType && !(base instanceof LeafrefTypeDefinition)) {
+            className = packageName + "." + parseToClassName(node.getType().getQName().getLocalName());
+            sb.insert(0, "new " + className + "(");
+            sb.insert(sb.length(), ")");
+        }
+
+        return sb.toString();
+    }
+
+
+    private String typeToDef(Class<?> clazz, String defaultValue) {
+        return "new " + clazz.getName() + "(\"" + defaultValue + "\")";
+    }
+
+    private String binaryToDef(String defaultValue) {
+        StringBuilder sb = new StringBuilder();
+        BaseEncoding en = BaseEncoding.base64();
+        byte[] encoded = en.decode(defaultValue);
+        sb.append("new byte[] {");
+        for (int i = 0; i < encoded.length; i++) {
+            sb.append(encoded[i]);
+            if (i != encoded.length - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    private String bitsToDef(BitsTypeDefinition type, String className, String defaultValue, boolean isBase) {
+        List<Bit> bits = new ArrayList<>(type.getBits());
+        Collections.sort(bits, new Comparator<Bit>() {
+            @Override
+            public int compare(Bit o1, Bit o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        StringBuilder sb = new StringBuilder();
+        sb.append(isBase ? "new " + className + "(" : "");
+        for (int i = 0; i < bits.size(); i++) {
+            if (bits.get(i).getName().equals(defaultValue)) {
+                sb.append(true);
+            } else {
+                sb.append(false);
+            }
+            if (i != bits.size() - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append(isBase ? ")" : "");
+        return sb.toString();
+    }
+
+    private Module getParentModule(YangNode node) {
+        if (node instanceof Module) {
+            return (Module) node;
+        }
+
+        YangNode parent = null;
+        if (node instanceof DataSchemaNode) {
+            parent = ((DataSchemaNode) node).getParent();
+        } else if (node instanceof DataNodeContainer) {
+            parent = ((DataNodeContainer) node).getParent();
+        } else {
+            parent = null;
+        }
+
+        while (parent != null && !(parent instanceof Module)) {
+            if (parent instanceof DataSchemaNode) {
+                parent = ((DataSchemaNode) parent).getParent();
+            } else if (parent instanceof DataNodeContainer) {
+                parent = ((DataNodeContainer) parent).getParent();
+            } else {
+                parent = null;
+            }
+        }
+        return (Module) parent;
+    }
+
+    private String leafrefToDef(LeafSchemaNode parentNode, LeafrefTypeDefinition leafrefType) {
+        Preconditions.checkArgument(leafrefType != null, "Leafref Type Definition reference cannot be NULL!");
+        Preconditions.checkArgument(leafrefType.getPathStatement() != null, "The Path Statement for Leafref Type Definition cannot be NULL!");
+
+        final RevisionAwareXPath xpath = leafrefType.getPathStatement();
+        final String strXPath = xpath.toString();
+
+        if (strXPath != null) {
+            if (strXPath.contains("[")) {
+                return "new java.lang.Object()";
+            } else {
+                final Module module = findParentModule(schemaContext, parentNode);
+                if (module != null) {
+                    final SchemaNode dataNode;
+                    if (xpath.isAbsolute()) {
+                        dataNode = findDataSchemaNode(schemaContext, module, xpath);
+                    } else {
+                        dataNode = findDataSchemaNodeForRelativeXPath(schemaContext, module, parentNode, xpath);
+                    }
+                    return getTypeDefaultConstruction((LeafSchemaNode)dataNode, parentNode.getDefault());
+                }
+            }
+        }
+
+        return null;
     }
 
 }

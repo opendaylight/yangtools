@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -170,6 +171,11 @@ public final class BaseYangTypes {
             case "uint64": Types.typeForClass(BigInteger.class, restrictions);
             default: return javaTypeForSchemaDefinitionType(type, parentNode);
             }
+        }
+
+        @Override
+        public String getTypeDefaultConstruction(LeafSchemaNode node) {
+            return null;
         }
     };
 }

@@ -45,7 +45,7 @@ public final class StringType implements StringTypeDefinition {
         patterns = Collections.emptyList();
     }
 
-    public static StringType getIntance() {
+    public static StringType getInstance() {
         return INSTANCE;
     }
 
