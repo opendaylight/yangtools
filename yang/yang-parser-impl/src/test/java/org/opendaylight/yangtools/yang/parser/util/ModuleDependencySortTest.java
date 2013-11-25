@@ -11,8 +11,11 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -25,14 +28,13 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort.ModuleNodeImpl;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Edge;
 
 import com.google.common.collect.Sets;
 
 public class ModuleDependencySortTest {
-
+    private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private ModuleBuilder a = mockModuleBuilder("a", null);
     private ModuleBuilder b = mockModuleBuilder("b", null);
     private ModuleBuilder c = mockModuleBuilder("c", null);
@@ -131,8 +133,7 @@ public class ModuleDependencySortTest {
             ModuleDependencySort.sort(builders);
         } catch (YangValidationException e) {
             assertThat(e.getMessage(), containsString("Module:b imported twice with different revisions:"
-                    + YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(date1) + ", "
-                    + YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(date2)));
+                    + SIMPLE_DATE_FORMAT.format(date1) + ", " + SIMPLE_DATE_FORMAT.format(date2)));
             throw e;
         }
     }
@@ -155,8 +156,8 @@ public class ModuleDependencySortTest {
         try {
             ModuleDependencySort.sort(builders);
         } catch (YangValidationException e) {
-            assertThat(e.getMessage(), containsString("Module:a with revision:"
-                    + YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(rev) + " declared twice"));
+            assertThat(e.getMessage(), containsString("Module:a with revision:" + SIMPLE_DATE_FORMAT.format(rev)
+                    + " declared twice"));
             throw e;
         }
     }

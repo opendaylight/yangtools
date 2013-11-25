@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
@@ -256,7 +256,7 @@ public final class ModuleDependencySort {
     }
 
     private static String formatRevDate(Date rev) {
-        return rev.equals(DEFAULT_REVISION) ? "default" : YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(rev);
+        return rev.equals(DEFAULT_REVISION) ? "default" : new SimpleDateFormat("yyyy-MM-dd").format(rev);
     }
 
     @VisibleForTesting

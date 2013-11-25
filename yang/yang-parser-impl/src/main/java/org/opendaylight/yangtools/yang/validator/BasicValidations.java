@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.validator;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,6 @@ import java.util.regex.Pattern;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 import com.google.common.collect.Sets;
@@ -95,7 +95,7 @@ final class BasicValidations {
             String exceptionMessage = ValidationUtil.f(
                     "(In (sub)module:%s) %s:%s, invalid date format expected date format is:%s",
                     ValidationUtil.getRootParentName(stmt), ValidationUtil.getSimpleStatementName(stmt.getClass()),
-                    ValidationUtil.getName(stmt), YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(new Date()));
+                    ValidationUtil.getName(stmt), new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
             ValidationUtil.ex(exceptionMessage);
         }
     }
@@ -201,7 +201,7 @@ final class BasicValidations {
     }
 
     /**
-     * 
+     *
      * Implementation of interface <code>MessageProvider</code> for method
      * {@link BasicValidations#checkPresentChildOfTypeSafe(ParseTree, Set, boolean)
      * checkPresentChildOfTypeSafe(ParseTree, Set, boolean) * }

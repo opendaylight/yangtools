@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.validator;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -33,7 +35,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Prefix_stmtContext
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_date_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Status_argContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.StringContext;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 import com.google.common.collect.Sets;
@@ -223,7 +224,7 @@ public class YangModelValidationTest {
     }
 
     static String getFormattedDate() {
-        return YangParserListenerImpl.SIMPLE_DATE_FORMAT.format(new Date());
+        return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     }
 
     private Include_stmtContext mockInclude(String name) {

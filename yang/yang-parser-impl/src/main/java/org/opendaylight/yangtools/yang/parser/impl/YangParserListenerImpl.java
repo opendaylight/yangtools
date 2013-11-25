@@ -89,7 +89,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private String yangModelPrefix;
     private Date revision = new Date(0L);
 
-    public static final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private final Stack<Stack<QName>> actualPath = new Stack<>();
 
     private void addNodeToPath(QName name) {

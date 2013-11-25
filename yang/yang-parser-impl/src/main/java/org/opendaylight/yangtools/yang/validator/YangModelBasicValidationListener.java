@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.validator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Set;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -56,7 +58,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Typedef_stmtContex
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Unique_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Uses_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yin_element_argContext;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserListenerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +69,8 @@ import com.google.common.collect.Sets;
  * only basic validation where context from all yang models is not present.
  */
 final class YangModelBasicValidationListener extends YangParserBaseListener {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(YangModelBasicValidationListener.class);
+    private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private final Set<String> uniquePrefixes;
     private final Set<String> uniqueImports;
@@ -175,7 +176,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterRevision_stmt(Revision_stmtContext ctx) {
-        BasicValidations.checkDateFormat(ctx, YangParserListenerImpl.SIMPLE_DATE_FORMAT);
+        BasicValidations.checkDateFormat(ctx, SIMPLE_DATE_FORMAT);
 
     }
 
@@ -240,7 +241,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      */
     @Override
     public void enterRevision_date_stmt(Revision_date_stmtContext ctx) {
-        BasicValidations.checkDateFormat(ctx, YangParserListenerImpl.SIMPLE_DATE_FORMAT);
+        BasicValidations.checkDateFormat(ctx, SIMPLE_DATE_FORMAT);
     }
 
     /**
