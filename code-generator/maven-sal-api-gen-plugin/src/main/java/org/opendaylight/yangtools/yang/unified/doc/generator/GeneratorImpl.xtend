@@ -414,6 +414,9 @@ class GeneratorImpl {
         </ul>
     '''
 
+    def dispatch CharSequence tree(Void obj) '''
+    '''
+
 
 
     /* #################### RESTRICTIONS #################### */
