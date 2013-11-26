@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,11 +92,9 @@ public final class TypeProviderImpl implements TypeProvider {
     private final SchemaContext schemaContext;
 
     /**
-     * The outter map maps module names to the map of the types for the module.
-     * The inner map maps the name of the concrete type to the JAVA
-     * <code>Type</code> (usually it is generated TO).
+     * Map<moduleName, Map<moduleDate, Map<typeName, type>>>
      */
-    private Map<String, Map<String, Type>> genTypeDefsContextMap;
+    private Map<String, Map<Date, Map<String, Type>>> genTypeDefsContextMap;
 
     /**
      * The map which maps schema paths to JAVA <code>Type</code>.
@@ -243,7 +242,8 @@ public final class TypeProviderImpl implements TypeProvider {
                 final Module module = findParentModule(schemaContext, typeDefinition);
                 Restrictions r = BindingGeneratorUtil.getRestrictions(typeDefinition);
                 if (module != null) {
-                    final Map<String, Type> genTOs = genTypeDefsContextMap.get(module.getName());
+                    final Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(module.getName());
+                    final Map<String, Type> genTOs = modulesByDate.get(module.getRevision());
                     if (genTOs != null) {
                         returnType = genTOs.get(typedefName);
                     }
@@ -333,7 +333,8 @@ public final class TypeProviderImpl implements TypeProvider {
                 final Module module = findParentModule(schemaContext, parentNode);
 
                 if (module != null) {
-                    final Map<String, Type> genTOs = genTypeDefsContextMap.get(module.getName());
+                    final Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(module.getName());
+                    final Map<String, Type> genTOs = modulesByDate.get(module.getRevision());
                     if (genTOs != null) {
                         returnType = genTOs.get(typedefName);
                     }
@@ -588,6 +589,16 @@ public final class TypeProviderImpl implements TypeProvider {
         final List<Module> modulesSortedByDependency = ModuleDependencySort.sort(modulesArray);
 
         for (final Module module : modulesSortedByDependency) {
+            Map<Date, Map<String, Type>> dateTypeMap = genTypeDefsContextMap.get(module.getName());
+            if (dateTypeMap == null) {
+                dateTypeMap = new HashMap<>();
+            }
+            final Map<String, Type> typeMap = new HashMap<>();
+            dateTypeMap.put(module.getRevision(), typeMap);
+            genTypeDefsContextMap.put(module.getName(), dateTypeMap);
+        }
+
+        for (final Module module : modulesSortedByDependency) {
             if (module == null) {
                 continue;
             }
@@ -598,12 +609,9 @@ public final class TypeProviderImpl implements TypeProvider {
             final List<TypeDefinition<?>> typeDefinitions = it.allTypedefs();
             final List<TypeDefinition<?>> listTypeDefinitions = sortTypeDefinitionAccordingDepth(typeDefinitions);
 
-            final Map<String, Type> typeMap = new HashMap<>();
-            genTypeDefsContextMap.put(moduleName, typeMap);
-
             if ((listTypeDefinitions != null) && (basePackageName != null)) {
                 for (final TypeDefinition<?> typedef : listTypeDefinitions) {
-                    typedefToGeneratedType(basePackageName, moduleName, typedef);
+                    typedefToGeneratedType(basePackageName, moduleName, module.getRevision(), typedef);
                 }
             }
         }
@@ -624,7 +632,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *         <code>modulName</code> or <code>typedef</code> or Q name of
      *         <code>typedef</code> equals <code>null</code>
      */
-    private Type typedefToGeneratedType(final String basePackageName, final String moduleName,
+    private Type typedefToGeneratedType(final String basePackageName, final String moduleName, final Date moduleRevision,
             final TypeDefinition<?> typedef) {
         if ((basePackageName != null) && (moduleName != null) && (typedef != null) && (typedef.getQName() != null)) {
 
@@ -658,7 +666,10 @@ public final class TypeProviderImpl implements TypeProvider {
                     returnType = wrapJavaTypeIntoTO(basePackageName, typedef, javaType);
                 }
                 if (returnType != null) {
-                    final Map<String, Type> typeMap = genTypeDefsContextMap.get(moduleName);
+                    final Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(moduleName);
+                    final Map<String, Type> typeMap = modulesByDate.get(moduleRevision);
+
+
                     if (typeMap != null) {
                         typeMap.put(typedefName, returnType);
                     }
@@ -887,7 +898,8 @@ public final class TypeProviderImpl implements TypeProvider {
     private Type findGenTO(final String searchedTypeName, final SchemaNode parentNode) {
         final Module typeModule = findParentModule(schemaContext, parentNode);
         if (typeModule != null && typeModule.getName() != null) {
-            final Map<String, Type> genTOs = genTypeDefsContextMap.get(typeModule.getName());
+            final Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(typeModule.getName());
+            final Map<String, Type> genTOs = modulesByDate.get(typeModule.getRevision());
             if (genTOs != null) {
                 return genTOs.get(searchedTypeName);
             }
@@ -908,10 +920,11 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private void storeGenTO(TypeDefinition<?> newTypeDef, GeneratedTOBuilder genTOBuilder, SchemaNode parentNode) {
         if (!(newTypeDef instanceof UnionType)) {
-            Map<String, Type> genTOsMap = null;
+
             final Module parentModule = findParentModule(schemaContext, parentNode);
             if (parentModule != null && parentModule.getName() != null) {
-                genTOsMap = genTypeDefsContextMap.get(parentModule.getName());
+                Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(parentModule.getName());
+                Map<String, Type> genTOsMap = modulesByDate.get(parentModule.getRevision());
                 genTOsMap.put(newTypeDef.getQName().getLocalName(), genTOBuilder.toInstance());
             }
         }
@@ -1117,10 +1130,12 @@ public final class TypeProviderImpl implements TypeProvider {
             genTOBuilder.setIsUnion(true);
         }
 
+        Map<Date, Map<String, Type>> modulesByDate = null;
         Map<String, Type> typeMap = null;
         final Module parentModule = findParentModule(schemaContext, innerExtendedType);
         if (parentModule != null) {
-            typeMap = genTypeDefsContextMap.get(parentModule.getName());
+            modulesByDate = genTypeDefsContextMap.get(parentModule.getName());
+            typeMap = modulesByDate.get(parentModule.getRevision());
         }
 
         if (typeMap != null) {
