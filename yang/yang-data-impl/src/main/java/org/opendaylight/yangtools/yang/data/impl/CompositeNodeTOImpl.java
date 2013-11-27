@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
  */
 public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implements CompositeNode {
 
-    private Map<QName, List<Node<?>>> nodeMap;
+    private Map<QName, List<Node<?>>> nodeMap = new HashMap<>();
 
     /**
      * @param qname
@@ -37,9 +38,6 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
      */
     public CompositeNodeTOImpl(QName qname, CompositeNode parent, List<Node<?>> value) {
         super(qname, parent, value);
-        if (value != null) {
-            nodeMap = NodeUtils.buildNodeMap(getValue());
-        }
         init();
     }
 
@@ -54,10 +52,13 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
         super(qname, parent, value, modifyAction);
         init();
     }
+    
+    protected void init() {
+        if (getValue() != null) {
+            nodeMap = NodeUtils.buildNodeMap(getValue());
+        }
+    }
 
-    /**
-     * @return the nodeMap
-     */
     protected Map<QName, List<Node<?>>> getNodeMap() {
         return nodeMap;
     }
@@ -136,12 +137,6 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
     @Override
     public List<SimpleNode<?>> getSimpleNodesByName(String children) {
         return getSimpleNodesByName(new QName(getNodeType(), children));
-    }
-
-    protected void init() {
-        if (getValue() != null) {
-            nodeMap = NodeUtils.buildNodeMap(getValue());
-        }
     }
 
     @Override
