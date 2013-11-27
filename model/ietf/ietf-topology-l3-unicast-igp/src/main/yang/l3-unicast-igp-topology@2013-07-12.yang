@@ -5,6 +5,7 @@ module l3-unicast-igp-topology {
     prefix "l3t";
     import network-topology {
         prefix "nt";
+        revision-date 2013-07-12;
     }
     
     import ietf-inet-types {

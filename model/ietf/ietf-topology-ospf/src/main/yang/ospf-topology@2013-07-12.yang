@@ -1,21 +1,24 @@
 ňmodule ospf-topology {
     yang-version 1;
     namespace "urn:ietf:params:xml:ns:yang:ospf-topology";
-	// replace with IANA namespace when assigned
+    // replace with IANA namespace when assigned
     prefix "ospf";
 
     import network-topology {
-		prefix "nt";
+        prefix "nt";
+        revision-date 2013-07-12;
     }
 
     import l3-unicast-igp-topology {
-		prefix "igp";
+        prefix "igp";
+        revision-date 2013-07-12;
     }
     import ietf-inet-types {
-		prefix "inet";
+        prefix "inet";
     }
     import ted {
-		prefix "ted";
+        prefix "ted";
+        revision-date 2013-07-12;
     }
 
     organization "TBD";

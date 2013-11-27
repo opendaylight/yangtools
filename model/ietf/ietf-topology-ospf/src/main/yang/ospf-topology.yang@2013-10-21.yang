@@ -7,16 +7,19 @@ module ospf-topology {
 
     import network-topology {
         prefix "nt";
+        revision-date 2013-10-21;
     }
 
     import l3-unicast-igp-topology {
         prefix "l3t";
+        revision-date 2013-10-21;
     }
     import ietf-inet-types {
         prefix "inet";
     }
     import ted {
         prefix "ted";
+        revision-date 2013-10-21;
     }
 
     organization "TBD";

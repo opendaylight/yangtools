@@ -5,12 +5,15 @@ module isis-topology {
 	prefix "isis";
 	import network-topology {
 	    prefix nt;
+	    revision-date 2013-07-12;
 	}
 	import l3-unicast-igp-topology {
 		prefix igp;
+		revision-date 2013-07-12;
 	}
 	import ted {
 		prefix ted;
+		revision-date 2013-07-12;
 	}
 	
 	organization "TBD";
