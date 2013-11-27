@@ -118,26 +118,6 @@ public class ModuleDependencySortTest {
         ModuleDependencySort.sort(builders);
     }
 
-    @Test(expected = YangValidationException.class)
-    public void testImportTwiceDifferentRevision() throws Exception {
-        Date date1 = new Date(463846463486L);
-        Date date2 = new Date(364896446683L);
-        b = mockModuleBuilder("b", date1);
-        ModuleBuilder b2 = mockModuleBuilder("b", date2);
-
-        mockDependency(a, b);
-        mockDependency(c, b2);
-
-        ModuleBuilder[] builders = new ModuleBuilder[] { a, c, b, b2 };
-        try {
-            ModuleDependencySort.sort(builders);
-        } catch (YangValidationException e) {
-            assertThat(e.getMessage(), containsString("Module:b imported twice with different revisions:"
-                    + SIMPLE_DATE_FORMAT.format(date1) + ", " + SIMPLE_DATE_FORMAT.format(date2)));
-            throw e;
-        }
-    }
-
     @Test
     public void testModuleTwiceWithDifferentRevs() throws Exception {
         ModuleBuilder a2 = mockModuleBuilder("a", new Date());

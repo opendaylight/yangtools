@@ -131,10 +131,11 @@ public final class ModuleDependencySort {
      * Extract module:revision from module builders
      */
     private static void processDependencies(Map<String, Map<Date, ModuleNodeImpl>> moduleGraph, List<?> builders) {
-        Map<String, Date> imported = Maps.newHashMap();
+
 
         // Create edges in graph
         for (Object mb : builders) {
+            Map<String, Date> imported = Maps.newHashMap();
 
             String fromName = null;
             Date fromRevision = null;
