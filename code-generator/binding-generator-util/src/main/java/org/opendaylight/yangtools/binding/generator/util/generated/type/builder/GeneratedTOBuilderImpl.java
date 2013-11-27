@@ -25,6 +25,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     private final List<GeneratedPropertyBuilder> equalsProperties = new ArrayList<>();
     private final List<GeneratedPropertyBuilder> hashProperties = new ArrayList<>();
     private final List<GeneratedPropertyBuilder> toStringProperties = new ArrayList<>();
+    private boolean isTypedef = false;
     private boolean isUnionType = false;
     private Restrictions restrictions;
     private GeneratedPropertyBuilder SUID;
@@ -132,6 +133,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     }
 
     @Override
+    public void setTypedef(boolean isTypedef) {
+        this.isTypedef = isTypedef;
+    }
+
+    @Override
     public void setIsUnion(boolean isUnion) {
         this.isUnionType = isUnion;
     }
@@ -143,6 +149,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         private final List<GeneratedProperty> hashCodeProperties;
         private final List<GeneratedProperty> stringProperties;
         private final GeneratedTransferObject extendsType;
+        private final boolean isTypedef;
         private final boolean isUnionType;
         private final Restrictions restrictions;
         private final GeneratedProperty SUID;
@@ -153,6 +160,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             this.equalsProperties = toUnmodifiableProperties(builder.equalsProperties);
             this.hashCodeProperties = toUnmodifiableProperties(builder.hashProperties);
             this.stringProperties = toUnmodifiableProperties(builder.toStringProperties);
+            this.isTypedef = builder.isTypedef;
             this.isUnionType = builder.isUnionType;
             this.restrictions = builder.restrictions;
             if (builder.SUID == null) {
@@ -160,6 +168,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             } else {
                 this.SUID = builder.SUID.toInstance(GeneratedTransferObjectImpl.this);
             }
+        }
+
+        @Override
+        public boolean isTypedef() {
+            return isTypedef;
         }
 
         @Override

@@ -177,5 +177,10 @@ public final class BaseYangTypes {
         public String getTypeDefaultConstruction(LeafSchemaNode node) {
             return null;
         }
+
+        @Override
+        public String getConstructorPropertyName(SchemaNode node) {
+            return null;
+        }
     };
 }
