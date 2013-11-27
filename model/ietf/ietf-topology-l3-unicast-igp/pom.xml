@@ -4,7 +4,7 @@
     <parent>
         <artifactId>model-ietf</artifactId>
         <groupId>org.opendaylight.yangtools.model</groupId>
-        <version>0.5.7-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,7 +17,6 @@
         <dependency>
             <groupId>org.opendaylight.yangtools.model</groupId>
             <artifactId>ietf-topology</artifactId>
-            <version>2013.07.12-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
