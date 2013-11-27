@@ -34,15 +34,26 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition
 import java.util.ArrayList
 import java.util.Map
 import org.opendaylight.yangtools.yang.model.api.SchemaPath
-import java.util.LinkedHashMap
+
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates
+import java.util.LinkedHashMap
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier
+import com.google.common.collect.FluentIterable
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode
+import java.net.URLEncoder
+import javax.swing.text.StyledEditorKit.ForegroundAction
 
 class GeneratorImpl {
 
     File path
     static val REVISION_FORMAT = new SimpleDateFormat("yyyy-MM-dd")
     static val Logger LOG = LoggerFactory.getLogger(GeneratorImpl)
+    var Module currentModule;
 
 
     def generate(SchemaContext context, File targetPath, Set<Module> modulesToGen) throws IOException {
@@ -61,7 +72,7 @@ class GeneratorImpl {
             val fw = new FileWriter(destination)
             destination.createNewFile();
             val bw = new BufferedWriter(fw)
-
+            currentModule = module;
             bw.append(module.generate);
             bw.close();
             fw.close();
@@ -92,9 +103,9 @@ class GeneratorImpl {
 
         «groupings(module)»
 
-        «childNodes(module)»
-
         «dataStore(module)»
+
+        «childNodes(module)»
 
         «notifications(module)»
 
@@ -192,7 +203,7 @@ class GeneratorImpl {
             «FOR augment : module.augmentations»
                 <li>
                     augment
-                    «augment.tree»
+                    «augment.augmentationInfo(InstanceIdentifier.builder().toInstance())»
                 </li>
             «ENDFOR»
             </ul>
@@ -204,17 +215,14 @@ class GeneratorImpl {
         if (notificationdefs.empty) {
             return '';
         }
+        
         return '''
             <h2>Notifications</h2>
-
-            <ul>
             «FOR notificationdef : notificationdefs»
-                <li>
-                    «notificationdef.nodeName»
-                    «notificationdef.tree»
-                </li>
+                
+                <h3>«notificationdef.nodeName»</h3>
+                    «notificationdef.notificationInfo(InstanceIdentifier.builder().node(notificationdef.QName).toInstance())»
             «ENDFOR»
-            </ul>
         '''
     }
 
@@ -222,15 +230,12 @@ class GeneratorImpl {
         if (module.rpcs.empty) {
             return '';
         }
+        
         return '''
             <h2>RPC Definitions</h2>
-
-            <ul>
             «FOR rpc : module.rpcs»
-                <li>
-                    «rpc.nodeName»
-                    «rpc.tree»
-                </li>
+                <h3>«rpc.nodeName»</h3>
+                    «rpc.rpcInfo(InstanceIdentifier.builder().node(rpc.QName).toInstance())»
             «ENDFOR»
             </ul>
         '''
@@ -242,15 +247,11 @@ class GeneratorImpl {
         }
         return '''
             <h2>Extensions</h2>
-
-            <ul>
             «FOR ext : module.extensionSchemaNodes»
                 <li>
-                    «ext.nodeName»
-                    «ext.tree»
+                    <h3>«ext.nodeName»</h3>
                 </li>
             «ENDFOR»
-            </ul>
         '''
     }
 
@@ -287,63 +288,278 @@ class GeneratorImpl {
             <dd>«pre(REVISION_FORMAT.format(module.revision))»</dd>
             
             «FOR imp : module.imports BEFORE "<dt>Imports</dt>" »
-                <dd>«pre(imp.prefix)» = «pre(imp.moduleName)»</dd>
+                <dd>«code(imp.prefix)» = «code(imp.moduleName)»</dd>
             «ENDFOR»
         </dl>
     '''
-
+    
+    def code(String string) '''<code>«string»</code>'''
+        
     def process(Module module) {
         throw new UnsupportedOperationException("TODO: auto-generated method stub")
     }
 
-
-
-    /* #################### TREE STRUCTURE #################### */
-    def dispatch CharSequence tree(Module module) '''
+    def CharSequence tree(Module module) '''
         «strong("module " + module.name)»
-        «module.childNodes.tree»
+        «module.childNodes.treeSet(InstanceIdentifier.builder.toInstance())»
+    '''
+    
+    private def dispatch CharSequence tree(ChoiceNode node,InstanceIdentifier path) '''
+        «node.nodeName» (choice)
+        «casesTree(node.cases,path)»
+    '''
+    
+    def casesTree(Set<ChoiceCaseNode> nodes,InstanceIdentifier path) '''
+        <ul>
+        «FOR node : nodes»
+            <li>
+            «node.nodeName»
+            «node.childNodes.treeSet(path)»
+            </li>
+        «ENDFOR»
+        </ul>
     '''
 
-    def dispatch CharSequence tree(DataNodeContainer node) '''
-        «IF node instanceof SchemaNode»
-            «(node as SchemaNode).nodeName»
-        «ENDIF»
-        «node.childNodes.tree»
-    '''
-
-    def dispatch CharSequence tree(DataSchemaNode node) '''
+    private def dispatch CharSequence tree(DataSchemaNode node,InstanceIdentifier path) '''
         «node.nodeName»
     '''
 
-    def dispatch CharSequence tree(ListSchemaNode node) '''
-        «node.nodeName»
-        «node.childNodes.tree»
+    private def dispatch CharSequence tree(ListSchemaNode node,InstanceIdentifier path) '''
+        «val newPath = path.append(node)»
+        «localLink(newPath,node.nodeName)»
+        «node.childNodes.treeSet(newPath)»
+    '''
+    
+    private def dispatch CharSequence tree(ContainerSchemaNode node,InstanceIdentifier path) '''
+        «val newPath = path.append(node)»
+        «localLink(newPath,node.nodeName)»
+        «node.childNodes.treeSet(newPath)»
     '''
 
     def CharSequence childNodes(Module module) '''
-        «val Map<SchemaPath, DataSchemaNode> childNodes = new LinkedHashMap()»
-        «collectChildNodes(module.childNodes, childNodes)»
+        «val childNodes = module.childNodes»
         «IF childNodes !== null && !childNodes.empty»
             <h2>Child nodes</h2>
 
-            «childNodes.childNodesInfoTree»
+            «childNodes.printChildren(2,InstanceIdentifier.builder().toInstance())»
         «ENDIF»
     '''
+    
+    def CharSequence printChildren(Set<DataSchemaNode> nodes, int level, InstanceIdentifier path) {
+    val leafNodes = nodes.filter(LeafSchemaNode)
+    val leafListNodes = nodes.filter(LeafListSchemaNode)
+    val choices = nodes.filter(ChoiceNode)
+    val containers = nodes.filter(ContainerSchemaNode)
+    val lists = nodes.filter(ListSchemaNode)
+    return '''
+        <h3>Direct children</h3>
+        <ul>
+        «FOR childNode : leafNodes»
+            «childNode.printShortInfo(level,path)»
+        «ENDFOR»
+        «FOR childNode : leafListNodes»
+            «childNode.printShortInfo(level,path)»
+        «ENDFOR»
+        «FOR childNode : containers»
+            «childNode.printShortInfo(level,path)»
+        «ENDFOR»
+        «FOR childNode : lists»
+            «childNode.printShortInfo(level,path)»
+        «ENDFOR»
+        </ul>
+        
+        «IF !path.path.empty»
+        <h3>XML example</h3>
+        «nodes.xmlExample(path.path.last.nodeType,path)»
+        </h3>
+        «ENDIF»
+        «FOR childNode : containers»
+            «childNode.printInfo(level,path)»
+        «ENDFOR»
+        «FOR childNode : lists»
+            «childNode.printInfo(level,path)»
+        «ENDFOR»
+        
+    '''
+    }
+    
+    def CharSequence xmlExample(Set<DataSchemaNode> nodes, QName name,InstanceIdentifier path) '''
+    <pre>
+        «xmlExampleTag(name,nodes.xmplExampleTags(path))»
+    </pre>
+    '''
+    
+    def CharSequence xmplExampleTags(Set<DataSchemaNode> nodes, InstanceIdentifier identifier) '''
+        <!-- Child nodes -->
+        «FOR node : nodes»
+        <!-- «node.QName.localName» -->
+            «node.asXmlExampleTag(identifier)»
+        «ENDFOR»
+        
+    '''
+    
+    private def dispatch CharSequence asXmlExampleTag(LeafSchemaNode node, InstanceIdentifier identifier) '''
+        «node.QName.xmlExampleTag("...")»
+    '''
+    
+    private def dispatch CharSequence asXmlExampleTag(LeafListSchemaNode node, InstanceIdentifier identifier) '''
+        &lt!-- This node could appear multiple times --&gt
+        «node.QName.xmlExampleTag("...")»
+    '''
+    
+    private def dispatch CharSequence asXmlExampleTag(ContainerSchemaNode node, InstanceIdentifier identifier) '''
+        &lt!-- See «localLink(identifier.append(node),"definition")» for child nodes.  --&gt
+        «node.QName.xmlExampleTag("...")»
+    '''
+    
+    
+    private def dispatch CharSequence asXmlExampleTag(ListSchemaNode node, InstanceIdentifier identifier) '''
+        &lt!-- See «localLink(identifier.append(node),"definition")» for child nodes.  --&gt
+        &lt!-- This node could appear multiple times --&gt
+        «node.QName.xmlExampleTag("...")»
+    '''
+    
+    
+    private def dispatch CharSequence asXmlExampleTag(DataSchemaNode node, InstanceIdentifier identifier) '''
+        <!-- noop -->
+    '''
+    
+    
+    def xmlExampleTag(QName name, CharSequence data) {
+        return '''&lt;«name.localName» xmlns="«name.namespace»"&gt;«data»&lt;/«name.localName»&gt;'''
+    }
+    
+    private def dispatch CharSequence printInfo(ContainerSchemaNode node, int level, InstanceIdentifier path) '''
+        «val newPath = path.append(node)»
+        «header(level,newPath)»
+        <dl>
+          <dt>XML Path</dt>
+          <dd>«newPath.asXmlPath»</dd>
+          <dt>Restconf path</dt>
+          <dd>«code(newPath.asRestconfPath)»</dd>
+        </dl>
+        «node.childNodes.printChildren(level,newPath)»
+    '''
+    
+    def header(int level,QName name) '''<h«level»>«name.localName»</h«level»>'''
+    
+    
+    def header(int level,InstanceIdentifier name) 
+        '''
+        <h«level» id="«FOR cmp : name.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">
+            «FOR cmp : name.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»
+        </h«level»>'''
+    
+    
+    private def dispatch CharSequence printInfo(ListSchemaNode node, int level, InstanceIdentifier path) '''
+        «val newPath = path.append(node)»
+        «header(level,newPath)»
+        <dl>
+          <dt>XML Path</dt>
+          <dd>«newPath.asXmlPath»</dd>
+          <dt>Restconf path</dt>
+          <dd>«code(newPath.asRestconfPath)»</dd>
+        </dl>
+        «node.childNodes.printChildren(level,newPath)»
+    '''
+    
+    def CharSequence printShortInfo(ContainerSchemaNode node, int level, InstanceIdentifier path) {
+        val newPath = path.append(node);
+        return '''
+            <li>«strong(localLink(newPath,node.QName.localName))» (container)</li>
+        '''
+    }
+    
+    def CharSequence printShortInfo(ListSchemaNode node, int level, InstanceIdentifier path) {
+        val newPath = path.append(node);
+        return '''
+            <li>«strong(localLink(newPath,node.QName.localName))» (list)</li>
+        '''
+    }
+    
+    def CharSequence printShortInfo(LeafSchemaNode node, int level, InstanceIdentifier path) {
+        return '''
+            <li>«strong((node.QName.localName))» (leaf)</li>
+        '''
+    }
+    
+    def CharSequence printShortInfo(LeafListSchemaNode node, int level, InstanceIdentifier path) {
+        return '''
+            <li>«strong((node.QName.localName))» (leaf-list)</li>
+        '''
+    }
+    
+    def CharSequence localLink(InstanceIdentifier identifier, CharSequence text) '''
+        <a href="#«FOR cmp : identifier.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">«text»</a>
+    '''
+    
+    
+    private def dispatch InstanceIdentifier append(InstanceIdentifier identifier, ContainerSchemaNode node) {
+        val pathArguments = new ArrayList(identifier.path)
+        pathArguments.add(new NodeIdentifier(node.QName));
+        return new InstanceIdentifier(pathArguments);
+    }
+    
+    private def dispatch InstanceIdentifier append(InstanceIdentifier identifier, ListSchemaNode node) {
+        val pathArguments = new ArrayList(identifier.path)
+        val keyValues = new LinkedHashMap<QName,Object>();
+        if(node.keyDefinition != null) {
+            for(definition : node.keyDefinition) {
+                keyValues.put(definition,new Object);
+            }
+        }
+        pathArguments.add(new NodeIdentifierWithPredicates(node.QName,keyValues));
+        return new InstanceIdentifier(pathArguments);
+    }
+    
+    
+    def asXmlPath(InstanceIdentifier identifier) {
+        return "";
+    }
+    
+    def asRestconfPath(InstanceIdentifier identifier) {
+        val it = new StringBuilder();
+        append(currentModule.name)
+        append(":")
+        var previous = false;
+        for(arg : identifier.path) {
+            if(previous) append("/")
+            append(arg.nodeType.localName);
+            previous = true;
+            if(arg instanceof NodeIdentifierWithPredicates) {
+                val nodeIdentifier = arg as NodeIdentifierWithPredicates;
+                for(qname : nodeIdentifier.keyValues.keySet) {
+                    append("/{");
+                    append(qname.localName)
+                    append("}")
+                }
+            }
+        }
+        
+        return it.toString;
+    }
+    
+    
+    private def dispatch CharSequence printInfo(DataSchemaNode node, int level, InstanceIdentifier path) '''
+        «header(level+1,node.QName)»
+    '''
+    
+
+
+
 
     def CharSequence childNodesInfoTree(Map<SchemaPath, DataSchemaNode> childNodes) '''
         «IF childNodes !== null && !childNodes.empty»
-            <ul>
             «FOR child : childNodes.values»
                 «childInfo(child, childNodes)»
             «ENDFOR»
-            </ul>
         «ENDIF»
     '''
 
     def CharSequence childInfo(DataSchemaNode node, Map<SchemaPath, DataSchemaNode> childNodes) '''
         «val String path = nodeSchemaPathToPath(node, childNodes)»
         «IF path != null»
-            «listItem(strong(path))»
+            «code(path)»
                 «IF node !== null»
                 <ul>
                 «node.descAndRef»
@@ -352,12 +568,12 @@ class GeneratorImpl {
         «ENDIF»
     '''
 
-    def dispatch CharSequence tree(Collection<DataSchemaNode> childNodes) '''
+    private def CharSequence treeSet(Collection<DataSchemaNode> childNodes, InstanceIdentifier path) '''
         «IF childNodes !== null && !childNodes.empty»
             <ul>
             «FOR child : childNodes»
                 <li>
-                    «child.tree»
+                    «child.tree(path)»
                 </li>
             «ENDFOR»
             </ul>
@@ -368,7 +584,7 @@ class GeneratorImpl {
         [«FOR key : node.keyDefinition SEPARATOR " "»«key.localName»«ENDFOR»]
     '''
 
-    def dispatch CharSequence tree(AugmentationSchema augment) '''
+    private def CharSequence augmentationInfo(AugmentationSchema augment, InstanceIdentifier path) '''
         <ul>
             «listItem(augment.description)»
             «listItem("Reference", augment.reference)»
@@ -380,41 +596,41 @@ class GeneratorImpl {
             </li>
             <li>
                 Child nodes
-                «augment.childNodes.tree»
+                «augment.childNodes.treeSet(path)»
             </li>
         </ul>
     '''
 
-    def dispatch CharSequence tree(NotificationDefinition notification) '''
+    private def CharSequence notificationInfo(NotificationDefinition notification,InstanceIdentifier path) '''
         <ul>
             «notification.descAndRef»
             <li>
                 Child nodes
-                «notification.childNodes.tree»
+                «notification.childNodes.treeSet(path)»
             </li>
         </ul>
     '''
 
-    def dispatch CharSequence tree(RpcDefinition rpc) '''
+    private def CharSequence rpcInfo(RpcDefinition rpc,InstanceIdentifier path) '''
         <ul>
             «rpc.descAndRef»
             <li>
-                «rpc.input.tree»
+                «rpc.input.tree(path)»
             </li>
             <li>
-                «rpc.output.tree»
+                «rpc.output.tree(path)»
             </li>
         </ul>
     '''
 
-    def dispatch CharSequence tree(ExtensionDefinition ext) '''
+    private def CharSequence extensionInfo(ExtensionDefinition ext, InstanceIdentifier path) '''
         <ul>
             «ext.descAndRef»
             «listItem("Argument", ext.argument)»
         </ul>
     '''
 
-    def dispatch CharSequence tree(Void obj) '''
+    private def dispatch CharSequence tree(Void obj, InstanceIdentifier path) '''
     '''
 
 
@@ -425,37 +641,37 @@ class GeneratorImpl {
         «type.toRange»
     '''
 
-    def dispatch toLength(TypeDefinition<?> type) {
+    private def dispatch toLength(TypeDefinition<?> type) {
     }
 
-    def dispatch toLength(BinaryTypeDefinition type) '''
+    private def dispatch toLength(BinaryTypeDefinition type) '''
         «type.lengthConstraints.toLengthStmt»
     '''
 
-    def dispatch toLength(StringTypeDefinition type) '''
+    private def dispatch toLength(StringTypeDefinition type) '''
         «type.lengthConstraints.toLengthStmt»
     '''
 
-    def dispatch toLength(ExtendedType type) '''
+    private def dispatch toLength(ExtendedType type) '''
         «type.lengthConstraints.toLengthStmt»
     '''
 
-    def dispatch toRange(TypeDefinition<?> type) {
+    private def dispatch toRange(TypeDefinition<?> type) {
     }
 
-    def dispatch toRange(DecimalTypeDefinition type) '''
+    private def dispatch toRange(DecimalTypeDefinition type) '''
         «type.rangeConstraints.toRangeStmt»
     '''
 
-    def dispatch toRange(IntegerTypeDefinition type) '''
+    private def dispatch toRange(IntegerTypeDefinition type) '''
         «type.rangeConstraints.toRangeStmt»
     '''
 
-    def dispatch toRange(UnsignedIntegerTypeDefinition type) '''
+    private def dispatch toRange(UnsignedIntegerTypeDefinition type) '''
         «type.rangeConstraints.toRangeStmt»
     '''
 
-    def dispatch toRange(ExtendedType type) '''
+    private def dispatch toRange(ExtendedType type) '''
         «type.rangeConstraints.toRangeStmt»
     '''
 
@@ -496,9 +712,9 @@ class GeneratorImpl {
 
 
     /* #################### UTILITY #################### */
-    private def String strong(String str) '''<strong>«str»</strong>'''
-    private def italic(String str) '''<i>«str»</i>'''
-    private def pre(String str) '''<pre>«str»</pre>'''
+    private def String strong(CharSequence str) '''<strong>«str»</strong>'''
+    private def italic(CharSequence str) '''<i>«str»</i>'''
+    private def pre(CharSequence str) '''<pre>«str»</pre>'''
 
     def CharSequence descAndRef(SchemaNode node) '''
         «listItem(node.description)»
@@ -583,18 +799,18 @@ class GeneratorImpl {
         «ENDIF»
     '''
 
-    def dispatch addedByInfo(SchemaNode node) '''
+    private def dispatch addedByInfo(SchemaNode node) '''
     '''
 
-    def dispatch addedByInfo(DataSchemaNode node) '''
+    private def dispatch addedByInfo(DataSchemaNode node) '''
         «IF node.augmenting»(A)«ENDIF»«IF node.addedByUses»(U)«ENDIF»
     '''
 
-    def dispatch isAddedBy(SchemaNode node) {
+    private def dispatch isAddedBy(SchemaNode node) {
         return false;
     }
 
-    def dispatch isAddedBy(DataSchemaNode node) {
+    private def dispatch isAddedBy(DataSchemaNode node) {
         if (node.augmenting || node.addedByUses) {
             return true
         } else {
@@ -602,17 +818,25 @@ class GeneratorImpl {
         }
     }
 
-    def dispatch nodeName(SchemaNode node) '''
+    private def dispatch nodeName(SchemaNode node) '''
         «IF node.isAddedBy»
             «italic(node.QName.localName)»«node.addedByInfo»
+        «ELSE»
+            «node.QName.localName»«node.addedByInfo»
+        «ENDIF»
+    '''
+    
+    private def dispatch nodeName(ContainerSchemaNode node) '''
+        «IF node.isAddedBy»
+            «strong(italic(node.QName.localName))»«node.addedByInfo»
         «ELSE»
             «strong(node.QName.localName)»«node.addedByInfo»
         «ENDIF»
     '''
 
-    def dispatch nodeName(ListSchemaNode node) '''
+    private def dispatch nodeName(ListSchemaNode node) '''
         «IF node.isAddedBy»
-            «italic(node.QName.localName)» «IF node.keyDefinition !== null && !node.keyDefinition.empty»«node.listKeys»«ENDIF»«node.addedByInfo»
+            «strong(italic(node.QName.localName))» «IF node.keyDefinition !== null && !node.keyDefinition.empty»«node.listKeys»«ENDIF»«node.addedByInfo»
         «ELSE»
             «strong(node.QName.localName)» «IF node.keyDefinition !== null && !node.keyDefinition.empty»«node.listKeys»«ENDIF»
         «ENDIF»
