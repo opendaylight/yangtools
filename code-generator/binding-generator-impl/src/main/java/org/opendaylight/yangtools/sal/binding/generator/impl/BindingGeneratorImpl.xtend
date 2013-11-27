@@ -883,6 +883,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
             if (result != null) {
                 if (tmpPath.size == 1) {
+                    if (result != null && result.addedByUses) {
+                        result = findOriginal(result);
+                    }
                     return result;
                 } else {
                     var DataSchemaNode newParent = result;
@@ -890,6 +893,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     tmpPath.remove(0);
                     for (name : tmpPath) {
                         newParent = (newParent as DataNodeContainer).getDataChildByName(name);
+                    }
+                    if (newParent != null && newParent.addedByUses) {
+                        newParent = findOriginal(newParent);
                     }
                     return newParent;
                 }
