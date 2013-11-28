@@ -30,9 +30,13 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
+import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.sonatype.plexus.build.incremental.BuildContext;
+import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 class YangToSourcesProcessor {
@@ -47,11 +51,18 @@ class YangToSourcesProcessor {
     private final List<CodeGeneratorArg> codeGenerators;
     private final MavenProject project;
     private final boolean inspectDependencies;
+    private final BuildContext buildContext;
     private YangProvider yangProvider;
 
     @VisibleForTesting
     YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
             MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
+        this(new DefaultBuildContext(), log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, yangProvider);
+    }
+
+    private YangToSourcesProcessor(BuildContext buildContext,  Log log, File yangFilesRootDir, File[] excludedFiles,
+            List<CodeGeneratorArg> codeGenerators, MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
+        this.buildContext = Util.checkNotNull(buildContext, "buildContext");
         this.log = Util.checkNotNull(log, "log");
         this.yangFilesRootDir = Util.checkNotNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = new File[excludedFiles.length];
@@ -65,7 +76,7 @@ class YangToSourcesProcessor {
         this.yangProvider = yangProvider;
     }
 
-    YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
+    YangToSourcesProcessor(BuildContext buildContext, Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
             MavenProject project, boolean inspectDependencies) {
         this(log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, new YangProvider());
     }
@@ -208,6 +219,10 @@ class YangToSourcesProcessor {
 
         if (outputDir != null) {
             project.addCompileSourceRoot(outputDir.getAbsolutePath());
+        }
+
+        if (g instanceof BuildContextAware) {
+            ((BuildContextAware)g).setBuildContext(buildContext);
         }
         g.setLog(log);
         g.setMavenProject(project);
