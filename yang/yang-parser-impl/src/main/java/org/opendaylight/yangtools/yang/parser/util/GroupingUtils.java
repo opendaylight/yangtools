@@ -609,9 +609,14 @@ public final class GroupingUtils {
             final ModuleBuilder parentModule) {
         // set correct path
         List<QName> targetNodePath = new ArrayList<>(parentSchemaPath.getPath());
-        targetNodePath.add(new QName(parentModule.getNamespace(), parentModule.getRevision(), parentModule.getPrefix(),
-                node.getQName().getLocalName()));
+        QName qname = new QName(parentModule.getNamespace(), parentModule.getRevision(), parentModule.getPrefix(),
+                node.getQName().getLocalName());
+        targetNodePath.add(qname);
+        if (node instanceof DataSchemaNodeBuilder) {
+            ((DataSchemaNodeBuilder)node).setQName(qname);
+        }
         node.setPath(new SchemaPath(targetNodePath, true));
+
 
         // set correct path for all child nodes
         if (node instanceof DataNodeContainerBuilder) {

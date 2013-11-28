@@ -106,6 +106,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     @Override
     public void setQName(QName qname) {
         this.qname = qname;
+        instance.setQName(qname);
     }
 
     @Override
@@ -241,7 +242,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     public final class ChoiceCaseNodeImpl implements ChoiceCaseNode {
-        private final QName qname;
+        private QName qname;
         private SchemaPath path;
         private YangNode parent;
         private String description;
@@ -262,6 +263,10 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         @Override
         public QName getQName() {
             return qname;
+        }
+
+        private void setQName(QName qname) {
+            this.qname = qname;
         }
 
         @Override

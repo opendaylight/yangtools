@@ -88,6 +88,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     @Override
     public void setQName(QName qname) {
         this.qname = qname;
+        instance.setQName(qname);
     }
 
     @Override
@@ -226,7 +227,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     }
 
     private final class LeafSchemaNodeImpl implements LeafSchemaNode {
-        private final QName qname;
+        private QName qname;
         private SchemaPath path;
         private YangNode parent;
         private String description;
@@ -248,6 +249,10 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         @Override
         public QName getQName() {
             return qname;
+        }
+
+        private void setQName(QName qname) {
+            this.qname = qname;
         }
 
         @Override

@@ -65,6 +65,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     @Override
     public void setQName(QName qname) {
         this.qname = qname;
+        instance.setQName(qname);
     }
 
     @Override
@@ -149,7 +150,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     private final class AnyXmlSchemaNodeImpl implements AnyXmlSchemaNode {
-        private final QName qname;
+        private QName qname;
         private SchemaPath path;
         private YangNode parent;
         private String description;
@@ -168,6 +169,10 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         @Override
         public QName getQName() {
             return qname;
+        }
+
+        private void setQName(QName qname) {
+            this.qname = qname;
         }
 
         @Override
