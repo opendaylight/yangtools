@@ -26,7 +26,7 @@ public interface TypeProvider {
      * Definition contains extended type defined via yang typedef statement
      * the method SHOULD return Generated Type or Generated Transfer Object
      * if that Type is correctly referenced to resolved imported yang module.
-     * The method will return <cdoe>null</cdoe> value in situations that
+     * The method will return <code>null</code> value in situations that
      * TypeDefinition can't be resolved (either due missing yang import or
      * incorrectly specified type).
      *

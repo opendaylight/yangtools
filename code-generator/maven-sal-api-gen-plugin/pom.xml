@@ -37,6 +37,14 @@
             <artifactId>yang-data-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.sonatype.plexus</groupId>
+            <artifactId>plexus-build-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-slf4j-logging</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

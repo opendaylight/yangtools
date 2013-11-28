@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.sal.java.api.generator;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +21,10 @@ import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.plexus.build.incremental.BuildContext;
+import org.sonatype.plexus.build.incremental.DefaultBuildContext;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Generates files with JAVA source codes for every specified type.
@@ -39,8 +45,34 @@ public final class GeneratorJavaFile {
     private final Set<? extends Type> types;
 
     /**
+     * BuildContext used for instantiating files
+     */
+    private final BuildContext buildContext;
+
+    /**
      * Creates instance of this class with the set of <code>types</code> for
      * which the JAVA code is generated.
+     *
+     * The instances of concrete JAVA code generator are created.
+     *
+     * @param buildContext
+     *            build context to use for accessing files
+     * @param types
+     *            set of types for which JAVA code should be generated
+     */
+    public GeneratorJavaFile(final BuildContext buildContext, final Set<? extends Type> types) {
+        this.buildContext = Preconditions.checkNotNull(buildContext);
+        this.types = Preconditions.checkNotNull(types);
+        generators.add(new InterfaceGenerator());
+        generators.add(new TOGenerator());
+        generators.add(new EnumGenerator());
+        generators.add(new BuilderGenerator());
+    }
+
+    /**
+     * Creates instance of this class with the set of <code>types</code> for
+     * which the JAVA code is generated. Generator instantiated this way uses
+     * the default build context, e.g. it will re-generate any and all files.
      *
      * The instances of concrete JAVA code generator are created.
      *
@@ -48,11 +80,7 @@ public final class GeneratorJavaFile {
      *            set of types for which JAVA code should be generated
      */
     public GeneratorJavaFile(final Set<? extends Type> types) {
-        this.types = types;
-        generators.add(new InterfaceGenerator());
-        generators.add(new TOGenerator());
-        generators.add(new EnumGenerator());
-        generators.add(new BuilderGenerator());
+        this(new DefaultBuildContext(), types);
     }
 
     /**
@@ -63,7 +91,7 @@ public final class GeneratorJavaFile {
      *            directory to which the output source codes should be generated
      * @return list of output files
      * @throws IOException
-     *             if the error during writting to the file occures
+     *             if the error during writing to the file occurs
      */
     public List<File> generateToFile(final File parentDirectory) throws IOException {
         final List<File> result = new ArrayList<>();
@@ -96,7 +124,7 @@ public final class GeneratorJavaFile {
      *            code generator which is used for generating of the source code
      * @return file which contains JAVA source code
      * @throws IOException
-     *             if the error during writting to the file occures
+     *             if the error during writing to the file occurs
      * @throws IllegalArgumentException
      *             if <code>type</code> equals <code>null</code>
      * @throws IllegalStateException
@@ -123,19 +151,20 @@ public final class GeneratorJavaFile {
         }
 
         if (generator.isAcceptable(type)) {
-            String generatedCode = generator.generate(type);
+            final String generatedCode = generator.generate(type);
             if (generatedCode.isEmpty()) {
                 throw new IllegalStateException("Generated code should not be empty!");
             }
             final File file = new File(packageDir, generator.getUnitName(type) + ".java");
-            try (final FileWriter fw = new FileWriter(file)) {
-                file.createNewFile();
-                try (final BufferedWriter bw = new BufferedWriter(fw)) {
-                    bw.write(generatedCode);
+            try (final OutputStream stream = buildContext.newFileOutputStream(file)) {
+                try (final Writer fw = new OutputStreamWriter(stream)) {
+                    try (final BufferedWriter bw = new BufferedWriter(fw)) {
+                        bw.write(generatedCode);
+                    }
+                } catch (IOException e) {
+                    LOG.error("Failed to write generate output into {}", file.getPath(), e);
+                    throw e;
                 }
-            } catch (IOException e) {
-                LOG.error(e.getMessage());
-                throw new IOException(e);
             }
             return file;
         }

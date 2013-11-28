@@ -131,6 +131,18 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang.version}</version>
             </dependency>
+
+            <!-- Plugin integration -->
+            <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-build-api</artifactId>
+                <version>0.0.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-slf4j-logging</artifactId>
+                <version>1.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

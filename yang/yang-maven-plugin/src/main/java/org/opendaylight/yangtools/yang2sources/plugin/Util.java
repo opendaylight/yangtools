@@ -15,6 +15,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
@@ -97,18 +98,6 @@ final class Util {
         }
 
         return result;
-    }
-
-    static List<InputStream> listFilesAsStream(File rootDir, File[] excludedFiles, Log log)
-            throws FileNotFoundException {
-        List<InputStream> is = new ArrayList<InputStream>();
-
-        Collection<File> files = listFiles(rootDir, excludedFiles, log);
-        for (File f : files) {
-            is.add(new NamedFileInputStream(f));
-        }
-
-        return is;
     }
 
     static class NamedFileInputStream extends FileInputStream {
@@ -243,7 +232,7 @@ final class Util {
                         if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
                                 && !entry.isDirectory() && entryName.endsWith(".yang")) {
                             foundFilesForReporting.add(entryName);
-                            // This will be closed after all strams are
+                            // This will be closed after all streams are
                             // parsed.
                             InputStream entryStream = zip.getInputStream(entry);
                             yangsFromDependencies.add(entryStream);
@@ -260,6 +249,53 @@ final class Util {
             throw new MojoFailureException(e.getMessage(), e);
         }
         return new YangsInZipsResult(yangsFromDependencies, zips);
+    }
+
+    static Collection<File> findYangFilesInDependencies(Log log, MavenProject project) throws MojoFailureException {
+        final List<File> yangsFilesFromDependencies = new ArrayList<>();
+
+        try {
+            List<File> filesOnCp = Util.getClassPath(project);
+            log.info(Util.message("Searching for yang files in following dependencies: %s",
+                    YangToSourcesProcessor.LOG_PREFIX, filesOnCp));
+
+            for (File file : filesOnCp) {
+                // is it jar file or directory?
+                if (file.isDirectory()) {
+                    File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
+                    if (yangDir.exists() && yangDir.isDirectory()) {
+                        File[] yangFiles = yangDir.listFiles(new FilenameFilter() {
+                            @Override
+                            public boolean accept(File dir, String name) {
+                                return name.endsWith(".yang") && new File(dir, name).isFile();
+                            }
+                        });
+
+                        yangsFilesFromDependencies.addAll(Arrays.asList(yangFiles));
+                    }
+                } else {
+                    try (ZipFile zip = new ZipFile(file)) {
+
+                        final Enumeration<? extends ZipEntry> entries = zip.entries();
+                        while (entries.hasMoreElements()) {
+                            ZipEntry entry = entries.nextElement();
+                            String entryName = entry.getName();
+
+                            if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
+                                    && !entry.isDirectory() && entryName.endsWith(".yang")) {
+                                log.debug(Util.message("Found a YANG file in %s: %s", YangToSourcesProcessor.LOG_PREFIX,
+                                        file, entryName));
+                                yangsFilesFromDependencies.add(file);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new MojoFailureException("Failed to scan for YANG files in depedencies", e);
+        }
+        return yangsFilesFromDependencies;
     }
 
     static final class ContextHolder {
