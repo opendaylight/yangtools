@@ -160,6 +160,7 @@ public final class BaseYangTypes {
             switch (typeName) {
             case "binary" : return Types.primitiveType("byte[]", restrictions);
             case "decimal64": return Types.typeForClass(BigDecimal.class, restrictions);
+            case "enumeration": return Types.typeForClass(Enum.class, restrictions);
             case "int8": return Types.typeForClass(Byte.class, restrictions);
             case "int16": return Types.typeForClass(Short.class, restrictions);
             case "int32": return Types.typeForClass(Integer.class, restrictions);
