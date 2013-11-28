@@ -76,6 +76,8 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      */
     GeneratedTransferObject toInstance();
 
+    void setTypedef(boolean isTypedef);
+
     /**
      *
      * @param isUnion

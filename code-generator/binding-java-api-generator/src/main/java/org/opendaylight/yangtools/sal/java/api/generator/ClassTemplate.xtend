@@ -12,6 +12,8 @@ import java.util.Collectionsimport java.util.Arrays
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import com.google.common.collect.Range
 import java.util.regex.Pattern
+import com.google.common.io.BaseEncoding
+import java.beans.ConstructorProperties
 
 /**
  * Template for generating JAVA class. 
@@ -95,7 +97,9 @@ class ClassTemplate extends BaseTemplate {
             «enumDeclarations»
             «constantsDeclarations»
             «generateFields»
+
             «constructors»
+
             «FOR field : properties SEPARATOR "\n"»
                 «field.getterMethod»
                 «IF !field.readOnly»
@@ -148,6 +152,9 @@ class ClassTemplate extends BaseTemplate {
     '''
     
     def protected allValuesConstructor() '''
+    «IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
+        @«ConstructorProperties.importedName»("value")
+    «ENDIF»
     public «type.name»(«allProperties.asArgumentsDeclaration») {
         «IF false == parentProperties.empty»
             super(«parentProperties.asArguments»);
@@ -209,9 +216,21 @@ class ClassTemplate extends BaseTemplate {
             super(source);
     }
     '''
-    
 
-    
+    def protected defaultInstance() '''
+        «IF genTO.typedef && !allProperties.empty && !genTO.unionType»
+            «val prop = allProperties.get(0)»
+            public static «genTO.name» getDefaultInstance(String defaultValue) {
+                «IF "byte[]".equals(prop.returnType.name)»
+                    «BaseEncoding.importedName» baseEncoding = «BaseEncoding.importedName».base64(); 
+                    return new «genTO.name»(baseEncoding.decode(defaultValue));
+                «ELSE»
+                    return new «genTO.name»(new «prop.returnType.importedName»(defaultValue));
+                «ENDIF»
+            } 
+        «ENDIF»
+    '''
+
     /**
      * Template method which generates JAVA class declaration.
      * 

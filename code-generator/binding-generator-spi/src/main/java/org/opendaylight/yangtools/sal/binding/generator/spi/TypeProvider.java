@@ -45,4 +45,6 @@ public interface TypeProvider {
      * @return
      */
     String getTypeDefaultConstruction(LeafSchemaNode node);
+
+    String getConstructorPropertyName(SchemaNode node);
 }

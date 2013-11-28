@@ -62,6 +62,8 @@ public interface GeneratedTransferObject extends GeneratedType {
      */
     List<GeneratedProperty> getToStringIdentifiers();
 
+    boolean isTypedef();
+
     /**
      * Return boolean value which describe whether Generated Transfer Object
      * was/wasn't created from union YANG type.

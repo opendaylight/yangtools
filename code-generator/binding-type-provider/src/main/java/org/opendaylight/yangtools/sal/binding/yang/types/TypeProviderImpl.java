@@ -43,8 +43,12 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPr
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -54,6 +58,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -647,6 +652,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 } else if (innerTypeDefinition instanceof UnionTypeDefinition) {
                     final GeneratedTOBuilder genTOBuilder = provideGeneratedTOBuilderForUnionTypeDef(basePackageName,
                             (UnionTypeDefinition) innerTypeDefinition, typedefName, typedef);
+                    genTOBuilder.setTypedef(true);
                     genTOBuilder.setIsUnion(true);
                     addUnitsToGenTO(genTOBuilder, typedef.getUnits());
                     returnType = genTOBuilder.toInstance();
@@ -658,6 +664,7 @@ public final class TypeProviderImpl implements TypeProvider {
                     final BitsTypeDefinition bitsTypeDefinition = (BitsTypeDefinition) innerTypeDefinition;
                     final GeneratedTOBuilder genTOBuilder = provideGeneratedTOBuilderForBitsTypeDefinition(
                             basePackageName, bitsTypeDefinition, typedefName);
+                    genTOBuilder.setTypedef(true);
                     addUnitsToGenTO(genTOBuilder, typedef.getUnits());
                     returnType = genTOBuilder.toInstance();
                 } else {
@@ -708,6 +715,7 @@ public final class TypeProviderImpl implements TypeProvider {
             addStringRegExAsConstant(genTOBuilder, regExps);
         }
         addUnitsToGenTO(genTOBuilder, typedef.getUnits());
+        genTOBuilder.setTypedef(true);
         return genTOBuilder.toInstance();
     }
 
@@ -731,8 +739,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 typedef, typeDefName, parentNode);
         GeneratedTOBuilder resultTOBuilder = null;
         if (!genTOBuilders.isEmpty()) {
-            resultTOBuilder = genTOBuilders.get(0);
-            genTOBuilders.remove(0);
+            resultTOBuilder = genTOBuilders.remove(0);
             for (GeneratedTOBuilder genTOBuilder : genTOBuilders) {
                 resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
             }
@@ -1123,6 +1130,7 @@ public final class TypeProviderImpl implements TypeProvider {
         final String classTypedefName = parseToClassName(typedefName);
         final String innerTypeDef = innerExtendedType.getQName().getLocalName();
         final GeneratedTOBuilder genTOBuilder = new GeneratedTOBuilderImpl(basePackageName, classTypedefName);
+        genTOBuilder.setTypedef(true);
         Restrictions r = BindingGeneratorUtil.getRestrictions(typedef);
         genTOBuilder.setRestrictions(r);
 
@@ -1261,8 +1269,8 @@ public final class TypeProviderImpl implements TypeProvider {
 
         Module module = getParentModule(node);
         String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
-        String packageName = packageNameForGeneratedType(basePackageName, node.getPath());
-        String className = packageName + "." + parseToClassName(node.getQName().getLocalName());
+        String packageName = packageNameForGeneratedType(basePackageName, node.getType().getPath());
+        String className = packageName + "." + parseToClassName(node.getType().getQName().getLocalName());
 
         StringBuilder sb = new StringBuilder();
         TypeDefinition<?> base = baseTypeDefForExtendedType(type);
@@ -1437,5 +1445,172 @@ public final class TypeProviderImpl implements TypeProvider {
 
         return null;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Utility method which search for original node defined in grouping.
+     */
+    private DataSchemaNode findOriginal(DataSchemaNode node) {
+        DataSchemaNode result = findCorrectTargetFromGrouping(node);
+        if (result == null) {
+            result = findCorrectTargetFromAugment(node);
+            if (result != null) {
+                if (result.isAddedByUses()) {
+                    result = findOriginal(result);
+                }
+            }
+        }
+        return result;
+    }
+
+    private DataSchemaNode findCorrectTargetFromAugment(DataSchemaNode node) {
+        if (!node.isAugmenting()) {
+            return null;
+        }
+
+        String currentName = node.getQName().getLocalName();
+        List<String> tmpPath = new ArrayList<>();
+        YangNode parent = node;
+        AugmentationSchema augment = null;
+        do {
+            parent = ((DataSchemaNode)parent).getParent();
+            if (parent instanceof AugmentationTarget) {
+                tmpPath.add(currentName);
+                augment = findNodeInAugment(((AugmentationTarget)parent).getAvailableAugmentations(), currentName);
+                if (augment == null) {
+                    currentName = ((DataSchemaNode)parent).getQName().getLocalName();
+                }
+            }
+        } while (((DataSchemaNode)parent).isAugmenting() && augment == null);
+
+        if (augment == null) {
+            return null;
+        } else {
+            Collections.reverse(tmpPath);
+            Object actualParent = augment;
+            DataSchemaNode result = null;
+            for (String name : tmpPath) {
+                if (actualParent instanceof DataNodeContainer) {
+                    result = ((DataNodeContainer)actualParent).getDataChildByName(name);
+                    actualParent = ((DataNodeContainer)actualParent).getDataChildByName(name);
+                } else {
+                    if (actualParent instanceof ChoiceNode) {
+                        result = ((ChoiceNode)actualParent).getCaseNodeByName(name);
+                        actualParent = ((ChoiceNode)actualParent).getCaseNodeByName(name);
+                    }
+                }
+            }
+
+            if (result.isAddedByUses()) {
+                result = findCorrectTargetFromGrouping(result);
+            }
+
+            return result;
+        }
+    }
+
+    private AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, String name) {
+        for (AugmentationSchema augment : augments) {
+            if (augment.getDataChildByName(name) != null) {
+                return augment;
+            }
+        }
+        return null;
+    }
+
+    private DataSchemaNode findCorrectTargetFromGrouping(DataSchemaNode node) {
+        if (node.getPath().getPath().size() == 1) {
+
+            // uses is under module statement
+            Module m = findParentModule(schemaContext, node);
+            DataSchemaNode result = null;
+            for (UsesNode u : m.getUses()) {
+                SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.getGroupingPath().getPath());
+                if (!(targetGrouping instanceof GroupingDefinition)) {
+                    throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                }
+                GroupingDefinition gr = (GroupingDefinition)targetGrouping;
+                result = gr.getDataChildByName(node.getQName().getLocalName());
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("Failed to generate code for augment");
+            }
+            return result;
+        } else {
+            DataSchemaNode result = null;
+            String currentName = node.getQName().getLocalName();
+            List<String> tmpPath = new ArrayList<>();
+            YangNode parent = node.getParent();
+            do {
+                tmpPath.add(currentName);
+                DataNodeContainer dataNodeParent = (DataNodeContainer)parent;
+                for (UsesNode u : dataNodeParent.getUses()) {
+                    if (result == null) {
+                        SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.getGroupingPath().getPath());
+                        if (!(targetGrouping instanceof GroupingDefinition)) {
+                            throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                        }
+                        GroupingDefinition gr = (GroupingDefinition)targetGrouping;
+                        result = gr.getDataChildByName(currentName);
+                    }
+                }
+                if (result == null) {
+                    currentName = ((SchemaNode)parent).getQName().getLocalName();
+                    if (parent instanceof DataSchemaNode) {
+                        parent = ((DataSchemaNode)parent).getParent();
+                    } else {
+                        parent = ((DataNodeContainer)parent).getParent();
+                    }
+                }
+            } while (result == null && !(parent instanceof Module));
+
+            if (result != null) {
+                if (tmpPath.size() == 1) {
+                    if (result != null && result.isAddedByUses()) {
+                        result = findOriginal(result);
+                    }
+                    return result;
+                } else {
+                    DataSchemaNode newParent = result;
+                    Collections.reverse(tmpPath);
+                    tmpPath.remove(0);
+                    for (String name : tmpPath) {
+                        newParent = ((DataNodeContainer)newParent).getDataChildByName(name);
+                    }
+                    if (newParent != null && newParent.isAddedByUses()) {
+                        newParent = findOriginal(newParent);
+                    }
+                    return newParent;
+                }
+            }
+
+            return result;
+        }
+    }
+
+    @Override
+    public String getConstructorPropertyName(SchemaNode node) {
+        if (node instanceof TypeDefinition<?>) {
+            return "value";
+        } else {
+            return "";
+        }
+    }
+
 
 }

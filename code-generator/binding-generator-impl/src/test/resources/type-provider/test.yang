@@ -3,6 +3,10 @@ module test {
     namespace "urn:opendaylight:test";
     prefix "t";
 
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
     revision "2013-10-08" {
     }
 
@@ -285,6 +289,11 @@ module test {
     }
 
     identity alg {
+    }
+
+    leaf ip-leaf {
+        type inet:ipv4-address;
+        default "0.0.0.1";
     }
 
 }
