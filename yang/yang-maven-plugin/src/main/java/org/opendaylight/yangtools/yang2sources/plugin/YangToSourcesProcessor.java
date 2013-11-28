@@ -29,8 +29,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
+import org.opendaylight.yangtools.yang2sources.plugin.Util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
+import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.sonatype.plexus.build.incremental.BuildContext;
+import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
@@ -47,11 +51,18 @@ class YangToSourcesProcessor {
     private final List<CodeGeneratorArg> codeGenerators;
     private final MavenProject project;
     private final boolean inspectDependencies;
+    private final BuildContext buildContext;
     private YangProvider yangProvider;
 
     @VisibleForTesting
     YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
             MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
+        this(new DefaultBuildContext(), log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, yangProvider);
+    }
+
+    private YangToSourcesProcessor(BuildContext buildContext,  Log log, File yangFilesRootDir, File[] excludedFiles,
+            List<CodeGeneratorArg> codeGenerators, MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
+        this.buildContext = Util.checkNotNull(buildContext, "buildContext");
         this.log = Util.checkNotNull(log, "log");
         this.yangFilesRootDir = Util.checkNotNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = new File[excludedFiles.length];
@@ -65,15 +76,17 @@ class YangToSourcesProcessor {
         this.yangProvider = yangProvider;
     }
 
-    YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
+    YangToSourcesProcessor(BuildContext buildContext, Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
             MavenProject project, boolean inspectDependencies) {
         this(log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, new YangProvider());
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         ContextHolder context = processYang();
-        generateSources(context);
-        yangProvider.addYangsToMetaInf(log, project, yangFilesRootDir, excludedFiles);
+        if (context != null) {
+            generateSources(context);
+            yangProvider.addYangsToMetaInf(log, project, yangFilesRootDir, excludedFiles);
+        }
     }
 
     private ContextHolder processYang() throws MojoExecutionException {
@@ -81,7 +94,44 @@ class YangToSourcesProcessor {
         List<Closeable> closeables = new ArrayList<>();
         log.info(Util.message("Inspecting %s", LOG_PREFIX, yangFilesRootDir));
         try {
-            List<InputStream> yangsInProject = Util.listFilesAsStream(yangFilesRootDir, excludedFiles, log);
+            /*
+             * Collect all files which affect YANG context. This includes all
+             * files in current project and optionally any jars/files in the
+             * dependencies.
+             */
+            final Collection<File> yangFilesInProject = Util.listFiles(yangFilesRootDir, excludedFiles, log);
+            final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
+            if (inspectDependencies) {
+                allFiles.addAll(Util.findYangFilesInDependencies(log, project));
+            }
+
+            if (allFiles.isEmpty()) {
+            	log.info(Util.message("No input files found", LOG_PREFIX));
+            	return null;
+            }
+            
+            /*
+             * Check if any of the listed files changed. If no changes occurred,
+             * simply return null, which indicates and of execution.
+             */
+            boolean noChange = true;
+            for (final File f : allFiles) {
+                if (buildContext.hasDelta(f)) {
+                    log.debug(Util.message("buildContext %s indicates %s changed, forcing regeneration", LOG_PREFIX, buildContext, f));
+                    noChange = false;
+                }
+            }
+
+            if (noChange) {
+            	log.info(Util.message("None of %s input files changed", LOG_PREFIX, allFiles.size()));
+                return null;
+            }
+
+            final List<InputStream> yangsInProject = new ArrayList<>();
+            for (final File f : yangFilesInProject) {
+                yangsInProject.add(new NamedFileInputStream(f));
+            }
+
             List<InputStream> all = new ArrayList<>(yangsInProject);
             closeables.addAll(yangsInProject);
             Map<InputStream, Module> allYangModules;
@@ -208,6 +258,10 @@ class YangToSourcesProcessor {
 
         if (outputDir != null) {
             project.addCompileSourceRoot(outputDir.getAbsolutePath());
+        }
+
+        if (g instanceof BuildContextAware) {
+            ((BuildContextAware)g).setBuildContext(buildContext);
         }
         g.setLog(log);
         g.setMavenProject(project);
