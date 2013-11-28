@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.sal.java.api.generator;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +21,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.plexus.build.incremental.BuildContext;
+import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
 /**
  * Generates files with JAVA source codes for every specified type.
@@ -27,6 +31,11 @@ import org.slf4j.LoggerFactory;
 public final class GeneratorJavaFile {
 
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorJavaFile.class);
+
+    /**
+     * Build context used for registering files which have been generated.
+     */
+    private static final BuildContext CTX = new DefaultBuildContext();
 
     /**
      * List of <code>CodeGenerator</code> instances.
@@ -96,7 +105,7 @@ public final class GeneratorJavaFile {
      *            code generator which is used for generating of the source code
      * @return file which contains JAVA source code
      * @throws IOException
-     *             if the error during writting to the file occures
+     *             if the error during writing to the file occurs
      * @throws IllegalArgumentException
      *             if <code>type</code> equals <code>null</code>
      * @throws IllegalStateException
@@ -123,19 +132,20 @@ public final class GeneratorJavaFile {
         }
 
         if (generator.isAcceptable(type)) {
-            String generatedCode = generator.generate(type);
+            final String generatedCode = generator.generate(type);
             if (generatedCode.isEmpty()) {
                 throw new IllegalStateException("Generated code should not be empty!");
             }
             final File file = new File(packageDir, generator.getUnitName(type) + ".java");
-            try (final FileWriter fw = new FileWriter(file)) {
-                file.createNewFile();
-                try (final BufferedWriter bw = new BufferedWriter(fw)) {
-                    bw.write(generatedCode);
+            try (final OutputStream stream = CTX.newFileOutputStream(file)) {
+                try (final Writer fw = new OutputStreamWriter(stream)) {
+                    try (final BufferedWriter bw = new BufferedWriter(fw)) {
+                        bw.write(generatedCode);
+                    }
+                } catch (IOException e) {
+                    LOG.error("Failed to write generate output into {}", file.getPath(), e);
+                    throw e;
                 }
-            } catch (IOException e) {
-                LOG.error(e.getMessage());
-                throw new IOException(e);
             }
             return file;
         }
