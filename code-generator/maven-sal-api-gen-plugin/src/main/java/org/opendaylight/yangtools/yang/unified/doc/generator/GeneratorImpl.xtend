@@ -6,8 +6,9 @@ import java.util.Set
 import org.opendaylight.yangtools.yang.model.api.Module
 import java.io.IOException
 import java.util.HashSet
-import java.io.FileWriter
 import java.io.BufferedWriter
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition
@@ -35,6 +36,9 @@ import java.util.ArrayList
 import java.util.Map
 import org.opendaylight.yangtools.yang.model.api.SchemaPath
 
+import org.sonatype.plexus.build.incremental.BuildContext;
+import org.sonatype.plexus.build.incremental.DefaultBuildContext;
+
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
@@ -53,6 +57,7 @@ class GeneratorImpl {
     File path
     static val REVISION_FORMAT = new SimpleDateFormat("yyyy-MM-dd")
     static val Logger LOG = LoggerFactory.getLogger(GeneratorImpl)
+    static val BuildContext CTX = new DefaultBuildContext();
     var Module currentModule;
 
 
@@ -69,8 +74,7 @@ class GeneratorImpl {
     def generateDocumentation(Module module) {
         val destination = new File(path, '''«module.name».html''')
         try {
-            val fw = new FileWriter(destination)
-            destination.createNewFile();
+            val fw = new OutputStreamWriter(CTX.newFileOutputStream(destination))
             val bw = new BufferedWriter(fw)
             currentModule = module;
             bw.append(module.generate);
