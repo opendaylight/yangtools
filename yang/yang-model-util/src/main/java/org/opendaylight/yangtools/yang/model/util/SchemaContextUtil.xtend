@@ -268,7 +268,7 @@ public  class SchemaContextUtil {
             if (childNodeQName != null) {
                 schemaNode = nextNode.getDataChildByName(childNodeQName.getLocalName());
                 if(schemaNode === null && nextNode instanceof Module) {
-                    schemaNode = (nextNode as Module).getNotificationByName(childNodeQName);
+                    schemaNode = (nextNode as Module).getNotificationByName(childNodeQName.localName);
                 }
                 if(schemaNode === null && nextNode instanceof Module) {
                     
@@ -339,7 +339,7 @@ public  class SchemaContextUtil {
     }
 
     private static def SchemaNode findNodeInModule(Module module, List<QName> path) {
-        val current = path.get(0);
+        val current = path.get(0).localName;
         var SchemaNode node = module.getDataChildByName(current);
         if (node != null) return findNode(node as DataSchemaNode,path.nextLevel);
         node = module.getRpcByName(current);
@@ -353,7 +353,7 @@ public  class SchemaContextUtil {
 
     private static def SchemaNode findNodeInGrouping(GroupingDefinition grouping, List<QName> path) {
         if (path.empty) return grouping;
-        val current = path.get(0);
+        val current = path.get(0).localName;
         val node = grouping.getDataChildByName(current);
         if (node != null) return findNode(node, path.nextLevel);
         return null;
@@ -371,7 +371,7 @@ public  class SchemaContextUtil {
     
     private static def SchemaNode findNodeInNotification(NotificationDefinition rpc,List<QName> path) {
         if(path.empty) return rpc;
-        val current = path.get(0);
+        val current = path.get(0).localName;
         val node = rpc.getDataChildByName(current)
         if(node != null) return findNode(node,path.nextLevel)
         return null
@@ -379,7 +379,7 @@ public  class SchemaContextUtil {
     
     private static dispatch def SchemaNode findNode(ChoiceNode parent,List<QName> path) {
         if(path.empty) return parent;
-        val current = path.get(0);
+        val current = path.get(0).localName;
         val node = parent.getCaseNodeByName(current)
         if (node != null) return findNodeInCase(node,path.nextLevel)
         return null
@@ -387,7 +387,7 @@ public  class SchemaContextUtil {
     
     private static dispatch def SchemaNode findNode(ContainerSchemaNode parent,List<QName> path) {
         if(path.empty) return parent;
-         val current = path.get(0);
+         val current = path.get(0).localName;
         val node = parent.getDataChildByName(current)
         if (node != null) return findNode(node,path.nextLevel)
         return null
@@ -395,7 +395,7 @@ public  class SchemaContextUtil {
     
     private static dispatch def SchemaNode findNode(ListSchemaNode parent,List<QName> path) {
         if(path.empty) return parent;
-         val current = path.get(0);
+         val current = path.get(0).localName;
         val node = parent.getDataChildByName(current)
         if (node != null) return findNode(node,path.nextLevel)
         return null
@@ -411,16 +411,16 @@ public  class SchemaContextUtil {
     
     public static  def SchemaNode findNodeInCase(ChoiceCaseNode parent,List<QName> path) {
         if(path.empty) return parent;
-         val current = path.get(0);
+         val current = path.get(0).localName;
         val node = parent.getDataChildByName(current)
         if (node != null) return findNode(node,path.nextLevel)
         return null
     }
     
      
-    public static def RpcDefinition getRpcByName(Module module, QName name) {
+    public static def RpcDefinition getRpcByName(Module module, String name) {
         for(notification : module.rpcs) {
-            if(notification.QName == name) {
+            if(notification.QName.localName == name) {
                 return notification;
             }
         }
@@ -432,18 +432,18 @@ public  class SchemaContextUtil {
         return path.subList(1,path.size)
     }
     
-    public static def NotificationDefinition getNotificationByName(Module module, QName name) {
+    public static def NotificationDefinition getNotificationByName(Module module, String name) {
         for(notification : module.notifications) {
-            if(notification.QName == name) {
+            if(notification.QName.localName == name) {
                 return notification;
             }
         }
         return null;
     }
     
-    public static def GroupingDefinition getGroupingByName(Module module, QName name) {
+    public static def GroupingDefinition getGroupingByName(Module module, String name) {
         for (grouping : module.groupings) {
-            if (grouping.QName.equals(name)) {
+            if (grouping.QName.localName.equals(name)) {
                 return grouping;
             }
         }

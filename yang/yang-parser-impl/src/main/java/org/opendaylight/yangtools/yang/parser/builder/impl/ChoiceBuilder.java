@@ -103,6 +103,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     @Override
     public void setQName(QName qname) {
         this.qname = qname;
+        instance.setQName(qname);
     }
 
     public Set<ChoiceCaseBuilder> getCases() {
@@ -267,7 +268,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     public final class ChoiceNodeImpl implements ChoiceNode {
-        private final QName qname;
+        private QName qname;
         private SchemaPath path;
         private YangNode parent;
         private String description;
@@ -289,6 +290,10 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         @Override
         public QName getQName() {
             return qname;
+        }
+
+        private void setQName(QName qname) {
+            this.qname = qname;
         }
 
         @Override

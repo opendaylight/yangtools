@@ -134,6 +134,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     @Override
     public void setQName(QName qname) {
         this.qname = qname;
+        instance.setQName(qname);
     }
 
     @Override
@@ -306,7 +307,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     public final class ListSchemaNodeImpl implements ListSchemaNode {
-        private final QName qname;
+        private QName qname;
         private SchemaPath path;
         private YangNode parent;
         private String description;
@@ -332,6 +333,10 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         @Override
         public QName getQName() {
             return qname;
+        }
+
+        private void setQName(QName qname) {
+            this.qname = qname;
         }
 
         @Override
