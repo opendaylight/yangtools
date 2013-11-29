@@ -141,9 +141,9 @@ public class CompilationTestUtils {
      * @param args
      *            array of argument classes
      */
-    static void assertContainsConstructor(Class<?> clazz, Class<?>... args) {
+    static Constructor<?> assertContainsConstructor(Class<?> clazz, Class<?>... args) {
         try {
-            clazz.getDeclaredConstructor(args);
+            return clazz.getDeclaredConstructor(args);
         } catch (NoSuchMethodException e) {
             throw new AssertionError("Constructor with args " + Arrays.toString(args) + " does not exists in class "
                     + clazz.getSimpleName());
@@ -162,11 +162,13 @@ public class CompilationTestUtils {
      *            method name
      * @param args
      *            array of parameter type classes
+     * @return method with given name, return type and parameter types
      */
-    static void assertContainsMethod(Class<?> clazz, Class<?> returnType, String name, Class<?>... args) {
+    static Method assertContainsMethod(Class<?> clazz, Class<?> returnType, String name, Class<?>... args) {
         try {
             Method m = clazz.getDeclaredMethod(name, args);
             assertEquals(returnType, m.getReturnType());
+            return m;
         } catch (NoSuchMethodException e) {
             throw new AssertionError("Method " + name + " with args " + Arrays.toString(args)
                     + " does not exists in class " + clazz.getSimpleName());
