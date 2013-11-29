@@ -14,6 +14,7 @@ import com.google.common.collect.Range
 import java.util.regex.Pattern
 import com.google.common.io.BaseEncoding
 import java.beans.ConstructorProperties
+import com.google.common.collect.Lists
 
 /**
  * Template for generating JAVA class. 
@@ -99,6 +100,8 @@ class ClassTemplate extends BaseTemplate {
             «generateFields»
 
             «constructors»
+            
+            «defaultInstance»
 
             «FOR field : properties SEPARATOR "\n"»
                 «field.getterMethod»
@@ -205,7 +208,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDFOR»
     }
     '''
-    
+
     def protected parentConstructor() '''
     /**
      * Creates a new instance from «genTO.superType.importedName»
@@ -220,15 +223,40 @@ class ClassTemplate extends BaseTemplate {
     def protected defaultInstance() '''
         «IF genTO.typedef && !allProperties.empty && !genTO.unionType»
             «val prop = allProperties.get(0)»
+            «IF !("org.opendaylight.yangtools.yang.binding.InstanceIdentifier".equals(prop.returnType.fullyQualifiedName))»
             public static «genTO.name» getDefaultInstance(String defaultValue) {
                 «IF "byte[]".equals(prop.returnType.name)»
                     «BaseEncoding.importedName» baseEncoding = «BaseEncoding.importedName».base64(); 
                     return new «genTO.name»(baseEncoding.decode(defaultValue));
+                «ELSEIF "java.lang.String".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(defaultValue);
+                «ELSEIF allProperties.size > 1»
+                    «bitsArgs»
                 «ELSE»
                     return new «genTO.name»(new «prop.returnType.importedName»(defaultValue));
                 «ENDIF»
-            } 
+            }
+            «ENDIF»
         «ENDIF»
+    '''
+
+    def protected bitsArgs() '''
+        «List.importedName»<«String.importedName»> properties = «Lists.importedName».newArrayList(«allProperties.propsAsArgs»);
+        if (!properties.contains(defaultValue)) {
+            throw new «IllegalArgumentException.importedName»("invalid default parameter");
+        }
+        int i = 0;
+        return new «genTO.name»(
+        «FOR prop : allProperties SEPARATOR ","»
+            properties.get(i++).equals(defaultValue) ? new «Boolean.importedName»("true") : null
+        «ENDFOR»
+        );
+    '''
+
+    def protected propsAsArgs(Iterable<GeneratedProperty> properties) '''
+        «FOR prop : properties SEPARATOR ","»
+            "«prop.name»"
+        «ENDFOR»
     '''
 
     /**

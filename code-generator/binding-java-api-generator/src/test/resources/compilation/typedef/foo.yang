@@ -6,6 +6,44 @@ module foo {
     revision "2013-10-08" {
     }
 
+
+    typedef bits-ext {
+        type bits {
+            bit pc {
+                position 0;
+            }
+            bit bpc {
+                position 1;
+            }
+            bit dpc {
+                position 2;
+            }
+            bit lbpc {
+                position 3;
+            }
+            bit spc {
+                position 4;
+            }
+            bit sfmof {
+                position 5;
+            }
+            bit sfapc {
+                position 6;
+            }
+        }
+    }
+
+    typedef myenum {
+        type enumeration {
+            enum zero;
+            enum one;
+            enum seven {
+                value 7;
+            }
+        }
+        default one;
+    }
+
     typedef int32-ext0 {
         type int32;
     }
