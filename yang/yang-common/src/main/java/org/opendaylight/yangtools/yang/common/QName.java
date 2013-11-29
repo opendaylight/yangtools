@@ -44,8 +44,18 @@ public final class QName implements Immutable,Serializable {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
-    private static final SimpleDateFormat REVISION_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
+    private static final ThreadLocal<SimpleDateFormat> REVISION_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+        
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd");
+        };
+        
+        public void set(SimpleDateFormat value) {
+            throw new UnsupportedOperationException();
+        };
+        
+    };
+    
     private final URI namespace;
     private final String localName;
     private final String prefix;
@@ -70,7 +80,7 @@ public final class QName implements Immutable,Serializable {
         this.revision = revision;
         this.prefix = prefix;
         if(revision != null) {
-            this.formattedRevision = REVISION_FORMAT.format(revision);
+            this.formattedRevision = REVISION_FORMAT.get().format(revision);
         } else {
             this.formattedRevision = null;
         }
@@ -205,7 +215,7 @@ public final class QName implements Immutable,Serializable {
     public static QName create(String namespace, String revision, String localName) throws IllegalArgumentException{
         try {
             URI namespaceUri = new URI(namespace);
-            Date revisionDate = REVISION_FORMAT.parse(revision);
+            Date revisionDate = REVISION_FORMAT.get().parse(revision);
             return create(namespaceUri, revisionDate, localName);
         } catch (ParseException pe) {
             throw new IllegalArgumentException("Revision is not in supported format", pe);
@@ -221,7 +231,7 @@ public final class QName implements Immutable,Serializable {
             sb.append("(" + namespace);
 
             if (revision != null) {
-                sb.append("?revision=" + REVISION_FORMAT.format(revision));
+                sb.append("?revision=" + REVISION_FORMAT.get().format(revision));
             }
             sb.append(")");
         }
