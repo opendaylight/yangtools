@@ -43,12 +43,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPr
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -58,7 +54,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -177,7 +172,8 @@ public final class TypeProviderImpl implements TypeProvider {
      *             </ul>
      */
     @Override
-    public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> typeDefinition, final SchemaNode parentNode, Restrictions r) {
+    public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> typeDefinition, final SchemaNode parentNode,
+            Restrictions r) {
         Type returnType = null;
         Preconditions.checkArgument(typeDefinition != null, "Type Definition cannot be NULL!");
         if (typeDefinition.getQName() == null) {
@@ -362,7 +358,9 @@ public final class TypeProviderImpl implements TypeProvider {
     private TypeDefinition<?> baseTypeDefForExtendedType(final TypeDefinition<?> extendTypeDef) {
         Preconditions.checkArgument(extendTypeDef != null, "Type Definiition reference cannot be NULL!");
         final TypeDefinition<?> baseTypeDef = extendTypeDef.getBaseType();
-        if (baseTypeDef instanceof ExtendedType) {
+        if (baseTypeDef == null) {
+            return extendTypeDef;
+        } else if (baseTypeDef instanceof ExtendedType) {
             return baseTypeDefForExtendedType(baseTypeDef);
         } else {
             return baseTypeDef;
@@ -637,8 +635,8 @@ public final class TypeProviderImpl implements TypeProvider {
      *         <code>modulName</code> or <code>typedef</code> or Q name of
      *         <code>typedef</code> equals <code>null</code>
      */
-    private Type typedefToGeneratedType(final String basePackageName, final String moduleName, final Date moduleRevision,
-            final TypeDefinition<?> typedef) {
+    private Type typedefToGeneratedType(final String basePackageName, final String moduleName,
+            final Date moduleRevision, final TypeDefinition<?> typedef) {
         if ((basePackageName != null) && (moduleName != null) && (typedef != null) && (typedef.getQName() != null)) {
 
             final String typedefName = typedef.getQName().getLocalName();
@@ -675,7 +673,6 @@ public final class TypeProviderImpl implements TypeProvider {
                 if (returnType != null) {
                     final Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(moduleName);
                     final Map<String, Type> typeMap = modulesByDate.get(moduleRevision);
-
 
                     if (typeMap != null) {
                         typeMap.put(typedefName, returnType);
@@ -1121,8 +1118,8 @@ public final class TypeProviderImpl implements TypeProvider {
      *             <li>if <code>typedefName</code> equals null</li>
      *             </ul>
      */
-    private GeneratedTransferObject provideGeneratedTOFromExtendedType(final TypeDefinition<?> typedef, final ExtendedType innerExtendedType,
-            final String basePackageName) {
+    private GeneratedTransferObject provideGeneratedTOFromExtendedType(final TypeDefinition<?> typedef,
+            final ExtendedType innerExtendedType, final String basePackageName) {
         Preconditions.checkArgument(innerExtendedType != null, "Extended type cannot be NULL!");
         Preconditions.checkArgument(basePackageName != null, "String with base package name cannot be NULL!");
 
@@ -1263,37 +1260,32 @@ public final class TypeProviderImpl implements TypeProvider {
 
     public String getTypeDefaultConstruction(LeafSchemaNode node, String defaultValue) {
         TypeDefinition<?> type = node.getType();
+        QName typeQName = type.getQName();
+        TypeDefinition<?> base = baseTypeDefForExtendedType(type);
         Preconditions.checkNotNull(type, "Cannot provide default construction for null type of " + node);
         Preconditions.checkNotNull(defaultValue, "Cannot provide default construction for null default statement of "
                 + node);
 
-        Module module = getParentModule(node);
-        String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
-        String packageName = packageNameForGeneratedType(basePackageName, node.getType().getPath());
-        String className = packageName + "." + parseToClassName(node.getType().getQName().getLocalName());
-
         StringBuilder sb = new StringBuilder();
-        TypeDefinition<?> base = baseTypeDefForExtendedType(type);
-        final boolean isBaseNull = base == null;
-
-        if (isBaseNull) {
-            base = type;
-        }
-
         String result = null;
         if (base instanceof BinaryTypeDefinition) {
             result = binaryToDef(defaultValue);
         } else if (base instanceof BitsTypeDefinition) {
             String parentName;
+            String className;
             YangNode parent = node.getParent();
             if (parent instanceof Module) {
-                parentName = parseToClassName(((Module)parent).getName()) + "Data";
+                parentName = parseToClassName(((Module) parent).getName()) + "Data";
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName((Module) parent);
                 className = basePackageName + "." + parentName + "." + parseToClassName(node.getQName().getLocalName());
             } else {
-                parentName = parseToClassName(((SchemaNode)parent).getQName().getLocalName());
+                Module parentModule = getParentModule(node);
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parentModule);
+                String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
+                parentName = parseToClassName(((SchemaNode) parent).getQName().getLocalName());
                 className = packageName + "." + parentName + "." + parseToClassName(node.getQName().getLocalName());
             }
-            result = bitsToDef((BitsTypeDefinition) base, className, defaultValue, isBaseNull);
+            result = bitsToDef((BitsTypeDefinition) base, className, defaultValue, type instanceof ExtendedType);
         } else if (base instanceof BooleanTypeDefinition) {
             result = typeToDef(Boolean.class, defaultValue);
         } else if (base instanceof DecimalTypeDefinition) {
@@ -1305,8 +1297,18 @@ public final class TypeProviderImpl implements TypeProvider {
             char first = Character.toUpperCase(defaultValue.charAt(0));
             defValArray[0] = first;
             String newDefVal = new String(defValArray);
+            String className;
             if (type instanceof ExtendedType) {
-                className = packageName + "." + parseToClassName(node.getType().getQName().getLocalName());
+                QName qname = type.getPath().getPath().get(0);
+                Module m = schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(m);
+                String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
+                className = packageName + "." + parseToClassName(typeQName.getLocalName());
+            } else {
+                Module parentModule = getParentModule(node);
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parentModule);
+                String packageName = packageNameForGeneratedType(basePackageName, node.getPath());
+                className = packageName + "." + parseToClassName(node.getQName().getLocalName());
             }
             result = className + "." + newDefVal;
         } else if (base instanceof IdentityrefTypeDefinition) {
@@ -1322,7 +1324,7 @@ public final class TypeProviderImpl implements TypeProvider {
         } else if (base instanceof Int64) {
             result = typeToDef(Long.class, defaultValue);
         } else if (base instanceof LeafrefTypeDefinition) {
-            result = leafrefToDef(node, (LeafrefTypeDefinition)base);
+            result = leafrefToDef(node, (LeafrefTypeDefinition) base);
         } else if (base instanceof StringTypeDefinition) {
             result = "\"" + defaultValue + "\"";
         } else if (base instanceof Uint8) {
@@ -1340,15 +1342,18 @@ public final class TypeProviderImpl implements TypeProvider {
         }
         sb.append(result);
 
-        if (result != null && !result.isEmpty() && type instanceof ExtendedType && !(base instanceof LeafrefTypeDefinition)) {
-            className = packageName + "." + parseToClassName(node.getType().getQName().getLocalName());
+        if (type instanceof ExtendedType && !(base instanceof LeafrefTypeDefinition)) {
+            QName qname = type.getPath().getPath().get(0);
+            Module m = schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
+            String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(m);
+            String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
+            String className = packageName + "." + parseToClassName(typeQName.getLocalName());
             sb.insert(0, "new " + className + "(");
             sb.insert(sb.length(), ")");
         }
 
         return sb.toString();
     }
-
 
     private String typeToDef(Class<?> clazz, String defaultValue) {
         return "new " + clazz.getName() + "(\"" + defaultValue + "\")";
@@ -1369,7 +1374,7 @@ public final class TypeProviderImpl implements TypeProvider {
         return sb.toString();
     }
 
-    private String bitsToDef(BitsTypeDefinition type, String className, String defaultValue, boolean isBase) {
+    private String bitsToDef(BitsTypeDefinition type, String className, String defaultValue, boolean isExt) {
         List<Bit> bits = new ArrayList<>(type.getBits());
         Collections.sort(bits, new Comparator<Bit>() {
             @Override
@@ -1378,7 +1383,7 @@ public final class TypeProviderImpl implements TypeProvider {
             }
         });
         StringBuilder sb = new StringBuilder();
-        sb.append(isBase ? "new " + className + "(" : "");
+        sb.append(isExt ? "" : "new " + className + "(");
         for (int i = 0; i < bits.size(); i++) {
             if (bits.get(i).getName().equals(defaultValue)) {
                 sb.append(true);
@@ -1389,7 +1394,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 sb.append(", ");
             }
         }
-        sb.append(isBase ? ")" : "");
+        sb.append(isExt ? "" : ")");
         return sb.toString();
     }
 
@@ -1421,7 +1426,8 @@ public final class TypeProviderImpl implements TypeProvider {
 
     private String leafrefToDef(LeafSchemaNode parentNode, LeafrefTypeDefinition leafrefType) {
         Preconditions.checkArgument(leafrefType != null, "Leafref Type Definition reference cannot be NULL!");
-        Preconditions.checkArgument(leafrefType.getPathStatement() != null, "The Path Statement for Leafref Type Definition cannot be NULL!");
+        Preconditions.checkArgument(leafrefType.getPathStatement() != null,
+                "The Path Statement for Leafref Type Definition cannot be NULL!");
 
         final RevisionAwareXPath xpath = leafrefType.getPathStatement();
         final String strXPath = xpath.toString();
@@ -1438,169 +1444,13 @@ public final class TypeProviderImpl implements TypeProvider {
                     } else {
                         dataNode = findDataSchemaNodeForRelativeXPath(schemaContext, module, parentNode, xpath);
                     }
-                    return getTypeDefaultConstruction((LeafSchemaNode)dataNode, parentNode.getDefault());
-                }
-            }
-        }
-
-        return null;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Utility method which search for original node defined in grouping.
-     */
-    private DataSchemaNode findOriginal(DataSchemaNode node) {
-        DataSchemaNode result = findCorrectTargetFromGrouping(node);
-        if (result == null) {
-            result = findCorrectTargetFromAugment(node);
-            if (result != null) {
-                if (result.isAddedByUses()) {
-                    result = findOriginal(result);
-                }
-            }
-        }
-        return result;
-    }
-
-    private DataSchemaNode findCorrectTargetFromAugment(DataSchemaNode node) {
-        if (!node.isAugmenting()) {
-            return null;
-        }
-
-        String currentName = node.getQName().getLocalName();
-        List<String> tmpPath = new ArrayList<>();
-        YangNode parent = node;
-        AugmentationSchema augment = null;
-        do {
-            parent = ((DataSchemaNode)parent).getParent();
-            if (parent instanceof AugmentationTarget) {
-                tmpPath.add(currentName);
-                augment = findNodeInAugment(((AugmentationTarget)parent).getAvailableAugmentations(), currentName);
-                if (augment == null) {
-                    currentName = ((DataSchemaNode)parent).getQName().getLocalName();
-                }
-            }
-        } while (((DataSchemaNode)parent).isAugmenting() && augment == null);
-
-        if (augment == null) {
-            return null;
-        } else {
-            Collections.reverse(tmpPath);
-            Object actualParent = augment;
-            DataSchemaNode result = null;
-            for (String name : tmpPath) {
-                if (actualParent instanceof DataNodeContainer) {
-                    result = ((DataNodeContainer)actualParent).getDataChildByName(name);
-                    actualParent = ((DataNodeContainer)actualParent).getDataChildByName(name);
-                } else {
-                    if (actualParent instanceof ChoiceNode) {
-                        result = ((ChoiceNode)actualParent).getCaseNodeByName(name);
-                        actualParent = ((ChoiceNode)actualParent).getCaseNodeByName(name);
-                    }
-                }
-            }
-
-            if (result.isAddedByUses()) {
-                result = findCorrectTargetFromGrouping(result);
-            }
-
-            return result;
-        }
-    }
-
-    private AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, String name) {
-        for (AugmentationSchema augment : augments) {
-            if (augment.getDataChildByName(name) != null) {
-                return augment;
-            }
-        }
-        return null;
-    }
-
-    private DataSchemaNode findCorrectTargetFromGrouping(DataSchemaNode node) {
-        if (node.getPath().getPath().size() == 1) {
-
-            // uses is under module statement
-            Module m = findParentModule(schemaContext, node);
-            DataSchemaNode result = null;
-            for (UsesNode u : m.getUses()) {
-                SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.getGroupingPath().getPath());
-                if (!(targetGrouping instanceof GroupingDefinition)) {
-                    throw new IllegalArgumentException("Failed to generate code for augment in " + u);
-                }
-                GroupingDefinition gr = (GroupingDefinition)targetGrouping;
-                result = gr.getDataChildByName(node.getQName().getLocalName());
-            }
-            if (result == null) {
-                throw new IllegalArgumentException("Failed to generate code for augment");
-            }
-            return result;
-        } else {
-            DataSchemaNode result = null;
-            String currentName = node.getQName().getLocalName();
-            List<String> tmpPath = new ArrayList<>();
-            YangNode parent = node.getParent();
-            do {
-                tmpPath.add(currentName);
-                DataNodeContainer dataNodeParent = (DataNodeContainer)parent;
-                for (UsesNode u : dataNodeParent.getUses()) {
-                    if (result == null) {
-                        SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.getGroupingPath().getPath());
-                        if (!(targetGrouping instanceof GroupingDefinition)) {
-                            throw new IllegalArgumentException("Failed to generate code for augment in " + u);
-                        }
-                        GroupingDefinition gr = (GroupingDefinition)targetGrouping;
-                        result = gr.getDataChildByName(currentName);
-                    }
-                }
-                if (result == null) {
-                    currentName = ((SchemaNode)parent).getQName().getLocalName();
-                    if (parent instanceof DataSchemaNode) {
-                        parent = ((DataSchemaNode)parent).getParent();
-                    } else {
-                        parent = ((DataNodeContainer)parent).getParent();
-                    }
-                }
-            } while (result == null && !(parent instanceof Module));
-
-            if (result != null) {
-                if (tmpPath.size() == 1) {
-                    if (result != null && result.isAddedByUses()) {
-                        result = findOriginal(result);
-                    }
+                    String result = getTypeDefaultConstruction((LeafSchemaNode) dataNode, parentNode.getDefault());
                     return result;
-                } else {
-                    DataSchemaNode newParent = result;
-                    Collections.reverse(tmpPath);
-                    tmpPath.remove(0);
-                    for (String name : tmpPath) {
-                        newParent = ((DataNodeContainer)newParent).getDataChildByName(name);
-                    }
-                    if (newParent != null && newParent.isAddedByUses()) {
-                        newParent = findOriginal(newParent);
-                    }
-                    return newParent;
                 }
             }
-
-            return result;
         }
+
+        return null;
     }
 
     @Override
@@ -1611,6 +1461,5 @@ public final class TypeProviderImpl implements TypeProvider {
             return "";
         }
     }
-
 
 }

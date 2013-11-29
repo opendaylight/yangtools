@@ -11,10 +11,25 @@ module test {
     }
 
 
+
+    // binary
     typedef my-binary {
         type binary;
     }
 
+    leaf ext-binary {
+        type my-binary;
+        default "TWFu";
+    }
+
+    leaf leaf-binary {
+        type binary;
+        default "TWFu";
+    }
+
+
+
+    // bits
     typedef my-bits {
         type bits {
             bit ctrl;
@@ -25,81 +40,12 @@ module test {
         }
     }
 
-    typedef my-boolean {
-        type boolean;
+    leaf ext-bits {
+        type my-bits;
+        default "delete";
     }
 
-    
-    typedef my-decimal64 {
-        type decimal64 {
-            fraction-digits 4;
-        }
-    }
-
-    typedef my-empty {
-        type empty;
-    }
-
-    typedef my-enumeration {
-        type enumeration {
-            enum zero;
-            enum one;
-            enum seven {
-                value 7;
-            }
-        }
-    }
-
-    typedef my-identityref {
-        type identityref {
-            base alg;
-        }
-    }
-
-    typedef my-8 {
-        type int8;
-    }
-    typedef my-16 {
-        type int16;
-    }
-    typedef my-32 {
-        type int32;
-    }
-    typedef my-64 {
-        type int64;
-    }
-
-    typedef my-leafref {
-        type leafref {
-            path "/links/node/id-64";
-        }
-    }
-
-    typedef my-string {
-        type string;
-    }
-
-    typedef my-u8 {
-        type uint8;
-    }
-    typedef my-u16 {
-        type uint16;
-    }
-    typedef my-u32 {
-        type uint32;
-    }
-    typedef my-u64 {
-        type uint64;
-    }
-
-
-
-    leaf id-binary {
-        type binary;
-        default "TWFu";
-    }
-
-    leaf id-bits {
+    leaf leaf-bits {
         type bits {
             bit ctrl;
             bit alt {
@@ -110,24 +56,80 @@ module test {
         default "delete";
     }
 
-    leaf id-boolean {
+
+
+    // boolean
+    typedef my-boolean {
+        type boolean;
+    }
+
+    leaf ext-boolean {
+        type my-boolean;
+        default true;
+    }
+
+    leaf leaf-boolean {
         type boolean;
         default true;
     }
 
-    leaf id-decimal64 {
+
+
+    // decimal64
+    typedef my-decimal64 {
+        type decimal64 {
+            fraction-digits 4;
+        }
+    }
+
+    leaf ext-decimal64 {
+        type my-decimal64;
+        default "3.14";
+    }
+
+    leaf leaf-decimal64 {
         type decimal64 {
             fraction-digits 4;
         }
         default "3.14";
     }
 
-    leaf id-empty {
+
+
+    // empty
+    typedef my-empty {
+        type empty;
+    }
+
+    leaf ext-empty {
+        type my-empty;
+        default false;
+    }
+
+    leaf leaf-empty {
         type empty;
         default false;
     }
 
-    leaf id-enumeration {
+
+
+    // enumeration
+    typedef my-enumeration {
+        type enumeration {
+            enum zero;
+            enum one;
+            enum seven {
+                value 7;
+            }
+        }
+    }
+
+    leaf ext-enumeration {
+        type my-enumeration;
+        default seven;
+    }
+
+    leaf leaf-enumeration {
         type enumeration {
             enum zero;
             enum one;
@@ -138,115 +140,100 @@ module test {
         default seven;
     }
 
-    leaf id-identityref {
+
+
+    // identityref
+    typedef my-identityref {
         type identityref {
             base alg;
         }
-    }
-
-    leaf id-8 {
-        type int8;
-        default "11";
-    }
-    leaf id-16 {
-        type int16;
-        default "111";
-    }
-    leaf id-32 {
-        type int32;
-        default "1111";
-    }
-    leaf id-64 {
-        type int64;
-        default "11111";
-    }
-
-    leaf id-leafref {
-        type leafref {
-            path "/links/node/id-64";
-        }
-        default "1.234";
-    }
-
-    leaf id-string {
-        type string;
-        default "name";
-    }
-
-    leaf id-u8 {
-        type uint8;
-        default "11";
-    }
-    leaf id-u16 {
-        type uint16;
-        default "111";
-    }
-    leaf id-u32 {
-        type uint32;
-        default "1111";
-    }
-    leaf id-u64 {
-        type uint64;
-        default "11111";
-    }
-
-
-
-    leaf ext-binary {
-        type my-binary;
-        default "TWFu";
-    }
-
-    leaf ext-bits {
-        type my-bits {
-            bit ctrl;
-            bit alt {
-                position 5;
-            }
-            bit delete;
-        }
-        default "delete";
-    }
-
-    leaf ext-boolean {
-        type my-boolean;
-        default true;
-    }
-
-    leaf ext-decimal64 {
-        type my-decimal64;
-        default "3.14";
-    }
-
-    leaf ext-empty {
-        type my-empty;
-        default false;
-    }
-
-    leaf ext-enumeration {
-        type my-enumeration;
-        default seven;
     }
 
     leaf ext-identityref {
         type my-identityref;
     }
 
-    leaf ext-8 {
-        type my-8;
+    leaf leaf-identityref {
+        type identityref {
+            base alg;
+        }
+    }
+
+
+
+    // int8
+    typedef my-int8 {
+        type int8;
+    }
+
+    leaf ext-int8 {
+        type my-int8;
         default "11";
     }
-    leaf ext-16 {
-        type my-16;
+
+    leaf leaf-int8 {
+        type int8;
+        default "11";
+    }
+
+
+
+    // int16
+    typedef my-int16 {
+        type int16;
+    }
+
+    leaf ext-int16 {
+        type my-int16;
         default "111";
     }
-    leaf ext-32 {
-        type my-32;
+
+    leaf leaf-int16 {
+        type int16;
+        default "111";
+    }
+
+
+
+    // int32
+    typedef my-int32 {
+        type int32;
+    }
+
+    leaf ext-int32 {
+        type my-int32;
         default "1111";
     }
-    leaf ext-64 {
-        type my-64;
+
+    leaf leaf-int32 {
+        type int32;
+        default "1111";
+    }
+
+
+
+    // int64
+    typedef my-int64 {
+        type int64;
+    }
+
+    leaf ext-int64 {
+        type my-int64;
         default "11111";
+    }
+
+    leaf leaf-int64 {
+        type int64;
+        default "11111";
+    }
+
+
+
+    // leafref
+    typedef my-leafref {
+        type leafref {
+            path "/links/node/id-64";
+        }
     }
 
     leaf ext-leafref {
@@ -254,25 +241,113 @@ module test {
         default "1.234";
     }
 
+    leaf leaf-leafref {
+        type leafref {
+            path "/links/node/id-64";
+        }
+        default "1.234";
+    }
+
+    typedef my-leafref1 {
+        type leafref {
+            path "/links/node/id-for-binary";
+        }
+    }
+
+    leaf ext-leafref1 {
+        type my-leafref1;
+        default "TWFu";
+    }
+
+    leaf leaf-leafref1 {
+        type leafref {
+            path "/links/node/id-for-binary";
+        }
+        default "TWFu";
+    }
+
+
+
+    // string
+    typedef my-string {
+        type string;
+    }
+
     leaf ext-string {
         type my-string;
         default "name";
     }
 
-    leaf ext-u8 {
-        type my-u8;
+    leaf leaf-string {
+        type string;
+        default "name";
+    }
+
+
+
+    // uint8
+    typedef my-uint8 {
+        type uint8;
+    }
+
+    leaf ext-uint8 {
+        type my-uint8;
         default "11";
     }
-    leaf ext-u16 {
-        type my-u16;
+
+    leaf leaf-uint8 {
+        type uint8;
+        default "11";
+    }
+
+
+
+    // uint16
+    typedef my-uint16 {
+        type uint16;
+    }
+
+    leaf ext-uint16 {
+        type my-uint16;
         default "111";
     }
-    leaf ext-u32 {
-        type my-u32;
+
+    leaf leaf-uint16 {
+        type uint16;
+        default "111";
+    }
+
+
+
+    // uint32
+    typedef my-uint32 {
+        type uint32;
+    }
+
+    leaf ext-uint32 {
+        type my-uint32;
         default "1111";
     }
-    leaf ext-u64 {
-        type my-u64;
+
+    leaf leaf-uint32 {
+        type uint32;
+        default "1111";
+    }
+
+
+
+    // uint64
+    typedef my-uint64 {
+        type uint64;
+    }
+
+    leaf ext-uint64 {
+        type my-uint64;
+        default "11111";
+    }
+
+    leaf leaf-uint64 {
+        type uint64;
         default "11111";
     }
 
@@ -284,6 +359,9 @@ module test {
                 type decimal64 {
                     fraction-digits "7";
                 }
+            }
+            leaf id-for-binary {
+                type my-binary;
             }
         }
     }
