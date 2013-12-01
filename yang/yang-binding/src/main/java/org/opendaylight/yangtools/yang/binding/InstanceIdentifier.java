@@ -43,6 +43,10 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
      * @return path
      */
     public List<PathArgument> getPath() {
+        return getPathArguments();
+    }
+    
+    public List<PathArgument> getPathArguments() {
         return this.path;
     }
 
@@ -234,6 +238,8 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
                 Class<N> listItem, K listKey);
 
         <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilder<N> augmentation(Class<N> container);
+        
+        InstanceIdentifier<T> build();
 
     }
 
@@ -293,6 +299,11 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         public InstanceIdentifier<T> toInstance() {
             List<PathArgument> immutablePath = Collections.unmodifiableList(new ArrayList<PathArgument>(path));
             return new InstanceIdentifier(immutablePath, target);
+        }
+        
+        @Override
+        public InstanceIdentifier<T> build() {
+            return toInstance();
         }
 
         @Override
@@ -369,7 +380,36 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
                 return false;
             }
         }
-
         return true;
+    }
+    
+    public boolean containsWildcarded(final InstanceIdentifier<?> other) {
+        if(other == null) {
+            throw new IllegalArgumentException("other should not be null");
+        }
+        final int localSize = this.path.size();
+        final List<PathArgument> otherPath = other.getPath();
+        if(localSize > other.path.size()) {
+            return false;
+        }
+        for(int i = 0;i<localSize;i++ ) {
+            final PathArgument localArgument = path.get(i);
+            if(!localArgument.getType().equals(otherPath.get(i).getType())) {
+                return false;
+            } 
+            if(localArgument instanceof IdentifiableItem<?, ?> && !localArgument.equals(otherPath.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isWildcarded() {
+        for(PathArgument pathArgument : path) {
+            if(Identifiable.class.isAssignableFrom(pathArgument.getType()) && !(pathArgument instanceof IdentifiableItem<?, ?>)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
