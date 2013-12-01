@@ -23,9 +23,14 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
-public final class CodeGeneratorImpl implements CodeGenerator {
+import com.google.common.base.Preconditions;
+
+public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware {
+    private BuildContext buildContext;
 
     @Override
     public Collection<File> generateSources(final SchemaContext context, final File outputDir,
@@ -40,7 +45,7 @@ public final class CodeGeneratorImpl implements CodeGenerator {
 
         final BindingGenerator bindingGenerator = new BindingGeneratorImpl();
         final List<Type> types = bindingGenerator.generateTypes(context, yangModules);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        final GeneratorJavaFile generator = new GeneratorJavaFile(buildContext, new HashSet<>(types));
 
         return generator.generateToFile(outputBaseDir);
     }
@@ -64,6 +69,11 @@ public final class CodeGeneratorImpl implements CodeGenerator {
     @Override
     public void setMavenProject(MavenProject project) {
         // no additional information needed
+    }
+
+    @Override
+    public void setBuildContext(BuildContext buildContext) {
+        this.buildContext = Preconditions.checkNotNull(buildContext);
     }
 
 }

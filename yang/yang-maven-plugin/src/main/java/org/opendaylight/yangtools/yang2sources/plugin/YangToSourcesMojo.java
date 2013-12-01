@@ -16,6 +16,7 @@ import java.util.Set;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
 import org.slf4j.impl.StaticLoggerBinder;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -71,6 +73,9 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(property = "inspectDependencies", required = true, readonly = true)
     private boolean inspectDependencies;
 
+    @Component
+    private BuildContext buildContext;
+
     private YangToSourcesProcessor yangToSourcesProcessor;
 
     public YangToSourcesMojo() {
@@ -96,7 +101,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
             File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
             File[] excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
-            yangToSourcesProcessor = new YangToSourcesProcessor(getLog(), yangFilesRootFile, excludedFiles,
+            yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, getLog(), yangFilesRootFile, excludedFiles,
                     codeGeneratorArgs, project, inspectDependencies);
         }
         yangToSourcesProcessor.execute();
