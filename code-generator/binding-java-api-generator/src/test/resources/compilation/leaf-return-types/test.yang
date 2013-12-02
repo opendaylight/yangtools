@@ -8,7 +8,9 @@ module test {
 
     container nodes {
         leaf id-binary {
-            type binary;
+            type binary {
+                length 1..10;
+            }
         }
         leaf id-bits {
             type bits {
@@ -25,6 +27,7 @@ module test {
         leaf id-decimal64 {
             type decimal64 {
                 fraction-digits 4;
+                range "1.5..5.5";
             }
         }
         leaf id-empty {

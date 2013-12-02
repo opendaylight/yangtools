@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -201,7 +202,7 @@ public class CompilationTestUtils {
     }
 
     /**
-     * Asserts that class containes hashCode, equals and toString methods.
+     * Asserts that class contains hashCode, equals and toString methods.
      *
      * @param clazz
      *            class to test
@@ -210,6 +211,54 @@ public class CompilationTestUtils {
         assertContainsMethod(clazz, Integer.TYPE, "hashCode");
         assertContainsMethod(clazz, Boolean.TYPE, "equals", Object.class);
         assertContainsMethod(clazz, String.class, "toString");
+    }
+
+    /**
+     * Asserts that constructor contains check for illegal argument.
+     *
+     * @param constructor
+     *            constructor to invoke
+     * @param errorMsg
+     *            expected error message
+     * @param args
+     *            constructor arguments
+     * @throws Exception
+     */
+    static void assertContainsRestrictionCheck(Constructor<?> constructor, String errorMsg, Object... args)
+            throws Exception {
+        try {
+            constructor.newInstance(args);
+            fail("constructor invocation should fail");
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            assertTrue(cause instanceof IllegalArgumentException);
+            assertEquals(errorMsg, cause.getMessage());
+        }
+    }
+
+    /**
+     * Asserts that method contains check for illegal argument.
+     *
+     * @param obj
+     *            object to test (can be null, if method is static)
+     * @param method
+     *            method to invoke
+     * @param errorMsg
+     *            expected error message
+     * @param args
+     *            constructor arguments
+     * @throws Exception
+     */
+    static void assertContainsRestrictionCheck(Object obj, Method method, String errorMsg, Object... args)
+            throws Exception {
+        try {
+            method.invoke(obj, args);
+            fail("method invocation should fail");
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            assertTrue(cause instanceof IllegalArgumentException);
+            assertEquals(errorMsg, cause.getMessage());
+        }
     }
 
     /**

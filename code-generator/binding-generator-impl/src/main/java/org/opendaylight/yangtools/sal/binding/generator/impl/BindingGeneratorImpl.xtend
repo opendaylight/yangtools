@@ -1491,8 +1491,28 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 nodeDesc = "";
             }
             if (nodeName !== null && !node.isAddedByUses()) {
-                val TypeDefinition<?> type = node.type;
-                val listType = Types.listTypeFor(typeProvider.javaTypeForSchemaDefinitionType(type, node));
+                val TypeDefinition<?> typeDef = node.type;
+                val parentModule = findParentModule(schemaContext, node);
+
+                var Type returnType = null;
+                if (typeDef instanceof EnumTypeDefinition) {
+                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, node);
+                    val enumTypeDef = typeDef as EnumTypeDefinition;
+                    val enumBuilder = resolveInnerEnumFromTypeDefinition(enumTypeDef, nodeName, typeBuilder);
+                    returnType = new ReferencedTypeImpl(enumBuilder.packageName, enumBuilder.name);
+                    (typeProvider as TypeProviderImpl).putReferencedType(node.path, returnType);
+                } else if (typeDef instanceof UnionType) {
+                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, nodeName, node, parentModule);
+                    returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
+                } else if (typeDef instanceof BitsTypeDefinition) {
+                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, nodeName, node, parentModule);
+                    returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
+                } else {
+                    val Restrictions restrictions = BindingGeneratorUtil.getRestrictions(typeDef);
+                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, node, restrictions);
+                }
+
+                val listType = Types.listTypeFor(returnType);
                 constructGetter(typeBuilder, nodeName, nodeDesc, listType);
                 return true;
             }
@@ -1792,7 +1812,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * @return generated TO builder for <code>typeDef</code>
      */
     private def GeneratedTOBuilder addTOToTypeBuilder(TypeDefinition<?> typeDef, GeneratedTypeBuilder typeBuilder,
-        String leafName, LeafSchemaNode leaf, Module parentModule) {
+        String leafName, DataSchemaNode leaf, Module parentModule) {
         val classNameFromLeaf = parseToClassName(leafName);
         val List<GeneratedTOBuilder> genTOBuilders = new ArrayList();
         val packageName = typeBuilder.fullyQualifiedName;

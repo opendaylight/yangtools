@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -528,12 +529,29 @@ public final class ParserListenerUtils {
         List<RangeConstraint> rangeConstraints = Collections.emptyList();
         outer: for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree numRestrChild = ctx.getChild(i);
+
             if (numRestrChild instanceof Numerical_restrictionsContext) {
                 for (int j = 0; j < numRestrChild.getChildCount(); j++) {
                     ParseTree rangeChild = numRestrChild.getChild(j);
                     if (rangeChild instanceof Range_stmtContext) {
                         rangeConstraints = parseRangeConstraints((Range_stmtContext) rangeChild, moduleName);
                         break outer;
+                    }
+                }
+            }
+
+            if (numRestrChild instanceof Decimal64_specificationContext) {
+                for (int j = 0; j < numRestrChild.getChildCount(); j++) {
+                    ParseTree decRestr = numRestrChild.getChild(j);
+                    if (decRestr instanceof Numerical_restrictionsContext) {
+                        for (int k = 0; k < decRestr.getChildCount(); k++) {
+                            ParseTree rangeChild = decRestr.getChild(k);
+                            if (rangeChild instanceof Range_stmtContext) {
+                                rangeConstraints = parseRangeConstraints((Range_stmtContext) rangeChild, moduleName);
+                                break outer;
+                            }
+                        }
+
                     }
                 }
             }
@@ -671,7 +689,11 @@ public final class ParserListenerUtils {
             result = new UnknownBoundaryNumber(value);
         } else {
             try {
-                result = Long.valueOf(value);
+                if (value.contains(".")) {
+                    result = new BigDecimal(value);
+                } else {
+                    result = Long.valueOf(value);
+                }
             } catch (NumberFormatException e) {
                 throw new YangParseException(moduleName, line, "Unable to parse range value '" + value + "'.", e);
             }

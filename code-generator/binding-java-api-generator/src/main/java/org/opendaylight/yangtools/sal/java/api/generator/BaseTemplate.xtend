@@ -240,7 +240,7 @@ abstract class BaseTemplate {
                 }
             }
             if (!isValidRange) {
-                throw new IllegalArgumentException("illegal length");
+                throw new IllegalArgumentException("illegal range");
             }
         }
     '''

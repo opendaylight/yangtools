@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -415,6 +416,8 @@ public final class BindingGeneratorUtil {
                 range.addAll(((IntegerTypeDefinition)base).getRangeConstraints());
             } else if (base instanceof UnsignedIntegerTypeDefinition && range.isEmpty()) {
                 range.addAll(((UnsignedIntegerTypeDefinition)base).getRangeConstraints());
+            } else if (base instanceof DecimalTypeDefinition && range.isEmpty()) {
+                range.addAll(((DecimalTypeDefinition)base).getRangeConstraints());
             }
 
         }

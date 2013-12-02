@@ -126,6 +126,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(int32Ext1Class, int32Ext1Class, "getDefaultInstance", String.class);
         assertEquals(5, int32Ext1Class.getDeclaredMethods().length);
 
+        assertContainsRestrictionCheck(expectedConstructor, "illegal range", new Integer("1"));
         obj = expectedConstructor.newInstance(new Integer("159"));
         assertEquals(obj, defInst.invoke(null, "159"));
 
@@ -141,8 +142,9 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(int32Ext2Class, int32Ext2Class, "getDefaultInstance", String.class);
         assertEquals(2, int32Ext2Class.getDeclaredMethods().length);
 
-        obj = expectedConstructor.newInstance(new Integer("159"));
-        assertEquals(obj, defInst.invoke(null, "159"));
+        assertContainsRestrictionCheck(expectedConstructor, "illegal range", new Integer("10"));
+        obj = expectedConstructor.newInstance(new Integer("2147483647"));
+        assertEquals(obj, defInst.invoke(null, "2147483647"));
 
         // typedef string-ext1
         assertFalse(stringExt1Class.isInterface());
@@ -159,6 +161,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsGetLength(stringExt1Class);
         assertEquals(6, stringExt1Class.getDeclaredMethods().length);
 
+        assertContainsRestrictionCheck(expectedConstructor, "illegal length", "abcd");
         obj = expectedConstructor.newInstance("hello world");
         assertEquals(obj, defInst.invoke(null, "hello world"));
 
@@ -173,6 +176,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(stringExt2Class, stringExt2Class, "getDefaultInstance", String.class);
         assertEquals(2, stringExt2Class.getDeclaredMethods().length);
 
+        assertContainsRestrictionCheck(expectedConstructor, "illegal length", "abcde");
         obj = expectedConstructor.newInstance("helloWorld");
         assertEquals(obj, defInst.invoke(null, "helloWorld"));
 
@@ -202,6 +206,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(myDecimalTypeClass, myDecimalTypeClass, "getDefaultInstance", String.class);
         assertEquals(5, myDecimalTypeClass.getDeclaredMethods().length);
 
+        assertContainsRestrictionCheck(expectedConstructor, "illegal range", new BigDecimal("1.4"));
         obj = expectedConstructor.newInstance(new BigDecimal("3.14"));
         assertEquals(obj, defInst.invoke(null, "3.14"));
 
@@ -261,7 +266,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(5, unionExt4Class.getDeclaredConstructors().length);
         assertContainsDefaultMethods(unionExt4Class);
 
-        //cleanUp(sourcesOutputDir, compiledOutputDir);
+        cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
 }

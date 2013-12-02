@@ -435,4 +435,17 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+    def private generateGetRange() '''
+        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
+            public static «List.importedName»<«Range.importedName»<Integer>> getLength() {
+                final «List.importedName»<«Range.importedName»<Integer>> result = new «ArrayList.importedName»<>();
+                «List.importedName»<«Range.importedName»<«Integer.importedName»>> lengthConstraints = new «ArrayList.importedName»<>(); 
+                «FOR r : restrictions.lengthConstraints»
+                    result.add(«Range.importedName».closed(«r.min», «r.max»));
+                «ENDFOR»
+                return result;
+            }
+        «ENDIF»
+    '''
+
 }
