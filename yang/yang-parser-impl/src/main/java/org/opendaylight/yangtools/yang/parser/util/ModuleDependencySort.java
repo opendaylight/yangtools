@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -131,7 +133,7 @@ public final class ModuleDependencySort {
      * Extract module:revision from module builders
      */
     private static void processDependencies(Map<String, Map<Date, ModuleNodeImpl>> moduleGraph, List<?> builders) {
-
+        Map<URI, Object> allNS = new HashMap<>();
 
         // Create edges in graph
         for (Object mb : builders) {
@@ -140,16 +142,39 @@ public final class ModuleDependencySort {
             String fromName = null;
             Date fromRevision = null;
             Set<ModuleImport> imports = null;
+            URI ns = null;
 
             if (mb instanceof Module) {
                 fromName = ((Module) mb).getName();
                 fromRevision = ((Module) mb).getRevision();
                 imports = ((Module) mb).getImports();
+                ns = ((Module)mb).getNamespace();
             } else if (mb instanceof ModuleBuilder) {
                 fromName = ((ModuleBuilder) mb).getName();
                 fromRevision = ((ModuleBuilder) mb).getRevision();
                 imports = ((ModuleBuilder) mb).getModuleImports();
+                ns = ((ModuleBuilder)mb).getNamespace();
             }
+
+            // check for existence of module with same namespace
+            if (allNS.containsKey(ns)) {
+                Object mod = allNS.get(ns);
+                String name = null;
+                Date revision = null;
+                if (mod instanceof Module) {
+                    name = ((Module) mod).getName();
+                    revision = ((Module) mod).getRevision();
+                } else if (mod instanceof ModuleBuilder) {
+                    name = ((ModuleBuilder) mod).getName();
+                    revision = ((ModuleBuilder) mod).getRevision();
+                }
+                LOGGER.warn(
+                        "Error while sorting module [{}, {}]: module with same namespace ({}) allready loaded: [{}, {}]",
+                        fromName, fromRevision, ns, name, revision);
+            } else {
+                allNS.put(ns, mb);
+            }
+
             // no need to check if other Type of object, check is performed in
             // process modules
 
