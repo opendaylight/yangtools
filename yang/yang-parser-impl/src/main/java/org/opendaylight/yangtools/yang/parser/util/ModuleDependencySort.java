@@ -168,9 +168,11 @@ public final class ModuleDependencySort {
                     name = ((ModuleBuilder) mod).getName();
                     revision = ((ModuleBuilder) mod).getRevision();
                 }
-                LOGGER.warn(
-                        "Error while sorting module [{}, {}]: module with same namespace ({}) allready loaded: [{}, {}]",
-                        fromName, fromRevision, ns, name, revision);
+                if (!(fromName.equals(name))) {
+                    LOGGER.warn(
+                            "Error while sorting module [{}, {}]: module with same namespace ({}) already loaded: [{}, {}]",
+                            fromName, fromRevision, ns, name, revision);
+                }
             } else {
                 allNS.put(ns, mb);
             }

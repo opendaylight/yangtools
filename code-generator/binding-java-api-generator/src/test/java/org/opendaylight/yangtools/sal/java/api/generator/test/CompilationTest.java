@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,8 @@ import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+
+import com.google.common.collect.Range;
 
 /**
  * Test correct code generation.
@@ -410,10 +413,18 @@ public class CompilationTest extends BaseCompilationTest {
         Object builderObj = builderClass.newInstance();
 
         Method m = assertContainsMethod(builderClass, builderClass, "setIdBinary", b.getClass());
-        assertContainsRestrictionCheck(builderObj, m, "illegal length", new byte[] {});
+        List<Range<Integer>> lengthConstraints = new ArrayList<>();
+        lengthConstraints.add(Range.closed(1, 10));
+        Object arg = new byte[] {};
+        String expectedMsg = String.format("Invalid length: {}, expected: {}.", arg, lengthConstraints);
+        assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg);
 
         m = assertContainsMethod(builderClass, builderClass, "setIdDecimal64", BigDecimal.class);
-        assertContainsRestrictionCheck(builderObj, m, "illegal range", new BigDecimal("1.4"));
+        List<Range<BigDecimal>> rangeConstraints = new ArrayList<>();
+        rangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
+        arg = new BigDecimal("1.4");
+        expectedMsg = String.format("Invalid range: {}, expected: {}.", arg, rangeConstraints);
+        assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }

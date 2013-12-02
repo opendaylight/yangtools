@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+
+import com.google.common.collect.Range;
 
 /**
  * Test correct code generation.
@@ -126,7 +129,11 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(int32Ext1Class, int32Ext1Class, "getDefaultInstance", String.class);
         assertEquals(5, int32Ext1Class.getDeclaredMethods().length);
 
-        assertContainsRestrictionCheck(expectedConstructor, "illegal range", new Integer("1"));
+        List<Range<Integer>> rangeConstraints = new ArrayList<>();
+        rangeConstraints.add(Range.closed(new Integer("2"), new Integer("2147483647")));
+        Object arg = new Integer("1");
+        String expectedMsg = String.format("Invalid range: {}, expected: {}.", arg, rangeConstraints);
+        assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(new Integer("159"));
         assertEquals(obj, defInst.invoke(null, "159"));
 
@@ -142,7 +149,12 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(int32Ext2Class, int32Ext2Class, "getDefaultInstance", String.class);
         assertEquals(2, int32Ext2Class.getDeclaredMethods().length);
 
-        assertContainsRestrictionCheck(expectedConstructor, "illegal range", new Integer("10"));
+        rangeConstraints.clear();
+        rangeConstraints.add(Range.closed(new Integer("3"), new Integer("9")));
+        rangeConstraints.add(Range.closed(new Integer("11"), new Integer("2147483647")));
+        arg = new Integer("10");
+        expectedMsg = String.format("Invalid range: {}, expected: {}.", arg, rangeConstraints);
+        assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(new Integer("2147483647"));
         assertEquals(obj, defInst.invoke(null, "2147483647"));
 
@@ -161,7 +173,11 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsGetLength(stringExt1Class);
         assertEquals(6, stringExt1Class.getDeclaredMethods().length);
 
-        assertContainsRestrictionCheck(expectedConstructor, "illegal length", "abcd");
+        List<Range<Integer>> lengthConstraints = new ArrayList<>();
+        lengthConstraints.add(Range.closed(5, 11));
+        arg = "abcd";
+        expectedMsg = String.format("Invalid length: {}, expected: {}.", arg, lengthConstraints);
+        assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance("hello world");
         assertEquals(obj, defInst.invoke(null, "hello world"));
 
@@ -176,7 +192,11 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(stringExt2Class, stringExt2Class, "getDefaultInstance", String.class);
         assertEquals(2, stringExt2Class.getDeclaredMethods().length);
 
-        assertContainsRestrictionCheck(expectedConstructor, "illegal length", "abcde");
+        lengthConstraints.clear();
+        lengthConstraints.add(Range.closed(6, 10));
+        arg = "abcde";
+        String.format("Invalid length: {}, expected: {}.", arg, lengthConstraints);
+        assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance("helloWorld");
         assertEquals(obj, defInst.invoke(null, "helloWorld"));
 
@@ -206,7 +226,11 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(myDecimalTypeClass, myDecimalTypeClass, "getDefaultInstance", String.class);
         assertEquals(5, myDecimalTypeClass.getDeclaredMethods().length);
 
-        assertContainsRestrictionCheck(expectedConstructor, "illegal range", new BigDecimal("1.4"));
+        List<Range<BigDecimal>> decimalRangeConstraints = new ArrayList<>();
+        decimalRangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
+        arg = new BigDecimal("1.4");
+        expectedMsg = String.format("Invalid range: {}, expected: {}.", arg, decimalRangeConstraints);
+        assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(new BigDecimal("3.14"));
         assertEquals(obj, defInst.invoke(null, "3.14"));
 

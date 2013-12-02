@@ -214,7 +214,7 @@ abstract class BaseTemplate {
                 }
             }
             if (!isValidLength) {
-                throw new IllegalArgumentException("illegal length");
+                throw new IllegalArgumentException(String.format("Invalid length: {}, expected: {}.", «paramName», lengthConstraints));
             }
         }
     '''
@@ -240,7 +240,7 @@ abstract class BaseTemplate {
                 }
             }
             if (!isValidRange) {
-                throw new IllegalArgumentException("illegal range");
+                throw new IllegalArgumentException(String.format("Invalid range: {}, expected: {}.", «paramName», rangeConstraints));
             }
         }
     '''
