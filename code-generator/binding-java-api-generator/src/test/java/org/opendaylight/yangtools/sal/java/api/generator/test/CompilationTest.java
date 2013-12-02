@@ -383,6 +383,7 @@ public class CompilationTest extends BaseCompilationTest {
         String pkg = BASE_PKG + ".urn.opendaylight.test.rev131008";
         ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
         Class<?> nodesClass = Class.forName(pkg + ".Nodes", true, loader);
+        Class<?> builderClass = Class.forName(pkg + ".NodesBuilder", true, loader);
 
         // Test methods return type
         byte[] b = new byte[] {};
@@ -405,6 +406,14 @@ public class CompilationTest extends BaseCompilationTest {
         assertContainsMethod(nodesClass, Long.class, "getIdU32");
         assertContainsMethod(nodesClass, BigInteger.class, "getIdU64");
         assertContainsMethod(nodesClass, pkg + ".Nodes$IdUnion", "getIdUnion", loader);
+
+        Object builderObj = builderClass.newInstance();
+
+        Method m = assertContainsMethod(builderClass, builderClass, "setIdBinary", b.getClass());
+        assertContainsRestrictionCheck(builderObj, m, "illegal length", new byte[] {});
+
+        m = assertContainsMethod(builderClass, builderClass, "setIdDecimal64", BigDecimal.class);
+        assertContainsRestrictionCheck(builderObj, m, "illegal range", new BigDecimal("1.4"));
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }

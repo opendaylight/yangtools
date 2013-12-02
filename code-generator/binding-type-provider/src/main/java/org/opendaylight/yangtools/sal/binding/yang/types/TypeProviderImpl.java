@@ -167,7 +167,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * @throws IllegalArgumentException
      *             <ul>
      *             <li>if <code>typeDefinition</code> equal null</li>
-     *             <li>if Q name of <code>typeDefinition</code> equal null</li>
+     *             <li>if Qname of <code>typeDefinition</code> equal null</li>
      *             <li>if name of <code>typeDefinition</code> equal null</li>
      *             </ul>
      */
@@ -188,8 +188,8 @@ public final class TypeProviderImpl implements TypeProvider {
         } else {
             returnType = javaTypeForLeafrefOrIdentityRef(typeDefinition, parentNode);
             if (returnType == null) {
-                returnType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(typeDefinition,
-                        parentNode, r);
+                returnType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForYangType(typeDefinition.getQName()
+                        .getLocalName());
             }
         }
         // TODO: add throw exception when we will be able to resolve ALL yang

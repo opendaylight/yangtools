@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -20,6 +22,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
 public final class BaseYangTypes {
     /**
@@ -38,6 +44,8 @@ public final class BaseYangTypes {
      * <code>Type</code> representation of <code>empty</code> YANG type
      */
     public static final Type EMPTY_TYPE = Types.typeForClass(Boolean.class);
+
+    public static final Type ENUM_TYPE = Types.typeForClass(Enum.class);
 
     /**
      * <code>Type</code> representation of <code>int8</code> YANG type
@@ -72,22 +80,23 @@ public final class BaseYangTypes {
     /**
      * <code>Type</code> representation of <code>uint8</code> YANG type
      */
-    public static final Type UINT8_TYPE = Types.typeForClass(Short.class);
+    public static final Type UINT8_TYPE = Types.typeForClass(Short.class, singleRangeRestrictions(0, 255));
 
     /**
      * <code>Type</code> representation of <code>uint16</code> YANG type
      */
-    public static final Type UINT16_TYPE = Types.typeForClass(Integer.class);
+    public static final Type UINT16_TYPE = Types.typeForClass(Integer.class, singleRangeRestrictions(0, 65535));
 
     /**
      * <code>Type</code> representation of <code>uint32</code> YANG type
      */
-    public static final Type UINT32_TYPE = Types.typeForClass(Long.class);
+    public static final Type UINT32_TYPE = Types.typeForClass(Long.class, singleRangeRestrictions(0, 4294967295L));
 
     /**
      * <code>Type</code> representation of <code>uint64</code> YANG type
      */
-    public static final Type UINT64_TYPE = Types.typeForClass(BigInteger.class);
+    public static final Type UINT64_TYPE = Types.typeForClass(BigInteger.class,
+            singleRangeRestrictions(0, new BigInteger("18446744073709551615")));
 
     /**
      * <code>Type</code> representation of <code>binary</code> YANG type
@@ -107,6 +116,7 @@ public final class BaseYangTypes {
     static {
         typeMap.put("boolean", BOOLEAN_TYPE);
         typeMap.put("empty", EMPTY_TYPE);
+        typeMap.put("enumeration", ENUM_TYPE);
         typeMap.put("int8", INT8_TYPE);
         typeMap.put("int16", INT16_TYPE);
         typeMap.put("int32", INT32_TYPE);
@@ -118,7 +128,7 @@ public final class BaseYangTypes {
         typeMap.put("uint32", UINT32_TYPE);
         typeMap.put("uint64", UINT64_TYPE);
         typeMap.put("binary", BINARY_TYPE);
-        typeMap.put("instance-identifier", INSTANCE_IDENTIFIER );
+        typeMap.put("instance-identifier", INSTANCE_IDENTIFIER);
     }
 
     public static final TypeProvider BASE_YANG_TYPES_PROVIDER = new TypeProvider() {
@@ -155,22 +165,36 @@ public final class BaseYangTypes {
         }
 
         @Override
-        public Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode, Restrictions restrictions) {
+        public Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode,
+                Restrictions restrictions) {
             String typeName = type.getQName().getLocalName();
             switch (typeName) {
-            case "binary" : return Types.primitiveType("byte[]", restrictions);
-            case "decimal64": return Types.typeForClass(BigDecimal.class, restrictions);
-            case "enumeration": return Types.typeForClass(Enum.class, restrictions);
-            case "int8": return Types.typeForClass(Byte.class, restrictions);
-            case "int16": return Types.typeForClass(Short.class, restrictions);
-            case "int32": return Types.typeForClass(Integer.class, restrictions);
-            case "int64": return Types.typeForClass(Long.class, restrictions);
-            case "string": return Types.typeForClass(String.class, restrictions);
-            case "uint8": return Types.typeForClass(Short.class, restrictions);
-            case "uint16": Types.typeForClass(Integer.class, restrictions);
-            case "uint32": Types.typeForClass(Long.class, restrictions);
-            case "uint64": Types.typeForClass(BigInteger.class, restrictions);
-            default: return javaTypeForSchemaDefinitionType(type, parentNode);
+            case "binary":
+                return Types.primitiveType("byte[]", restrictions);
+            case "decimal64":
+                return Types.typeForClass(BigDecimal.class, restrictions);
+            case "enumeration":
+                return Types.typeForClass(Enum.class, restrictions);
+            case "int8":
+                return Types.typeForClass(Byte.class, restrictions);
+            case "int16":
+                return Types.typeForClass(Short.class, restrictions);
+            case "int32":
+                return Types.typeForClass(Integer.class, restrictions);
+            case "int64":
+                return Types.typeForClass(Long.class, restrictions);
+            case "string":
+                return Types.typeForClass(String.class, restrictions);
+            case "uint8":
+                return Types.typeForClass(Short.class, restrictions);
+            case "uint16":
+                return Types.typeForClass(Integer.class, restrictions);
+            case "uint32":
+                return Types.typeForClass(Long.class, restrictions);
+            case "uint64":
+                return Types.typeForClass(BigInteger.class, restrictions);
+            default:
+                return javaTypeForSchemaDefinitionType(type, parentNode);
             }
         }
 
@@ -184,4 +208,29 @@ public final class BaseYangTypes {
             return null;
         }
     };
+
+    private static Restrictions singleRangeRestrictions(final Number min, final Number max) {
+        return new Restrictions() {
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public List<RangeConstraint> getRangeConstraints() {
+                return Collections.singletonList(BaseConstraints.rangeConstraint(min, max, null, null));
+            }
+
+            @Override
+            public List<PatternConstraint> getPatternConstraints() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<LengthConstraint> getLengthConstraints() {
+                return Collections.emptyList();
+            }
+        };
+    }
+
 }
