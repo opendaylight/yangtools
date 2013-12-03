@@ -423,7 +423,7 @@ public class CompilationTest extends BaseCompilationTest {
         List<Range<BigDecimal>> rangeConstraints = new ArrayList<>();
         rangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
         arg = new BigDecimal("1.4");
-        expectedMsg = String.format("Invalid range: {}, expected: {}.", arg, rangeConstraints);
+        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
         assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);

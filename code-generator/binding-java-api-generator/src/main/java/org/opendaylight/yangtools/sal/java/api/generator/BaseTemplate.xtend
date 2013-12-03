@@ -240,7 +240,7 @@ abstract class BaseTemplate {
                 }
             }
             if (!isValidRange) {
-                throw new IllegalArgumentException(String.format("Invalid range: {}, expected: {}.", «paramName», rangeConstraints));
+                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", «paramName», rangeConstraints));
             }
         }
     '''

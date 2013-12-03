@@ -132,7 +132,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         List<Range<Integer>> rangeConstraints = new ArrayList<>();
         rangeConstraints.add(Range.closed(new Integer("2"), new Integer("2147483647")));
         Object arg = new Integer("1");
-        String expectedMsg = String.format("Invalid range: {}, expected: {}.", arg, rangeConstraints);
+        String expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
         assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(new Integer("159"));
         assertEquals(obj, defInst.invoke(null, "159"));
@@ -153,7 +153,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         rangeConstraints.add(Range.closed(new Integer("3"), new Integer("9")));
         rangeConstraints.add(Range.closed(new Integer("11"), new Integer("2147483647")));
         arg = new Integer("10");
-        expectedMsg = String.format("Invalid range: {}, expected: {}.", arg, rangeConstraints);
+        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
         assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(new Integer("2147483647"));
         assertEquals(obj, defInst.invoke(null, "2147483647"));
@@ -229,7 +229,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         List<Range<BigDecimal>> decimalRangeConstraints = new ArrayList<>();
         decimalRangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
         arg = new BigDecimal("1.4");
-        expectedMsg = String.format("Invalid range: {}, expected: {}.", arg, decimalRangeConstraints);
+        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, decimalRangeConstraints);
         assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(new BigDecimal("3.14"));
         assertEquals(obj, defInst.invoke(null, "3.14"));
