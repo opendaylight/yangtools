@@ -111,7 +111,7 @@ public class TypeProviderIntegrationTest {
 
         leaf = (LeafSchemaNode) m.getDataChildByName("ext-enumeration");
         actual = provider.getTypeDefaultConstruction(leaf);
-        assertEquals("new " + PKG + "MyEnumeration(" + PKG + "MyEnumeration.Seven)", actual);
+        assertEquals(PKG + "MyEnumeration.Seven", actual);
     }
 
     @Test
