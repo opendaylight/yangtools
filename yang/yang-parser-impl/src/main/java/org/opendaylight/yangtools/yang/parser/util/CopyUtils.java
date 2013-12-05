@@ -457,10 +457,6 @@ public final class CopyUtils {
         }
         copy.getTargetUnknownNodes().addAll(newTargetUnknownNodes);
 
-        // add new uses to collection of uses in module
-        ModuleBuilder module = ParserUtils.getParentModule(newParent);
-        module.getAllUsesNodes().add(copy);
-
         return copy;
     }
 
@@ -487,7 +483,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    static UnknownSchemaNodeBuilder copy(UnknownSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    public static UnknownSchemaNodeBuilder copy(UnknownSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;

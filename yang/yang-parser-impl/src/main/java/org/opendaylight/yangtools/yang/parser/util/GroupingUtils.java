@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +66,7 @@ public final class GroupingUtils {
     public static GroupingBuilder getTargetGroupingFromModules(final UsesNodeBuilder usesBuilder,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         final int line = usesBuilder.getLine();
+
         final String groupingString = usesBuilder.getGroupingPathAsString();
         String groupingPrefix;
         String groupingName;
@@ -664,6 +666,23 @@ public final class GroupingUtils {
             RefineUtils.performRefine(nodeToRefine, refine);
             usesNode.addRefineNode(nodeToRefine);
         }
+    }
+
+    public static class UsesComparator implements Comparator<UsesNodeBuilder> {
+        @Override
+        public int compare(UsesNodeBuilder o1, UsesNodeBuilder o2) {
+            return getElementPosition(o2) - getElementPosition(o1);
+        }
+    }
+
+    private static int getElementPosition(UsesNodeBuilder usesNode) {
+        int i = 0;
+        Builder parent = usesNode.getParent();
+        while (!(parent instanceof ModuleBuilder)) {
+            parent = parent.getParent();
+            i++;
+        }
+        return i;
     }
 
 }

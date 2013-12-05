@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,6 +62,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilde
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.util.GroupingSort;
 import org.opendaylight.yangtools.yang.parser.util.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
@@ -95,7 +97,7 @@ public final class YangParserImpl implements YangModelParser {
         try {
             yangFileStream = new FileInputStream(yangFile);
             streamToFileMap.put(yangFileStream, yangFile);
-        } catch(FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
         }
 
@@ -108,13 +110,13 @@ public final class YangParserImpl implements YangModelParser {
                 if (dependency.isFile()) {
                     streamToFileMap.put(new FileInputStream(dependency), dependency);
                 }
-            } catch(FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 LOG.warn("Exception while reading yang file: " + fileName, e);
             }
         }
 
-        Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(
-                new ArrayList<>(streamToFileMap.keySet()), new HashMap<ModuleBuilder, InputStream>());
+        Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(new ArrayList<>(streamToFileMap.keySet()),
+                new HashMap<ModuleBuilder, InputStream>());
         ModuleBuilder main = parsedBuilders.get(yangFileStream);
 
         List<ModuleBuilder> moduleBuilders = new ArrayList<>();
@@ -251,7 +253,7 @@ public final class YangParserImpl implements YangModelParser {
         new YangModelBasicValidator(walker).validate(new ArrayList<>(trees.values()));
 
         YangParserListenerImpl yangModelParser;
-        for(Map.Entry<InputStream, ParseTree> entry : trees.entrySet()) {
+        for (Map.Entry<InputStream, ParseTree> entry : trees.entrySet()) {
             yangModelParser = new YangParserListenerImpl();
             walker.walk(yangModelParser, entry.getValue());
             ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
@@ -366,12 +368,12 @@ public final class YangParserImpl implements YangModelParser {
 
     private Map<ModuleBuilder, Module> build(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
         // fix unresolved nodes
+        resolveDirtyNodes(modules);
         resolveAugmentsTargetPath(modules, null);
         resolveUsesTargetGrouping(modules, null);
-        resolveDirtyNodes(modules);
+        resolveUsesForGroupings(modules);
+        resolveUsesForNodes(modules);
         resolveAugments(modules);
-        resolveUses(modules, false);
-        resolvedUsesPostProcessing(modules, false);
         resolveDeviations(modules);
 
         // build
@@ -514,32 +516,72 @@ public final class YangParserImpl implements YangModelParser {
         SchemaPath oldSchemaPath = augment.getTargetPath();
         List<QName> oldPath = oldSchemaPath.getPath();
         List<QName> newPath = new ArrayList<>();
-        for (QName qn : oldPath) {
-            URI ns = module.getNamespace();
-            Date rev = module.getRevision();
-            String pref = module.getPrefix();
-            String localPrefix = qn.getPrefix();
-            if (localPrefix != null && !("".equals(localPrefix))) {
-                ModuleBuilder currentModule = ParserUtils.findModuleFromBuilders(modules, module, localPrefix,
-                        augment.getLine());
-                if (currentModule == null) {
-                    Module m = ParserUtils.findModuleFromContext(context, module, localPrefix, augment.getLine());
-                    if (m == null) {
-                        throw new YangParseException(module.getName(), augment.getLine(), "Module with prefix "
-                                + localPrefix + " not found.");
-                    }
-                    ns = m.getNamespace();
-                    rev = m.getRevision();
-                    pref = m.getPrefix();
-                } else {
-                    ns = currentModule.getNamespace();
-                    rev = currentModule.getRevision();
-                    pref = currentModule.getPrefix();
-                }
+
+        Builder parent = augment.getParent();
+        if (parent instanceof UsesNodeBuilder) {
+            DataNodeContainerBuilder usesParent = ((UsesNodeBuilder) parent).getParent();
+            newPath.addAll(usesParent.getPath().getPath());
+
+            URI ns;
+            Date revision;
+            String prefix;
+            QName baseQName = usesParent.getQName();
+            if (baseQName == null) {
+                ModuleBuilder m = ParserUtils.getParentModule(usesParent);
+                ns = m.getNamespace();
+                revision = m.getRevision();
+                prefix = m.getPrefix();
+            } else {
+                ns = baseQName.getNamespace();
+                revision = baseQName.getRevision();
+                prefix = baseQName.getPrefix();
             }
-            newPath.add(new QName(ns, rev, pref, qn.getLocalName()));
+
+            for (QName qn : oldSchemaPath.getPath()) {
+                newPath.add(new QName(ns, revision, prefix, qn.getLocalName()));
+            }
+        } else {
+
+            for (QName qn : oldPath) {
+                URI ns = module.getNamespace();
+                Date rev = module.getRevision();
+                String pref = module.getPrefix();
+                String localPrefix = qn.getPrefix();
+                if (localPrefix != null && !("".equals(localPrefix))) {
+                    ModuleBuilder currentModule = ParserUtils.findModuleFromBuilders(modules, module, localPrefix,
+                            augment.getLine());
+                    if (currentModule == null) {
+                        Module m = ParserUtils.findModuleFromContext(context, module, localPrefix, augment.getLine());
+                        if (m == null) {
+                            throw new YangParseException(module.getName(), augment.getLine(), "Module with prefix "
+                                    + localPrefix + " not found.");
+                        }
+                        ns = m.getNamespace();
+                        rev = m.getRevision();
+                        pref = m.getPrefix();
+                    } else {
+                        ns = currentModule.getNamespace();
+                        rev = currentModule.getRevision();
+                        pref = currentModule.getPrefix();
+                    }
+                }
+                newPath.add(new QName(ns, rev, pref, qn.getLocalName()));
+            }
         }
         augment.setTargetNodeSchemaPath(new SchemaPath(newPath, augment.getTargetPath().isAbsolute()));
+
+        for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
+            correctPathForAugmentNodes(childNode, augment.getTargetNodeSchemaPath());
+        }
+    }
+
+    private void correctPathForAugmentNodes(DataSchemaNodeBuilder node, SchemaPath parentPath) {
+        node.setPath(ParserUtils.createSchemaPath(parentPath, node.getQName()));
+        if (node instanceof DataNodeContainerBuilder) {
+            for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder)node).getChildNodeBuilders()) {
+                correctPathForAugmentNodes(child, node.getPath());
+            }
+        }
     }
 
     /**
@@ -608,7 +650,8 @@ public final class YangParserImpl implements YangModelParser {
             for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
                 if (childNode.getConstraints().isMandatory()) {
                     throw new YangParseException(augment.getModuleName(), augment.getLine(),
-                            "Error in augment parsing: cannot augment mandatory node");
+                            "Error in augment parsing: cannot augment mandatory node "
+                                    + childNode.getQName().getLocalName());
                 }
             }
         }
@@ -833,6 +876,55 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    private void resolveUsesForGroupings(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+        final Set<GroupingBuilder> allGroupings = new HashSet<>();
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
+                ModuleBuilder module = inner.getValue();
+                allGroupings.addAll(module.getGroupingBuilders());
+            }
+        }
+        final List<GroupingBuilder> sorted = GroupingSort.sort(allGroupings);
+        for (GroupingBuilder gb : sorted) {
+            List<UsesNodeBuilder> usesNodes = new ArrayList<>(GroupingSort.getAllUsesNodes(gb));
+            Collections.sort(usesNodes, new GroupingUtils.UsesComparator());
+            for (UsesNodeBuilder usesNode : usesNodes) {
+                resolveUses(usesNode, modules);
+            }
+        }
+    }
+
+    private void resolveUsesForNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
+                ModuleBuilder module = inner.getValue();
+                List<UsesNodeBuilder> usesNodes = module.getAllUsesNodes();
+                Collections.sort(usesNodes, new GroupingUtils.UsesComparator());
+                for (UsesNodeBuilder usesNode : usesNodes) {
+                    resolveUses(usesNode, modules);
+                }
+            }
+        }
+    }
+
+    private void resolveUses(UsesNodeBuilder usesNode, final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+        if (!usesNode.isResolved()) {
+            DataNodeContainerBuilder parent = usesNode.getParent();
+            ModuleBuilder module = ParserUtils.getParentModule(parent);
+            GroupingBuilder target = GroupingUtils.getTargetGroupingFromModules(usesNode, modules, module);
+            parent.getChildNodeBuilders().addAll(target.instantiateChildNodes(parent));
+            parent.getTypeDefinitionBuilders().addAll(target.instantiateTypedefs(parent));
+            parent.getGroupingBuilders().addAll(target.instantiateGroupings(parent));
+            parent.getUnknownNodeBuilders().addAll(target.instantiateUnknownNodes(parent));
+            usesNode.setResolved(true);
+
+            for (AugmentationSchemaBuilder augment : usesNode.getAugmentations()) {
+                processAugmentation(augment, parent, augment.getTargetPath().getPath());
+            }
+            GroupingUtils.performRefine(usesNode);
+        }
+    }
+
     /**
      * Copy data from uses target. Augmentations have to be resolved already.
      *
@@ -929,8 +1021,8 @@ public final class YangParserImpl implements YangModelParser {
         for (UnknownSchemaNodeBuilder usnb : module.getAllUnknownNodes()) {
             QName nodeType = usnb.getNodeType();
             try {
-                ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module,
-                        nodeType.getPrefix(), usnb.getLine());
+                ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module, nodeType.getPrefix(),
+                        usnb.getLine());
 
                 if (dependentModuleBuilder == null) {
                     Module dependentModule = findModuleFromContext(context, module, nodeType.getPrefix(),
