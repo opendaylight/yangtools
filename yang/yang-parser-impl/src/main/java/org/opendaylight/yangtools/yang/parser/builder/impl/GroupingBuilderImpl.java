@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,11 +24,14 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
+import org.opendaylight.yangtools.yang.parser.util.CopyUtils;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder implements GroupingBuilder {
@@ -92,6 +96,51 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         return instance;
     }
 
+    @Override
+    public Set<DataSchemaNodeBuilder> instantiateChildNodes(Builder newParent) {
+        final Set<DataSchemaNodeBuilder> nodes = new HashSet<>();
+        for (DataSchemaNodeBuilder node : addedChildNodes) {
+            DataSchemaNodeBuilder copy = CopyUtils.copy(node, newParent, true);
+            ParserUtils.setNodeAddedByUses(copy);
+            nodes.add(copy);
+        }
+        return nodes;
+    }
+
+    @Override
+    public Set<TypeDefinitionBuilder> instantiateTypedefs(Builder newParent) {
+        final Set<TypeDefinitionBuilder> nodes = new HashSet<>();
+        for (TypeDefinitionBuilder node : addedTypedefs) {
+            TypeDefinitionBuilder copy = CopyUtils.copy(node, newParent, true);
+            nodes.add(copy);
+        }
+        return nodes;
+    }
+
+    @Override
+    public Set<GroupingBuilder> instantiateGroupings(Builder newParent) {
+        final Set<GroupingBuilder> nodes = new HashSet<>();
+        for (GroupingBuilder node : addedGroupings) {
+            GroupingBuilder copy = CopyUtils.copy(node, newParent, true);
+            copy.setAddedByUses(true);
+            for (DataSchemaNodeBuilder childNode : copy.getChildNodeBuilders()) {
+                ParserUtils.setNodeAddedByUses(childNode);
+            }
+            nodes.add(copy);
+        }
+        return nodes;
+    }
+
+    @Override
+    public Set<UnknownSchemaNodeBuilder> instantiateUnknownNodes(Builder newParent) {
+        final Set<UnknownSchemaNodeBuilder> nodes = new HashSet<>();
+        for (UnknownSchemaNodeBuilder node : addedUnknownNodes) {
+            UnknownSchemaNodeBuilder copy = CopyUtils.copy(node, newParent, true);
+            copy.setAddedByUses(true);
+            nodes.add(copy);
+        }
+        return nodes;
+    }
 
     @Override
     public void setQName(QName qname) {

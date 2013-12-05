@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -428,39 +427,6 @@ public final class CopyUtils {
         copy.getRefines().addAll(old.getRefines());
         copy.setAugmenting(old.isAugmenting());
         copy.setParentAugment(old.getParentAugment());
-
-        // target child nodes
-        Set<DataSchemaNodeBuilder> newTargetChildren = new HashSet<>();
-        for (DataSchemaNodeBuilder dnb : old.getTargetChildren()) {
-            newTargetChildren.add(copy(dnb, newParent, true));
-        }
-        copy.getTargetChildren().addAll(newTargetChildren);
-
-        // target typedefs
-        Set<TypeDefinitionBuilder> newTargetTypedefs = new HashSet<>();
-        for (TypeDefinitionBuilder tdb : old.getTargetTypedefs()) {
-            newTargetTypedefs.add(copy(tdb, newParent, true));
-        }
-        copy.getTargetTypedefs().addAll(newTargetTypedefs);
-
-        // target groupings
-        Set<GroupingBuilder> newTargetGroupings = new HashSet<>();
-        for (GroupingBuilder gb : old.getTargetGroupings()) {
-            newTargetGroupings.add(copy(gb, newParent, true));
-        }
-        copy.getTargetGroupings().addAll(newTargetGroupings);
-
-        // target unknown nodes
-        Set<UnknownSchemaNodeBuilder> newTargetUnknownNodes = new HashSet<>();
-        for (UnknownSchemaNodeBuilder unb : old.getTargetUnknownNodes()) {
-            newTargetUnknownNodes.add(copy(unb, newParent, true));
-        }
-        copy.getTargetUnknownNodes().addAll(newTargetUnknownNodes);
-
-        // add new uses to collection of uses in module
-        ModuleBuilder module = ParserUtils.getParentModule(newParent);
-        module.getAllUsesNodes().add(copy);
-
         return copy;
     }
 
@@ -487,7 +453,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    static UnknownSchemaNodeBuilder copy(UnknownSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    public static UnknownSchemaNodeBuilder copy(UnknownSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;

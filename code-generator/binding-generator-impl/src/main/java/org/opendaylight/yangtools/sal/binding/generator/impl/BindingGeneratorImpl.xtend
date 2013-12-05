@@ -1149,12 +1149,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
         checkArgument(basePackageName !== null, "Base Package Name cannot be NULL.");
         checkArgument(choiceNode !== null, "Choice Schema Node cannot be NULL.");
 
-        val packageName = packageNameForGeneratedType(basePackageName, choiceNode.path);
-        val choiceTypeBuilder = addRawInterfaceDefinition(packageName, choiceNode);
-        constructGetter(parent, choiceNode.QName.localName, choiceNode.description, choiceTypeBuilder);
-        choiceTypeBuilder.addImplementsType(DataContainer.typeForClass);
-        genCtx.get(module).addChildNodeType(choiceNode.path, choiceTypeBuilder)
-        generateTypesFromChoiceCases(module, basePackageName, parent, choiceTypeBuilder.toInstance, choiceNode);
+        if (!choiceNode.addedByUses) {
+            val packageName = packageNameForGeneratedType(basePackageName, choiceNode.path);
+            val choiceTypeBuilder = addRawInterfaceDefinition(packageName, choiceNode);
+            constructGetter(parent, choiceNode.QName.localName, choiceNode.description, choiceTypeBuilder);
+            choiceTypeBuilder.addImplementsType(DataContainer.typeForClass);
+            genCtx.get(module).addChildNodeType(choiceNode.path, choiceTypeBuilder)
+            generateTypesFromChoiceCases(module, basePackageName, parent, choiceTypeBuilder.toInstance, choiceNode);
+        }
     }
 
     /**
