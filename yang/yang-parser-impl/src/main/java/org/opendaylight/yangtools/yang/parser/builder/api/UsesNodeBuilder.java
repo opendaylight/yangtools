@@ -206,4 +206,8 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
      */
     void setDataCollected(boolean dataCollected);
 
+    boolean isResolved();
+
+    void setResolved(boolean resolved);
+
 }
