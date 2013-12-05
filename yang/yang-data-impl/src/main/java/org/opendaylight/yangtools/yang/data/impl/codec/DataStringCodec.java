@@ -1,6 +1,8 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-public interface DataStringCodec<T> {
+import org.opendaylight.yangtools.concepts.Codec;
+
+public interface DataStringCodec<T> extends Codec<String, T> {
     
     Class<T> getInputClass();
 

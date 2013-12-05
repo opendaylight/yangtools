@@ -1,7 +1,9 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
+import org.opendaylight.yangtools.concepts.Codec;
 
-public interface StringCodec<T> {
+
+public interface StringCodec<T> extends Codec<T,String> {
 
     public T serialize(String data);
 
