@@ -209,7 +209,7 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'testfile7' at line 18: Error in augment parsing: cannot augment mandatory node";
+            String expected = "Error in module 'testfile7' at line 18: Error in augment parsing: cannot augment mandatory node linkleaf";
             assertEquals(expected, e.getMessage());
         }
     }

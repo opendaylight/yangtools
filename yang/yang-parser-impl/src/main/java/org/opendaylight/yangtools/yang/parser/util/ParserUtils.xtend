@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder
+import java.net.URI
 
 public final class ParserUtils {
 
@@ -60,6 +61,14 @@ public final class ParserUtils {
         val path = new ArrayList<QName>(schemaPath.getPath());
         path.addAll(Arrays.asList(qname));
         return new SchemaPath(path, schemaPath.isAbsolute());
+    }
+
+    public static def SchemaPath correctSchemaPath(SchemaPath old, URI ns, Date revision, String prefix) {
+        val List<QName> newPath = new ArrayList();
+        for (name : old.path) {
+            newPath.add(new QName(ns, revision, prefix, name.localName))
+        }
+        return new SchemaPath(newPath, old.absolute) 
     }
 
     /**
@@ -205,6 +214,9 @@ public final class ParserUtils {
     public static def void fillAugmentTarget(AugmentationSchemaBuilder augment, DataNodeContainerBuilder target) {
         for (DataSchemaNodeBuilder child : augment.getChildNodeBuilders()) {
             val childCopy = CopyUtils.copy(child, target, false);
+            if (augment.parent instanceof UsesNodeBuilder) {
+                setNodeAddedByUses(childCopy);
+            }
             setNodeAugmenting(childCopy, augment);
             correctNodePath(child, target.getPath());
             correctNodePath(childCopy, target.getPath());
@@ -216,11 +228,6 @@ public final class ParserUtils {
                     "Failed to perform augmentation: " + e.getMessage());
             }
         }
-        for (UsesNodeBuilder usesNode : augment.getUsesNodes()) {
-            val copy = CopyUtils.copyUses(usesNode, target);
-            copy.setAugmenting(true);
-            target.addUsesNode(copy);
-        }
     }
 
     private static def void setNodeAugmenting(DataSchemaNodeBuilder child, AugmentationSchemaBuilder augment) {
@@ -230,14 +237,25 @@ public final class ParserUtils {
             for (inner : dataNodeChild.getChildNodeBuilders()) {
                 setNodeAugmenting(inner, augment);
             }
-            for (uses : dataNodeChild.getUsesNodes()) {
-                uses.setParentAugment(augment);
-                uses.setAugmenting(true);
-            }
         } else if (child instanceof ChoiceBuilder) {
             val ChoiceBuilder choiceChild = child as ChoiceBuilder;
             for (inner : choiceChild.cases) {
                 setNodeAugmenting(inner, augment);
+            }
+        }
+    }
+
+    public static def void setNodeAddedByUses(DataSchemaNodeBuilder child) {
+        child.setAddedByUses(true);
+        if (child instanceof DataNodeContainerBuilder) {
+            val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
+            for (inner : dataNodeChild.getChildNodeBuilders()) {
+                setNodeAddedByUses(inner);
+            }
+        } else if (child instanceof ChoiceBuilder) {
+            val ChoiceBuilder choiceChild = child as ChoiceBuilder;
+            for (inner : choiceChild.cases) {
+                setNodeAddedByUses(inner);
             }
         }
     }
@@ -253,6 +271,9 @@ public final class ParserUtils {
     public static def void fillAugmentTarget(AugmentationSchemaBuilder augment, ChoiceBuilder target) {
         for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
             val childCopy = CopyUtils.copy(builder, target, false);
+            if (augment.parent instanceof UsesNodeBuilder) {
+                setNodeAddedByUses(childCopy);
+            }
             setNodeAugmenting(childCopy, augment)
             correctNodePath(builder, target.getPath());
             correctNodePath(childCopy, target.getPath());
