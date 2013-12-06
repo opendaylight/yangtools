@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
-
-import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsAttributes;
+import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -93,7 +93,7 @@ public class BitAndUnionTOEnclosingTest {
                 "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
                 lfLeaf.getPackageName());
 
-        assertEquals("Lf generated TO has incorrect number of properties", 2, lfLeaf.getProperties().size());
+        assertEquals("Lf generated TO has incorrect number of properties", 3, lfLeaf.getProperties().size());
         containsAttributes(lfLeaf, true, true, true, new NameTypePattern("string", "String"));
         containsAttributes(lfLeaf, true, false, true, new NameTypePattern("lf1", "Lf1"));
 
@@ -146,7 +146,7 @@ public class BitAndUnionTOEnclosingTest {
         assertEquals("TypeUnion has incorrect package name.",
                 "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnionTypedef.getPackageName());
 
-        assertEquals("TypeUnion generated TO has incorrect number of properties", 2, typeUnionTypedef.getProperties()
+        assertEquals("TypeUnion generated TO has incorrect number of properties", 3, typeUnionTypedef.getProperties()
                 .size());
         containsAttributes(typeUnionTypedef, true, true, true, new NameTypePattern("string", "String"));
         containsAttributes(typeUnionTypedef, true, false, true, new NameTypePattern("typeUnion1", "TypeUnion1"));
@@ -177,7 +177,7 @@ public class BitAndUnionTOEnclosingTest {
                 "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion1.getPackageName());
 
         assertEquals("TypeUnion1 generated TO has incorrect number of properties", 4, typeUnion1.getProperties().size());
-       
+
         containsAttributes(typeUnion1, true, true, true, new NameTypePattern("uint32", "Long"));
         containsAttributes(typeUnion1, true, true, true, new NameTypePattern("int8", "Byte"));
         containsAttributes(typeUnion1, true, true, true, new NameTypePattern("string", "String"));

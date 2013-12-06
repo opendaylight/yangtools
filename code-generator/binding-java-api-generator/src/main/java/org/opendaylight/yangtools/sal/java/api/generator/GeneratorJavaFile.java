@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,18 +88,33 @@ public final class GeneratorJavaFile {
      * Generates list of files with JAVA source code. Only the suitable code
      * generator is used to generate the source code for the concrete type.
      *
-     * @param parentDirectory
+     * @param generatedSourcesDirectory
      *            directory to which the output source codes should be generated
      * @return list of output files
      * @throws IOException
      *             if the error during writing to the file occurs
      */
-    public List<File> generateToFile(final File parentDirectory) throws IOException {
+    public List<File> generateToFile(final File generatedSourcesDirectory) throws IOException {
+        return generateToFile(generatedSourcesDirectory, generatedSourcesDirectory);
+    }
+
+    public List<File> generateToFile(final File generatedSourcesDirectory, final File persistenSourcesDirectory)
+            throws IOException {
         final List<File> result = new ArrayList<>();
         for (Type type : types) {
             if (type != null) {
                 for (CodeGenerator generator : generators) {
-                    File generatedJavaFile = generateTypeToJavaFile(parentDirectory, type, generator);
+                    File generatedJavaFile = null;
+                    if (type instanceof GeneratedTransferObject
+                            && ((GeneratedTransferObject) type).isUnionTypeBuilder()) {
+                        File packageDir = packageToDirectory(persistenSourcesDirectory, type.getPackageName());
+                        File file = new File(packageDir, generator.getUnitName(type) + ".java");
+                        if (!file.exists()) {
+                            generatedJavaFile = generateTypeToJavaFile(persistenSourcesDirectory, type, generator);
+                        }
+                    } else {
+                        generatedJavaFile = generateTypeToJavaFile(generatedSourcesDirectory, type, generator);
+                    }
                     if (generatedJavaFile != null) {
                         result.add(generatedJavaFile);
                     }

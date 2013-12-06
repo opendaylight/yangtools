@@ -21,9 +21,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
@@ -241,6 +243,61 @@ public class TypeProviderIntegrationTest {
         String actual = provider.getTypeDefaultConstruction(leaf);
         String exp = "new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address(\"0.0.0.1\")";
         assertEquals(exp, actual);
+    }
+
+    @Test
+    public void testGetTypeDefaultConstructionUnion() throws ParseException {
+        LeafSchemaNode leaf = (LeafSchemaNode) m.getDataChildByName("leaf-union");
+        String actual = provider.getTypeDefaultConstruction(leaf);
+        String expected = "new " + PKG + "TestData.LeafUnion(\"111\".toCharArray())";
+        assertEquals(expected, actual);
+
+        leaf = (LeafSchemaNode) m.getDataChildByName("ext-union");
+        actual = provider.getTypeDefaultConstruction(leaf);
+        expected = "new " + PKG + "MyUnion(\"111\".toCharArray())";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetTypeDefaultConstructionUnionNested() throws ParseException {
+        ContainerSchemaNode c1 = (ContainerSchemaNode)m.getDataChildByName("c1");
+        ContainerSchemaNode c2 = (ContainerSchemaNode)c1.getDataChildByName("c2");
+        ContainerSchemaNode c3 = (ContainerSchemaNode)c2.getDataChildByName("c3");
+        LeafSchemaNode leaf = (LeafSchemaNode) c3.getDataChildByName("id");
+
+        String actual = provider.getTypeDefaultConstruction(leaf);
+        String expected = "new " + PKG + "NestedUnion(\"111\".toCharArray())";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetParamNameFromType() throws ParseException {
+        m = context.findModuleByName("ietf-inet-types", new SimpleDateFormat("yyyy-MM-dd").parse("2010-09-24"));
+        Set<TypeDefinition<?>> types = m.getTypeDefinitions();
+        TypeDefinition<?> ipv4 = null;
+        TypeDefinition<?> ipv6 = null;
+        TypeDefinition<?> ipv4Pref = null;
+        TypeDefinition<?> ipv6Pref = null;
+        for (TypeDefinition<?> type : types) {
+            if ("ipv4-address".equals(type.getQName().getLocalName())) {
+                ipv4 = type;
+            } else if ("ipv6-address".equals(type.getQName().getLocalName())) {
+                ipv6 = type;
+            } else if ("ipv4-prefix".equals(type.getQName().getLocalName())) {
+                ipv4Pref = type;
+            } else if ("ipv6-prefix".equals(type.getQName().getLocalName())) {
+                ipv6Pref = type;
+            }
+        }
+
+        assertNotNull(ipv4);
+        assertNotNull(ipv6);
+        assertNotNull(ipv4Pref);
+        assertNotNull(ipv6Pref);
+        assertEquals("_ipv4Address", provider.getParamNameFromType(ipv4));
+        assertEquals("_ipv6Address", provider.getParamNameFromType(ipv6));
+        assertEquals("_ipv4Prefix", provider.getParamNameFromType(ipv4Pref));
+        assertEquals("_ipv6Prefix", provider.getParamNameFromType(ipv6Pref));
     }
 
     private static SchemaContext resolveSchemaContextFromFiles(final String... yangFiles) {
