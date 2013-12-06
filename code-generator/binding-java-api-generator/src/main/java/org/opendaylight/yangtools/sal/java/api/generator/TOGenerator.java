@@ -12,11 +12,11 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
 /**
- * 
+ *
  * Transformator of the data from the virtual form to JAVA source code. The
  * result source code represents JAVA class. For generating of the source code
  * is used the template written in XTEND language.
- * 
+ *
  */
 public final class TOGenerator implements CodeGenerator {
 
@@ -31,6 +31,9 @@ public final class TOGenerator implements CodeGenerator {
             final GeneratedTransferObject genTO = (GeneratedTransferObject) type;
             if(genTO.isUnionType()) {
                 final UnionTemplate template = new UnionTemplate(genTO);
+                return template.generate();
+            } else if (genTO.isUnionTypeBuilder()) {
+                final UnionBuilderTemplate template = new UnionBuilderTemplate(genTO);
                 return template.generate();
             } else {
                 final ClassTemplate template = new ClassTemplate(genTO);

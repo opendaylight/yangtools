@@ -322,4 +322,19 @@ abstract class BaseTemplate {
         return "\"" + obj.toString + "\"";
     }
 
+    /**
+     * Template method which generates method parameters with their types from <code>parameters</code>.
+     * 
+     * @param parameters
+     * list of parameter instances which are transformed to the method parameters
+     * @return string with the list of the method parameters with their types in JAVA format
+     */
+    def protected generateParameters(List<MethodSignature.Parameter> parameters) '''«
+        IF !parameters.empty»«
+            FOR parameter : parameters SEPARATOR ", "»«
+                parameter.type.importedName» «parameter.name»«
+            ENDFOR»«
+        ENDIF
+    »'''
+
 }

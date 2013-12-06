@@ -77,7 +77,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertTrue(unionExt2.exists());
         assertTrue(unionExt3.exists());
         assertTrue(unionExt4.exists());
-        assertFilesCount(parent, 27);
+        assertFilesCount(parent, 30);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -238,13 +238,13 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertFalse(unionExt1Class.isInterface());
         assertContainsField(unionExt1Class, "_int16", Short.class);
         assertContainsField(unionExt1Class, "_int32", Integer.class);
-        assertEquals(2, unionExt1Class.getDeclaredFields().length);
+        assertEquals(3, unionExt1Class.getDeclaredFields().length);
         assertContainsMethod(unionExt1Class, Short.class, "getInt16");
         assertContainsMethod(unionExt1Class, Integer.class, "getInt32");
         assertContainsConstructor(unionExt1Class, Short.class);
         assertContainsConstructor(unionExt1Class, Integer.class);
         assertContainsConstructor(unionExt1Class, unionExt1Class);
-        assertEquals(3, unionExt1Class.getDeclaredConstructors().length);
+        assertEquals(4, unionExt1Class.getDeclaredConstructors().length);
         assertContainsDefaultMethods(unionExt1Class);
 
         // typedef union-ext2
@@ -255,20 +255,20 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsConstructor(unionExt2Class, Integer.class);
         assertContainsConstructor(unionExt2Class, unionExt2Class);
         assertContainsConstructor(unionExt2Class, unionExt1Class);
-        assertEquals(4, unionExt2Class.getDeclaredConstructors().length);
+        assertEquals(5, unionExt2Class.getDeclaredConstructors().length);
 
         // typedef union-ext3
         assertFalse(unionExt3Class.isInterface());
         assertContainsField(unionExt3Class, "_string", String.class);
         assertContainsField(unionExt3Class, "_unionExt2", unionExt2Class);
         assertContainsFieldWithValue(unionExt3Class, UNITS, String.class, "object id", String.class);
-        assertEquals(3, unionExt3Class.getDeclaredFields().length);
+        assertEquals(4, unionExt3Class.getDeclaredFields().length);
         assertContainsMethod(unionExt3Class, String.class, "getString");
         assertContainsMethod(unionExt3Class, unionExt2Class, "getUnionExt2");
         assertContainsConstructor(unionExt3Class, String.class);
         assertContainsConstructor(unionExt3Class, unionExt2Class);
         assertContainsConstructor(unionExt3Class, unionExt3Class);
-        assertEquals(3, unionExt3Class.getDeclaredConstructors().length);
+        assertEquals(4, unionExt3Class.getDeclaredConstructors().length);
         assertContainsDefaultMethods(unionExt3Class);
 
         // typedef union-ext4
@@ -277,7 +277,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsField(unionExt4Class, "_int32Ext2", int32Ext2Class);
         assertContainsField(unionExt4Class, "_empty", Boolean.class);
         assertContainsField(unionExt4Class, "_myDecimalType", myDecimalTypeClass);
-        assertEquals(4, unionExt4Class.getDeclaredFields().length);
+        assertEquals(5, unionExt4Class.getDeclaredFields().length);
         assertContainsMethod(unionExt4Class, unionExt3Class, "getUnionExt3");
         assertContainsMethod(unionExt4Class, int32Ext2Class, "getInt32Ext2");
         assertContainsMethod(unionExt4Class, Boolean.class, "isEmpty");
@@ -287,10 +287,10 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsConstructor(unionExt4Class, Boolean.class);
         assertContainsConstructor(unionExt4Class, myDecimalTypeClass);
         assertContainsConstructor(unionExt4Class, unionExt4Class);
-        assertEquals(5, unionExt4Class.getDeclaredConstructors().length);
+        assertEquals(6, unionExt4Class.getDeclaredConstructors().length);
         assertContainsDefaultMethods(unionExt4Class);
 
-        cleanUp(sourcesOutputDir, compiledOutputDir);
+        //cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
 }
