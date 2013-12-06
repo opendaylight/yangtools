@@ -185,9 +185,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val List<Type> filteredGenTypes = new ArrayList();
         for (Module m : modules) {
             filteredGenTypes.addAll(genCtx.get(m).generatedTypes);
-
+            val Set<Type> additionalTypes = (typeProvider as TypeProviderImpl).additionalTypes.get(m)
+            if (additionalTypes != null) {
+                filteredGenTypes.addAll(additionalTypes)
+            }
         }
-        //genCtx.clear;
 
         return filteredGenTypes;
     }
