@@ -30,7 +30,10 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import com.google.common.base.Preconditions;
 
 public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware {
+    private static final String FS = File.separator;
     private BuildContext buildContext;
+    private File projectBaseDir;
+    private Map<String, String> additionalConfig;
 
     @Override
     public Collection<File> generateSources(final SchemaContext context, final File outputDir,
@@ -47,7 +50,17 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         final List<Type> types = bindingGenerator.generateTypes(context, yangModules);
         final GeneratorJavaFile generator = new GeneratorJavaFile(buildContext, new HashSet<>(types));
 
-        return generator.generateToFile(outputBaseDir);
+        File persistentSourcesDir = null;
+        if (additionalConfig != null) {
+            String persistenSourcesPath = additionalConfig.get("persistentSourcesDir");
+            if (persistenSourcesPath != null) {
+                persistentSourcesDir = new File(persistenSourcesPath);
+            }
+        }
+        if (persistentSourcesDir == null) {
+            persistentSourcesDir = new File(projectBaseDir, "src" + FS + "main" + FS + "java");
+        }
+        return generator.generateToFile(outputBaseDir, persistentSourcesDir);
     }
 
     @Override
@@ -58,7 +71,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
 
     @Override
     public void setAdditionalConfig(Map<String, String> additionalConfiguration) {
-        // no additional config utilized
+        this.additionalConfig = additionalConfiguration;
     }
 
     @Override
@@ -68,7 +81,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
 
     @Override
     public void setMavenProject(MavenProject project) {
-        // no additional information needed
+        this.projectBaseDir = project.getBasedir();
     }
 
     @Override

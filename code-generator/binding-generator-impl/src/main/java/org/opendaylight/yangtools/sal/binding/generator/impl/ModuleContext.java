@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class ModuleContext {
     private GeneratedTypeBuilder moduleNode;
+    private final Set<Type> additionalTypes = new HashSet<>();
     private final List<GeneratedTOBuilder> genTOs = new ArrayList<GeneratedTOBuilder>();
     private final Map<SchemaPath, Type> typedefs = new HashMap<SchemaPath, Type>();
     private final Map<SchemaPath, GeneratedTypeBuilder> childNodes = new HashMap<SchemaPath, GeneratedTypeBuilder>();
@@ -41,6 +42,11 @@ public final class ModuleContext {
             result.add(moduleNode.toInstance());
         }
 
+        for (Type b : additionalTypes) {
+            if (b != null) {
+                result.add(b);
+            }
+        }
         for (GeneratedTOBuilder b : genTOs) {
             result.add(b.toInstance());
         }
@@ -88,6 +94,10 @@ public final class ModuleContext {
 
     public void addModuleNode(GeneratedTypeBuilder moduleNode) {
         this.moduleNode = moduleNode;
+    }
+
+    public void addAdditionalType(Type b) {
+        additionalTypes.add(b);
     }
 
     public void addGeneratedTOBuilder(GeneratedTOBuilder b) {
