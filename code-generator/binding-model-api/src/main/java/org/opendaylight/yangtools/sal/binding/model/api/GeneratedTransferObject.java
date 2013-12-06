@@ -71,8 +71,9 @@ public interface GeneratedTransferObject extends GeneratedType {
      * @return true value if Generated Transfer Object was created from union
      *         YANG type.
      */
-    @Deprecated
     boolean isUnionType();
+
+    boolean isUnionTypeBuilder();
 
     Restrictions getRestrictions();
 }

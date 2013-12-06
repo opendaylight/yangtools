@@ -12,7 +12,9 @@ import java.util.List;
 
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
@@ -21,12 +23,12 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         GeneratedTOBuilder {
 
     private GeneratedTransferObject extendsType;
-    private final List<GeneratedPropertyBuilder> properties = new ArrayList<>();
     private final List<GeneratedPropertyBuilder> equalsProperties = new ArrayList<>();
     private final List<GeneratedPropertyBuilder> hashProperties = new ArrayList<>();
     private final List<GeneratedPropertyBuilder> toStringProperties = new ArrayList<>();
     private boolean isTypedef = false;
     private boolean isUnionType = false;
+    private boolean isUnionTypeBuilder = false;
     private Restrictions restrictions;
     private GeneratedPropertyBuilder SUID;
 
@@ -116,8 +118,6 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         builder.append(getConstants());
         builder.append(", enumerations=");
         builder.append(getEnumerations());
-        builder.append(", properties=");
-        builder.append(properties);
         builder.append(", equalsProperties=");
         builder.append(equalsProperties);
         builder.append(", hashCodeProperties=");
@@ -142,6 +142,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         this.isUnionType = isUnion;
     }
 
+    @Override
+    public void setIsUnionBuilder(boolean isUnionTypeBuilder) {
+        this.isUnionTypeBuilder = isUnionTypeBuilder;
+    }
+
     private static final class GeneratedTransferObjectImpl extends AbstractGeneratedType implements
             GeneratedTransferObject {
 
@@ -151,6 +156,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         private final GeneratedTransferObject extendsType;
         private final boolean isTypedef;
         private final boolean isUnionType;
+        private final boolean isUnionTypeBuilder;
         private final Restrictions restrictions;
         private final GeneratedProperty SUID;
 
@@ -162,6 +168,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             this.stringProperties = toUnmodifiableProperties(builder.toStringProperties);
             this.isTypedef = builder.isTypedef;
             this.isUnionType = builder.isUnionType;
+            this.isUnionTypeBuilder = builder.isUnionTypeBuilder;
             this.restrictions = builder.restrictions;
             if (builder.SUID == null) {
                 this.SUID = null;
@@ -178,6 +185,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         @Override
         public boolean isUnionType() {
             return isUnionType;
+        }
+
+        @Override
+        public boolean isUnionTypeBuilder() {
+            return isUnionTypeBuilder;
         }
 
         @Override
@@ -212,6 +224,9 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
 
         @Override
         public String toString() {
+            if(isTypedef) {
+                return serializeTypedef(this);
+            }
             StringBuilder builder = new StringBuilder();
             builder.append("GeneratedTransferObject [packageName=");
             builder.append(getPackageName());
@@ -244,5 +259,28 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             builder.append("]");
             return builder.toString();
         }
+
+        public String serializeTypedef(Type type) {
+            if (type instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                StringBuffer sb = new StringBuffer();
+                sb.append(parameterizedType.getRawType().getFullyQualifiedName());
+                sb.append("<");
+                boolean first = true;
+                for (Type parameter : parameterizedType.getActualTypeArguments()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        sb.append(",");
+                    }
+                    sb.append(serializeTypedef(parameter));
+                }
+                sb.append(">");
+                return sb.toString();
+            } else {
+                return type.getFullyQualifiedName();
+            }
+        }
+
     }
 }

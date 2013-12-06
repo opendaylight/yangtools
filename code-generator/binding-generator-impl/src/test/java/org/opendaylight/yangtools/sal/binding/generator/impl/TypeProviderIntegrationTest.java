@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -241,6 +242,31 @@ public class TypeProviderIntegrationTest {
         String actual = provider.getTypeDefaultConstruction(leaf);
         String exp = "new org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Ipv4Address(\"0.0.0.1\")";
         assertEquals(exp, actual);
+    }
+
+    @Test
+    public void testGetTypeDefaultConstructionUnion() throws ParseException {
+        LeafSchemaNode leaf = (LeafSchemaNode) m.getDataChildByName("leaf-union");
+        String actual = provider.getTypeDefaultConstruction(leaf);
+        String expected = "new " + PKG + "TestData.LeafUnion(\"111\".toCharArray())";
+        assertEquals(expected, actual);
+
+        leaf = (LeafSchemaNode) m.getDataChildByName("ext-union");
+        actual = provider.getTypeDefaultConstruction(leaf);
+        expected = "new " + PKG + "MyUnion(\"111\".toCharArray())";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetTypeDefaultConstructionUnionNested() throws ParseException {
+        ContainerSchemaNode c1 = (ContainerSchemaNode)m.getDataChildByName("c1");
+        ContainerSchemaNode c2 = (ContainerSchemaNode)c1.getDataChildByName("c2");
+        ContainerSchemaNode c3 = (ContainerSchemaNode)c2.getDataChildByName("c3");
+        LeafSchemaNode leaf = (LeafSchemaNode) c3.getDataChildByName("id");
+
+        String actual = provider.getTypeDefaultConstruction(leaf);
+        String expected = "new " + PKG + "NestedUnion(\"111\".toCharArray())";
+        assertEquals(expected, actual);
     }
 
     private static SchemaContext resolveSchemaContextFromFiles(final String... yangFiles) {
