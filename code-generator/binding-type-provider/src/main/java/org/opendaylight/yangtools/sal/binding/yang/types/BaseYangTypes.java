@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
@@ -98,6 +99,8 @@ public final class BaseYangTypes {
     public static final Type UINT64_TYPE = Types.typeForClass(BigInteger.class,
             singleRangeRestrictions(0, new BigInteger("18446744073709551615")));
 
+    public static final Type UNION_TYPE = new UnionType();
+
     /**
      * <code>Type</code> representation of <code>binary</code> YANG type
      */
@@ -110,7 +113,6 @@ public final class BaseYangTypes {
      * It is undesirable to create instance of this class.
      */
     private BaseYangTypes() {
-
     }
 
     static {
@@ -127,6 +129,7 @@ public final class BaseYangTypes {
         typeMap.put("uint16", UINT16_TYPE);
         typeMap.put("uint32", UINT32_TYPE);
         typeMap.put("uint64", UINT64_TYPE);
+        typeMap.put("union", UNION_TYPE);
         typeMap.put("binary", BINARY_TYPE);
         typeMap.put("instance-identifier", INSTANCE_IDENTIFIER);
     }
@@ -193,6 +196,8 @@ public final class BaseYangTypes {
                 return Types.typeForClass(Long.class, restrictions);
             case "uint64":
                 return Types.typeForClass(BigInteger.class, restrictions);
+            case "union" :
+                return UNION_TYPE;
             default:
                 return javaTypeForSchemaDefinitionType(type, parentNode);
             }
@@ -206,6 +211,11 @@ public final class BaseYangTypes {
         @Override
         public String getConstructorPropertyName(SchemaNode node) {
             return null;
+        }
+
+        @Override
+        public String getParamNameFromType(TypeDefinition<?> type) {
+            return "_" + BindingGeneratorUtil.parseToValidParamName(type.getQName().getLocalName());
         }
     };
 
@@ -231,6 +241,21 @@ public final class BaseYangTypes {
                 return Collections.emptyList();
             }
         };
+    }
+
+    public static final class UnionType implements Type {
+        @Override
+        public String getPackageName() {
+            return null;
+        }
+        @Override
+        public String getName() {
+            return "Union";
+        }
+        @Override
+        public String getFullyQualifiedName() {
+            return "Union";
+        }
     }
 
 }

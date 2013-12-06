@@ -75,8 +75,12 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl
+
 import org.opendaylight.yangtools.yang.common.QNameimport org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase
+
+import org.opendaylight.yangtools.yang.common.QNameimport com.google.common.collect.Sets
+
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -186,9 +190,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val List<Type> filteredGenTypes = new ArrayList();
         for (Module m : modules) {
             filteredGenTypes.addAll(genCtx.get(m).generatedTypes);
-
+            val Set<Type> additionalTypes = (typeProvider as TypeProviderImpl).additionalTypes.get(m)
+            if (additionalTypes != null) {
+                filteredGenTypes.addAll(additionalTypes)
+            }
         }
-        //genCtx.clear;
 
         return filteredGenTypes;
     }
@@ -1342,6 +1348,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val TypeDefinition<?> typeDef = leaf.type;
 
                 var Type returnType = null;
+                var GeneratedTOBuilder genTOBuilder;
                 if (typeDef instanceof EnumTypeDefinition) {
                     returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
                     val enumTypeDef = typeDef as EnumTypeDefinition;
@@ -1352,12 +1359,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     }
                     (typeProvider as TypeProviderImpl).putReferencedType(leaf.path, returnType);
                 } else if (typeDef instanceof UnionType) {
-                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder,  leaf, parentModule);
+                    genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leaf, parentModule);
                     if (genTOBuilder !== null) {
-                        returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
+                        returnType = createReturnTypeForUnion(genTOBuilder, typeDef, typeBuilder, parentModule)
                     }
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder,  leaf, parentModule);
+                    genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leaf, parentModule);
                     if (genTOBuilder !== null) {
                         returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
                     }
@@ -1515,10 +1522,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     returnType = new ReferencedTypeImpl(enumBuilder.packageName, enumBuilder.name);
                     (typeProvider as TypeProviderImpl).putReferencedType(node.path, returnType);
                 } else if (typeDef instanceof UnionType) {
-                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder,  node, parentModule);
-                    returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
+                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, node, parentModule);
+                    if (genTOBuilder !== null) {
+                        returnType = createReturnTypeForUnion(genTOBuilder, typeDef, typeBuilder, parentModule)
+                    }
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder,  node, parentModule);
+                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, node, parentModule);
                     returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
                 } else {
                     val Restrictions restrictions = BindingGeneratorUtil.getRestrictions(typeDef);
@@ -1531,6 +1540,33 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
         }
         return false;
+    }
+
+    private def Type createReturnTypeForUnion(GeneratedTOBuilder genTOBuilder, TypeDefinition<?> typeDef,
+        GeneratedTypeBuilder typeBuilder, Module parentModule) {
+        val Type returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
+        genTOBuilder.setTypedef(true);
+        genTOBuilder.setIsUnion(true);
+        (typeProvider as TypeProviderImpl).addUnitsToGenTO(genTOBuilder, typeDef.getUnits());
+
+        // union builder
+        val GeneratedTOBuilder unionBuilder = new GeneratedTOBuilderImpl(typeBuilder.getPackageName(),
+            genTOBuilder.getName() + "Builder");
+        unionBuilder.setIsUnionBuilder(true);
+        val MethodSignatureBuilder method = unionBuilder.addMethod("getDefaultInstance");
+        method.setReturnType(returnType);
+        method.addParameter(Types.STRING, "defaultValue");
+        method.setAccessModifier(AccessModifier.PUBLIC);
+        method.setStatic(true);
+
+        val Set<Type> types = (typeProvider as TypeProviderImpl).additionalTypes.get(parentModule);
+        if (types == null) {
+            (typeProvider as TypeProviderImpl).additionalTypes.put(parentModule,
+                Sets.newHashSet(unionBuilder.toInstance))
+        } else {
+            types.add(unionBuilder.toInstance)
+        }
+        return returnType
     }
 
     private def GeneratedTypeBuilder addDefaultInterfaceDefinition(String packageName, SchemaNode schemaNode) {
@@ -1828,10 +1864,26 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val List<GeneratedTOBuilder> genTOBuilders = new ArrayList();
         val packageName = typeBuilder.fullyQualifiedName;
         if (typeDef instanceof UnionTypeDefinition) {
-            genTOBuilders.addAll(
-                (typeProvider as TypeProviderImpl).
+            val List<GeneratedTOBuilder> types = (typeProvider as TypeProviderImpl).
                     provideGeneratedTOBuildersForUnionTypeDef(packageName, (typeDef as UnionTypeDefinition),
-                        classNameFromLeaf, leaf));
+                        classNameFromLeaf, leaf); 
+            genTOBuilders.addAll(types);
+                        
+            
+        var GeneratedTOBuilder resultTOBuilder = null;
+        if (!types.isEmpty()) {
+            resultTOBuilder = types.remove(0);
+            for (GeneratedTOBuilder genTOBuilder : types) {
+                resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
+            }
+        }
+
+        val GeneratedPropertyBuilder genPropBuilder = resultTOBuilder.addProperty("value");
+        genPropBuilder.setReturnType(Types.primitiveType("char[]", null));
+        resultTOBuilder.addEqualsIdentity(genPropBuilder);
+        resultTOBuilder.addHashIdentity(genPropBuilder);
+        resultTOBuilder.addToStringProperty(genPropBuilder);
+
         } else if (typeDef instanceof BitsTypeDefinition) {
             genTOBuilders.add(
                 ((typeProvider as TypeProviderImpl) ).

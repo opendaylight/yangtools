@@ -120,6 +120,7 @@ class InterfaceTemplate extends BaseTemplate {
          «ENDFOR»
      « ENDIF»
      '''
+
     /**
      * Template method which generates inner classes inside this interface.
      * 
@@ -129,10 +130,16 @@ class InterfaceTemplate extends BaseTemplate {
         «IF !enclosedGeneratedTypes.empty»
             «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
                 «IF (innerClass instanceof GeneratedTransferObject)»
-                    «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
-                    «classTemplate.generateAsInnerClass»
-                    «this.importMap.putAll(classTemplate.importMap)»
-                    
+                    «IF (innerClass as GeneratedTransferObject).unionType»
+                        «val unionTemplate = new UnionTemplate(innerClass as GeneratedTransferObject)»
+                        «unionTemplate.generateAsInnerClass»
+                        «this.importMap.putAll(unionTemplate.importMap)»
+                    «ELSE»
+                        «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
+                        «classTemplate.generateAsInnerClass»
+                        «this.importMap.putAll(classTemplate.importMap)»
+                    «ENDIF»
+
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
@@ -181,22 +188,6 @@ class InterfaceTemplate extends BaseTemplate {
             «ENDFOR»
         «ENDIF»
     '''
-    
-    /**
-     * Template method which generates method parameters with their types from <code>parameters</code>.
-     * 
-     * @param parameters
-     * list of parameter instances which are transformed to the method parameters
-     * @return string with the list of the method parameters with their types in JAVA format
-     */
-    def private generateParameters(List<MethodSignature.Parameter> parameters) '''«
-        IF !parameters.empty»«
-            FOR parameter : parameters SEPARATOR ", "»«
-                parameter.type.importedName» «parameter.name»«
-            ENDFOR»«
-        ENDIF
-    »'''
 
-    
 }
 

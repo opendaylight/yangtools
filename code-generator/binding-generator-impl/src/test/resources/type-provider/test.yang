@@ -351,6 +351,43 @@ module test {
         default "11111";
     }
 
+    // uint64
+    typedef my-union {
+        type union {
+            type string;
+            type my-binary;
+        }
+    }
+
+    leaf ext-union {
+        type my-union;
+        default "111";
+    }
+
+    leaf leaf-union {
+        type union {
+            type string;
+            type int8;
+        }
+        default "111";
+    }
+
+    container c1 {
+        container c2 {
+            typedef nested-union {
+                type union {
+                    type string;
+                    type int16;
+                }
+            }
+            container c3 {
+                leaf id {
+                    type nested-union;
+                    default "111";
+                }
+            }
+        }
+    }
 
 
     list links {

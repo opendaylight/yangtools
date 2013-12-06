@@ -51,7 +51,7 @@ public class GeneratedTypesTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
-        assertEquals(26, genTypes.size());
+        assertEquals(29, genTypes.size());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class GeneratedTypesTest {
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
-        assertEquals(51, genTypes.size());
+        assertEquals(54, genTypes.size());
         assertNotNull(genTypes);
 
         GeneratedTransferObject gtIfcKey = null;

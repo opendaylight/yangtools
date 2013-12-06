@@ -7,83 +7,37 @@
  */
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
-import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.moduleNamespaceToPackageName;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.packageNameForGeneratedType;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToClassName;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToValidParamName;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
-import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
-import org.opendaylight.yangtools.binding.generator.util.Types;
-import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.EnumerationBuilderImpl;
-import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl;
-import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
+import org.opendaylight.yangtools.binding.generator.util.*;
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.*;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
-import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.sal.binding.model.api.*;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.*;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
-import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.type.*;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
-import org.opendaylight.yangtools.yang.model.util.EnumerationType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.Int16;
-import org.opendaylight.yangtools.yang.model.util.Int32;
-import org.opendaylight.yangtools.yang.model.util.Int64;
-import org.opendaylight.yangtools.yang.model.util.Int8;
-import org.opendaylight.yangtools.yang.model.util.StringType;
-import org.opendaylight.yangtools.yang.model.util.Uint16;
-import org.opendaylight.yangtools.yang.model.util.Uint32;
-import org.opendaylight.yangtools.yang.model.util.Uint64;
-import org.opendaylight.yangtools.yang.model.util.Uint8;
-import org.opendaylight.yangtools.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.model.util.*;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
 
 public final class TypeProviderImpl implements TypeProvider {
@@ -101,6 +55,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * The map which maps schema paths to JAVA <code>Type</code>.
      */
     private final Map<SchemaPath, Type> referencedTypes;
+    private final Map<Module, Set<Type>> additionalTypes;
 
     /**
      * Creates new instance of class <code>TypeProviderImpl</code>.
@@ -116,6 +71,7 @@ public final class TypeProviderImpl implements TypeProvider {
         this.schemaContext = schemaContext;
         this.genTypeDefsContextMap = new HashMap<>();
         this.referencedTypes = new HashMap<>();
+        this.additionalTypes = new HashMap<>();
         resolveTypeDefsFromContext();
     }
 
@@ -138,6 +94,10 @@ public final class TypeProviderImpl implements TypeProvider {
                 "Path reference of Enumeration Type Definition cannot be NULL!");
         Preconditions.checkArgument(refType != null, "Reference to Enumeration Type cannot be NULL!");
         referencedTypes.put(refTypePath, refType);
+    }
+
+    public Map<Module, Set<Type>> getAdditionalTypes() {
+        return additionalTypes;
     }
 
     /**
@@ -615,7 +575,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
             if ((listTypeDefinitions != null) && (basePackageName != null)) {
                 for (final TypeDefinition<?> typedef : listTypeDefinitions) {
-                    typedefToGeneratedType(basePackageName, moduleName, module.getRevision(), typedef);
+                    typedefToGeneratedType(basePackageName, module, typedef);
                 }
             }
         }
@@ -636,8 +596,10 @@ public final class TypeProviderImpl implements TypeProvider {
      *         <code>modulName</code> or <code>typedef</code> or Q name of
      *         <code>typedef</code> equals <code>null</code>
      */
-    private Type typedefToGeneratedType(final String basePackageName, final String moduleName,
-            final Date moduleRevision, final TypeDefinition<?> typedef) {
+    private Type typedefToGeneratedType(final String basePackageName, final Module module,
+            final TypeDefinition<?> typedef) {
+        final String moduleName = module.getName();
+        final Date moduleRevision = module.getRevision();
         if ((basePackageName != null) && (moduleName != null) && (typedef != null) && (typedef.getQName() != null)) {
 
             final String typedefName = typedef.getQName().getLocalName();
@@ -655,6 +617,22 @@ public final class TypeProviderImpl implements TypeProvider {
                     genTOBuilder.setIsUnion(true);
                     addUnitsToGenTO(genTOBuilder, typedef.getUnits());
                     returnType = genTOBuilder.toInstance();
+                    // union builder
+                    GeneratedTOBuilder unionBuilder = new GeneratedTOBuilderImpl(genTOBuilder.getPackageName(),
+                            genTOBuilder.getName() + "Builder");
+                    unionBuilder.setIsUnionBuilder(true);
+                    MethodSignatureBuilder method = unionBuilder.addMethod("getDefaultInstance");
+                    method.setReturnType(returnType);
+                    method.addParameter(Types.STRING, "defaultValue");
+                    method.setAccessModifier(AccessModifier.PUBLIC);
+                    method.setStatic(true);
+                    Set<Type> types = additionalTypes.get(module);
+                    if (types == null) {
+                        types = Sets.<Type> newHashSet(unionBuilder.toInstance());
+                        additionalTypes.put(module, types);
+                    } else {
+                        types.add(unionBuilder.toInstance());
+                    }
                 } else if (innerTypeDefinition instanceof EnumTypeDefinition) {
                     final EnumTypeDefinition enumTypeDef = (EnumTypeDefinition) innerTypeDefinition;
                     // TODO units for typedef enum
@@ -674,7 +652,6 @@ public final class TypeProviderImpl implements TypeProvider {
                 if (returnType != null) {
                     final Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(moduleName);
                     final Map<String, Type> typeMap = modulesByDate.get(moduleRevision);
-
                     if (typeMap != null) {
                         typeMap.put(typedefName, returnType);
                     }
@@ -742,6 +719,13 @@ public final class TypeProviderImpl implements TypeProvider {
                 resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
             }
         }
+
+        final GeneratedPropertyBuilder genPropBuilder = resultTOBuilder.addProperty("value");
+        genPropBuilder.setReturnType(Types.primitiveType("char[]", null));
+        resultTOBuilder.addEqualsIdentity(genPropBuilder);
+        resultTOBuilder.addHashIdentity(genPropBuilder);
+        resultTOBuilder.addToStringProperty(genPropBuilder);
+
         return resultTOBuilder;
     }
 
@@ -758,59 +742,57 @@ public final class TypeProviderImpl implements TypeProvider {
      * @param typeDefName
      *            string with name for generated TO
      * @return generated TO builder which represents <code>typedef</code>
-     * @throws IllegalArgumentException
+     * @throws NullPointerException
      *             <ul>
-     *             <li>if <code>basePackageName</code> equals null</li>
-     *             <li>if <code>typedef</code> equals null</li>
-     *             <li>if Q name of <code>typedef</code> equals null</li>
+     *             <li>if <code>basePackageName</code> is null</li>
+     *             <li>if <code>typedef</code> is null</li>
+     *             <li>if Qname of <code>typedef</code> is null</li>
      *             </ul>
      */
     public List<GeneratedTOBuilder> provideGeneratedTOBuildersForUnionTypeDef(final String basePackageName,
             final UnionTypeDefinition typedef, final String typeDefName, final SchemaNode parentNode) {
-        Preconditions.checkArgument(basePackageName != null, "Base Package Name cannot be NULL!");
-        Preconditions.checkArgument(typedef != null, "Type Definition cannot be NULL!");
-        Preconditions.checkArgument(typedef.getQName() != null,
-                "Type Definition cannot have non specified QName (QName cannot be NULL!)");
+        Preconditions.checkNotNull(basePackageName, "Base Package Name cannot be NULL!");
+        Preconditions.checkNotNull(typedef, "Type Definition cannot be NULL!");
+        Preconditions.checkNotNull(typedef.getQName(), "Type definition QName cannot be NULL!");
 
         final List<GeneratedTOBuilder> generatedTOBuilders = new ArrayList<>();
+        final List<TypeDefinition<?>> unionTypes = typedef.getTypes();
 
-        if (typedef != null) {
-            final List<TypeDefinition<?>> unionTypes = typedef.getTypes();
-
-            final GeneratedTOBuilder unionGenTOBuilder;
-            if (typeDefName != null && !typeDefName.isEmpty()) {
-                final String typeName = parseToClassName(typeDefName);
-                unionGenTOBuilder = new GeneratedTOBuilderImpl(basePackageName, typeName);
-            } else {
-                unionGenTOBuilder = typedefToTransferObject(basePackageName, typedef);
-            }
-            generatedTOBuilders.add(unionGenTOBuilder);
-            unionGenTOBuilder.setIsUnion(true);
-            final List<String> regularExpressions = new ArrayList<String>();
-            for (final TypeDefinition<?> unionType : unionTypes) {
-                final String unionTypeName = unionType.getQName().getLocalName();
-                if (unionType instanceof UnionType) {
-                    generatedTOBuilders.addAll(resolveUnionSubtypeAsUnion(unionGenTOBuilder, (UnionType) unionType,
-                            basePackageName, parentNode));
-                } else if (unionType instanceof ExtendedType) {
-                    resolveExtendedSubtypeAsUnion(unionGenTOBuilder, (ExtendedType) unionType, unionTypeName,
-                            regularExpressions, parentNode);
-                } else if (unionType instanceof EnumTypeDefinition) {
-                    final Enumeration enumeration = addInnerEnumerationToTypeBuilder((EnumTypeDefinition) unionType,
-                            unionTypeName, unionGenTOBuilder);
-                    updateUnionTypeAsProperty(unionGenTOBuilder, enumeration, unionTypeName);
-                } else {
-                    final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(
-                            unionType, parentNode);
-                    updateUnionTypeAsProperty(unionGenTOBuilder, javaType, unionTypeName);
-                }
-            }
-            if (!regularExpressions.isEmpty()) {
-                addStringRegExAsConstant(unionGenTOBuilder, regularExpressions);
-            }
-
-            storeGenTO(typedef, unionGenTOBuilder, parentNode);
+        final GeneratedTOBuilder unionGenTOBuilder;
+        if (typeDefName != null && !typeDefName.isEmpty()) {
+            final String typeName = parseToClassName(typeDefName);
+            unionGenTOBuilder = new GeneratedTOBuilderImpl(basePackageName, typeName);
+        } else {
+            unionGenTOBuilder = typedefToTransferObject(basePackageName, typedef);
         }
+
+        generatedTOBuilders.add(unionGenTOBuilder);
+        unionGenTOBuilder.setIsUnion(true);
+        final List<String> regularExpressions = new ArrayList<String>();
+        for (final TypeDefinition<?> unionType : unionTypes) {
+            final String unionTypeName = unionType.getQName().getLocalName();
+            if (unionType instanceof UnionType) {
+                generatedTOBuilders.addAll(resolveUnionSubtypeAsUnion(unionGenTOBuilder, (UnionType) unionType,
+                        basePackageName, parentNode));
+            } else if (unionType instanceof ExtendedType) {
+                resolveExtendedSubtypeAsUnion(unionGenTOBuilder, (ExtendedType) unionType, regularExpressions,
+                        parentNode);
+            } else if (unionType instanceof EnumTypeDefinition) {
+                final Enumeration enumeration = addInnerEnumerationToTypeBuilder((EnumTypeDefinition) unionType,
+                        unionTypeName, unionGenTOBuilder);
+                updateUnionTypeAsProperty(unionGenTOBuilder, enumeration, unionTypeName);
+            } else {
+                final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(unionType,
+                        parentNode);
+                updateUnionTypeAsProperty(unionGenTOBuilder, javaType, unionTypeName);
+            }
+        }
+        if (!regularExpressions.isEmpty()) {
+            addStringRegExAsConstant(unionGenTOBuilder, regularExpressions);
+        }
+
+        storeGenTO(typedef, unionGenTOBuilder, parentNode);
+
         return generatedTOBuilders;
     }
 
@@ -871,9 +853,10 @@ public final class TypeProviderImpl implements TypeProvider {
      *            list of strings with the regular expressions
      */
     private void resolveExtendedSubtypeAsUnion(final GeneratedTOBuilder parentUnionGenTOBuilder,
-            final ExtendedType unionSubtype, final String unionTypeName, final List<String> regularExpressions,
+            final ExtendedType unionSubtype, final List<String> regularExpressions,
             final SchemaNode parentNode) {
-        final Type genTO = findGenTO(unionTypeName, parentNode);
+        final String unionTypeName = unionSubtype.getQName().getLocalName();
+        final Type genTO = findGenTO(unionTypeName, unionSubtype);
         if (genTO != null) {
             updateUnionTypeAsProperty(parentUnionGenTOBuilder, genTO, genTO.getName());
         } else {
@@ -1245,7 +1228,7 @@ public final class TypeProviderImpl implements TypeProvider {
         }
     }
 
-    private void addUnitsToGenTO(GeneratedTOBuilder to, String units) {
+    public void addUnitsToGenTO(GeneratedTOBuilder to, String units) {
         if (units != null && !units.isEmpty()) {
             to.addConstant(Types.STRING, "_UNITS", "\"" + units + "\"");
             GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("UNITS");
@@ -1337,18 +1320,19 @@ public final class TypeProviderImpl implements TypeProvider {
         } else if (base instanceof Uint64) {
             result = typeToDef(BigInteger.class, defaultValue);
         } else if (base instanceof UnionTypeDefinition) {
-            throw new UnsupportedOperationException("Cannot get default construction for union type");
+            result = unionToDef(node);
         } else {
             result = "";
         }
         sb.append(result);
 
-        if (type instanceof ExtendedType && !(base instanceof LeafrefTypeDefinition) && !(base instanceof EnumerationType)) {
+        if (type instanceof ExtendedType && !(base instanceof LeafrefTypeDefinition)
+                && !(base instanceof EnumerationType) && !(base instanceof UnionTypeDefinition)) {
             QName qname = type.getPath().getPath().get(0);
             Module m = schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
             String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(m);
             String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
-            String className = packageName + "." + parseToClassName(typeQName.getLocalName());
+            String className = packageName + "." + BindingMapping.getClassName(typeQName);
             sb.insert(0, "new " + className + "(");
             sb.insert(sb.length(), ")");
         }
@@ -1454,6 +1438,65 @@ public final class TypeProviderImpl implements TypeProvider {
         return null;
     }
 
+    private String unionToDef(LeafSchemaNode node) {
+        String parentName;
+        String className;
+
+        if (node.getType() instanceof ExtendedType) {
+            ExtendedType type = (ExtendedType) node.getType();
+            QName typeQName = type.getQName();
+            Module module = null;
+            Set<Module> modules = schemaContext.findModuleByNamespace(typeQName.getNamespace());
+            if (modules.size() > 1) {
+                for (Module m : modules) {
+                    if (m.getRevision().equals(typeQName.getRevision())) {
+                        module = m;
+                        break;
+                    }
+                }
+                if (module == null) {
+                    List<Module> modulesList = new ArrayList<>(modules);
+                    Collections.sort(modulesList, new Comparator<Module>() {
+                        @Override
+                        public int compare(Module o1, Module o2) {
+                            return o1.getRevision().compareTo(o2.getRevision());
+                        }
+                    });
+                    module = modulesList.get(0);
+                }
+            } else {
+                module = modules.iterator().next();
+            }
+
+            String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
+            className = basePackageName + "." + BindingMapping.getClassName(typeQName);
+        } else {
+            YangNode parent = node.getParent();
+            if (parent instanceof Module) {
+                parentName = parseToClassName(((Module) parent).getName()) + "Data";
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName((Module) parent);
+                className = basePackageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
+            } else {
+                Module parentModule = getParentModule(node);
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parentModule);
+                String packageName = packageNameForGeneratedType(basePackageName, node.getType().getPath());
+                className = packageName + "." + BindingMapping.getClassName(node.getQName());
+            }
+        }
+        return union(className, node.getDefault(), node);
+    }
+
+    private String union(String className, String defaultValue, LeafSchemaNode node) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("new " + className + "(");
+        sb.append("\"");
+        sb.append(defaultValue);
+        sb.append("\"");
+        sb.append(".toCharArray()");
+        sb.append(")");
+        return sb.toString();
+    }
+
     @Override
     public String getConstructorPropertyName(SchemaNode node) {
         if (node instanceof TypeDefinition<?>) {
@@ -1461,6 +1504,11 @@ public final class TypeProviderImpl implements TypeProvider {
         } else {
             return "";
         }
+    }
+
+    @Override
+    public String getParamNameFromType(TypeDefinition<?> type) {
+        return BindingGeneratorUtil.parseToValidParamName(type.getQName().getLocalName());
     }
 
 }

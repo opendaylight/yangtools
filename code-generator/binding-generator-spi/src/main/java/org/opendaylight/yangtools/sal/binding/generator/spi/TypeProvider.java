@@ -47,4 +47,7 @@ public interface TypeProvider {
     String getTypeDefaultConstruction(LeafSchemaNode node);
 
     String getConstructorPropertyName(SchemaNode node);
+
+    String getParamNameFromType(TypeDefinition<?> type);
+
 }
