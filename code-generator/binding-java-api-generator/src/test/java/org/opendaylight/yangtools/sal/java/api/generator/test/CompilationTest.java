@@ -374,11 +374,12 @@ public class CompilationTest extends BaseCompilationTest {
         generator.generateToFile(sourcesOutputDir);
 
         File parent = new File(sourcesOutputDir, NS_TEST);
-        assertFilesCount(parent, 4);
         assertTrue(new File(parent, "TestData.java").exists());
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
         assertTrue(new File(parent, "Alg.java").exists());
+        assertTrue(new File(parent, "IdUnionBuilder.java").exists());
+        assertFilesCount(parent, 5);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);

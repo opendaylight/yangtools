@@ -84,5 +84,7 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      */
     void setIsUnion(boolean isUnion);
 
+    void setIsUnionBuilder(boolean isUnionTypeBuilder);
+
     void setSUID(GeneratedPropertyBuilder suid);
 }
