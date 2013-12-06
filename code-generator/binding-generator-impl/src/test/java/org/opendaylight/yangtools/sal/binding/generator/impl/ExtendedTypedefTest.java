@@ -109,7 +109,7 @@ public class ExtendedTypedefTest {
         extendTO = extendedTypedefUnion.getSuperType();
         assertEquals("Incorrect extension fo ExtendedTypedefUnion.", "UnionTypedef", extendTO.getName());
         assertNull("UnionTypedef shouldn't be extended", extendTO.getSuperType());
-        assertEquals("Incorrect number of properties for UnionTypedef.", 4, extendTO.getProperties().size());
+        assertEquals("Incorrect number of properties for UnionTypedef.", 5, extendTO.getProperties().size());
 
         GeneratedProperty simpleTypedef4Property = null;
         GeneratedProperty simpleTypedef1Property = null;

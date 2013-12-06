@@ -27,6 +27,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     private final List<GeneratedPropertyBuilder> toStringProperties = new ArrayList<>();
     private boolean isTypedef = false;
     private boolean isUnionType = false;
+    private boolean isUnionTypeBuilder = false;
     private Restrictions restrictions;
     private GeneratedPropertyBuilder SUID;
 
@@ -142,6 +143,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         this.isUnionType = isUnion;
     }
 
+    @Override
+    public void setIsUnionBuilder(boolean isUnionTypeBuilder) {
+        this.isUnionTypeBuilder = isUnionTypeBuilder;
+    }
+
     private static final class GeneratedTransferObjectImpl extends AbstractGeneratedType implements
             GeneratedTransferObject {
 
@@ -151,6 +157,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         private final GeneratedTransferObject extendsType;
         private final boolean isTypedef;
         private final boolean isUnionType;
+        private final boolean isUnionTypeBuilder;
         private final Restrictions restrictions;
         private final GeneratedProperty SUID;
 
@@ -162,6 +169,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             this.stringProperties = toUnmodifiableProperties(builder.toStringProperties);
             this.isTypedef = builder.isTypedef;
             this.isUnionType = builder.isUnionType;
+            this.isUnionTypeBuilder = builder.isUnionTypeBuilder;
             this.restrictions = builder.restrictions;
             if (builder.SUID == null) {
                 this.SUID = null;
@@ -178,6 +186,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         @Override
         public boolean isUnionType() {
             return isUnionType;
+        }
+
+        @Override
+        public boolean isUnionTypeBuilder() {
+            return isUnionTypeBuilder;
         }
 
         @Override
