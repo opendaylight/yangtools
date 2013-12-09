@@ -13,13 +13,17 @@ import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 
+import java.io.Serializable;
+
 /**
  * @author michal.rehak
  * @param <T> type of simple node value
  *
  */
 public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
-        SimpleNode<T> {
+        SimpleNode<T>, Serializable {
+
+    private static final long serialVersionUID = 100L;
 
     /**
      * @param qname
@@ -48,6 +52,7 @@ public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
 
     @Override
     public String toString() {
+
         return super.toString() + ", value = "+getValue();
     }
 }

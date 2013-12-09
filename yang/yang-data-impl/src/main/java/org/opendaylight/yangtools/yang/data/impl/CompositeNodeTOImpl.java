@@ -7,6 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.ModifyAction;
+import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
+import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,18 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
-
 /**
  * @author michal.rehak
  * 
  */
-public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implements CompositeNode {
+public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implements CompositeNode, Serializable {
+
+    private static final long serialVersionUID = 100L;
 
     private Map<QName, List<Node<?>>> nodeMap = new HashMap<>();
 

@@ -26,6 +26,11 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
     private T value;
     private ModifyAction modifyAction;
 
+    // Only for Serialization use
+    public AbstractNodeTO(){
+
+    }
+
     /**
      * @param qname
      * @param parent
