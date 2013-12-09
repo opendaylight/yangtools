@@ -574,7 +574,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
             newType.setExtendsType(gto);
         }
         newType.setAbstract(true);
-        genCtx.get(module).addIdentityType(newType)
+        val qname = identity.QName;
+        newType.addConstant(QName.typeForClass,"QNAME",'''
+            org.opendaylight.yangtools.yang.common.QName.create("«qname.namespace»","«qname.formattedRevision»","«qname.localName»")
+        ''');
+        genCtx.get(module).addIdentityType(identity.QName,newType)
     }
 
     /**

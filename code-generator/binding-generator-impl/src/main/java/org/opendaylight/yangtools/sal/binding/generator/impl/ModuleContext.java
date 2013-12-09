@@ -17,6 +17,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
@@ -27,7 +28,7 @@ public final class ModuleContext {
     private final Map<SchemaPath, GeneratedTypeBuilder> childNodes = new HashMap<SchemaPath, GeneratedTypeBuilder>();
     private final Map<SchemaPath, GeneratedTypeBuilder> groupings = new HashMap<SchemaPath, GeneratedTypeBuilder>();
     private final Map<SchemaPath, GeneratedTypeBuilder> cases = new HashMap<SchemaPath, GeneratedTypeBuilder>();
-    private final Set<GeneratedTOBuilder> identities = new HashSet<GeneratedTOBuilder>();
+    private final Map<QName,GeneratedTOBuilder> identities = new HashMap<>();
     private final Set<GeneratedTypeBuilder> topLevelNodes = new HashSet<GeneratedTypeBuilder>();
     private final List<GeneratedTypeBuilder> augmentations = new ArrayList<GeneratedTypeBuilder>();
     private final Map<Type,AugmentationSchema> typeToAugmentation = new HashMap<>();
@@ -58,7 +59,7 @@ public final class ModuleContext {
         for (GeneratedTypeBuilder b : cases.values()) {
             result.add(b.toInstance());
         }
-        for (GeneratedTOBuilder b : identities) {
+        for (GeneratedTOBuilder b : identities.values()) {
             result.add(b.toInstance());
         }
         for (GeneratedTypeBuilder b : topLevelNodes) {
@@ -110,8 +111,8 @@ public final class ModuleContext {
         cases.put(p, b);
     }
 
-    public void addIdentityType(GeneratedTOBuilder b) {
-        identities.add(b);
+    public void addIdentityType(QName name,GeneratedTOBuilder b) {
+        identities.put(name,b);
     }
 
     public void addTopLevelNodeType(GeneratedTypeBuilder b) {
@@ -138,7 +139,7 @@ public final class ModuleContext {
         return cases;
     }
 
-    public Set<GeneratedTOBuilder> getIdentities() {
+    public Map<QName,GeneratedTOBuilder> getIdentities() {
         return identities;
     }
 
