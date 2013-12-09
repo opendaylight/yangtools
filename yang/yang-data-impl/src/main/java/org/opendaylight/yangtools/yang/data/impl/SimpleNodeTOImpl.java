@@ -13,13 +13,20 @@ import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 /**
  * @author michal.rehak
  * @param <T> type of simple node value
  *
  */
 public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
-        SimpleNode<T> {
+        SimpleNode<T>, Serializable {
+
+    private static final long serialVersionUID = 100L;
 
     /**
      * @param qname
@@ -48,6 +55,28 @@ public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
 
     @Override
     public String toString() {
+
         return super.toString() + ", value = "+getValue();
+    }
+
+  // Serialization related
+
+    private void readObject(ObjectInputStream aStream) throws IOException, ClassNotFoundException {
+        aStream.defaultReadObject();
+        QName qName = (QName)aStream.readObject();
+        CompositeNode parent = (CompositeNode) aStream.readObject();
+        T value = (T) aStream.readObject();
+        ModifyAction modifyAction = (ModifyAction) aStream.readObject();
+
+        init(qName, parent, value, modifyAction);
+    }
+
+    private void writeObject(ObjectOutputStream aStream) throws IOException {
+        aStream.defaultWriteObject();
+        //manually serialize superclass
+        aStream.writeObject(getQName());
+        aStream.writeObject(getParent());
+        aStream.writeObject(getValue());
+        aStream.writeObject(getModificationAction());
     }
 }

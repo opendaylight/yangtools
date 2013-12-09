@@ -26,6 +26,11 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
     private T value;
     private ModifyAction modifyAction;
 
+    // Only for Serialization use
+    public AbstractNodeTO(){
+
+    }
+
     /**
      * @param qname
      * @param parent
@@ -173,4 +178,13 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
     }
     /* */
 
+
+    //Serialization related
+
+    protected final void init(QName qName, CompositeNode parent, T value, ModifyAction modifyAction){
+        this.qName = qName;
+        this.modifyAction = modifyAction;
+        this.parent = parent;
+        this.value = value;
+    }
 }

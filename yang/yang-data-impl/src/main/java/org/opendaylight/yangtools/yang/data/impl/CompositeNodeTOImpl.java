@@ -7,6 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.ModifyAction;
+import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
+import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,18 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
-
 /**
  * @author michal.rehak
  * 
  */
-public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implements CompositeNode {
+public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implements CompositeNode, Serializable {
+
+    private static final long serialVersionUID = 100L;
 
     private Map<QName, List<Node<?>>> nodeMap = new HashMap<>();
 
@@ -212,5 +218,26 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
     @Override
     public Collection<List<Node<?>>> values() {
         return nodeMap.values();
+    }
+
+  // Serialization related
+
+    private void readObject(ObjectInputStream aStream) throws IOException, ClassNotFoundException {
+        aStream.defaultReadObject();
+        QName qName = (QName)aStream.readObject();
+        CompositeNode parent = (CompositeNode) aStream.readObject();
+        List<Node<?>> value = (List<Node<?>>) aStream.readObject();
+        ModifyAction modifyAction = (ModifyAction) aStream.readObject();
+
+        init(qName, parent, value, modifyAction);
+    }
+
+    private void writeObject(ObjectOutputStream aStream) throws IOException {
+        aStream.defaultWriteObject();
+        //manually serialize superclass
+        aStream.writeObject(getQName());
+        aStream.writeObject(getParent());
+        aStream.writeObject(getValue());
+        aStream.writeObject(getModificationAction());
     }
 }
