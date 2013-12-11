@@ -44,6 +44,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private GroupingBuilder groupingBuilder;
     private boolean addedByUses;
     private boolean augmenting;
+    private boolean resolved;
     private AugmentationSchemaBuilder parentAugment;
     private final Set<AugmentationSchema> augments = new HashSet<>();
     private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<>();
@@ -197,7 +198,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     public boolean isAddedByUses() {
         return addedByUses;
     }
-
     @Override
     public void setAddedByUses(final boolean addedByUses) {
         this.addedByUses = addedByUses;
@@ -211,6 +211,16 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void setAugmenting(boolean augmenting) {
         this.augmenting = augmenting;
+    }
+
+    @Override
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    @Override
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
     }
 
     @Override

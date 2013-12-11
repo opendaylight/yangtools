@@ -66,26 +66,37 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private String prefix;
     private Date revision;
 
-    private final Deque<Builder> actualPath = new LinkedList<Builder>();
-    private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<TypeAwareBuilder>();
+    private final Deque<Builder> actualPath = new LinkedList<>();
+    private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<>();
 
     private final Set<ModuleImport> imports = new HashSet<ModuleImport>();
+
     private final Set<AugmentationSchema> augments = new HashSet<>();
     private final List<AugmentationSchemaBuilder> augmentBuilders = new ArrayList<>();
-    private final List<AugmentationSchemaBuilder> allAugments = new ArrayList<AugmentationSchemaBuilder>();
-    private final List<UsesNodeBuilder> allUsesNodes = new ArrayList<UsesNodeBuilder>();
-    private final Set<RpcDefinition> rpcs = new TreeSet<RpcDefinition>(Comparators.SCHEMA_NODE_COMP);
-    private final Set<RpcDefinitionBuilder> addedRpcs = new HashSet<RpcDefinitionBuilder>();
-    private final Set<NotificationDefinition> notifications = new TreeSet<NotificationDefinition>(Comparators.SCHEMA_NODE_COMP);
-    private final Set<NotificationBuilder> addedNotifications = new HashSet<NotificationBuilder>();
+    private final List<AugmentationSchemaBuilder> allAugments = new ArrayList<>();
+
+    private final List<GroupingBuilder> allGroupings = new ArrayList<>();
+
+    private final List<UsesNodeBuilder> allUsesNodes = new ArrayList<>();
+
+    private final Set<RpcDefinition> rpcs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+    private final Set<RpcDefinitionBuilder> addedRpcs = new HashSet<>();
+
+    private final Set<NotificationDefinition> notifications = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+    private final Set<NotificationBuilder> addedNotifications = new HashSet<>();
+
     private final Set<IdentitySchemaNode> identities = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-    private final Set<IdentitySchemaNodeBuilder> addedIdentities = new HashSet<IdentitySchemaNodeBuilder>();
-    private final Set<FeatureDefinition> features = new TreeSet<FeatureDefinition>(Comparators.SCHEMA_NODE_COMP);
+    private final Set<IdentitySchemaNodeBuilder> addedIdentities = new HashSet<>();
+
+    private final Set<FeatureDefinition> features = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
     private final Set<FeatureBuilder> addedFeatures = new HashSet<>();
+
     private final Set<Deviation> deviations = new HashSet<>();
     private final Set<DeviationBuilder> deviationBuilders = new HashSet<>();
+
     private final List<ExtensionDefinition> extensions = new ArrayList<>();
     private final List<ExtensionBuilder> addedExtensions = new ArrayList<>();
+
     private final List<UnknownSchemaNodeBuilder> allUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
     public ModuleBuilder(final String name) {
@@ -249,6 +260,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     public Set<IdentitySchemaNodeBuilder> getIdentities() {
         return addedIdentities;
+    }
+
+    public List<GroupingBuilder> getAllGroupings() {
+        return allGroupings;
     }
 
     public List<UsesNodeBuilder> getAllUsesNodes() {
@@ -423,6 +438,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             }
         }
 
+        allGroupings.add(builder);
         return builder;
     }
 
