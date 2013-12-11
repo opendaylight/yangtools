@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuild
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
@@ -38,67 +37,22 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private boolean isBuilt;
     private UsesNodeImpl instance;
     private DataNodeContainerBuilder parentBuilder;
-    private final String groupingName;
+    private final String groupingPathString;
     private SchemaPath groupingPath;
     private GroupingDefinition groupingDefinition;
     private GroupingBuilder groupingBuilder;
     private boolean addedByUses;
     private boolean augmenting;
     private boolean resolved;
-    private AugmentationSchemaBuilder parentAugment;
     private final Set<AugmentationSchema> augments = new HashSet<>();
     private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<>();
     private final List<RefineHolder> refines = new ArrayList<>();
 
-    /**
-     * Copies of target grouping child nodes.
-     */
-    private final Set<DataSchemaNodeBuilder> targetChildren = new HashSet<>();
-
-    /**
-     * Copies of target grouping groupings.
-     */
-    private final Set<GroupingBuilder> targetGroupings = new HashSet<>();
-
-    /**
-     * Copies of target grouping typedefs.
-     */
-    private final Set<TypeDefinitionBuilder> targetTypedefs = new HashSet<>();
-
-    /**
-     * Copies of target grouping unknown nodes.
-     */
-    private final List<UnknownSchemaNodeBuilder> targetUnknownNodes = new ArrayList<>();
-
-    private final boolean isCopy;
-    private boolean dataCollected;
-
-    @Override
-    public boolean isCopy() {
-        return isCopy;
-    }
-
-    @Override
-    public boolean isDataCollected() {
-        return dataCollected;
-    }
-
-    @Override
-    public void setDataCollected(boolean dataCollected) {
-        this.dataCollected = dataCollected;
-    }
 
     public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
         super(moduleName, line);
-        this.groupingName = groupingName;
-        isCopy = false;
-    }
-
-    public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName, final boolean isCopy) {
-        super(moduleName, line);
-        this.groupingName = groupingName;
-        this.isCopy = isCopy;
+        this.groupingPathString = groupingName;
     }
 
     @Override
@@ -181,7 +135,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     @Override
     public String getGroupingPathAsString() {
-        return groupingName;
+        return groupingPathString;
     }
 
     @Override
@@ -224,16 +178,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public AugmentationSchemaBuilder getParentAugment() {
-        return parentAugment;
-    }
-
-    @Override
-    public void setParentAugment(AugmentationSchemaBuilder augment) {
-        this.parentAugment = augment;
-    }
-
-    @Override
     public List<SchemaNodeBuilder> getRefineNodes() {
         return refineBuilders;
     }
@@ -254,30 +198,10 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public Set<DataSchemaNodeBuilder> getTargetChildren() {
-        return targetChildren;
-    }
-
-    @Override
-    public Set<GroupingBuilder> getTargetGroupings() {
-        return targetGroupings;
-    }
-
-    @Override
-    public Set<TypeDefinitionBuilder> getTargetTypedefs() {
-        return targetTypedefs;
-    }
-
-    @Override
-    public List<UnknownSchemaNodeBuilder> getTargetUnknownNodes() {
-        return targetUnknownNodes;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((groupingName == null) ? 0 : groupingName.hashCode());
+        result = prime * result + ((groupingPathString == null) ? 0 : groupingPathString.hashCode());
         result = prime * result + ((parentBuilder == null) ? 0 : parentBuilder.hashCode());
         return result;
     }
@@ -294,11 +218,11 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             return false;
         }
         UsesNodeBuilderImpl other = (UsesNodeBuilderImpl) obj;
-        if (groupingName == null) {
-            if (other.groupingName != null) {
+        if (groupingPathString == null) {
+            if (other.groupingPathString != null) {
                 return false;
             }
-        } else if (!groupingName.equals(other.groupingName)) {
+        } else if (!groupingPathString.equals(other.groupingPathString)) {
             return false;
         }
         if (parentBuilder == null) {
@@ -313,7 +237,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     @Override
     public String toString() {
-        return "uses '" + groupingName + "'";
+        return "uses '" + groupingPathString + "'";
     }
 
     public final class UsesNodeImpl implements UsesNode {

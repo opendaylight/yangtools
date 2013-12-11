@@ -696,7 +696,7 @@ public final class YangParserImpl implements YangModelParser {
                     "Failed to parse augment: Unresolved parent of augment: " + augmentParent);
         }
 
-        return processAugmentation(augment, firstNodeParent, path);
+        return processAugmentation(augment, firstNodeParent);
     }
 
     /**
@@ -781,7 +781,7 @@ public final class YangParserImpl implements YangModelParser {
         if (currentParent == null) {
             return processAugmentationOnContext(augment, path, module, prefix, context);
         } else {
-            return processAugmentation(augment, currentParent, path);
+            return processAugmentation(augment, currentParent);
         }
     }
 
@@ -948,7 +948,6 @@ public final class YangParserImpl implements YangModelParser {
                 for (AugmentationSchemaBuilder augment : usesNode.getAugmentations()) {
                     processAugmentationOnContext(augment, augment.getTargetPath().getPath(), module, prefix, context);
                 }
-                GroupingUtils.performRefine(usesNode);
             } else {
                 parent.getChildNodeBuilders().addAll(target.instantiateChildNodes(parent));
                 parent.getTypeDefinitionBuilders().addAll(target.instantiateTypedefs(parent));
@@ -957,10 +956,10 @@ public final class YangParserImpl implements YangModelParser {
                 usesNode.setResolved(true);
 
                 for (AugmentationSchemaBuilder augment : usesNode.getAugmentations()) {
-                    processAugmentation(augment, parent, augment.getTargetPath().getPath());
+                    processAugmentation(augment, parent);
                 }
-                GroupingUtils.performRefine(usesNode);
             }
+            GroupingUtils.performRefine(usesNode);
         }
     }
 

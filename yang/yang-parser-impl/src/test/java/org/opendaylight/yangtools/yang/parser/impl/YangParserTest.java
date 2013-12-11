@@ -12,7 +12,9 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,9 +69,10 @@ public class YangParserTest {
 
     @Before
     public void init() throws FileNotFoundException, ParseException {
-        fooRev = TestUtils.simpleDateFormat.parse("2013-02-27");
-        barRev = TestUtils.simpleDateFormat.parse("2013-07-03");
-        bazRev = TestUtils.simpleDateFormat.parse("2013-02-27");
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        fooRev = simpleDateFormat.parse("2013-02-27");
+        barRev = simpleDateFormat.parse("2013-07-03");
+        bazRev = simpleDateFormat.parse("2013-02-27");
 
         modules = TestUtils.loadModules(getClass().getResource("/model").getPath());
         assertEquals(3, modules.size());

@@ -743,7 +743,7 @@ public final class ParserListenerUtils {
                 reference = stringFromNode(child);
             }
         }
-        String pattern = patternStringFromNode(ctx);
+        String pattern = parsePatternString(ctx);
         return BaseConstraints.patternConstraint(pattern, description, reference);
     }
 
@@ -754,7 +754,7 @@ public final class ParserListenerUtils {
      *            context to parse
      * @return pattern value as String
      */
-    public static String patternStringFromNode(final Pattern_stmtContext ctx) {
+    private static String parsePatternString(final Pattern_stmtContext ctx) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             ParseTree child = ctx.getChild(i);

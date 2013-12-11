@@ -279,15 +279,6 @@ abstract class BaseTemplate {
         return null;
     }
 
-    def GeneratedProperty getPropByName(Collection<GeneratedProperty> props, String name) {
-        for (GeneratedProperty prop : props) {
-            if (prop.name.equals(name)) {
-                return prop;
-            }
-        }
-        return null;
-    }
-
     def getRestrictions(Type type) {
         var Restrictions restrictions = null
         if (type instanceof ConcreteType) {

@@ -199,15 +199,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return instance;
     }
 
-    public boolean isAllUsesDataCollected() {
-        for (UsesNodeBuilder usesNode : allUsesNodes) {
-            if (!usesNode.isDataCollected()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     public void setParent(Builder parent) {
         throw new YangParseException(name, 0, "Can not set parent to module");
@@ -491,7 +482,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
         if(parent instanceof AugmentationSchemaBuilder) {
             usesBuilder.setAugmenting(true);
-            usesBuilder.setParentAugment((AugmentationSchemaBuilder)parent);
         }
 
         allUsesNodes.add(usesBuilder);
