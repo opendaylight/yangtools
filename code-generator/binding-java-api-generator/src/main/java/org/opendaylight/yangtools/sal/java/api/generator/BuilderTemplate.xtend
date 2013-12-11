@@ -593,10 +593,39 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+    def override generateToString(Collection<GeneratedProperty> properties) '''
+        «IF !properties.empty»
+            @Override
+            public String toString() {
+                StringBuilder builder = new StringBuilder();
+                builder.append("«type.name» [«properties.get(0).fieldName»=");
+                «IF properties.get(0).returnType.name.contains("[")»
+                    builder.append(«Arrays.importedName».toString(«properties.get(0).fieldName»));
+                «ELSE»
+                    builder.append(«properties.get(0).fieldName»);
+                «ENDIF»
+                «FOR i : 1..<properties.size»
+                    builder.append(", «properties.get(i).fieldName»=");
+                    «IF properties.get(i).returnType.name.contains("[")»
+                        builder.append(«Arrays.importedName».toString(«properties.get(i).fieldName»));
+                    «ELSE»
+                        builder.append(«properties.get(i).fieldName»);
+                    «ENDIF»
+                «ENDFOR»
+                «IF augmentField != null»
+                    builder.append(", «augmentField.name»=");
+                    builder.append(«augmentField.name».values());
+                «ENDIF»
+                builder.append("]");
+                return builder.toString();
+            }
+        «ENDIF»
+    '''
+
     override protected getFullyQualifiedName() {
         '''«type.fullyQualifiedName»Builder'''.toString
     }
-    
+
     def implementedInterfaceGetter() '''
     public «Class.importedName»<«type.importedName»> getImplementedInterface() {
         return «type.importedName».class;
