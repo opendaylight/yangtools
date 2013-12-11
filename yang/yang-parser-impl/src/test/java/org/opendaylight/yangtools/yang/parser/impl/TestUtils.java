@@ -39,8 +39,6 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 
 final class TestUtils {
 
-    static final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     private TestUtils() {
     }
 
@@ -151,7 +149,7 @@ final class TestUtils {
     /**
      * Test if node has augmenting flag set to expected value. In case this is
      * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
-     * 
+     *
      * @param node
      *            node to check
      * @param expected
@@ -173,7 +171,7 @@ final class TestUtils {
     /**
      * Check if node has addedByUses flag set to expected value. In case this is
      * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
-     * 
+     *
      * @param node
      *            node to check
      * @param expected

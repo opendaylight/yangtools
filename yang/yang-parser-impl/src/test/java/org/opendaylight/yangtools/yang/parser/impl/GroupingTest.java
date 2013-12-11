@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -390,7 +391,7 @@ public class GroupingTest {
         assertNotNull(gzz);
 
         URI expectedNS = URI.create("urn:grouping:cascade-uses");
-        Date expectedRev = TestUtils.simpleDateFormat.parse("2013-07-18");
+        Date expectedRev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-18");
         String expectedPref = "cu";
         SchemaPath expectedPath;
 

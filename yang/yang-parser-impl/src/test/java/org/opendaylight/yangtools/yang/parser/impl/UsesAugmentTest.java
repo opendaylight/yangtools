@@ -11,7 +11,9 @@ import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,8 +52,9 @@ public class UsesAugmentTest {
 
     @Before
     public void init() throws FileNotFoundException, ParseException {
-        UG_REV = TestUtils.simpleDateFormat.parse("2013-07-30");
-        GD_REV = TestUtils.simpleDateFormat.parse("2013-09-04");
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        UG_REV = simpleDateFormat.parse("2013-07-30");
+        GD_REV = simpleDateFormat.parse("2013-09-04");
     }
 
     /**
