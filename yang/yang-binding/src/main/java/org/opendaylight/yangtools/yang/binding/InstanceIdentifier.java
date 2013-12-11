@@ -256,7 +256,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         return new BuilderImpl<T>().addNode(container);
     }
 
-    public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> InstanceIdentifierBuilder<N> builder(
+    public static <N extends Identifiable<K> & ChildOf<? extends DataRoot>, K extends Identifier<N>> InstanceIdentifierBuilder<N> builder(
             Class<N> listItem, K listKey) {
         return new BuilderImpl<N>().addNode(listItem, listKey);
     }
