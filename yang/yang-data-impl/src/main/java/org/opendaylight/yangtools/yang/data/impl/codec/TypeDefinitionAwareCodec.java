@@ -1,47 +1,18 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT16_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT32_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT64_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT8_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT16_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int32Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import javax.xml.bind.DatatypeConverter;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.data.api.codec.*;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.*;
+
+import com.google.common.base.*;
 import com.google.common.collect.ImmutableSet;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
@@ -113,7 +84,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         final TypeDefinitionAwareCodec codec = fromType(typeDefinition);
         return (TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>>) codec;
     }
-    
+
     public static final <T extends TypeDefinition<T>> TypeDefinitionAwareCodec<?, T> fromType(T typeDefinition) {
         T superType = typeDefinition;
         while (superType.getBaseType() != null) {
@@ -371,14 +342,12 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(byte[] data) {
-            // FIXME By YANG Spec
-            return null;
+            return DatatypeConverter.printBase64Binary(data);
         }
 
         @Override
         public byte[] deserialize(String stringRepresentation) {
-            // FIXME By YANG Spec
-            return null;
+            return DatatypeConverter.parseBase64Binary(stringRepresentation);
         }
     };
 
