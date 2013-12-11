@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangNode;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 
 /**
@@ -89,25 +88,6 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
     void setAugmenting(boolean augmenting);
 
     /**
-     * Get augment under which was this uses node was defined.
-     * <p>
-     * Note: This method may return different object than {@link #getParent()}
-     * if this node is a copy of other uses node. If the uses node is copied,
-     * its parent has changed, but parent augment is always same.
-     * </p>
-     *
-     * @return AugmentationSchemaBuilder under which was this node defined
-     */
-    AugmentationSchemaBuilder getParentAugment();
-
-    /**
-     * Set augment under which was this uses node was defined.
-     *
-     * @param augment
-     */
-    void setParentAugment(AugmentationSchemaBuilder augment);
-
-    /**
      * Get augmentations defined in this uses node.
      *
      * @return set of augmentations defined in this node
@@ -156,55 +136,6 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
      * Build new UsesNode object.
      */
     UsesNode build(YangNode parent);
-
-    /**
-     * Get child nodes defined in target grouping.
-     *
-     * @return set of DataSchemaNodeBuilder objects
-     */
-    Set<DataSchemaNodeBuilder> getTargetChildren();
-
-    /**
-     * Get groupings defined in target grouping.
-     *
-     * @return set of GroupingBuilder objects
-     */
-    Set<GroupingBuilder> getTargetGroupings();
-
-    /**
-     * Get type definitions defined in target grouping.
-     *
-     * @return set of typedefs defined in target grouping
-     */
-    Set<TypeDefinitionBuilder> getTargetTypedefs();
-
-    /**
-     * Get unknown nodes defined in target grouping.
-     *
-     * @return list of unknown nodes defined in target grouping
-     */
-    List<UnknownSchemaNodeBuilder> getTargetUnknownNodes();
-
-    /**
-     *
-     * @return true, if this object was built based on another UsesNodeBuilder,
-     *         false otherwise
-     */
-    boolean isCopy();
-
-    /**
-     *
-     * @return true, if target grouping objects was loaded already, false
-     *         otherwise
-     */
-    boolean isDataCollected();
-
-    /**
-     * Set if target grouping objects was loaded already.
-     *
-     * @param dataCollected
-     */
-    void setDataCollected(boolean dataCollected);
 
     boolean isResolved();
 

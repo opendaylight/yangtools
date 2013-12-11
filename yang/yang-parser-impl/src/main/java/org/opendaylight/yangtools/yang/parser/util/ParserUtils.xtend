@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder
-import java.net.URI
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember
 
 public final class ParserUtils {
@@ -62,14 +61,6 @@ public final class ParserUtils {
         val path = new ArrayList<QName>(schemaPath.getPath());
         path.addAll(Arrays.asList(qname));
         return new SchemaPath(path, schemaPath.isAbsolute());
-    }
-
-    public static def SchemaPath correctSchemaPath(SchemaPath old, URI ns, Date revision, String prefix) {
-        val List<QName> newPath = new ArrayList();
-        for (name : old.path) {
-            newPath.add(new QName(ns, revision, prefix, name.localName))
-        }
-        return new SchemaPath(newPath, old.absolute) 
     }
 
     /**
@@ -297,7 +288,6 @@ public final class ParserUtils {
      *            schema path of node parent
      */
     static def void correctNodePath(SchemaNodeBuilder node, SchemaPath parentSchemaPath) {
-
         // set correct path
         val targetNodePath = new ArrayList<QName>(parentSchemaPath.getPath());
         targetNodePath.add(node.getQName());
@@ -321,7 +311,6 @@ public final class ParserUtils {
     }
 
 
-
     private static def Builder findNode(Builder firstNodeParent, List<QName> path, String moduleName, int line) {
         var currentName = "";
         var currentParent = firstNodeParent;
@@ -343,16 +332,10 @@ public final class ParserUtils {
                 if (nodeFound == null && currentParent instanceof ModuleBuilder) {
                     nodeFound = searchRpcs(currentParent as ModuleBuilder, currentName);
                 }
-                // if not found, search in uses
                 if (nodeFound == null) {
-                    var found = searchUses(dataNodeContainerParent, currentName);
-                    if(found == null) {
-                        return null;
-                    } else {
-                        currentParent = found;
-                    }
+                    return null
                 } else {
-                    currentParent = nodeFound;
+                    currentParent = nodeFound
                 }
             } else if (currentParent instanceof ChoiceBuilder) {
                 val choiceParent = currentParent as ChoiceBuilder;
@@ -396,41 +379,6 @@ public final class ParserUtils {
         return null;
     }
 
-    private static def searchUses(DataNodeContainerBuilder dataNodeContainerParent, String name) {
-        var currentName = name;
-        for (unb : dataNodeContainerParent.usesNodes) {
-            var result = searchInUsesTarget(currentName, unb);
-            if (result != null) {
-                return result;
-            }
-
-            result = findNodeInUses(currentName, unb);
-            if (result != null) {
-                var copy = CopyUtils.copy(result, unb.getParent(), true);
-                unb.getTargetChildren().add(copy);
-                return copy;
-            }
-        }
-        return null;
-    }
-    
-    public static def getRpc(ModuleBuilder module,String name) {
-        for(rpc : module.getRpcs()) {
-            if(name == rpc.QName.localName) {
-                return rpc;
-            }
-        }
-        return null;
-    }
-    
-    public static def getNotification(ModuleBuilder module,String name) {
-        for(notification : module.getNotifications()) {
-            if(name == notification.QName.localName) {
-                return notification;
-            }
-        }
-    }
-    
     private static def nextLevel(List<QName> path){
         return path.subList(1,path.size)
     }
@@ -445,64 +393,30 @@ public final class ParserUtils {
      *            path to augment target
      * @return true if augmentation process succeed, false otherwise
      */
-    public static def boolean processAugmentation(AugmentationSchemaBuilder augment, Builder firstNodeParent,
-        List<QName> path) {
+    public static def boolean processAugmentation(AugmentationSchemaBuilder augment, Builder firstNodeParent) {
+        val path = augment.targetPath.path
+        // traverse augment target path and try to reach target node
+        val targetNode = findNode(firstNodeParent, path, augment.moduleName, augment.line);
+        if(targetNode === null) return false;
 
-            // traverse augment target path and try to reach target node
-            val targetNode = findNode(firstNodeParent,path,augment.moduleName,augment.line);
-            if (targetNode === null) return false;
-            
-            if ((targetNode instanceof DataNodeContainerBuilder)) {
-            	val targetDataNodeContainer = targetNode as DataNodeContainerBuilder;
-            	augment.setTargetNodeSchemaPath(targetDataNodeContainer.getPath());
-                fillAugmentTarget(augment, targetDataNodeContainer);
-            } else if (targetNode instanceof ChoiceBuilder) {
-            	val targetChoiceBuilder = targetNode as ChoiceBuilder;
-            	augment.setTargetNodeSchemaPath(targetChoiceBuilder.getPath());
-                fillAugmentTarget(augment, targetChoiceBuilder);
-            } else {
-                throw new YangParseException(augment.getModuleName(), augment.getLine(),
-                    "Error in augment parsing: The target node MUST be either a container, list, choice, case, input, output, or notification node.");
-            }
-            (targetNode as AugmentationTargetBuilder).addAugmentation(augment);
-            augment.setResolved(true);
-            return true;
+        if ((targetNode instanceof DataNodeContainerBuilder)) {
+            val targetDataNodeContainer = targetNode as DataNodeContainerBuilder;
+            augment.setTargetNodeSchemaPath(targetDataNodeContainer.getPath());
+            fillAugmentTarget(augment, targetDataNodeContainer);
+        } else if (targetNode instanceof ChoiceBuilder) {
+            val targetChoiceBuilder = targetNode as ChoiceBuilder;
+            augment.setTargetNodeSchemaPath(targetChoiceBuilder.getPath());
+            fillAugmentTarget(augment, targetChoiceBuilder);
+        } else {
+            throw new YangParseException(augment.getModuleName(), augment.getLine(),
+                "Error in augment parsing: The target node MUST be either a container, list, choice, case, input, output, or notification node.");
         }
-
-    private static def DataSchemaNodeBuilder searchInUsesTarget(String localName, UsesNodeBuilder uses) {
-        for(child : uses.targetChildren) {
-            if (child.getQName().getLocalName().equals(localName)) {
-                return child;
-            }
-        }
-    } 
-
-        /**
-     * Find node with given name in uses target.
-     *
-     * @param localName
-     *            name of node to find
-     * @param uses
-     *            uses node which target grouping should be searched
-     * @return node with given name if found, null otherwise
-     */
-    private static def DataSchemaNodeBuilder findNodeInUses(String localName, UsesNodeBuilder uses) {
-        val target = uses.groupingBuilder;
-        for (child : target.childNodeBuilders) {
-            if (child.getQName().getLocalName().equals(localName)) {
-                return child;
-            }
-        }
-        for (usesNode : target.usesNodes) {
-            val result = findNodeInUses(localName, usesNode);
-            if (result != null) {
-                return result;
-            }
-        }
-        return null;
+        (targetNode as AugmentationTargetBuilder).addAugmentation(augment);
+        augment.setResolved(true);
+        return true;
     }
 
-        /**
+    /**
      * Find augment target node in given context and perform augmentation.
      *
      * @param augment
@@ -516,106 +430,106 @@ public final class ParserUtils {
      *            SchemaContext containing already resolved modules
      * @return true if augment process succeed, false otherwise
      */
-        public static def boolean processAugmentationOnContext(AugmentationSchemaBuilder augment, List<QName> path,
-            ModuleBuilder module, String prefix, SchemaContext context) {
-            val int line = augment.getLine();
-            val Module dependentModule = findModuleFromContext(context, module, prefix, line);
-            if (dependentModule === null) {
-                throw new YangParseException(module.getName(), line,
-                    "Error in augment parsing: failed to find module with prefix " + prefix + ".");
-            }
+    public static def boolean processAugmentationOnContext(AugmentationSchemaBuilder augment, List<QName> path,
+        ModuleBuilder module, String prefix, SchemaContext context) {
+        val int line = augment.getLine();
+        val Module dependentModule = findModuleFromContext(context, module, prefix, line);
+        if (dependentModule === null) {
+            throw new YangParseException(module.getName(), line,
+                "Error in augment parsing: failed to find module with prefix " + prefix + ".");
+        }
 
-            var currentName = path.get(0).getLocalName();
-            var SchemaNode currentParent = dependentModule.getDataChildByName(currentName);
-            if (currentParent === null) {
-                val notifications = dependentModule.getNotifications();
-                for (NotificationDefinition ntf : notifications) {
-                    if (ntf.getQName().getLocalName().equals(currentName)) {
-                        currentParent = ntf;
-                    }
+        var currentName = path.get(0).getLocalName();
+        var SchemaNode currentParent = dependentModule.getDataChildByName(currentName);
+        if (currentParent === null) {
+            val notifications = dependentModule.getNotifications();
+            for (NotificationDefinition ntf : notifications) {
+                if (ntf.getQName().getLocalName().equals(currentName)) {
+                    currentParent = ntf;
                 }
             }
+        }
+        if (currentParent === null) {
+            throw new YangParseException(module.getName(), line,
+                "Error in augment parsing: failed to find node " + currentName + ".");
+        }
+
+        for (qname : path.nextLevel) {
+            currentName = qname.getLocalName();
+            if (currentParent instanceof DataNodeContainer) {
+                currentParent = (currentParent as DataNodeContainer).getDataChildByName(currentName);
+            } else if (currentParent instanceof ChoiceNode) {
+                currentParent = (currentParent as ChoiceNode).getCaseNodeByName(currentName);
+            } else {
+                throw new YangParseException(augment.getModuleName(), line,
+                    "Error in augment parsing: failed to find node " + currentName);
+            }
+
+            // if node in path not found, return false
             if (currentParent === null) {
                 throw new YangParseException(module.getName(), line,
                     "Error in augment parsing: failed to find node " + currentName + ".");
             }
-
-            for (qname : path.nextLevel) {
-                currentName = qname.getLocalName();
-                if (currentParent instanceof DataNodeContainer) {
-                    currentParent = (currentParent as DataNodeContainer).getDataChildByName(currentName);
-                } else if (currentParent instanceof ChoiceNode) {
-                    currentParent = (currentParent as ChoiceNode).getCaseNodeByName(currentName);
-                } else {
-                    throw new YangParseException(augment.getModuleName(), line,
-                        "Error in augment parsing: failed to find node " + currentName);
-                }
-
-                // if node in path not found, return false
-                if (currentParent === null) {
-                    throw new YangParseException(module.getName(), line,
-                        "Error in augment parsing: failed to find node " + currentName + ".");
-                }
-            }
-
-            val oldPath = currentParent.path;
-
-            if (!(currentParent instanceof AugmentationTarget)) {
-                throw new YangParseException(module.getName(), line,
-                    "Target of type " + currentParent.class + " cannot be augmented.");
-            }
-
-            switch (currentParent) {
-                case (currentParent instanceof ContainerSchemaNodeImpl): {
-
-                    // includes container, input and output statement
-                    val c = currentParent as ContainerSchemaNodeImpl;
-                    val cb = c.toBuilder();
-                    fillAugmentTarget(augment, cb);
-                    (cb as AugmentationTargetBuilder ).addAugmentation(augment);
-                    cb.rebuild();
-                }
-                case (currentParent instanceof ListSchemaNodeImpl): {
-                    val l = currentParent as ListSchemaNodeImpl;
-                    val lb = l.toBuilder();
-                    fillAugmentTarget(augment, lb);
-                    (lb as AugmentationTargetBuilder ).addAugmentation(augment);
-                    lb.rebuild();
-                    augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-                    augment.setResolved(true);
-                }
-                case (currentParent instanceof ChoiceNodeImpl): {
-                    val ch = currentParent as ChoiceNodeImpl;
-                    val chb = ch.toBuilder();
-                    fillAugmentTarget(augment, chb);
-                    (chb as AugmentationTargetBuilder ).addAugmentation(augment);
-                    chb.rebuild();
-                    augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-                    augment.setResolved(true);
-                }
-                case (currentParent instanceof ChoiceCaseNodeImpl): {
-                    val chc = currentParent as ChoiceCaseNodeImpl;
-                    val chcb = chc.toBuilder();
-                    fillAugmentTarget(augment, chcb);
-                    (chcb as AugmentationTargetBuilder ).addAugmentation(augment);
-                    chcb.rebuild();
-                    augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-                    augment.setResolved(true);
-                }
-                case (currentParent instanceof NotificationDefinitionImpl): {
-                    val nd = currentParent as NotificationDefinitionImpl;
-                    val nb = nd.toBuilder();
-                    fillAugmentTarget(augment, nb);
-                    (nb as AugmentationTargetBuilder ).addAugmentation(augment);
-                    nb.rebuild();
-                    augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-                    augment.setResolved(true);
-                }
-            }
-            augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-            augment.setResolved(true);
-            return true;
         }
+
+        val oldPath = currentParent.path;
+
+        if (!(currentParent instanceof AugmentationTarget)) {
+            throw new YangParseException(module.getName(), line,
+                "Target of type " + currentParent.class + " cannot be augmented.");
+        }
+
+        switch (currentParent) {
+            case (currentParent instanceof ContainerSchemaNodeImpl): {
+
+                // includes container, input and output statement
+                val c = currentParent as ContainerSchemaNodeImpl;
+                val cb = c.toBuilder();
+                fillAugmentTarget(augment, cb);
+                (cb as AugmentationTargetBuilder ).addAugmentation(augment);
+                cb.rebuild();
+            }
+            case (currentParent instanceof ListSchemaNodeImpl): {
+                val l = currentParent as ListSchemaNodeImpl;
+                val lb = l.toBuilder();
+                fillAugmentTarget(augment, lb);
+                (lb as AugmentationTargetBuilder ).addAugmentation(augment);
+                lb.rebuild();
+                augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+                augment.setResolved(true);
+            }
+            case (currentParent instanceof ChoiceNodeImpl): {
+                val ch = currentParent as ChoiceNodeImpl;
+                val chb = ch.toBuilder();
+                fillAugmentTarget(augment, chb);
+                (chb as AugmentationTargetBuilder ).addAugmentation(augment);
+                chb.rebuild();
+                augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+                augment.setResolved(true);
+            }
+            case (currentParent instanceof ChoiceCaseNodeImpl): {
+                val chc = currentParent as ChoiceCaseNodeImpl;
+                val chcb = chc.toBuilder();
+                fillAugmentTarget(augment, chcb);
+                (chcb as AugmentationTargetBuilder ).addAugmentation(augment);
+                chcb.rebuild();
+                augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+                augment.setResolved(true);
+            }
+            case (currentParent instanceof NotificationDefinitionImpl): {
+                val nd = currentParent as NotificationDefinitionImpl;
+                val nb = nd.toBuilder();
+                fillAugmentTarget(augment, nb);
+                (nb as AugmentationTargetBuilder ).addAugmentation(augment);
+                nb.rebuild();
+                augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+                augment.setResolved(true);
+            }
+        }
+        augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
+        augment.setResolved(true);
+        return true;
+    }
 
     public static def IdentitySchemaNodeBuilder findBaseIdentity(Map<String, TreeMap<Date, ModuleBuilder>> modules,
         ModuleBuilder module, String baseString, int line) {
@@ -675,22 +589,22 @@ public final class ParserUtils {
         return null;
     }
 
-        /**
+    /**
      * Get module in which this node is defined.
      *
      * @param node
      * @return builder of module where this node is defined
      */
-        public static def ModuleBuilder getParentModule(Builder node) {
-            if (node instanceof ModuleBuilder) {
-                return node as ModuleBuilder;
-            }
-            var parent = node.getParent();
-            while (!(parent instanceof ModuleBuilder)) {
-                parent = parent.getParent();
-            }
-            return parent as ModuleBuilder;
+    public static def ModuleBuilder getParentModule(Builder node) {
+        if (node instanceof ModuleBuilder) {
+            return node as ModuleBuilder;
         }
+        var parent = node.getParent();
+        while (!(parent instanceof ModuleBuilder)) {
+            parent = parent.getParent();
+        }
+        return parent as ModuleBuilder;
+    }
 
 }
 

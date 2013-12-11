@@ -37,8 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 public class AugmentTest {
-    private static final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     private static final URI fooNS = URI.create("urn:opendaylight.foo");
     private static final URI barNS = URI.create("urn:opendaylight.bar");
     private static final URI bazNS = URI.create("urn:opendaylight.baz");
@@ -56,6 +54,7 @@ public class AugmentTest {
 
     @BeforeClass
     public static void init() throws FileNotFoundException, ParseException {
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         fooRev = simpleDateFormat.parse("2013-10-13");
         barRev = simpleDateFormat.parse("2013-10-14");
         bazRev = simpleDateFormat.parse("2013-10-15");
@@ -342,7 +341,7 @@ public class AugmentTest {
         modules = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").getPath());
         final URI NS_BAR = URI.create("urn:opendaylight:bar");
         final URI NS_FOO = URI.create("urn:opendaylight:foo");
-        final Date revision = simpleDateFormat.parse("2013-10-11");
+        final Date revision = new SimpleDateFormat("yyyy-MM-dd").parse("2013-10-11");
 
         Module bar = TestUtils.findModule(modules, "bar");
         Set<RpcDefinition> rpcs = bar.getRpcs();

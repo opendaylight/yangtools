@@ -214,7 +214,7 @@ public class YangParserSimpleTest {
 
     private SchemaPath createPath(String... names) {
         try {
-            rev = TestUtils.simpleDateFormat.parse("2013-07-30");
+            rev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-30");
         } catch (ParseException e) {
             e.printStackTrace();
         }
