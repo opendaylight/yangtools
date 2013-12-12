@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
@@ -35,7 +34,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     }
 
     public InstanceIdentifier(List<PathArgument> path, Class<T> type) {
-        this.path = ImmutableList.copyOf(path);
+        this.path = Collections.<PathArgument> unmodifiableList(new ArrayList<>(path));
         this.targetType = type;
     }
 
