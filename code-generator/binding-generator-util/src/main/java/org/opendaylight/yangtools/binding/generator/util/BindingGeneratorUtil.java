@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.TypeMemberBuilder;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -47,6 +48,7 @@ public final class BindingGeneratorUtil {
     /**
      * Array of strings values which represents JAVA reserved words.
      */
+    @Deprecated
     private static final String[] SET_VALUES = new String[] { "abstract", "assert", "boolean", "break", "byte", "case",
             "catch", "char", "class", "const", "continue", "default", "double", "do", "else", "enum", "extends",
             "false", "final", "finally", "float", "for", "goto", "if", "implements", "import", "instanceof", "int",
@@ -64,6 +66,7 @@ public final class BindingGeneratorUtil {
     /**
      * Hash set of words which are reserved in JAVA language.
      */
+    @Deprecated
     private static final Set<String> JAVA_RESERVED_WORDS = new HashSet<String>(Arrays.asList(SET_VALUES));
 
     /**
@@ -243,7 +246,10 @@ public final class BindingGeneratorUtil {
      *            JAVA class name
      * @return string which is in accordance with best practices for JAVA class
      *         name.
+     *         
+     * @deprecated Use {@link BindingMapping#getClassName(QName)} instead.
      */
+    @Deprecated
     public static String parseToClassName(String token) {
         return parseToCamelCase(token, true);
     }
