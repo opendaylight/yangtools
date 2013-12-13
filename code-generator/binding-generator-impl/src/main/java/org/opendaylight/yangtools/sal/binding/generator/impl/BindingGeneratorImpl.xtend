@@ -75,7 +75,8 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl
-import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.common.QNameimport org.opendaylight.yangtools.yang.binding.BindingMapping
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -425,7 +426,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         interfaceBuilder.addImplementsType(Types.typeForClass(RpcService));
         for (rpc : rpcDefinitions) {
             if (rpc !== null) {
-                val rpcName = parseToClassName(rpc.QName.localName);
+                val rpcName = BindingMapping.getClassName(rpc.QName);
                 val rpcMethodName = parseToValidParamName(rpcName);
                 val method = interfaceBuilder.addMethod(rpcMethodName);
                 val input = rpc.input;
@@ -561,7 +562,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             return;
         }
         val packageName = packageNameForGeneratedType(basePackageName, identity.path);
-        val genTypeName = parseToClassName(identity.QName.localName);
+        val genTypeName = BindingMapping.getClassName(identity.QName);
         val newType = new GeneratedTOBuilderImpl(packageName, genTypeName);
         val baseIdentity = identity.baseIdentity;
         if (baseIdentity === null) {
@@ -569,16 +570,22 @@ public class BindingGeneratorImpl implements BindingGenerator {
         } else {
             val baseIdentityParentModule = SchemaContextUtil.findParentModule(context, baseIdentity);
             val returnTypePkgName = moduleNamespaceToPackageName(baseIdentityParentModule);
-            val returnTypeName = parseToClassName(baseIdentity.QName.localName);
+            val returnTypeName = BindingMapping.getClassName(baseIdentity.QName);
             val gto = new GeneratedTOBuilderImpl(returnTypePkgName, returnTypeName).toInstance();
             newType.setExtendsType(gto);
         }
         newType.setAbstract(true);
         val qname = identity.QName;
-        newType.addConstant(QName.typeForClass,"QNAME",'''
-            org.opendaylight.yangtools.yang.common.QName.create("«qname.namespace»","«qname.formattedRevision»","«qname.localName»")
-        ''');
+        
+        newType.qnameConstant(BindingMapping.QNAME_STATIC_FIELD_NAME,qname);
+        
         genCtx.get(module).addIdentityType(identity.QName,newType)
+    }
+    
+    private static def qnameConstant(GeneratedTypeBuilderBase<?> toBuilder, String constantName, QName name) {
+        toBuilder.addConstant(QName.typeForClass,constantName,'''
+            org.opendaylight.yangtools.yang.common.QName.create("«name.namespace»","«name.formattedRevision»","«name.localName»")
+        ''');
     }
 
     /**
@@ -663,11 +670,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * @return enumeration builder which contais data from
      *         <code>enumTypeDef</code>
      */
-    private def EnumBuilder resolveInnerEnumFromTypeDefinition(EnumTypeDefinition enumTypeDef, String enumName,
+    private def EnumBuilder resolveInnerEnumFromTypeDefinition(EnumTypeDefinition enumTypeDef, QName enumName,
         GeneratedTypeBuilder typeBuilder) {
         if ((enumTypeDef !== null) && (typeBuilder !== null) && (enumTypeDef.QName !== null) &&
             (enumTypeDef.QName.localName !== null)) {
-            val enumerationName = parseToClassName(enumName);
+            val enumerationName = BindingMapping.getClassName(enumName);
             val enumBuilder = typeBuilder.addEnumeration(enumerationName);
             enumBuilder.updateEnumPairsFromEnumTypeDef(enumTypeDef);
             return enumBuilder;
@@ -692,7 +699,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def GeneratedTypeBuilder moduleTypeBuilder(Module module, String postfix) {
         checkArgument(module !== null, "Module reference cannot be NULL.");
         val packageName = moduleNamespaceToPackageName(module);
-        val moduleName = parseToClassName(module.name) + postfix;
+        val moduleName = BindingMapping.getClassName(module.name) + postfix;
         return new GeneratedTypeBuilderImpl(packageName, moduleName);
     }
 
@@ -969,7 +976,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val augIdentifier = getAugmentIdentifier(augSchema.unknownSchemaNodes);
 
         val augTypeName = if (augIdentifier !== null) {
-                parseToClassName(augIdentifier)
+                BindingMapping.getClassName(augIdentifier)
             } else {
                 augGenTypeName(augmentBuilders, targetTypeRef.name);
             }
@@ -1338,19 +1345,19 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 if (typeDef instanceof EnumTypeDefinition) {
                     returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
                     val enumTypeDef = typeDef as EnumTypeDefinition;
-                    val enumBuilder = resolveInnerEnumFromTypeDefinition(enumTypeDef, leafName, typeBuilder);
+                    val enumBuilder = resolveInnerEnumFromTypeDefinition(enumTypeDef, leaf.QName, typeBuilder);
 
                     if (enumBuilder !== null) {
                         returnType = new ReferencedTypeImpl(enumBuilder.packageName, enumBuilder.name);
                     }
                     (typeProvider as TypeProviderImpl).putReferencedType(leaf.path, returnType);
                 } else if (typeDef instanceof UnionType) {
-                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, leaf, parentModule);
+                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder,  leaf, parentModule);
                     if (genTOBuilder !== null) {
                         returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
                     }
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leafName, leaf, parentModule);
+                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder,  leaf, parentModule);
                     if (genTOBuilder !== null) {
                         returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
                     }
@@ -1400,7 +1407,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val Class<RoutingContext> clazz = typeof(RoutingContext);
                 val AnnotationTypeBuilder rc = getter.addAnnotation(clazz.package.name, clazz.simpleName);
                 val packageName = packageNameForGeneratedType(basePackageName, identity.path);
-                val genTypeName = parseToClassName(identity.QName.localName);
+                val genTypeName = BindingMapping.getClassName(identity.QName.localName);
                 rc.addParameter("value", packageName + "." + genTypeName + ".class");
             }
         }
@@ -1491,7 +1498,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private def boolean resolveLeafListSchemaNode(GeneratedTypeBuilder typeBuilder, LeafListSchemaNode node) {
         if ((node !== null) && (typeBuilder !== null)) {
-            val nodeName = node.QName.localName;
+            val nodeName = node.QName;
             var String nodeDesc = node.description;
             if (nodeDesc === null) {
                 nodeDesc = "";
@@ -1508,10 +1515,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     returnType = new ReferencedTypeImpl(enumBuilder.packageName, enumBuilder.name);
                     (typeProvider as TypeProviderImpl).putReferencedType(node.path, returnType);
                 } else if (typeDef instanceof UnionType) {
-                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, nodeName, node, parentModule);
+                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder,  node, parentModule);
                     returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, nodeName, node, parentModule);
+                    val genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder,  node, parentModule);
                     returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
                 } else {
                     val Restrictions restrictions = BindingGeneratorUtil.getRestrictions(typeDef);
@@ -1519,7 +1526,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 }
 
                 val listType = Types.listTypeFor(returnType);
-                constructGetter(typeBuilder, nodeName, nodeDesc, listType);
+                constructGetter(typeBuilder, nodeName.localName, nodeDesc, listType);
                 return true;
             }
         }
@@ -1556,9 +1563,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         Type parent) {
         val it = addRawInterfaceDefinition(packageName, schemaNode, "");
         val qname = schemaNode.QName;
-        addConstant(QName.typeForClass,"QNAME",'''
-            org.opendaylight.yangtools.yang.common.QName.create("«qname.namespace»","«qname.formattedRevision»","«qname.localName»")
-        ''');
+        qnameConstant(BindingMapping.QNAME_STATIC_FIELD_NAME,schemaNode.QName);
         if (parent === null) {
             addImplementsType(DATA_OBJECT);
         } else {
@@ -1623,9 +1628,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         var String genTypeName;
         if (prefix === null) {
-            genTypeName = parseToClassName(schemaNodeName);
+            genTypeName = BindingMapping.getClassName(schemaNodeName);
         } else {
-            genTypeName = prefix + parseToClassName(schemaNodeName);
+            genTypeName = prefix + BindingMapping.getClassName(schemaNodeName);
         }
 
         //FIXME: Validation of name conflict
@@ -1659,7 +1664,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         } else {
             method.append("get");
         }
-        method.append(parseToClassName(localName));
+        method.append(BindingMapping.getClassName(localName));
         return method.toString();
     }
 
@@ -1788,7 +1793,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         var GeneratedTOBuilder genTOBuilder = null;
         if ((list.keyDefinition !== null) && (!list.keyDefinition.isEmpty())) {
             val listName = list.QName.localName + "Key";
-            val String genTOName = parseToClassName(listName);
+            val String genTOName = BindingMapping.getClassName(listName);
             genTOBuilder = new GeneratedTOBuilderImpl(packageName, genTOName);
         }
         return genTOBuilder;
@@ -1818,8 +1823,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * @return generated TO builder for <code>typeDef</code>
      */
     private def GeneratedTOBuilder addTOToTypeBuilder(TypeDefinition<?> typeDef, GeneratedTypeBuilder typeBuilder,
-        String leafName, DataSchemaNode leaf, Module parentModule) {
-        val classNameFromLeaf = parseToClassName(leafName);
+        DataSchemaNode leaf, Module parentModule) {
+        val classNameFromLeaf = BindingMapping.getClassName(leaf.QName);
         val List<GeneratedTOBuilder> genTOBuilders = new ArrayList();
         val packageName = typeBuilder.fullyQualifiedName;
         if (typeDef instanceof UnionTypeDefinition) {
