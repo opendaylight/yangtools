@@ -208,6 +208,7 @@ class GeneratorImpl {
                 <li>
                     augment
                     «augment.augmentationInfo(InstanceIdentifier.builder().toInstance())»
+                    «augment.childNodes.printChildren(2,InstanceIdentifier.builder().toInstance())»
                 </li>
             «ENDFOR»
             </ul>
@@ -353,6 +354,7 @@ class GeneratorImpl {
     val leafNodes = nodes.filter(LeafSchemaNode)
     val leafListNodes = nodes.filter(LeafListSchemaNode)
     val choices = nodes.filter(ChoiceNode)
+    val cases = nodes.filter(ChoiceCaseNode)
     val containers = nodes.filter(ContainerSchemaNode)
     val lists = nodes.filter(ListSchemaNode)
     return '''
@@ -381,6 +383,12 @@ class GeneratorImpl {
             «childNode.printInfo(level,path)»
         «ENDFOR»
         «FOR childNode : lists»
+            «childNode.printInfo(level,path)»
+        «ENDFOR»
+        «FOR childNode : choices»
+            «childNode.printInfo(level,path)»
+        «ENDFOR»
+        «FOR childNode : cases»
             «childNode.printInfo(level,path)»
         «ENDFOR»
         
@@ -466,7 +474,16 @@ class GeneratorImpl {
         </dl>
         «node.childNodes.printChildren(level,newPath)»
     '''
-    
+
+    private def dispatch CharSequence printInfo(ChoiceNode node, int level, InstanceIdentifier path) '''
+        «val Set<DataSchemaNode> choiceCases = new HashSet(node.cases)»
+        «choiceCases.printChildren(level,path)»
+    '''
+
+    private def dispatch CharSequence printInfo(ChoiceCaseNode node, int level, InstanceIdentifier path) '''
+        «node.childNodes.printChildren(level,path)»
+    '''
+
     def CharSequence printShortInfo(ContainerSchemaNode node, int level, InstanceIdentifier path) {
         val newPath = path.append(node);
         return '''
@@ -492,7 +509,7 @@ class GeneratorImpl {
             <li>«strong((node.QName.localName))» (leaf-list)</li>
         '''
     }
-    
+
     def CharSequence localLink(InstanceIdentifier identifier, CharSequence text) '''
         <a href="#«FOR cmp : identifier.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">«text»</a>
     '''
