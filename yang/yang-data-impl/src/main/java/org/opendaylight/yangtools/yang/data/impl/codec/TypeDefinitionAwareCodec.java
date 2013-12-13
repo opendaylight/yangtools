@@ -6,8 +6,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.opendaylight.yangtools.yang.data.api.codec.*;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.*;
@@ -65,6 +63,9 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
     public static final Uint64CodecStringImpl UINT64_DEFAULT_CODEC = new Uint64CodecStringImpl(
             Optional.<UnsignedIntegerTypeDefinition> absent());
+
+    public static final UnionCodecStringImpl UNION_DEFAULT_CODEC = new UnionCodecStringImpl(
+            Optional.<UnionTypeDefinition> absent());
 
     public Class<J> getInputClass() {
         return inputClass;
@@ -405,6 +406,24 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         @Override
         public BigDecimal deserialize(String stringRepresentation) {
             return new BigDecimal(stringRepresentation);
+        }
+    };
+
+    public static class UnionCodecStringImpl extends TypeDefinitionAwareCodec<String, UnionTypeDefinition> implements
+            UnionCodec<String> {
+
+        protected UnionCodecStringImpl(Optional<UnionTypeDefinition> typeDef) {
+            super(typeDef, String.class);
+        }
+
+        @Override
+        public String serialize(String data) {
+            return data;
+        }
+
+        @Override
+        public String deserialize(String stringRepresentation) {
+            return stringRepresentation;
         }
     };
 }
