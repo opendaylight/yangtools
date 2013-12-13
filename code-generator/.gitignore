@@ -1,2 +1,3 @@
 /.settings
 /binding-java-api-generator/src/main/xtend-gen
+/maven-sal-api-gen-plugin/src/main/xtend-gen
