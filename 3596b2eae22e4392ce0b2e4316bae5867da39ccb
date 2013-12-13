@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_446d9197",
+        "filename": "code-generator/maven-sal-api-gen-plugin/src/main/java/org/opendaylight/yangtools/yang/wadl/generator/maven/WadlGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2013-12-13T23:25:40Z",
+      "side": 1,
+      "message": "Please also add BuildContextAware and use buildContext for generating the files.",
+      "revId": "3596b2eae22e4392ce0b2e4316bae5867da39ccb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
