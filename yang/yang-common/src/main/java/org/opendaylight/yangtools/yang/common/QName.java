@@ -21,12 +21,12 @@ import org.slf4j.LoggerFactory;
 /**
  * The QName from XML consists of local name of element and XML namespace, but
  * for our use, we added module revision to it.
- * 
+ *
  * In YANG context QName is full name of defined node, type, procedure or
  * notification. QName consists of XML namespace, YANG model revision and local
  * name of defined type. It is used to prevent name clashes between nodes with
  * same local name, but from different schemas.
- * 
+ *
  * <ul>
  * <li><b>XMLNamespace</b> - the namespace assigned to the YANG module which
  * defined element, type, procedure or notification.</li>
@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
  * <li><b>LocalName</b> - the YANG schema identifier which were defined for this
  * node in the YANG module</li>
  * </ul>
- * 
- * 
+ *
+ *
  */
 public final class QName implements Immutable,Serializable {
 
@@ -45,17 +45,17 @@ public final class QName implements Immutable,Serializable {
     protected static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
     private static final ThreadLocal<SimpleDateFormat> REVISION_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-        
+
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd");
         };
-        
+
         public void set(SimpleDateFormat value) {
             throw new UnsupportedOperationException();
         };
-        
+
     };
-    
+
     private final URI namespace;
     private final String localName;
     private final String prefix;
@@ -64,7 +64,7 @@ public final class QName implements Immutable,Serializable {
 
     /**
      * QName Constructor.
-     * 
+     *
      * @param namespace
      *            the namespace assigned to the YANG module
      * @param revision
@@ -88,7 +88,7 @@ public final class QName implements Immutable,Serializable {
 
     /**
      * QName Constructor.
-     * 
+     *
      * @param namespace
      *            the namespace assigned to the YANG module
      * @param localName
@@ -100,7 +100,7 @@ public final class QName implements Immutable,Serializable {
 
     /**
      * QName Constructor.
-     * 
+     *
      * @param namespace
      *            the namespace assigned to the YANG module
      * @param revision
@@ -116,9 +116,31 @@ public final class QName implements Immutable,Serializable {
         this(base.getNamespace(), base.getRevision(), base.getPrefix(), localName);
     }
 
+    // TODO: rework with pattern
+    public QName(String base) throws ParseException {
+        Date revision = null;
+        String nsAndRev = base.substring(base.indexOf("(") + 1, base.indexOf(")"));
+        if (nsAndRev.contains("?")) {
+            String[] splitted = nsAndRev.split("\\?");
+            this.namespace = URI.create(splitted[0]);
+            revision = REVISION_FORMAT.get().parse(splitted[1]);
+        } else {
+            this.namespace = URI.create(nsAndRev);
+        }
+
+        this.localName = base.substring(base.indexOf(")") + 1);
+        this.revision = revision;
+        this.prefix = null;
+        if (revision != null) {
+            this.formattedRevision = REVISION_FORMAT.get().format(revision);
+        } else {
+            this.formattedRevision = null;
+        }
+    }
+
     /**
      * Returns XMLNamespace assigned to the YANG module.
-     * 
+     *
      * @return XMLNamespace assigned to the YANG module.
      */
     public URI getNamespace() {
@@ -128,7 +150,7 @@ public final class QName implements Immutable,Serializable {
     /**
      * Returns YANG schema identifier which were defined for this node in the
      * YANG module
-     * 
+     *
      * @return YANG schema identifier which were defined for this node in the
      *         YANG module
      */
@@ -139,7 +161,7 @@ public final class QName implements Immutable,Serializable {
     /**
      * Returns revision of the YANG module if the module has defined revision,
      * otherwise returns <code>null</code>
-     * 
+     *
      * @return revision of the YANG module if the module has defined revision,
      *         otherwise returns <code>null</code>
      */
@@ -149,7 +171,7 @@ public final class QName implements Immutable,Serializable {
 
     /**
      * Returns locally defined prefix assigned to local name
-     * 
+     *
      * @return locally defined prefix assigned to local name
      */
     public String getPrefix() {
@@ -201,17 +223,17 @@ public final class QName implements Immutable,Serializable {
         }
         return true;
     }
-    
-    
+
+
     public static QName create(QName base, String localName){
         return new QName(base, localName);
     }
-    
+
     public static QName create(URI namespace, Date revision, String localName){
         return new QName(namespace, revision, localName);
     }
-    
-    
+
+
     public static QName create(String namespace, String revision, String localName) throws IllegalArgumentException{
         try {
             URI namespaceUri = new URI(namespace);
@@ -244,11 +266,11 @@ public final class QName implements Immutable,Serializable {
      * ://tools.ietf.org/html/rfc6020}, if namespace is not correctly defined,
      * the method will return <code>null</code> <br>
      * example "http://example.acme.com/system?revision=2008-04-01"
-     * 
+     *
      * @return namespace in form defined by section 5.6.4. of {@link https
      *         ://tools.ietf.org/html/rfc6020}, if namespace is not correctly
      *         defined, the method will return <code>null</code>
-     * 
+     *
      */
     URI getRevisionNamespace() {
 
@@ -270,7 +292,7 @@ public final class QName implements Immutable,Serializable {
         }
         return compositeURI;
     }
-    
+
     public String getFormattedRevision() {
         return formattedRevision;
     }
