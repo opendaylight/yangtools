@@ -120,6 +120,8 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
             }
         } else if (superType instanceof StringTypeDefinition) {
             codec = STRING_DEFAULT_CODEC;
+        } else if (superType instanceof UnionTypeDefinition) {
+            codec = UNION_DEFAULT_CODEC;
         } else if (superType instanceof UnsignedIntegerTypeDefinition) {
             if (UINT8_QNAME.equals(superType.getQName())) {
                 codec = UINT8_DEFAULT_CODEC;
