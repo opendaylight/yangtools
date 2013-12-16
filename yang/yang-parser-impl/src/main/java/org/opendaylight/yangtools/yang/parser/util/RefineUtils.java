@@ -167,7 +167,7 @@ public final class RefineUtils {
      * @param refine
      *            refine object containing information about refine process
      */
-    public static void checkRefine(SchemaNodeBuilder node, RefineHolder refine) {
+    private static void checkRefine(SchemaNodeBuilder node, RefineHolder refine) {
         String moduleName = refine.getModuleName();
         int line = refine.getLine();
         String name = node.getQName().getLocalName();
@@ -259,7 +259,7 @@ public final class RefineUtils {
      * @param refine
      *            refine object containing information about refine process
      */
-    public static void refineDefault(final Builder node, final RefineHolder refine) {
+    private static void refineDefault(final Builder node, final RefineHolder refine) {
         final String moduleName = refine.getModuleName();
         final int line = refine.getLine();
         Class<? extends Builder> cls = node.getClass();
@@ -303,7 +303,7 @@ public final class RefineUtils {
      * @param refine
      *            refine object containing information about refine process
      */
-    public static void performRefine(SchemaNodeBuilder nodeToRefine, RefineHolder refine) {
+    static void performRefine(SchemaNodeBuilder nodeToRefine, RefineHolder refine) {
         checkRefine(nodeToRefine, refine);
         refineDefault(nodeToRefine, refine);
         if (nodeToRefine instanceof LeafSchemaNodeBuilder) {

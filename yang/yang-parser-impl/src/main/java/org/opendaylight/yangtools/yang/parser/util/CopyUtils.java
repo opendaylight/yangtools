@@ -415,9 +415,9 @@ public final class CopyUtils {
         return newConstraints;
     }
 
-    static UsesNodeBuilder copyUses(UsesNodeBuilder old, Builder newParent) {
+    private static UsesNodeBuilder copyUses(UsesNodeBuilder old, Builder newParent) {
         UsesNodeBuilder copy = new UsesNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
-                old.getGroupingPathAsString(), true);
+                old.getGroupingPathAsString());
         copy.setParent(newParent);
         copy.setGroupingDefinition(old.getGroupingDefinition());
         copy.setGrouping(old.getGroupingBuilder());
@@ -426,7 +426,6 @@ public final class CopyUtils {
         copy.getRefineNodes().addAll(old.getRefineNodes());
         copy.getRefines().addAll(old.getRefines());
         copy.setAugmenting(old.isAugmenting());
-        copy.setParentAugment(old.getParentAugment());
         return copy;
     }
 
