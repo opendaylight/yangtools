@@ -30,7 +30,7 @@ class UnionBuilderTemplate extends ClassTemplate {
         «FOR method : genTO.methodDefinitions»
             «method.accessModifier.accessModifier»«IF method.static»static«ENDIF»«IF method.final» final«ENDIF» «method.
             returnType.importedName» «method.name»(«method.parameters.generateParameters») {
-                return null;
+                throw new «UnsupportedOperationException.importedName»("Not yet implemented");
             }
         «ENDFOR»
     '''
