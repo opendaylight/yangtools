@@ -146,7 +146,11 @@ abstract class BaseTemplate {
      */
     def protected CharSequence asJavadoc(String comment) {
         if(comment == null) return '';
-        val paragraphs = paragraphSplitter.split(comment)
+        var txt = comment
+        if (txt.contains("*/")) {
+            txt = txt.replace("*/", "&#42;&#47;")
+        }
+        val paragraphs = paragraphSplitter.split(txt)
 
         return '''
             /**

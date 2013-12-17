@@ -59,7 +59,7 @@ class InterfaceTemplate extends BaseTemplate {
      * @return string with code for interface body in JAVA format
      */
     override body() '''
-        «type.comment.generateComment»
+        «type.comment.asJavadoc»
         public interface «type.name»
             «superInterfaces»
         {
@@ -75,21 +75,7 @@ class InterfaceTemplate extends BaseTemplate {
         }
         
     '''
-    
-    /**
-     * Template method which generates JAVA comment.
-     * 
-     * @param comment 
-     * string with the comment for whole JAVA interface
-     * @return string with comment in JAVA format
-     */
-    def private generateComment(String comment) '''
-        «IF comment != null && !comment.empty»
-            /*
-            «comment»
-            */
-        «ENDIF»
-    '''
+   
 
     def private generateAnnotations(List<AnnotationType> annotations) '''
         «IF annotations != null && !annotations.empty»
@@ -182,7 +168,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateMethods() '''
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
-                «m.comment.generateComment»
+                «m.comment.asJavadoc»
                 «m.annotations.generateAnnotations»
                 «m.returnType.importedName» «m.name»(«m.parameters.generateParameters»);
             «ENDFOR»
