@@ -101,7 +101,7 @@ END_IDENTIFIER_LEFT_BRACE : '{' ->type(LEFT_BRACE), popMode;
  
 fragment SUB_STRING : ('"' (ESC | ~["])*'"') | ('\'' (ESC | ~['])*'\'') ;
 
-STRING: (SUB_STRING |  (~( '\r' | '\n' | '\t' | ' ' | ';' | '{' )+)) ->popMode;// IDENTIFIER ;
+STRING: ((~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '"' | '\'' )+) | SUB_STRING ) ->popMode;// IDENTIFIER ;
 S : [ \n\r\t] -> skip;    
 
 mode BLOCK_COMMENT_MODE;
