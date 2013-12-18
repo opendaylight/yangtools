@@ -988,7 +988,7 @@ public final class YangParserImpl implements YangModelParser {
         for (UnknownSchemaNodeBuilder usnb : module.getAllUnknownNodes()) {
             QName nodeType = usnb.getNodeType();
             try {
-                ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module, nodeType.getPrefix(),
+                ModuleBuilder dependentModuleBuilder = findModuleFlromBuilders(modules, module, nodeType.getPrefix(),
                         usnb.getLine());
 
                 if (dependentModuleBuilder == null) {

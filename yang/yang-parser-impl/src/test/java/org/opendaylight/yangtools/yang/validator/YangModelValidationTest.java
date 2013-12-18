@@ -15,12 +15,14 @@ import static org.mockito.Mockito.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Augment_stmtContext;
@@ -237,12 +239,17 @@ public class YangModelValidationTest {
     }
 
     static void mockName(ParseTree stmt, String name) {
-        StringContext nameCtx = mock(StringContext.class);
-        ParseTree internalName = mock(ParseTree.class);
         doReturn(1).when(stmt).getChildCount();
-        doReturn(name).when(internalName).getText();
-        doReturn(internalName).when(nameCtx).getChild(0);
+
+        TerminalNode terminalNode = mock(TerminalNode.class);
+        doReturn(name).when(terminalNode).getText();
+
+        StringContext nameCtx = mock(StringContext.class);
         doReturn(nameCtx).when(stmt).getChild(0);
+        doReturn(terminalNode).when(nameCtx).getChild(0);
+        doReturn(name).when(terminalNode).getText();
+
+        doReturn(Collections.singletonList(terminalNode)).when(nameCtx).STRING();
     }
 
     static <T extends ParseTree> T mockStatement(Class<T> stmtType, String name) {
