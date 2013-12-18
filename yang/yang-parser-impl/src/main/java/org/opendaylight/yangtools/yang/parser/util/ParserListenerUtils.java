@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.*;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Base_stmtContext;
@@ -139,16 +140,28 @@ public final class ParserListenerUtils {
             if (treeNode.getChild(i) instanceof StringContext) {
                 final StringContext context = (StringContext) treeNode.getChild(i);
                 if (context != null) {
-                    result = context.getChild(0).getText();
-                    if (!(result.startsWith("\"")) && result.endsWith("\"")) {
-                        LOG.error("Syntax error in module {} at line {}: missing '\"'.", getParentModule(treeNode),
-                                context.getStart().getLine());
-                    }
-                    return result.replace("\"", "");
+                    return stringFromStringContext(context,treeNode);
+                    
                 }
             }
         }
         return result;
+    }
+
+    private static String stringFromStringContext(StringContext context, ParseTree treeNode) {
+        StringBuilder str = new StringBuilder();
+        for (TerminalNode stringNode : context.STRING()) {
+            String result = stringNode.getText();
+            if(!result.contains("\"")){
+                str.append(result);
+            } else if (!(result.startsWith("\"")) && result.endsWith("\"")) {
+                LOG.error("Syntax error in module {} at line {}: missing '\"'.", getParentModule(treeNode),
+                        context.getStart().getLine());
+            } else {
+                str.append(result.replace("\"", ""));
+            }
+        }
+        return str.toString();
     }
 
     private static String getParentModule(final ParseTree ctx) {

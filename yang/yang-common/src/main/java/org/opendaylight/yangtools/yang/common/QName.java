@@ -17,6 +17,7 @@ import java.util.Date;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -295,5 +296,9 @@ public final class QName implements Immutable,Serializable {
 
     public String getFormattedRevision() {
         return formattedRevision;
+    }
+
+    public QName withoutRevision() {
+        return QName.create(namespace, null, localName);
     }
 }

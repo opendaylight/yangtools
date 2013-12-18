@@ -1,6 +1,7 @@
 module simple-nodes {
     yang-version 1;
-    namespace "urn:opendaylight:simple-nodes";
+    namespace "urn:opendaylight:"+
+        "simple-nodes";
     prefix "sn";
 
     organization "opendaylight";
