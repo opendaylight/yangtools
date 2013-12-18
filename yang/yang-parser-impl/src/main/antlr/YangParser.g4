@@ -23,8 +23,8 @@ deviate_add_stmt : DEVIATE_KEYWORD string /*ADD_KEYWORD*/ (SEMICOLON | (LEFT_BRA
 deviate_not_supported_stmt : DEVIATE_KEYWORD string /*NOT_SUPPORTED_KEYWORD*/ (SEMICOLON | (LEFT_BRACE identifier_stmt? RIGHT_BRACE));
 deviation_stmt : DEVIATION_KEYWORD string LEFT_BRACE (identifier_stmt |description_stmt | reference_stmt | deviate_not_supported_stmt | deviate_add_stmt | deviate_replace_stmt | deviate_delete_stmt)+ RIGHT_BRACE;
 notification_stmt : NOTIFICATION_KEYWORD string (SEMICOLON | (LEFT_BRACE (identifier_stmt |if_feature_stmt | status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | data_def_stmt )* RIGHT_BRACE));
-output_stmt : OUTPUT_KEYWORD LEFT_BRACE (identifier_stmt |typedef_stmt | grouping_stmt | data_def_stmt )+ RIGHT_BRACE;
-input_stmt : INPUT_KEYWORD LEFT_BRACE (identifier_stmt |typedef_stmt | grouping_stmt | data_def_stmt )+ RIGHT_BRACE;
+output_stmt : OUTPUT_KEYWORD LEFT_BRACE (identifier_stmt |typedef_stmt | grouping_stmt | data_def_stmt )* RIGHT_BRACE;
+input_stmt : INPUT_KEYWORD LEFT_BRACE (identifier_stmt |typedef_stmt | grouping_stmt | data_def_stmt )* RIGHT_BRACE;
 rpc_stmt : RPC_KEYWORD string (SEMICOLON | (LEFT_BRACE (identifier_stmt |if_feature_stmt  | status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | input_stmt | output_stmt )* RIGHT_BRACE));
 when_stmt : WHEN_KEYWORD string (SEMICOLON | (LEFT_BRACE (identifier_stmt |description_stmt | reference_stmt )* RIGHT_BRACE));
 
