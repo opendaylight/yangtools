@@ -82,11 +82,19 @@ abstract class BaseTemplate {
      * @return string with the getter method source code in JAVA format 
      */
     final protected def getterMethod(GeneratedProperty field) {
+        if(field.returnType.equals(Types.BOOLEAN)) {
+        '''
+            public «field.returnType.importedName» «field.getterMethodName»() {
+                return «field.fieldName» == null ? Boolean.FALSE : «field.fieldName»;
+            }
+        '''
+        } else {
         '''
             public «field.returnType.importedName» «field.getterMethodName»() {
                 return «field.fieldName»;
             }
         '''
+        }
     }
 
     final protected def getterMethodName(GeneratedProperty field) {
