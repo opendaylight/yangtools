@@ -40,7 +40,7 @@ public final class StringType implements StringTypeDefinition {
      */
     private StringType() {
         final List<LengthConstraint> constraints = new ArrayList<LengthConstraint>();
-        constraints.add(BaseConstraints.lengthConstraint(0, Long.MAX_VALUE, "", ""));
+        constraints.add(BaseConstraints.lengthConstraint(0, Integer.MAX_VALUE, "", ""));
         lengthStatements = Collections.unmodifiableList(constraints);
         patterns = Collections.emptyList();
     }
