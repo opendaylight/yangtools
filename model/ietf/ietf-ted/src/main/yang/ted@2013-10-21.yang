@@ -6,6 +6,7 @@ module ted {
 
   import ietf-inet-types {
     prefix inet;
+    revision-date 2010-09-24;
   }
 
   organization "TBD";

@@ -16,6 +16,7 @@ module ospf-topology {
     }
     import ietf-inet-types {
         prefix "inet";
+	revision-date 2010-09-24;
     }
     import ted {
         prefix "ted";

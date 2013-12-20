@@ -4,7 +4,7 @@ module network-topology  {
     // replace with IANA namespace when assigned
     prefix "nt";
 
-    import ietf-inet-types { prefix "inet"; }
+    import ietf-inet-types { prefix "inet"; revision-date 2010-09-24; }
 
     organization "TBD";
 
