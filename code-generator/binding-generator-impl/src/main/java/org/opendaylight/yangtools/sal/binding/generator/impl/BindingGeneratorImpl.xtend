@@ -1685,13 +1685,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
     }
 
     /**
-     * Creates the name of the getter method from <code>methodName</code>.
+     * Creates the name of the getter method from <code>localName</code>.
      *
-     * @param methodName
+     * @param localName
      *            string with the name of the getter method
      * @param returnType return type
      * @return string with the name of the getter method for
-     *         <code>methodName</code> in JAVA method format
+     *         <code>localName</code> in JAVA method format
      */
     public static def String getterMethodName(String localName, Type returnType) {
         val method = new StringBuilder();
