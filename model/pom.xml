@@ -52,6 +52,10 @@
                                     <codeGeneratorClass>org.opendaylight.yangtools.yang.unified.doc.generator.maven.DocumentationGeneratorImpl</codeGeneratorClass>
                                     <outputBaseDir>target/site/restconf</outputBaseDir>
                                 </generator>
+                                <generator>
+                                    <codeGeneratorClass>org.opendaylight.yangtools.yang.wadl.generator.maven.WadlGenerator</codeGeneratorClass>
+                                    <outputBaseDir>target/site/restconf</outputBaseDir>
+                                </generator>
                             </codeGenerators>
                             <inspectDependencies>true</inspectDependencies>
                         </configuration>
