@@ -121,7 +121,7 @@ public class XmlDocumentUtils {
                         baseType.getQName().getLocalName(), //
                         node.getValue().getClass());
                 element.setTextContent(String.valueOf(node.getValue()));
-            }
+            } 
         } else {
             if (node.getValue() != null) {
                 try {
