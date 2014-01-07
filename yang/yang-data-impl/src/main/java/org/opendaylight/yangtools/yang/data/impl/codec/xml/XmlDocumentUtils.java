@@ -1,5 +1,5 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
- 
+
 import java.util.Set;
 
 import javax.activation.UnsupportedDataTypeException;
@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.Leafref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -117,13 +116,12 @@ public class XmlDocumentUtils {
                 element.setAttribute("xmlns:" + prefix, value.getNamespace().toString());
                 element.setTextContent(prefix + ":" + value.getLocalName());
             } else {
-                logger.debug("Value of {}:{} is not instance of QName but is {}", baseType.getQName().getNamespace(), //
+                logger.debug("Value of {}:{} is not instance of QName but is {}",
+                        baseType.getQName().getNamespace(), //
                         baseType.getQName().getLocalName(), //
                         node.getValue().getClass());
                 element.setTextContent(String.valueOf(node.getValue()));
             }
-        } else if (baseType instanceof Leafref) {
-            element.setTextContent(String.valueOf(node.getValue()));
         } else {
             if (node.getValue() != null) {
                 try {
@@ -131,7 +129,7 @@ public class XmlDocumentUtils {
                     element.setTextContent(value);
                 } catch (ClassCastException e) {
                     element.setTextContent(String.valueOf(node.getValue()));
-                    logger.error("Provided node did not have type required by mapping. Using stream instead. {}", e);
+                    logger.error("Provided node did not have type required by mapping. Using stream instead. {}",e);
                 }
             }
         }
