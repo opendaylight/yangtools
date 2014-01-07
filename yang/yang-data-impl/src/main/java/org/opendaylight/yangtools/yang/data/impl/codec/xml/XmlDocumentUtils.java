@@ -106,7 +106,7 @@ public class XmlDocumentUtils {
 
         TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
 
-        if (baseType instanceof IdentityrefTypeDefinition && node.getValue() instanceof QName) {
+        if (baseType instanceof IdentityrefTypeDefinition) {
             if (node.getValue() instanceof QName) {
                 QName value = (QName) node.getValue();
                 String prefix = "x";
@@ -121,7 +121,7 @@ public class XmlDocumentUtils {
                         baseType.getQName().getLocalName(), //
                         node.getValue().getClass());
                 element.setTextContent(String.valueOf(node.getValue()));
-            }
+            } 
         } else {
             if (node.getValue() != null) {
                 try {
