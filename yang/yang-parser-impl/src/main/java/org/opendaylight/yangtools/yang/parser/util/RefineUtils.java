@@ -37,7 +37,7 @@ public final class RefineUtils {
         String defaultStr = refine.getDefaultStr();
         Boolean mandatory = refine.isMandatory();
         MustDefinition must = refine.getMust();
-        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
 
         if (defaultStr != null && !("".equals(defaultStr))) {
             leaf.setDefaultStr(defaultStr);
@@ -59,7 +59,7 @@ public final class RefineUtils {
     public static void refineContainer(ContainerSchemaNodeBuilder container, RefineHolder refine) {
         Boolean presence = refine.isPresence();
         MustDefinition must = refine.getMust();
-        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
 
         if (presence != null) {
             container.setPresence(presence);
@@ -79,7 +79,7 @@ public final class RefineUtils {
         MustDefinition must = refine.getMust();
         Integer min = refine.getMinElements();
         Integer max = refine.getMaxElements();
-        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
 
         if (must != null) {
             list.getConstraints().addMustDefinition(must);
@@ -102,7 +102,7 @@ public final class RefineUtils {
         MustDefinition must = refine.getMust();
         Integer min = refine.getMinElements();
         Integer max = refine.getMaxElements();
-        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
 
         if (must != null) {
             leafList.getConstraints().addMustDefinition(must);
@@ -124,7 +124,7 @@ public final class RefineUtils {
     public static void refineChoice(ChoiceBuilder choice, RefineHolder refine) {
         String defaultStr = refine.getDefaultStr();
         Boolean mandatory = refine.isMandatory();
-        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
 
         if (defaultStr != null) {
             choice.setDefaultCase(defaultStr);
@@ -143,7 +143,7 @@ public final class RefineUtils {
     public static void refineAnyxml(AnyXmlBuilder anyXml, RefineHolder refine) {
         Boolean mandatory = refine.isMandatory();
         MustDefinition must = refine.getMust();
-        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
 
         if (mandatory != null) {
             anyXml.getConstraints().setMandatory(mandatory);

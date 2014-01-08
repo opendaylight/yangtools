@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
 
 /**
@@ -18,12 +17,12 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
  */
 public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember {
 
-    void setQName(QName qname);
-
     /**
      * Build DataSchemaNode object from this builder.
      */
-    DataSchemaNode build(YangNode parent);
+    DataSchemaNode build();
+
+    void setPath(SchemaPath path);
 
     /**
      *

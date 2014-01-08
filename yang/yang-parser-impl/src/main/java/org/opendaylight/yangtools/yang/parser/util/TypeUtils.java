@@ -10,34 +10,15 @@ package org.opendaylight.yangtools.yang.parser.util;
 import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
 import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.type.*;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
-import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
-import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.*;
+import org.opendaylight.yangtools.yang.parser.builder.impl.*;
 
 /**
  * Utility class which contains helper methods for dealing with type operations.
@@ -50,7 +31,7 @@ public final class TypeUtils {
     /**
      * Resolve unknown type of node. It is assumed that type of node is either
      * UnknownType or ExtendedType with UnknownType as base type.
-     * 
+     *
      * @param nodeToResolve
      *            node with type to resolve
      * @param modules
@@ -74,7 +55,7 @@ public final class TypeUtils {
     /**
      * Resolve unknown type of node. It is assumed that type of node is either
      * UnknownType or ExtendedType with UnknownType as base type.
-     * 
+     *
      * @param nodeToResolve
      *            node with type to resolve
      * @param modules
@@ -153,7 +134,7 @@ public final class TypeUtils {
 
     /**
      * Resolve union type which contains one or more unresolved types.
-     * 
+     *
      * @param union
      *            union type builder to resolve
      * @param modules
@@ -225,7 +206,7 @@ public final class TypeUtils {
 
     /**
      * Find type definition of type of unresolved node.
-     * 
+     *
      * @param nodeToResolve
      *            node with unresolved type
      * @param dependentModuleBuilder
@@ -264,7 +245,7 @@ public final class TypeUtils {
 
     /**
      * Search types for type with given name.
-     * 
+     *
      * @param types
      *            types to search
      * @param name
@@ -282,7 +263,7 @@ public final class TypeUtils {
 
     /**
      * Find type by name.
-     * 
+     *
      * @param types
      *            collection of types
      * @param typeName
@@ -301,7 +282,7 @@ public final class TypeUtils {
 
     /**
      * Pull restriction from type and add them to constraints.
-     * 
+     *
      * @param type
      *            type from which constraints will be read
      * @param constraints
@@ -332,7 +313,7 @@ public final class TypeUtils {
     /**
      * Create new type builder based on old type with new base type. Note: only
      * one of newBaseTypeBuilder or newBaseType can be specified.
-     * 
+     *
      * @param newBaseTypeBuilder
      *            new base type builder or null
      * @param newBaseType
@@ -356,7 +337,7 @@ public final class TypeUtils {
         }
 
         final TypeDefinitionBuilderImpl newType = new TypeDefinitionBuilderImpl(module.getModuleName(), line,
-                oldExtendedType.getQName());
+                oldExtendedType.getQName(), oldExtendedType.getPath());
         final TypeConstraints tc = new TypeConstraints(module.getName(), line);
         TypeConstraints constraints;
         if (newBaseType == null) {
@@ -371,7 +352,6 @@ public final class TypeUtils {
             newType.setType(newBaseType);
         }
 
-        newType.setPath(oldExtendedType.getPath());
         newType.setDescription(oldExtendedType.getDescription());
         newType.setReference(oldExtendedType.getReference());
         newType.setStatus(oldExtendedType.getStatus());
@@ -381,13 +361,12 @@ public final class TypeUtils {
         newType.setFractionDigits(constraints.getFractionDigits());
         newType.setUnits(oldExtendedType.getUnits());
         newType.setDefaultValue(oldExtendedType.getDefaultValue());
-        newType.setUnknownNodes(oldExtendedType.getUnknownSchemaNodes());
         return newType;
     }
 
     /**
      * Pull restrictions from type and add them to constraints.
-     * 
+     *
      * @param typeToResolve
      *            type from which constraints will be read
      * @param constraints
@@ -477,7 +456,7 @@ public final class TypeUtils {
 
     /**
      * Search for type definition builder by name.
-     * 
+     *
      * @param nodeToResolve
      *            node which contains unresolved type
      * @param dependentModule

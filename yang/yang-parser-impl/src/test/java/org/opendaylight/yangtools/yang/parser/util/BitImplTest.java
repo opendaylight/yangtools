@@ -1,18 +1,16 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
@@ -104,11 +102,12 @@ public class BitImplTest {
         assertEquals("Incorrect hash code for biA.", 923522, biA.hashCode());
 
         List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
-        UnknownSchemaNodeBuilder usnb = new UnknownSchemaNodeBuilder("module", 3, qnameB);
+        SchemaPath path = org.mockito.Mockito.mock(SchemaPath.class);
+        UnknownSchemaNodeBuilder usnb = new UnknownSchemaNodeBuilder("module", 3, qnameB, path);
         ModuleBuilder parent = org.mockito.Mockito.mock(ModuleBuilder.class);
         usnb.setParent(parent);
 
-        unknownNodes.add(usnb.build(null));
+        unknownNodes.add(usnb.build());
 
         biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, unknownNodes);
 

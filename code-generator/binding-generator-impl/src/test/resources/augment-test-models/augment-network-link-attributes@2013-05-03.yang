@@ -15,7 +15,7 @@ module augment-network-link-attributes {
         reference "http://www.opendaylight.org/";
     }
 
-    augment "at:topology/at:network-links/at:network-link/at:attributes" {
+    augment "/at:topology/at:network-links/at:network-link/at:attributes" {
         leaf longitude {
             type decimal64 {    
                 fraction-digits 2;

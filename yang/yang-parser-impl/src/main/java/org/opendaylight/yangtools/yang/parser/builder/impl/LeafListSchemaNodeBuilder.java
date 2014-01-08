@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
@@ -27,61 +27,55 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     private final LeafListSchemaNodeImpl instance;
     // SchemaNode args
     private SchemaPath schemaPath;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
     // DataSchemaNode args
-    private boolean augmenting;
-    private boolean addedByUses;
-    private Boolean configuration;
     private final ConstraintsBuilder constraints;
-    // LeafListSchemaNode args
-    private boolean userOrdered;
 
-    public LeafListSchemaNodeBuilder(final String moduleName, final int line, final QName qname,
-            final SchemaPath schemaPath) {
+    public LeafListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        this.schemaPath = schemaPath;
-        instance = new LeafListSchemaNodeImpl(qname);
+        this.schemaPath = path;
+        instance = new LeafListSchemaNodeImpl(qname, path);
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
+    public LeafListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final LeafListSchemaNode base) {
+        super(moduleName, line, qname);
+        schemaPath = path;
+        instance = new LeafListSchemaNodeImpl(qname, path);
+        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+
+        instance.description = base.getDescription();
+        instance.reference = base.getReference();
+        instance.status = base.getStatus();
+        instance.augmenting = base.isAugmenting();
+        instance.addedByUses = base.isAddedByUses();
+        instance.configuration = base.isConfiguration();
+        instance.constraintsDef = base.getConstraints();
+        this.type = base.getType();
+        instance.userOrdered = base.isUserOrdered();
+        instance.unknownNodes.addAll(base.getUnknownSchemaNodes());
+    }
+
     @Override
-    public LeafListSchemaNode build(YangNode parent) {
+    public LeafListSchemaNode build() {
         if (!isBuilt) {
-            instance.setParent(parent);
             instance.setConstraints(constraints.build());
-            instance.setPath(schemaPath);
-            instance.setDescription(description);
-            instance.setReference(reference);
-            instance.setStatus(status);
-            instance.setAugmenting(augmenting);
-            instance.setAddedByUses(addedByUses);
-            instance.setConfiguration(configuration);
-            instance.setUserOrdered(userOrdered);
 
             if (type == null) {
-                instance.setType(typedef.build(instance));
+                instance.setType(typedef.build());
             } else {
                 instance.setType(type);
             }
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(instance));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
+            instance.addUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
         }
         return instance;
-    }
-
-    @Override
-    public void setQName(QName qname) {
-        this.qname = qname;
-        instance.setQName(qname);
     }
 
     @Override
@@ -90,70 +84,70 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public void setPath(final SchemaPath schemaPath) {
-        this.schemaPath = schemaPath;
+    public void setPath(SchemaPath path) {
+        instance.path = path;
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return instance.description;
     }
 
     @Override
     public void setDescription(final String description) {
-        this.description = description;
+        instance.description = description;
     }
 
     @Override
     public String getReference() {
-        return reference;
+        return instance.reference;
     }
 
     @Override
-    public void setReference(String reference) {
-        this.reference = reference;
+    public void setReference(final String reference) {
+        instance.reference = reference;
     }
 
     @Override
     public Status getStatus() {
-        return status;
+        return instance.status;
     }
 
     @Override
     public void setStatus(Status status) {
         if (status != null) {
-            this.status = status;
+            instance.status = status;
         }
     }
 
     @Override
     public boolean isAugmenting() {
-        return augmenting;
+        return instance.augmenting;
     }
 
     @Override
     public void setAugmenting(boolean augmenting) {
-        this.augmenting = augmenting;
+        instance.augmenting = augmenting;
     }
 
     @Override
     public boolean isAddedByUses() {
-        return addedByUses;
+        return instance.addedByUses;
     }
 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
-        this.addedByUses = addedByUses;
+        instance.addedByUses = addedByUses;
     }
 
     @Override
     public Boolean isConfiguration() {
-        return configuration;
+        return instance.configuration;
     }
 
     @Override
     public void setConfiguration(Boolean configuration) {
-        this.configuration = configuration;
+        instance.configuration = configuration;
     }
 
     @Override
@@ -162,11 +156,11 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     public boolean isUserOrdered() {
-        return userOrdered;
+        return instance.userOrdered;
     }
 
     public void setUserOrdered(final boolean userOrdered) {
-        this.userOrdered = userOrdered;
+        instance.userOrdered = userOrdered;
     }
 
     @Override
@@ -212,9 +206,8 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     private final class LeafListSchemaNodeImpl implements LeafListSchemaNode {
-        private QName qname;
+        private final QName qname;
         private SchemaPath path;
-        private YangNode parent;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
@@ -224,10 +217,11 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         private ConstraintDefinition constraintsDef;
         private TypeDefinition<?> type;
         private boolean userOrdered;
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
-        private LeafListSchemaNodeImpl(final QName qname) {
+        private LeafListSchemaNodeImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
+            this.path = path;
         }
 
         @Override
@@ -235,26 +229,9 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
             return qname;
         }
 
-        private void setQName(QName qname) {
-            this.qname = qname;
-        }
-
         @Override
         public SchemaPath getPath() {
             return path;
-        }
-
-        private void setPath(final SchemaPath path) {
-            this.path = path;
-        }
-
-        @Override
-        public YangNode getParent() {
-            return parent;
-        }
-
-        private void setParent(YangNode parent) {
-            this.parent = parent;
         }
 
         @Override
@@ -262,17 +239,9 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
             return description;
         }
 
-        private void setDescription(String description) {
-            this.description = description;
-        }
-
         @Override
         public String getReference() {
             return reference;
-        }
-
-        private void setReference(String reference) {
-            this.reference = reference;
         }
 
         @Override
@@ -280,17 +249,9 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
             return status;
         }
 
-        private void setStatus(Status status) {
-            this.status = status;
-        }
-
         @Override
         public boolean isAugmenting() {
             return augmenting;
-        }
-
-        private void setAugmenting(boolean augmenting) {
-            this.augmenting = augmenting;
         }
 
         @Override
@@ -298,17 +259,9 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
             return addedByUses;
         }
 
-        private void setAddedByUses(final boolean addedByUses) {
-            this.addedByUses = addedByUses;
-        }
-
         @Override
         public boolean isConfiguration() {
             return configuration;
-        }
-
-        private void setConfiguration(boolean configuration) {
-            this.configuration = configuration;
         }
 
         @Override
@@ -334,18 +287,14 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
             return userOrdered;
         }
 
-        private void setUserOrdered(boolean userOrdered) {
-            this.userOrdered = userOrdered;
-        }
-
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
+            return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
+        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
-                this.unknownNodes = unknownNodes;
+                this.unknownNodes.addAll(unknownNodes);
             }
         }
 

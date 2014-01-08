@@ -20,7 +20,7 @@ module augment-topology-tunnels {
         reference "http://www.opendaylight.org/";
     }
 
-    augment "at:topology/at:network-links/at:network-link/aug-at:tunnels/aug-at:tunnel" {
+    augment "/at:topology/at:network-links/at:network-link/aug-at:tunnels/aug-at:tunnel" {
         leaf tunnel-name {
             type string;
         }

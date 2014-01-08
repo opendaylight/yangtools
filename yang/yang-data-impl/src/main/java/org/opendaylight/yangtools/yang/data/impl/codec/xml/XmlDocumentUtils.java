@@ -12,16 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +48,7 @@ public class XmlDocumentUtils {
         }
 
         if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode) {
-            doc.appendChild(createXmlRootElement(doc, data, schema, codecProvider));
+            doc.appendChild(createXmlRootElement(doc, data, (SchemaNode) schema, codecProvider));
             return doc;
         } else {
             throw new UnsupportedDataTypeException(
@@ -65,7 +56,7 @@ public class XmlDocumentUtils {
         }
     }
 
-    private static Element createXmlRootElement(Document doc, Node<?> data, YangNode schema,
+    private static Element createXmlRootElement(Document doc, Node<?> data, SchemaNode schema,
             XmlCodecProvider codecProvider) throws UnsupportedDataTypeException {
         QName dataType = data.getNodeType();
         Element itemEl = doc.createElementNS(dataType.getNamespace().toString(), dataType.getLocalName());
@@ -121,7 +112,7 @@ public class XmlDocumentUtils {
                         baseType.getQName().getLocalName(), //
                         node.getValue().getClass());
                 element.setTextContent(String.valueOf(node.getValue()));
-            } 
+            }
         } else {
             if (node.getValue() != null) {
                 try {

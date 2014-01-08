@@ -13,13 +13,12 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 
 /**
  * Interface for builders of 'uses' statement.
  */
-public interface UsesNodeBuilder extends GroupingMember, Builder {
+public interface UsesNodeBuilder extends GroupingMember {
 
     /**
      * Get parent of this uses node. Since uses can be defined only under on of
@@ -135,7 +134,7 @@ public interface UsesNodeBuilder extends GroupingMember, Builder {
     /**
      * Build new UsesNode object.
      */
-    UsesNode build(YangNode parent);
+    UsesNode build();
 
     boolean isResolved();
 

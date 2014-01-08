@@ -7,12 +7,20 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import static com.google.common.base.Preconditions.*;
+import static extension org.opendaylight.yangtools.binding.generator.util.Types.*;
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
+import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
+import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator
+import java.util.Collection
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -54,11 +62,6 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-import static com.google.common.base.Preconditions.*;
-import static extension org.opendaylight.yangtools.binding.generator.util.Types.*;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
-import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
-import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.api.UsesNode
@@ -66,28 +69,25 @@ import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder
 import org.opendaylight.yangtools.yang.model.api.ModuleImport
 import org.opendaylight.yangtools.yang.binding.DataContainer
-import java.util.Iterator
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
-import java.util.Collection
-import org.opendaylight.yangtools.yang.model.api.YangNode
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl
-
 import org.opendaylight.yangtools.yang.common.QNameimport org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase
 
-import org.opendaylight.yangtools.yang.common.QNameimport com.google.common.collect.Sets
-
+import com.google.common.collect.Sets
+import java.net.URI
+import java.util.Date
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
     private final Map<Module, ModuleContext> genCtx = new HashMap()
 
     /**
-     * Outter key represents the package name. Outter value represents map of
+     * Outer key represents the package name. Outer value represents map of
      * all builders in the same package. Inner key represents the schema node
      * name (in JAVA class/interface name format). Inner value represents
      * instance of builder for schema node specified in key part.
@@ -100,7 +100,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private var TypeProvider typeProvider;
 
     /**
-     * Holds reference to schema context to resolve data of augmented elemnt
+     * Holds reference to schema context to resolve data of augmented element
      * when creating augmentation builder
      */
     private var SchemaContext schemaContext;
@@ -597,7 +597,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Converts all <b>groupings</b> of the module to the list of
      * <code>Type</code> objects. Firstly are groupings sorted according mutual
-     * dependencies. At least dependend (indepedent) groupings are in the list
+     * dependencies. At least dependent (independent) groupings are in the list
      * saved at first positions. For every grouping the record is added to map
      * {@link BindingGeneratorImpl#allGroupings allGroupings}
      *
@@ -640,7 +640,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Tries to find EnumTypeDefinition in <code>typeDefinition</code>. If base
      * type of <code>typeDefinition</code> is of the type ExtendedType then this
-     * method is recursivelly called with this base type.
+     * method is recursively called with this base type.
      *
      * @param typeDefinition
      *            TypeDefinition in which should be EnumTypeDefinition found as
@@ -673,7 +673,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *            builder
      * @param typeBuilder
      *            GeneratedTypeBuilder to which will be enum builder assigned
-     * @return enumeration builder which contais data from
+     * @return enumeration builder which contains data from
      *         <code>enumTypeDef</code>
      */
     private def EnumBuilder resolveInnerEnumFromTypeDefinition(EnumTypeDefinition enumTypeDef, QName enumName,
@@ -720,7 +720,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *            string with the name of the package to which the augmentation
      *            belongs
      * @param augSchema
-     *            AugmentationSchema which is contains data about agumentation
+     *            AugmentationSchema which is contains data about augmentation
      *            (target path, childs...)
      * @param module current module
      * @param parentUsesNode parent uses node of this augment (can be null if this augment is not defined under uses statement)
@@ -740,8 +740,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         processUsesAugments(augSchema, module);
 
-        // EVERY augmented interface will extends Augmentation<T> interface
-        // and DataObject interface
         val targetPath = augSchema.targetPath;
         var targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
         if (targetSchemaNode instanceof DataSchemaNode && (targetSchemaNode as DataSchemaNode).isAddedByUses()) {
@@ -755,6 +753,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     "Failed to find target node from grouping for augmentation " + augSchema + " in module " +
                         module.name);
             }
+        }
+
+        if (targetSchemaNode == null) {
+            throw new IllegalArgumentException("augment target not found")
         }
 
         if (targetSchemaNode !== null) {
@@ -799,20 +801,30 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     private def DataSchemaNode findCorrectTargetFromAugment(DataSchemaNode node) {
         if (!node.augmenting) {
-            return null;
+            return null
         }
 
-        var String currentName = node.QName.localName;
-        var tmpPath = new ArrayList<String>();
-        var YangNode parent = node;
+        var String currentName = node.QName.localName
+        var Object currentNode = node
+        var Object parent = node;
+        val tmpPath = new ArrayList<String>()
+        val tmpTree = new ArrayList<SchemaNode>()
+
         var AugmentationSchema augment = null;
         do {
-            parent = (parent as DataSchemaNode).parent;
+            val SchemaPath sp = (parent as SchemaNode).path
+            val List<QName> names = sp.path
+            val List<QName> newNames = new ArrayList(names)
+            newNames.remove(newNames.size - 1)
+            val SchemaPath newSp = new SchemaPath(newNames, sp.absolute)
+            parent = findDataSchemaNode(schemaContext, newSp)
             if (parent instanceof AugmentationTarget) {
                 tmpPath.add(currentName);
+                tmpTree.add(currentNode as SchemaNode)
                 augment = findNodeInAugment((parent as AugmentationTarget).availableAugmentations, currentName);
                 if (augment == null) {
                     currentName = (parent as DataSchemaNode).QName.localName;
+                    currentNode = parent
                 }
             }
         } while ((parent as DataSchemaNode).augmenting && augment == null);
@@ -821,6 +833,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             return null;
         } else {
             Collections.reverse(tmpPath);
+            Collections.reverse(tmpTree);
             var Object actualParent = augment;
             var DataSchemaNode result = null;
             for (name : tmpPath) {
@@ -836,7 +849,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
 
             if (result.addedByUses) {
-                result = findCorrectTargetFromGrouping(result);
+                result = findCorrectTargetFromAugmentGrouping(result, augment, tmpTree);
             }
 
             return result;
@@ -854,7 +867,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     private def DataSchemaNode findCorrectTargetFromGrouping(DataSchemaNode node) {
         if (node.path.path.size == 1) {
-
             // uses is under module statement
             val Module m = findParentModule(schemaContext, node);
             var DataSchemaNode result = null;
@@ -867,60 +879,123 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 result = gr.getDataChildByName(node.QName.localName);
             }
             if (result == null) {
-                throw new IllegalArgumentException("Failed to generate code for augment");
+                throw new IllegalArgumentException("Failed to generate code for augment")
             }
-            return result;
+            return result
         } else {
             var DataSchemaNode result = null;
-            var String currentName = node.QName.localName;
-            var tmpPath = new ArrayList<String>();
-            var YangNode parent = node.parent;
+            var String currentName = node.QName.localName
+            var tmpPath = new ArrayList<String>()
+            var Object parent = null
+
+            val SchemaPath sp = node.path
+            val List<QName> names = sp.path
+            val List<QName> newNames = new ArrayList(names)
+            newNames.remove(newNames.size - 1)
+            val SchemaPath newSp = new SchemaPath(newNames, sp.absolute)
+            parent = findDataSchemaNode(schemaContext, newSp)
+
             do {
                 tmpPath.add(currentName);
                 val dataNodeParent = parent as DataNodeContainer;
                 for (u : dataNodeParent.uses) {
                     if (result == null) {
-                        var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.groupingPath.path);
-                        if (!(targetGrouping instanceof GroupingDefinition)) {
-                            throw new IllegalArgumentException("Failed to generate code for augment in " + u);
-                        }
-                        var gr = targetGrouping as GroupingDefinition;
-                        result = gr.getDataChildByName(currentName);
+                        result = getResultFromUses(u, currentName)
                     }
                 }
                 if (result == null) {
-                    currentName = (parent as SchemaNode).QName.localName;
+                    currentName = (parent as SchemaNode).QName.localName
                     if (parent instanceof DataSchemaNode) {
-                        parent = (parent as DataSchemaNode).parent;
+                        val SchemaPath nodeSp = (parent as DataSchemaNode).path
+                        val List<QName> nodeNames = nodeSp.path
+                        val List<QName> nodeNewNames = new ArrayList(nodeNames)
+                        nodeNewNames.remove(nodeNewNames.size - 1)
+                        if (nodeNewNames.empty) {
+                            parent = getParentModule(parent as SchemaNode)
+                        } else {
+                            val SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.absolute)
+                            parent = findDataSchemaNode(schemaContext, nodeNewSp)
+                        }
                     } else {
-                        parent = (parent as DataNodeContainer).parent;
+                        throw new IllegalArgumentException("Failed to generate code for augment")
                     }
                 }
             } while (result == null && !(parent instanceof Module));
 
             if (result != null) {
-                if (tmpPath.size == 1) {
-                    if (result != null && result.addedByUses) {
-                        result = findOriginal(result);
-                    }
-                    return result;
-                } else {
-                    var DataSchemaNode newParent = result;
-                    Collections.reverse(tmpPath);
-                    tmpPath.remove(0);
-                    for (name : tmpPath) {
-                        newParent = (newParent as DataNodeContainer).getDataChildByName(name);
-                    }
-                    if (newParent != null && newParent.addedByUses) {
-                        newParent = findOriginal(newParent);
-                    }
-                    return newParent;
-                }
+                result = getTargetNode(tmpPath, result)
             }
-
             return result;
         }
     }
+
+    private def DataSchemaNode findCorrectTargetFromAugmentGrouping(DataSchemaNode node, AugmentationSchema parentNode,
+        List<SchemaNode> dataTree) {
+
+        var DataSchemaNode result = null;
+        var String currentName = node.QName.localName
+        var tmpPath = new ArrayList<String>()
+        tmpPath.add(currentName)
+        var int i = 1;
+        var Object parent = null
+
+        do {
+            if (dataTree.size < 2 || dataTree.size == i) {
+                parent = parentNode
+            } else {
+                parent = dataTree.get(dataTree.size - (i+1))
+                tmpPath.add((parent as SchemaNode).QName.localName);
+            }
+
+            val dataNodeParent = parent as DataNodeContainer;
+            for (u : dataNodeParent.uses) {
+                if (result == null) {
+                    result = getResultFromUses(u, currentName)
+                }
+            }
+            if (result == null) {
+                i = i + 1
+                currentName = (parent as SchemaNode).QName.localName
+            }
+        } while (result == null);
+
+        if (result != null) {
+            result = getTargetNode(tmpPath, result)
+        }
+        return result;
+    }
+
+    private def getResultFromUses(UsesNode u, String currentName) {
+        var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.groupingPath.path)
+        if (!(targetGrouping instanceof GroupingDefinition)) {
+            throw new IllegalArgumentException("Failed to generate code for augment in " + u)
+        }
+        var gr = targetGrouping as GroupingDefinition
+        return gr.getDataChildByName(currentName)
+    }
+
+    private def getTargetNode(List<String> tmpPath, DataSchemaNode node) {
+        var DataSchemaNode result = node
+        if (tmpPath.size == 1) {
+            if (result != null && result.addedByUses) {
+                result = findOriginal(result);
+            }
+            return result;
+        } else {
+            var DataSchemaNode newParent = result;
+            Collections.reverse(tmpPath);
+
+            tmpPath.remove(0);
+            for (name : tmpPath) {
+                newParent = (newParent as DataNodeContainer).getDataChildByName(name);
+            }
+            if (newParent != null && newParent.addedByUses) {
+                newParent = findOriginal(newParent);
+            }
+            return newParent;
+        }
+    }
+
 
     /**
      * Convenient method to find node added by uses statement.
@@ -1217,7 +1292,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 genCtx.get(module).addCaseType(caseNode.path, caseTypeBuilder)
                 val Set<DataSchemaNode> caseChildNodes = caseNode.childNodes
                 if (caseChildNodes !== null) {
-                    val parentNode = choiceNode.parent
+                    var Object parentNode = null
+                    val SchemaPath nodeSp = choiceNode.path
+                    val List<QName> nodeNames = nodeSp.path
+                    val List<QName> nodeNewNames = new ArrayList(nodeNames)
+                    nodeNewNames.remove(nodeNewNames.size - 1)
+                    val SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.absolute)
+                    parentNode = findDataSchemaNode(schemaContext, nodeNewSp)
+
                     var SchemaNode parent
                     if (parentNode instanceof AugmentationSchema) {
                         val augSchema = parentNode as AugmentationSchema;
@@ -1234,7 +1316,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         }
                         parent = targetSchemaNode
                     } else {
-                        parent = choiceNode.parent as SchemaNode
+                        val SchemaPath sp = choiceNode.path
+                        val List<QName> names = sp.path
+                        val List<QName> newNames = new ArrayList(names)
+                        newNames.remove(newNames.size - 1)
+                        val SchemaPath newSp = new SchemaPath(newNames, sp.absolute)
+                        parent = findDataSchemaNode(schemaContext, newSp)
                     }
                     var GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.path)
                     resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes)
@@ -1282,7 +1369,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val caseTypeBuilder = addDefaultInterfaceDefinition(packageName, caseNode);
                 caseTypeBuilder.addImplementsType(targetType);
 
-                val SchemaNode parent = targetNode.parent as SchemaNode;
+                var SchemaNode parent = null
+                val SchemaPath nodeSp = targetNode.path
+                val List<QName> nodeNames = nodeSp.path
+                val List<QName> nodeNewNames = new ArrayList(nodeNames)
+                nodeNewNames.remove(nodeNewNames.size - 1)
+                val SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.absolute)
+                parent = findDataSchemaNode(schemaContext, nodeNewSp)
+
                 var GeneratedTypeBuilder childOfType = null;
                 if (parent instanceof Module) {
                     childOfType = genCtx.get(parent as Module).moduleNode
@@ -1598,7 +1692,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def GeneratedTypeBuilder addDefaultInterfaceDefinition(String packageName, SchemaNode schemaNode,
         Type parent) {
         val it = addRawInterfaceDefinition(packageName, schemaNode, "");
-        val qname = schemaNode.QName;
         qnameConstant(BindingMapping.QNAME_STATIC_FIELD_NAME,schemaNode.QName);
         if (parent === null) {
             addImplementsType(DATA_OBJECT);
@@ -1650,7 +1743,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if <code>schemaNode</code> equals null</li>
      *             <li>if <code>packageName</code> equals null</li>
      *             <li>if Q name of schema node is null</li>
-     *             <li>if schema node name is nul</li>
+     *             <li>if schema node name is null</li>
      *             </ul>
      *
      */
@@ -1685,13 +1778,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
     }
 
     /**
-     * Creates the name of the getter method from <code>localName</code>.
+     * Creates the name of the getter method from <code>methodName</code>.
      *
-     * @param localName
+     * @param methodName
      *            string with the name of the getter method
      * @param returnType return type
      * @return string with the name of the getter method for
-     *         <code>localName</code> in JAVA method format
+     *         <code>methodName</code> in JAVA method format
      */
     public static def String getterMethodName(String localName, Type returnType) {
         val method = new StringBuilder();
@@ -1903,7 +1996,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * Adds the implemented types to type builder.
      *
      * The method passes through the list of <i>uses</i> in
-     * {@code dataNodeContainer}. For every <i>use</i> is obtained coresponding
+     * {@code dataNodeContainer}. For every <i>use</i> is obtained corresponding
      * generated type from {@link BindingGeneratorImpl#allGroupings
      * allGroupings} which is added as <i>implements type</i> to
      * <code>builder</code>
@@ -1959,8 +2052,15 @@ public class BindingGeneratorImpl implements BindingGenerator {
         return null
     }
 
+    private def Module getParentModule(SchemaNode node) {
+        val QName qname = node.getPath().getPath().get(0);
+        val URI namespace = qname.getNamespace();
+        val Date revision = qname.getRevision();
+        return schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
+    }
 
     public def getModuleContexts() {
         genCtx;
     }
+
 }

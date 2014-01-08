@@ -23,28 +23,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
-import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -202,7 +182,6 @@ public class YangParserTest {
         assertEquals(Status.CURRENT, ifEntry.getStatus());
         assertEquals(0, ifEntry.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
-        assertEquals(interfaces, ifEntry.getParent());
         assertFalse(ifEntry.isAugmenting());
         assertTrue(ifEntry.isConfiguration());
         ConstraintDefinition constraints = ifEntry.getConstraints();
@@ -649,7 +628,6 @@ public class YangParserTest {
         Module foo = TestUtils.findModule(modules, "foo");
         ContainerSchemaNode transfer = (ContainerSchemaNode) foo.getDataChildByName("transfer");
         ChoiceNode how = (ChoiceNode) transfer.getDataChildByName("how");
-        assertEquals(transfer, how.getParent());
         Set<ChoiceCaseNode> cases = how.getCases();
         assertEquals(5, cases.size());
         ChoiceCaseNode input = null;
@@ -737,12 +715,8 @@ public class YangParserTest {
         assertEquals(0, notification.getUses().size());
 
         LeafSchemaNode eventClass = (LeafSchemaNode) notification.getDataChildByName("event-class");
-        assertEquals(notification, eventClass.getParent());
         assertTrue(eventClass.getType() instanceof StringType);
-        AnyXmlSchemaNode reportingEntity = (AnyXmlSchemaNode) notification.getDataChildByName("reporting-entity");
-        assertEquals(notification, reportingEntity.getParent());
         LeafSchemaNode severity = (LeafSchemaNode) notification.getDataChildByName("severity");
-        assertEquals(notification, severity.getParent());
         assertTrue(severity.getType() instanceof StringType);
     }
 
@@ -756,17 +730,6 @@ public class YangParserTest {
         RpcDefinition rpc = rpcs.iterator().next();
         assertEquals("Retrieve all or part of a specified configuration.", rpc.getDescription());
         assertEquals("RFC 6241, Section 7.1", rpc.getReference());
-
-        ContainerSchemaNode input = rpc.getInput();
-        assertEquals(rpc, input.getParent());
-        DataSchemaNode source = input.getDataChildByName("source");
-        assertEquals(input, source.getParent());
-        DataSchemaNode filter = input.getDataChildByName("filter");
-        assertEquals(input, filter.getParent());
-        ContainerSchemaNode output = rpc.getOutput();
-        assertEquals(rpc, output.getParent());
-        DataSchemaNode data = output.getDataChildByName("data");
-        assertEquals(output, data.getParent());
     }
 
     @Test

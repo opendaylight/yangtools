@@ -11,14 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.type.*;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
@@ -27,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
-    private SchemaPath schemaPath;
+    private final SchemaPath schemaPath;
     private List<RangeConstraint> ranges = Collections.emptyList();
     private List<LengthConstraint> lengths = Collections.emptyList();
     private List<PatternConstraint> patterns = Collections.emptyList();
@@ -40,28 +34,47 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     private Object defaultValue;
     private boolean addedByUses;
 
-    public TypeDefinitionBuilderImpl(final String moduleName, final int line, final QName qname) {
+    public TypeDefinitionBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
+        this.schemaPath = path;
+    }
+
+    public TypeDefinitionBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path, final ExtendedType base) {
+        super(moduleName, line, base.getQName());
+        this.schemaPath = path;
+
+        this.type = base.getBaseType();
+        this.description = base.getDescription();
+        this.reference = base.getReference();
+        this.status = base.getStatus();
+        this.units = base.getUnits();
+        this.defaultValue = base.getDefaultValue();
+
+        ExtendedType ext = base;
+        this.addedByUses = ext.isAddedByUses();
+        this.ranges = ext.getRangeConstraints();
+        this.lengths = ext.getLengthConstraints();
+        this.patterns = ext.getPatternConstraints();
+        this.fractionDigits = ext.getFractionDigits();
+        this.unknownNodes.addAll(base.getUnknownSchemaNodes());
     }
 
     @Override
-    public TypeDefinition<? extends TypeDefinition<?>> build(YangNode parent) {
+    public TypeDefinition<? extends TypeDefinition<?>> build() {
         TypeDefinition<?> result = null;
         ExtendedType.Builder typeBuilder = null;
         if ((type == null || type instanceof UnknownType) && typedef == null) {
             throw new YangParseException("Unresolved type: '" + qname.getLocalName() + "'.");
         }
         if (type == null || type instanceof UnknownType) {
-            type = typedef.build(parent);
+            type = typedef.build();
         }
 
         typeBuilder = new ExtendedType.Builder(qname, type, description, reference, schemaPath);
-
         typeBuilder.status(status);
         typeBuilder.units(units);
         typeBuilder.defaultValue(defaultValue);
         typeBuilder.addedByUses(addedByUses);
-
         typeBuilder.ranges(ranges);
         typeBuilder.lengths(lengths);
         typeBuilder.patterns(patterns);
@@ -69,7 +82,7 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
 
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-            unknownNodes.add(b.build(null));
+            unknownNodes.add(b.build());
         }
         Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
         typeBuilder.unknownSchemaNodes(unknownNodes);
@@ -85,11 +98,6 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     @Override
     public SchemaPath getPath() {
         return schemaPath;
-    }
-
-    @Override
-    public void setPath(final SchemaPath schemaPath) {
-        this.schemaPath = schemaPath;
     }
 
     @Override
@@ -155,7 +163,7 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownNodes() {
+    public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
         return Collections.emptyList();
     }
 

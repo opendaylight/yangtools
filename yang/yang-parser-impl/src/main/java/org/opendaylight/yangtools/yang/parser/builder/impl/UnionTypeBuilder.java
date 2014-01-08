@@ -7,19 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.type.*;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
@@ -81,20 +73,15 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public UnionType build(YangNode parent) {
+    public UnionType build() {
         if (!isBuilt) {
             instance = new UnionType(types);
             for (TypeDefinitionBuilder tdb : typedefs) {
-                types.add(tdb.build(null));
+                types.add(tdb.build());
             }
             isBuilt = true;
         }
         return instance;
-    }
-
-    @Override
-    public void setPath(final SchemaPath schemaPath) {
-        throw new YangParseException(moduleName, line, "Can not set path to " + NAME);
     }
 
     @Override
@@ -120,11 +107,6 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
         throw new YangParseException(moduleName, line, "Union type can not be added by uses.");
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownNodes() {
-        return Collections.emptyList();
     }
 
     @Override
@@ -193,7 +175,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public List<UnknownSchemaNodeBuilder> getUnknownNodeBuilders() {
+    public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
         return Collections.emptyList();
     }
 
