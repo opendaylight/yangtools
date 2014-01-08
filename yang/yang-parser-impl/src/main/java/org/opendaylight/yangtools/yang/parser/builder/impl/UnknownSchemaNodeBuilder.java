@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,23 +16,42 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 
 public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private boolean isBuilt;
     private final UnknownSchemaNodeImpl instance;
-    private boolean addedByUses;
     private QName nodeType;
     private String nodeParameter;
 
     private ExtensionDefinition extensionDefinition;
     private ExtensionBuilder extensionBuilder;
 
-    public UnknownSchemaNodeBuilder(final String moduleName, final int line, final QName qname) {
+    public UnknownSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        instance = new UnknownSchemaNodeImpl(qname);
+        this.schemaPath = path;
+        instance = new UnknownSchemaNodeImpl(qname, path);
+    }
+
+    public UnknownSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final UnknownSchemaNode base) {
+        super(moduleName, line, base.getQName());
+        this.schemaPath = path;
+        instance = new UnknownSchemaNodeImpl(qname, path);
+
+        instance.nodeType = base.getNodeType();
+        instance.nodeParameter = base.getNodeParameter();
+        instance.description = base.getDescription();
+        instance.reference = base.getReference();
+        instance.status = base.getStatus();
+        instance.addedByUses = base.isAddedByUses();
+        instance.extension = base.getExtensionDefinition();
+        instance.unknownNodes.addAll(base.getUnknownSchemaNodes());
+    }
+
+    @Override
+    public SchemaPath getPath() {
+        return instance.path;
     }
 
     @Override
@@ -89,28 +109,23 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
-    public UnknownSchemaNode build(YangNode parent) {
+    public UnknownSchemaNode build() {
         if (!isBuilt) {
-            instance.setPath(schemaPath);
             instance.setNodeType(nodeType);
             instance.setNodeParameter(nodeParameter);
-            instance.setDescription(description);
-            instance.setReference(reference);
-            instance.setStatus(status);
-            instance.setAddedByUses(addedByUses);
 
             // EXTENSION
             if (extensionDefinition != null) {
                 instance.setExtensionDefinition(extensionDefinition);
             } else {
                 if (extensionBuilder != null) {
-                    instance.setExtensionDefinition(extensionBuilder.build(null));
+                    instance.setExtensionDefinition(extensionBuilder.build());
                 }
             }
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(null));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
@@ -121,16 +136,44 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         return instance;
     }
 
-    public void setQName(QName qname) {
-        this.qname = qname;
+    @Override
+    public String getDescription() {
+        return instance.description;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        instance.description = description;
+    }
+
+    @Override
+    public String getReference() {
+        return instance.reference;
+    }
+
+    @Override
+    public void setReference(final String reference) {
+        instance.reference = reference;
+    }
+
+    @Override
+    public Status getStatus() {
+        return instance.status;
+    }
+
+    @Override
+    public void setStatus(Status status) {
+        if (status != null) {
+            instance.status = status;
+        }
     }
 
     public boolean isAddedByUses() {
-        return addedByUses;
+        return instance.addedByUses;
     }
 
     public void setAddedByUses(final boolean addedByUses) {
-        this.addedByUses = addedByUses;
+        instance.addedByUses = addedByUses;
     }
 
     public QName getNodeType() {
@@ -178,18 +221,19 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
 
     private final class UnknownSchemaNodeImpl implements UnknownSchemaNode {
         private final QName qname;
-        private SchemaPath path;
+        private final SchemaPath path;
         private ExtensionDefinition extension;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
         private QName nodeType;
         private String nodeParameter;
         private boolean addedByUses;
 
-        private UnknownSchemaNodeImpl(final QName qname) {
+        private UnknownSchemaNodeImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
+            this.path = path;
         }
 
         @Override
@@ -200,10 +244,6 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         @Override
         public SchemaPath getPath() {
             return path;
-        }
-
-        private void setPath(final SchemaPath path) {
-            this.path = path;
         }
 
         @Override
@@ -220,17 +260,9 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             return description;
         }
 
-        private void setDescription(final String description) {
-            this.description = description;
-        }
-
         @Override
         public String getReference() {
             return reference;
-        }
-
-        private void setReference(final String reference) {
-            this.reference = reference;
         }
 
         @Override
@@ -238,19 +270,9 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             return status;
         }
 
-        private void setStatus(final Status status) {
-            if (status != null) {
-                this.status = status;
-            }
-        }
-
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
-        }
-
-        private void setAddedByUses(final boolean addedByUses) {
-            this.addedByUses = addedByUses;
         }
 
         @Override
@@ -260,7 +282,7 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
 
         private void setUnknownSchemaNodes(final List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
-                this.unknownNodes = unknownNodes;
+                this.unknownNodes.addAll(unknownNodes);
             }
         }
 

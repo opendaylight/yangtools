@@ -7,19 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.*;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
@@ -105,10 +96,6 @@ public class GroupingSort {
             final NodeWrappedType nodeWrappedType = (NodeWrappedType) node;
             final GroupingBuilder groupingDefinition = (GroupingBuilder) nodeWrappedType.getWrappedType();
 
-            if (groupingDefinition.getQName().getLocalName().equals("rp-object")) {
-                System.out.println();
-            }
-
             Set<UsesNodeBuilder> usesNodes = getAllUsesNodes(groupingDefinition);
             for (UsesNodeBuilder usesNode : usesNodes) {
                 SchemaPath schemaPath = usesNode.getGroupingBuilder().getPath();
@@ -147,7 +134,7 @@ public class GroupingSort {
         for (GroupingBuilder groupingDefinition : groupings) {
             ret.addAll(getAllUsesNodes(groupingDefinition));
         }
-        Set<DataSchemaNodeBuilder> childNodes = container.getChildNodeBuilders();
+        Set<DataSchemaNodeBuilder> childNodes = container.getChildNodes();
         for (DataSchemaNodeBuilder childNode : childNodes) {
             if (childNode instanceof DataNodeContainerBuilder) {
                 ret.addAll(getAllUsesNodes((DataNodeContainerBuilder) childNode));

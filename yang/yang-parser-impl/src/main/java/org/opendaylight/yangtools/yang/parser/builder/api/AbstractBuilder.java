@@ -21,7 +21,7 @@ public abstract class AbstractBuilder implements Builder {
     protected final int line;
     protected Builder parentBuilder;
 
-    protected List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+    protected final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
     protected final List<UnknownSchemaNodeBuilder> addedUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
     protected AbstractBuilder(final String moduleName, final int line) {
@@ -55,17 +55,13 @@ public abstract class AbstractBuilder implements Builder {
     }
 
     @Override
-    public List<UnknownSchemaNodeBuilder> getUnknownNodeBuilders() {
+    public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
         return addedUnknownNodes;
     }
 
     @Override
     public void addUnknownNodeBuilder(UnknownSchemaNodeBuilder unknownNode) {
         addedUnknownNodes.add(unknownNode);
-    }
-
-    public void setUnknownNodes(List<UnknownSchemaNode> unknownNodes) {
-        this.unknownNodes = unknownNodes;
     }
 
 }

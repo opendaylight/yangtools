@@ -11,7 +11,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 
 /**
  * Interface for all builders of SchemaNode nodes.
@@ -31,13 +30,6 @@ public interface SchemaNodeBuilder extends Builder {
      * @return SchemaPath of this node
      */
     SchemaPath getPath();
-
-    /**
-     * Set schema path to this node.
-     *
-     * @param schemaPath
-     */
-    void setPath(SchemaPath schemaPath);
 
     /**
      * Get description of this node.
@@ -84,6 +76,6 @@ public interface SchemaNodeBuilder extends Builder {
     /**
      * Build SchemaNode object from this builder.
      */
-    SchemaNode build(YangNode parent);
+    SchemaNode build();
 
 }

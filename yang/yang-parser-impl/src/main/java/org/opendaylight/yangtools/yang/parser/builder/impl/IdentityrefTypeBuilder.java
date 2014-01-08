@@ -11,14 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.type.*;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
@@ -48,8 +42,8 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public IdentityrefType build(YangNode parent) {
-        return new IdentityrefType(baseIdentity.build(parent), schemaPath);
+    public IdentityrefType build() {
+        return new IdentityrefType(baseIdentity.build(), schemaPath);
     }
 
     public String getBaseString() {
@@ -81,11 +75,6 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setPath(final SchemaPath schemaPath) {
-        throw new YangParseException(moduleName, line, "Can not set path to " + NAME);
-    }
-
-    @Override
     public void setDescription(final String description) {
         throw new YangParseException(moduleName, line, "Can not set description to " + NAME);
     }
@@ -108,11 +97,6 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     @Override
     public void setAddedByUses(final boolean addedByUses) {
         throw new YangParseException(moduleName, line, "Identityref type can not be added by uses.");
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownNodes() {
-        return Collections.emptyList();
     }
 
     @Override
@@ -186,7 +170,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public List<UnknownSchemaNodeBuilder> getUnknownNodeBuilders() {
+    public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
         return Collections.emptyList();
     }
 

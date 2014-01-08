@@ -7,13 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 
 public final class ConstraintsBuilder {
@@ -24,6 +20,7 @@ public final class ConstraintsBuilder {
     private final int line;
     private final ConstraintDefinitionImpl instance;
     private final Set<MustDefinition> mustDefinitions;
+    private RevisionAwareXPath whenStmt;
     private String whenCondition;
     private boolean mandatory;
     private Integer min;
@@ -47,12 +44,24 @@ public final class ConstraintsBuilder {
         max = b.getMaxElements();
     }
 
+    ConstraintsBuilder(final String moduleName, final int line, final ConstraintDefinition base) {
+        this.moduleName = moduleName;
+        this.line = line;
+        instance = new ConstraintDefinitionImpl();
+        whenStmt = base.getWhenCondition();
+        mustDefinitions = new HashSet<MustDefinition>(base.getMustConstraints());
+        mandatory = base.isMandatory();
+        min = base.getMinElements();
+        max = base.getMaxElements();
+    }
+
     public ConstraintDefinition build() {
-        RevisionAwareXPath whenStmt;
-        if (whenCondition == null) {
-            whenStmt = null;
-        } else {
-            whenStmt = new RevisionAwareXPathImpl(whenCondition, false);
+        if (whenStmt == null) {
+            if (whenCondition == null) {
+                whenStmt = null;
+            } else {
+                whenStmt = new RevisionAwareXPathImpl(whenCondition, false);
+            }
         }
         instance.setWhenCondition(whenStmt);
         instance.setMustConstraints(mustDefinitions);

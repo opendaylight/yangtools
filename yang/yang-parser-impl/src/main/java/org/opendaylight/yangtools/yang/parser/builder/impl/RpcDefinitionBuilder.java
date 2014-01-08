@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -16,18 +17,15 @@ import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     private boolean isBuilt;
@@ -47,43 +45,35 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
         return outputBuilder;
     }
 
-    RpcDefinitionBuilder(final String moduleName, final int line, final QName qname) {
+    RpcDefinitionBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        this.instance = new RpcDefinitionImpl(qname);
+        this.schemaPath = path;
+        this.instance = new RpcDefinitionImpl(qname, path);
     }
 
     @Override
-    public RpcDefinition build(YangNode parent) {
-        if (!(parent instanceof Module)) {
-            throw new YangParseException(moduleName, line, "Rpc can be defined only under module");
-        }
+    public RpcDefinition build() {
         if (!isBuilt) {
-            instance.setDescription(description);
-            instance.setReference(reference);
-            instance.setStatus(status);
-
-            final ContainerSchemaNode input = inputBuilder == null ? null : inputBuilder.build(instance);
-            final ContainerSchemaNode output = outputBuilder == null ? null : outputBuilder.build(instance);
+            final ContainerSchemaNode input = inputBuilder == null ? null : inputBuilder.build();
+            final ContainerSchemaNode output = outputBuilder == null ? null : outputBuilder.build();
             instance.setInput(input);
             instance.setOutput(output);
 
-            instance.setPath(schemaPath);
-
             // TYPEDEFS
             for (TypeDefinitionBuilder entry : addedTypedefs) {
-                typedefs.add(entry.build(instance));
+                typedefs.add(entry.build());
             }
             instance.setTypeDefinitions(typedefs);
 
             // GROUPINGS
             for (GroupingBuilder entry : addedGroupings) {
-                groupings.add(entry.build(instance));
+                groupings.add(entry.build());
             }
             instance.setGroupings(groupings);
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(instance));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
             instance.setUnknownSchemaNodes(unknownNodes);
@@ -91,6 +81,43 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             isBuilt = true;
         }
         return instance;
+    }
+
+    @Override
+    public SchemaPath getPath() {
+        return instance.path;
+    }
+
+    @Override
+    public String getDescription() {
+        return instance.description;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        instance.description = description;
+    }
+
+    @Override
+    public String getReference() {
+        return instance.reference;
+    }
+
+    @Override
+    public void setReference(final String reference) {
+        instance.reference = reference;
+    }
+
+    @Override
+    public Status getStatus() {
+        return instance.status;
+    }
+
+    @Override
+    public void setStatus(Status status) {
+        if (status != null) {
+            instance.status = status;
+        }
     }
 
     void setInput(final ContainerSchemaNodeBuilder inputBuilder) {
@@ -159,18 +186,19 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
 
     private final class RpcDefinitionImpl implements RpcDefinition {
         private final QName qname;
-        private SchemaPath path;
+        private final SchemaPath path;
         private String description;
         private String reference;
         private Status status;
         private ContainerSchemaNode input;
         private ContainerSchemaNode output;
-        private Set<TypeDefinition<?>> typeDefinitions;
-        private Set<GroupingDefinition> groupings;
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final Set<TypeDefinition<?>> typeDefinitions = new HashSet<>();
+        private final Set<GroupingDefinition> groupings = new HashSet<>();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
-        private RpcDefinitionImpl(final QName qname) {
+        private RpcDefinitionImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
+            this.path = path;
         }
 
         @Override
@@ -183,17 +211,9 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             return path;
         }
 
-        private void setPath(SchemaPath path) {
-            this.path = path;
-        }
-
         @Override
         public String getDescription() {
             return description;
-        }
-
-        private void setDescription(String description) {
-            this.description = description;
         }
 
         @Override
@@ -201,17 +221,9 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             return reference;
         }
 
-        private void setReference(String reference) {
-            this.reference = reference;
-        }
-
         @Override
         public Status getStatus() {
             return status;
-        }
-
-        private void setStatus(Status status) {
-            this.status = status;
         }
 
         @Override
@@ -234,30 +246,30 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
 
         @Override
         public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return typeDefinitions;
+            return Collections.unmodifiableSet(typeDefinitions);
         }
 
         private void setTypeDefinitions(Set<TypeDefinition<?>> typeDefinitions) {
-            this.typeDefinitions = typeDefinitions;
+            this.typeDefinitions.addAll(typeDefinitions);
         }
 
         @Override
         public Set<GroupingDefinition> getGroupings() {
-            return groupings;
+            return Collections.unmodifiableSet(groupings);
         }
 
         private void setGroupings(Set<GroupingDefinition> groupings) {
-            this.groupings = groupings;
+            this.groupings.addAll(groupings);
         }
 
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
+            return Collections.unmodifiableList(unknownNodes);
         }
 
         private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
-                this.unknownNodes = unknownNodes;
+                this.unknownNodes.addAll(unknownNodes);
             }
         }
 

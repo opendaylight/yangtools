@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,10 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
@@ -35,11 +37,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         AugmentationTargetBuilder {
     private boolean isBuilt;
     private final ChoiceNodeImpl instance;
-    private YangNode parent;
     // DataSchemaNode args
-    private boolean augmenting;
-    private boolean addedByUses;
-    private Boolean configuration;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
     private final List<AugmentationSchema> augmentations = new ArrayList<>();
@@ -49,65 +47,85 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     private final Set<ChoiceCaseBuilder> caseBuilders = new HashSet<>();
     private String defaultCase;
 
-    public ChoiceBuilder(final String moduleName, final int line, final QName qname) {
+    public ChoiceBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        instance = new ChoiceNodeImpl(qname);
+        this.schemaPath = path;
+        instance = new ChoiceNodeImpl(qname, path);
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
+    public ChoiceBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
+            final ChoiceNode base) {
+        super(moduleName, line, qname);
+        this.schemaPath = path;
+        instance = new ChoiceNodeImpl(qname, path);
+        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+
+        instance.description = base.getDescription();
+        instance.reference = base.getReference();
+        instance.status = base.getStatus();
+        instance.augmenting = base.isAugmenting();
+        instance.addedByUses = base.isAddedByUses();
+        instance.configuration = base.isConfiguration();
+        instance.constraints = base.getConstraints();
+        instance.augmentations.addAll(base.getAvailableAugmentations());
+
+        URI ns = qname.getNamespace();
+        Date rev = qname.getRevision();
+        String pref = qname.getPrefix();
+        Set<DataSchemaNodeBuilder> wrapped = ParserUtils.wrapChildNodes(moduleName, line, new HashSet<DataSchemaNode>(
+                base.getCases()), path, ns, rev, pref);
+        for (DataSchemaNodeBuilder wrap : wrapped) {
+            if (wrap instanceof ChoiceCaseBuilder) {
+                caseBuilders.add((ChoiceCaseBuilder) wrap);
+            }
+        }
+
+        instance.unknownNodes.addAll(base.getUnknownSchemaNodes());
+    }
+
     @Override
-    public ChoiceNode build(YangNode parent) {
+    public ChoiceNode build() {
         if (!isBuilt) {
-            this.parent = parent;
-            instance.setParent(parent);
-            instance.setPath(schemaPath);
-            instance.setDescription(description);
-            instance.setReference(reference);
-            instance.setStatus(status);
-            instance.setAugmenting(augmenting);
-            instance.setAddedByUses(addedByUses);
-            instance.setConfiguration(configuration);
             instance.setConstraints(constraints.build());
             instance.setDefaultCase(defaultCase);
 
             // CASES
             for (ChoiceCaseBuilder caseBuilder : caseBuilders) {
-                cases.add(caseBuilder.build(instance));
+                cases.add(caseBuilder.build());
             }
-            instance.setCases(cases);
+            instance.addCases(cases);
 
             // AUGMENTATIONS
             for (AugmentationSchemaBuilder builder : augmentationBuilders) {
-                augmentations.add(builder.build(instance));
+                augmentations.add(builder.build());
             }
-            instance.setAvailableAugmentations(new HashSet<>(augmentations));
+            instance.addAvailableAugmentations(new HashSet<>(augmentations));
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(instance));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
+            instance.addUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
         }
         return instance;
     }
 
-    @Override
-    public void rebuild() {
-        isBuilt = false;
-        build(parent);
-    }
-
-    @Override
-    public void setQName(QName qname) {
-        this.qname = qname;
-        instance.setQName(qname);
-    }
-
     public Set<ChoiceCaseBuilder> getCases() {
         return caseBuilders;
+    }
+
+    @Override
+    public SchemaPath getPath() {
+        return instance.path;
+    }
+
+    @Override
+    public void setPath(SchemaPath path) {
+        instance.path = path;
     }
 
     /**
@@ -151,14 +169,13 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             caseBuilders.add((ChoiceCaseBuilder) caseNode);
         } else {
             ChoiceCaseBuilder caseBuilder = new ChoiceCaseBuilder(caseNode.getModuleName(), caseNode.getLine(),
-                    caseQName);
+                    caseQName, caseNode.getPath());
             if (caseNode.isAugmenting()) {
                 // if node is added by augmentation, set case builder augmenting
                 // as true and node augmenting as false
                 caseBuilder.setAugmenting(true);
                 caseNode.setAugmenting(false);
             }
-            caseBuilder.setPath(caseNode.getPath());
             SchemaPath newPath = ParserUtils.createSchemaPath(caseNode.getPath(), caseQName);
             caseNode.setPath(newPath);
             caseBuilder.addChildNode(caseNode);
@@ -166,37 +183,66 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         }
     }
 
-    public void setCases(Set<ChoiceCaseNode> cases) {
-        this.cases = cases;
+    @Override
+    public String getDescription() {
+        return instance.description;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        instance.description = description;
+    }
+
+    @Override
+    public String getReference() {
+        return instance.reference;
+    }
+
+    @Override
+    public void setReference(final String reference) {
+        instance.reference = reference;
+    }
+
+    @Override
+    public Status getStatus() {
+        return instance.status;
+    }
+
+    @Override
+    public void setStatus(Status status) {
+        if (status != null) {
+            instance.status = status;
+        }
     }
 
     @Override
     public boolean isAugmenting() {
-        return augmenting;
+        return instance.augmenting;
     }
 
     @Override
     public void setAugmenting(boolean augmenting) {
-        this.augmenting = augmenting;
+        instance.augmenting = augmenting;
     }
 
     @Override
     public boolean isAddedByUses() {
-        return addedByUses;
+        return instance.addedByUses;
     }
 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
-        this.addedByUses = addedByUses;
+        instance.addedByUses = addedByUses;
     }
 
+    @Override
     public Boolean isConfiguration() {
-        return configuration;
+        return instance.configuration;
     }
 
     @Override
     public void setConfiguration(Boolean configuration) {
-        this.configuration = configuration;
+        instance.configuration = configuration;
     }
 
     @Override
@@ -211,10 +257,6 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
     public List<AugmentationSchemaBuilder> getAugmentationBuilders() {
         return augmentationBuilders;
-    }
-
-    public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
-        return addedUnknownNodes;
     }
 
     public String getDefaultCase() {
@@ -268,9 +310,8 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     public final class ChoiceNodeImpl implements ChoiceNode {
-        private QName qname;
+        private final QName qname;
         private SchemaPath path;
-        private YangNode parent;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
@@ -278,13 +319,14 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         private boolean addedByUses;
         private boolean configuration;
         private ConstraintDefinition constraints;
-        private Set<ChoiceCaseNode> cases = Collections.emptySet();
-        private Set<AugmentationSchema> augmentations = Collections.emptySet();
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final Set<ChoiceCaseNode> cases = new HashSet<>();
+        private final Set<AugmentationSchema> augmentations = new HashSet<>();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
         private String defaultCase;
 
-        private ChoiceNodeImpl(QName qname) {
+        private ChoiceNodeImpl(QName qname, SchemaPath path) {
             this.qname = qname;
+            this.path = path;
         }
 
         @Override
@@ -292,26 +334,9 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             return qname;
         }
 
-        private void setQName(QName qname) {
-            this.qname = qname;
-        }
-
         @Override
         public SchemaPath getPath() {
             return path;
-        }
-
-        private void setPath(SchemaPath path) {
-            this.path = path;
-        }
-
-        @Override
-        public YangNode getParent() {
-            return parent;
-        }
-
-        private void setParent(YangNode parent) {
-            this.parent = parent;
         }
 
         @Override
@@ -319,17 +344,9 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             return description;
         }
 
-        private void setDescription(String description) {
-            this.description = description;
-        }
-
         @Override
         public String getReference() {
             return reference;
-        }
-
-        private void setReference(String reference) {
-            this.reference = reference;
         }
 
         @Override
@@ -337,19 +354,9 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             return status;
         }
 
-        private void setStatus(Status status) {
-            if (status != null) {
-                this.status = status;
-            }
-        }
-
         @Override
         public boolean isAugmenting() {
             return augmenting;
-        }
-
-        private void setAugmenting(boolean augmenting) {
-            this.augmenting = augmenting;
         }
 
         @Override
@@ -357,17 +364,9 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             return addedByUses;
         }
 
-        private void setAddedByUses(boolean addedByUses) {
-            this.addedByUses = addedByUses;
-        }
-
         @Override
         public boolean isConfiguration() {
             return configuration;
-        }
-
-        private void setConfiguration(boolean configuration) {
-            this.configuration = configuration;
         }
 
         @Override
@@ -381,29 +380,29 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
         @Override
         public Set<AugmentationSchema> getAvailableAugmentations() {
-            return augmentations;
+            return Collections.unmodifiableSet(augmentations);
         }
 
-        private void setAvailableAugmentations(Set<AugmentationSchema> availableAugmentations) {
+        private void addAvailableAugmentations(Set<AugmentationSchema> availableAugmentations) {
             if (availableAugmentations != null) {
-                this.augmentations = availableAugmentations;
+                this.augmentations.addAll(availableAugmentations);
             }
         }
 
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
+            return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
+        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
             if (unknownSchemaNodes != null) {
-                this.unknownNodes = unknownSchemaNodes;
+                this.unknownNodes.addAll(unknownSchemaNodes);
             }
         }
 
         @Override
         public Set<ChoiceCaseNode> getCases() {
-            return cases;
+            return Collections.unmodifiableSet(cases);
         }
 
         @Override
@@ -433,9 +432,9 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             return null;
         }
 
-        private void setCases(Set<ChoiceCaseNode> cases) {
+        private void addCases(Set<ChoiceCaseNode> cases) {
             if (cases != null) {
-                this.cases = cases;
+                this.cases.addAll(cases);
             }
         }
 
@@ -446,10 +445,6 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
 
         private void setDefaultCase(String defaultCase) {
             this.defaultCase = defaultCase;
-        }
-
-        public ChoiceBuilder toBuilder() {
-            return ChoiceBuilder.this;
         }
 
         @Override

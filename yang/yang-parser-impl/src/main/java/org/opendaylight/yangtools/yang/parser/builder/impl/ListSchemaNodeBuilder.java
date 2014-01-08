@@ -7,25 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
@@ -34,107 +28,105 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilder implements DataSchemaNodeBuilder,
         AugmentationTargetBuilder {
     private boolean isBuilt;
     private final ListSchemaNodeImpl instance;
-    private YangNode parent;
     // SchemaNode args
     private SchemaPath schemaPath;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
     // DataSchemaNode args
-    private boolean augmenting;
-    private boolean addedByUses;
-    private Boolean configuration;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
     private final List<AugmentationSchema> augmentations = new ArrayList<>();
     private final List<AugmentationSchemaBuilder> augmentationBuilders = new ArrayList<>();
-    // ListSchemaNode args
-    private List<QName> keyDefinition = Collections.emptyList();
-    private boolean userOrdered;
 
-    public ListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath schemaPath) {
+
+    public ListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        this.schemaPath = schemaPath;
-        instance = new ListSchemaNodeImpl(qname);
+        this.schemaPath = path;
+        instance = new ListSchemaNodeImpl(qname, path);
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
-    @Override
-    public ListSchemaNode build(YangNode parent) {
-        if (!isBuilt) {
-            this.parent = parent;
-            instance.setParent(parent);
-            instance.setKeyDefinition(keyDefinition);
-            instance.setPath(schemaPath);
-            instance.setDescription(description);
-            instance.setReference(reference);
-            instance.setStatus(status);
-            instance.setAugmenting(augmenting);
-            instance.setAddedByUses(addedByUses);
-            instance.setConfiguration(configuration);
-            instance.setUserOrdered(userOrdered);
+    public ListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final ListSchemaNode base) {
+        super(moduleName, line, qname);
+        schemaPath = path;
+        instance = new ListSchemaNodeImpl(qname, path);
+        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
 
+        instance.keyDefinition = base.getKeyDefinition();
+        instance.userOrdered = base.isUserOrdered();
+
+        instance.description = base.getDescription();
+        instance.reference = base.getReference();
+        instance.status = base.getStatus();
+        instance.augmenting = base.isAugmenting();
+        instance.addedByUses = base.isAddedByUses();
+        instance.configuration = base.isConfiguration();
+        instance.constraints = base.getConstraints();
+        instance.augmentations.addAll(base.getAvailableAugmentations());
+
+        URI ns = qname.getNamespace();
+        Date rev = qname.getRevision();
+        String pref = qname.getPrefix();
+        addedChildNodes.addAll(ParserUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
+        addedGroupings.addAll(ParserUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
+        addedTypedefs.addAll(ParserUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
+        addedUnknownNodes.addAll(ParserUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
+                rev, pref));
+
+        instance.uses.addAll(base.getUses());
+    }
+
+    @Override
+    public ListSchemaNode build() {
+        if (!isBuilt) {
             // CHILD NODES
             for (DataSchemaNodeBuilder node : addedChildNodes) {
-                DataSchemaNode child = node.build(instance);
+                DataSchemaNode child = node.build();
                 childNodes.put(child.getQName(), child);
             }
-            instance.setChildNodes(childNodes);
+            instance.addChildNodes(childNodes);
 
             // TYPEDEFS
             for (TypeDefinitionBuilder entry : addedTypedefs) {
-                typedefs.add(entry.build(instance));
+                typedefs.add(entry.build());
             }
-            instance.setTypeDefinitions(typedefs);
+            instance.addTypeDefinitions(typedefs);
 
             // USES
             for (UsesNodeBuilder builder : addedUsesNodes) {
-                usesNodes.add(builder.build(instance));
+                usesNodes.add(builder.build());
             }
-            instance.setUses(usesNodes);
+            instance.addUses(usesNodes);
 
             // GROUPINGS
             for (GroupingBuilder builder : addedGroupings) {
-                groupings.add(builder.build(instance));
+                groupings.add(builder.build());
             }
-            instance.setGroupings(groupings);
+            instance.addGroupings(groupings);
 
             // AUGMENTATIONS
             for (AugmentationSchemaBuilder builder : augmentationBuilders) {
-                augmentations.add(builder.build(instance));
+                augmentations.add(builder.build());
             }
-            instance.setAvailableAugmentations(new HashSet<>(augmentations));
+            instance.addAvailableAugmentations(new HashSet<>(augmentations));
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(instance));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
+            instance.addUnknownSchemaNodes(unknownNodes);
 
             instance.setConstraints(constraints.build());
 
             isBuilt = true;
         }
         return instance;
-    }
-
-    @Override
-    public void rebuild() {
-        isBuilt = false;
-        build(parent);
-    }
-
-    @Override
-    public void setQName(QName qname) {
-        this.qname = qname;
-        instance.setQName(qname);
     }
 
     @Override
@@ -154,49 +146,45 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         addedTypedefs.add(type);
     }
 
-    public void setTypedefs(final Set<TypeDefinition<?>> typedefs) {
-        this.typedefs = typedefs;
-    }
-
     @Override
     public SchemaPath getPath() {
-        return schemaPath;
+        return instance.path;
     }
 
     @Override
-    public void setPath(final SchemaPath schemaPath) {
-        this.schemaPath = schemaPath;
+    public void setPath(SchemaPath path) {
+        instance.path = path;
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return instance.description;
     }
 
     @Override
     public void setDescription(final String description) {
-        this.description = description;
+        instance.description = description;
     }
 
     @Override
     public String getReference() {
-        return reference;
+        return instance.reference;
     }
 
     @Override
-    public void setReference(String reference) {
-        this.reference = reference;
+    public void setReference(final String reference) {
+        instance.reference = reference;
     }
 
     @Override
     public Status getStatus() {
-        return status;
+        return instance.status;
     }
 
     @Override
     public void setStatus(Status status) {
         if (status != null) {
-            this.status = status;
+            instance.status = status;
         }
     }
 
@@ -205,50 +193,46 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         augmentationBuilders.add(augment);
     }
 
-    public List<AugmentationSchema> getAugmentations() {
-        return augmentations;
-    }
-
     public List<AugmentationSchemaBuilder> getAugmentationBuilders() {
         return augmentationBuilders;
     }
 
     public List<QName> getKeyDefinition() {
-        return keyDefinition;
+        return instance.keyDefinition;
     }
 
     public void setKeyDefinition(final List<QName> keyDefinition) {
-        if (keyDefinition != null) {
-            this.keyDefinition = keyDefinition;
-        }
+        instance.keyDefinition = keyDefinition;
     }
 
+    @Override
     public boolean isAugmenting() {
-        return augmenting;
+        return instance.augmenting;
     }
 
     @Override
     public void setAugmenting(boolean augmenting) {
-        this.augmenting = augmenting;
+        instance.augmenting = augmenting;
     }
 
     @Override
     public boolean isAddedByUses() {
-        return addedByUses;
+        return instance.addedByUses;
     }
 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
-        this.addedByUses = addedByUses;
+        instance.addedByUses = addedByUses;
     }
 
+    @Override
     public Boolean isConfiguration() {
-        return configuration;
+        return instance.configuration;
     }
 
     @Override
     public void setConfiguration(Boolean configuration) {
-        this.configuration = configuration;
+        instance.configuration = configuration;
     }
 
     @Override
@@ -257,11 +241,11 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     public boolean isUserOrdered() {
-        return userOrdered;
+        return instance.userOrdered;
     }
 
     public void setUserOrdered(final boolean userOrdered) {
-        this.userOrdered = userOrdered;
+        instance.userOrdered = userOrdered;
     }
 
     @Override
@@ -307,9 +291,8 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     public final class ListSchemaNodeImpl implements ListSchemaNode {
-        private QName qname;
+        private final QName qname;
         private SchemaPath path;
-        private YangNode parent;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
@@ -318,16 +301,17 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         private boolean addedByUses;
         private boolean configuration;
         private ConstraintDefinition constraints;
-        private Set<AugmentationSchema> augmentations = Collections.emptySet();
-        private Map<QName, DataSchemaNode> childNodes = Collections.emptyMap();
-        private Set<TypeDefinition<?>> typeDefinitions = Collections.emptySet();
-        private Set<GroupingDefinition> groupings = Collections.emptySet();
-        private Set<UsesNode> uses = Collections.emptySet();
+        private final Set<AugmentationSchema> augmentations = new HashSet<>();
+        private final Map<QName, DataSchemaNode> childNodes = new HashMap<>();
+        private final Set<TypeDefinition<?>> typeDefinitions = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+        private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+        private final Set<UsesNode> uses = new HashSet<>();
         private boolean userOrdered;
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
-        private ListSchemaNodeImpl(final QName qname) {
+        private ListSchemaNodeImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
+            this.path = path;
         }
 
         @Override
@@ -335,26 +319,9 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
             return qname;
         }
 
-        private void setQName(QName qname) {
-            this.qname = qname;
-        }
-
         @Override
         public SchemaPath getPath() {
             return path;
-        }
-
-        private void setPath(final SchemaPath path) {
-            this.path = path;
-        }
-
-        @Override
-        public YangNode getParent() {
-            return parent;
-        }
-
-        private void setParent(YangNode parent) {
-            this.parent = parent;
         }
 
         @Override
@@ -362,17 +329,9 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
             return description;
         }
 
-        private void setDescription(final String description) {
-            this.description = description;
-        }
-
         @Override
         public String getReference() {
             return reference;
-        }
-
-        private void setReference(final String reference) {
-            this.reference = reference;
         }
 
         @Override
@@ -380,19 +339,9 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
             return status;
         }
 
-        private void setStatus(Status status) {
-            this.status = status;
-        }
-
         @Override
         public List<QName> getKeyDefinition() {
             return keyDefinition;
-        }
-
-        private void setKeyDefinition(List<QName> keyDefinition) {
-            if (keyDefinition != null) {
-                this.keyDefinition = keyDefinition;
-            }
         }
 
         @Override
@@ -400,26 +349,14 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
             return augmenting;
         }
 
-        private void setAugmenting(boolean augmenting) {
-            this.augmenting = augmenting;
-        }
-
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
         }
 
-        private void setAddedByUses(final boolean addedByUses) {
-            this.addedByUses = addedByUses;
-        }
-
         @Override
         public boolean isConfiguration() {
             return configuration;
-        }
-
-        private void setConfiguration(boolean configuration) {
-            this.configuration = configuration;
         }
 
         @Override
@@ -433,56 +370,58 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
         @Override
         public Set<AugmentationSchema> getAvailableAugmentations() {
-            return augmentations;
+            return Collections.unmodifiableSet(augmentations);
         }
 
-        private void setAvailableAugmentations(Set<AugmentationSchema> augmentations) {
+        private void addAvailableAugmentations(Set<AugmentationSchema> augmentations) {
             if (augmentations != null) {
-                this.augmentations = augmentations;
+                this.augmentations.addAll(augmentations);
             }
         }
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            return new HashSet<>(childNodes.values());
+            final Set<DataSchemaNode> result = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+            result.addAll(childNodes.values());
+            return Collections.unmodifiableSet(result);
         }
 
-        private void setChildNodes(Map<QName, DataSchemaNode> childNodes) {
+        private void addChildNodes(Map<QName, DataSchemaNode> childNodes) {
             if (childNodes != null) {
-                this.childNodes = childNodes;
+                this.childNodes.putAll(childNodes);
             }
         }
 
         @Override
         public Set<GroupingDefinition> getGroupings() {
-            return groupings;
+            return Collections.unmodifiableSet(groupings);
         }
 
-        private void setGroupings(Set<GroupingDefinition> groupings) {
+        private void addGroupings(Set<GroupingDefinition> groupings) {
             if (groupings != null) {
-                this.groupings = groupings;
+                this.groupings.addAll(groupings);
             }
         }
 
         @Override
         public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return typeDefinitions;
+            return Collections.unmodifiableSet(typeDefinitions);
         }
 
-        private void setTypeDefinitions(Set<TypeDefinition<?>> typeDefinitions) {
+        private void addTypeDefinitions(Set<TypeDefinition<?>> typeDefinitions) {
             if (typeDefinitions != null) {
-                this.typeDefinitions = typeDefinitions;
+                this.typeDefinitions.addAll(typeDefinitions);
             }
         }
 
         @Override
         public Set<UsesNode> getUses() {
-            return uses;
+            return Collections.unmodifiableSet(uses);
         }
 
-        private void setUses(Set<UsesNode> uses) {
+        private void addUses(Set<UsesNode> uses) {
             if (uses != null) {
-                this.uses = uses;
+                this.uses.addAll(uses);
             }
         }
 
@@ -508,23 +447,15 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
             return userOrdered;
         }
 
-        private void setUserOrdered(boolean userOrdered) {
-            this.userOrdered = userOrdered;
-        }
-
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
+            return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
+        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
-                this.unknownNodes = unknownNodes;
+                this.unknownNodes.addAll(unknownNodes);
             }
-        }
-
-        public ListSchemaNodeBuilder toBuilder() {
-            return ListSchemaNodeBuilder.this;
         }
 
         @Override
@@ -567,13 +498,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("list ");
-            sb.append(qname.getLocalName());
-            sb.append("[");
-            sb.append(path);
-            sb.append("]");
-            return sb.toString();
+            return "list " + qname.getLocalName();
         }
     }
 

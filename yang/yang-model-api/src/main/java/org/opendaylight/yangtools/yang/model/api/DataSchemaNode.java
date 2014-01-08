@@ -13,9 +13,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * which contains data.
  *
  */
-public interface DataSchemaNode extends SchemaNode, YangNode {
-
-    YangNode getParent();
+public interface DataSchemaNode extends SchemaNode {
 
     /**
      * Returns <code>true</code> if the data node was added by augmentation,

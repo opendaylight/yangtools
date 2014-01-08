@@ -17,20 +17,41 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findP
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.opendaylight.yangtools.binding.generator.util.*;
-import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.*;
+import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
+import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
+import org.opendaylight.yangtools.binding.generator.util.Types;
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.EnumerationBuilderImpl;
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl;
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
-import org.opendaylight.yangtools.sal.binding.model.api.*;
+import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.*;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.*;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.util.*;
@@ -1257,17 +1278,17 @@ public final class TypeProviderImpl implements TypeProvider {
         } else if (base instanceof BitsTypeDefinition) {
             String parentName;
             String className;
-            YangNode parent = node.getParent();
-            if (parent instanceof Module) {
-                parentName = parseToClassName(((Module) parent).getName()) + "Data";
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName((Module) parent);
-                className = basePackageName + "." + parentName + "." + parseToClassName(node.getQName().getLocalName());
+            SchemaPath nodePath = node.getPath();
+            Module parent = getParentModule(node);
+            if (nodePath.getPath().size() == 1) {
+                parentName = BindingMapping.getClassName((parent).getName()) + "Data";
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
+                className = basePackageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
             } else {
-                Module parentModule = getParentModule(node);
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parentModule);
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
                 String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
-                parentName = parseToClassName(((SchemaNode) parent).getQName().getLocalName());
-                className = packageName + "." + parentName + "." + parseToClassName(node.getQName().getLocalName());
+                parentName = BindingMapping.getClassName(((SchemaNode) parent).getQName());
+                className = packageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
             }
             result = bitsToDef((BitsTypeDefinition) base, className, defaultValue, type instanceof ExtendedType);
         } else if (base instanceof BooleanTypeDefinition) {
@@ -1283,16 +1304,15 @@ public final class TypeProviderImpl implements TypeProvider {
             String newDefVal = new String(defValArray);
             String className;
             if (type instanceof ExtendedType) {
-                QName qname = type.getPath().getPath().get(0);
-                Module m = schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
+                Module m = getParentModule(type);
                 String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(m);
                 String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
-                className = packageName + "." + parseToClassName(typeQName.getLocalName());
+                className = packageName + "." + BindingMapping.getClassName(typeQName);
             } else {
                 Module parentModule = getParentModule(node);
                 String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parentModule);
                 String packageName = packageNameForGeneratedType(basePackageName, node.getPath());
-                className = packageName + "." + parseToClassName(node.getQName().getLocalName());
+                className = packageName + "." + BindingMapping.getClassName(node.getQName());
             }
             result = className + "." + newDefVal;
         } else if (base instanceof IdentityrefTypeDefinition) {
@@ -1328,8 +1348,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
         if (type instanceof ExtendedType && !(base instanceof LeafrefTypeDefinition)
                 && !(base instanceof EnumerationType) && !(base instanceof UnionTypeDefinition)) {
-            QName qname = type.getPath().getPath().get(0);
-            Module m = schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
+            Module m = getParentModule(type);
             String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(m);
             String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
             String className = packageName + "." + BindingMapping.getClassName(typeQName);
@@ -1383,30 +1402,11 @@ public final class TypeProviderImpl implements TypeProvider {
         return sb.toString();
     }
 
-    private Module getParentModule(YangNode node) {
-        if (node instanceof Module) {
-            return (Module) node;
-        }
-
-        YangNode parent = null;
-        if (node instanceof DataSchemaNode) {
-            parent = ((DataSchemaNode) node).getParent();
-        } else if (node instanceof DataNodeContainer) {
-            parent = ((DataNodeContainer) node).getParent();
-        } else {
-            parent = null;
-        }
-
-        while (parent != null && !(parent instanceof Module)) {
-            if (parent instanceof DataSchemaNode) {
-                parent = ((DataSchemaNode) parent).getParent();
-            } else if (parent instanceof DataNodeContainer) {
-                parent = ((DataNodeContainer) parent).getParent();
-            } else {
-                parent = null;
-            }
-        }
-        return (Module) parent;
+    private Module getParentModule(SchemaNode node) {
+        QName qname = node.getPath().getPath().get(0);
+        URI namespace = qname.getNamespace();
+        Date revision = qname.getRevision();
+        return schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
     }
 
     private String leafrefToDef(LeafSchemaNode parentNode, LeafrefTypeDefinition leafrefType) {
@@ -1471,13 +1471,20 @@ public final class TypeProviderImpl implements TypeProvider {
             String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
             className = basePackageName + "." + BindingMapping.getClassName(typeQName);
         } else {
-            YangNode parent = node.getParent();
-            if (parent instanceof Module) {
-                parentName = parseToClassName(((Module) parent).getName()) + "Data";
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName((Module) parent);
+            SchemaPath nodePath = node.getPath();
+            if (nodePath.getPath().size() == 1) {
+                QName first = nodePath.getPath().get(0);
+                URI namespace = first.getNamespace();
+                Date revision = first.getRevision();
+                Module parent = schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
+                parentName = BindingMapping.getClassName((parent).getName()) + "Data";
+                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
                 className = basePackageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
             } else {
-                Module parentModule = getParentModule(node);
+                QName first = node.getPath().getPath().get(0);
+                URI namespace = first.getNamespace();
+                Date revision = first.getRevision();
+                Module parentModule = schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
                 String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parentModule);
                 String packageName = packageNameForGeneratedType(basePackageName, node.getType().getPath());
                 className = packageName + "." + BindingMapping.getClassName(node.getQName());

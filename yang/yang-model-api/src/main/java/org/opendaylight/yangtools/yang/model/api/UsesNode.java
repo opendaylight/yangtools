@@ -17,8 +17,6 @@ import java.util.Set;
  */
 public interface UsesNode extends YangNode {
 
-    YangNode getParent();
-
     /**
      * Returns the schema path to used grouping.
      *

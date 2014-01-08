@@ -22,20 +22,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.*;
 
 public class YangParserSimpleTest {
     private final URI snNS = URI.create("urn:opendaylight:simple-nodes");
@@ -68,7 +55,6 @@ public class YangParserSimpleTest {
         assertEquals(Status.OBSOLETE, data.getStatus());
         assertEquals(0, data.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
-        assertEquals(testModule, data.getParent());
         assertFalse(data.isAugmenting());
         assertFalse(data.isConfiguration());
         ConstraintDefinition constraints = data.getConstraints();
@@ -118,7 +104,6 @@ public class YangParserSimpleTest {
         assertEquals(Status.CURRENT, nodes.getStatus());
         assertEquals(0, nodes.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
-        assertEquals(test, nodes.getParent());
         assertFalse(nodes.isAugmenting());
         assertFalse(nodes.isConfiguration());
 
@@ -170,31 +155,16 @@ public class YangParserSimpleTest {
         // child nodes
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
-        AnyXmlSchemaNode text = (AnyXmlSchemaNode)nodes.getDataChildByName("text");
-        assertEquals(nodes, text.getParent());
-        ChoiceNode level = (ChoiceNode)nodes.getDataChildByName("level");
-        assertEquals(nodes, level.getParent());
-        ContainerSchemaNode node = (ContainerSchemaNode)nodes.getDataChildByName("node");
-        assertEquals(nodes, node.getParent());
-        LeafSchemaNode nodesId = (LeafSchemaNode)nodes.getDataChildByName("nodes-id");
-        assertEquals(nodes, nodesId.getParent());
         LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName("added");
-        assertEquals(nodes, added.getParent());
         assertEquals(createPath("nodes", "added"), added.getPath());
         assertEquals(createPath("mytype"), added.getType().getPath());
 
         ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName("links");
-        assertEquals(nodes, links.getParent());
         assertFalse(links.isUserOrdered());
-        LeafSchemaNode source = (LeafSchemaNode)nodes.getDataChildByName("source");
-        assertEquals(nodes, source.getParent());
-        LeafSchemaNode target = (LeafSchemaNode)nodes.getDataChildByName("target");
-        assertEquals(nodes, target.getParent());
 
         Set<GroupingDefinition> groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
         GroupingDefinition nodeGroup = groupings.iterator().next();
-        assertEquals(nodes, nodeGroup.getParent());
         QName groupQName = new QName(snNS, snRev, snPref, "node-group");
         assertEquals(groupQName, nodeGroup.getQName());
         SchemaPath nodeGroupPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "node-group");
@@ -203,7 +173,6 @@ public class YangParserSimpleTest {
         Set<UsesNode> uses = nodes.getUses();
         assertEquals(1, uses.size());
         UsesNode use = uses.iterator().next();
-        assertEquals(nodes, use.getParent());
         assertEquals(nodeGroupPath, use.getGroupingPath());
     }
 

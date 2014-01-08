@@ -1,6 +1,9 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,7 +27,6 @@ public class RefineHolderTest {
         rh = new RefineHolder("module", 2104, "name");
         rh1 = new RefineHolder("module", 2104, "name");
     }
-
 
 
     @Test
@@ -171,9 +173,6 @@ public class RefineHolderTest {
         simpleUri = getUri("very:simple:URI");
         assertNotNull("URI can't be null", simpleUri);
 
-        UnknownSchemaNodeBuilder usnb = new UnknownSchemaNodeBuilder("usnb", 151, new QName(simpleUri, "tst"));
-        UnknownSchemaNodeBuilder usnb1 = new UnknownSchemaNodeBuilder("usnb", 151, new QName(simpleUri, "tst"));
-
         URI uriA = getUri("some:uriA");
         assertNotNull("URI can't be null", simpleUri);
         QName qnameA = new QName(uriA, new Date(5000000), "some nameA");
@@ -182,20 +181,16 @@ public class RefineHolderTest {
         List<QName> qnamesB = new ArrayList<>();
         qnamesA.add(qnameA);
         qnamesB.add(qnameB);
-        SchemaPath schemaPathA = new SchemaPath(qnamesA, true);
         SchemaPath schemaPathB = new SchemaPath(qnamesB, true);
 
-        usnb.setPath(schemaPathB);
-        usnb1.setPath(schemaPathB);
+        UnknownSchemaNodeBuilder usnb = new UnknownSchemaNodeBuilder("usnb", 151, new QName(simpleUri, "tst"), schemaPathB);
+        UnknownSchemaNodeBuilder usnb1 = new UnknownSchemaNodeBuilder("usnb", 151, new QName(simpleUri, "tst"), schemaPathB);
 
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.addUnknownNodeBuilder(usnb);
         assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
         rh.addUnknownNodeBuilder(usnb1);
         assertEquals("rh should equal to rh1", rh, rh1);
-        usnb.setPath(schemaPathA);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
-        usnb1.setPath(schemaPathA);
     }
 
     @Test
@@ -203,10 +198,12 @@ public class RefineHolderTest {
         URI simpleUriA = getUri("very:simple:URI:a");
         URI simpleUriB = getUri("very:simple:URI:b");
 
-        UnknownSchemaNodeBuilder usnbA = new UnknownSchemaNodeBuilder("usnbA", 151, new QName(simpleUriA, "tst"));
-        UnknownSchemaNodeBuilder usnbB = new UnknownSchemaNodeBuilder("usnbB", 151, new QName(simpleUriB, "tst"));
+        SchemaPath path = org.mockito.Mockito.mock(SchemaPath.class);
+
+        UnknownSchemaNodeBuilder usnbA = new UnknownSchemaNodeBuilder("usnbA", 151, new QName(simpleUriA, "tst"), path);
+        UnknownSchemaNodeBuilder usnbB = new UnknownSchemaNodeBuilder("usnbB", 151, new QName(simpleUriB, "tst"), path);
         UnknownSchemaNodeBuilder usnbAParent = new UnknownSchemaNodeBuilder("usnbAParent", 151, new QName(simpleUriA,
-                "tst"));
+                "tst"), path);
         usnbA.setParent(usnbAParent);
 
         assertEquals("rh should equal to rh1", rh, rh1);

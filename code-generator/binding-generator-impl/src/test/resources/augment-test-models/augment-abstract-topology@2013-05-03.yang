@@ -25,7 +25,7 @@ module augment-abstract-topology {
         reference "http://www.opendaylight.org/";
     }
 
-    augment "at:topology" {
+    augment "/at:topology" {
         container interfaces {
             list interface {
                 key "interface-id";
@@ -45,7 +45,7 @@ module augment-abstract-topology {
         }
     }
 
-    augment "at:topology/at:network-links/at:network-link" {
+    augment "/at:topology/at:network-links/at:network-link" {
         container tunnels {
             list tunnel {
                 key "tunnel-id";
@@ -63,7 +63,7 @@ module augment-abstract-topology {
         }
     }
 
-    augment "at:topology/at:network-links/at:network-link" {
+    augment "/at:topology/at:network-links/at:network-link" {
         leaf interface {
             type leafref {
                 path "/at:topology/atp:interfaces/atp:interface/atp:interface-id";

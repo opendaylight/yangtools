@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -56,29 +55,28 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public UsesNode build(YangNode parent) {
+    public UsesNode build() {
         if (!isBuilt) {
             instance = new UsesNodeImpl(groupingPath);
             instance.setAddedByUses(addedByUses);
-            instance.setParent(parent);
 
             // AUGMENTATIONS
             for (AugmentationSchemaBuilder builder : addedAugments) {
-                augments.add(builder.build(instance));
+                augments.add(builder.build());
             }
             instance.setAugmentations(augments);
 
             // REFINES
             final Map<SchemaPath, SchemaNode> refineNodes = new HashMap<>();
             for (SchemaNodeBuilder refineBuilder : refineBuilders) {
-                SchemaNode refineNode = refineBuilder.build(instance);
+                SchemaNode refineNode = refineBuilder.build();
                 refineNodes.put(refineNode.getPath(), refineNode);
             }
             instance.setRefines(refineNodes);
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(instance));
+                unknownNodes.add(b.build());
             }
             instance.setUnknownSchemaNodes(unknownNodes);
 
@@ -241,21 +239,11 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     public final class UsesNodeImpl implements UsesNode {
-        private YangNode parent;
         private final SchemaPath groupingPath;
         private Set<AugmentationSchema> augmentations = Collections.emptySet();
         private boolean addedByUses;
         private Map<SchemaPath, SchemaNode> refines = Collections.emptyMap();
         private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
-
-        @Override
-        public YangNode getParent() {
-            return parent;
-        }
-
-        private void setParent(YangNode parent) {
-            this.parent = parent;
-        }
 
         private UsesNodeImpl(final SchemaPath groupingPath) {
             this.groupingPath = groupingPath;
