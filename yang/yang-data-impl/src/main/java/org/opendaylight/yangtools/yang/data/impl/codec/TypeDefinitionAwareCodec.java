@@ -1,16 +1,50 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.*;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT16_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT32_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT64_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT8_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT16_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.data.api.codec.*;
+import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.Int32Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
-import com.google.common.base.*;
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 
@@ -358,6 +392,9 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static final class BitsCodecStringImpl extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefinition>
             implements BitsCodec<String> {
 
+        public static final Joiner JOINER = Joiner.on(" ").skipNulls();
+        public static final Splitter SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
+
         @SuppressWarnings("unchecked")
         protected BitsCodecStringImpl(Optional<BitsTypeDefinition> typeDef) {
             super(typeDef, (Class<Set<String>>) ((Class<?>) Set.class));
@@ -365,12 +402,14 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Set<String> data) {
-            return Joiner.on(" ").join(data).toString();
+            return data != null ? JOINER.join(data) : "";
         }
 
         @Override
         public Set<String> deserialize(String stringRepresentation) {
-            String[] strings = stringRepresentation.split(" ");
+            if (stringRepresentation == null)
+                return ImmutableSet.of();
+            Iterable<String> strings = SPLITTER.split(stringRepresentation);
             return ImmutableSet.copyOf(strings);
         }
     };

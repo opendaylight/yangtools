@@ -1,6 +1,8 @@
 package org.opendaylight.yangtools.yang.data.impl.test.codecs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -9,7 +11,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 
 import com.google.common.collect.ImmutableSet;
 
-public class TypeDefinitionAwareCodecTests {
+public class TypeDefinitionAwareCodecTest {
 
     @Test
     public void bitsEmptySerialization() throws Exception {
@@ -38,6 +40,11 @@ public class TypeDefinitionAwareCodecTests {
         Set<String> deserialized = TypeDefinitionAwareCodec.BITS_DEFAULT_CODEC.deserialize("  foo bar     ");
         assertNotNull(deserialized);
         assertEquals(toSerialize, deserialized);
+    }
+
+    @Test
+    public void nullDataInBitCodecTest() {
+        assertEquals("", TypeDefinitionAwareCodec.BITS_DEFAULT_CODEC.serialize(null));
     }
 
 }
