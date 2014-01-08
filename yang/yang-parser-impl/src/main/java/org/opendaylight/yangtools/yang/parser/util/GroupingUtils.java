@@ -7,41 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
 public final class GroupingUtils {
 
@@ -188,94 +170,6 @@ public final class GroupingUtils {
             }
         }
         return null;
-    }
-
-    /**
-     * Read data defined in target grouping definition, make a copy and add them
-     * to uses node builder.
-     *
-     * @param usesNode
-     *            used node builder to which are copied nodes from its
-     *            <code>GroupingDefinition</code>
-     * @param namespace
-     *            URI with parent namespace
-     * @param revision
-     *            date with parent revision date
-     * @param prefix
-     *            string with parent prefix
-     * @param moduleName
-     *            string with parent module name
-     * @param line
-     *            line from YANG file where parent node is defined
-     */
-    public static Set<DataSchemaNodeBuilder> getTargetGroupingDefinitionNodesWithNewNamespace(
-            final UsesNodeBuilder usesNode, final URI namespace, final Date revision, final String prefix,
-            final String moduleName, final int line) {
-        final Set<DataSchemaNodeBuilder> newChildren = new HashSet<>();
-        for (DataSchemaNode child : usesNode.getGroupingDefinition().getChildNodes()) {
-            if (child != null) {
-                DataSchemaNodeBuilder newChild = null;
-                QName newQName = new QName(namespace, revision, prefix, child.getQName().getLocalName());
-                if (child instanceof AnyXmlSchemaNode) {
-                    newChild = CopyUtils.createAnyXml((AnyXmlSchemaNode) child, newQName, moduleName, line);
-                } else if (child instanceof ChoiceNode) {
-                    newChild = CopyUtils.createChoice((ChoiceNode) child, newQName, moduleName, line);
-                } else if (child instanceof ContainerSchemaNode) {
-                    newChild = CopyUtils.createContainer((ContainerSchemaNode) child, newQName, moduleName, line);
-                } else if (child instanceof LeafListSchemaNode) {
-                    newChild = CopyUtils.createLeafList((LeafListSchemaNode) child, newQName, moduleName, line);
-                } else if (child instanceof LeafSchemaNode) {
-                    newChild = CopyUtils.createLeafBuilder((LeafSchemaNode) child, newQName, moduleName, line);
-                } else if (child instanceof ListSchemaNode) {
-                    newChild = CopyUtils.createList((ListSchemaNode) child, newQName, moduleName, line);
-                }
-
-                if (newChild == null) {
-                    throw new YangParseException(moduleName, line,
-                            "Unknown member of target grouping while resolving uses node.");
-                }
-
-                ((GroupingMember) newChild).setAddedByUses(true);
-                newChildren.add(newChild);
-            }
-        }
-        return newChildren;
-    }
-
-    public static Set<TypeDefinitionBuilder> getTargetGroupingDefinitionTypedefsWithNewNamespace(
-            UsesNodeBuilder usesNode, URI namespace, Date revision, String prefix, String moduleName, int line) {
-        final Set<TypeDefinitionBuilder> newTypedefs = new HashSet<>();
-        for (TypeDefinition<?> td : usesNode.getGroupingDefinition().getTypeDefinitions()) {
-            QName newQName = new QName(namespace, revision, prefix, td.getQName().getLocalName());
-            TypeDefinitionBuilder newType = CopyUtils.createTypedef((ExtendedType) td, newQName, moduleName, line);
-            newType.setAddedByUses(true);
-            newTypedefs.add(newType);
-        }
-        return newTypedefs;
-    }
-
-    public static Set<GroupingBuilder> getTargetGroupingDefinitionGroupingsWithNewNamespace(UsesNodeBuilder usesNode,
-            URI namespace, Date revision, String prefix, String moduleName, int line) {
-        final Set<GroupingBuilder> newGroupings = new HashSet<>();
-        for (GroupingDefinition g : usesNode.getGroupingDefinition().getGroupings()) {
-            QName newQName = new QName(namespace, revision, prefix, g.getQName().getLocalName());
-            GroupingBuilder newGrouping = CopyUtils.createGrouping(g, newQName, moduleName, line);
-            newGrouping.setAddedByUses(true);
-            newGroupings.add(newGrouping);
-        }
-        return newGroupings;
-    }
-
-    public static List<UnknownSchemaNodeBuilder> getTargetGroupingDefinitionUnknownNodesWithNewNamespace(
-            UsesNodeBuilder usesNode, URI namespace, Date revision, String prefix, String moduleName, int line) {
-        final List<UnknownSchemaNodeBuilder> newUnknownNodes = new ArrayList<>();
-        for (UnknownSchemaNode un : usesNode.getGroupingDefinition().getUnknownSchemaNodes()) {
-            QName newQName = new QName(namespace, revision, prefix, un.getQName().getLocalName());
-            UnknownSchemaNodeBuilder newNode = CopyUtils.createUnknownSchemaNode(un, newQName, moduleName, line);
-            newNode.setAddedByUses(true);
-            newUnknownNodes.add(newNode);
-        }
-        return newUnknownNodes;
     }
 
     /**

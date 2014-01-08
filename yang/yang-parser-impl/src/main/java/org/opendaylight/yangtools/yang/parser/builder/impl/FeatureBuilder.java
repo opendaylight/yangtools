@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 
@@ -23,29 +23,62 @@ public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
     private boolean isBuilt;
     private final FeatureDefinitionImpl instance;
 
-    FeatureBuilder(final String moduleName, final int line, final QName qname) {
+    FeatureBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        instance = new FeatureDefinitionImpl(qname);
+        this.schemaPath = path;
+        instance = new FeatureDefinitionImpl(qname, path);
     }
 
     @Override
-    public FeatureDefinitionImpl build(YangNode parent) {
+    public FeatureDefinitionImpl build() {
         if (!isBuilt) {
-            instance.setPath(schemaPath);
-            instance.setDescription(description);
-            instance.setReference(reference);
-            instance.setStatus(status);
-
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(null));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
+            instance.addUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
         }
         return instance;
+    }
+
+    @Override
+    public SchemaPath getPath() {
+        return instance.path;
+    }
+
+    @Override
+    public String getDescription() {
+        return instance.description;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        instance.description = description;
+    }
+
+    @Override
+    public String getReference() {
+        return instance.reference;
+    }
+
+    @Override
+    public void setReference(final String reference) {
+        instance.reference = reference;
+    }
+
+    @Override
+    public Status getStatus() {
+        return instance.status;
+    }
+
+    @Override
+    public void setStatus(Status status) {
+        if (status != null) {
+            instance.status = status;
+        }
     }
 
     @Override
@@ -55,14 +88,15 @@ public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
 
     private final class FeatureDefinitionImpl implements FeatureDefinition {
         private final QName qname;
-        private SchemaPath path;
+        private final SchemaPath path;
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
-        private FeatureDefinitionImpl(final QName qname) {
+        private FeatureDefinitionImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
+            this.path = path;
         }
 
         @Override
@@ -75,17 +109,9 @@ public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
             return path;
         }
 
-        private void setPath(final SchemaPath path) {
-            this.path = path;
-        }
-
         @Override
         public String getDescription() {
             return description;
-        }
-
-        private void setDescription(final String description) {
-            this.description = description;
         }
 
         @Override
@@ -93,29 +119,19 @@ public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
             return reference;
         }
 
-        private void setReference(final String reference) {
-            this.reference = reference;
-        }
-
         @Override
         public Status getStatus() {
             return status;
         }
 
-        private void setStatus(Status status) {
-            if (status != null) {
-                this.status = status;
-            }
-        }
-
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
+            return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void setUnknownSchemaNodes(final List<UnknownSchemaNode> unknownNodes) {
+        private void addUnknownSchemaNodes(final List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
-                this.unknownNodes = unknownNodes;
+                this.unknownNodes.addAll(unknownNodes);
             }
         }
 

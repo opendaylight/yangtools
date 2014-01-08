@@ -7,36 +7,25 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.*;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.RefineUtils;
@@ -55,7 +44,7 @@ public class RefineTest {
     }
 
     private void findUnknownNode(DataSchemaNodeBuilder childNode, String unknownNodeValue, String unknownNodeName) {
-        List<UnknownSchemaNodeBuilder> unknownSchemaNodesBuilder = childNode.getUnknownNodeBuilders();
+        List<UnknownSchemaNodeBuilder> unknownSchemaNodesBuilder = childNode.getUnknownNodes();
         boolean refinedUnknownNodeLflstFound = false;
 
         for (UnknownSchemaNodeBuilder unknownSchemaNodeBuilders : unknownSchemaNodesBuilder) {
@@ -79,7 +68,6 @@ public class RefineTest {
         assertTrue("Must element in 'lflst' is missing.", mustLflstFound);
     }
 
-    @Ignore
     @Test
     public void usesInGroupingDependenciesTest() {
         loadTestResources();
@@ -93,7 +81,7 @@ public class RefineTest {
                 refineHolders = usesNodeBuilder.getRefines();
                 // FIXME
                 //GroupingUtils.updateUsesParent(usesNodeBuilder);
-                dataSchemaNodeBuilders = usesNodeBuilder.getParent().getChildNodeBuilders();
+                dataSchemaNodeBuilders = usesNodeBuilder.getParent().getChildNodes();
                 break;
             }
         }
@@ -175,7 +163,8 @@ public class RefineTest {
         RefineHolder refHolderChc2 = getRefineHolder("chc2", refineHolders);
 
         QName qname = createQname();
-        DataSchemaNodeBuilder builderChc2 = new ChoiceBuilder("module", 4, qname);
+        List<QName> path = Lists.newArrayList(qname);
+        DataSchemaNodeBuilder builderChc2 = new ChoiceBuilder("module", 4, qname, new SchemaPath(path, true));
         assertNotNull("Refine holder chc2 wasn't initialized.", refHolderChc2);
 
         RefineUtils.refineChoice((ChoiceBuilder) builderChc2, refHolderChc2);
@@ -190,7 +179,8 @@ public class RefineTest {
         RefineHolder refHolderChc = getRefineHolder("chc", refineHolders);
 
         QName qname = createQname();
-        DataSchemaNodeBuilder builderChc = new ChoiceBuilder("module", 4, qname);
+        List<QName> path = Lists.newArrayList(qname);
+        DataSchemaNodeBuilder builderChc = new ChoiceBuilder("module", 4, qname, new SchemaPath(path, true));
 
         assertNotNull("Refine holder chc wasn't initialized.", refHolderChc);
         assertNotNull("Data schema node builder chc wasn't initialized.", builderChc);

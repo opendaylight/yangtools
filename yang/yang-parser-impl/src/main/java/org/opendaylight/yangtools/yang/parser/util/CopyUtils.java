@@ -10,24 +10,10 @@ package org.opendaylight.yangtools.yang.parser.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -35,22 +21,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AugmentationSchemaBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UsesNodeBuilderImpl;
+import org.opendaylight.yangtools.yang.parser.builder.impl.*;
 
 public final class CopyUtils {
 
@@ -99,14 +70,13 @@ public final class CopyUtils {
         AnyXmlBuilder copy = new AnyXmlBuilder(newParent.getModuleName(), newParent.getLine(), newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
         }
 
@@ -118,10 +88,9 @@ public final class CopyUtils {
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        ChoiceBuilder copy = new ChoiceBuilder(newParent.getModuleName(), newParent.getLine(), newQName);
+        ChoiceBuilder copy = new ChoiceBuilder(newParent.getModuleName(), newParent.getLine(), newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
@@ -134,7 +103,7 @@ public final class CopyUtils {
         for (AugmentationSchemaBuilder augment : old.getAugmentationBuilders()) {
             copy.addAugmentation(copyAugment(augment, copy));
         }
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
         }
 
@@ -146,16 +115,14 @@ public final class CopyUtils {
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        ChoiceCaseBuilder copy = new ChoiceCaseBuilder(newParent.getModuleName(), newParent.getLine(), newQName);
+        ChoiceCaseBuilder copy = new ChoiceCaseBuilder(newParent.getModuleName(), newParent.getLine(), newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAugmenting(old.isAugmenting());
-        copy.getChildNodes().addAll(old.getChildNodes());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
         copy.getGroupings().addAll(old.getGroupings());
@@ -168,7 +135,7 @@ public final class CopyUtils {
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
         }
 
@@ -185,7 +152,6 @@ public final class CopyUtils {
                 newParent.getLine(), newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
@@ -193,7 +159,7 @@ public final class CopyUtils {
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
         copy.getGroupings().addAll(old.getGroupings());
@@ -209,7 +175,7 @@ public final class CopyUtils {
         for (AugmentationSchemaBuilder augment : old.getAugmentationBuilders()) {
             copy.addAugmentation(copyAugment(augment, copy));
         }
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
         }
 
@@ -225,14 +191,13 @@ public final class CopyUtils {
                 newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
         }
 
@@ -257,14 +222,13 @@ public final class CopyUtils {
                 newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
         }
 
@@ -288,14 +252,13 @@ public final class CopyUtils {
                 newQName, newSchemaPath);
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
         copy.getGroupings().addAll(old.getGroupings());
@@ -311,7 +274,7 @@ public final class CopyUtils {
         for (AugmentationSchemaBuilder augment : old.getAugmentationBuilders()) {
             copy.addAugmentation(copyAugment(augment, copy));
         }
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
         }
 
@@ -326,14 +289,13 @@ public final class CopyUtils {
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        GroupingBuilderImpl copy = new GroupingBuilderImpl(newParent.getModuleName(), newParent.getLine(), newQName);
+        GroupingBuilderImpl copy = new GroupingBuilderImpl(newParent.getModuleName(), newParent.getLine(), newQName, newSchemaPath);
         copy.setParent(newParent);
-        copy.setPath(newSchemaPath);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAddedByUses(old.isAddedByUses());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
         copy.getGroupings().addAll(old.getGroupings());
@@ -346,7 +308,7 @@ public final class CopyUtils {
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
         }
 
@@ -373,13 +335,9 @@ public final class CopyUtils {
             type = new IdentityrefTypeBuilder(newParent.getModuleName(), newParent.getLine(),
                     ((IdentityrefTypeBuilder) old).getBaseString(), newSchemaPath);
             type.setParent(newParent);
-            type.setPath(newSchemaPath);
         } else {
-            type = new TypeDefinitionBuilderImpl(old.getModuleName(), newParent.getLine(), newQName);
+            type = new TypeDefinitionBuilderImpl(old.getModuleName(), newParent.getLine(), newQName, old.getPath());
             type.setParent(newParent);
-            // TODO
-            // type.setPath(newSchemaPath);
-            type.setPath(old.getPath());
 
             if (old.getType() == null) {
                 type.setTypedef(copy(old.getTypedef(), type, updateQName));
@@ -387,7 +345,7 @@ public final class CopyUtils {
                 type.setType(old.getType());
             }
 
-            for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+            for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
                 type.addUnknownNodeBuilder((copy(un, type, updateQName)));
             }
 
@@ -439,13 +397,13 @@ public final class CopyUtils {
         copy.setStatus(old.getStatus());
         copy.addWhenCondition(old.getWhenCondition());
         copy.setTargetNodeSchemaPath(old.getTargetNodeSchemaPath());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, false));
         }
         for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             copy.addUnknownNodeBuilder((copy(un, copy, false)));
         }
 
@@ -458,15 +416,14 @@ public final class CopyUtils {
         SchemaPath newSchemaPath = data.schemaPath;
 
         UnknownSchemaNodeBuilder c = new UnknownSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
-                newQName);
+                newQName, newSchemaPath);
 
         c.setParent(newParent);
-        c.setPath(newSchemaPath);
         c.setDescription(old.getDescription());
         c.setReference(old.getReference());
         c.setStatus(old.getStatus());
         c.setAddedByUses(old.isAddedByUses());
-        for (UnknownSchemaNodeBuilder un : old.getUnknownNodeBuilders()) {
+        for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
 
@@ -527,292 +484,6 @@ public final class CopyUtils {
             this.qname = qname;
             this.schemaPath = schemaPath;
         }
-    }
-
-    /**
-     * Create AnyXmlBuilder from given AnyXmlSchemaNode.
-     *
-     * @param anyxml
-     *            base anyxml
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            current line in module
-     * @return anyxml builder based on given anyxml node
-     */
-    public static AnyXmlBuilder createAnyXml(AnyXmlSchemaNode anyxml, QName qname, String moduleName, int line) {
-        final AnyXmlBuilder builder = new AnyXmlBuilder(moduleName, line, qname, anyxml.getPath());
-        convertDataSchemaNode(anyxml, builder);
-        builder.setConfiguration(anyxml.isConfiguration());
-        builder.setUnknownNodes(anyxml.getUnknownSchemaNodes());
-        return builder;
-    }
-
-    /**
-     * Create GroupingBuilder from given GroupingDefinition.
-     *
-     * @param grouping
-     *            base grouping
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            current line in module
-     * @return grouping builder based on given grouping node
-     */
-    public static GroupingBuilder createGrouping(GroupingDefinition grouping, QName qname, String moduleName, int line) {
-        final GroupingBuilderImpl builder = new GroupingBuilderImpl(moduleName, line, qname);
-        builder.setPath(grouping.getPath());
-        for (DataSchemaNode child : grouping.getChildNodes()) {
-            builder.addChildNode(child);
-        }
-        builder.setGroupings(grouping.getGroupings());
-        builder.setTypedefs(grouping.getTypeDefinitions());
-        builder.setUsesnodes(grouping.getUses());
-        builder.setUnknownNodes(grouping.getUnknownSchemaNodes());
-        builder.setDescription(grouping.getDescription());
-        builder.setReference(grouping.getReference());
-        builder.setStatus(grouping.getStatus());
-        return builder;
-    }
-
-    /**
-     * Create TypeDefinitionBuilder from given ExtendedType.
-     *
-     * @param typedef
-     *            base typedef
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            current line in module
-     * @return typedef builder based on given typedef node
-     */
-    public static TypeDefinitionBuilder createTypedef(ExtendedType typedef, QName qname, String moduleName, int line) {
-        final TypeDefinitionBuilderImpl builder = new TypeDefinitionBuilderImpl(moduleName, line, qname);
-        builder.setPath(typedef.getPath());
-        builder.setDefaultValue(typedef.getDefaultValue());
-        builder.setUnits(typedef.getUnits());
-        builder.setDescription(typedef.getDescription());
-        builder.setReference(typedef.getReference());
-        builder.setStatus(typedef.getStatus());
-        builder.setRanges(typedef.getRangeConstraints());
-        builder.setLengths(typedef.getLengthConstraints());
-        builder.setPatterns(typedef.getPatternConstraints());
-        builder.setFractionDigits(typedef.getFractionDigits());
-        final TypeDefinition<?> type = typedef.getBaseType();
-        builder.setType(type);
-        builder.setUnits(typedef.getUnits());
-        builder.setUnknownNodes(typedef.getUnknownSchemaNodes());
-        return builder;
-    }
-
-    /**
-     * Create UnknownSchemaNodeBuilder from given UnknownSchemaNode.
-     *
-     * @param unknownNode
-     *            base unknown node
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            current line in module
-     * @return unknown node builder based on given unknown node
-     */
-    public static UnknownSchemaNodeBuilder createUnknownSchemaNode(UnknownSchemaNode unknownNode, QName qname,
-            String moduleName, int line) {
-        final UnknownSchemaNodeBuilder builder = new UnknownSchemaNodeBuilder(moduleName, line, qname);
-        builder.setPath(unknownNode.getPath());
-        builder.setUnknownNodes(unknownNode.getUnknownSchemaNodes());
-        builder.setDescription(unknownNode.getDescription());
-        builder.setReference(unknownNode.getReference());
-        builder.setStatus(unknownNode.getStatus());
-        builder.setAddedByUses(unknownNode.isAddedByUses());
-        builder.setNodeType(unknownNode.getNodeType());
-        builder.setNodeParameter(unknownNode.getNodeParameter());
-        return builder;
-    }
-
-    /**
-     * Create LeafSchemaNodeBuilder from given LeafSchemaNode.
-     *
-     * @param leaf
-     *            leaf from which to create builder
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            line in module
-     * @return leaf builder based on given leaf node
-     */
-    public static LeafSchemaNodeBuilder createLeafBuilder(LeafSchemaNode leaf, QName qname, String moduleName, int line) {
-        final LeafSchemaNodeBuilder builder = new LeafSchemaNodeBuilder(moduleName, line, qname, leaf.getPath());
-        convertDataSchemaNode(leaf, builder);
-        builder.setConfiguration(leaf.isConfiguration());
-        final TypeDefinition<?> type = leaf.getType();
-        builder.setType(type);
-        builder.setPath(leaf.getPath());
-        builder.setUnknownNodes(leaf.getUnknownSchemaNodes());
-        builder.setDefaultStr(leaf.getDefault());
-        builder.setUnits(leaf.getUnits());
-        return builder;
-    }
-
-    /**
-     * Create ContainerSchemaNodeBuilder from given ContainerSchemaNode.
-     *
-     * @param container
-     *            base container
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            current line in module
-     * @return container builder based on given container node
-     */
-    public static ContainerSchemaNodeBuilder createContainer(ContainerSchemaNode container, QName qname,
-            String moduleName, int line) {
-        final ContainerSchemaNodeBuilder builder = new ContainerSchemaNodeBuilder(moduleName, line, qname,
-                container.getPath());
-        convertDataSchemaNode(container, builder);
-        builder.setConfiguration(container.isConfiguration());
-        builder.setUnknownNodes(container.getUnknownSchemaNodes());
-        for (DataSchemaNode child : container.getChildNodes()) {
-            builder.addChildNode(child);
-        }
-        builder.setGroupings(container.getGroupings());
-        builder.setTypedefs(container.getTypeDefinitions());
-        builder.getAugmentations().addAll(container.getAvailableAugmentations());
-        builder.setUsesnodes(container.getUses());
-        builder.setPresence(container.isPresenceContainer());
-        return builder;
-    }
-
-    /**
-     * Create ListSchemaNodeBuilder from given ListSchemaNode.
-     *
-     * @param list
-     *            base list
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            current line in module
-     * @return list builder based on given list node
-     */
-    public static ListSchemaNodeBuilder createList(ListSchemaNode list, QName qname, String moduleName, int line) {
-        ListSchemaNodeBuilder builder = new ListSchemaNodeBuilder(moduleName, line, qname, list.getPath());
-        convertDataSchemaNode(list, builder);
-        builder.setConfiguration(list.isConfiguration());
-        builder.setUnknownNodes(list.getUnknownSchemaNodes());
-        builder.setTypedefs(list.getTypeDefinitions());
-        for (DataSchemaNode child : list.getChildNodes()) {
-            builder.addChildNode(child);
-        }
-        builder.setGroupings(list.getGroupings());
-        builder.getAugmentations().addAll(list.getAvailableAugmentations());
-        builder.setUsesnodes(list.getUses());
-        builder.setUserOrdered(builder.isUserOrdered());
-        return builder;
-    }
-
-    /**
-     * Create LeafListSchemaNodeBuilder from given LeafListSchemaNode.
-     *
-     * @param leafList
-     *            base leaf-list
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            current line in module
-     * @return leaf-list builder based on given leaf-list node
-     */
-    public static LeafListSchemaNodeBuilder createLeafList(LeafListSchemaNode leafList, QName qname, String moduleName,
-            int line) {
-        final LeafListSchemaNodeBuilder builder = new LeafListSchemaNodeBuilder(moduleName, line, qname,
-                leafList.getPath());
-        convertDataSchemaNode(leafList, builder);
-        builder.setConfiguration(leafList.isConfiguration());
-        builder.setType(leafList.getType());
-        builder.setUnknownNodes(leafList.getUnknownSchemaNodes());
-        builder.setUserOrdered(leafList.isUserOrdered());
-        return builder;
-    }
-
-    /**
-     * Create ChoiceBuilder from given ChoiceNode.
-     *
-     * @param choice
-     *            base choice
-     * @param qname
-     *            new qname
-     * @param moduleName
-     *            current module name
-     * @param line
-     *            current line in module
-     * @return choice builder based on given choice node
-     */
-    public static ChoiceBuilder createChoice(ChoiceNode choice, QName qname, String moduleName, int line) {
-        final ChoiceBuilder builder = new ChoiceBuilder(moduleName, line, qname);
-        convertDataSchemaNode(choice, builder);
-        builder.setConfiguration(choice.isConfiguration());
-        builder.setCases(choice.getCases());
-        builder.setUnknownNodes(choice.getUnknownSchemaNodes());
-        builder.setDefaultCase(choice.getDefaultCase());
-        return builder;
-    }
-
-    /**
-     * Set DataSchemaNode arguments to builder object
-     *
-     * @param node
-     *            node from which arguments should be read
-     * @param builder
-     *            builder to which arguments should be set
-     */
-    private static void convertDataSchemaNode(DataSchemaNode node, DataSchemaNodeBuilder builder) {
-        builder.setPath(node.getPath());
-        builder.setDescription(node.getDescription());
-        builder.setReference(node.getReference());
-        builder.setStatus(node.getStatus());
-        builder.setAugmenting(node.isAugmenting());
-        copyConstraintsFromDefinition(node.getConstraints(), builder.getConstraints());
-    }
-
-    /**
-     * Copy constraints from constraints definition to constraints builder.
-     *
-     * @param nodeConstraints
-     *            definition from which constraints will be copied
-     * @param constraints
-     *            builder to which constraints will be added
-     */
-    private static void copyConstraintsFromDefinition(final ConstraintDefinition nodeConstraints,
-            final ConstraintsBuilder constraints) {
-        final RevisionAwareXPath when = nodeConstraints.getWhenCondition();
-        final Set<MustDefinition> must = nodeConstraints.getMustConstraints();
-
-        if (when != null) {
-            constraints.addWhenCondition(when.toString());
-        }
-        if (must != null) {
-            for (MustDefinition md : must) {
-                constraints.addMustDefinition(md);
-            }
-        }
-        constraints.setMandatory(nodeConstraints.isMandatory());
-        constraints.setMinElements(nodeConstraints.getMinElements());
-        constraints.setMaxElements(nodeConstraints.getMaxElements());
     }
 
 }

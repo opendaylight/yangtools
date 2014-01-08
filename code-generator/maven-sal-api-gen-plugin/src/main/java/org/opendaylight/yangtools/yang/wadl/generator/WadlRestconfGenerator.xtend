@@ -188,9 +188,11 @@ class WadlRestconfGenerator {
 	
 	private def resourceParams() '''
 		«FOR pathParam : pathListParams»
+		    «IF pathParam != null»
 			«val prefix = pathParam.type.QName.prefix»
 			«val type = if (prefix.nullOrEmpty) pathParam.type.QName.localName else prefix + ":" + pathParam.type.QName.localName»
 			<param required="true" style="template" name="«pathParam.QName.localName»" type="«type»"/>
+			«ENDIF»
 		«ENDFOR»
 	'''
 	

@@ -17,13 +17,10 @@ import java.util.TreeMap;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
@@ -33,17 +30,35 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder.ChoiceNodeImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder.ChoiceCaseNodeImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder.ContainerSchemaNodeImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder.ListSchemaNodeImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder.NotificationDefinitionImpl;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
+import java.util.HashSet
+import java.net.URI
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode
+import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode
+import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
+import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder
+import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingBuilderImpl
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition
+import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl
+import org.opendaylight.yangtools.yang.model.util.ExtendedType
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer
 
 public final class ParserUtils {
 
@@ -139,7 +154,8 @@ public final class ParserUtils {
     public static def Module findModuleFromContext(SchemaContext context, ModuleBuilder currentModule,
         String prefix, int line) {
         if (context === null) {
-        	throw new YangParseException(currentModule.getName(), line, "Cannot find module with prefix '" + prefix + "'.");
+            throw new YangParseException(currentModule.getName(), line,
+                "Cannot find module with prefix '" + prefix + "'.");
         }
         val modulesByRevision = new TreeMap<Date, Module>();
 
@@ -195,6 +211,9 @@ public final class ParserUtils {
         return new SchemaPath(path, absolute);
     }
 
+    public static def dispatch fillAugmentTarget(AugmentationSchemaBuilder augment, Builder target) {
+    }
+
     /**
      * Add all augment's child nodes to given target.
      *
@@ -203,51 +222,20 @@ public final class ParserUtils {
      * @param target
      *            augmentation target node
      */
-    public static def void fillAugmentTarget(AugmentationSchemaBuilder augment, DataNodeContainerBuilder target) {
-        for (DataSchemaNodeBuilder child : augment.getChildNodeBuilders()) {
+    public static def dispatch fillAugmentTarget(AugmentationSchemaBuilder augment, DataNodeContainerBuilder target) {
+        for (DataSchemaNodeBuilder child : augment.getChildNodes()) {
             val childCopy = CopyUtils.copy(child, target, false);
             if (augment.parent instanceof UsesNodeBuilder) {
                 setNodeAddedByUses(childCopy);
             }
             setNodeAugmenting(childCopy);
-            correctNodePath(child, target.getPath());
-            correctNodePath(childCopy, target.getPath());
             try {
                 target.addChildNode(childCopy);
             } catch (YangParseException e) {
+
                 // more descriptive message
                 throw new YangParseException(augment.getModuleName(), augment.getLine(),
                     "Failed to perform augmentation: " + e.getMessage());
-            }
-        }
-    }
-
-    private static def void setNodeAugmenting(DataSchemaNodeBuilder child) {
-        child.setAugmenting(true);
-        if (child instanceof DataNodeContainerBuilder) {
-            val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
-            for (inner : dataNodeChild.getChildNodeBuilders()) {
-                setNodeAugmenting(inner);
-            }
-        } else if (child instanceof ChoiceBuilder) {
-            val ChoiceBuilder choiceChild = child as ChoiceBuilder;
-            for (inner : choiceChild.cases) {
-                setNodeAugmenting(inner);
-            }
-        }
-    }
-
-    public static def void setNodeAddedByUses(GroupingMember child) {
-        child.setAddedByUses(true);
-        if (child instanceof DataNodeContainerBuilder) {
-            val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
-            for (inner : dataNodeChild.getChildNodeBuilders()) {
-                setNodeAddedByUses(inner);
-            }
-        } else if (child instanceof ChoiceBuilder) {
-            val ChoiceBuilder choiceChild = child as ChoiceBuilder;
-            for (inner : choiceChild.cases) {
-                setNodeAddedByUses(inner);
             }
         }
     }
@@ -260,15 +248,13 @@ public final class ParserUtils {
      * @param target
      *            augmentation target choice node
      */
-    public static def void fillAugmentTarget(AugmentationSchemaBuilder augment, ChoiceBuilder target) {
-        for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
+    public static def dispatch fillAugmentTarget(AugmentationSchemaBuilder augment, ChoiceBuilder target) {
+        for (DataSchemaNodeBuilder builder : augment.getChildNodes()) {
             val childCopy = CopyUtils.copy(builder, target, false);
             if (augment.parent instanceof UsesNodeBuilder) {
                 setNodeAddedByUses(childCopy);
             }
             setNodeAugmenting(childCopy)
-            correctNodePath(builder, target.getPath());
-            correctNodePath(childCopy, target.getPath());
             target.addCase(childCopy);
         }
         for (UsesNodeBuilder usesNode : augment.getUsesNodes()) {
@@ -280,109 +266,104 @@ public final class ParserUtils {
     }
 
     /**
-     * Create new schema path of node based on parent node schema path.
-     *
-     * @param node
-     *            node to correct
-     * @param parentSchemaPath
-     *            schema path of node parent
+     * Set augmenting flag to true for node and all its child nodes.
      */
-    static def void correctNodePath(SchemaNodeBuilder node, SchemaPath parentSchemaPath) {
-        // set correct path
-        val targetNodePath = new ArrayList<QName>(parentSchemaPath.getPath());
-        targetNodePath.add(node.getQName());
-        node.setPath(new SchemaPath(targetNodePath, true));
-
-        // set correct path for all child nodes
-        if (node instanceof DataNodeContainerBuilder) {
-            val dataNodeContainer = node as DataNodeContainerBuilder;
-            for (DataSchemaNodeBuilder child : dataNodeContainer.getChildNodeBuilders()) {
-                correctNodePath(child, node.getPath());
+    private static def void setNodeAugmenting(DataSchemaNodeBuilder child) {
+        child.setAugmenting(true);
+        if (child instanceof DataNodeContainerBuilder) {
+            val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
+            for (inner : dataNodeChild.getChildNodes()) {
+                setNodeAugmenting(inner);
             }
-        }
-
-        // set correct path for all cases
-        if (node instanceof ChoiceBuilder) {
-            val choiceBuilder = node as ChoiceBuilder;
-            for (ChoiceCaseBuilder choiceCaseBuilder : choiceBuilder.getCases()) {
-                correctNodePath(choiceCaseBuilder, node.getPath());
+        } else if (child instanceof ChoiceBuilder) {
+            val ChoiceBuilder choiceChild = child as ChoiceBuilder;
+            for (inner : choiceChild.cases) {
+                setNodeAugmenting(inner);
             }
         }
     }
 
+    /**
+     * Set addedByUses flag to true for node and all its child nodes. 
+     */
+    public static def void setNodeAddedByUses(GroupingMember child) {
+        child.setAddedByUses(true);
+        if (child instanceof DataNodeContainerBuilder) {
+            val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
+            for (inner : dataNodeChild.getChildNodes()) {
+                setNodeAddedByUses(inner);
+            }
+        } else if (child instanceof ChoiceBuilder) {
+            val ChoiceBuilder choiceChild = child as ChoiceBuilder;
+            for (inner : choiceChild.cases) {
+                setNodeAddedByUses(inner);
+            }
+        }
+    }
 
-    private static def Builder findNode(Builder firstNodeParent, List<QName> path, String moduleName, int line) {
-        var currentName = "";
-        var currentParent = firstNodeParent;
-
-        val max = path.size();
-        var i = 0;
-        while(i < max) {
-            var qname = path.get(i);
-
-            currentName = qname.getLocalName();
-            if (currentParent instanceof DataNodeContainerBuilder) {
-                var dataNodeContainerParent = currentParent as DataNodeContainerBuilder;
-                var SchemaNodeBuilder nodeFound = dataNodeContainerParent.getDataChildByName(currentName);
-                // if not found, search in notifications
-                if (nodeFound == null && currentParent instanceof ModuleBuilder) {
-                    nodeFound = searchNotifications(currentParent as ModuleBuilder, currentName);
-                }
-                // if not found, search in rpcs
-                if (nodeFound == null && currentParent instanceof ModuleBuilder) {
-                    nodeFound = searchRpcs(currentParent as ModuleBuilder, currentName);
-                }
-                if (nodeFound == null) {
-                    return null
+    public static def DataSchemaNodeBuilder findSchemaNode(List<QName> path, SchemaNodeBuilder parentNode) {
+        var DataSchemaNodeBuilder node
+        var SchemaNodeBuilder parent = parentNode
+        var int i = 0;
+        while (i < path.size) {
+            val String name = path.get(i).localName
+            if (parent instanceof DataNodeContainerBuilder) {
+                node = (parent as DataNodeContainerBuilder).getDataChildByName(name)
+            } else if (parent instanceof ChoiceBuilder) {
+                node = (parent as ChoiceBuilder).getCaseNodeByName(name)
+            } else if (parent instanceof RpcDefinitionBuilder) {
+                if ("input".equals(name)) {
+                    node = (parent as RpcDefinitionBuilder).input
+                } else if ("output".equals(name)) {
+                    node = (parent as RpcDefinitionBuilder).output
                 } else {
-                    currentParent = nodeFound
-                }
-            } else if (currentParent instanceof ChoiceBuilder) {
-                val choiceParent = currentParent as ChoiceBuilder;
-                currentParent = choiceParent.getCaseNodeByName(currentName);
-            } else if (currentParent instanceof RpcDefinitionBuilder) {
-                val rpc = currentParent as RpcDefinitionBuilder;
-                if ("input".equals(currentName)) {
-                    currentParent = rpc.input;
-                } else if ("output".equals(currentName)) {
-                    currentParent = rpc.output;
+                    return null
                 }
             } else {
-                throw new YangParseException(moduleName, line,
-                        "Error in augment parsing: failed to find node " + currentName);
+                return null
             }
 
-            // if node in path not found, return null
-            if (currentParent == null) {
-                return null;
+            if (i < path.size - 1) {
+                parent = node
             }
-            i = i + 1; 
+            i = i + 1
         }
-        return currentParent;
+
+        return node
     }
 
-    private static def searchNotifications(ModuleBuilder parent, String name) {
-        for(notification : parent.notifications) {
-            if(notification.getQName().localName.equals(name)) {
-                return notification;
-            }
-        }
-        return null;
-    }
+    public static def SchemaNodeBuilder findSchemaNodeInModule(List<QName> pathToNode, ModuleBuilder module) {
+        val List<QName> path = new ArrayList(pathToNode)
+        val QName first = path.remove(0)
 
-    private static def searchRpcs(ModuleBuilder parent, String name) {
-        for(rpc : parent.rpcs) {
-            if(rpc.getQName().localName.equals(name)) {
-                return rpc;
+        var SchemaNodeBuilder node = module.getDataChildByName(first.localName)
+        if (node == null) {
+            val notifications = module.notifications
+            for (notification : notifications) {
+                if (notification.QName.localName.equals(first.localName)) {
+                    node = notification
+                }
             }
         }
-        return null;
+        if (node == null) {
+            val rpcs = module.rpcs
+            for (rpc : rpcs) {
+                if (rpc.QName.localName.equals(first.localName)) {
+                    node = rpc
+                }
+            }
+        }
+        if (node == null) {
+            return null;
+        }
+
+        if (!path.empty) {
+            node = findSchemaNode(path, node)
+        }
+
+        return node
     }
 
-    private static def nextLevel(List<QName> path){
-        return path.subList(1,path.size)
-    }
-    
     /**
      * Find augment target node and perform augmentation.
      *
@@ -393,140 +374,23 @@ public final class ParserUtils {
      *            path to augment target
      * @return true if augmentation process succeed, false otherwise
      */
-    public static def boolean processAugmentation(AugmentationSchemaBuilder augment, Builder firstNodeParent) {
+    public static def boolean processAugmentation(AugmentationSchemaBuilder augment, ModuleBuilder firstNodeParent) {
         val path = augment.targetPath.path
-        // traverse augment target path and try to reach target node
-        val targetNode = findNode(firstNodeParent, path, augment.moduleName, augment.line);
+        var Builder targetNode = findSchemaNodeInModule(path, firstNodeParent as ModuleBuilder)
         if(targetNode === null) return false;
 
         if ((targetNode instanceof DataNodeContainerBuilder)) {
             val targetDataNodeContainer = targetNode as DataNodeContainerBuilder;
             augment.setTargetNodeSchemaPath(targetDataNodeContainer.getPath());
-            fillAugmentTarget(augment, targetDataNodeContainer);
         } else if (targetNode instanceof ChoiceBuilder) {
             val targetChoiceBuilder = targetNode as ChoiceBuilder;
             augment.setTargetNodeSchemaPath(targetChoiceBuilder.getPath());
-            fillAugmentTarget(augment, targetChoiceBuilder);
         } else {
             throw new YangParseException(augment.getModuleName(), augment.getLine(),
                 "Error in augment parsing: The target node MUST be either a container, list, choice, case, input, output, or notification node.");
         }
+        fillAugmentTarget(augment, targetNode);
         (targetNode as AugmentationTargetBuilder).addAugmentation(augment);
-        augment.setResolved(true);
-        return true;
-    }
-
-    /**
-     * Find augment target node in given context and perform augmentation.
-     *
-     * @param augment
-     * @param path
-     *            path to augment target
-     * @param module
-     *            current module
-     * @param prefix
-     *            current prefix of target module
-     * @param context
-     *            SchemaContext containing already resolved modules
-     * @return true if augment process succeed, false otherwise
-     */
-    public static def boolean processAugmentationOnContext(AugmentationSchemaBuilder augment, List<QName> path,
-        ModuleBuilder module, String prefix, SchemaContext context) {
-        val int line = augment.getLine();
-        val Module dependentModule = findModuleFromContext(context, module, prefix, line);
-        if (dependentModule === null) {
-            throw new YangParseException(module.getName(), line,
-                "Error in augment parsing: failed to find module with prefix " + prefix + ".");
-        }
-
-        var currentName = path.get(0).getLocalName();
-        var SchemaNode currentParent = dependentModule.getDataChildByName(currentName);
-        if (currentParent === null) {
-            val notifications = dependentModule.getNotifications();
-            for (NotificationDefinition ntf : notifications) {
-                if (ntf.getQName().getLocalName().equals(currentName)) {
-                    currentParent = ntf;
-                }
-            }
-        }
-        if (currentParent === null) {
-            throw new YangParseException(module.getName(), line,
-                "Error in augment parsing: failed to find node " + currentName + ".");
-        }
-
-        for (qname : path.nextLevel) {
-            currentName = qname.getLocalName();
-            if (currentParent instanceof DataNodeContainer) {
-                currentParent = (currentParent as DataNodeContainer).getDataChildByName(currentName);
-            } else if (currentParent instanceof ChoiceNode) {
-                currentParent = (currentParent as ChoiceNode).getCaseNodeByName(currentName);
-            } else {
-                throw new YangParseException(augment.getModuleName(), line,
-                    "Error in augment parsing: failed to find node " + currentName);
-            }
-
-            // if node in path not found, return false
-            if (currentParent === null) {
-                throw new YangParseException(module.getName(), line,
-                    "Error in augment parsing: failed to find node " + currentName + ".");
-            }
-        }
-
-        val oldPath = currentParent.path;
-
-        if (!(currentParent instanceof AugmentationTarget)) {
-            throw new YangParseException(module.getName(), line,
-                "Target of type " + currentParent.class + " cannot be augmented.");
-        }
-
-        switch (currentParent) {
-            case (currentParent instanceof ContainerSchemaNodeImpl): {
-
-                // includes container, input and output statement
-                val c = currentParent as ContainerSchemaNodeImpl;
-                val cb = c.toBuilder();
-                fillAugmentTarget(augment, cb);
-                (cb as AugmentationTargetBuilder ).addAugmentation(augment);
-                cb.rebuild();
-            }
-            case (currentParent instanceof ListSchemaNodeImpl): {
-                val l = currentParent as ListSchemaNodeImpl;
-                val lb = l.toBuilder();
-                fillAugmentTarget(augment, lb);
-                (lb as AugmentationTargetBuilder ).addAugmentation(augment);
-                lb.rebuild();
-                augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-                augment.setResolved(true);
-            }
-            case (currentParent instanceof ChoiceNodeImpl): {
-                val ch = currentParent as ChoiceNodeImpl;
-                val chb = ch.toBuilder();
-                fillAugmentTarget(augment, chb);
-                (chb as AugmentationTargetBuilder ).addAugmentation(augment);
-                chb.rebuild();
-                augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-                augment.setResolved(true);
-            }
-            case (currentParent instanceof ChoiceCaseNodeImpl): {
-                val chc = currentParent as ChoiceCaseNodeImpl;
-                val chcb = chc.toBuilder();
-                fillAugmentTarget(augment, chcb);
-                (chcb as AugmentationTargetBuilder ).addAugmentation(augment);
-                chcb.rebuild();
-                augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-                augment.setResolved(true);
-            }
-            case (currentParent instanceof NotificationDefinitionImpl): {
-                val nd = currentParent as NotificationDefinitionImpl;
-                val nb = nd.toBuilder();
-                fillAugmentTarget(augment, nb);
-                (nb as AugmentationTargetBuilder ).addAugmentation(augment);
-                nb.rebuild();
-                augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
-                augment.setResolved(true);
-            }
-        }
-        augment.setTargetNodeSchemaPath(new SchemaPath(oldPath.getPath(), oldPath.isAbsolute()));
         augment.setResolved(true);
         return true;
     }
@@ -537,8 +401,8 @@ public final class ParserUtils {
         if (baseString.contains(":")) {
             val String[] splittedBase = baseString.split(":");
             if (splittedBase.length > 2) {
-                throw new YangParseException(module.getName(), line, "Failed to parse identityref base: " +
-                    baseString);
+                throw new YangParseException(module.getName(), line,
+                    "Failed to parse identityref base: " + baseString);
             }
             val prefix = splittedBase.get(0);
             val name = splittedBase.get(1);
@@ -553,7 +417,7 @@ public final class ParserUtils {
     }
 
     public static def IdentitySchemaNode findBaseIdentityFromContext(Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            ModuleBuilder module, String baseString, int line, SchemaContext context) {
+        ModuleBuilder module, String baseString, int line, SchemaContext context) {
         var IdentitySchemaNode result = null;
 
         val String[] splittedBase = baseString.split(":");
@@ -606,5 +470,82 @@ public final class ParserUtils {
         return parent as ModuleBuilder;
     }
 
-}
+    public static def Set<DataSchemaNodeBuilder> wrapChildNodes(String moduleName, int line, Set<DataSchemaNode> nodes,
+        SchemaPath parentPath, URI ns, Date rev, String pref) {
+        val Set<DataSchemaNodeBuilder> result = new HashSet()
 
+        for (DataSchemaNode node : nodes) {
+            val qname = new QName(ns, rev, pref, node.QName.localName)
+            val DataSchemaNodeBuilder wrapped = wrapChildNode(moduleName, line, node, parentPath, qname)
+            result.add(wrapped)
+        }
+        return result
+    }
+
+    public static def DataSchemaNodeBuilder wrapChildNode(String moduleName, int line, DataSchemaNode node,
+        SchemaPath parentPath, QName qname) {
+        val List<QName> path = new ArrayList(parentPath.getPath())
+        path.add(qname)
+        val SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute())
+
+        if (node instanceof AnyXmlSchemaNode) {
+            return new AnyXmlBuilder(moduleName, line, qname, schemaPath, (node as AnyXmlSchemaNode));
+        } else if (node instanceof ChoiceNode) {
+            return new ChoiceBuilder(moduleName, line, qname, schemaPath, (node as ChoiceNode));
+        } else if (node instanceof ContainerSchemaNode) {
+            return new ContainerSchemaNodeBuilder(moduleName, line, qname, schemaPath, (node as ContainerSchemaNode));
+        } else if (node instanceof LeafSchemaNode) {
+            return new LeafSchemaNodeBuilder(moduleName, line, qname, schemaPath, (node as LeafSchemaNode));
+        } else if (node instanceof LeafListSchemaNode) {
+            return new LeafListSchemaNodeBuilder(moduleName, line, qname, schemaPath, (node as LeafListSchemaNode));
+        } else if (node instanceof ListSchemaNode) {
+            return new ListSchemaNodeBuilder(moduleName, line, qname, schemaPath, (node as ListSchemaNode));
+        } else if (node instanceof ChoiceCaseNode) {
+            return new ChoiceCaseBuilder(moduleName, line, qname, schemaPath, (node as ChoiceCaseNode));
+        } else {
+            throw new YangParseException(moduleName, line,
+                "Failed to copy node: Unknown type of DataSchemaNode: " + node)
+        }
+    }
+
+    public static def Set<GroupingBuilder> wrapGroupings(String moduleName, int line, Set<GroupingDefinition> nodes,
+        SchemaPath parentPath, URI ns, Date rev, String pref) {
+        val Set<GroupingBuilder> result = new HashSet()
+        for (GroupingDefinition node : nodes) {
+            val qname = new QName(ns, rev, pref, node.QName.localName)
+            val List<QName> path = new ArrayList(parentPath.getPath())
+            path.add(qname)
+            val SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute())
+            result.add(new GroupingBuilderImpl(moduleName, line, qname, schemaPath, node))
+        }
+        return result
+    }
+
+    public static def Set<TypeDefinitionBuilder> wrapTypedefs(String moduleName, int line, DataNodeContainer dataNode,
+        SchemaPath parentPath, URI ns, Date rev, String pref) {
+        val Set<TypeDefinition<?>> nodes = dataNode.typeDefinitions
+        val Set<TypeDefinitionBuilder> result = new HashSet()
+        for (TypeDefinition<?> node : nodes) {
+            val qname = new QName(ns, rev, pref, node.QName.localName)
+            val List<QName> path = new ArrayList(parentPath.getPath())
+            path.add(qname)
+            val SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute())
+            result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, (node as ExtendedType)))
+        }
+        return result
+    }
+
+    public static def List<UnknownSchemaNodeBuilder> wrapUnknownNodes(String moduleName, int line,
+        List<UnknownSchemaNode> nodes, SchemaPath parentPath, URI ns, Date rev, String pref) {
+        val List<UnknownSchemaNodeBuilder> result = new ArrayList()
+        for (UnknownSchemaNode node : nodes) {
+            val qname = new QName(ns, rev, pref, node.QName.localName)
+            val List<QName> path = new ArrayList(parentPath.getPath())
+            path.add(qname)
+            val SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute())
+            result.add(new UnknownSchemaNodeBuilder(moduleName, line, qname, schemaPath, (node as UnknownSchemaNode)))
+        }
+        return result
+    }
+
+}

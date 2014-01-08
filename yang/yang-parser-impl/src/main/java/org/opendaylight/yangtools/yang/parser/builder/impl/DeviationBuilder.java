@@ -7,28 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
-import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+import org.opendaylight.yangtools.yang.parser.util.*;
 
 public final class DeviationBuilder extends AbstractBuilder {
-    private final String targetPathStr;
     private boolean isBuilt;
     private final DeviationImpl instance;
-
+    private final String targetPathStr;
     private SchemaPath targetPath;
-    private String reference;
-    private final List<UnknownSchemaNodeBuilder> addedUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
     DeviationBuilder(final String moduleName, final int line, final String targetPathStr) {
         super(moduleName, line);
@@ -42,21 +32,20 @@ public final class DeviationBuilder extends AbstractBuilder {
     }
 
     @Override
-    public Deviation build(YangNode parent) {
+    public Deviation build() {
         if (targetPath == null) {
             throw new YangParseException(moduleName, line, "Unresolved deviation target");
         }
 
         if (!isBuilt) {
             instance.setTargetPath(targetPath);
-            instance.setReference(reference);
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(instance));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
+            instance.addUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
         }
@@ -87,7 +76,7 @@ public final class DeviationBuilder extends AbstractBuilder {
     }
 
     public void setReference(final String reference) {
-        this.reference = reference;
+        instance.reference = reference;
     }
 
     @Override
@@ -99,7 +88,7 @@ public final class DeviationBuilder extends AbstractBuilder {
         private SchemaPath targetPath;
         private Deviate deviate;
         private String reference;
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
         private DeviationImpl() {
         }
@@ -127,18 +116,14 @@ public final class DeviationBuilder extends AbstractBuilder {
             return reference;
         }
 
-        private void setReference(final String reference) {
-            this.reference = reference;
-        }
-
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
+            return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
+        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
             if (unknownSchemaNodes != null) {
-                this.unknownNodes = unknownSchemaNodes;
+                this.unknownNodes.addAll(unknownSchemaNodes);
             }
         }
 

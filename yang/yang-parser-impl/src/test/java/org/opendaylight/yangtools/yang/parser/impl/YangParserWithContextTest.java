@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,23 +26,8 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
@@ -59,7 +47,7 @@ public class YangParserWithContextTest {
 
         resource = "/context-test/test1.yang";
         InputStream stream2 = new FileInputStream(getClass().getResource(resource).getPath());
-        Module module = TestUtils.loadModuleWithContext(stream2, context);
+        Module module = TestUtils.loadModuleWithContext("test1", stream2, context);
         stream2.close();
         assertNotNull(module);
 
@@ -97,7 +85,7 @@ public class YangParserWithContextTest {
         }
         Module testModule;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test2.yang").getPath())) {
-            testModule = TestUtils.loadModuleWithContext(stream, context);
+            testModule = TestUtils.loadModuleWithContext("test2", stream, context);
         }
         assertNotNull(testModule);
 
@@ -200,7 +188,7 @@ public class YangParserWithContextTest {
         }
         Module module;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test2.yang").getPath())) {
-            module = TestUtils.loadModuleWithContext(stream, context);
+            module = TestUtils.loadModuleWithContext("test2", stream, context);
         }
         assertNotNull(module);
 
@@ -276,7 +264,7 @@ public class YangParserWithContextTest {
 
         Module module;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test3.yang").getPath())) {
-            module = TestUtils.loadModuleWithContext(stream, context);
+            module = TestUtils.loadModuleWithContext("test3", stream, context);
         }
         assertNotNull(module);
 
@@ -308,7 +296,7 @@ public class YangParserWithContextTest {
 
         Module module;
         try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test3.yang").getPath())) {
-            module = TestUtils.loadModuleWithContext(stream, context);
+            module = TestUtils.loadModuleWithContext("test3", stream, context);
         }
 
         ContainerSchemaNode network = (ContainerSchemaNode) module.getDataChildByName("network");
@@ -335,11 +323,6 @@ public class YangParserWithContextTest {
             context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
         }
 
-        Set<Module> contextModules = context.getModules();
-        Module t3 = TestUtils.findModule(contextModules, "test4");
-        ContainerSchemaNode interfaces = (ContainerSchemaNode) t3.getDataChildByName("interfaces");
-        ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
-
         // load another modules and parse them against already existing context
         Set<Module> modules;
         try (InputStream stream1 = new FileInputStream(getClass().getResource("/context-augment-test/test1.yang")
@@ -352,6 +335,10 @@ public class YangParserWithContextTest {
             modules = TestUtils.loadModulesWithContext(input, context);
         }
         assertNotNull(modules);
+
+        Module t3 = TestUtils.findModule(modules, "test4");
+        ContainerSchemaNode interfaces = (ContainerSchemaNode) t3.getDataChildByName("interfaces");
+        ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
 
         // test augmentation process
         ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName("augment-holder");
