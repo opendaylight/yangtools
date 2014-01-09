@@ -110,6 +110,38 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         actualPath.pop();
     }
 
+    @Override public void enterSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
+        moduleName = stringFromNode(ctx);
+        LOGGER.debug("entering submodule " + moduleName);
+        enterLog("module", moduleName, 0);
+        actualPath.push(new Stack<QName>());
+
+        moduleBuilder = new ModuleBuilder(moduleName);
+
+        String description = null;
+        String reference = null;
+        for (int i = 0; i < ctx.getChildCount(); i++) {
+            ParseTree child = ctx.getChild(i);
+            if (child instanceof Description_stmtContext) {
+                description = stringFromNode(child);
+            } else if (child instanceof Reference_stmtContext) {
+                reference = stringFromNode(child);
+            } else {
+                if (description != null && reference != null) {
+                    break;
+                }
+            }
+        }
+        moduleBuilder.setDescription(description);
+        moduleBuilder.setReference(reference);
+    }
+
+    @Override
+    public void exitSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
+        exitLog("submodule", "");
+        actualPath.pop();
+    }
+
     @Override
     public void enterModule_header_stmts(Module_header_stmtsContext ctx) {
         enterLog("module_header", "", ctx.getStart().getLine());
