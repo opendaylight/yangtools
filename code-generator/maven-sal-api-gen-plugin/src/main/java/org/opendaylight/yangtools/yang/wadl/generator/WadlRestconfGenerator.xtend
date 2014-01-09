@@ -38,7 +38,7 @@ class WadlRestconfGenerator {
 		this.context = context
 		for (module : modules) {
 			val dataContainers = module.childNodes.filter[it|it instanceof ContainerSchemaNode || it instanceof ListSchemaNode]
-			if (!dataContainers.empty) {
+			if (!dataContainers.empty || !module.rpcs.nullOrEmpty) {
 				configData = new ArrayList
 				operationalData = new ArrayList
 				

@@ -1,11 +1,12 @@
 package org.opendaylight.yangtools.yang.wadl.generator.maven;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +46,8 @@ public class WadlGenTest {
         final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
         final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
         final CodeGenerator generator = new WadlGenerator();
-        generator.generateSources(context, GENERATOR_OUTPUT_DIR, modulesToBuild);
+        Collection<File> generatedWadlFiles = generator.generateSources(context, GENERATOR_OUTPUT_DIR, modulesToBuild);
+        assertEquals(3, generatedWadlFiles.size());
     }
 
     private static List<File> getSourceFiles(String path) throws FileNotFoundException {

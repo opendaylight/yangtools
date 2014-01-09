@@ -1,0 +1,32 @@
+module controller-network-rpcs {
+	yang-version 1;
+	namespace "urn:opendaylight:controller:network:rpcs";
+	prefix "topos";
+	
+	import ietf-inet-types { prefix "inet"; }
+	
+	revision 2013-05-20 {
+	   description "Initial demo";
+	}
+	
+	rpc activate-software-image {
+         input {
+             leaf image-name {
+                 type string;
+             }
+         }
+         output {
+             leaf status {
+                 type string;
+             }
+         }
+     }
+     
+     rpc rock-the-house {
+         input {
+             leaf zip-code {
+                 type string;
+             }
+         }
+     }
+}
