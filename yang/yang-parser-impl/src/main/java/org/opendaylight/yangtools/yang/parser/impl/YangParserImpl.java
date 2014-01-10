@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.*;
-import java.util.Map.Entry;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -59,9 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+
 
 public final class YangParserImpl implements YangModelParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
@@ -80,7 +77,6 @@ public final class YangParserImpl implements YangModelParser {
 
         FileInputStream yangFileStream = null;
         LinkedHashMap<InputStream, File> streamToFileMap = new LinkedHashMap<>();
-
         try {
             yangFileStream = new FileInputStream(yangFile);
             streamToFileMap.put(yangFileStream, yangFile);
@@ -110,131 +106,141 @@ public final class YangParserImpl implements YangModelParser {
         moduleBuilders.add(main);
         filterImports(main, new ArrayList<>(parsedBuilders.values()), moduleBuilders);
 
+        // module builders sorted by dependencies
         ModuleBuilder[] builders = new ModuleBuilder[moduleBuilders.size()];
         moduleBuilders.toArray(builders);
-
-        // module dependency graph sorted
-        List<ModuleBuilder> sorted = ModuleDependencySort.sort(builders);
-
-        final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
-        return new LinkedHashSet<>(build(modules).values());
+        List<ModuleBuilder> sortedBuilders = ModuleDependencySort.sort(builders);
+        LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sortedBuilders);
+        Collection<Module> unsorted = build(modules).values();
+        return new LinkedHashSet<>(ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
     }
 
     @Override
     public Set<Module> parseYangModels(final List<File> yangFiles) {
-        return Sets.newLinkedHashSet(parseYangModelsMapped(yangFiles).values());
+        Collection<Module> unsorted = parseYangModelsMapped(yangFiles).values();
+        return new LinkedHashSet<>(ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
     }
 
     @Override
     public Set<Module> parseYangModels(final List<File> yangFiles, final SchemaContext context) {
-        if (yangFiles != null) {
-            final Map<InputStream, File> inputStreams = Maps.newHashMap();
-
-            for (final File yangFile : yangFiles) {
-                try {
-                    inputStreams.put(new FileInputStream(yangFile), yangFile);
-                } catch (FileNotFoundException e) {
-                    LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
-                }
-            }
-
-            Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(
-                    Lists.newArrayList(inputStreams.keySet()), builderToStreamMap);
-
-            for (InputStream is : inputStreams.keySet()) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    LOG.debug("Failed to close stream.");
-                }
-            }
-
-            Collection<Module> built = buildWithContext(modules, context).values();
-            for (Module m : context.getModules()) {
-                if (!built.contains(m)) {
-                    built.add(m);
-                }
-            }
-            return new LinkedHashSet<>(built);
+        if (yangFiles == null) {
+            return Collections.emptySet();
         }
-        return Collections.emptySet();
+
+        final Map<InputStream, File> inputStreams = new HashMap<>();
+        for (final File yangFile : yangFiles) {
+            try {
+                inputStreams.put(new FileInputStream(yangFile), yangFile);
+            } catch (FileNotFoundException e) {
+                LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
+            }
+        }
+
+        List<InputStream> yangModelStreams = new ArrayList<>(inputStreams.keySet());
+        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams,
+                builderToStreamMap, null);
+
+        for (InputStream is : inputStreams.keySet()) {
+            try {
+                is.close();
+            } catch (IOException e) {
+                LOG.debug("Failed to close stream.");
+            }
+        }
+
+        final Collection<Module> unsorted = buildWithContext(modules, context).values();
+        if (context != null) {
+            for (Module m : context.getModules()) {
+                if (!unsorted.contains(m)) {
+                    unsorted.add(m);
+                }
+            }
+        }
+        return new LinkedHashSet<>(ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
     }
 
     @Override
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams) {
-        return Sets.newHashSet(parseYangModelsFromStreamsMapped(yangModelStreams).values());
+        Collection<Module> unsorted = parseYangModelsFromStreamsMapped(yangModelStreams).values();
+        return new LinkedHashSet<>(ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
     }
 
     @Override
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, SchemaContext context) {
-        if (yangModelStreams != null) {
-            Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuildersWithContext(
-                    yangModelStreams, builderToStreamMap, context);
+        if (yangModelStreams == null) {
+            return Collections.emptySet();
+        }
 
-            final Set<Module> built = new LinkedHashSet<>(buildWithContext(modules, context).values());
+        final Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
+        final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams,
+                builderToStreamMap, context);
+        final Set<Module> unsorted = new LinkedHashSet<>(buildWithContext(modules, context).values());
+        if (context != null) {
             for (Module m : context.getModules()) {
-                if (!built.contains(m)) {
-                    built.add(m);
+                if (!unsorted.contains(m)) {
+                    unsorted.add(m);
                 }
             }
-            return built;
         }
-        return Collections.emptySet();
+        return new LinkedHashSet<>(ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
     }
 
     @Override
     public Map<File, Module> parseYangModelsMapped(List<File> yangFiles) {
-        if (yangFiles != null) {
-            final Map<InputStream, File> inputStreams = Maps.newHashMap();
-
-            for (final File yangFile : yangFiles) {
-                try {
-                    inputStreams.put(new FileInputStream(yangFile), yangFile);
-                } catch (FileNotFoundException e) {
-                    LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
-                }
-            }
-
-            Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(
-                    Lists.newArrayList(inputStreams.keySet()), builderToStreamMap);
-
-            for (InputStream is : inputStreams.keySet()) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    LOG.debug("Failed to close stream.");
-                }
-            }
-
-            Map<File, Module> retVal = Maps.newLinkedHashMap();
-            Map<ModuleBuilder, Module> builderToModuleMap = build(modules);
-
-            for (Entry<ModuleBuilder, Module> builderToModule : builderToModuleMap.entrySet()) {
-                retVal.put(inputStreams.get(builderToStreamMap.get(builderToModule.getKey())),
-                        builderToModule.getValue());
-            }
-
-            return retVal;
+        if (yangFiles == null) {
+            return Collections.emptyMap();
         }
-        return Collections.emptyMap();
+
+        final Map<InputStream, File> inputStreams = new HashMap<>();
+        for (final File yangFile : yangFiles) {
+            try {
+                inputStreams.put(new FileInputStream(yangFile), yangFile);
+            } catch (FileNotFoundException e) {
+                LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
+            }
+        }
+
+        List<InputStream> yangModelStreams = new ArrayList<>(inputStreams.keySet());
+        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, builderToStreamMap,
+                null);
+
+        for (InputStream is : inputStreams.keySet()) {
+            try {
+                is.close();
+            } catch (IOException e) {
+                LOG.debug("Failed to close stream.");
+            }
+        }
+
+        Map<File, Module> result = new LinkedHashMap<>();
+        Map<ModuleBuilder, Module> builderToModuleMap = build(modules);
+        Set<ModuleBuilder> keyset = builderToModuleMap.keySet();
+        List<ModuleBuilder> sorted = ModuleDependencySort.sort(keyset.toArray(new ModuleBuilder[keyset.size()]));
+        for (ModuleBuilder key : sorted) {
+            result.put(inputStreams.get(builderToStreamMap.get(key)), builderToModuleMap.get(key));
+        }
+        return result;
     }
 
     @Override
     public Map<InputStream, Module> parseYangModelsFromStreamsMapped(final List<InputStream> yangModelStreams) {
-        Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
-
-        final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams,
-                builderToStreamMap);
-        Map<InputStream, Module> retVal = Maps.newLinkedHashMap();
-        Map<ModuleBuilder, Module> builderToModuleMap = build(modules);
-
-        for (Entry<ModuleBuilder, Module> builderToModule : builderToModuleMap.entrySet()) {
-            retVal.put(builderToStreamMap.get(builderToModule.getKey()), builderToModule.getValue());
+        if (yangModelStreams == null) {
+            return Collections.emptyMap();
         }
-        return retVal;
+
+        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, builderToStreamMap,
+                null);
+        Map<InputStream, Module> result = new LinkedHashMap<>();
+        Map<ModuleBuilder, Module> builderToModuleMap = build(modules);
+        Set<ModuleBuilder> keyset = builderToModuleMap.keySet();
+        List<ModuleBuilder> sorted = ModuleDependencySort.sort(keyset.toArray(new ModuleBuilder[keyset.size()]));
+        for (ModuleBuilder key : sorted) {
+            result.put(builderToStreamMap.get(key), builderToModuleMap.get(key));
+        }
+        return result;
     }
 
     @Override
@@ -267,13 +273,7 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuilders(final List<InputStream> yangFileStreams,
-            Map<ModuleBuilder, InputStream> streamToBuilderMap) {
-        return resolveModuleBuildersWithContext(yangFileStreams, streamToBuilderMap, null);
-    }
-
-    private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuildersWithContext(
-            final List<InputStream> yangFileStreams, final Map<ModuleBuilder, InputStream> streamToBuilderMap,
-            final SchemaContext context) {
+            final Map<ModuleBuilder, InputStream> streamToBuilderMap, final SchemaContext context) {
         Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(yangFileStreams, streamToBuilderMap);
         ModuleBuilder[] builders = new ModuleBuilder[parsedBuilders.size()];
         parsedBuilders.values().toArray(builders);
@@ -285,7 +285,6 @@ public final class YangParserImpl implements YangModelParser {
         } else {
             sorted = ModuleDependencySort.sortWithContext(context, builders);
         }
-
         return orderModules(sorted);
     }
 
@@ -297,8 +296,7 @@ public final class YangParserImpl implements YangModelParser {
      * @return modules ordered by name and revision
      */
     private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(List<ModuleBuilder> modules) {
-        // LinkedHashMap must be used to preserve order
-        LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
+        final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
         for (final ModuleBuilder builder : modules) {
             if (builder == null) {
                 continue;
