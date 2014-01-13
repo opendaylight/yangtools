@@ -74,7 +74,7 @@ public class RefineTest {
         loadTestResources();
         assertEquals("Incorrect number of test files.", 1, testModels.size());
 
-        Set<UsesNodeBuilder> usesNodeBuilders = getModuleBuilder().getUsesNodes();
+        Set<UsesNodeBuilder> usesNodeBuilders = getModuleBuilder().getUsesNodeBuilders();
         List<RefineHolder> refineHolders = null;
         Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders = null;
         for (UsesNodeBuilder usesNodeBuilder : usesNodeBuilders) {
@@ -82,7 +82,7 @@ public class RefineTest {
                 refineHolders = usesNodeBuilder.getRefines();
                 // FIXME
                 //GroupingUtils.updateUsesParent(usesNodeBuilder);
-                dataSchemaNodeBuilders = usesNodeBuilder.getParent().getChildNodes();
+                dataSchemaNodeBuilders = usesNodeBuilder.getParent().getChildNodeBuilders();
                 break;
             }
         }

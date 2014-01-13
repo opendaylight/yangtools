@@ -62,6 +62,9 @@ public final class GroupingUtils {
         }
 
         ModuleBuilder dependentModule;
+        if(groupingPrefix == null) {
+            dependentModule = module;
+        }
         if (groupingPrefix.equals(module.getPrefix())) {
             dependentModule = module;
         } else {
