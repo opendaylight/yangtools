@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools</artifactId>
-        <version>0.5-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -12,9 +12,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>restconf-common</module>
-        <module>restconf-jaxrs-api</module>
-        <module>restconf-util</module>
+        <module>restconf-client-api</module>
     </modules>
 
     <dependencyManagement>
@@ -22,17 +20,17 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-common</artifactId>
-                <version>${project.version}</version>
+                <version>0.5.9-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-api</artifactId>
-                <version>${project.version}</version>
+                <version>0.5.9-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-data-util</artifactId>
-                <version>${project.version}</version>
+                <artifactId>yang-data-impl</artifactId>
+                <version>0.5.9-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
@@ -41,34 +39,8 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-model-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-binding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-parser-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-parser-impl
-                </artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-maven-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-maven-plugin-spi</artifactId>
-                <version>${project.version}</version>
+                <version>0.6.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -86,9 +58,12 @@
                 </configuration>
             </plugin>
             <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
                 <configuration>
                     <stylesheet>maven</stylesheet>
                 </configuration>
@@ -109,15 +84,6 @@
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>${maven.bundle.version}</version>
                     <extensions>true</extensions>
-                    <executions>
-                        <execution>
-                            <id>bundle-manifest</id>
-                            <phase>process-classes</phase>
-                            <goals>
-                                <goal>manifest</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -167,6 +133,6 @@
         </plugins>
     </reporting>
 
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
 </project>
 

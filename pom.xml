@@ -42,6 +42,7 @@
         <module>yang</module>
         <module>code-generator</module>
         <module>model</module>
+        <module>restconf</module>
         <!-- module>third-party</module -->
     </modules>
 
