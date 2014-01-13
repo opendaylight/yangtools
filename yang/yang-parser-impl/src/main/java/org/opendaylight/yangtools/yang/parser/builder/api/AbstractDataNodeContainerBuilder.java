@@ -67,9 +67,9 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
 
     @Override
     public void addChildNode(DataSchemaNodeBuilder child) {
-        String childName = child.getQName().getLocalName();
+        QName childName = child.getQName();
         for (DataSchemaNodeBuilder addedChildNode : addedChildNodes) {
-            if (addedChildNode.getQName().getLocalName().equals(childName)) {
+            if (addedChildNode.getQName().equals(childName)) {
                 throw new YangParseException(child.getModuleName(), child.getLine(), "Can not add '" + child + "' to '"
                         + this + "' in module '" + moduleName + "': node with same name already declared at line "
                         + addedChildNode.getLine());
@@ -109,9 +109,9 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
 
     @Override
     public void addGrouping(GroupingBuilder grouping) {
-        String groupingName = grouping.getQName().getLocalName();
+        QName groupingName = grouping.getQName();
         for (GroupingBuilder addedGrouping : addedGroupings) {
-            if (addedGrouping.getQName().getLocalName().equals(groupingName)) {
+            if (addedGrouping.getQName().equals(groupingName)) {
                 throw new YangParseException(grouping.getModuleName(), grouping.getLine(), "Can not add '" + grouping
                         + "': grouping with same name already declared in module '" + moduleName + "' at line "
                         + addedGrouping.getLine());
