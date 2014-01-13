@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
@@ -41,9 +43,6 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private final AugmentationSchemaImpl instance;
 
     private String whenCondition;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
 
     private final String augmentTargetStr;
     private SchemaPath targetPath;
@@ -79,12 +78,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public AugmentationSchema build(YangNode parent) {
+    public AugmentationSchema build() {
         if (!built) {
-            instance.setParent(parent);
-            instance.setDescription(description);
-            instance.setReference(reference);
-            instance.setStatus(status);
             instance.setTargetPath(targetNodeSchemaPath);
 
             RevisionAwareXPath whenStmt;
@@ -97,23 +92,23 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
             // CHILD NODES
             for (DataSchemaNodeBuilder node : addedChildNodes) {
-                DataSchemaNode child = node.build(instance);
+                DataSchemaNode child = node.build();
                 childNodes.put(child.getQName(), child);
             }
-            instance.setChildNodes(childNodes);
+            instance.addChildNodes(childNodes);
 
             // USES
             for (UsesNodeBuilder builder : addedUsesNodes) {
-                usesNodes.add(builder.build(instance));
+                usesNodes.add(builder.build());
             }
-            instance.setUses(usesNodes);
+            instance.addUses(usesNodes);
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(instance));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
+            instance.addUnknownSchemaNodes(unknownNodes);
 
             built = true;
         }
@@ -150,33 +145,33 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
     @Override
     public String getDescription() {
-        return description;
+        return instance.description;
     }
 
     @Override
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(final String description) {
+        instance.description = description;
     }
 
     @Override
     public String getReference() {
-        return reference;
+        return instance.reference;
     }
 
     @Override
-    public void setReference(String reference) {
-        this.reference = reference;
+    public void setReference(final String reference) {
+        instance.reference = reference;
     }
 
     @Override
     public Status getStatus() {
-        return status;
+        return instance.status;
     }
 
     @Override
     public void setStatus(Status status) {
         if (status != null) {
-            this.status = status;
+            instance.status = status;
         }
     }
 
@@ -251,27 +246,17 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     private final class AugmentationSchemaImpl implements AugmentationSchema {
-        private YangNode parent;
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
-        private Map<QName, DataSchemaNode> childNodes = Collections.emptyMap();
-        private Set<UsesNode> uses = Collections.emptySet();
+        private final Map<QName, DataSchemaNode> childNodes = new HashMap<>();
+        private final Set<UsesNode> uses = new HashSet<>();
         private String description;
         private String reference;
         private Status status;
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
         private AugmentationSchemaImpl(SchemaPath targetPath) {
             this.targetPath = targetPath;
-        }
-
-        @Override
-        public YangNode getParent() {
-            return parent;
-        }
-
-        private void setParent(YangNode parent) {
-            this.parent = parent;
         }
 
         @Override
@@ -296,12 +281,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         public Set<DataSchemaNode> getChildNodes() {
             final Set<DataSchemaNode> result = new TreeSet<DataSchemaNode>(Comparators.SCHEMA_NODE_COMP);
             result.addAll(childNodes.values());
-            return result;
+            return Collections.unmodifiableSet(result);
         }
 
-        private void setChildNodes(Map<QName, DataSchemaNode> childNodes) {
+        private void addChildNodes(Map<QName, DataSchemaNode> childNodes) {
             if (childNodes != null) {
-                this.childNodes = childNodes;
+                this.childNodes.putAll(childNodes);
             }
         }
 
@@ -316,12 +301,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
         @Override
         public Set<UsesNode> getUses() {
-            return uses;
+            return Collections.unmodifiableSet(uses);
         }
 
-        private void setUses(Set<UsesNode> uses) {
+        private void addUses(Set<UsesNode> uses) {
             if (uses != null) {
-                this.uses = uses;
+                this.uses.addAll(uses);
             }
         }
 
@@ -339,17 +324,9 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return description;
         }
 
-        private void setDescription(String description) {
-            this.description = description;
-        }
-
         @Override
         public String getReference() {
             return reference;
-        }
-
-        private void setReference(String reference) {
-            this.reference = reference;
         }
 
         @Override
@@ -357,18 +334,14 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return status;
         }
 
-        private void setStatus(Status status) {
-            this.status = status;
-        }
-
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
+            return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
+        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
             if (unknownSchemaNodes != null) {
-                this.unknownNodes = unknownSchemaNodes;
+                this.unknownNodes.addAll(unknownSchemaNodes);
             }
         }
 

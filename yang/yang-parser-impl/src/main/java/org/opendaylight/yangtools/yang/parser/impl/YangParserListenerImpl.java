@@ -10,12 +10,8 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.*;
 
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Stack;
+import java.text.*;
+import java.util.*;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.*;
@@ -54,27 +50,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.YangTypesConverter;
-import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.FeatureBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.*;
+import org.opendaylight.yangtools.yang.parser.builder.impl.*;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -305,8 +282,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         addNodeToPath(qname);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
 
-        ExtensionBuilder builder = moduleBuilder.addExtension(qname, line);
-        builder.setPath(path);
+        ExtensionBuilder builder = moduleBuilder.addExtension(qname, line, path);
         parseSchemaNodeArgs(ctx, builder);
 
         String argument = null;
@@ -340,8 +316,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         addNodeToPath(typedefQName);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
 
-        TypeDefinitionBuilder builder = moduleBuilder.addTypedef(line, typedefQName);
-        builder.setPath(path);
+        TypeDefinitionBuilder builder = moduleBuilder.addTypedef(line, typedefQName, path);
         parseSchemaNodeArgs(ctx, builder);
         builder.setUnits(parseUnits(ctx));
         builder.setDefaultValue(parseDefault(ctx));
@@ -451,8 +426,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         addNodeToPath(groupQName);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
 
-        GroupingBuilder builder = moduleBuilder.addGrouping(ctx.getStart().getLine(), groupQName);
-        builder.setPath(path);
+        GroupingBuilder builder = moduleBuilder.addGrouping(ctx.getStart().getLine(), groupQName, path);
         parseSchemaNodeArgs(ctx, builder);
 
         moduleBuilder.enterNode(builder);
@@ -703,8 +677,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         addNodeToPath(choiceQName);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
 
-        ChoiceBuilder builder = moduleBuilder.addChoice(line, choiceQName);
-        builder.setPath(path);
+        ChoiceBuilder builder = moduleBuilder.addChoice(line, choiceQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -738,8 +711,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         addNodeToPath(caseQName);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
 
-        ChoiceCaseBuilder builder = moduleBuilder.addCase(line, caseQName);
-        builder.setPath(path);
+        ChoiceCaseBuilder builder = moduleBuilder.addCase(line, caseQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -762,8 +734,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         addNodeToPath(notificationQName);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
 
-        NotificationBuilder builder = moduleBuilder.addNotification(line, notificationQName);
-        builder.setPath(path);
+        NotificationBuilder builder = moduleBuilder.addNotification(line, notificationQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -803,13 +774,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             qname = new QName(namespace, revision, yangModelPrefix, nodeParameter);
         }
 
-        UnknownSchemaNodeBuilder builder = moduleBuilder.addUnknownSchemaNode(line, qname);
+        addNodeToPath(new QName(namespace, revision, yangModelPrefix, nodeParameter));
+        SchemaPath path = createActualSchemaPath(actualPath.peek());
+
+        UnknownSchemaNodeBuilder builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
         builder.setNodeType(nodeType);
         builder.setNodeParameter(nodeParameter);
-        addNodeToPath(new QName(namespace, revision, yangModelPrefix, nodeParameter));
 
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
-        builder.setPath(path);
 
         parseSchemaNodeArgs(ctx, builder);
         moduleBuilder.enterNode(builder);
@@ -828,12 +799,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("rpc", rpcName, line);
 
         QName rpcQName = new QName(namespace, revision, yangModelPrefix, rpcName);
-        RpcDefinitionBuilder rpcBuilder = moduleBuilder.addRpc(line, rpcQName);
-        moduleBuilder.enterNode(rpcBuilder);
         addNodeToPath(rpcQName);
-
         SchemaPath path = createActualSchemaPath(actualPath.peek());
-        rpcBuilder.setPath(path);
+
+        RpcDefinitionBuilder rpcBuilder = moduleBuilder.addRpc(line, rpcQName, path);
+        moduleBuilder.enterNode(rpcBuilder);
+
 
         parseSchemaNodeArgs(ctx, rpcBuilder);
     }
@@ -897,12 +868,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("feature", featureName, line);
 
         QName featureQName = new QName(namespace, revision, yangModelPrefix, featureName);
-        FeatureBuilder featureBuilder = moduleBuilder.addFeature(line, featureQName);
-        moduleBuilder.enterNode(featureBuilder);
         addNodeToPath(featureQName);
-
         SchemaPath path = createActualSchemaPath(actualPath.peek());
-        featureBuilder.setPath(path);
+
+        FeatureBuilder featureBuilder = moduleBuilder.addFeature(line, featureQName, path);
+        moduleBuilder.enterNode(featureBuilder);
+
         parseSchemaNodeArgs(ctx, featureBuilder);
     }
 
@@ -954,12 +925,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("identity", identityName, line);
 
         final QName identityQName = new QName(namespace, revision, yangModelPrefix, identityName);
-        IdentitySchemaNodeBuilder builder = moduleBuilder.addIdentity(identityQName, line);
-        moduleBuilder.enterNode(builder);
         addNodeToPath(identityQName);
-
         SchemaPath path = createActualSchemaPath(actualPath.peek());
-        builder.setPath(path);
+
+        IdentitySchemaNodeBuilder builder = moduleBuilder.addIdentity(identityQName, line, path);
+        moduleBuilder.enterNode(builder);
+
 
         parseSchemaNodeArgs(ctx, builder);
 

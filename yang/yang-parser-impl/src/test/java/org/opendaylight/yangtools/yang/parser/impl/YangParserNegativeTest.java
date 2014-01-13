@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
@@ -66,7 +63,8 @@ public class YangParserNegativeTest {
                 }
             }
         } catch (YangParseException e) {
-            assertEquals("Error in module 'test3' at line 10: Error in augment parsing: failed to find augment target",
+            assertEquals(
+                    "Error in module 'test3' at line 10: Error in augment parsing: failed to find augment target: augment /data:unknown",
                     e.getMessage());
         }
     }

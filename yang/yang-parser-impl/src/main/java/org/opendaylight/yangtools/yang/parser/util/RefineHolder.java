@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 
 public final class RefineHolder extends AbstractBuilder {
@@ -105,7 +104,7 @@ public final class RefineHolder extends AbstractBuilder {
     }
 
     @Override
-    public Object build(YangNode parent) {
+    public Object build() {
         return null;
     }
 

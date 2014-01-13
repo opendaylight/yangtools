@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,16 +28,16 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder implements DataNodeContainerBuilder {
     protected QName qname;
 
-    protected Map<QName, DataSchemaNode> childNodes = new TreeMap<QName, DataSchemaNode>(Comparators.QNAME_COMP);
-    protected final Set<DataSchemaNodeBuilder> addedChildNodes = new HashSet<DataSchemaNodeBuilder>();
+    protected final Map<QName, DataSchemaNode> childNodes = new TreeMap<>(Comparators.QNAME_COMP);
+    protected final Set<DataSchemaNodeBuilder> addedChildNodes = new HashSet<>();
 
-    protected Set<GroupingDefinition> groupings = new TreeSet<GroupingDefinition>(Comparators.SCHEMA_NODE_COMP);
-    protected final Set<GroupingBuilder> addedGroupings = new HashSet<GroupingBuilder>();
+    protected final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+    protected final Set<GroupingBuilder> addedGroupings = new HashSet<>();
 
-    protected Set<TypeDefinition<?>> typedefs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+    protected final Set<TypeDefinition<?>> typedefs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
     protected final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<>();
 
-    protected Set<UsesNode> usesNodes = new HashSet<>();
+    protected final Set<UsesNode> usesNodes = new HashSet<>();
     protected final Set<UsesNodeBuilder> addedUsesNodes = new HashSet<>();
 
     protected AbstractDataNodeContainerBuilder(final String moduleName, final int line, final QName qname) {
@@ -52,15 +51,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
     }
 
     @Override
-    public Collection<DataSchemaNode> getChildNodes() {
-        if (childNodes == null) {
-            return Collections.emptySet();
-        }
-        return childNodes.values();
-    }
-
-    @Override
-    public Set<DataSchemaNodeBuilder> getChildNodeBuilders() {
+    public Set<DataSchemaNodeBuilder> getChildNodes() {
         return addedChildNodes;
     }
 
@@ -88,6 +79,11 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
     }
 
     @Override
+    public void addChildNodeToContext(DataSchemaNodeBuilder child) {
+        addedChildNodes.add(child);
+    }
+
+    @Override
     public void addChildNode(DataSchemaNode child) {
         QName childName = child.getQName();
         for (QName qname : childNodes.keySet()) {
@@ -105,10 +101,6 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
             return Collections.emptySet();
         }
         return groupings;
-    }
-
-    public void setGroupings(final Set<GroupingDefinition> groupings) {
-        this.groupings = groupings;
     }
 
     public Set<GroupingBuilder> getGroupingBuilders() {
@@ -131,10 +123,6 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
     @Override
     public Set<UsesNodeBuilder> getUsesNodes() {
         return addedUsesNodes;
-    }
-
-    public void setUsesnodes(final Set<UsesNode> usesNodes) {
-        this.usesNodes = usesNodes;
     }
 
     @Override

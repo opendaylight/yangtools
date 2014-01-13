@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import java.util.List;
 
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
 /**
@@ -65,7 +64,7 @@ public interface Builder {
      *
      * @return collection of UnknownSchemaNodeBuilder objects
      */
-    List<UnknownSchemaNodeBuilder> getUnknownNodeBuilders();
+    List<UnknownSchemaNodeBuilder> getUnknownNodes();
 
     /**
      * Build YANG data model node.
@@ -76,9 +75,6 @@ public interface Builder {
      *
      * @return YANG data model node
      */
-    Object build(YangNode parent);
+    Object build();
 
-    interface Rebuildable<T extends Builder> {
-        T toBuilder();
-    }
 }

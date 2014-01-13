@@ -9,32 +9,13 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.*;
+import java.util.*;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 
 final class TestUtils {
@@ -73,13 +54,20 @@ final class TestUtils {
         return modules.iterator().next();
     }
 
-    public static Module loadModuleWithContext(final InputStream stream, final SchemaContext context)
+    public static Module loadModuleWithContext(final String name, final InputStream stream, final SchemaContext context)
             throws IOException {
         final YangModelParser parser = new YangParserImpl();
         final List<InputStream> input = Collections.singletonList(stream);
         final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input, context));
         stream.close();
-        return modules.iterator().next();
+        Module result = null;
+        for (Module module : modules) {
+            if (module.getName().equals(name)) {
+                result = module;
+                break;
+            }
+        }
+        return result;
     }
 
     public static Set<Module> loadModulesWithContext(final List<InputStream> input, final SchemaContext context)

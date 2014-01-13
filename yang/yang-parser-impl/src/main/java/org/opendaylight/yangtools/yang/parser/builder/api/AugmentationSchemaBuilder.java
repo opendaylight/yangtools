@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
+import org.opendaylight.yangtools.yang.model.api.*;
 
 /**
  * Interface for builders of 'augment' statement.
@@ -66,7 +63,7 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
      */
     void setTargetNodeSchemaPath(SchemaPath path);
 
-    AugmentationSchema build(YangNode parent);
+    AugmentationSchema build();
 
     /**
      * Get information about augmentation process.

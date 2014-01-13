@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -38,57 +41,69 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     private boolean isBuilt;
     private final GroupingDefinitionImpl instance;
     private SchemaPath schemaPath;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
-    private boolean addedByUses;
 
-    public GroupingBuilderImpl(final String moduleName, final int line, final QName qname) {
+    public GroupingBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        instance = new GroupingDefinitionImpl(qname);
+        schemaPath = path;
+        instance = new GroupingDefinitionImpl(qname, path);
+    }
+
+    public GroupingBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path, final GroupingDefinition base) {
+        super(moduleName, line, base.getQName());
+        schemaPath = path;
+        instance = new GroupingDefinitionImpl(qname, path);
+
+        instance.description = base.getDescription();
+        instance.reference = base.getReference();
+        instance.status = base.getStatus();
+        instance.addedByUses = base.isAddedByUses();
+
+        URI ns = qname.getNamespace();
+        Date rev = qname.getRevision();
+        String pref = qname.getPrefix();
+        addedChildNodes.addAll(ParserUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
+        addedGroupings.addAll(ParserUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
+        addedTypedefs.addAll(ParserUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
+        addedUnknownNodes.addAll(ParserUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
+                rev, pref));
+
+        instance.uses.addAll(base.getUses());
     }
 
     @Override
-    public GroupingDefinition build(YangNode parent) {
+    public GroupingDefinition build() {
         if (!isBuilt) {
-            instance.setParent(parent);
-            instance.setPath(schemaPath);
-            instance.setDescription(description);
-            instance.setReference(reference);
-            instance.setStatus(status);
-            instance.setAddedByUses(addedByUses);
-
             // CHILD NODES
             for (DataSchemaNodeBuilder node : addedChildNodes) {
-                DataSchemaNode child = node.build(instance);
+                DataSchemaNode child = node.build();
                 childNodes.put(child.getQName(), child);
             }
-            instance.setChildNodes(childNodes);
+            instance.addChildNodes(childNodes);
 
             // GROUPINGS
             for (GroupingBuilder builder : addedGroupings) {
-                groupings.add(builder.build(instance));
+                groupings.add(builder.build());
             }
-            instance.setGroupings(groupings);
+            instance.addGroupings(groupings);
 
             // TYPEDEFS
             for (TypeDefinitionBuilder entry : addedTypedefs) {
-                typedefs.add(entry.build(instance));
+                typedefs.add(entry.build());
             }
-            instance.setTypeDefinitions(typedefs);
+            instance.addTypeDefinitions(typedefs);
 
             // USES
             for (UsesNodeBuilder builder : addedUsesNodes) {
-                usesNodes.add(builder.build(instance));
+                usesNodes.add(builder.build());
             }
-            instance.setUses(usesNodes);
+            instance.addUses(usesNodes);
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build(instance));
+                unknownNodes.add(b.build());
             }
             Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
+            instance.addUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
         }
@@ -123,7 +138,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         for (GroupingBuilder node : addedGroupings) {
             GroupingBuilder copy = CopyUtils.copy(node, newParent, true);
             copy.setAddedByUses(true);
-            for (DataSchemaNodeBuilder childNode : copy.getChildNodeBuilders()) {
+            for (DataSchemaNodeBuilder childNode : copy.getChildNodes()) {
                 ParserUtils.setNodeAddedByUses(childNode);
             }
             nodes.add(copy);
@@ -143,11 +158,6 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public void setQName(QName qname) {
-        this.qname = qname;
-    }
-
-    @Override
     public Set<TypeDefinitionBuilder> getTypeDefinitionBuilders() {
         return addedTypedefs;
     }
@@ -162,58 +172,51 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         addedTypedefs.add(type);
     }
 
-    public void setTypedefs(final Set<TypeDefinition<?>> typedefs) {
-        this.typedefs = typedefs;
-    }
-
     @Override
     public SchemaPath getPath() {
         return schemaPath;
     }
 
     @Override
-    public void setPath(SchemaPath schemaPath) {
-        this.schemaPath = schemaPath;
-    }
-
-    @Override
     public String getDescription() {
-        return description;
+        return instance.description;
     }
 
     @Override
     public void setDescription(final String description) {
-        this.description = description;
+        instance.description = description;
     }
 
     @Override
     public String getReference() {
-        return reference;
+        return instance.reference;
     }
 
     @Override
     public void setReference(final String reference) {
-        this.reference = reference;
+        instance.reference = reference;
     }
 
     @Override
     public Status getStatus() {
-        return status;
+        return instance.status;
     }
 
     @Override
-    public void setStatus(final Status status) {
-        this.status = status;
+    public void setStatus(Status status) {
+        if (status != null) {
+            instance.status = status;
+        }
     }
 
     @Override
     public boolean isAddedByUses() {
-        return addedByUses;
+        return instance.addedByUses;
     }
 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
-        this.addedByUses = addedByUses;
+        instance.addedByUses = addedByUses;
     }
 
     @Override
@@ -265,20 +268,20 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
 
     private final class GroupingDefinitionImpl implements GroupingDefinition {
         private final QName qname;
-        private SchemaPath path;
-        private YangNode parent;
+        private final SchemaPath path;
         private String description;
         private String reference;
         private Status status;
         private boolean addedByUses;
-        private Map<QName, DataSchemaNode> childNodes = Collections.emptyMap();
-        private Set<GroupingDefinition> groupings = Collections.emptySet();
-        private Set<TypeDefinition<?>> typeDefinitions = Collections.emptySet();
-        private Set<UsesNode> uses = Collections.emptySet();
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final Map<QName, DataSchemaNode> childNodes = new HashMap<>();
+        private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+        private final Set<TypeDefinition<?>> typeDefinitions = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+        private final Set<UsesNode> uses = new HashSet<>();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
-        private GroupingDefinitionImpl(final QName qname) {
+        private GroupingDefinitionImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
+            this.path = path;
         }
 
         @Override
@@ -291,26 +294,9 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
             return path;
         }
 
-        private void setPath(SchemaPath path) {
-            this.path = path;
-        }
-
-        @Override
-        public YangNode getParent() {
-            return parent;
-        }
-
-        private void setParent(YangNode parent) {
-            this.parent = parent;
-        }
-
         @Override
         public String getDescription() {
             return description;
-        }
-
-        private void setDescription(String description) {
-            this.description = description;
         }
 
         @Override
@@ -318,17 +304,9 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
             return reference;
         }
 
-        private void setReference(String reference) {
-            this.reference = reference;
-        }
-
         @Override
         public Status getStatus() {
             return status;
-        }
-
-        private void setStatus(Status status) {
-            this.status = status;
         }
 
         @Override
@@ -336,56 +314,61 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
             return addedByUses;
         }
 
-        private void setAddedByUses(final boolean addedByUses) {
-            this.addedByUses = addedByUses;
-        }
-
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            final Set<DataSchemaNode> result = new TreeSet<DataSchemaNode>(Comparators.SCHEMA_NODE_COMP);
+            final Set<DataSchemaNode> result = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
             result.addAll(childNodes.values());
-            return result;
+            return Collections.unmodifiableSet(result);
         }
 
-        private void setChildNodes(Map<QName, DataSchemaNode> childNodes) {
-            this.childNodes = childNodes;
+        private void addChildNodes(Map<QName, DataSchemaNode> childNodes) {
+            if (childNodes != null) {
+                this.childNodes.putAll(childNodes);
+            }
+
         }
 
         @Override
         public Set<GroupingDefinition> getGroupings() {
-            return groupings;
+            return Collections.unmodifiableSet(groupings);
         }
 
-        private void setGroupings(Set<GroupingDefinition> groupings) {
-            this.groupings = groupings;
+        private void addGroupings(Set<GroupingDefinition> groupings) {
+            if (groupings != null) {
+                this.groupings.addAll(groupings);
+            }
         }
 
         @Override
         public Set<UsesNode> getUses() {
-            return uses;
+            return Collections.unmodifiableSet(uses);
         }
 
-        private void setUses(Set<UsesNode> uses) {
-            this.uses = uses;
+        private void addUses(Set<UsesNode> uses) {
+            if (uses != null) {
+                this.uses.addAll(uses);
+            }
         }
 
         @Override
         public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return typeDefinitions;
+            return Collections.unmodifiableSet(typeDefinitions);
         }
 
-        private void setTypeDefinitions(Set<TypeDefinition<?>> typeDefinitions) {
-            this.typeDefinitions = typeDefinitions;
+        private void addTypeDefinitions(Set<TypeDefinition<?>> typeDefinitions) {
+            if (typeDefinitions != null) {
+                this.typeDefinitions.addAll(typeDefinitions);
+            }
         }
 
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
+            return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
+        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
-                this.unknownNodes = unknownNodes;
+                this.unknownNodes.addAll(unknownNodes);
             }
         }
 

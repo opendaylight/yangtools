@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,18 +35,11 @@ public interface DataNodeContainerBuilder extends Builder {
     SchemaPath getPath();
 
     /**
-     * Get already built child nodes.
-     *
-     * @return collection of child nodes
-     */
-    Collection<DataSchemaNode> getChildNodes();
-
-    /**
      * Get builders of child nodes.
      *
      * @return collection child nodes builders
      */
-    Set<DataSchemaNodeBuilder> getChildNodeBuilders();
+    Set<DataSchemaNodeBuilder> getChildNodes();
 
     /**
      * Get child node by name.
@@ -66,6 +58,8 @@ public interface DataNodeContainerBuilder extends Builder {
     void addChildNode(DataSchemaNodeBuilder childNode);
 
     void addChildNode(DataSchemaNode childNode);
+
+    void addChildNodeToContext(DataSchemaNodeBuilder childNode);
 
     /**
      * Get already built groupings defined in this node.

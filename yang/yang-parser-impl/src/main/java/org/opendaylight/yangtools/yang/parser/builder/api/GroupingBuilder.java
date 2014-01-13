@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.YangNode;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
 /**
@@ -22,9 +20,7 @@ public interface GroupingBuilder extends DataNodeContainerBuilder, SchemaNodeBui
     /**
      * Build GroupingDefinition object from this builder.
      */
-    GroupingDefinition build(YangNode parent);
-
-    void setQName(QName qname);
+    GroupingDefinition build();
 
     Set<DataSchemaNodeBuilder> instantiateChildNodes(Builder newParent);
 
