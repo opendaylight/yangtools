@@ -22,6 +22,7 @@ import java.util.*;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
@@ -104,7 +105,7 @@ public class RefineTest {
 
         Method methodResolveModuleBuilders = null;
         try {
-            methodResolveModuleBuilders = cl.getDeclaredMethod("resolveModuleBuilders", List.class, Map.class);
+            methodResolveModuleBuilders = cl.getDeclaredMethod("resolveModuleBuilders", List.class, Map.class, SchemaContext.class);
         } catch (NoSuchMethodException | SecurityException e1) {
         }
         assertNotNull("The method resolveModuleBuilders cannot be found", methodResolveModuleBuilders);
@@ -124,7 +125,7 @@ public class RefineTest {
         try {
             methodResolveModuleBuilders.setAccessible(true);
             modules = (Map<String, Map<Date, ModuleBuilder>>) methodResolveModuleBuilders.invoke(yangParserImpl,
-                    Lists.newArrayList(inputStreams.keySet()), builderToStreamMap);
+                    Lists.newArrayList(inputStreams.keySet()), builderToStreamMap, null);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
