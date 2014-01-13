@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -18,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 final class SchemaContextImpl implements SchemaContext {
     private final Set<Module> modules;
@@ -37,7 +40,8 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Set<Module> getModules() {
-        return modules;
+        List<Module> sorted = ModuleDependencySort.sort(modules.toArray(new Module[modules.size()]));
+        return new LinkedHashSet<Module>(sorted);
     }
 
     @Override

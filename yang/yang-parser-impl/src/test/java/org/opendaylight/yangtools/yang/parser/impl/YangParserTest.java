@@ -10,14 +10,20 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
@@ -807,6 +813,101 @@ public class YangParserTest {
         YangModelParser parser = new YangParserImpl();
         modules = parser.parseYangModels(yangFile, dependenciesDir);
         assertEquals(6, modules.size());
+    }
+
+    @Test
+    public void testSorting() throws FileNotFoundException {
+        // Correct order: m2, m4, m6, m8, m7, m6, m3, m1
+        File yangFile = new File(getClass().getResource("/sorting-test/m1.yang").getPath());
+        File dependenciesDir = new File(getClass().getResource("/sorting-test").getPath());
+        YangModelParser parser = new YangParserImpl();
+        modules = parser.parseYangModels(yangFile, dependenciesDir);
+        SchemaContext ctx = new SchemaContextImpl(modules);
+        checkOrder(modules);
+        assertSetEquals(modules, ctx.getModules());
+
+        // ##########
+        parser = new YangParserImpl();
+        final File testDir = dependenciesDir;
+        final String[] fileList = testDir.list();
+        final List<File> testFiles = new ArrayList<>();
+        if (fileList == null) {
+            throw new FileNotFoundException(dependenciesDir.getAbsolutePath());
+        }
+        for (String fileName : fileList) {
+            testFiles.add(new File(testDir, fileName));
+        }
+        Set<Module> newModules = parser.parseYangModels(testFiles);
+        assertSetEquals(newModules, modules);
+        ctx = new SchemaContextImpl(newModules);
+        assertSetEquals(newModules, ctx.getModules());
+        // ##########
+        newModules = parser.parseYangModels(testFiles, null);
+        assertSetEquals(newModules, modules);
+        ctx = new SchemaContextImpl(newModules);
+        assertSetEquals(newModules, ctx.getModules());
+        // ##########
+        List<InputStream> streams = new ArrayList<>();
+        for (File f : testFiles) {
+            streams.add(new FileInputStream(f));
+        }
+        newModules = parser.parseYangModelsFromStreams(streams);
+        assertSetEquals(newModules, modules);
+        ctx = new SchemaContextImpl(newModules);
+        assertSetEquals(newModules, ctx.getModules());
+        // ##########
+        streams.clear();
+        for (File f : testFiles) {
+            streams.add(new FileInputStream(f));
+        }
+        newModules = parser.parseYangModelsFromStreams(streams, null);
+        assertSetEquals(newModules, modules);
+        ctx = new SchemaContextImpl(newModules);
+        assertSetEquals(newModules, ctx.getModules());
+        // ##########
+        Map<File, Module> mapped = parser.parseYangModelsMapped(testFiles);
+        newModules = new LinkedHashSet<>(mapped.values());
+        assertSetEquals(newModules, modules);
+        ctx = new SchemaContextImpl(newModules);
+        assertSetEquals(newModules, ctx.getModules());
+        // ##########
+        streams.clear();
+        for (File f : testFiles) {
+            streams.add(new FileInputStream(f));
+        }
+        Map<InputStream, Module> mappedStreams = parser.parseYangModelsFromStreamsMapped(streams);
+        newModules = new LinkedHashSet<>(mappedStreams.values());
+        assertSetEquals(newModules, modules);
+        ctx = new SchemaContextImpl(newModules);
+        assertSetEquals(newModules, ctx.getModules());
+    }
+
+    private void checkOrder(Collection<Module> modules) {
+        Iterator<Module> it = modules.iterator();
+        Module m = it.next();
+        assertEquals("m2", m.getName());
+        m = it.next();
+        assertEquals("m4", m.getName());
+        m = it.next();
+        assertEquals("m6", m.getName());
+        m = it.next();
+        assertEquals("m8", m.getName());
+        m = it.next();
+        assertEquals("m7", m.getName());
+        m = it.next();
+        assertEquals("m5", m.getName());
+        m = it.next();
+        assertEquals("m3", m.getName());
+        m = it.next();
+        assertEquals("m1", m.getName());
+    }
+
+    private void assertSetEquals(Set<Module> s1, Set<Module> s2) {
+        assertEquals(s1, s2);
+        Iterator<Module> it = s1.iterator();
+        for (Module m : s2) {
+            assertEquals(m, it.next());
+        }
     }
 
 }
