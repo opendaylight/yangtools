@@ -44,6 +44,8 @@ import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 public class YangParserTest {
+    public static final String FS = File.separator;
+
     private final URI fooNS = URI.create("urn:opendaylight.foo");
     private final URI barNS = URI.create("urn:opendaylight.bar");
     private final URI bazNS = URI.create("urn:opendaylight.baz");
@@ -908,6 +910,30 @@ public class YangParserTest {
         for (Module m : s2) {
             assertEquals(m, it.next());
         }
+    }
+
+    @Test
+    public void testSubmodules() {
+        String yangFilePath = getClass().getResource(FS + "submodule-test" + FS + "subfoo.yang").getPath();
+        String directoryPath = getClass().getResource(FS + "model").getPath();
+
+        File directory = new File(directoryPath);
+        File yangFile = new File(yangFilePath);
+
+        Set<Module> modules = new YangParserImpl().parseYangModels(yangFile, directory);
+        assertEquals(3, modules.size());
+
+        Module foo = TestUtils.findModule(modules, "foo");
+
+        DataSchemaNode id = foo.getDataChildByName("id");
+        assertNotNull(id);
+        DataSchemaNode subExt = foo.getDataChildByName("sub-ext");
+        assertNotNull(subExt);
+        DataSchemaNode subTransfer = foo.getDataChildByName("sub-transfer");
+        assertNotNull(subTransfer);
+
+        assertEquals(2, foo.getExtensionSchemaNodes().size());
+        assertEquals(2, foo.getAugmentations().size());
     }
 
 }

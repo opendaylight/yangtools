@@ -59,6 +59,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer
+import com.google.common.base.Preconditions
 
 public final class ParserUtils {
 
@@ -115,7 +116,9 @@ public final class ParserUtils {
         var ModuleBuilder dependentModule = null;
         var Date dependentModuleRevision = null;
 
-        if (prefix.equals(module.getPrefix())) {
+        if(prefix == null) {
+            dependentModule = module;
+        } else if (prefix.equals(module.getPrefix())) {
             dependentModule = module;
         } else {
             val ModuleImport dependentModuleImport = getModuleImport(module, prefix);
@@ -223,7 +226,7 @@ public final class ParserUtils {
      *            augmentation target node
      */
     public static def dispatch fillAugmentTarget(AugmentationSchemaBuilder augment, DataNodeContainerBuilder target) {
-        for (DataSchemaNodeBuilder child : augment.getChildNodes()) {
+        for (DataSchemaNodeBuilder child : augment.getChildNodeBuilders()) {
             val childCopy = CopyUtils.copy(child, target, false);
             if (augment.parent instanceof UsesNodeBuilder) {
                 setNodeAddedByUses(childCopy);
@@ -249,7 +252,7 @@ public final class ParserUtils {
      *            augmentation target choice node
      */
     public static def dispatch fillAugmentTarget(AugmentationSchemaBuilder augment, ChoiceBuilder target) {
-        for (DataSchemaNodeBuilder builder : augment.getChildNodes()) {
+        for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
             val childCopy = CopyUtils.copy(builder, target, false);
             if (augment.parent instanceof UsesNodeBuilder) {
                 setNodeAddedByUses(childCopy);
@@ -257,7 +260,7 @@ public final class ParserUtils {
             setNodeAugmenting(childCopy)
             target.addCase(childCopy);
         }
-        for (UsesNodeBuilder usesNode : augment.getUsesNodes()) {
+        for (UsesNodeBuilder usesNode : augment.getUsesNodeBuilders()) {
             if (usesNode !== null) {
                 throw new YangParseException(augment.getModuleName(), augment.getLine(),
                     "Error in augment parsing: cannot augment choice with nodes from grouping");
@@ -272,7 +275,7 @@ public final class ParserUtils {
         child.setAugmenting(true);
         if (child instanceof DataNodeContainerBuilder) {
             val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
-            for (inner : dataNodeChild.getChildNodes()) {
+            for (inner : dataNodeChild.getChildNodeBuilders()) {
                 setNodeAugmenting(inner);
             }
         } else if (child instanceof ChoiceBuilder) {
@@ -290,7 +293,7 @@ public final class ParserUtils {
         child.setAddedByUses(true);
         if (child instanceof DataNodeContainerBuilder) {
             val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
-            for (inner : dataNodeChild.getChildNodes()) {
+            for (inner : dataNodeChild.getChildNodeBuilders()) {
                 setNodeAddedByUses(inner);
             }
         } else if (child instanceof ChoiceBuilder) {
@@ -338,7 +341,7 @@ public final class ParserUtils {
 
         var SchemaNodeBuilder node = module.getDataChildByName(first.localName)
         if (node == null) {
-            val notifications = module.notifications
+            val notifications = module.getAddedNotifications
             for (notification : notifications) {
                 if (notification.QName.localName.equals(first.localName)) {
                     node = notification
@@ -346,7 +349,7 @@ public final class ParserUtils {
             }
         }
         if (node == null) {
-            val rpcs = module.rpcs
+            val rpcs = module.getAddedRpcs
             for (rpc : rpcs) {
                 if (rpc.QName.localName.equals(first.localName)) {
                     node = rpc
@@ -408,10 +411,10 @@ public final class ParserUtils {
             val name = splittedBase.get(1);
             val dependentModule = findModuleFromBuilders(modules, module, prefix, line);
             if (dependentModule !== null) {
-                result = findIdentity(dependentModule.identities, name);
+                result = findIdentity(dependentModule.getAddedIdentities, name);
             }
         } else {
-            result = findIdentity(module.identities, baseString);
+            result = findIdentity(module.getAddedIdentities, baseString);
         }
         return result;
     }
@@ -467,7 +470,12 @@ public final class ParserUtils {
         while (!(parent instanceof ModuleBuilder)) {
             parent = parent.getParent();
         }
-        return parent as ModuleBuilder;
+        Preconditions.checkState(parent instanceof ModuleBuilder)
+        var parentModule = parent as ModuleBuilder
+        if(parentModule.submodule) {
+           parentModule = parentModule.parent; 
+        }
+        return parentModule;
     }
 
     public static def Set<DataSchemaNodeBuilder> wrapChildNodes(String moduleName, int line, Set<DataSchemaNode> nodes,

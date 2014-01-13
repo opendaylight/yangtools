@@ -50,8 +50,12 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         return qname;
     }
 
+    public Map<QName, DataSchemaNode> getChildNodes() {
+        return childNodes;
+    }
+
     @Override
-    public Set<DataSchemaNodeBuilder> getChildNodes() {
+    public Set<DataSchemaNodeBuilder> getChildNodeBuilders() {
         return addedChildNodes;
     }
 
@@ -121,7 +125,16 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
     }
 
     @Override
-    public Set<UsesNodeBuilder> getUsesNodes() {
+    public Set<TypeDefinition<?>> getTypeDefinitions() {
+        return typedefs;
+    }
+
+    public Set<UsesNode> getUsesNodes() {
+        return usesNodes;
+    }
+
+    @Override
+    public Set<UsesNodeBuilder> getUsesNodeBuilders() {
         return addedUsesNodes;
     }
 
