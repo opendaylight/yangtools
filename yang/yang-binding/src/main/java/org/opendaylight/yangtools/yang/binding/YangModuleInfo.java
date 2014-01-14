@@ -16,27 +16,28 @@ public interface YangModuleInfo {
 
     /**
      * Returns yang module name
-     * 
+     *
      * @return
      */
     String getName();
-    
+
     /**
-     * 
+     *
      * Returns revision of yang module.
-     * 
+     *
      * @return
      */
     String getRevision();
-    
+
     /**
      * Returns XML namespace associated to the YANG module
-     * 
+     *
      * @return XML namespace associated to the YANG module.
      */
     String getNamespace();
-    
+
     InputStream getModuleSourceStream() throws IOException;
-    
+
     ImmutableSet<YangModuleInfo> getImportedModules();
+
 }

@@ -31,6 +31,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -98,20 +99,6 @@ final class Util {
         }
 
         return result;
-    }
-
-    static class NamedFileInputStream extends FileInputStream {
-        private final File file;
-
-        NamedFileInputStream(File file) throws FileNotFoundException {
-            super(file);
-            this.file = file;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + "{" + file + "}";
-        }
     }
 
     private static void toCache(final File rootDir, final Collection<File> yangFiles) {
@@ -216,7 +203,8 @@ final class Util {
                             }
                         });
                         for (File yangFile : yangFiles) {
-                            yangsFromDependencies.add(new NamedFileInputStream(yangFile));
+                            //yangsFromDependencies.add(new NamedFileInputStream(yangFile));
+                            yangsFromDependencies.add(new NamedInputStream(new FileInputStream(yangFile), yangFile.getAbsolutePath()));
                         }
                     }
 
@@ -234,7 +222,8 @@ final class Util {
                             foundFilesForReporting.add(entryName);
                             // This will be closed after all streams are
                             // parsed.
-                            InputStream entryStream = zip.getInputStream(entry);
+                            //InputStream entryStream = zip.getInputStream(entry);
+                            InputStream entryStream = new NamedInputStream(zip.getInputStream(entry), zip.getName());
                             yangsFromDependencies.add(entryStream);
                         }
                     }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,9 +28,9 @@ import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
-import org.opendaylight.yangtools.yang2sources.plugin.Util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
@@ -109,7 +110,7 @@ class YangToSourcesProcessor {
             	log.info(Util.message("No input files found", LOG_PREFIX));
             	return null;
             }
-            
+
             /*
              * Check if any of the listed files changed. If no changes occurred,
              * simply return null, which indicates and of execution.
@@ -129,7 +130,7 @@ class YangToSourcesProcessor {
 
             final List<InputStream> yangsInProject = new ArrayList<>();
             for (final File f : yangFilesInProject) {
-                yangsInProject.add(new NamedFileInputStream(f));
+                yangsInProject.add(new NamedInputStream(new FileInputStream(f), f.getAbsolutePath()));
             }
 
             List<InputStream> all = new ArrayList<>(yangsInProject);

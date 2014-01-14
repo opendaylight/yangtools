@@ -60,6 +60,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
     private static final String AUGMENT_STR = "augment";
 
+    private final String sourcePath;
     private ModuleBuilder moduleBuilder;
     private String moduleName;
     private URI namespace;
@@ -77,6 +78,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         return actualPath.peek().pop();
     }
 
+    public YangParserListenerImpl(String sourcePath) {
+        this.sourcePath = sourcePath;
+    }
+
     @Override
     public void enterModule_stmt(YangParser.Module_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
@@ -84,7 +89,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("module", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
-        moduleBuilder = new ModuleBuilder(moduleName);
+        moduleBuilder = new ModuleBuilder(moduleName, sourcePath);
 
         String description = null;
         String reference = null;
@@ -116,7 +121,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("submodule", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
-        moduleBuilder = new ModuleBuilder(moduleName, true);
+        moduleBuilder = new ModuleBuilder(moduleName, true, sourcePath);
 
         String description = null;
         String reference = null;
