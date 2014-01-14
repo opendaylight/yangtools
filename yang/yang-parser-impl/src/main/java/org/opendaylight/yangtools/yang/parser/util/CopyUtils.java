@@ -122,7 +122,7 @@ public final class CopyUtils {
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAugmenting(old.isAugmenting());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
         copy.getGroupings().addAll(old.getGroupings());
@@ -132,7 +132,7 @@ public final class CopyUtils {
         for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
             copy.addTypedef(copy(tdb, copy, updateQName));
         }
-        for (UsesNodeBuilder oldUses : old.getUsesNodeBuilders()) {
+        for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
@@ -159,7 +159,7 @@ public final class CopyUtils {
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
         copy.getGroupings().addAll(old.getGroupings());
@@ -169,7 +169,7 @@ public final class CopyUtils {
         for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
             copy.addTypedef(copy(tdb, copy, updateQName));
         }
-        for (UsesNodeBuilder oldUses : old.getUsesNodeBuilders()) {
+        for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
         for (AugmentationSchemaBuilder augment : old.getAugmentationBuilders()) {
@@ -258,7 +258,7 @@ public final class CopyUtils {
         copy.setAugmenting(old.isAugmenting());
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
         copy.getGroupings().addAll(old.getGroupings());
@@ -268,7 +268,7 @@ public final class CopyUtils {
         for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
             copy.addTypedef(copy(tdb, copy, updateQName));
         }
-        for (UsesNodeBuilder oldUses : old.getUsesNodeBuilders()) {
+        for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
         for (AugmentationSchemaBuilder augment : old.getAugmentationBuilders()) {
@@ -295,7 +295,7 @@ public final class CopyUtils {
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.setAddedByUses(old.isAddedByUses());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
         copy.getGroupings().addAll(old.getGroupings());
@@ -305,7 +305,7 @@ public final class CopyUtils {
         for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
             copy.addTypedef(copy(tdb, copy, updateQName));
         }
-        for (UsesNodeBuilder oldUses : old.getUsesNodeBuilders()) {
+        for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
@@ -397,10 +397,10 @@ public final class CopyUtils {
         copy.setStatus(old.getStatus());
         copy.addWhenCondition(old.getWhenCondition());
         copy.setTargetNodeSchemaPath(old.getTargetNodeSchemaPath());
-        for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : old.getChildNodes()) {
             copy.addChildNode(copy(childNode, copy, false));
         }
-        for (UsesNodeBuilder oldUses : old.getUsesNodeBuilders()) {
+        for (UsesNodeBuilder oldUses : old.getUsesNodes()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {

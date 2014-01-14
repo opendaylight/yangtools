@@ -18,31 +18,25 @@ public abstract class AbstractCachingSchemaSourceProvider<I, O> implements Schem
 
     @Override
     public Optional<O> getSchemaSource(String moduleName, Optional<String> revision) {
+        return getSchemaSourceImpl(moduleName, revision, defaultDelegate);
+    }
+
+    private Optional<O> getSchemaSourceImpl(String moduleName, Optional<String> revision,
+            SchemaSourceProvider<I> delegate) {
         checkNotNull(moduleName, "Module name should not be null.");
         checkNotNull(revision, "Revision should not be null");
-        return getSchemaSource(SourceIdentifier.create(moduleName, revision));
-    }
-    
-    @Override
-    public Optional<O> getSchemaSource(SourceIdentifier sourceIdentifier) {
-        return getSchemaSourceImpl(sourceIdentifier, defaultDelegate);
-    }
 
-    protected final Optional<O> getSchemaSourceImpl(SourceIdentifier identifier,
-            SchemaSourceProvider<I> delegate) {
-        checkNotNull(identifier, "Source identifier name should not be null.");
-
-        Optional<O> cached = getCachedSchemaSource(identifier);
+        Optional<O> cached = getCachedSchemaSource(moduleName, revision);
         if (cached.isPresent()) {
             return cached;
         }
-        Optional<I> live = delegate.getSchemaSource(identifier);
-        return cacheSchemaSource(identifier, live);
+        Optional<I> live = delegate.getSchemaSource(moduleName, revision);
+        return cacheSchemaSource(moduleName, revision, live);
     }
 
-    abstract protected Optional<O> cacheSchemaSource(SourceIdentifier identifier, Optional<I> stream);
+    abstract protected Optional<O> cacheSchemaSource(String moduleName, Optional<String> revision, Optional<I> stream);
 
-    abstract protected Optional<O> getCachedSchemaSource(SourceIdentifier identifier);
+    abstract protected Optional<O> getCachedSchemaSource(String moduleName, Optional<String> revision);
 
     public SchemaSourceProvider<I> getDelegate() {
         return defaultDelegate;
@@ -53,9 +47,7 @@ public abstract class AbstractCachingSchemaSourceProvider<I, O> implements Schem
         return new SchemaSourceProviderInstance(delegate);
     }
 
-    private class SchemaSourceProviderInstance implements //
-    SchemaSourceProvider<O>, 
-    Delegator<SchemaSourceProvider<I>> {
+    private class SchemaSourceProviderInstance implements SchemaSourceProvider<O>, Delegator<SchemaSourceProvider<I>> {
 
         private final SchemaSourceProvider<I> delegate;
 
@@ -66,17 +58,12 @@ public abstract class AbstractCachingSchemaSourceProvider<I, O> implements Schem
 
         @Override
         public Optional<O> getSchemaSource(String moduleName, Optional<String> revision) {
-            return getSchemaSource(SourceIdentifier.create(moduleName, revision));
+            return getSchemaSourceImpl(moduleName, revision, getDelegate());
         }
 
         @Override
         public SchemaSourceProvider<I> getDelegate() {
             return delegate;
-        }
-
-        @Override
-        public Optional<O> getSchemaSource(SourceIdentifier sourceIdentifier) {
-            return getSchemaSourceImpl(sourceIdentifier, getDelegate());
         }
     }
 }
