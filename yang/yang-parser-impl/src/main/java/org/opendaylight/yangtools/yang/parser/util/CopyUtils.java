@@ -428,6 +428,8 @@ public final class CopyUtils {
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
             c.addUnknownNodeBuilder((copy(un, c, updateQName)));
         }
+        c.setExtensionBuilder(old.getExtensionBuilder());
+        c.setExtensionDefinition(old.getExtensionDefinition());
 
         return c;
     }

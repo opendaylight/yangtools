@@ -187,6 +187,39 @@ public final class GeneratorJavaFile {
         return null;
     }
 
+    private File generateStringToJavaFile(final File parentDir, final String generatedCode, String packageName,
+            final CodeGenerator generator) throws IOException {
+        if (parentDir == null) {
+            LOG.warn("Parent Directory not specified, files will be generated "
+                    + "accordingly to generated Type package path.");
+        }
+        if (generator == null) {
+            LOG.error("Cannot generate Type into Java File because " + "Code Generator instance is NULL!");
+            throw new IllegalArgumentException("Code Generator Cannot be NULL!");
+        }
+        final File packageDir = packageToDirectory(parentDir, packageName);
+
+        if (!packageDir.exists()) {
+            packageDir.mkdirs();
+        }
+
+        if (generatedCode.isEmpty()) {
+            throw new IllegalStateException("Generated code should not be empty!");
+        }
+        final File file = new File(packageDir, "YangModuleInfoImpl.java");
+        try (final OutputStream stream = buildContext.newFileOutputStream(file)) {
+            try (final Writer fw = new OutputStreamWriter(stream)) {
+                try (final BufferedWriter bw = new BufferedWriter(fw)) {
+                    bw.write(generatedCode);
+                }
+            } catch (IOException e) {
+                LOG.error("Failed to write generate output into {}", file.getPath(), e);
+                throw e;
+            }
+        }
+        return file;
+    }
+
     /**
      * Creates the package directory path as concatenation of
      * <code>parentDirectory</code> and parsed <code>packageName</code>. The
@@ -200,7 +233,7 @@ public final class GeneratorJavaFile {
      * @return <code>File</code> object which refers to the new directory for
      *         package <code>packageName</code>
      */
-    private File packageToDirectory(final File parentDirectory, final String packageName) {
+    public static File packageToDirectory(final File parentDirectory, final String packageName) {
         if (packageName == null) {
             throw new IllegalArgumentException("Package Name cannot be NULL!");
         }
