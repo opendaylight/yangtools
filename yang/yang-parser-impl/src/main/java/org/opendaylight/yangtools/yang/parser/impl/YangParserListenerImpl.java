@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.*;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.text.*;
 import java.util.*;
@@ -60,6 +61,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
     private static final String AUGMENT_STR = "augment";
 
+    private final InputStream sourceStream;
     private ModuleBuilder moduleBuilder;
     private String moduleName;
     private URI namespace;
@@ -77,6 +79,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         return actualPath.peek().pop();
     }
 
+    public YangParserListenerImpl(InputStream sourceStream) {
+        this.sourceStream = sourceStream;
+    }
+
     @Override
     public void enterModule_stmt(YangParser.Module_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
@@ -84,7 +90,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("module", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
-        moduleBuilder = new ModuleBuilder(moduleName);
+        moduleBuilder = new ModuleBuilder(moduleName, sourceStream);
 
         String description = null;
         String reference = null;
@@ -116,7 +122,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("submodule", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
-        moduleBuilder = new ModuleBuilder(moduleName, true);
+        moduleBuilder = new ModuleBuilder(moduleName, true, sourceStream);
 
         String description = null;
         String reference = null;

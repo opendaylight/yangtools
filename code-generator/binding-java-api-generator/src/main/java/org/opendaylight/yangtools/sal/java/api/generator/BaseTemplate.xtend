@@ -23,9 +23,6 @@ abstract class BaseTemplate {
     static val paragraphSplitter = Splitter.on("\n\n").omitEmptyStrings();
 
     new(GeneratedType _type) {
-        if (_type == null) {
-            throw new IllegalArgumentException("Generated type reference cannot be NULL!")
-        }
         this.type = _type;
         this.importMap = GeneratorUtil.createImports(type)
     }

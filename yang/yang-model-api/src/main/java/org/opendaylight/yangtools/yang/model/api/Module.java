@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +59,8 @@ import java.util.Set;
  */
 
 public interface Module extends DataNodeContainer, YangNode {
+
+    InputStream getModuleSourceStream();
 
     /**
      * Returns the namespace of the module which is specified as argument of

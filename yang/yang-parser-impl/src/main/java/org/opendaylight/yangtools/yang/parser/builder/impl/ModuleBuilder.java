@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.*;
 
@@ -27,6 +28,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     private final ModuleImpl instance;
     private final String name;
+    private final InputStream sourceStream;
     private final SchemaPath schemaPath;
     private URI namespace;
     private String prefix;
@@ -77,27 +79,28 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     private final List<UnknownSchemaNodeBuilder> allUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
-    public ModuleBuilder(final String name) {
-        this(name, false);
+    public ModuleBuilder(final String name, final InputStream sourceStream) {
+        this(name, false, sourceStream);
     }
 
-    public ModuleBuilder(final String name, final boolean submodule) {
+    public ModuleBuilder(final String name, final boolean submodule, final InputStream sourceStream) {
         super(name, 0, null);
         this.name = name;
+        this.sourceStream = sourceStream;
         schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
-        instance = new ModuleImpl(name);
         this.submodule = submodule;
+        instance = new ModuleImpl(name, sourceStream);
         actualPath.push(this);
     }
 
     public ModuleBuilder(Module base) {
         super(base.getName(), 0, null);
         this.name = base.getName();
+        this.sourceStream = base.getModuleSourceStream();
         schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
-        instance = new ModuleImpl(base.getName());
         submodule = false;
+        instance = new ModuleImpl(base.getName(), base.getModuleSourceStream());
         actualPath.push(this);
-
         namespace = base.getNamespace();
         prefix = base.getPrefix();
         revision = base.getRevision();
@@ -205,6 +208,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         instance.setUnknownSchemaNodes(unknownNodes);
 
         return instance;
+    }
+
+    public InputStream getModuleSourceStream() {
+        return sourceStream;
     }
 
     @Override
@@ -876,6 +883,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private final class ModuleImpl implements Module {
         private URI namespace;
         private final String name;
+        private final InputStream sourceStream;
         private Date revision;
         private String prefix;
         private String yangVersion;
@@ -897,8 +905,14 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         private final Set<IdentitySchemaNode> identities = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
-        private ModuleImpl(String name) {
+        private ModuleImpl(String name, InputStream sourceStream) {
             this.name = name;
+            this.sourceStream = sourceStream;
+        }
+
+        @Override
+        public InputStream getModuleSourceStream() {
+            return sourceStream;
         }
 
         @Override

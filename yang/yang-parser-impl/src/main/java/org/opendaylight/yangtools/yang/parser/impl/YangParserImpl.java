@@ -260,7 +260,7 @@ public final class YangParserImpl implements YangModelParser {
 
         YangParserListenerImpl yangModelParser;
         for (Map.Entry<InputStream, ParseTree> entry : trees.entrySet()) {
-            yangModelParser = new YangParserListenerImpl();
+            yangModelParser = new YangParserListenerImpl(entry.getKey());
             walker.walk(yangModelParser, entry.getValue());
             ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
 
