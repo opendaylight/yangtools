@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.GroupingSort;
 import org.opendaylight.yangtools.yang.parser.util.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
@@ -262,7 +263,13 @@ public final class YangParserImpl implements YangModelParser {
 
         YangParserListenerImpl yangModelParser;
         for (Map.Entry<InputStream, ParseTree> entry : trees.entrySet()) {
-            yangModelParser = new YangParserListenerImpl();
+            InputStream is = entry.getKey();
+            String path = null;
+            if (is instanceof NamedFileInputStream) {
+                NamedFileInputStream nis = (NamedFileInputStream)is;
+                path = nis.getFileDestination();
+            }
+            yangModelParser = new YangParserListenerImpl(path);
             walker.walk(yangModelParser, entry.getValue());
             ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
 

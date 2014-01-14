@@ -298,8 +298,8 @@ public final class ParserListenerUtils {
     /**
      * Create java.util.List of key node names.
      *
-     * @param keyDefinition
-     *            key definition as string
+     * @param ctx
+     *            Key_stmtContext context
      * @return YANG list key as java.util.List of key node names
      */
     public static List<String> createListKey(final Key_stmtContext ctx) {

@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.maven.sal.api.gen.plugin;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -17,10 +21,12 @@ import java.util.Set;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
+import org.opendaylight.yangtools.sal.java.api.generator.YangModuleInfoTemplate;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
@@ -60,7 +66,13 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         if (persistentSourcesDir == null) {
             persistentSourcesDir = new File(projectBaseDir, "src" + FS + "main" + FS + "java");
         }
-        return generator.generateToFile(outputBaseDir, persistentSourcesDir);
+
+        List<File> result = generator.generateToFile(outputBaseDir, persistentSourcesDir);
+        for (Module module : yangModules) {
+            // TODO: add YangModuleInfo class
+            result.add(generateYangModuleInfo(outputBaseDir, module, context));
+        }
+        return result;
     }
 
     @Override
@@ -87,6 +99,31 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
     @Override
     public void setBuildContext(BuildContext buildContext) {
         this.buildContext = Preconditions.checkNotNull(buildContext);
+    }
+
+    private File generateYangModuleInfo(File outputBaseDir, Module module, SchemaContext ctx) {
+        final YangModuleInfoTemplate template = new YangModuleInfoTemplate(module, ctx);
+        String generatedCode = template.generate();
+        if (generatedCode.isEmpty()) {
+            throw new IllegalStateException("Generated code should not be empty!");
+        }
+
+        final File packageDir = GeneratorJavaFile.packageToDirectory(outputBaseDir, BindingGeneratorUtil.moduleNamespaceToPackageName(module));
+
+        final File file = new File(packageDir, "$YangModuleInfoImpl.java");
+        try (final OutputStream stream = buildContext.newFileOutputStream(file)) {
+            try (final Writer fw = new OutputStreamWriter(stream)) {
+                try (final BufferedWriter bw = new BufferedWriter(fw)) {
+                    bw.write(generatedCode);
+                }
+            } catch (Exception e) {
+                // TODO handle exception
+            }
+        } catch (Exception e) {
+            // TODO handle exception
+        }
+        return file;
+
     }
 
 }
