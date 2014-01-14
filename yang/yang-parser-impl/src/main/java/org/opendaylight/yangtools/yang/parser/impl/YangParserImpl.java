@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilde
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.GroupingSort;
 import org.opendaylight.yangtools.yang.parser.util.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
@@ -641,18 +642,17 @@ public final class YangParserImpl implements YangModelParser {
             sorted = ModuleDependencySort.sortWithContext(context, all.toArray(new ModuleBuilder[all.size()]));
         }
 
-        // resolve other augments
         for (ModuleBuilder mb : sorted) {
             if (mb != null) {
                 List<AugmentationSchemaBuilder> augments = mb.getAllAugments();
                 checkAugmentMandatoryNodes(augments);
+                Collections.sort(augments, Comparators.AUGMENT_COMP);
                 for (AugmentationSchemaBuilder augment : augments) {
                     if (!(augment.isResolved())) {
                         boolean resolved = resolveAugment(augment, mb, modules, context);
                         if (!resolved) {
                             throw new YangParseException(augment.getModuleName(), augment.getLine(),
                                     "Error in augment parsing: failed to find augment target: " + augment);
-
                         }
                     }
                 }

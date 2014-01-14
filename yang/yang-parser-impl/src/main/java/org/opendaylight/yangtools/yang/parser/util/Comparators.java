@@ -11,11 +11,24 @@ import java.util.Comparator;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 
 public final class Comparators {
 
+    /**
+     * Comparator based on alphabetical order of qname's local name.
+     */
     public static final QNameComparator QNAME_COMP = new QNameComparator();
+
+    /**
+     * Comparator based on alphabetical order of local name of SchemaNode's qname.
+     */
     public static final SchemaNodeComparator SCHEMA_NODE_COMP = new SchemaNodeComparator();
+
+    /**
+     * Comparator based on augment target path length.
+     */
+    public static final AugmentComparator AUGMENT_COMP = new AugmentComparator();
 
     private Comparators() {
     }
@@ -32,6 +45,14 @@ public final class Comparators {
         public int compare(SchemaNode o1, SchemaNode o2) {
             return o1.getQName().getLocalName().compareTo(o2.getQName().getLocalName());
         }
+    }
+
+    private static final class AugmentComparator implements Comparator<AugmentationSchemaBuilder> {
+        @Override
+        public int compare(AugmentationSchemaBuilder o1, AugmentationSchemaBuilder o2) {
+            return o1.getTargetPath().getPath().size() - o2.getTargetPath().getPath().size();
+        }
+
     }
 
 }
