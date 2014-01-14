@@ -27,6 +27,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     private final ModuleImpl instance;
     private final String name;
+    private final String sourcePath;
     private final SchemaPath schemaPath;
     private URI namespace;
     private String prefix;
@@ -79,27 +80,28 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     private final List<ListSchemaNodeBuilder> allLists = new ArrayList<ListSchemaNodeBuilder>();
 
-    public ModuleBuilder(final String name) {
-        this(name, false);
+    public ModuleBuilder(final String name, final String sourcePath) {
+        this(name, false, sourcePath);
     }
 
-    public ModuleBuilder(final String name, final boolean submodule) {
+    public ModuleBuilder(final String name, final boolean submodule, final String sourcePath) {
         super(name, 0, null);
         this.name = name;
+        this.sourcePath = sourcePath;
         schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
-        instance = new ModuleImpl(name);
         this.submodule = submodule;
+        instance = new ModuleImpl(name, sourcePath);
         actualPath.push(this);
     }
 
     public ModuleBuilder(Module base) {
         super(base.getName(), 0, null);
         this.name = base.getName();
+        this.sourcePath = base.getModuleSourcePath();
         schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
-        instance = new ModuleImpl(base.getName());
         submodule = false;
+        instance = new ModuleImpl(base.getName(), base.getModuleSourcePath());
         actualPath.push(this);
-
         namespace = base.getNamespace();
         prefix = base.getPrefix();
         revision = base.getRevision();
@@ -206,6 +208,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         instance.setUnknownSchemaNodes(unknownNodes);
 
         return instance;
+    }
+
+    public String getModuleSourcePath() {
+        return sourcePath;
     }
 
     @Override
@@ -882,6 +888,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private final class ModuleImpl implements Module {
         private URI namespace;
         private final String name;
+        private final String sourcePath;
         private Date revision;
         private String prefix;
         private String yangVersion;
@@ -903,8 +910,14 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         private final Set<IdentitySchemaNode> identities = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
-        private ModuleImpl(String name) {
+        private ModuleImpl(String name, String sourcePath) {
             this.name = name;
+            this.sourcePath = sourcePath;
+        }
+
+        @Override
+        public String getModuleSourcePath() {
+            return sourcePath;
         }
 
         @Override
