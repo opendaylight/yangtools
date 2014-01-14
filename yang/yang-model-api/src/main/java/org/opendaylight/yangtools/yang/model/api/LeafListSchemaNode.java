@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 /**
  * Interface describing YANG 'leaf-list' statement.
  */
-public interface LeafListSchemaNode extends DataSchemaNode {
+public interface LeafListSchemaNode extends SimpleValueSchemaNode {
 
     /**
      * Returns type of the instance which implements <code>DataSchemaNode</code>

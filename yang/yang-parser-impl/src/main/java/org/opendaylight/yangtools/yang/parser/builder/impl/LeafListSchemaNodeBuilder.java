@@ -291,6 +291,19 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
             return Collections.unmodifiableList(unknownNodes);
         }
+        
+        
+        @Override
+        public String getDefault() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
+        @Override
+        public String getUnits() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
         private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
