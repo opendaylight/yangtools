@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -31,6 +30,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -98,20 +98,6 @@ final class Util {
         }
 
         return result;
-    }
-
-    static class NamedFileInputStream extends FileInputStream {
-        private final File file;
-
-        NamedFileInputStream(File file) throws FileNotFoundException {
-            super(file);
-            this.file = file;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + "{" + file + "}";
-        }
     }
 
     private static void toCache(final File rootDir, final Collection<File> yangFiles) {
@@ -216,7 +202,7 @@ final class Util {
                             }
                         });
                         for (File yangFile : yangFiles) {
-                            yangsFromDependencies.add(new NamedFileInputStream(yangFile));
+                            yangsFromDependencies.add(new NamedFileInputStream(yangFile, YangToSourcesProcessor.META_INF_YANG_STRING + File.separator + yangFile.getName()));
                         }
                     }
 
