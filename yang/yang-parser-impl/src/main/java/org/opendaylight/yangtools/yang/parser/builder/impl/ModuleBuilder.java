@@ -32,18 +32,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private String prefix;
     private Date revision;
 
-    private final boolean submodule;
-    private String belongsTo;
-    private ModuleBuilder parent;
-
-    public ModuleBuilder getParent() {
-        return parent;
-    }
-
-    public void setParent(ModuleBuilder parent) {
-        this.parent = parent;
-    }
-
     private final Deque<Builder> actualPath = new LinkedList<>();
     private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<>();
 
@@ -78,15 +66,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private final List<UnknownSchemaNodeBuilder> allUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
     public ModuleBuilder(final String name) {
-        this(name, false);
-    }
-
-    public ModuleBuilder(final String name, final boolean submodule) {
         super(name, 0, null);
         this.name = name;
         schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
         instance = new ModuleImpl(name);
-        this.submodule = submodule;
         actualPath.push(this);
     }
 
@@ -95,7 +78,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         this.name = base.getName();
         schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
         instance = new ModuleImpl(base.getName());
-        submodule = false;
         actualPath.push(this);
 
         namespace = base.getNamespace();
@@ -253,32 +235,12 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return dirtyNodes;
     }
 
-    public Set<AugmentationSchema> getAugments() {
-        return augments;
-    }
-
-    public List<AugmentationSchemaBuilder> getAugmentBuilders() {
-        return augmentBuilders;
-    }
-
     public List<AugmentationSchemaBuilder> getAllAugments() {
         return allAugments;
     }
 
-    public Set<IdentitySchemaNode> getIdentities() {
-        return identities;
-    }
-
-    public Set<IdentitySchemaNodeBuilder> getAddedIdentities() {
+    public Set<IdentitySchemaNodeBuilder> getIdentities() {
         return addedIdentities;
-    }
-
-    public Set<FeatureDefinition> getFeatures() {
-        return features;
-    }
-
-    public Set<FeatureBuilder> getAddedFeatures() {
-        return addedFeatures;
     }
 
     public List<GroupingBuilder> getAllGroupings() {
@@ -289,19 +251,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return allUsesNodes;
     }
 
-    public Set<Deviation> getDeviations() {
-        return deviations;
-    }
-
-    public Set<DeviationBuilder> getDeviationBuilders() {
+    public Set<DeviationBuilder> getDeviations() {
         return deviationBuilders;
     }
 
-    public List<ExtensionDefinition> getExtensions() {
-        return extensions;
-    }
-
-    public List<ExtensionBuilder> getAddedExtensions() {
+    public List<ExtensionBuilder> getExtensions() {
         return addedExtensions;
     }
 
@@ -327,18 +281,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     public Date getRevision() {
         return revision;
-    }
-
-    public boolean isSubmodule() {
-        return submodule;
-    }
-
-    public String getBelongsTo() {
-        return belongsTo;
-    }
-
-    public void setBelongsTo(String belongsTo) {
-        this.belongsTo = belongsTo;
     }
 
     public void markActualNodeDirty() {
@@ -852,19 +794,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return builder;
     }
 
-    public Set<RpcDefinition> getRpcs() {
-        return rpcs;
-    }
-
-    public Set<RpcDefinitionBuilder> getAddedRpcs() {
+    public Set<RpcDefinitionBuilder> getRpcs() {
         return addedRpcs;
     }
 
-    public Set<NotificationDefinition> getNotifications() {
-        return notifications;
-    }
-
-    public Set<NotificationBuilder> getAddedNotifications() {
+    public Set<NotificationBuilder> getNotifications() {
         return addedNotifications;
     }
 
@@ -1298,7 +1232,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         // defined only under module or submodule
         if (parent instanceof DataNodeContainerBuilder) {
             DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parent;
-            for (DataSchemaNodeBuilder childNode : parentNode.getChildNodeBuilders()) {
+            for (DataSchemaNodeBuilder childNode : parentNode.getChildNodes()) {
                 if (childNode.getQName().getLocalName().equals(childName)) {
                     raiseYangParserException("'" + child + "'", "node", childName, lineNum, childNode.getLine());
                 }

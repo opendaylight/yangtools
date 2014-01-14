@@ -26,8 +26,8 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
     }
 
     @Override
-    protected synchronized Optional<InputStream> cacheSchemaSource(SourceIdentifier identifier, Optional<I> source) {
-        File schemaFile = toFile(identifier);
+    protected synchronized Optional<InputStream> cacheSchemaSource(String moduleName, Optional<String> revision, Optional<I> source) {
+        File schemaFile = toFile(moduleName, revision);
         try {
             if(source.isPresent() && schemaFile.createNewFile()) {
                 try (
@@ -59,8 +59,8 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
     }
 
     @Override
-    protected Optional<InputStream> getCachedSchemaSource(SourceIdentifier identifier) {
-        File inputFile = toFile(identifier);
+    protected Optional<InputStream> getCachedSchemaSource(String moduleName, Optional<String> revision) {
+        File inputFile = toFile(moduleName, revision);
         try {
             if (inputFile.exists() && inputFile.canRead()) {
                 InputStream stream = new FileInputStream(inputFile);
@@ -72,11 +72,19 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
         return Optional.absent();
     }
 
-    private File toFile(SourceIdentifier identifier) {
-        return new File(storageDirectory, identifier.toYangFilename());
+    private File toFile(String moduleName, Optional<String> revision) {
+        return new File(storageDirectory, toYangFileName(moduleName, revision));
     }
 
-
+    public static final String toYangFileName(String moduleName, Optional<String> revision) {
+        StringBuilder filename = new StringBuilder(moduleName);
+        if (revision.isPresent()) {
+            filename.append("@");
+            filename.append(revision.get());
+        }
+        filename.append(".yang");
+        return filename.toString();
+    }
 
     private static final Function<String, String> NOOP_TRANSFORMATION = new Function<String, String>() {
         @Override

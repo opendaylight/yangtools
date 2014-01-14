@@ -27,7 +27,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
@@ -40,7 +39,15 @@ import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.*;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.GroupingSort;
 import org.opendaylight.yangtools.yang.parser.util.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
@@ -91,18 +98,17 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
 
-        Map<InputStream, ModuleBuilder> parsedBuilders = parseBuilders(new ArrayList<>(streamToFileMap.keySet()),
+        Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(new ArrayList<>(streamToFileMap.keySet()),
                 new HashMap<ModuleBuilder, InputStream>());
         ModuleBuilder main = parsedBuilders.get(yangFileStream);
 
         List<ModuleBuilder> moduleBuilders = new ArrayList<>();
         moduleBuilders.add(main);
         filterImports(main, new ArrayList<>(parsedBuilders.values()), moduleBuilders);
-        Collection<ModuleBuilder> result = resolveSubmodules(moduleBuilders);
 
         // module builders sorted by dependencies
-        ModuleBuilder[] builders = new ModuleBuilder[result.size()];
-        result.toArray(builders);
+        ModuleBuilder[] builders = new ModuleBuilder[moduleBuilders.size()];
+        moduleBuilders.toArray(builders);
         List<ModuleBuilder> sortedBuilders = ModuleDependencySort.sort(builders);
         LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sortedBuilders);
         Collection<Module> unsorted = build(modules).values();
@@ -244,13 +250,7 @@ public final class YangParserImpl implements YangModelParser {
 
     private Map<InputStream, ModuleBuilder> parseModuleBuilders(List<InputStream> inputStreams,
             Map<ModuleBuilder, InputStream> streamToBuilderMap) {
-        Map<InputStream, ModuleBuilder> modules = parseBuilders(inputStreams, streamToBuilderMap);
-        Map<InputStream, ModuleBuilder> result = resolveSubmodules(modules);
-        return result;
-    }
 
-    private Map<InputStream, ModuleBuilder> parseBuilders(List<InputStream> inputStreams,
-            Map<ModuleBuilder, InputStream> streamToBuilderMap) {
         final ParseTreeWalker walker = new ParseTreeWalker();
         final Map<InputStream, ParseTree> trees = parseStreams(inputStreams);
         final Map<InputStream, ModuleBuilder> builders = new LinkedHashMap<>();
@@ -266,88 +266,10 @@ public final class YangParserImpl implements YangModelParser {
 
             // We expect the order of trees and streams has to be the same
             streamToBuilderMap.put(moduleBuilder, entry.getKey());
-
             builders.put(entry.getKey(), moduleBuilder);
         }
 
         return builders;
-    }
-
-    private Map<InputStream, ModuleBuilder> resolveSubmodules(Map<InputStream, ModuleBuilder> builders) {
-        Map<InputStream, ModuleBuilder> modules = new HashMap<>();
-        Set<ModuleBuilder> submodules = new HashSet<>();
-        for (Map.Entry<InputStream, ModuleBuilder> entry : builders.entrySet()) {
-            ModuleBuilder moduleBuilder = entry.getValue();
-            if (moduleBuilder.isSubmodule()) {
-                submodules.add(moduleBuilder);
-            } else {
-                modules.put(entry.getKey(), moduleBuilder);
-            }
-        }
-
-        Collection<ModuleBuilder> values = modules.values();
-        for (ModuleBuilder submodule : submodules) {
-            for (ModuleBuilder module : values) {
-                if (module.getName().equals(submodule.getBelongsTo())) {
-                    addSubmoduleToModule(submodule, module);
-                }
-            }
-        }
-        return modules;
-    }
-
-    private Collection<ModuleBuilder> resolveSubmodules(Collection<ModuleBuilder> builders) {
-        Collection<ModuleBuilder> modules = new HashSet<>();
-        Set<ModuleBuilder> submodules = new HashSet<>();
-        for (ModuleBuilder moduleBuilder : builders) {
-            if (moduleBuilder.isSubmodule()) {
-                submodules.add(moduleBuilder);
-            } else {
-                modules.add(moduleBuilder);
-            }
-        }
-
-        for (ModuleBuilder submodule : submodules) {
-            for (ModuleBuilder module : modules) {
-                if (module.getName().equals(submodule.getBelongsTo())) {
-                    addSubmoduleToModule(submodule, module);
-                }
-            }
-        }
-        return modules;
-    }
-
-    private void addSubmoduleToModule(ModuleBuilder submodule, ModuleBuilder module) {
-        submodule.setParent(module);
-        module.getDirtyNodes().addAll(submodule.getDirtyNodes());
-        module.getModuleImports().addAll(submodule.getModuleImports());
-        module.getAugments().addAll(submodule.getAugments());
-        module.getAugmentBuilders().addAll(submodule.getAugmentBuilders());
-        module.getAllAugments().addAll(submodule.getAllAugments());
-        module.getChildNodeBuilders().addAll(submodule.getChildNodeBuilders());
-        module.getChildNodes().putAll(submodule.getChildNodes());
-        module.getGroupings().addAll(submodule.getGroupings());
-        module.getGroupingBuilders().addAll(submodule.getGroupingBuilders());
-        module.getTypeDefinitions().addAll(submodule.getTypeDefinitions());
-        module.getTypeDefinitionBuilders().addAll(submodule.getTypeDefinitionBuilders());
-        module.getUsesNodes().addAll(submodule.getUsesNodes());
-        module.getUsesNodeBuilders().addAll(submodule.getUsesNodeBuilders());
-        module.getAllGroupings().addAll(submodule.getAllGroupings());
-        module.getAllUsesNodes().addAll(submodule.getAllUsesNodes());
-        module.getRpcs().addAll(submodule.getRpcs());
-        module.getAddedRpcs().addAll(submodule.getAddedRpcs());
-        module.getNotifications().addAll(submodule.getNotifications());
-        module.getAddedNotifications().addAll(submodule.getAddedNotifications());
-        module.getIdentities().addAll(submodule.getIdentities());
-        module.getAddedIdentities().addAll(submodule.getAddedIdentities());
-        module.getFeatures().addAll(submodule.getFeatures());
-        module.getAddedFeatures().addAll(submodule.getAddedFeatures());
-        module.getDeviations().addAll(submodule.getDeviations());
-        module.getDeviationBuilders().addAll(submodule.getDeviationBuilders());
-        module.getExtensions().addAll(submodule.getExtensions());
-        module.getAddedExtensions().addAll(submodule.getAddedExtensions());
-        module.getUnknownNodes().addAll(submodule.getUnknownNodes());
-        module.getAllUnknownNodes().addAll(submodule.getAllUnknownNodes());
     }
 
     private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuilders(final List<InputStream> yangFileStreams,
@@ -395,22 +317,7 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     private void filterImports(ModuleBuilder main, List<ModuleBuilder> other, List<ModuleBuilder> filtered) {
-        Set<ModuleImport> imports = main.getModuleImports();
-
-        // if this is submodule, add parent to filtered and pick its imports
-        if (main.isSubmodule()) {
-            TreeMap<Date, ModuleBuilder> dependencies = new TreeMap<>();
-            for (ModuleBuilder mb : other) {
-                if (mb.getName().equals(main.getBelongsTo())) {
-                    dependencies.put(mb.getRevision(), mb);
-                }
-            }
-            ModuleBuilder parent = dependencies.get(dependencies.firstKey());
-            filtered.add(parent);
-            imports.addAll(parent.getModuleImports());
-        }
-
-        for (ModuleImport mi : imports) {
+        for (ModuleImport mi : main.getModuleImports()) {
             for (ModuleBuilder builder : other) {
                 if (mi.getModuleName().equals(builder.getModuleName())) {
                     if (mi.getRevision() == null) {
@@ -451,21 +358,6 @@ public final class YangParserImpl implements YangModelParser {
             parser.addErrorListener(errorListener);
             result = parser.yang();
             errorListener.validate();
-        } catch (IOException e) {
-            LOG.warn("Exception while reading yang file: " + yangStream, e);
-        }
-        return result;
-    }
-    
-    public static YangContext parseStreamWithoutErrorListeners(final InputStream yangStream) {
-        YangContext result = null;
-        try {
-            final ANTLRInputStream input = new ANTLRInputStream(yangStream);
-            final YangLexer lexer = new YangLexer(input);
-            final CommonTokenStream tokens = new CommonTokenStream(lexer);
-            final YangParser parser = new YangParser(tokens);
-            parser.removeErrorListeners();
-            result = parser.yang();
         } catch (IOException e) {
             LOG.warn("Exception while reading yang file: " + yangStream, e);
         }
@@ -676,7 +568,7 @@ public final class YangParserImpl implements YangModelParser {
         }
         augment.setTargetNodeSchemaPath(new SchemaPath(newPath, augment.getTargetPath().isAbsolute()));
 
-        for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
+        for (DataSchemaNodeBuilder childNode : augment.getChildNodes()) {
             correctPathForAugmentNodes(childNode, augment.getTargetNodeSchemaPath());
         }
     }
@@ -685,7 +577,7 @@ public final class YangParserImpl implements YangModelParser {
         SchemaPath newPath = ParserUtils.createSchemaPath(parentPath, node.getQName());
         node.setPath(newPath);
         if (node instanceof DataNodeContainerBuilder) {
-            for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder) node).getChildNodeBuilders()) {
+            for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder) node).getChildNodes()) {
                 correctPathForAugmentNodes(child, node.getPath());
             }
         }
@@ -714,7 +606,7 @@ public final class YangParserImpl implements YangModelParser {
                 continue;
             }
 
-            for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
+            for (DataSchemaNodeBuilder childNode : augment.getChildNodes()) {
                 if (childNode.getConstraints().isMandatory()) {
                     throw new YangParseException(augment.getModuleName(), augment.getLine(),
                             "Error in augment parsing: cannot augment mandatory node "
@@ -857,7 +749,7 @@ public final class YangParserImpl implements YangModelParser {
      *            module being resolved
      */
     private void resolveIdentities(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
-        final Set<IdentitySchemaNodeBuilder> identities = module.getAddedIdentities();
+        final Set<IdentitySchemaNodeBuilder> identities = module.getIdentities();
         for (IdentitySchemaNodeBuilder identity : identities) {
             final String baseIdentityName = identity.getBaseIdentityName();
             final int line = identity.getLine();
@@ -886,7 +778,7 @@ public final class YangParserImpl implements YangModelParser {
      */
     private void resolveIdentitiesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder module, final SchemaContext context) {
-        final Set<IdentitySchemaNodeBuilder> identities = module.getAddedIdentities();
+        final Set<IdentitySchemaNodeBuilder> identities = module.getIdentities();
         for (IdentitySchemaNodeBuilder identity : identities) {
             final String baseIdentityName = identity.getBaseIdentityName();
             final int line = identity.getLine();
@@ -983,7 +875,7 @@ public final class YangParserImpl implements YangModelParser {
                     resolveUsesAugment(augment, module, modules, context);
                 }
             } else {
-                parent.getChildNodeBuilders().addAll(target.instantiateChildNodes(parent));
+                parent.getChildNodes().addAll(target.instantiateChildNodes(parent));
                 parent.getTypeDefinitionBuilders().addAll(target.instantiateTypedefs(parent));
                 parent.getGroupingBuilders().addAll(target.instantiateGroupings(parent));
                 parent.getUnknownNodes().addAll(target.instantiateUnknownNodes(parent));
@@ -1024,7 +916,7 @@ public final class YangParserImpl implements YangModelParser {
 
         Set<DataSchemaNodeBuilder> childNodes = wrapChildNodes(module.getModuleName(), line,
                 gd.getChildNodes(), parentPath, ns, rev, pref);
-        parent.getChildNodeBuilders().addAll(childNodes);
+        parent.getChildNodes().addAll(childNodes);
         for (DataSchemaNodeBuilder childNode : childNodes) {
             setNodeAddedByUses(childNode);
         }
@@ -1057,7 +949,7 @@ public final class YangParserImpl implements YangModelParser {
             try {
                 ModuleBuilder dependentModule = findModuleFromBuilders(modules, module, nodeType.getPrefix(),
                         usnb.getLine());
-                for (ExtensionBuilder extension : dependentModule.getAddedExtensions()) {
+                for (ExtensionBuilder extension : dependentModule.getExtensions()) {
                     if (extension.getQName().getLocalName().equals(nodeType.getLocalName())) {
                         usnb.setNodeType(extension.getQName());
                         usnb.setExtensionBuilder(extension);
@@ -1091,7 +983,7 @@ public final class YangParserImpl implements YangModelParser {
                         }
                     }
                 } else {
-                    for (ExtensionBuilder extension : dependentModuleBuilder.getAddedExtensions()) {
+                    for (ExtensionBuilder extension : dependentModuleBuilder.getExtensions()) {
                         if (extension.getQName().getLocalName().equals(nodeType.getLocalName())) {
                             usnb.setExtensionBuilder(extension);
                             break;
@@ -1131,7 +1023,7 @@ public final class YangParserImpl implements YangModelParser {
      *            module in which resolve deviations
      */
     private void resolveDeviation(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
-        for (DeviationBuilder dev : module.getDeviationBuilders()) {
+        for (DeviationBuilder dev : module.getDeviations()) {
             int line = dev.getLine();
             SchemaPath targetPath = dev.getTargetPath();
             List<QName> path = targetPath.getPath();
@@ -1178,7 +1070,7 @@ public final class YangParserImpl implements YangModelParser {
      */
     private void resolveDeviationWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder module, final SchemaContext context) {
-        for (DeviationBuilder dev : module.getDeviationBuilders()) {
+        for (DeviationBuilder dev : module.getDeviations()) {
             int line = dev.getLine();
             SchemaPath targetPath = dev.getTargetPath();
             List<QName> path = targetPath.getPath();

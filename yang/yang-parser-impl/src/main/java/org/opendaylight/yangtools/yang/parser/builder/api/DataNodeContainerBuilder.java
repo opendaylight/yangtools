@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Interface for all yang data-node containers [augment, case, container,
@@ -40,7 +39,7 @@ public interface DataNodeContainerBuilder extends Builder {
      *
      * @return collection child nodes builders
      */
-    Set<DataSchemaNodeBuilder> getChildNodeBuilders();
+    Set<DataSchemaNodeBuilder> getChildNodes();
 
     /**
      * Get child node by name.
@@ -88,7 +87,7 @@ public interface DataNodeContainerBuilder extends Builder {
      *
      * @return collection of uses builders
      */
-    Set<UsesNodeBuilder> getUsesNodeBuilders();
+    Set<UsesNodeBuilder> getUsesNodes();
 
     /**
      * Add builder of uses statement to this node.
@@ -96,8 +95,6 @@ public interface DataNodeContainerBuilder extends Builder {
      * @param usesBuilder
      */
     void addUsesNode(UsesNodeBuilder usesBuilder);
-
-    Set<TypeDefinition<?>> getTypeDefinitions();
 
     /**
      * Get builders of typedef statement defined in this node.

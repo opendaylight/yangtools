@@ -122,7 +122,7 @@ public class GroupingSort {
      */
     public static Set<UsesNodeBuilder> getAllUsesNodes(DataNodeContainerBuilder container) {
         Set<UsesNodeBuilder> ret = new HashSet<>();
-        Set<UsesNodeBuilder> usesNodes = container.getUsesNodeBuilders();
+        Set<UsesNodeBuilder> usesNodes = container.getUsesNodes();
         ret.addAll(usesNodes);
 
         for (UsesNodeBuilder usesNode : usesNodes) {
@@ -134,7 +134,7 @@ public class GroupingSort {
         for (GroupingBuilder groupingDefinition : groupings) {
             ret.addAll(getAllUsesNodes(groupingDefinition));
         }
-        Set<DataSchemaNodeBuilder> childNodes = container.getChildNodeBuilders();
+        Set<DataSchemaNodeBuilder> childNodes = container.getChildNodes();
         for (DataSchemaNodeBuilder childNode : childNodes) {
             if (childNode instanceof DataNodeContainerBuilder) {
                 ret.addAll(getAllUsesNodes((DataNodeContainerBuilder) childNode));
