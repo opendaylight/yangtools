@@ -44,6 +44,7 @@
         <module>model</module>
         <module>restconf</module>
         <!-- module>third-party</module -->
+        <module>util</module>
     </modules>
 
     <pluginRepositories>

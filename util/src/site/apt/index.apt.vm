@@ -1,0 +1,6 @@
+
+About ${project.artifactId}
+
+---
+${project.description}
+---
