@@ -138,7 +138,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         for (GroupingBuilder node : addedGroupings) {
             GroupingBuilder copy = CopyUtils.copy(node, newParent, true);
             copy.setAddedByUses(true);
-            for (DataSchemaNodeBuilder childNode : copy.getChildNodes()) {
+            for (DataSchemaNodeBuilder childNode : copy.getChildNodeBuilders()) {
                 ParserUtils.setNodeAddedByUses(childNode);
             }
             nodes.add(copy);

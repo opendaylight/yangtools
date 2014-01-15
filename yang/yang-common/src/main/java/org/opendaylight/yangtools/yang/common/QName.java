@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.slf4j.Logger;
@@ -238,11 +239,9 @@ public final class QName implements Immutable,Serializable {
     public static QName create(String namespace, String revision, String localName) throws IllegalArgumentException{
         try {
             URI namespaceUri = new URI(namespace);
-            Date revisionDate = REVISION_FORMAT.get().parse(revision);
+            Date revisionDate = parseRevision(revision);
             return create(namespaceUri, revisionDate, localName);
-        } catch (ParseException pe) {
-            throw new IllegalArgumentException("Revision is not in supported format", pe);
-        } catch (URISyntaxException ue) {
+        }  catch (URISyntaxException ue) {
             throw new IllegalArgumentException("Namespace is is not valid URI", ue);
         }
     }
@@ -300,5 +299,24 @@ public final class QName implements Immutable,Serializable {
 
     public QName withoutRevision() {
         return QName.create(namespace, null, localName);
+    }
+
+    public static Date parseRevision(String formatedDate) {
+        try {
+            return REVISION_FORMAT.get().parse(formatedDate);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Revision is not in supported format",e);
+        }
+    }
+
+    public static String formattedRevision(Date revision) {
+        if(revision == null) {
+            return null;
+        }
+        return REVISION_FORMAT.get().format(revision);
+    }
+
+    public boolean isEqualWithoutRevision(QName other) {
+        return localName.equals(other.getLocalName()) && Objects.equals(namespace, other.getNamespace());
     }
 }

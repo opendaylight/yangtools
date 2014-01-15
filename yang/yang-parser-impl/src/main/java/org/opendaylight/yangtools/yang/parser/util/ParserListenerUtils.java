@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
@@ -15,8 +17,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.omg.CORBA.CTX_RESTRICT_SCOPE;
 import org.opendaylight.yangtools.antlrv4.code.gen.*;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Base_stmtContext;
@@ -121,6 +125,8 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
 public final class ParserListenerUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ParserListenerUtils.class);
 
@@ -140,7 +146,7 @@ public final class ParserListenerUtils {
             if (treeNode.getChild(i) instanceof StringContext) {
                 final StringContext context = (StringContext) treeNode.getChild(i);
                 if (context != null) {
-                    return stringFromStringContext(context,treeNode);
+                    return stringFromStringContext(context);
                     
                 }
             }
@@ -148,14 +154,14 @@ public final class ParserListenerUtils {
         return result;
     }
 
-    private static String stringFromStringContext(StringContext context, ParseTree treeNode) {
+    public static String stringFromStringContext(StringContext context) {
         StringBuilder str = new StringBuilder();
         for (TerminalNode stringNode : context.STRING()) {
             String result = stringNode.getText();
             if(!result.contains("\"")){
                 str.append(result);
             } else if (!(result.startsWith("\"")) && result.endsWith("\"")) {
-                LOG.error("Syntax error in module {} at line {}: missing '\"'.", getParentModule(treeNode),
+                LOG.error("Syntax error in module {} at line {}: missing '\"'.", getParentModule(context),
                         context.getStart().getLine());
             } else {
                 str.append(result.replace("\"", ""));
@@ -1669,6 +1675,20 @@ public final class ParserListenerUtils {
             }
         }
         return refine;
+    }
+
+    public static String getArgumentString(org.antlr.v4.runtime.ParserRuleContext ctx) {
+        List<StringContext> potentialValues = ctx.getRuleContexts(StringContext.class);
+        checkState(!potentialValues.isEmpty());
+        return ParserListenerUtils.stringFromStringContext(potentialValues.get(0));
+    }
+    
+    public static <T extends ParserRuleContext> Optional<T> getFirstContext(ParserRuleContext context,Class<T> contextType) {
+        List<T> potential = context.getRuleContexts(contextType);
+        if(potential.isEmpty()) {
+            return Optional.absent();
+        }
+        return Optional.of(potential.get(0));
     }
 
 }

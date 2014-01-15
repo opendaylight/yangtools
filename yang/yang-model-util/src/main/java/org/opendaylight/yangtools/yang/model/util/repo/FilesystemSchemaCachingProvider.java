@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/eplv10.html
+ */
 package org.opendaylight.yangtools.yang.model.util.repo;
 
 import java.io.File;
@@ -18,7 +25,7 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
     private final File storageDirectory;
     private final Function<I, String> transformationFunction;
 
-    public FilesystemSchemaCachingProvider(SchemaSourceProvider<I> delegate, File directory,
+    public FilesystemSchemaCachingProvider(AdvancedSchemaSourceProvider<I> delegate, File directory,
             Function<I, String> transformationFunction) {
         super(delegate);
         this.storageDirectory = directory;
@@ -26,30 +33,28 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
     }
 
     @Override
-    protected synchronized Optional<InputStream> cacheSchemaSource(String moduleName, Optional<String> revision, Optional<I> source) {
-        File schemaFile = toFile(moduleName, revision);
+    protected synchronized Optional<InputStream> cacheSchemaSource(SourceIdentifier identifier, Optional<I> source) {
+        File schemaFile = toFile(identifier);
         try {
-            if(source.isPresent() && schemaFile.createNewFile()) {
-                try (
-                        FileOutputStream outStream = new FileOutputStream(schemaFile);
-                        OutputStreamWriter writer = new OutputStreamWriter(outStream);
-                ) {
-                writer.write(transformToString(source.get()));
-                writer.flush();
+            if (source.isPresent() && schemaFile.createNewFile()) {
+                try (FileOutputStream outStream = new FileOutputStream(schemaFile);
+                        OutputStreamWriter writer = new OutputStreamWriter(outStream);) {
+                    writer.write(transformToString(source.get()));
+                    writer.flush();
                 } catch (IOException e) {
-                    
+
                 }
             }
-        } catch (IOException e){
-            
+        } catch (IOException e) {
+
         }
         return transformToStream(source);
     }
 
     @SuppressWarnings("deprecation")
     private Optional<InputStream> transformToStream(Optional<I> source) {
-        if(source.isPresent()) {
-            return Optional.<InputStream>of(new StringBufferInputStream(transformToString(source.get())));
+        if (source.isPresent()) {
+            return Optional.<InputStream> of(new StringBufferInputStream(transformToString(source.get())));
         }
         return Optional.absent();
     }
@@ -59,8 +64,8 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
     }
 
     @Override
-    protected Optional<InputStream> getCachedSchemaSource(String moduleName, Optional<String> revision) {
-        File inputFile = toFile(moduleName, revision);
+    protected Optional<InputStream> getCachedSchemaSource(SourceIdentifier identifier) {
+        File inputFile = toFile(identifier);
         try {
             if (inputFile.exists() && inputFile.canRead()) {
                 InputStream stream = new FileInputStream(inputFile);
@@ -72,18 +77,8 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
         return Optional.absent();
     }
 
-    private File toFile(String moduleName, Optional<String> revision) {
-        return new File(storageDirectory, toYangFileName(moduleName, revision));
-    }
-
-    public static final String toYangFileName(String moduleName, Optional<String> revision) {
-        StringBuilder filename = new StringBuilder(moduleName);
-        if (revision.isPresent()) {
-            filename.append("@");
-            filename.append(revision.get());
-        }
-        filename.append(".yang");
-        return filename.toString();
+    private File toFile(SourceIdentifier identifier) {
+        return new File(storageDirectory, identifier.toYangFilename());
     }
 
     private static final Function<String, String> NOOP_TRANSFORMATION = new Function<String, String>() {
@@ -98,6 +93,9 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
         Preconditions.checkNotNull(liveProvider);
         Preconditions.checkNotNull(directory);
         directory.mkdirs();
-        return new FilesystemSchemaCachingProvider<String>(liveProvider, directory,NOOP_TRANSFORMATION);
+        return new FilesystemSchemaCachingProvider<String>(
+                SchemaSourceProviders.toAdvancedSchemaSourceProvider(liveProvider),//
+                directory, // 
+                NOOP_TRANSFORMATION);
     }
 }
