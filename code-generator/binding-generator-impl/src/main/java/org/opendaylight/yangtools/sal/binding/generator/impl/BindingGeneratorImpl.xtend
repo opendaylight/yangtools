@@ -1793,7 +1793,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         } else {
             method.append("get");
         }
-        method.append(BindingMapping.getClassName(localName));
+        method.append(BindingMapping.getMethodName(localName));
         return method.toString();
     }
 

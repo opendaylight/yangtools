@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+
 import static com.google.common.base.Preconditions.*;
 
 public final class BindingMapping {
@@ -35,11 +36,20 @@ public final class BindingMapping {
 
     public static final String getMethodName(QName name) {
         checkArgument(name != null, "Name should not be null.");
-        return toFirstLower(toCamelCase(name.getLocalName()));
+        return getMethodName(name.getLocalName());
     }
 
     public static final String getClassName(String localName) {
+        checkArgument(localName != null, "Name should not be null.");
         return toFirstUpper(toCamelCase(localName));
+    }
+    
+    public static final String getMethodName(String localName) {
+        final String potential = toFirstUpper(toCamelCase(localName));
+        if("Class".equals(potential)) {
+            return "XmlClass";
+        }
+        return potential;
     }
 
     public static final String getClassName(QName name) {
