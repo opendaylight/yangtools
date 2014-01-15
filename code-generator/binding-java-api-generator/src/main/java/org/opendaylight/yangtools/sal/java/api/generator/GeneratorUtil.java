@@ -143,7 +143,7 @@ public final class GeneratorUtil {
         final String parentTypeName = parentGenType.getName();
         final String parentTypePackageName = parentGenType.getPackageName();
         if (typeName.equals(parentTypeName) || typePackageName.startsWith("java.lang")
-                || typePackageName.equals(parentTypePackageName) || typePackageName.isEmpty()) {
+                 || typePackageName.isEmpty()) {
             return;
         }
         if (!imports.containsKey(typeName)) {
@@ -252,7 +252,7 @@ public final class GeneratorUtil {
         final String typeName = type.getName();
         final String importedPackageName = imports.get(typeName);
         final StringBuilder builder;
-        if (typePackageName.equals(importedPackageName) || typePackageName.equals(parentGenType.getPackageName())) {
+        if (typePackageName.equals(importedPackageName)) {
             builder = new StringBuilder(type.getName());
             addActualTypeParameters(builder, type, parentGenType, imports);
             if (builder.toString().equals("Void")) {
