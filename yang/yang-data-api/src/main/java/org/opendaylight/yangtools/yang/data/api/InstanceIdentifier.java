@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.yang.common.QName;
 
+import com.google.common.collect.ImmutableList;
+
 public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
 
     private static final long serialVersionUID = 8467409862384206193L;
@@ -24,11 +26,11 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     public InstanceIdentifier(final List<? extends PathArgument> path) {
-        this.path = Collections.unmodifiableList(new ArrayList<>(path));
+        this.path =ImmutableList.copyOf(path);
     }
 
     private InstanceIdentifier(NodeIdentifier nodeIdentifier) {
-        this.path = Collections.<PathArgument> singletonList(nodeIdentifier);
+        this.path = ImmutableList.<PathArgument>of(nodeIdentifier);
     }
 
     @Override
@@ -202,13 +204,14 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     private static class BuilderImpl implements InstanceIdentifierBuilder {
 
-        private final List<PathArgument> path = new ArrayList<>();
+        private final ImmutableList.Builder<PathArgument> path; 
 
         public BuilderImpl() {
-
+            path = ImmutableList.<PathArgument>builder();
         }
 
         public BuilderImpl(List<? extends PathArgument> prefix) {
+            path = ImmutableList.<PathArgument>builder();
             path.addAll(prefix);
         }
 
@@ -232,7 +235,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
         @Override
         public InstanceIdentifier toInstance() {
-            return new InstanceIdentifier(path);
+            return new InstanceIdentifier(path.build());
         }
 
         @Override
@@ -271,5 +274,9 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
         to_string_cache = builder.toString();
         return to_string_cache;
+    }
+
+    public static InstanceIdentifierBuilder builder(QName node) {
+        return builder().node(node);
     }
 }
