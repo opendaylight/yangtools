@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT16_QNAME;
@@ -170,7 +177,9 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 codec = UINT64_DEFAULT_CODEC;
             }
         }
-        return (TypeDefinitionAwareCodec<?, T>) codec;
+        @SuppressWarnings("unchecked")
+        TypeDefinitionAwareCodec<?, T> ret = (TypeDefinitionAwareCodec<?, T>) codec;
+        return ret;
     }
 
     public static class BooleanCodecStringImpl extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
