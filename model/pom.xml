@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.6.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -14,7 +14,6 @@
     <description>${project.artifactId}</description>
 
     <properties>
-        <yang.version>0.5.8-SNAPSHOT</yang.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -22,7 +21,6 @@
         <module>yang-ext</module>
         <module>iana</module>
         <module>ietf</module>
-        <!-- <module>model-topology-bgp</module> -->
         <module>l2-types</module>
     </modules>
 
@@ -31,7 +29,7 @@
             <plugin>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>0.6.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
@@ -145,7 +143,7 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
-            <version>0.5.9-SNAPSHOT</version>
+            <version>0.6.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
