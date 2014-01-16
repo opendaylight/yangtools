@@ -121,7 +121,7 @@ public class XmlDocumentUtils {
         } else {
             ret = doc.createElementNS(null, dataType.getLocalName());
         }
-        if (data instanceof AttributesContainer) {
+        if (data instanceof AttributesContainer && ((AttributesContainer) data).getAttributes() != null) {
             for (Entry<QName, String> attribute : ((AttributesContainer) data).getAttributes().entrySet()) {
                 ret.setAttributeNS(attribute.getKey().getNamespace().toString(), attribute.getKey().getLocalName(),
                         attribute.getValue());
@@ -229,9 +229,9 @@ public class XmlDocumentUtils {
         TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
         Object value;
-        if(codec != null) {
+        if (codec != null) {
             value = codec.deserialize(text);
-            
+
         } else {
             value = xmlElement.getTextContent();
         }
@@ -243,9 +243,9 @@ public class XmlDocumentUtils {
         TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
         Object value;
-        if(codec != null) {
+        if (codec != null) {
             value = codec.deserialize(text);
-            
+
         } else {
             value = xmlElement.getTextContent();
         }
