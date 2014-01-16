@@ -228,7 +228,13 @@ public class XmlDocumentUtils {
             XmlCodecProvider codecProvider) {
         TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
-        Object value = codec.deserialize(text);
+        Object value;
+        if(codec != null) {
+            value = codec.deserialize(text);
+            
+        } else {
+            value = xmlElement.getTextContent();
+        }
         return new SimpleNodeTOImpl<Object>(schema.getQName(), null, value);
     }
 
@@ -236,7 +242,13 @@ public class XmlDocumentUtils {
             XmlCodecProvider codecProvider) {
         TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
-        Object value = codec.deserialize(text);
+        Object value;
+        if(codec != null) {
+            value = codec.deserialize(text);
+            
+        } else {
+            value = xmlElement.getTextContent();
+        }
         return new SimpleNodeTOImpl<Object>(schema.getQName(), null, value);
     }
 
