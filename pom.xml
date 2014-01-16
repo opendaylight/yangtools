@@ -28,7 +28,8 @@
         <slf4j.version>1.7.2</slf4j.version>
         <guava.version>14.0.1</guava.version>
         <xtend.version>2.4.3</xtend.version>
-        <groovy.version>2.1.6</groovy.version>
+	<groovy.version>2.1.6</groovy.version>
+	<mockito.version>1.9.5</mockito.version>
     </properties>
 
     <scm>
@@ -42,7 +43,8 @@
         <module>yang</module>
         <module>code-generator</module>
         <module>model</module>
-        <module>restconf</module>
+	<module>restconf</module>
+	<module>mockito-configuration</module>
         <!-- module>third-party</module -->
     </modules>
 
@@ -107,7 +109,13 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.9.5</version>
+		<version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+		<version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
 
