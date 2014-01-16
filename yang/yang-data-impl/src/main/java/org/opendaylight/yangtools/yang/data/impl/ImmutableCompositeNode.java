@@ -44,7 +44,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
 
     private Map<QName, List<Node<?>>> nodeMap = new HashMap<>();
 
-    private Map<QName, String> attributes;
+    private final Map<QName, String> attributes;
 
 
 
@@ -56,7 +56,11 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
      */
     private ImmutableCompositeNode(QName qname, Map<QName,String> attributes,List<Node<?>> value) {
         super(qname, null, ImmutableList.copyOf(value));
-        attributes = ImmutableMap.copyOf(attributes);
+        if(attributes == null) {
+            this.attributes = ImmutableMap.<QName, String>of();
+        } else {
+            this.attributes = ImmutableMap.copyOf(attributes);
+        }
         init();
     }
 
@@ -81,6 +85,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
      */
     public ImmutableCompositeNode(QName qname, List<Node<?>> value, ModifyAction modifyAction) {
         super(qname, null, value, modifyAction);
+        attributes = ImmutableMap.of();
         init();
     }
 
