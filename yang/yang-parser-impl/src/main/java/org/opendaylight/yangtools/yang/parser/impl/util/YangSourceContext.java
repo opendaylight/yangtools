@@ -166,7 +166,7 @@ public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStre
                     for (ModuleImport dependency : info.getDependencies()) {
                         LOG.debug("Source: {} Resolving dependency: {}",identifier,dependency);
                         ResolutionState dependencyState = resolveDependency(dependency);
-                        if (dependencyState == ResolutionState.MISSING_SOURCE) {
+                        if (dependencyState != ResolutionState.EVERYTHING_OK) {
                             potentialState = ResolutionState.MISSING_DEPENDENCY;
                             missingDependencies.put(identifier, dependency);
                         }
