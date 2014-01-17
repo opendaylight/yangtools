@@ -11,12 +11,16 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Set;
 
+import org.opendaylight.yangtools.yang.common.QName;
+
 /**
  * The interface contains the methods for manipulating all the top level context
  * data (data from all red modules) like YANG notifications, extensions,
  * operations...
  */
-public interface SchemaContext {
+public interface SchemaContext extends ContainerSchemaNode {
+
+    public static final QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "data");
 
     /**
      * Returns data schema node instances which represents direct subnodes (like
