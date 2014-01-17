@@ -70,27 +70,27 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-common</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-api</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-util</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-api</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-util</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
@@ -100,23 +100,23 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-api</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-impl
                 </artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin-spi</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>[0.5.9,1.0]</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
