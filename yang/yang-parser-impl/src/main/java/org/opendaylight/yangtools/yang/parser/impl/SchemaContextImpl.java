@@ -8,18 +8,29 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 final class SchemaContextImpl implements SchemaContext {
@@ -110,6 +121,126 @@ final class SchemaContextImpl implements SchemaContext {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isAugmenting() {
+        return false;
+    }
+
+    @Override
+    public boolean isAddedByUses() {
+        return false;
+    }
+
+    @Override
+    public boolean isConfiguration() {
+        return false;
+    }
+
+    @Override
+    public ConstraintDefinition getConstraints() {
+        return null;
+    }
+
+    @Override
+    public QName getQName() {
+        return QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "data");
+    }
+
+    @Override
+    public SchemaPath getPath() {
+        return null;
+    }
+
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    @Override
+    public String getReference() {
+        return null;
+    }
+
+    @Override
+    public Status getStatus() {
+        return Status.CURRENT;
+    }
+
+    @Override
+    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
+        final List<UnknownSchemaNode> result = new ArrayList<>();
+        for (Module module : modules) {
+            result.addAll(module.getUnknownSchemaNodes());
+        }
+        return Collections.unmodifiableList(result);
+    }
+
+    @Override
+    public Set<TypeDefinition<?>> getTypeDefinitions() {
+        final Set<TypeDefinition<?>> result = new LinkedHashSet<>();
+        for (Module module : modules) {
+            result.addAll(module.getTypeDefinitions());
+        }
+        return Collections.unmodifiableSet(result);
+    }
+
+    @Override
+    public Set<DataSchemaNode> getChildNodes() {
+        final Set<DataSchemaNode> result = new LinkedHashSet<>();
+        for (Module module : modules) {
+            result.addAll(module.getChildNodes());
+        }
+        return Collections.unmodifiableSet(result);
+    }
+
+    @Override
+    public Set<GroupingDefinition> getGroupings() {
+        final Set<GroupingDefinition> result = new LinkedHashSet<>();
+        for (Module module : modules) {
+            result.addAll(module.getGroupings());
+        }
+        return Collections.unmodifiableSet(result);
+    }
+
+    @Override
+    public DataSchemaNode getDataChildByName(QName name) {
+        DataSchemaNode result = null;
+        for (Module module : modules) {
+            result = module.getDataChildByName(name);
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public DataSchemaNode getDataChildByName(String name) {
+        DataSchemaNode result = null;
+        for (Module module : modules) {
+            result = module.getDataChildByName(name);
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Set<UsesNode> getUses() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public boolean isPresenceContainer() {
+        return false;
+    }
+
+    @Override
+    public Set<AugmentationSchema> getAvailableAugmentations() {
+        return Collections.emptySet();
     }
 
 }

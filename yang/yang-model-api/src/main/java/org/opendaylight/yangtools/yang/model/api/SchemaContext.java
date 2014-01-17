@@ -16,7 +16,7 @@ import java.util.Set;
  * data (data from all red modules) like YANG notifications, extensions,
  * operations...
  */
-public interface SchemaContext {
+public interface SchemaContext extends ContainerSchemaNode {
 
     /**
      * Returns data schema node instances which represents direct subnodes (like
