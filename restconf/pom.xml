@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.6.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -18,29 +18,35 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>restconf-client-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>yang-common</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>yang-data-api</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>yang-data-impl</artifactId>
-                <version>0.5.9-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>yang-model-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>yang-binding</artifactId>
-                <version>0.6.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -122,7 +128,5 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <version>0.2.0-SNAPSHOT</version>
 </project>
 
