@@ -28,7 +28,16 @@ import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,12 +162,18 @@ public class XmlDocumentUtils {
             }
         } else {
             if (node.getValue() != null) {
-                try {
-                    String value = codecProvider.codecFor(baseType).serialize(node.getValue());
-                    element.setTextContent(value);
-                } catch (ClassCastException e) {
+                final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(baseType);
+                if (codec != null) {
+                    try {
+                        final String text = codec.serialize(node.getValue());
+                        element.setTextContent(text);
+                    } catch (ClassCastException e) {
+                        logger.error("Provided node did not have type required by mapping. Using stream instead.", e);
+                        element.setTextContent(String.valueOf(node.getValue()));
+                    }
+                } else {
+                    logger.error("Failed to find codec for {}, falling back to using stream", baseType);
                     element.setTextContent(String.valueOf(node.getValue()));
-                    logger.error("Provided node did not have type required by mapping. Using stream instead. {}", e);
                 }
             }
         }
