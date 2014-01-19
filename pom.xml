@@ -49,50 +49,32 @@
     </modules>
 
     <pluginRepositories>
-        <!-- Maven repo2 mirror -->
-        <!-- http://repo2.maven.org/maven2 -->
         <pluginRepository>
-            <id>central2</id>
-            <name>central2</name>
-            <url>${nexusproxy}/repositories/central2/</url>
-        </pluginRepository>
-        <!-- Maven repo1 mirror -->
-        <!-- http://repo1.maven.org/maven2 -->
-        <pluginRepository>
-            <id>central</id>
-            <name>central</name>
-            <url>${nexusproxy}/repositories/central/</url>
+            <id>opendaylight-mirror</id>
+            <name>opendaylight-mirror</name>
+            <url>${nexusproxy}/groups/public/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
         </pluginRepository>
     </pluginRepositories>
 
-
     <repositories>
-        <!-- Maven repo2 mirror -->
-        <!-- http://repo2.maven.org/maven2 -->
         <repository>
-            <id>central2</id>
-            <name>central2</name>
-            <url>${nexusproxy}/repositories/central2/</url>
-        </repository>
-        <!-- Maven repo1 mirror -->
-        <!-- http://repo1.maven.org/maven2 -->
-        <repository>
-            <id>central</id>
-            <name>central</name>
-            <url>${nexusproxy}/repositories/central/</url>
-        </repository>
-
-        <!-- OpenDayLight Released artifact -->
-        <repository>
-            <id>opendaylight-release</id>
-            <name>opendaylight-release</name>
-            <url>${nexusproxy}/repositories/opendaylight.release/</url>
-        </repository>
-        <!-- OpenDayLight Snapshot artifact -->
-        <repository>
-            <id>opendaylight-snapshot</id>
-            <name>opendaylight-snapshot</name>
-            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+            <id>opendaylight-mirror</id>
+            <name>opendaylight-mirror</name>
+            <url>${nexusproxy}/groups/public/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
         </repository>
     </repositories>
 
