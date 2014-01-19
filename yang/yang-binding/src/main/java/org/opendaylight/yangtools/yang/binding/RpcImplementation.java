@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.binding;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 public interface RpcImplementation {

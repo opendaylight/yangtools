@@ -2,8 +2,6 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
-import com.google.common.primitives.UnsignedInteger;
-
 /**
  * 
  * 

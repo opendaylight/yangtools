@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util.repo;
 
 import org.opendaylight.yangtools.concepts.Delegator;
-import org.opendaylight.yangtools.concepts.Registration;
-
 import com.google.common.base.Optional;
 
 import static com.google.common.base.Preconditions.*;

@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.binding.util;
 
-import java.io.ObjectInputStream.GetField;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.Checksum;
-
 import org.opendaylight.yangtools.concepts.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;

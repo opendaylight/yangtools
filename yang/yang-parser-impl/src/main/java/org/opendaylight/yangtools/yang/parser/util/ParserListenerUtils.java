@@ -20,7 +20,6 @@ import java.util.Stack;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.omg.CORBA.CTX_RESTRICT_SCOPE;
 import org.opendaylight.yangtools.antlrv4.code.gen.*;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Base_stmtContext;

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.concepts.util;
 
-import static org.opendaylight.yangtools.concepts.util.ClassLoaderUtils.findParameterizedType;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.concurrent.Callable;
