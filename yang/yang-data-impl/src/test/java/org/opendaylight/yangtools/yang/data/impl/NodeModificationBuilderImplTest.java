@@ -27,7 +27,7 @@ import org.w3c.dom.Document;
 
 /**
  * @author michal.rehak
- * 
+ *
  */
 public class NodeModificationBuilderImplTest {
 
@@ -48,12 +48,12 @@ public class NodeModificationBuilderImplTest {
         CompositeNode diffTreeImmutable = NodeFactory.copyDeepAsImmutable(diffTree, null);
 
         Document diffShadow = NodeUtils.buildShadowDomTree(diffTreeImmutable);
-        NodeHelper.dumpDoc(diffShadow, System.out);
+        NodeHelper.dumpDoc(diffShadow, LOG);
     }
 
     /**
      * prepare schemaContext
-     * 
+     *
      * @throws Exception
      */
     @Before
@@ -87,7 +87,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -111,7 +111,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -140,7 +140,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -162,7 +162,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -184,7 +184,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -207,7 +207,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -229,7 +229,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -251,7 +251,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -274,7 +274,7 @@ public class NodeModificationBuilderImplTest {
      * Test method for
      * {@link org.opendaylight.yangtools.yang.data.impl.NodeModificationBuilderImpl#buildDiffTree()}
      * .
-     * 
+     *
      * @throws Exception
      */
     @Test

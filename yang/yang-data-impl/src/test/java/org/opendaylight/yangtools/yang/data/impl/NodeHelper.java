@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -128,23 +129,30 @@ public abstract class NodeHelper {
       "    </network-elements>\n" +
       "</network>";
 
+    private static String domTreeString(Document domTree) throws TransformerException {
+        TransformerFactory transformerFact = TransformerFactory.newInstance();
+        transformerFact.setAttribute("indent-number", 4);
+        Transformer transformer = transformerFact.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        //initialize StreamResult with File object to save to file
+        StreamResult result = new StreamResult(new StringWriter());
+        DOMSource source = new DOMSource(domTree);
+        transformer.transform(source, result);
+        return result.getWriter().toString();
+    }
+
     /**
      * @param domTree
      * @param out
      * @throws Exception
      */
-    public static void dumpDoc(Document domTree, PrintStream out) throws Exception {
-      TransformerFactory transformerFact = TransformerFactory.newInstance();
-      transformerFact.setAttribute("indent-number", 4);
-      Transformer transformer = transformerFact.newTransformer();
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      //initialize StreamResult with File object to save to file
-      StreamResult result = new StreamResult(new StringWriter());
-      DOMSource source = new DOMSource(domTree);
-      transformer.transform(source, result);
-      String xmlString = result.getWriter().toString();
-      out.println(xmlString);
+    private static void dumpDoc(Document domTree, PrintStream out) throws Exception {
+      out.println(domTreeString(domTree));
     }
+
+	public static void dumpDoc(Document domTree, Logger logger) throws TransformerException {
+		logger.info("{}", domTreeString(domTree));
+	}
 
     /**
      * @param qName
@@ -403,9 +411,8 @@ public abstract class NodeHelper {
 
         boolean similar = myDiff.similar();
         if (! similar) {
-            System.out.println(new String(actualRaw.toByteArray()));
+            LOG.info("{}", new String(actualRaw.toByteArray()));
         }
         Assert.assertEquals(myDiff.toString(), true, similar);
     }
-
 }
