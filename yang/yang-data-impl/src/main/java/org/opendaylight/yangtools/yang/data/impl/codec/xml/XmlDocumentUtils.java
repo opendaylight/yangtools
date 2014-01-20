@@ -158,7 +158,7 @@ public class XmlDocumentUtils {
                 Object value = node.getValue();
                 logger.debug("Value of {}:{} is not instance of QName but is {}", baseType.getQName().getNamespace(), //
                         baseType.getQName().getLocalName(), //
-                        node != null ? value.getClass() : "null");
+                        value != null ? value.getClass() : "null");
                 if (value != null) {
                     element.setTextContent(String.valueOf(value));
                 }
