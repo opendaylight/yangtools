@@ -44,7 +44,7 @@ class WadlRestconfGenerator {
         val result = new HashSet;
 		this.context = context
 		for (module : modules) {
-			val dataContainers = module.childNodes.filter[it|it instanceof ContainerSchemaNode || it instanceof ListSchemaNode]
+			val dataContainers = module.childNodes.filter[it|it.listOrContainer]
 			if (!dataContainers.empty || !module.rpcs.nullOrEmpty) {
 				configData = new ArrayList
 				operationalData = new ArrayList
@@ -117,6 +117,9 @@ class WadlRestconfGenerator {
 		«IF !configData.nullOrEmpty»
 			<resource path="config">
 				«FOR schemaNode : configData»
+					«schemaNode.mehodPost»
+				«ENDFOR»
+				«FOR schemaNode : configData»
 					«schemaNode.firstResource(true)»
 				«ENDFOR»
 			</resource>
@@ -137,45 +140,13 @@ class WadlRestconfGenerator {
 	
 	private def String firstResource(DataSchemaNode schemaNode, boolean config) '''
 		<resource path="«module.name»:«schemaNode.createPath»">
-			«IF !pathListParams.nullOrEmpty»
-				«resourceParams»
-			«ENDIF»
-			«schemaNode.methodGet»
-			«IF config»
-				«schemaNode.mehodPut»
-				«schemaNode.mehodPost»
-			«ENDIF»
-			
-			«IF schemaNode instanceof DataNodeContainer»
-				«val children = (schemaNode as DataNodeContainer).childNodes.filter[it|it instanceof ContainerSchemaNode || it instanceof ListSchemaNode]»
-				«IF !children.empty»
-					«FOR child : children»
-						«child.resource(config)»
-					«ENDFOR»
-				«ENDIF»
-			«ENDIF»
+			«resourceBody(schemaNode, config)»
 		</resource>
 	'''
 		
 	private def String resource(DataSchemaNode schemaNode, boolean config) '''
 		<resource path="«schemaNode.createPath»">
-			«IF !pathListParams.nullOrEmpty»
-				«resourceParams»
-			«ENDIF»
-			«schemaNode.methodGet»
-			«IF config»
-				«schemaNode.mehodPut»
-				«schemaNode.mehodPost»
-			«ENDIF»
-			
-			«IF schemaNode instanceof DataNodeContainer»
-				«val children = (schemaNode as DataNodeContainer).childNodes.filter[it|it instanceof ContainerSchemaNode || it instanceof ListSchemaNode]»
-				«IF !children.empty»
-					«FOR child : children»
-						«child.resource(config)»
-					«ENDFOR»
-				«ENDIF»
-			«ENDIF»
+			«resourceBody(schemaNode, config)»
 		</resource>
 	'''
 	
@@ -193,6 +164,24 @@ class WadlRestconfGenerator {
 		return path.toString
 	}
 	
+	private def String resourceBody(DataSchemaNode schemaNode, boolean config) '''
+		«IF !pathListParams.nullOrEmpty»
+			«resourceParams»
+		«ENDIF»
+		«schemaNode.methodGet»
+		«val children = (schemaNode as DataNodeContainer).childNodes.filter[it|it.listOrContainer]»
+		«IF config»
+			«schemaNode.methodDelete»
+			«schemaNode.mehodPut»
+			«FOR child : children»
+				«child.mehodPost»
+			«ENDFOR»
+		«ENDIF»
+		«FOR child : children»
+			«child.resource(config)»
+		«ENDFOR»
+	'''
+	
 	private def resourceParams() '''
 		«FOR pathParam : pathListParams»
 		    «IF pathParam != null»
@@ -206,11 +195,7 @@ class WadlRestconfGenerator {
 	private def methodGet(DataSchemaNode schemaNode) '''
 		<method name="GET">
 			<response>
-				<representation mediaType="application/xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="text/xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/json" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/yang.data+xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/yang.data+json" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
+				«representation(schemaNode.QName.prefix, schemaNode.QName.localName)»
 			</response>
 		</method>
 	'''
@@ -218,11 +203,7 @@ class WadlRestconfGenerator {
 	private def mehodPut(DataSchemaNode schemaNode) '''
 		<method name="PUT">
 			<request>
-				<representation mediaType="application/xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="text/xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/json" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/yang.data+xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/yang.data+json" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
+				«representation(schemaNode.QName.prefix, schemaNode.QName.localName)»
 			</request>
 		</method>
 	'''
@@ -230,11 +211,7 @@ class WadlRestconfGenerator {
 	private def mehodPost(DataSchemaNode schemaNode) '''
 		<method name="POST">
 			<request>
-				<representation mediaType="application/xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="text/xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/json" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/yang.data+xml" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
-				<representation mediaType="application/yang.data+json" element="«schemaNode.QName.prefix»:«schemaNode.QName.localName»"/>
+				«representation(schemaNode.QName.prefix, schemaNode.QName.localName)»
 			</request>
 		</method>
 	'''
@@ -243,23 +220,32 @@ class WadlRestconfGenerator {
 		<method name="POST">
 			«IF input»
 			<request>
-				<representation mediaType="application/xml" element="input"/>
-				<representation mediaType="text/xml" element="input"/>
-				<representation mediaType="application/json" element="input"/>
-				<representation mediaType="application/yang.data+xml" element="input"/>
-				<representation mediaType="application/yang.data+json" element="input"/>
+				«representation(null, "input")»
 			</request>
 			«ENDIF»
 			«IF output»
 			<response>
-				<representation mediaType="application/xml" element="output"/>
-				<representation mediaType="text/xml" element="output"/>
-				<representation mediaType="application/json" element="output"/>
-				<representation mediaType="application/yang.data+xml" element="output"/>
-				<representation mediaType="application/yang.data+json" element="output"/>
+				«representation(null, "output")»
 			</response>
 			«ENDIF»
 		</method>
 	'''
+
+	private def methodDelete(DataSchemaNode schemaNode) '''
+		<method name="DELETE" />
+	'''
+
+	private def representation(String prefix, String name) '''
+		«val elementData = if (prefix.nullOrEmpty) name else prefix + ":" + name»
+		<representation mediaType="application/xml" element="«elementData»"/>
+		<representation mediaType="text/xml" element="«elementData»"/>
+		<representation mediaType="application/json" element="«elementData»"/>
+		<representation mediaType="application/yang.data+xml" element="«elementData»"/>
+		<representation mediaType="application/yang.data+json" element="«elementData»"/>
+	'''
+	
+	private def boolean isListOrContainer(DataSchemaNode schemaNode) {
+		return (schemaNode instanceof ListSchemaNode || schemaNode instanceof ContainerSchemaNode)
+	}
 
 }
