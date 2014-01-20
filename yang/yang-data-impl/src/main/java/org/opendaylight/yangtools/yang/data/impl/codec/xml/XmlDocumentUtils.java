@@ -155,10 +155,13 @@ public class XmlDocumentUtils {
                 element.setAttribute("xmlns:" + prefix, value.getNamespace().toString());
                 element.setTextContent(prefix + ":" + value.getLocalName());
             } else {
+                Object value = node.getValue();
                 logger.debug("Value of {}:{} is not instance of QName but is {}", baseType.getQName().getNamespace(), //
                         baseType.getQName().getLocalName(), //
-                        node.getValue().getClass());
-                element.setTextContent(String.valueOf(node.getValue()));
+                        node != null ? value.getClass() : "null");
+                if (value != null) {
+                    element.setTextContent(String.valueOf(value));
+                }
             }
         } else {
             if (node.getValue() != null) {
