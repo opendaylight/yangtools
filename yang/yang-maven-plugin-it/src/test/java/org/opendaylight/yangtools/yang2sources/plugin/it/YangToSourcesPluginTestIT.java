@@ -7,17 +7,26 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin.it;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
 
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class YangToSourcesPluginTestIT {
+    private static final String SRC_PROPERTIES = "target/it-project.properties";
+    private static final String VERSION_PROP = "it-project.version";
+    private static Properties props;
 
     // TODO Test yang files in transitive dependencies
 
@@ -104,6 +113,17 @@ public class YangToSourcesPluginTestIT {
         assertThat(e.getMessage(), containsString(string));
     }
 
+    @BeforeClass
+    public static void generateProps() throws IOException {
+        final Properties sp = new Properties();
+        try (InputStream is = new FileInputStream(new File(SRC_PROPERTIES))) {
+             sp.load(is);
+        }
+
+        props = new Properties(System.getProperties());
+        props.put(VERSION_PROP, sp.getProperty(VERSION_PROP));
+    }
+
     static Verifier setUp(String project, boolean ignoreF)
             throws VerificationException {
         final URL path = YangToSourcesPluginTestIT.class.getResource("/"
@@ -113,6 +133,7 @@ public class YangToSourcesPluginTestIT {
         if (ignoreF)
             verifier.addCliOption("-fn");
         verifier.setMavenDebug(true);
+        verifier.setSystemProperties(props);
         verifier.executeGoal("generate-sources");
         return verifier;
     }
@@ -127,6 +148,7 @@ public class YangToSourcesPluginTestIT {
     public void testFindResourceOnCp() throws VerificationException {
         Verifier v1 = new Verifier(new File(getClass().getResource(
                 "/GenerateTest1/pom.xml").getPath()).getParent());
+        v1.setSystemProperties(props);
         v1.executeGoal("clean");
         v1.executeGoal("package");
         v1.assertFilePresent("target/classes/META-INF/yang/testfile1.yang");
