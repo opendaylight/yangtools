@@ -13,7 +13,7 @@
 
     <scm>
         <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
-        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/controller.git</developerConnection>
+        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
         <url>https://wiki.opendaylight.org/view/YANG_Tools:Third-Party</url>
     </scm>
 

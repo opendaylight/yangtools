@@ -37,8 +37,8 @@
     </properties>
 
     <scm>
-        <connection>scm:git:ssh://git.opendaylight.org:29418/controller.git</connection>
-        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/controller.git</developerConnection>
+        <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
+        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
         <url>https://wiki.opendaylight.org/view/YANG_Tools:Main</url>
         <tag>HEAD</tag>
     </scm>
