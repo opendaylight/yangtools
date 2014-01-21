@@ -40,7 +40,7 @@ module controller-openflow {
         }
     }
 
-    augment "/cn:network/cn:topologies/cn:topology/cn:nodes/cn:node/" {
+    augment "/cn:network/cn:topologies/cn:topology/cn:nodes/cn:node" {
         when "../../../cn:types/of:openflow";
         leaf datapath-id {
             type datapath-id;
