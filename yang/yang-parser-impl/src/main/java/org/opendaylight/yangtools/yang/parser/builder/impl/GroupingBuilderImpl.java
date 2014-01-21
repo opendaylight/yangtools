@@ -11,10 +11,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -75,8 +73,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         if (!isBuilt) {
             // CHILD NODES
             for (DataSchemaNodeBuilder node : addedChildNodes) {
-                DataSchemaNode child = node.build();
-                childNodes.put(child.getQName(), child);
+                childNodes.add(node.build());
             }
             instance.addChildNodes(childNodes);
 
@@ -273,7 +270,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         private String reference;
         private Status status;
         private boolean addedByUses;
-        private final Map<QName, DataSchemaNode> childNodes = new HashMap<>();
+        private final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<TypeDefinition<?>> typeDefinitions = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<UsesNode> uses = new HashSet<>();
@@ -316,16 +313,13 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            final Set<DataSchemaNode> result = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-            result.addAll(childNodes.values());
-            return Collections.unmodifiableSet(result);
+            return Collections.unmodifiableSet(childNodes);
         }
 
-        private void addChildNodes(Map<QName, DataSchemaNode> childNodes) {
+        private void addChildNodes(Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
-                this.childNodes.putAll(childNodes);
+                this.childNodes.addAll(childNodes);
             }
-
         }
 
         @Override
@@ -374,19 +368,12 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
 
         @Override
         public DataSchemaNode getDataChildByName(QName name) {
-            return childNodes.get(name);
+            return getChildNode(childNodes, name);
         }
 
         @Override
         public DataSchemaNode getDataChildByName(String name) {
-            DataSchemaNode result = null;
-            for (Map.Entry<QName, DataSchemaNode> entry : childNodes.entrySet()) {
-                if (entry.getKey().getLocalName().equals(name)) {
-                    result = entry.getValue();
-                    break;
-                }
-            }
-            return result;
+            return getChildNode(childNodes, name);
         }
 
         @Override

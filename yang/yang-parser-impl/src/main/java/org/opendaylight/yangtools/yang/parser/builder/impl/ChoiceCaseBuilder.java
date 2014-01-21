@@ -11,11 +11,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.*;
@@ -78,8 +77,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
             // CHILD NODES
             for (DataSchemaNodeBuilder node : addedChildNodes) {
-                DataSchemaNode child = node.build();
-                childNodes.put(child.getQName(), child);
+                childNodes.add(node.build());
             }
             instance.addChildNodes(childNodes);
 
@@ -249,7 +247,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         private boolean augmenting;
         private boolean addedByUses;
         private ConstraintDefinition constraints;
-        private final Map<QName, DataSchemaNode> childNodes = new HashMap<>();
+        private final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<AugmentationSchema> augmentations = new HashSet<>();
         private final Set<UsesNode> uses = new HashSet<>();
         private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
@@ -330,12 +328,12 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            return Collections.unmodifiableSet(new HashSet<>(childNodes.values()));
+            return Collections.unmodifiableSet(childNodes);
         }
 
-        private void addChildNodes(Map<QName, DataSchemaNode> childNodes) {
+        private void addChildNodes(Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
-                this.childNodes.putAll(childNodes);
+                this.childNodes.addAll(childNodes);
             }
         }
 
@@ -346,19 +344,12 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
         @Override
         public DataSchemaNode getDataChildByName(QName name) {
-            return childNodes.get(name);
+            return getChildNode(childNodes, name);
         }
 
         @Override
         public DataSchemaNode getDataChildByName(String name) {
-            DataSchemaNode result = null;
-            for (Map.Entry<QName, DataSchemaNode> entry : childNodes.entrySet()) {
-                if (entry.getKey().getLocalName().equals(name)) {
-                    result = entry.getValue();
-                    break;
-                }
-            }
-            return result;
+            return getChildNode(childNodes, name);
         }
 
         @Override

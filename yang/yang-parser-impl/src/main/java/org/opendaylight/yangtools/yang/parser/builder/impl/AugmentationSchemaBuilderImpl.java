@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -93,7 +91,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             // CHILD NODES
             for (DataSchemaNodeBuilder node : addedChildNodes) {
                 DataSchemaNode child = node.build();
-                childNodes.put(child.getQName(), child);
+                childNodes.add(child);
             }
             instance.addChildNodes(childNodes);
 
@@ -248,7 +246,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private final class AugmentationSchemaImpl implements AugmentationSchema {
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
-        private final Map<QName, DataSchemaNode> childNodes = new HashMap<>();
+        private final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<UsesNode> uses = new HashSet<>();
         private String description;
         private String reference;
@@ -279,14 +277,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            final Set<DataSchemaNode> result = new TreeSet<DataSchemaNode>(Comparators.SCHEMA_NODE_COMP);
-            result.addAll(childNodes.values());
-            return Collections.unmodifiableSet(result);
+            return Collections.unmodifiableSet(childNodes);
         }
 
-        private void addChildNodes(Map<QName, DataSchemaNode> childNodes) {
+        private void addChildNodes(Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
-                this.childNodes.putAll(childNodes);
+                this.childNodes.addAll(childNodes);
             }
         }
 
@@ -347,19 +343,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
         @Override
         public DataSchemaNode getDataChildByName(QName name) {
-            return childNodes.get(name);
+            return getChildNode(childNodes, name);
         }
 
         @Override
         public DataSchemaNode getDataChildByName(String name) {
-            DataSchemaNode result = null;
-            for (Map.Entry<QName, DataSchemaNode> entry : childNodes.entrySet()) {
-                if (entry.getKey().getLocalName().equals(name)) {
-                    result = entry.getValue();
-                    break;
-                }
-            }
-            return result;
+            return getChildNode(childNodes, name);
         }
 
         @Override
