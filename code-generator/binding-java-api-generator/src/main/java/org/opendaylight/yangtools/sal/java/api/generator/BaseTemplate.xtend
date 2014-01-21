@@ -266,8 +266,9 @@ abstract class BaseTemplate {
                 «FOR i : 0..<properties.size»
                     if («properties.get(i).fieldName» != null) {
                         if (first) {
-                            builder.append(", ");
                             first = false;
+                        } else {
+                            builder.append(", ");
                         }
                         builder.append("«properties.get(i).fieldName»=");
                         «IF properties.get(i).returnType.name.contains("[")»
