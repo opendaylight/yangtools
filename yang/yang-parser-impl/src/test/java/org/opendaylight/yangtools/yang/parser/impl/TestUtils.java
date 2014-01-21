@@ -25,6 +25,10 @@ final class TestUtils {
 
     public static Set<Module> loadModules(String resourceDirectory) throws FileNotFoundException {
         YangModelParser parser = new YangParserImpl();
+        return loadModules(resourceDirectory, parser);
+    }
+
+    public static Set<Module> loadModules(String resourceDirectory, YangModelParser parser) throws FileNotFoundException {
         final File testDir = new File(resourceDirectory);
         final String[] fileList = testDir.list();
         final List<File> testFiles = new ArrayList<>();
@@ -189,6 +193,16 @@ final class TestUtils {
                 checkIsAddedByUses(caseNode, expected);
             }
         }
+    }
+
+    public static List<Module> findModules(Set<Module> modules, String moduleName) {
+        List<Module> result = new ArrayList<>();
+        for (Module module : modules) {
+            if (module.getName().equals(moduleName)) {
+                result.add(module);
+            }
+        }
+        return result;
     }
 
 }
