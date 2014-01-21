@@ -418,6 +418,8 @@ public final class CopyUtils {
         UnknownSchemaNodeBuilder c = new UnknownSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
                 newQName, newSchemaPath);
 
+        c.setNodeType(old.getNodeType());
+        c.setNodeParameter(old.getNodeParameter());
         c.setParent(newParent);
         c.setDescription(old.getDescription());
         c.setReference(old.getReference());
