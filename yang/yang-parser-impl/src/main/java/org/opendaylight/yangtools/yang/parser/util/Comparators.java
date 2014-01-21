@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import java.net.URI;
 import java.util.Comparator;
+import java.util.Date;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -43,7 +45,51 @@ public final class Comparators {
     private static final class SchemaNodeComparator implements Comparator<SchemaNode> {
         @Override
         public int compare(SchemaNode o1, SchemaNode o2) {
-            return o1.getQName().getLocalName().compareTo(o2.getQName().getLocalName());
+            QName q1 = o1.getQName();
+            QName q2 = o2.getQName();
+            int result = q1.getLocalName().compareTo(q2.getLocalName());
+            if (result == 0) {
+                URI ns1 = q1.getNamespace();
+                URI ns2 = q2.getNamespace();
+                if (ns1 == null && ns2 == null) {
+                    Date rev1 = q1.getRevision();
+                    Date rev2 = q2.getRevision();
+
+                    if (rev1 == null && rev2 == null) {
+                        String p1 = q1.getPrefix();
+                        String p2 = q2.getPrefix();
+                        if (p1 == null && p2 == null) {
+                            throw new IllegalArgumentException("Failed to sort nodes: " + o1 + ", " + o2);
+                        }
+                        if (p1 == null || p2 == null) {
+                            if (p1 == null) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        }
+                        return p1.compareTo(p2);
+                    }
+                    if (rev1 == null || rev2 == null) {
+                        if (rev1 == null) {
+                            return -1;
+                        } else {
+                            return -2;
+                        }
+                    }
+                    return rev1.compareTo(rev2);
+                }
+                if (ns1 == null || ns2 == null) {
+                    if (ns1 == null) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                }
+                return ns1.toString().compareTo(ns2.toString());
+            } else {
+                return result;
+            }
         }
     }
 
