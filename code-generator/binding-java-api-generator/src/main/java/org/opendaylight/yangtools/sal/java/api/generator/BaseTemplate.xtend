@@ -260,23 +260,24 @@ abstract class BaseTemplate {
         «IF !properties.empty»
             @Override
             public String toString() {
-                StringBuilder builder = new StringBuilder();
-                builder.append("«type.name» [«properties.get(0).fieldName»=");
-                «IF properties.get(0).returnType.name.contains("[")»
-                    builder.append(«Arrays.importedName».toString(«properties.get(0).fieldName»));
-                «ELSE»
-                    builder.append(«properties.get(0).fieldName»);
-                «ENDIF»
-                «FOR i : 1..<properties.size»
-                    builder.append(", «properties.get(i).fieldName»=");
-                    «IF properties.get(i).returnType.name.contains("[")»
-                        builder.append(«Arrays.importedName».toString(«properties.get(i).fieldName»));
-                    «ELSE»
-                        builder.append(«properties.get(i).fieldName»);
-                    «ENDIF»
+                StringBuilder builder = new StringBuilder("«type.name» [");
+                boolean first = true;
+
+                «FOR i : 0..<properties.size»
+                    if («properties.get(i).fieldName» != null) {
+                        if (first) {
+                            builder.append(", ");
+                            first = false;
+                        }
+                        builder.append("«properties.get(i).fieldName»=");
+                        «IF properties.get(i).returnType.name.contains("[")»
+                            builder.append(«Arrays.importedName».toString(«properties.get(i).fieldName»));
+                        «ELSE»
+                            builder.append(«properties.get(i).fieldName»);
+                        «ENDIF»
+                     }
                 «ENDFOR»
-                builder.append("]");
-                return builder.toString();
+                return builder.append(']').toString();
             }
         «ENDIF»
     '''
