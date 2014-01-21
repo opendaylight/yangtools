@@ -11,11 +11,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -83,8 +82,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         if (!isBuilt) {
             // CHILD NODES
             for (DataSchemaNodeBuilder node : addedChildNodes) {
-                DataSchemaNode child = node.build();
-                childNodes.put(child.getQName(), child);
+                childNodes.add(node.build());
             }
             instance.setChildNodes(childNodes);
 
@@ -189,7 +187,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         private String description;
         private String reference;
         private Status status = Status.CURRENT;
-        private final Map<QName, DataSchemaNode> childNodes = new HashMap<>();
+        private final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<GroupingDefinition> groupings = new HashSet<>();
         private final Set<TypeDefinition<?>> typeDefinitions = new HashSet<>();
         private final Set<UsesNode> uses = new HashSet<>();
@@ -228,12 +226,12 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            return Collections.unmodifiableSet(new HashSet<DataSchemaNode>(childNodes.values()));
+            return Collections.unmodifiableSet(childNodes);
         }
 
-        private void setChildNodes(Map<QName, DataSchemaNode> childNodes) {
+        private void setChildNodes(Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
-                this.childNodes.putAll(childNodes);
+                this.childNodes.addAll(childNodes);
             }
         }
 
@@ -294,19 +292,12 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
 
         @Override
         public DataSchemaNode getDataChildByName(QName name) {
-            return childNodes.get(name);
+            return getChildNode(childNodes, name);
         }
 
         @Override
         public DataSchemaNode getDataChildByName(String name) {
-            DataSchemaNode result = null;
-            for (Map.Entry<QName, DataSchemaNode> entry : childNodes.entrySet()) {
-                if (entry.getKey().getLocalName().equals(name)) {
-                    result = entry.getValue();
-                    break;
-                }
-            }
-            return result;
+            return getChildNode(childNodes, name);
         }
 
         @Override

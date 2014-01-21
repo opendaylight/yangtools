@@ -739,7 +739,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
             "Augmentation Schema does not contain Target Path (Target Path is NULL).");
 
         processUsesAugments(augSchema, module);
-
         val targetPath = augSchema.targetPath;
         var targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
         if (targetSchemaNode instanceof DataSchemaNode && (targetSchemaNode as DataSchemaNode).isAddedByUses()) {
@@ -756,7 +755,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
 
         if (targetSchemaNode == null) {
-            throw new IllegalArgumentException("augment target not found")
+            throw new IllegalArgumentException("augment target not found: " + targetPath)
         }
 
         if (targetSchemaNode !== null) {
@@ -804,10 +803,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
             return null
         }
 
-        var String currentName = node.QName.localName
+        var QName currentName = node.QName
         var Object currentNode = node
         var Object parent = node;
-        val tmpPath = new ArrayList<String>()
+        val tmpPath = new ArrayList<QName>()
         val tmpTree = new ArrayList<SchemaNode>()
 
         var AugmentationSchema augment = null;
@@ -823,7 +822,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 tmpTree.add(currentNode as SchemaNode)
                 augment = findNodeInAugment((parent as AugmentationTarget).availableAugmentations, currentName);
                 if (augment == null) {
-                    currentName = (parent as DataSchemaNode).QName.localName;
+                    currentName = (parent as DataSchemaNode).QName
                     currentNode = parent
                 }
             }
@@ -838,12 +837,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
             var DataSchemaNode result = null;
             for (name : tmpPath) {
                 if (actualParent instanceof DataNodeContainer) {
-                    result = (actualParent as DataNodeContainer).getDataChildByName(name);
-                    actualParent = (actualParent as DataNodeContainer).getDataChildByName(name);
+                    result = (actualParent as DataNodeContainer).getDataChildByName(name.localName);
+                    actualParent = (actualParent as DataNodeContainer).getDataChildByName(name.localName);
                 } else {
                     if (actualParent instanceof ChoiceNode) {
-                        result = (actualParent as ChoiceNode).getCaseNodeByName(name);
-                        actualParent = (actualParent as ChoiceNode).getCaseNodeByName(name);
+                        result = (actualParent as ChoiceNode).getCaseNodeByName(name.localName);
+                        actualParent = (actualParent as ChoiceNode).getCaseNodeByName(name.localName);
                     }
                 }
             }
@@ -856,9 +855,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
     }
 
-    private def AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, String name) {
+    private def AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, QName name) {
         for (augment : augments) {
-            if (augment.getDataChildByName(name) != null) {
+            val DataSchemaNode node = augment.getDataChildByName(name);
+            if (node != null) {
                 return augment;
             }
         }
@@ -884,8 +884,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
             return result
         } else {
             var DataSchemaNode result = null;
-            var String currentName = node.QName.localName
-            var tmpPath = new ArrayList<String>()
+            var QName currentName = node.QName
+            var tmpPath = new ArrayList<QName>()
             var Object parent = null
 
             val SchemaPath sp = node.path
@@ -900,13 +900,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val dataNodeParent = parent as DataNodeContainer;
                 for (u : dataNodeParent.uses) {
                     if (result == null) {
-                        result = getResultFromUses(u, currentName)
+                        result = getResultFromUses(u, currentName.localName)
                     }
                 }
                 if (result == null) {
-                    currentName = (parent as SchemaNode).QName.localName
-                    if (parent instanceof DataSchemaNode) {
-                        val SchemaPath nodeSp = (parent as DataSchemaNode).path
+                    currentName = (parent as SchemaNode).QName
+                    if (parent instanceof SchemaNode) {
+                        val SchemaPath nodeSp = (parent as SchemaNode).path
                         val List<QName> nodeNames = nodeSp.path
                         val List<QName> nodeNewNames = new ArrayList(nodeNames)
                         nodeNewNames.remove(nodeNewNames.size - 1)
@@ -933,8 +933,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
         List<SchemaNode> dataTree) {
 
         var DataSchemaNode result = null;
-        var String currentName = node.QName.localName
-        var tmpPath = new ArrayList<String>()
+        var QName currentName = node.QName
+        var tmpPath = new ArrayList<QName>()
         tmpPath.add(currentName)
         var int i = 1;
         var Object parent = null
@@ -944,18 +944,18 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 parent = parentNode
             } else {
                 parent = dataTree.get(dataTree.size - (i+1))
-                tmpPath.add((parent as SchemaNode).QName.localName);
+                tmpPath.add((parent as SchemaNode).QName)
             }
 
             val dataNodeParent = parent as DataNodeContainer;
             for (u : dataNodeParent.uses) {
                 if (result == null) {
-                    result = getResultFromUses(u, currentName)
+                    result = getResultFromUses(u, currentName.localName)
                 }
             }
             if (result == null) {
                 i = i + 1
-                currentName = (parent as SchemaNode).QName.localName
+                currentName = (parent as SchemaNode).QName
             }
         } while (result == null);
 
@@ -974,7 +974,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         return gr.getDataChildByName(currentName)
     }
 
-    private def getTargetNode(List<String> tmpPath, DataSchemaNode node) {
+    private def getTargetNode(List<QName> tmpPath, DataSchemaNode node) {
         var DataSchemaNode result = node
         if (tmpPath.size == 1) {
             if (result != null && result.addedByUses) {
@@ -987,7 +987,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
             tmpPath.remove(0);
             for (name : tmpPath) {
-                newParent = (newParent as DataNodeContainer).getDataChildByName(name);
+                // searching by local name is must, because node has different namespace in its original location
+                newParent = (newParent as DataNodeContainer).getDataChildByName(name.localName);
             }
             if (newParent != null && newParent.addedByUses) {
                 newParent = findOriginal(newParent);

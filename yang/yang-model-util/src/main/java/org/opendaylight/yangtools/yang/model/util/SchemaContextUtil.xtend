@@ -268,7 +268,7 @@ public  class SchemaContextUtil {
             if (childNodeQName != null) {
                 schemaNode = nextNode.getDataChildByName(childNodeQName.getLocalName());
                 if(schemaNode === null && nextNode instanceof Module) {
-                    schemaNode = (nextNode as Module).getNotificationByName(childNodeQName.localName);
+                    schemaNode = (nextNode as Module).getNotificationByName(childNodeQName);
                 }
                 if(schemaNode === null && nextNode instanceof Module) {
                     
@@ -302,8 +302,8 @@ public  class SchemaContextUtil {
         }
         return schemaNode;
     }
-    
-    
+
+
     public static def SchemaNode findNodeInSchemaContext(SchemaContext context, List<QName> path) {
         val current = path.get(0);
         val module = context.findModuleByNamespaceAndRevision(current.namespace,current.revision);
@@ -339,7 +339,7 @@ public  class SchemaContextUtil {
     }
 
     private static def SchemaNode findNodeInModule(Module module, List<QName> path) {
-        val current = path.get(0).localName;
+        val current = path.get(0)
         var SchemaNode node = module.getDataChildByName(current);
         if (node != null) return findNode(node as DataSchemaNode,path.nextLevel);
         node = module.getRpcByName(current);
@@ -348,12 +348,12 @@ public  class SchemaContextUtil {
         if (node != null) return findNodeInNotification(node as NotificationDefinition,path.nextLevel)
         node = module.getGroupingByName(current);
         if (node != null) return findNodeInGrouping(node as GroupingDefinition, path.nextLevel);
-        return null
+        return node
     }
 
     private static def SchemaNode findNodeInGrouping(GroupingDefinition grouping, List<QName> path) {
         if (path.empty) return grouping;
-        val current = path.get(0).localName;
+        val current = path.get(0)
         val node = grouping.getDataChildByName(current);
         if (node != null) return findNode(node, path.nextLevel);
         return null;
@@ -371,7 +371,7 @@ public  class SchemaContextUtil {
     
     private static def SchemaNode findNodeInNotification(NotificationDefinition rpc,List<QName> path) {
         if(path.empty) return rpc;
-        val current = path.get(0).localName;
+        val current = path.get(0)
         val node = rpc.getDataChildByName(current)
         if(node != null) return findNode(node,path.nextLevel)
         return null
@@ -379,7 +379,7 @@ public  class SchemaContextUtil {
     
     private static dispatch def SchemaNode findNode(ChoiceNode parent,List<QName> path) {
         if(path.empty) return parent;
-        val current = path.get(0).localName;
+        val current = path.get(0)
         val node = parent.getCaseNodeByName(current)
         if (node != null) return findNodeInCase(node,path.nextLevel)
         return null
@@ -387,7 +387,7 @@ public  class SchemaContextUtil {
     
     private static dispatch def SchemaNode findNode(ContainerSchemaNode parent,List<QName> path) {
         if(path.empty) return parent;
-         val current = path.get(0).localName;
+         val current = path.get(0)
         val node = parent.getDataChildByName(current)
         if (node != null) return findNode(node,path.nextLevel)
         return null
@@ -395,7 +395,7 @@ public  class SchemaContextUtil {
     
     private static dispatch def SchemaNode findNode(ListSchemaNode parent,List<QName> path) {
         if(path.empty) return parent;
-         val current = path.get(0).localName;
+         val current = path.get(0)
         val node = parent.getDataChildByName(current)
         if (node != null) return findNode(node,path.nextLevel)
         return null
@@ -411,17 +411,17 @@ public  class SchemaContextUtil {
     
     public static  def SchemaNode findNodeInCase(ChoiceCaseNode parent,List<QName> path) {
         if(path.empty) return parent;
-         val current = path.get(0).localName;
+         val current = path.get(0)
         val node = parent.getDataChildByName(current)
         if (node != null) return findNode(node,path.nextLevel)
         return null
     }
     
      
-    public static def RpcDefinition getRpcByName(Module module, String name) {
-        for(notification : module.rpcs) {
-            if(notification.QName.localName == name) {
-                return notification;
+    public static def RpcDefinition getRpcByName(Module module, QName name) {
+        for (rpc : module.rpcs) {
+            if (rpc.QName.equals(name)) {
+                return rpc;
             }
         }
         return null;
@@ -432,18 +432,18 @@ public  class SchemaContextUtil {
         return path.subList(1,path.size)
     }
     
-    public static def NotificationDefinition getNotificationByName(Module module, String name) {
+    public static def NotificationDefinition getNotificationByName(Module module, QName name) {
         for(notification : module.notifications) {
-            if(notification.QName.localName == name) {
+            if(notification.QName.equals(name)) {
                 return notification;
             }
         }
         return null;
     }
     
-    public static def GroupingDefinition getGroupingByName(Module module, String name) {
+    public static def GroupingDefinition getGroupingByName(Module module, QName name) {
         for (grouping : module.groupings) {
-            if (grouping.QName.localName.equals(name)) {
+            if (grouping.QName.equals(name)) {
                 return grouping;
             }
         }
@@ -617,9 +617,8 @@ public  class SchemaContextUtil {
                 if (path != null) {
                     val int lenght = path.size() - colCount;
                     absolutePath.addAll(path.subList(0,lenght));
-                    absolutePath.addAll(
-                        xpaths.subList(colCount,xpaths.length).map[stringPathPartToQName(context, module,it)]
-                    )
+                    val List<QName> sublist = xpaths.subList(colCount,xpaths.length).map[stringPathPartToQName(context, module,it)]
+                    absolutePath.addAll(sublist)
                 }
             }
         }

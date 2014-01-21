@@ -52,7 +52,7 @@ module augment-abstract-topology {
 
                 leaf tunnel-id {
                     type leafref {
-                        path "../../../link-id";
+                        path "../../../at:link-id";
                     }
                 }
             }

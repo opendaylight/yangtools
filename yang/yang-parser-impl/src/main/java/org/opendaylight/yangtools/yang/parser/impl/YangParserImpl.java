@@ -334,7 +334,7 @@ public final class YangParserImpl implements YangModelParser {
         module.getAugmentBuilders().addAll(submodule.getAugmentBuilders());
         module.getAllAugments().addAll(submodule.getAllAugments());
         module.getChildNodeBuilders().addAll(submodule.getChildNodeBuilders());
-        module.getChildNodes().putAll(submodule.getChildNodes());
+        module.getChildNodes().addAll(submodule.getChildNodes());
         module.getGroupings().addAll(submodule.getGroupings());
         module.getGroupingBuilders().addAll(submodule.getGroupingBuilders());
         module.getTypeDefinitions().addAll(submodule.getTypeDefinitions());
@@ -465,7 +465,7 @@ public final class YangParserImpl implements YangModelParser {
         }
         return result;
     }
-    
+
     public static YangContext parseStreamWithoutErrorListeners(final InputStream yangStream) {
         YangContext result = null;
         try {

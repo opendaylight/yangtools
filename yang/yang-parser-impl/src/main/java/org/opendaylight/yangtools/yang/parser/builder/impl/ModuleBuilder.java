@@ -103,7 +103,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         revision = base.getRevision();
 
         for (DataSchemaNode childNode : base.getChildNodes()) {
-            childNodes.put(childNode.getQName(), childNode);
+            childNodes.add(childNode);
         }
 
         typedefs.addAll(base.getTypeDefinitions());
@@ -137,8 +137,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         // CHILD NODES
         for (DataSchemaNodeBuilder child : addedChildNodes) {
-            DataSchemaNode childNode = child.build();
-            childNodes.put(childNode.getQName(), childNode);
+            childNodes.add(child.build());
         }
         instance.addChildNodes(childNodes);
 
@@ -890,7 +889,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         private final Set<AugmentationSchema> augmentations = new HashSet<>();
         private final Set<RpcDefinition> rpcs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<Deviation> deviations = new HashSet<>();
-        private final Map<QName, DataSchemaNode> childNodes = new TreeMap<>(Comparators.QNAME_COMP);
+        private final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<UsesNode> uses = new HashSet<>();
         private final List<ExtensionDefinition> extensionNodes = new ArrayList<>();
@@ -1057,14 +1056,12 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            final Set<DataSchemaNode> result = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-            result.addAll(childNodes.values());
-            return Collections.unmodifiableSet(result);
+            return Collections.unmodifiableSet(childNodes);
         }
 
-        private void addChildNodes(Map<QName, DataSchemaNode> childNodes) {
+        private void addChildNodes(Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
-                this.childNodes.putAll(childNodes);
+                this.childNodes.addAll(childNodes);
             }
         }
 
@@ -1126,19 +1123,12 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         @Override
         public DataSchemaNode getDataChildByName(QName name) {
-            return childNodes.get(name);
+            return getChildNode(childNodes, name);
         }
 
         @Override
         public DataSchemaNode getDataChildByName(String name) {
-            DataSchemaNode result = null;
-            for (Map.Entry<QName, DataSchemaNode> entry : childNodes.entrySet()) {
-                if (entry.getKey().getLocalName().equals(name)) {
-                    result = entry.getValue();
-                    break;
-                }
-            }
-            return result;
+            return getChildNode(childNodes, name);
         }
 
         @Override
