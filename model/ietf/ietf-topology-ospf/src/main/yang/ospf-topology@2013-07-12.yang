@@ -1,4 +1,4 @@
-ňmodule ospf-topology {
+module ospf-topology {
     yang-version 1;
     namespace "urn:ietf:params:xml:ns:yang:ospf-topology";
     // replace with IANA namespace when assigned
