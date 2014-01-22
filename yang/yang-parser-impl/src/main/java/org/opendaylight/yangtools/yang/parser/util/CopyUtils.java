@@ -279,7 +279,7 @@ public final class CopyUtils {
         }
 
         copy.setUserOrdered(old.isUserOrdered());
-        copy.setKeyDefinition(old.getKeyDefinition());
+        copy.setKeys(old.getKeys());
 
         return copy;
     }

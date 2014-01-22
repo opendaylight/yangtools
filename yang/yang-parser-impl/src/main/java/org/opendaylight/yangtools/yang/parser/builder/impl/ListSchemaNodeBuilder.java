@@ -89,6 +89,17 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
             }
             instance.addChildNodes(childNodes);
 
+            // KEY
+            if (keys == null) {
+                instance.keyDefinition = Collections.<QName> emptyList();
+            } else {
+                List<QName> qnames = new ArrayList<>();
+                for (String key : keys) {
+                    qnames.add(instance.getDataChildByName(key).getQName());
+                }
+                instance.keyDefinition = qnames;
+            }
+
             // TYPEDEFS
             for (TypeDefinitionBuilder entry : addedTypedefs) {
                 typedefs.add(entry.build());
@@ -201,14 +212,6 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
     public void setKeys(final List<String> keys) {
         this.keys = keys;
-    }
-
-    public List<QName> getKeyDefinition() {
-        return instance.keyDefinition;
-    }
-
-    public void setKeyDefinition(final List<QName> keyDefinition) {
-        instance.keyDefinition = keyDefinition;
     }
 
     @Override

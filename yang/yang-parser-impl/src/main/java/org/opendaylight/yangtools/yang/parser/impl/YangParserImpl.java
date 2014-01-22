@@ -480,7 +480,6 @@ public final class YangParserImpl implements YangModelParser {
         resolveUsesTargetGrouping(modules, null);
         resolveUsesForGroupings(modules, null);
         resolveUsesForNodes(modules, null);
-        resolveListsKey(modules);
         resolveAugments(modules, null);
         resolveDeviations(modules);
 
@@ -504,7 +503,6 @@ public final class YangParserImpl implements YangModelParser {
         resolveUsesTargetGrouping(modules, context);
         resolveUsesForGroupings(modules, context);
         resolveUsesForNodes(modules, context);
-        resolveListsKey(modules);
         resolveAugments(modules, context);
         resolveDeviationsWithContext(modules, context);
 
@@ -1050,28 +1048,6 @@ public final class YangParserImpl implements YangModelParser {
         parent.getUnknownNodes().addAll(unknownNodes);
         for (UnknownSchemaNodeBuilder un : unknownNodes) {
             un.setAddedByUses(true);
-        }
-    }
-
-    private void resolveListsKey(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
-            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
-                ModuleBuilder module = inner.getValue();
-                List<ListSchemaNodeBuilder> allLists = module.getAllLists();
-                for (ListSchemaNodeBuilder list : allLists) {
-                    List<String> keys = list.getKeys();
-                    if (keys == null) {
-                        list.setKeyDefinition(Collections.<QName> emptyList());
-                    } else {
-                        List<QName> qnames = new ArrayList<>();
-                        for (String key : keys) {
-                            qnames.add(list.getDataChildByName(key).getQName());
-                        }
-                        list.setKeyDefinition(qnames);
-                    }
-
-                }
-            }
         }
     }
 
