@@ -11,6 +11,7 @@
     <artifactId>yang-binding</artifactId>
     <name>${project.artifactId}</name>
     <description>Java binding for YANG</description>
+    <version>0.6.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -33,5 +34,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <version>0.6.0-SNAPSHOT</version>
 </project>
