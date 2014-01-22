@@ -379,7 +379,7 @@ public final class ParserUtils {
      */
     public static def boolean processAugmentation(AugmentationSchemaBuilder augment, ModuleBuilder firstNodeParent) {
         val path = augment.targetPath.path
-        var Builder targetNode = findSchemaNodeInModule(path, firstNodeParent as ModuleBuilder)
+        var Builder targetNode = findSchemaNodeInModule(path, firstNodeParent)
         if(targetNode === null) return false;
 
         if ((targetNode instanceof DataNodeContainerBuilder)) {

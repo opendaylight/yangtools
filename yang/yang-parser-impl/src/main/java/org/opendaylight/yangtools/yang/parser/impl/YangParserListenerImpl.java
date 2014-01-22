@@ -657,7 +657,6 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         parseConstraints(ctx, builder.getConstraints());
         builder.setConfiguration(getConfig(ctx, moduleBuilder.getActualParent(), moduleName, line));
 
-        String keyDefinition = "";
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             ParseTree childNode = ctx.getChild(i);
             if (childNode instanceof Ordered_by_stmtContext) {
@@ -665,9 +664,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 final boolean userOrdered = parseUserOrdered(orderedBy);
                 builder.setUserOrdered(userOrdered);
             } else if (childNode instanceof Key_stmtContext) {
-                keyDefinition = stringFromNode(childNode);
-                List<QName> key = createListKey(keyDefinition, namespace, revision, yangModelPrefix);
-                builder.setKeyDefinition(key);
+                List<String> key = createListKey((Key_stmtContext) childNode);
+                builder.setKeys(key);
             }
         }
     }

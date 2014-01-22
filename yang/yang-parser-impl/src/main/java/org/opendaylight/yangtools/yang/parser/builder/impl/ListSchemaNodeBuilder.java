@@ -33,6 +33,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         AugmentationTargetBuilder {
     private boolean isBuilt;
     private final ListSchemaNodeImpl instance;
+    private List<String> keys;
     // SchemaNode args
     private SchemaPath schemaPath;
     // DataSchemaNode args
@@ -192,6 +193,14 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
     public List<AugmentationSchemaBuilder> getAugmentationBuilders() {
         return augmentationBuilders;
+    }
+
+    public List<String> getKeys() {
+        return keys;
+    }
+
+    public void setKeys(final List<String> keys) {
+        this.keys = keys;
     }
 
     public List<QName> getKeyDefinition() {

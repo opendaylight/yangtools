@@ -213,6 +213,7 @@ public class YangParserTest {
         assertEquals(0, ifEntry.getUses().size());
 
         LeafSchemaNode ifIndex = (LeafSchemaNode) ifEntry.getDataChildByName("ifIndex");
+        assertEquals(ifEntry.getKeyDefinition().get(0), ifIndex.getQName());
         assertTrue(ifIndex.getType() instanceof Uint32);
         LeafSchemaNode ifMtu = (LeafSchemaNode) ifEntry.getDataChildByName("ifMtu");
         assertTrue(ifMtu.getType() instanceof Int32);

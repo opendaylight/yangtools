@@ -77,6 +77,8 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     private final List<UnknownSchemaNodeBuilder> allUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
+    private final List<ListSchemaNodeBuilder> allLists = new ArrayList<ListSchemaNodeBuilder>();
+
     public ModuleBuilder(final String name) {
         this(name, false);
     }
@@ -308,6 +310,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return allUnknownNodes;
     }
 
+    public List<ListSchemaNodeBuilder> getAllLists() {
+        return allLists;
+    }
+
     public String getName() {
         return name;
     }
@@ -416,6 +422,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         Builder parent = getActualNode();
         builder.setParent(parent);
         addChildToParent(parent, builder, qname.getLocalName());
+        allLists.add(builder);
 
         return builder;
     }
