@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Error_message_stmt
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Fraction_digits_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Identityref_specificationContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Instance_identifier_specificationContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Key_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Leafref_specificationContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Length_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Mandatory_argContext;
@@ -146,7 +147,7 @@ public final class ParserListenerUtils {
                 final StringContext context = (StringContext) treeNode.getChild(i);
                 if (context != null) {
                     return stringFromStringContext(context);
-                    
+
                 }
             }
         }
@@ -295,32 +296,22 @@ public final class ParserListenerUtils {
     }
 
     /**
-     * Create java.util.List of QName objects from given key definition as
-     * string.
+     * Create java.util.List of key node names.
      *
      * @param keyDefinition
      *            key definition as string
-     * @param namespace
-     *            current namespace
-     * @param revision
-     *            current revision
-     * @param prefix
-     *            current prefix
-     * @return YANG list key as java.util.List of QName objects
+     * @return YANG list key as java.util.List of key node names
      */
-    public static List<QName> createListKey(final String keyDefinition, final URI namespace, final Date revision,
-            final String prefix) {
-        List<QName> key = new ArrayList<>();
+    public static List<String> createListKey(final Key_stmtContext ctx) {
+        String keyDefinition = stringFromNode(ctx);
+        List<String> keys = new ArrayList<>();
         String[] splittedKey = keyDefinition.split(" ");
-
-        QName qname;
         for (String keyElement : splittedKey) {
-            if (keyElement.length() != 0) {
-                qname = new QName(namespace, revision, prefix, keyElement);
-                key.add(qname);
+            if (!keyElement.isEmpty()) {
+                keys.add(keyElement);
             }
         }
-        return key;
+        return keys;
     }
 
     /**
@@ -1681,7 +1672,7 @@ public final class ParserListenerUtils {
         checkState(!potentialValues.isEmpty());
         return ParserListenerUtils.stringFromStringContext(potentialValues.get(0));
     }
-    
+
     public static <T extends ParserRuleContext> Optional<T> getFirstContext(ParserRuleContext context,Class<T> contextType) {
         List<T> potential = context.getRuleContexts(contextType);
         if(potential.isEmpty()) {
