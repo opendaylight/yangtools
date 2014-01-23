@@ -34,6 +34,7 @@
         <xtend.version>2.4.3</xtend.version>
         <groovy.version>2.1.6</groovy.version>
         <mockito.version>1.9.5</mockito.version>
+        <javassist.version>3.17.1-GA</javassist.version>
     </properties>
 
     <scm>
@@ -188,7 +189,7 @@
                     <version>${maven.jar.version}</version>
                     <configuration>
                         <archive>
-                            <!-- Bundle OSGi Manifest created by maven-bundle-plugin 
+                            <!-- Bundle OSGi Manifest created by maven-bundle-plugin
                                 into jar file -->
                             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         </archive>
