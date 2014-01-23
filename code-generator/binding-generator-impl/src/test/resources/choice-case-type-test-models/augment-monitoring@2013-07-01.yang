@@ -54,8 +54,8 @@ module augment-monitoring {
 
     augment "/nm:netconf-state/nm:datastores/nm:datastore" {
         choice storage-format {
-            case xml {
-                container xml-def {
+            case _xml {
+                container _xml-def {
                     leaf file-name {
                         type string;
                     }
