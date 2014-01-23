@@ -611,8 +611,16 @@ class GeneratorImpl {
                 if (node == null && (parent instanceof Module)) {
                     val notifications = (parent as Module).notifications;
                     for (notification : notifications) {
-                        if (notification.QName.localName.equals(name.localName)) {
+                        if (notification.QName.equals(name)) {
                             node = notification
+                        }
+                    }
+                }
+                if (node == null && (parent instanceof Module)) {
+                    val rpcs = (parent as Module).rpcs;
+                    for (rpc : rpcs) {
+                        if (rpc.QName.equals(name)) {
+                            node = rpc
                         }
                     }
                 }
