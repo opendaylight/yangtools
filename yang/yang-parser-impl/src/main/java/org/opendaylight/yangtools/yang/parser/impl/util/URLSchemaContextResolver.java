@@ -33,7 +33,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     private final ConcurrentMap<SourceIdentifier, SourceContext> availableSources = new ConcurrentHashMap<>();
 
     private YangSourceContext currentSourceContext;
-    private Optional<SchemaContext> currentSchemaContext;
+    private Optional<SchemaContext> currentSchemaContext = Optional.absent();
     
     public Registration<URL> registerSource(URL source) {
         checkArgument(source != null, "Supplied source must not be null");
