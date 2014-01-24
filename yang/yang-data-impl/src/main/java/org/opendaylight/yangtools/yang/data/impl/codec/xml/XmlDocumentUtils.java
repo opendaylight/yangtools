@@ -10,8 +10,12 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import javax.activation.UnsupportedDataTypeException;
@@ -22,6 +26,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
@@ -39,6 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -142,7 +150,6 @@ public class XmlDocumentUtils {
 
     public static void writeValueByType(Element element, SimpleNode<?> node, TypeDefinition<?> type,
             DataSchemaNode schema, XmlCodecProvider codecProvider) {
-
         TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
 
         if (baseType instanceof IdentityrefTypeDefinition) {
@@ -163,6 +170,35 @@ public class XmlDocumentUtils {
                     element.setTextContent(String.valueOf(value));
                 }
             }
+        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
+            if (node.getValue() instanceof InstanceIdentifier) {
+                Map<String, String> prefixes = new HashMap<>();
+                InstanceIdentifier instanceIdentifier = (InstanceIdentifier) node.getValue();
+                StringBuilder textContent = new StringBuilder();
+                for (PathArgument pathArgument : instanceIdentifier.getPath()) {
+                    textContent.append("/");
+                    writeIdentifierWithNamespacePrefix(element, textContent, pathArgument.getNodeType(), prefixes);
+                    if (pathArgument instanceof NodeIdentifierWithPredicates) {
+                        Map<QName, Object> predicates = ((NodeIdentifierWithPredicates) pathArgument).getKeyValues();
+
+                        for (QName keyValue : predicates.keySet()) {
+                            String predicateValue = String.valueOf(predicates.get(keyValue));
+                            textContent.append("[");
+                            writeIdentifierWithNamespacePrefix(element, textContent, keyValue, prefixes);
+                            textContent.append("=\"");
+                            textContent.append(predicateValue);
+                            textContent.append("\"");
+                            textContent.append("]");
+                        }
+                    }
+                }
+                element.setTextContent(textContent.toString());
+
+            } else {
+                logger.debug("Value of {}:{} is not instance of InstanceIdentifier but is {}", baseType.getQName()
+                        .getNamespace(), baseType.getQName().getLocalName(), node.getValue().getClass());
+                element.setTextContent(String.valueOf(node.getValue()));
+            }
         } else {
             if (node.getValue() != null) {
                 final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(baseType);
@@ -180,6 +216,45 @@ public class XmlDocumentUtils {
                 }
             }
         }
+    }
+
+    /**
+     * 
+     * @param prefixes
+     *            key = namespace as string, value = prefix
+     */
+    private static void writeIdentifierWithNamespacePrefix(Element element, StringBuilder textContent, QName qName,
+            Map<String, String> prefixes) {
+        String namespace = qName.getNamespace().toString();
+        String prefix = prefixes.get(namespace);
+        if (prefix == null) {
+            prefix = qName.getPrefix();
+            if (prefix == null || prefix.isEmpty() || prefixes.containsValue(prefix)) {
+                prefix = generateNewPrefix(prefixes.values());
+            }
+        }
+
+        element.setAttribute("xmlns:" + prefix, namespace.toString());
+        textContent.append(prefix);
+        prefixes.put(namespace, prefix);
+
+        textContent.append(":");
+        textContent.append(qName.getLocalName());
+    }
+
+    private static String generateNewPrefix(Collection<String> prefixes) {
+        StringBuilder result = null;
+        ;
+        Random random = new Random();
+        do {
+            result = new StringBuilder();
+            for (int i = 0; i < 4; i++) {
+                int randomNumber = 0x61 + (Math.abs(random.nextInt()) % 26);
+                result.append(Character.toChars(randomNumber));
+            }
+        } while (prefixes.contains(result.toString()));
+
+        return result.toString();
     }
 
     public final static TypeDefinition<?> resolveBaseTypeFrom(TypeDefinition<?> type) {
