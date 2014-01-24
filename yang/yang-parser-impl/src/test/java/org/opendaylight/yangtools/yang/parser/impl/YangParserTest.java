@@ -915,8 +915,8 @@ public class YangParserTest {
 
     @Test
     public void testSubmodules() {
-        String yangFilePath = getClass().getResource(FS + "submodule-test" + FS + "subfoo.yang").getPath();
-        String directoryPath = getClass().getResource(FS + "model").getPath();
+        String yangFilePath = getClass().getResource("/submodule-test/subfoo.yang").getPath();
+        String directoryPath = getClass().getResource("/model").getPath();
 
         File directory = new File(directoryPath);
         File yangFile = new File(yangFilePath);
