@@ -64,6 +64,7 @@
     </modules>
 
     <pluginRepositories>
+        <!-- OpenDayLight Repo Mirror -->
         <pluginRepository>
             <id>opendaylight-mirror</id>
             <name>opendaylight-mirror</name>
@@ -76,9 +77,23 @@
                 <updatePolicy>never</updatePolicy>
             </releases>
         </pluginRepository>
+
+        <!-- OpenDayLight Snapshot artifact -->
+        <pluginRepository>
+            <id>opendaylight-snapshot</id>
+            <name>opendaylight-snapshot</name>
+            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
     </pluginRepositories>
 
     <repositories>
+        <!-- OpenDayLight Repo Mirror -->
         <repository>
             <id>opendaylight-mirror</id>
             <name>opendaylight-mirror</name>
@@ -91,8 +106,20 @@
                 <updatePolicy>never</updatePolicy>
             </releases>
         </repository>
-    </repositories>
 
+        <!-- OpenDayLight Snapshot artifact -->
+        <repository>
+            <id>opendaylight-snapshot</id>
+            <name>opendaylight-snapshot</name>
+            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
