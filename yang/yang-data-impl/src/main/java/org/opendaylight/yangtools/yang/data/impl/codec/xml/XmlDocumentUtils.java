@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
@@ -347,6 +348,63 @@ public class XmlDocumentUtils {
 
         });
 
+    }
+    
+    /**
+     * Converts XML Document containing notification data from Netconf device to
+     * Data DOM Nodes. <br>
+     * By specification defined in <a
+     * href="http://tools.ietf.org/search/rfc6020#section-7.14">RFC 6020</a>
+     * there are xml elements containing notifications metadata, like eventTime
+     * or root notification element which specifies namespace for which is
+     * notification defined in yang model. Those elements MUST be stripped off
+     * notifications body. This method returns pure notification body which
+     * begins in element which is equal to notifications name defined in
+     * corresponding yang model. Rest of notification metadata are obfuscated,
+     * thus Data DOM contains only pure notification body.
+     * 
+     * @param document
+     *            XML Document containing notification body
+     * @param notifications
+     *            Notifications Definition Schema
+     * @return Data DOM Nodes containing xml notification body definition or
+     *         <code>null</code> if there is no NotificationDefinition with
+     *         Element with equal notification QName defined in XML Document.
+     */
+    public static CompositeNode notificationToDomNodes(final Document document,
+            final Optional<Set<NotificationDefinition>> notifications) {
+        if (notifications.isPresent() && (document != null) && (document.getDocumentElement() != null)) {
+            final NodeList originChildNodes = document.getDocumentElement().getChildNodes();
+
+            for (int i = 0; i < originChildNodes.getLength(); i++) {
+                org.w3c.dom.Node child = originChildNodes.item(i);
+                if (child instanceof Element) {
+                    final Element childElement = (Element) child;
+                    final QName partialQName = qNameFromElement(childElement);
+                    final Optional<NotificationDefinition> notificationDef = findNotification(partialQName,
+                            notifications.get());
+                    if (notificationDef.isPresent()) {
+                        final Set<DataSchemaNode> dataNodes = notificationDef.get().getChildNodes();
+                        final List<Node<?>> domNodes = toDomNodes(childElement,
+                                Optional.<Set<DataSchemaNode>> fromNullable(dataNodes));
+                        return ImmutableCompositeNode.create(partialQName, domNodes);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Optional<NotificationDefinition> findNotification(final QName notifName,
+            final Set<NotificationDefinition> notifications) {
+        if ((notifName != null) && (notifications != null)) {
+            for (final NotificationDefinition notification : notifications) {
+                if ((notification != null) && notifName.isEqualWithoutRevision(notification.getQName())) {
+                    return Optional.<NotificationDefinition>fromNullable(notification);
+                }
+            }
+        }
+        return Optional.<NotificationDefinition>absent();
     }
 
     private static final <T> List<T> forEachChild(NodeList nodes, Function<Element, Optional<T>> forBody) {
