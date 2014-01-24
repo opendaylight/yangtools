@@ -304,6 +304,25 @@ public final class ParserUtils {
         }
     }
 
+    public static def void setNodeConfig(DataSchemaNodeBuilder child, Boolean config) {
+        if (child instanceof ContainerSchemaNodeBuilder || child instanceof LeafSchemaNodeBuilder ||
+            child instanceof LeafListSchemaNodeBuilder || child instanceof ListSchemaNodeBuilder ||
+            child instanceof ChoiceBuilder || child instanceof AnyXmlBuilder) {
+            child.setConfiguration(config);
+        }
+        if (child instanceof DataNodeContainerBuilder) {
+            val DataNodeContainerBuilder dataNodeChild = child as DataNodeContainerBuilder;
+            for (inner : dataNodeChild.getChildNodeBuilders()) {
+                setNodeConfig(inner, config);
+            }
+        } else if (child instanceof ChoiceBuilder) {
+            val ChoiceBuilder choiceChild = child as ChoiceBuilder;
+            for (inner : choiceChild.cases) {
+                setNodeConfig(inner, config);
+            }
+        }
+    }
+
     public static def DataSchemaNodeBuilder findSchemaNode(List<QName> path, SchemaNodeBuilder parentNode) {
         var DataSchemaNodeBuilder node
         var SchemaNodeBuilder parent = parentNode
@@ -551,7 +570,7 @@ public final class ParserUtils {
             val List<QName> path = new ArrayList(parentPath.getPath())
             path.add(qname)
             val SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute())
-            result.add(new UnknownSchemaNodeBuilder(moduleName, line, qname, schemaPath, (node as UnknownSchemaNode)))
+            result.add(new UnknownSchemaNodeBuilder(moduleName, line, qname, schemaPath, node))
         }
         return result
     }
