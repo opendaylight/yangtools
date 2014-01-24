@@ -16,9 +16,9 @@
     <artifactId>third-party-parent</artifactId>
     <packaging>pom</packaging>
 
-   <properties>
-   <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
-   </properties>
+    <properties>
+        <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
+    </properties>
 
     <scm>
         <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
@@ -31,36 +31,34 @@
         <module>antlr4-runtime-osgi</module>
     </modules>
 
-
     <repositories>
-        <!-- Maven repo2 mirror -->
-        <!-- http://repo2.maven.org/maven2 -->
+        <!-- OpenDayLight Repo Mirror -->
         <repository>
-            <id>central2</id>
-            <name>central2</name>
-            <url>${nexusproxy}/repositories/central2/</url>
+            <id>opendaylight-mirror</id>
+            <name>opendaylight-mirror</name>
+            <url>${nexusproxy}/groups/public/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
         </repository>
-        <!-- Maven repo1 mirror -->
-        <!-- http://repo1.maven.org/maven2 -->
-        <repository>
-                        <id>central</id>
-            <name>central</name>
-            <url>${nexusproxy}/repositories/central/</url>
-        </repository>
-        <!-- OpenDayLight Released artifact -->
-        <repository>
-            <id>opendaylight-release</id>
-            <name>opendaylight-release</name>
-            <url>${nexusproxy}/repositories/opendaylight.release/</url>
-        </repository>
+
         <!-- OpenDayLight Snapshot artifact -->
         <repository>
             <id>opendaylight-snapshot</id>
             <name>opendaylight-snapshot</name>
             <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
         </repository>
     </repositories>
-
 
     <distributionManagement>
         <!-- OpenDayLight Released artifact -->
@@ -78,7 +76,6 @@
             <url>./</url>
         </site>
     </distributionManagement>
-
 
     <build>
         <plugins>
