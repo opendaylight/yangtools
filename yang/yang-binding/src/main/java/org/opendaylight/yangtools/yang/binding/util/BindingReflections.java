@@ -133,7 +133,6 @@ public class BindingReflections {
     }
 
     public static QName getQName(Class<? extends BaseIdentity> context) {
-        // TODO Auto-generated method stub
-        return null;
+        return findQName(context);
     }
 }
