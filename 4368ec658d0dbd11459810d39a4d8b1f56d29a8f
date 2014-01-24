@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_ec48acb4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-01-24T14:58:55Z",
+      "side": 1,
+      "message": "Can originChildNodes ever be null?",
+      "revId": "4368ec658d0dbd11459810d39a4d8b1f56d29a8f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
