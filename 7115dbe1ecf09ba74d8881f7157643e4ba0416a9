@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_f8006b03",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-01-24T10:44:05Z",
+      "side": 1,
+      "message": "regarding to RFC 6020, there should be \u0027 instead of \"\n/* instance-identifier for a list entry */\n/ex:system/ex:user[ex:name\u003d\u0027fred\u0027]",
+      "revId": "7115dbe1ecf09ba74d8881f7157643e4ba0416a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_783ebbdb",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-01-24T10:44:05Z",
+      "side": 1,
+      "message": "Possible NPE. Should be the same as it is in IdentityrefTypeDefinition.",
+      "revId": "7115dbe1ecf09ba74d8881f7157643e4ba0416a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8c07f017",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-01-24T10:44:05Z",
+      "side": 1,
+      "message": "comment should be in place where Map is defined",
+      "revId": "7115dbe1ecf09ba74d8881f7157643e4ba0416a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0c1b0074",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-01-24T10:44:05Z",
+      "side": 1,
+      "message": "prefixes.containsValue(prefix)\nif it is true then generate new prefix? why? I should use the existing prefix for a namespace",
+      "revId": "7115dbe1ecf09ba74d8881f7157643e4ba0416a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_582777ca",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-01-24T10:44:05Z",
+      "side": 1,
+      "message": "remove \" ; \"",
+      "revId": "7115dbe1ecf09ba74d8881f7157643e4ba0416a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
