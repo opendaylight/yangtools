@@ -56,7 +56,7 @@ public class MyNodeBuilder extends BuilderSupport {
     	try {
 			qName = new QName(
 	                new URI("urn:opendaylight:controller:network"),
-	                new Date(42), "yang-data-impl-groovyTest_", null);
+	                new Date(42), "yang-data-impl-groovyTest_", "node");
         } catch (URISyntaxException e) {
 	        LOG.error(e.getMessage(), e);
         }
