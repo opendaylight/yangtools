@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_aca2b4fa",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-01-24T11:20:27Z",
+      "side": 1,
+      "message": "remove comment\u0027s slashes",
+      "revId": "6d9a72b441f8eef27af484d338ab254099751255",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_4cb1f845",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-01-24T11:20:27Z",
+      "side": 1,
+      "message": "remove comment\u0027s slashes.\nUse InstanceIdentifier instead of QName",
+      "revId": "6d9a72b441f8eef27af484d338ab254099751255",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
