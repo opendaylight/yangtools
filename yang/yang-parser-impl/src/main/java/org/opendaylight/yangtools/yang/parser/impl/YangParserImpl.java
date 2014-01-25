@@ -190,6 +190,7 @@ public final class YangParserImpl implements YangModelParser {
         final Map<InputStream, File> inputStreams = new HashMap<>();
         for (final File yangFile : yangFiles) {
             try {
+                
                 inputStreams.put(new FileInputStream(yangFile), yangFile);
             } catch (FileNotFoundException e) {
                 LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);

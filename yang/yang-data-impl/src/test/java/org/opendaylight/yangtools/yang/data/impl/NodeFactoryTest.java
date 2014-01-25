@@ -47,7 +47,7 @@ public class NodeFactoryTest {
         ns = "urn:ietf:params:xml:ns:netconf:base:1.0";
         qName = new QName(
                 new URI(ns),
-                new Date(42), null);
+                new Date(42), "node");
         network = NodeHelper.buildTestConfigTree(qName);
         networkShadow = NodeUtils.buildShadowDomTree(network);
         NodeHelper.compareXmlTree(networkShadow, "./config02-shadow.xml", getClass());

@@ -14,11 +14,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -57,11 +58,20 @@ public final class QName implements Immutable,Serializable {
         };
 
     };
+    static final String QNAME_REVISION_DELIMITER = "?revision=";
+    static final String QNAME_LEFT_PARENTHESIS = "(";
+    static final String QNAME_RIGHT_PARENTHESIS = ")";
 
+
+    //Nullable
     private final URI namespace;
+    //Mandatory
     private final String localName;
+    //Nullable
     private final String prefix;
+    //Nullable
     private final String formattedRevision;
+    //Nullable
     private final Date revision;
 
     /**
@@ -77,8 +87,8 @@ public final class QName implements Immutable,Serializable {
      *            YANG schema identifier
      */
     public QName(URI namespace, Date revision, String prefix, String localName) {
+        this.localName = checkLocalName(localName);
         this.namespace = namespace;
-        this.localName = localName;
         this.revision = revision;
         this.prefix = prefix;
         if(revision != null) {
@@ -100,6 +110,21 @@ public final class QName implements Immutable,Serializable {
         this(namespace, null, "", localName);
     }
 
+    private static String checkLocalName(String localName) {
+        if (localName == null || localName.length() == 0) {
+            throw new IllegalArgumentException("Parameter 'localName' must be non empty string.");
+        }
+        String [] illegalSubstrings = new String[] {"?", "(", ")", "&"};
+        for(String illegalSubstring: illegalSubstrings) {
+            if (localName.contains(illegalSubstring)) {
+                throw new IllegalArgumentException(String.format(
+                        "Parameter 'localName':'%s' contains illegal sequence '%s'",
+                        localName, illegalSubstring));
+            }
+        }
+        return localName;
+    }
+
     /**
      * QName Constructor.
      *
@@ -118,10 +143,14 @@ public final class QName implements Immutable,Serializable {
         this(base.getNamespace(), base.getRevision(), base.getPrefix(), localName);
     }
 
-    // TODO: rework with pattern
-    public QName(String base) throws ParseException {
+    /**
+     * @deprecated Use {@link #create(String)} instead.
+     * This implementation is broken.
+     */
+    @Deprecated
+    public QName(String input) throws ParseException {
         Date revision = null;
-        String nsAndRev = base.substring(base.indexOf("(") + 1, base.indexOf(")"));
+        String nsAndRev = input.substring(input.indexOf("(") + 1, input.indexOf(")"));
         if (nsAndRev.contains("?")) {
             String[] splitted = nsAndRev.split("\\?");
             this.namespace = URI.create(splitted[0]);
@@ -130,7 +159,7 @@ public final class QName implements Immutable,Serializable {
             this.namespace = URI.create(nsAndRev);
         }
 
-        this.localName = base.substring(base.indexOf(")") + 1);
+        this.localName = checkLocalName(input.substring(input.indexOf(")") + 1));
         this.revision = revision;
         this.prefix = null;
         if (revision != null) {
@@ -138,6 +167,36 @@ public final class QName implements Immutable,Serializable {
         } else {
             this.formattedRevision = null;
         }
+    }
+
+
+    private static Pattern QNAME_PATTERN_FULL = Pattern.compile(
+            "^\\((.+)\\" + QNAME_REVISION_DELIMITER + "(.+)\\)(.+)$");
+    private static Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(
+           "^\\((.+)\\)(.+)$" );
+    private static Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile(
+            "^(.+)$" );
+
+    public static QName create(String input) {
+        Matcher matcher = QNAME_PATTERN_FULL.matcher(input);
+        if (matcher.matches()) {
+            String namespace = matcher.group(1);
+            String revision = matcher.group(2);
+            String localName = matcher.group(3);
+            return create(namespace, revision, localName);
+        }
+        matcher = QNAME_PATTERN_NO_REVISION.matcher(input);
+        if (matcher.matches()) {
+            URI namespace = URI.create(matcher.group(1));
+            String localName = matcher.group(2);
+            return new QName(namespace, localName);
+        }
+        matcher = QNAME_PATTERN_NO_NAMESPACE_NO_REVISION.matcher(input);
+        if (matcher.matches()) {
+            String localName = matcher.group(1);
+            return new QName((URI)null, localName);
+        }
+        throw new IllegalArgumentException("Invalid input:" + input);
     }
 
     /**
@@ -250,12 +309,12 @@ public final class QName implements Immutable,Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (namespace != null) {
-            sb.append("(" + namespace);
+            sb.append(QNAME_LEFT_PARENTHESIS + namespace);
 
             if (revision != null) {
-                sb.append("?revision=" + REVISION_FORMAT.get().format(revision));
+                sb.append(QNAME_REVISION_DELIMITER + REVISION_FORMAT.get().format(revision));
             }
-            sb.append(")");
+            sb.append(QNAME_RIGHT_PARENTHESIS);
         }
         sb.append(localName);
         return sb.toString();
@@ -304,8 +363,8 @@ public final class QName implements Immutable,Serializable {
     public static Date parseRevision(String formatedDate) {
         try {
             return REVISION_FORMAT.get().parse(formatedDate);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Revision is not in supported format",e);
+        } catch (ParseException| RuntimeException e) {
+            throw new IllegalArgumentException("Revision is not in supported format:" + formatedDate,e);
         }
     }
 
