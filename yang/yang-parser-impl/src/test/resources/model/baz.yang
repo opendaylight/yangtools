@@ -187,8 +187,8 @@ module baz {
         typedef group-type {
             type br:my-decimal-type;
         }
-
-        opendaylight;
+        
+        br:opendaylight;
     }
 
 }

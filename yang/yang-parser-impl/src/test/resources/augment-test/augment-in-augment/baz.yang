@@ -87,8 +87,8 @@ module baz {
                 type int8;
             }
         }
-
-        opendaylight;
+        
+        br:opendaylight;
     }
 
 }

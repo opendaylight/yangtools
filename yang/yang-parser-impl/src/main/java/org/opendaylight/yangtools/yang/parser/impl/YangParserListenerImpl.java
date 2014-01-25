@@ -56,6 +56,8 @@ import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
     private static final String AUGMENT_STR = "augment";
@@ -795,8 +797,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             nodeType = new QName(namespace, revision, splittedElement[0], splittedElement[1]);
         }
 
-        QName qname;
-        if (nodeParameter != null) {
+        QName qname = null;
+        if (!Strings.isNullOrEmpty(nodeParameter)) {
             String[] splittedName = nodeParameter.split(":");
             if (splittedName.length == 2) {
                 qname = new QName(null, null, splittedName[0], splittedName[1]);
@@ -804,10 +806,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 qname = new QName(namespace, revision, yangModelPrefix, splittedName[0]);
             }
         } else {
-            qname = new QName(namespace, revision, yangModelPrefix, nodeParameter);
+            qname = nodeType;
         }
-
-        addNodeToPath(new QName(namespace, revision, yangModelPrefix, nodeParameter));
+        addNodeToPath(qname);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
 
         UnknownSchemaNodeBuilder builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
