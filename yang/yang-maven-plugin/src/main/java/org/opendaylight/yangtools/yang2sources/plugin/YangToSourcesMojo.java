@@ -93,7 +93,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        StaticLoggerBinder.SINGLETON.setLog(getLog());
+        StaticLoggerBinder.getSingleton().setMavenLog(this.getLog());
         if (yangToSourcesProcessor == null) {
             List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);
 
