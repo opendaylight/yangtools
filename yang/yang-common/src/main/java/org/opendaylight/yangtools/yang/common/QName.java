@@ -111,8 +111,11 @@ public final class QName implements Immutable,Serializable {
     }
 
     private static String checkLocalName(String localName) {
-        if (localName == null || localName.length() == 0) {
-            throw new IllegalArgumentException("Parameter 'localName' must be non empty string.");
+        if (localName == null) {
+            throw new IllegalArgumentException("Parameter 'localName' may not be null.");
+        }
+        if (localName.length() == 0) {
+            throw new IllegalArgumentException("Parameter 'localName' must be a non-empty string.");
         }
         String [] illegalSubstrings = new String[] {"?", "(", ")", "&"};
         for(String illegalSubstring: illegalSubstrings) {
