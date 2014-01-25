@@ -19,7 +19,7 @@ module opendaylight-l2-types {
 			 Values are from 0 (best effort) to 7 (highest); 
 			 1 represents the lowest priority.";
 		type uint8 {
-			//range "0..7";
+			range "0..7";
 		}
 	}
 
@@ -33,7 +33,7 @@ module opendaylight-l2-types {
 
 	typedef vlan-id {
 		type uint16 {
-			//range "0..4095";
+			range "0..4095";
 		}
 	}
 
