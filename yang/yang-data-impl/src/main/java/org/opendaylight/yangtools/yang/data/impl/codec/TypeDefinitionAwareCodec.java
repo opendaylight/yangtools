@@ -19,6 +19,8 @@ import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
@@ -56,10 +58,60 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
-
+    
+    private static final Pattern intPattern = Pattern.compile("[+-]?[1-9][0-9]*$");
+    private static final Pattern hexPattern = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
+    private static final Pattern octalPattern = Pattern.compile("[+-]?0[1-7][0-7]*$");
+    
     private final Optional<T> typeDefinition;
     private final Class<J> inputClass;
-
+    
+    private static final int provideBase(final String integer) {
+        if (integer == null) {
+            throw new IllegalArgumentException("String representing integer number cannot be NULL!");
+        }
+        
+        if ((integer.length() == 1) && (integer.charAt(0) == '0')) {
+            return 10;
+        }
+        
+        final Matcher intMatcher = intPattern.matcher(integer);
+        if (intMatcher.matches()) {
+            return 10;
+        } else {
+            final Matcher hexMatcher = hexPattern.matcher(integer);
+            if (hexMatcher.matches()) {
+                return 16;
+            } else {
+                final Matcher octMatcher = octalPattern.matcher(integer);
+                if (octMatcher.matches()) {
+                    return 8;
+                } else {
+                    throw new NumberFormatException("Incorrect lexical representation of Integer value!"
+                            + "The Integer value can be defined as Integer Number, Hexadecimal Number or"
+                            + "Octal Number. The sign vlues are allowed. "
+                            + "Spaces between digits are NOT allowed!");
+                }
+            }
+        }
+    }
+    
+    private static String normalizeHexadecimal(final String hexInt) {
+        if (hexInt == null) {
+            throw new IllegalArgumentException(
+                    "String representing integer number in Hexadecimal format cannot be NULL!");
+        }
+        final String normalizedString;
+        if (hexInt.contains("x")) {
+            normalizedString = hexInt.replace("x", "");
+        } else if (hexInt.contains("X")) {
+            normalizedString = hexInt.replace("X", "");
+        } else {
+            normalizedString = hexInt;
+        }
+        return normalizedString;
+    }
+    
     public static final BinaryCodecStringImpl BINARY_DEFAULT_CODEC = new BinaryCodecStringImpl(
             Optional.<BinaryTypeDefinition> absent());
 
@@ -196,7 +248,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Boolean deserialize(String stringRepresentation) {
-            return Boolean.parseBoolean(stringRepresentation);
+            return Boolean.valueOf(stringRepresentation);
         }
     };
 
@@ -214,7 +266,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Short deserialize(String stringRepresentation) {
-            return Short.parseShort(stringRepresentation);
+            int base = provideBase(stringRepresentation);
+            if (base == 16) {
+                return Short.valueOf(normalizeHexadecimal(stringRepresentation), base);
+            }
+            return Short.valueOf(stringRepresentation, base);
         }
     };
 
@@ -226,7 +282,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Integer deserialize(String stringRepresentation) {
-            return Integer.parseInt(stringRepresentation);
+            int base = provideBase(stringRepresentation);
+            if (base == 16) {
+                return Integer.valueOf(normalizeHexadecimal(stringRepresentation), base);
+            }
+            return Integer.valueOf(stringRepresentation, base);
         }
 
         @Override
@@ -244,7 +304,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Long deserialize(String stringRepresentation) {
-            return Long.parseLong(stringRepresentation);
+            int base = provideBase(stringRepresentation);
+            if (base == 16) {
+                return Long.valueOf(normalizeHexadecimal(stringRepresentation), base);
+            }
+            return Long.valueOf(stringRepresentation, base);
         }
 
         @Override
@@ -262,8 +326,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public BigInteger deserialize(String stringRepresentation) {
-            // FIXME: Implement codec correctly
-            return BigInteger.valueOf(Long.valueOf(stringRepresentation));
+            int base = provideBase(stringRepresentation);
+            if (base == 16) {
+                return new BigInteger(normalizeHexadecimal(stringRepresentation), base);
+            }
+            return new BigInteger(stringRepresentation, base);
         }
 
         @Override
@@ -299,7 +366,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Short deserialize(String stringRepresentation) {
-            return Short.valueOf(stringRepresentation);
+            int base = provideBase(stringRepresentation);
+            if (base == 16) {
+                return Short.valueOf(normalizeHexadecimal(stringRepresentation), base);
+            }
+            return Short.valueOf(stringRepresentation, base);
         }
 
         @Override
@@ -317,7 +388,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Integer deserialize(String stringRepresentation) {
-            return Integer.valueOf(stringRepresentation);
+            int base = provideBase(stringRepresentation);
+            if (base == 16) {
+                return Integer.valueOf(normalizeHexadecimal(stringRepresentation), base);
+            }
+            return Integer.valueOf(stringRepresentation, base);
         }
 
         @Override
@@ -335,7 +410,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Long deserialize(String stringRepresentation) {
-            return Long.parseLong(stringRepresentation);
+            int base = provideBase(stringRepresentation);
+            if (base == 16) {
+                return Long.valueOf(normalizeHexadecimal(stringRepresentation), base);
+            }
+            return Long.valueOf(stringRepresentation, base);
         }
 
         @Override
@@ -353,7 +432,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Byte deserialize(String stringRepresentation) {
-            return Byte.parseByte(stringRepresentation);
+            int base = provideBase(stringRepresentation);
+            if (base == 16) {
+                return Byte.valueOf(normalizeHexadecimal(stringRepresentation), base);
+            }
+            return Byte.valueOf(stringRepresentation, base);
         }
 
         @Override
