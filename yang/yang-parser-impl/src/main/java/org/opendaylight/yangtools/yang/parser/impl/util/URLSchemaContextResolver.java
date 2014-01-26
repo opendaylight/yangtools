@@ -127,8 +127,12 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         ImmutableMap<SourceIdentifier, YangModelDependencyInfo> sourcesMap = builder.build();
         YangSourceContext context = YangSourceContext.createFrom(sourcesMap);
         LOG.debug("Trying to create schema context from {}",sourcesMap.keySet());
-        LOG.debug("Ommiting {} because of unresolved dependencies",context.getMissingDependencies().keySet());
-        
+
+        if (context.getMissingDependencies().size() != 0) {
+            LOG.debug("Omitting {} because of unresolved dependencies", context.getMissingDependencies().keySet());
+            LOG.debug("Missing model sources for {}", context.getMissingSources());
+        }
+
         try {
             if(currentSourceContext == null || !context.getValidSources().equals(currentSourceContext.getValidSources())) {
                 List<InputStream> streams = YangSourceContext.getValidInputStreams(context, this);
