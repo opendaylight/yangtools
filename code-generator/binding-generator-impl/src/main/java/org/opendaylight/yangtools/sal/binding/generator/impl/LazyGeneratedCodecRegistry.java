@@ -75,6 +75,16 @@ public class LazyGeneratedCodecRegistry implements //
     private static final Map<Type, QName> typeToQname = new ConcurrentHashMap<>();
 
     private SchemaContext currentSchema;
+    
+    private SchemaLock lock;
+
+    public SchemaLock getLock() {
+        return lock;
+    }
+
+    public void setLock(SchemaLock lock) {
+        this.lock = lock;
+    }
 
     public TransformerGenerator getGenerator() {
         return generator;
@@ -98,6 +108,9 @@ public class LazyGeneratedCodecRegistry implements //
             codec = potentialCodec;
         } else
             try {
+                if(lock != null) {
+                    lock.waitForSchema(object);
+                }
                 Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentRawCodec = generator
                         .augmentationTransformerFor(object);
                 BindingCodec<Map<QName, Object>, Object> rawCodec = augmentRawCodec.newInstance();
