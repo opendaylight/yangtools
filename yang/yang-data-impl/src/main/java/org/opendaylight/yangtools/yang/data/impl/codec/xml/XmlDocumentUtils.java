@@ -416,7 +416,7 @@ public class XmlDocumentUtils {
                                 toNodeWithSchema(input, schemaNode.get(), DEFAULT_XML_VALUE_CODEC_PROVIDER));
                     }
                 }
-                return Optional.<Node<?>> fromNullable(toDomNode(element));
+                return Optional.<Node<?>> fromNullable(toDomNode(input));
             }
 
         });
