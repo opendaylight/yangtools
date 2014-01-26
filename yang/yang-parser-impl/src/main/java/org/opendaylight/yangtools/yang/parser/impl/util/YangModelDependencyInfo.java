@@ -141,7 +141,7 @@ public abstract class YangModelDependencyInfo {
         String latestRevision = null;
         for (Revision_stmtContext revisionStmt : revisions) {
             String currentRevision = getArgumentString(revisionStmt);
-            if (latestRevision == null || latestRevision.compareTo(currentRevision) == 1) {
+            if (latestRevision == null || latestRevision.compareTo(currentRevision) == -1) {
                 latestRevision = currentRevision;
             }
         }
