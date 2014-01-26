@@ -31,6 +31,7 @@ public final class BindingMapping {
     public static final String RPC_SERVICE_SUFFIX = "Service";
     public static final String NOTIFICATION_LISTENER_SUFFIX = "Listener";
     public static final String QNAME_STATIC_FIELD_NAME = "QNAME";
+    public static final String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
 
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 

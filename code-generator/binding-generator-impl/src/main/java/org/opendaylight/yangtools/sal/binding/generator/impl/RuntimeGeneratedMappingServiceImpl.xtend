@@ -143,9 +143,9 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         val key = toDataDom(entry.key)
         var CompositeNode data;
         if(Augmentation.isAssignableFrom(entry.key.targetType)) {
-            data = toCompositeNodeImpl(key,entry.value);
+            data = toCompositeNodeImplAugument(key,entry.value);
         } else {
-          data = toCompositeNodeImpl(entry.value);
+          data = toCompositeNodeImpl(key,entry.value);
         }
         return new SimpleEntry(key, data);
 
@@ -162,9 +162,18 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         val ret = codec.serialize(new ValueWithQName(null, object));
         return ret as CompositeNode;
     }
-
-
+    
     private def CompositeNode toCompositeNodeImpl(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,DataObject object) {
+        val last = identifier.path.last;
+        val cls = object.implementedInterface;
+        waitForSchema(cls);
+        val codec = registry.getCodecForDataObject(cls) as DataContainerCodec<DataObject>;
+        val ret = codec.serialize(new ValueWithQName(last.nodeType, object));
+        return ret as CompositeNode;
+    }
+
+
+    private def CompositeNode toCompositeNodeImplAugument(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,DataObject object) {
 
         //val cls = object.implementedInterface;
         //waitForSchema(cls);

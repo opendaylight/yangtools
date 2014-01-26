@@ -12,6 +12,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.opendaylight.yangtools.concepts.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -33,6 +37,8 @@ import com.google.common.cache.LoadingCache;
 public class BindingReflections {
 
     private static final long EXPIRATION_TIME = 60;
+    private static final String ROOT_PACKAGE_PATTERN_STRING = "(org.opendaylight.yang.gen.v1.[a-z0-9\\.]*.rev[0-9][0-9][0-1][0-9][0-3][0-9])";
+    private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
 
     private static final LoadingCache<Class<?>, Optional<QName>> classToQName = CacheBuilder.newBuilder() //
             .weakKeys() //
@@ -135,4 +141,30 @@ public class BindingReflections {
     public static QName getQName(Class<? extends BaseIdentity> context) {
         return findQName(context);
     }
+    
+    public static boolean isAugmentationChild(Class<?> clazz) {
+        // FIXME: Current resolver could be still confused when
+        // child node was added by grouping
+        checkArgument(clazz != null);
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        Class<?> parent = findHierarchicalParent((Class) clazz);
+        String clazzModelPackage = getModelRootPackageName(clazz.getPackage());
+        String parentModelPackage = getModelRootPackageName(parent.getPackage());
+
+        return !clazzModelPackage.equals(parentModelPackage);
+    }
+
+    public static String getModelRootPackageName(Package pkg) {
+        return getModelRootPackageName(pkg.getName());
+    }
+
+    public static String getModelRootPackageName(String name) {
+        checkArgument(name != null, "Package name should not be null.");
+        checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX));
+        Matcher match = ROOT_PACKAGE_PATTERN.matcher(name);
+        checkArgument(match.find());
+        String rootPackage = match.group(0);
+        return rootPackage;
+    }
+
 }

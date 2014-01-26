@@ -101,7 +101,6 @@ class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         for(baArg : pathArgs) {
 
             if(!Augmentation.isAssignableFrom(baArg.type)) {
-
                 val biArg = serializePathArgument(baArg,previousQName);
                 previousQName = biArg.nodeType;
                 components.add(biArg);
@@ -133,7 +132,7 @@ class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     private def dispatch PathArgument serializePathArgument(Item argument, QName previousQname) {
         val type = argument.type;
         val qname = BindingReflections.findQName(type);
-        if(previousQname == null) {
+        if(previousQname == null || (BindingReflections.isAugmentationChild(argument.type))) {
             return new NodeIdentifier(qname);
         }
         return new NodeIdentifier(QName.create(previousQname,qname.localName));
@@ -144,7 +143,10 @@ class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         val Map<QName,Object> predicates = new HashMap();
         val type = argument.type;
         val keyCodec = codecRegistry.getIdentifierCodecForIdentifiable(type);
-        val qname = BindingReflections.findQName(type);
+        var QName qname = BindingReflections.findQName(type);
+        if(previousQname != null && !(BindingReflections.isAugmentationChild(argument.type))) {
+            qname = QName.create(previousQname,qname.localName);
+        }
         val combinedInput =  new ValueWithQName(previousQname,argument.key)
         val compositeOutput = keyCodec.serialize(combinedInput as ValueWithQName);
         for(outputValue :compositeOutput.value) {
@@ -153,6 +155,6 @@ class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         if(previousQname == null) {
             return new NodeIdentifierWithPredicates(qname,predicates);
         }
-        return new NodeIdentifierWithPredicates(QName.create(previousQname,qname.localName),predicates);
+        return new NodeIdentifierWithPredicates(qname,predicates);
     }
 }
