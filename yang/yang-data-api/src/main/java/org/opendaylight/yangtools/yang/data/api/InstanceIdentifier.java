@@ -208,6 +208,68 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
     }
 
+    public static final class NodeWithValue implements PathArgument {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -3637456085341738431L;
+
+        private final QName nodeType;
+        private final Object value;
+
+        public NodeWithValue(QName node, Object value) {
+            this.nodeType = node;
+            this.value = value;
+        }
+
+        @Override
+        public QName getNodeType() {
+            return nodeType;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            NodeWithValue other = (NodeWithValue) obj;
+            if (value == null) {
+                if (other.value != null)
+                    return false;
+            } else if (!value.equals(other.value))
+                return false;
+            if (nodeType == null) {
+                if (other.nodeType != null)
+                    return false;
+            } else if (!nodeType.equals(other.nodeType))
+                return false;
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return nodeType + "[" + value + "]";
+        }
+
+    }
+
     private static class BuilderImpl implements InstanceIdentifierBuilder {
 
         private final ImmutableList.Builder<PathArgument> path; 
