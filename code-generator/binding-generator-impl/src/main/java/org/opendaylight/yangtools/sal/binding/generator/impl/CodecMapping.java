@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.data.impl.codec.IdentitityCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.IdentityCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.binding.BindingCodec;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -43,7 +43,7 @@ public class CodecMapping {
     }
 
 
-    public static void setIdentityRefCodec(Class<?> obj,IdentitityCodec<?> codec) {
+    public static void setIdentityRefCodec(Class<?> obj,IdentityCodec<?> codec) {
         Field instanceIdField;
         try {
             instanceIdField = obj.getField(IDENTITYREF_CODEC);

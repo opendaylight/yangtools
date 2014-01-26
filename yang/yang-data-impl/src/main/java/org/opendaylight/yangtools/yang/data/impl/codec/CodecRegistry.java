@@ -21,7 +21,7 @@ public interface CodecRegistry {
 
     InstanceIdentifierCodec getInstanceIdentifierCodec();
 
-    IdentitityCodec<?> getIdentityCodec();
+    IdentityCodec<?> getIdentityCodec();
 
     <T extends DataContainer> DataContainerCodec<T> getCodecForDataObject(Class<T> object);
 
@@ -31,7 +31,7 @@ public interface CodecRegistry {
 
     <T extends Augmentation<?>> AugmentationCodec<T> getCodecForAugmentation(Class<T> object);
 
-    <T extends BaseIdentity> IdentitityCodec<T> getCodecForIdentity(Class<T> codec);
+    <T extends BaseIdentity> IdentityCodec<T> getCodecForIdentity(Class<T> codec);
 
     Class<?> getClassForPath(List<QName> names);
 

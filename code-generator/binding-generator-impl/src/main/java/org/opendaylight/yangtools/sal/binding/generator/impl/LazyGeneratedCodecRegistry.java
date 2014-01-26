@@ -298,12 +298,12 @@ public class LazyGeneratedCodecRegistry implements //
     }
 
     @Override
-    public IdentitityCodec<?> getIdentityCodec() {
+    public IdentityCodec<?> getIdentityCodec() {
         return identityRefCodec;
     }
 
     @Override
-    public <T extends BaseIdentity> IdentitityCodec<T> getCodecForIdentity(Class<T> codec) {
+    public <T extends BaseIdentity> IdentityCodec<T> getCodecForIdentity(Class<T> codec) {
         bindingClassEncountered(codec);
         return identityRefCodec;
     }
@@ -914,7 +914,7 @@ public class LazyGeneratedCodecRegistry implements //
         }
     }
 
-    private class IdentityCompositeCodec implements IdentitityCodec {
+    private class IdentityCompositeCodec implements IdentityCodec {
 
         @Override
         public Object deserialize(Object input) {
