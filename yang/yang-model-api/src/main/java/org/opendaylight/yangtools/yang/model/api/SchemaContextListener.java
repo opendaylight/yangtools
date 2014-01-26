@@ -11,12 +11,6 @@ import java.util.EventListener;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-/**
- * @deprecated Please use {@link SchemaContextListener} instead.
- */
-@Deprecated
-public interface SchemaServiceListener extends EventListener {
-    // FIXME: move declaration to SchemaContextListener
-    void onGlobalContextUpdated(SchemaContext context);
+public interface SchemaContextListener extends SchemaServiceListener {
 
 }
