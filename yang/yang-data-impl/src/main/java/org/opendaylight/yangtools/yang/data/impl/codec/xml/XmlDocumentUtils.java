@@ -460,7 +460,7 @@ public class XmlDocumentUtils {
                         final Set<DataSchemaNode> dataNodes = notificationDef.get().getChildNodes();
                         final List<Node<?>> domNodes = toDomNodes(childElement,
                                 Optional.<Set<DataSchemaNode>> fromNullable(dataNodes));
-                        return ImmutableCompositeNode.create(partialQName, domNodes);
+                        return ImmutableCompositeNode.create(notificationDef.get().getQName(), domNodes);
                     }
                 }
             }
