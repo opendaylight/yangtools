@@ -275,8 +275,9 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         if (typeToDefinition.containsKey(type)) {
             return;
         }
-        LOG.trace("Thread blocked waiting for schema for: {}",type.fullyQualifiedName)
+        LOG.info("Thread blocked waiting for schema for: {}",type.fullyQualifiedName)
         type.waitForTypeDefinition.get();
+        LOG.info("Schema for {} became available, thread unblocked",type.fullyQualifiedName)
     }
 
     private def Future<Type> waitForTypeDefinition(Type type) {
