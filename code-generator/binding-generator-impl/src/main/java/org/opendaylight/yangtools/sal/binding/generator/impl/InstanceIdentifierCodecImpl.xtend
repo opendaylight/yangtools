@@ -34,13 +34,14 @@ import com.google.common.collect.ImmutableList
 import org.opendaylight.yangtools.yang.binding.Augmentation
 import java.util.concurrent.ConcurrentHashMap
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections
+import java.util.Collections
 
 class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
 
     private static val LOG = LoggerFactory.getLogger(InstanceIdentifierCodecImpl);
     val CodecRegistry codecRegistry;
 
-    val Map<Class<?>, Map<List<QName>, Class<?>>> classToPreviousAugment = new WeakHashMap;
+    val Map<Class<?>, Map<List<QName>, Class<?>>> classToPreviousAugment = Collections.synchronizedMap(new WeakHashMap);
 
     public new(CodecRegistry registry) {
         codecRegistry = registry;
