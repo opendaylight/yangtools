@@ -53,8 +53,9 @@ import java.util.Set
 import org.opendaylight.yangtools.yang.common.QName
 import com.google.common.collect.FluentIterable
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
+import java.util.HashMap
 
-class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaServiceListener, AutoCloseable {
+class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaServiceListener, SchemaLock, AutoCloseable {
 
     @Property
     ClassPool pool;
@@ -81,7 +82,7 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
 
     val promisedTypeDefinitions = HashMultimap.<Type, SettableFuture<GeneratedTypeBuilder>>create;
 
-    val promisedSchemas = HashMultimap.<Type, SettableFuture<SchemaNode>>create;
+    val promisedTypes = HashMultimap.<Type, SettableFuture<Type>>create;
 
     //ServiceRegistration<SchemaServiceListener> listenerRegistration
 
@@ -127,8 +128,10 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
             for (augmentation : augmentations) {
                 binding.typeToDefinition.put(augmentation, augmentation);
             }
-
             binding.typeToAugmentation.putAll(context.typeToAugmentation);
+            for(augmentation : augmentations) {
+                updatePromisedSchemas(augmentation);
+            }
         }
     }
 
@@ -192,13 +195,8 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         return ret as CompositeNode;
     }
 
-    private def void waitForSchema(Class<? extends DataContainer> class1) {
-        if(Augmentation.isAssignableFrom(class1)) {
-            /*  FIXME: We should wait also for augmentations. Currently YANGTools does not provide correct
-             *  mapping between java Augmentation classes and augmentations.
-             */
-            return;
-        }
+    override waitForSchema(Class class1) {
+
         if(registry.isCodecAvailable(class1)) {
             return;
         }
@@ -248,7 +246,7 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
             typeToDefinition.put(typeRef, entry.value);
             if (schemaNode != null) {
                 typeToSchemaNode.put(typeRef, schemaNode);
-                updatePromisedSchemas(typeRef, schemaNode);
+                updatePromisedSchemas(entry.value);
             }
 
         }
@@ -256,7 +254,7 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
 
     public def void init() {
         binding = new TransformerGenerator(pool);
-        registry = new LazyGeneratedCodecRegistry()
+        registry = new LazyGeneratedCodecRegistry(this)
         registry.generator = binding
 
         //binding.staticFieldsInitializer = registry
@@ -273,31 +271,30 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         return serviceTypeToRpc.get(new ReferencedTypeImpl(service.package.name,service.simpleName));
     }
 
-    private def getSchemaWithRetry(Type type) {
-        val typeDef = typeToSchemaNode.get(type);
-        if (typeDef !== null) {
-            return typeDef;
+    private def void getSchemaWithRetry(Type type) {
+        if (typeToDefinition.containsKey(type)) {
+            return;
         }
         LOG.trace("Thread blocked waiting for schema for: {}",type.fullyQualifiedName)
-        return type.getSchemaInFuture.get();
+        type.waitForTypeDefinition.get();
     }
 
-    private def Future<SchemaNode> getSchemaInFuture(Type type) {
-        val future = SettableFuture.<SchemaNode>create()
-        promisedSchemas.put(type, future);
+    private def Future<Type> waitForTypeDefinition(Type type) {
+        val future = SettableFuture.<Type>create()
+        promisedTypes.put(type, future);
         return future;
     }
 
-    private def void updatePromisedSchemas(Type builder, SchemaNode schema) {
+    private def void updatePromisedSchemas(Type builder) {
         val ref = new ReferencedTypeImpl(builder.packageName, builder.name);
-        val futures = promisedSchemas.get(ref);
+        val futures = promisedTypes.get(ref);
         if (futures === null || futures.empty) {
             return;
         }
         for (future : futures) {
-            future.set(schema);
+            future.set(builder);
         }
-        promisedSchemas.removeAll(builder);
+        promisedTypes.removeAll(builder);
     }
 
     override close() throws Exception {
