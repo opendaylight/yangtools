@@ -20,14 +20,14 @@ import javassist.ClassClassPath
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import org.slf4j.LoggerFactory
-import java.util.HashMap
 import java.util.WeakHashMap
+import java.util.Collections
 
 class JavassistUtils {
 
     private static val LOG = LoggerFactory.getLogger(JavassistUtils);
 
-    private val loaderClassPaths = new WeakHashMap<ClassLoader,LoaderClassPath>();
+    private val loaderClassPaths = Collections.synchronizedMap(new WeakHashMap<ClassLoader,LoaderClassPath>());
 
     ClassPool classPool
 

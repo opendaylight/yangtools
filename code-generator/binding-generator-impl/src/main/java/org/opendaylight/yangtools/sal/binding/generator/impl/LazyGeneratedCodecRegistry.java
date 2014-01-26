@@ -53,13 +53,13 @@ public class LazyGeneratedCodecRegistry implements //
     private TransformerGenerator generator;
 
     // Concrete class to codecs
-    private static final Map<Class<?>, DataContainerCodec<?>> containerCodecs = new WeakHashMap<>();
-    private static final Map<Class<?>, IdentifierCodec<?>> identifierCodecs = new WeakHashMap<>();
-    private static final Map<Class<?>, ChoiceCodecImpl<?>> choiceCodecs = new WeakHashMap<>();
-    private static final Map<Class<?>, ChoiceCaseCodecImpl<?>> caseCodecs = new WeakHashMap<>();
-    private static final Map<Class<?>, AugmentableCompositeCodec> augmentableCodecs = new WeakHashMap<>();
-    private static final Map<Class<?>, AugmentationCodec<?>> augmentationCodecs = new WeakHashMap<>();
-    private static final Map<Class<?>, QName> identityQNames = new WeakHashMap<>();
+    private static final Map<Class<?>, DataContainerCodec<?>> containerCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, DataContainerCodec<?>>());
+    private static final Map<Class<?>, IdentifierCodec<?>> identifierCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, IdentifierCodec<?>>());
+    private static final Map<Class<?>, ChoiceCodecImpl<?>> choiceCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, ChoiceCodecImpl<?>>());
+    private static final Map<Class<?>, ChoiceCaseCodecImpl<?>> caseCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, ChoiceCaseCodecImpl<?>>());
+    private static final Map<Class<?>, AugmentableCompositeCodec> augmentableCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, AugmentableCompositeCodec>());
+    private static final Map<Class<?>, AugmentationCodec<?>> augmentationCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, AugmentationCodec<?>>());
+    private static final Map<Class<?>, QName> identityQNames = Collections.synchronizedMap(new WeakHashMap<Class<?>, QName>());
     private static final Map<QName, Type> qnamesToIdentityMap = new ConcurrentHashMap<>();
     /** Binding type to encountered classes mapping **/
     @SuppressWarnings("rawtypes")
@@ -633,7 +633,7 @@ public class LazyGeneratedCodecRegistry implements //
         private final BindingCodec<Map<QName, Object>, Object> delegate;
 
         @SuppressWarnings("rawtypes")
-        private final Map<Class, ChoiceCaseCodecImpl<?>> cases = new WeakHashMap<>();
+        private final Map<Class, ChoiceCaseCodecImpl<?>> cases = Collections.synchronizedMap(new WeakHashMap<Class, ChoiceCaseCodecImpl<?>>());
 
         private final CaseCompositeNodeMapFacade CompositeToCase;
 
@@ -796,7 +796,7 @@ public class LazyGeneratedCodecRegistry implements //
 
         private final Class augmentableType;
 
-        Map<Class, AugmentationCodec<?>> localAugmentationCodecs = new WeakHashMap<>();
+        Map<Class, AugmentationCodec<?>> localAugmentationCodecs = Collections.synchronizedMap(new WeakHashMap<Class, AugmentationCodec<?>>());
 
         public AugmentableCompositeCodec(Class type) {
             Preconditions.checkArgument(Augmentable.class.isAssignableFrom(type));
