@@ -117,7 +117,7 @@ public class LazyGeneratedCodecRegistry implements //
             } catch (InstantiationException e) {
                 LOG.error("Can not instantiate raw augmentation codec {}", object.getSimpleName(), e);
             } catch (IllegalAccessException e) {
-                LOG.debug("BUG: Constructor for {} is not accessible.", object.getSimpleName(), e);
+                LOG.debug("YANGTools: Constructor for {} is not accessible.", object.getSimpleName(), e);
             }
         Class<? extends Augmentable<?>> objectSupertype = getAugmentableArgumentFrom(object);
         if (objectSupertype != null) {
@@ -387,7 +387,7 @@ public class LazyGeneratedCodecRegistry implements //
             ChoiceCaseNode node = (ChoiceCaseNode) SchemaContextUtil.findDataSchemaNode(module, caseNode.getKey());
 
             if (node == null) {
-                LOG.error("YANGTools Bug: SchemaNode for {}, with path {} was not found in context.",
+                LOG.warn("YANGTools: SchemaNode for {}, with path {} was not found in context.",
                         typeref.getFullyQualifiedName(), caseNode.getKey());
                 @SuppressWarnings("rawtypes")
                 ChoiceCaseCodecImpl value = new ChoiceCaseCodecImpl();
