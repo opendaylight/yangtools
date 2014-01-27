@@ -7,25 +7,29 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
-import org.opendaylight.yangtools.yang.model.api.Module
-import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
-import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import java.io.InputStream
-import com.google.common.collect.ImmutableSet
-import java.util.Map
-import java.util.LinkedHashMap
-import org.opendaylight.yangtools.binding.generator.util.Types
-import org.opendaylight.yangtools.sal.binding.model.api.Type
-import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType
-import org.opendaylight.yangtools.sal.binding.model.api.WildcardType
 import java.io.IOException
-import java.util.Set
-import java.util.HashSet
-import org.opendaylight.yangtools.yang.model.api.SchemaContext
-import java.util.Date
-import java.util.TreeMap
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+
+import java.util.Collections
+import java.util.Date
+import java.util.HashSet
+import java.util.LinkedHashMap
+import java.util.Map
+import java.util.Set
+import java.util.TreeMap
+
+import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
+import org.opendaylight.yangtools.binding.generator.util.Types
+import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType
+import org.opendaylight.yangtools.sal.binding.model.api.Type
+import org.opendaylight.yangtools.sal.binding.model.api.WildcardType
+import org.opendaylight.yangtools.yang.binding.YangModuleInfo
+import org.opendaylight.yangtools.yang.model.api.Module
+import org.opendaylight.yangtools.yang.model.api.SchemaContext
+
+import com.google.common.collect.ImmutableSet
 
 class YangModuleInfoTemplate {
     val CLASS = "$YangModuleInfoImpl"
@@ -54,24 +58,61 @@ class YangModuleInfoTemplate {
     }
 
     def body() '''
-        public class «CLASS» implements «YangModuleInfo.importedName» {
+        public final class «CLASS» implements «YangModuleInfo.importedName» {
 
             private static final «YangModuleInfo.importedName» INSTANCE = new «CLASS»();
 
-            private «CLASS»() {}
+            private final Set<YangModuleInfo> importedModules;
 
             public static «YangModuleInfo.importedName» getInstance() {
                 return INSTANCE;
             }
 
             «module.classBody»
-
         }
     '''
 
     private def CharSequence classBody(Module m) '''
+        private «CLASS»() {
+            «IF m.imports.size != 0»
+                «Set.importedName»<«YangModuleInfo.importedName»> set = new «HashSet.importedName»<>();
+                «FOR imp : m.imports»
+                    «val name = imp.moduleName»
+                    «val rev = imp.revision»
+                    «IF rev == null»
+                        «val Set<Module> modules = ctx.modules»
+                        «val TreeMap<Date, Module> sorted = new TreeMap()»
+                        «FOR module : modules»
+                            «IF module.name.equals(name)»
+                                «sorted.put(module.revision, module)»
+                            «ENDIF»
+                        «ENDFOR»
+                        set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(sorted.lastEntry().value)».«CLASS».getInstance());
+                    «ELSE»
+                        set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(ctx.findModuleByName(name, rev))».«CLASS».getInstance());
+                    «ENDIF»
+                «ENDFOR»
+                importedModules = «ImmutableSet.importedName».copyOf(set);
+            «ELSE»
+                importedModules = «Collections.importedName».emptySet();
+            «ENDIF»
+
+            «val path = m.moduleSourcePath»
+            «IF path != null»
+                «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
+                if (stream == null) {
+                    throw new IllegalStateException("Resource «path» is missing");
+                }
+                try {
+                    stream.close();
+                } catch («IOException.importedName» e) {
+                    // Resource leak, but there's nothing we can do
+                }
+            «ENDIF»
+        }
+
         @Override
-            public «String.importedName» getName() {
+        public «String.importedName» getName() {
             return "«m.name»";
         }
 
@@ -87,35 +128,21 @@ class YangModuleInfoTemplate {
         }
 
         @Override
-        public «InputStream.importedName» getModuleSourceStream() throws «IOException.importedName» {
-            «val path = m.moduleSourcePath»
+        public «InputStream.importedName» getModuleSourceStream() throws IOException {
             «IF path == null»
                 return null;
             «ELSE»
-                return «CLASS».class.getResourceAsStream("«path»");
+                «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
+                if (stream == null) {
+                    throw new «IOException.importedName»("Resource «path» is missing");
+                }
+                return stream;
             «ENDIF»
         }
 
         @Override
-        public «ImmutableSet.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
-            «Set.importedName»<«YangModuleInfo.importedName»> set = new «HashSet.importedName»<>();
-            «FOR imp : m.imports»
-                «val name = imp.moduleName»
-                «val rev = imp.revision»
-                «IF rev == null»
-                    «val Set<Module> modules = ctx.modules»
-                    «val TreeMap<Date, Module> sorted = new TreeMap()»
-                    «FOR module : modules»
-                        «IF module.name.equals(name)»
-                            «sorted.put(module.revision, module)»
-                        «ENDIF»
-                    «ENDFOR»
-                    set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(sorted.lastEntry().value)».«CLASS».getInstance());
-                «ELSE»
-                    set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(ctx.findModuleByName(name, rev))».«CLASS».getInstance());
-                «ENDIF»
-            «ENDFOR»
-            return «ImmutableSet.importedName».copyOf(set);
+        public «Set.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
+            return importedModules;
         }
     '''
 

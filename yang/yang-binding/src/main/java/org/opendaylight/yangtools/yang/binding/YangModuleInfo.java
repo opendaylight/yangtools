@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import java.io.IOException;
 import java.io.InputStream;
-
-import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
+import java.util.Set;
 
 public interface YangModuleInfo {
 
@@ -38,6 +37,6 @@ public interface YangModuleInfo {
 
     InputStream getModuleSourceStream() throws IOException;
 
-    ImmutableSet<YangModuleInfo> getImportedModules();
+    Set<YangModuleInfo> getImportedModules();
 
 }
