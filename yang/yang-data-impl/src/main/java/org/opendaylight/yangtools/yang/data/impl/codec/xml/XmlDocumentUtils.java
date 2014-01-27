@@ -363,7 +363,7 @@ public class XmlDocumentUtils {
                 } else if (dsn instanceof ChoiceNode) {
                     for (ChoiceCaseNode choiceCase : ((ChoiceNode) dsn).getCases()) {
                         Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
-                        if (foundDsn != null) {
+                        if (foundDsn != null && foundDsn.isPresent()) {
                             return foundDsn;
                         }
                     }
