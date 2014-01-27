@@ -98,17 +98,15 @@ class YangModuleInfoTemplate {
             «ENDIF»
 
             «val path = m.moduleSourcePath»
-            «IF path != null»
-                «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
-                if (stream == null) {
-                    throw new IllegalStateException("Resource «path» is missing");
-                }
-                try {
-                    stream.close();
-                } catch («IOException.importedName» e) {
-                    // Resource leak, but there's nothing we can do
-                }
-            «ENDIF»
+            «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
+            if (stream == null) {
+                throw new IllegalStateException("Resource «path» is missing");
+            }
+            try {
+                stream.close();
+            } catch («IOException.importedName» e) {
+                // Resource leak, but there is nothing we can do
+            }
         }
 
         @Override
@@ -129,15 +127,11 @@ class YangModuleInfoTemplate {
 
         @Override
         public «InputStream.importedName» getModuleSourceStream() throws IOException {
-            «IF path == null»
-                return null;
-            «ELSE»
-                «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
-                if (stream == null) {
-                    throw new «IOException.importedName»("Resource «path» is missing");
-                }
-                return stream;
-            «ENDIF»
+            «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
+            if (stream == null) {
+                throw new «IOException.importedName»("Resource «path» is missing");
+            }
+            return stream;
         }
 
         @Override
