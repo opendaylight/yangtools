@@ -1553,7 +1553,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *         </ul>
      */
     private def boolean resolveLeafSchemaNodeAsProperty(GeneratedTOBuilder toBuilder, LeafSchemaNode leaf,
-        boolean isReadOnly) {
+        boolean isReadOnly, Module module) {
         if ((leaf !== null) && (toBuilder !== null)) {
             val leafName = leaf.QName.localName;
             var String leafDesc = leaf.description;
@@ -1562,10 +1562,23 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
 
             if (leafName !== null) {
+                var Type returnType = null;
                 val TypeDefinition<?> typeDef = leaf.type;
+                if (typeDef instanceof UnionTypeDefinition) {
+                    // GeneratedType for this type definition should be already created
+                    var qname = typeDef.QName
+                    var Module unionModule = null
+                    if (qname.prefix == null || qname.prefix.empty) {
+                        unionModule = module
+                    } else {
+                        unionModule = findModuleFromImports(module.imports, qname.prefix)
+                    }
+                    val ModuleContext mc = genCtx.get(unionModule)
+                    returnType = mc.typedefs.get(typeDef.path)
+                } else {
+                    returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
+                }
 
-                // TODO: properly resolve enum types
-                val returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
                 if (returnType !== null) {
                     val propBuilder = toBuilder.addProperty(parseToValidParamName(leafName));
                     propBuilder.setReadOnly(isReadOnly);
@@ -1860,7 +1873,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             val leafName = leaf.QName.localName;
             resolveLeafSchemaNodeAsMethod(typeBuilder, leaf);
             if (listKeys.contains(leafName)) {
-                resolveLeafSchemaNodeAsProperty(genTOBuilder, leaf, true);
+                resolveLeafSchemaNodeAsProperty(genTOBuilder, leaf, true, module)
             }
         } else if (!schemaNode.addedByUses) {
             if (schemaNode instanceof LeafListSchemaNode) {
