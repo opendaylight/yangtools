@@ -97,7 +97,7 @@ class YangModuleInfoTemplate {
                 importedModules = «Collections.importedName».emptySet();
             «ENDIF»
 
-            «val path = m.moduleSourcePath»
+            «val path = m.moduleSourcePath.replace(java.io.File.separatorChar, '/')»
             «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
             if (stream == null) {
                 throw new IllegalStateException("Resource «path» is missing");
