@@ -803,15 +803,20 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         }
 
         QName qname = null;
-        if (!Strings.isNullOrEmpty(nodeParameter)) {
-            String[] splittedName = nodeParameter.split(":");
-            if (splittedName.length == 2) {
-                qname = new QName(null, null, splittedName[0], splittedName[1]);
+        try {
+            if (!Strings.isNullOrEmpty(nodeParameter)) {
+                String[] splittedName = nodeParameter.split(":");
+                if (splittedName.length == 2) {
+                    qname = new QName(null, null, splittedName[0], splittedName[1]);
+                } else {
+                    qname = new QName(namespace, revision, yangModelPrefix, splittedName[0]);
+                }
             } else {
-                qname = new QName(namespace, revision, yangModelPrefix, splittedName[0]);
+                qname = nodeType;
             }
-        } else {
+        } catch (IllegalArgumentException e) {
             qname = nodeType;
+            
         }
         addNodeToPath(qname);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
