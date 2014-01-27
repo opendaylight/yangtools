@@ -71,7 +71,6 @@ import java.util.Collections
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit
 import java.util.Set
 import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 
 class TransformerGenerator {
 
@@ -719,21 +718,6 @@ class TransformerGenerator {
             return _builder.build();
         }
     '''
-    
-    private def dispatch String deserializeBodyImpl(GeneratedType type, NotificationDefinition node) '''
-        {
-            «QName.name» _localQName = «QName.name».create($1,QNAME.getLocalName());
-            if($2 == null) {
-                return null;
-            }
-            java.util.Map _compositeNode = (java.util.Map) $2;
-            //System.out.println(_localQName + " " + _compositeNode);
-            «type.builderName» _builder = new «type.builderName»();
-            «deserializeDataNodeContainerBody(type, node)»
-            «deserializeAugmentations»
-            return _builder.build();
-        }
-    '''
 
     private def dispatch String deserializeBodyImpl(GeneratedType type, ChoiceCaseNode node) '''
         {
@@ -1336,7 +1320,7 @@ class TransformerGenerator {
         }
     '''
 
-    private def dispatch String serializeBody(GeneratedType type, NotificationDefinition node) '''
+    private def dispatch String serializeBody(GeneratedType type, ContainerSchemaNode node) '''
         {
             «QName.name» _resultName = «QName.name».create($1,QNAME.getLocalName());
             java.util.List _childNodes = new java.util.ArrayList();
@@ -1346,8 +1330,6 @@ class TransformerGenerator {
             return ($r) java.util.Collections.singletonMap(_resultName,_childNodes);
         }
     '''
-    
-    
 
     private def dispatch String serializeBody(GeneratedType type, ChoiceCaseNode node) '''
         {
