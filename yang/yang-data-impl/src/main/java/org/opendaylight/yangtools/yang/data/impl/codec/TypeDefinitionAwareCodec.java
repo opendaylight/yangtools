@@ -243,7 +243,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Boolean data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
 
         @Override
@@ -261,7 +261,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Short data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
 
         @Override
@@ -291,7 +291,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Integer data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -313,7 +313,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Long data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -335,7 +335,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(BigInteger data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -353,7 +353,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(String data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -375,7 +375,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Short data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -397,7 +397,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Integer data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -419,7 +419,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Long data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -441,7 +441,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Byte data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -472,7 +472,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(byte[] data) {
-            return BaseEncoding.base64().encode(data);
+            return data == null ? "" : BaseEncoding.base64().encode(data);
         }
 
         @Override
@@ -494,7 +494,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(Set<String> data) {
-            return data != null ? JOINER.join(data) : "";
+            return data == null ? "" : JOINER.join(data);
         }
 
         @Override
@@ -520,7 +520,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(String data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
     };
 
@@ -533,7 +533,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(BigDecimal data) {
-            return data.toString();
+            return data == null ? "" : data.toString();
         }
 
         @Override
@@ -551,7 +551,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(String data) {
-            return data;
+            return data == null ? "" : data;
         }
 
         @Override
