@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yangtools</artifactId>
     <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.6.1-SNAPSHOT</version>
+    <version>0.6.1</version>
     <packaging>pom</packaging>
     <prerequisites>
         <maven>3.0.4</maven>
@@ -49,7 +49,7 @@
         <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
         <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
         <url>https://wiki.opendaylight.org/view/YANG_Tools:Main</url>
-        <tag>HEAD</tag>
+        <tag>yangtools-0.6.1</tag>
     </scm>
 
     <modules>
