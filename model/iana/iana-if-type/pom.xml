@@ -12,12 +12,12 @@
     <parent>
         <artifactId>model-iana</artifactId>
         <groupId>org.opendaylight.yangtools.model</groupId>
-        <version>0.6.0-SNAPSHOT</version>
+        <version>0.6.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>iana-if-type</artifactId>
-    <version>2013.07.04.2-SNAPSHOT</version>
+    <version>2013.07.04.2</version>
 
     <build>
         <plugins>

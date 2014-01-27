@@ -12,7 +12,7 @@
     <parent>
         <artifactId>model-parent</artifactId>
         <groupId>org.opendaylight.yangtools.model</groupId>
-        <version>0.6.0-SNAPSHOT</version>
+        <version>0.6.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
