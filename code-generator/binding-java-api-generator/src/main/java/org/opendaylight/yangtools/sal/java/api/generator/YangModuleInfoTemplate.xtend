@@ -30,50 +30,69 @@ import org.opendaylight.yangtools.yang.model.api.Module
 import org.opendaylight.yangtools.yang.model.api.SchemaContext
 
 import com.google.common.collect.ImmutableSet
+import static org.opendaylight.yangtools.yang.binding.BindingMapping.*
+import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
+import com.google.common.base.Preconditions
 
 class YangModuleInfoTemplate {
-    val CLASS = "$YangModuleInfoImpl"
 
     val Module module
     val SchemaContext ctx
     val Map<String, String> importMap = new LinkedHashMap()
 
-    new (Module module, SchemaContext ctx) {
-        if (module == null) {
-            throw new IllegalArgumentException("Module reference cannot be NULL!")
-        }
+    @Property
+    val String packageName;
+
+    @Property
+    val String modelBindingProviderName;
+
+    new(Module module, SchemaContext ctx) {
+        Preconditions.checkArgument(module != null, "Module must not be null.");
         this.module = module
         this.ctx = ctx
+        _packageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
+        _modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»''';
     }
 
     def String generate() {
-        val String classBody = body().toString
+        val body = '''
+            public final class «MODULE_INFO_CLASS_NAME» implements «YangModuleInfo.importedName» {
+
+                    private static final «YangModuleInfo.importedName» INSTANCE = new «MODULE_INFO_CLASS_NAME»();
+
+                    private final Set<YangModuleInfo> importedModules;
+
+                    public static «YangModuleInfo.importedName» getInstance() {
+                    return INSTANCE;
+                    }
+
+                    «module.classBody»
+                }
         '''
-        package «BindingGeneratorUtil.moduleNamespaceToPackageName(module)» ;
-
-        «imports»
-
-        «classBody»
+        return '''
+            
+                package «packageName» ;
+                «imports»
+                «body»
         '''.toString
     }
 
-    def body() '''
-        public final class «CLASS» implements «YangModuleInfo.importedName» {
+    def String generateModelProvider() {
+        '''
+            package «packageName»;
 
-            private static final «YangModuleInfo.importedName» INSTANCE = new «CLASS»();
+            public final class «MODEL_BINDING_PROVIDER_CLASS_NAME» implements «YangModelBindingProvider.name» {
 
-            private final Set<YangModuleInfo> importedModules;
-
-            public static «YangModuleInfo.importedName» getInstance() {
-                return INSTANCE;
+                public «YangModuleInfo.name» getModuleInfo() {
+                    return «MODULE_INFO_CLASS_NAME».getInstance();
+                }
             }
+        '''
 
-            «module.classBody»
-        }
-    '''
+    }
 
     private def CharSequence classBody(Module m) '''
-        private «CLASS»() {
+        private «MODULE_INFO_CLASS_NAME»() {
             «IF m.imports.size != 0»
                 «Set.importedName»<«YangModuleInfo.importedName»> set = new «HashSet.importedName»<>();
                 «FOR imp : m.imports»
@@ -87,24 +106,23 @@ class YangModuleInfoTemplate {
                                 «sorted.put(module.revision, module)»
                             «ENDIF»
                         «ENDFOR»
-                        set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(sorted.lastEntry().value)».«CLASS».getInstance());
+                        set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(sorted.lastEntry().value)».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ELSE»
-                        set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(ctx.findModuleByName(name, rev))».«CLASS».getInstance());
+                        set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(ctx.findModuleByName(name, rev))».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ENDIF»
                 «ENDFOR»
                 importedModules = «ImmutableSet.importedName».copyOf(set);
             «ELSE»
                 importedModules = «Collections.importedName».emptySet();
             «ENDIF»
-
-            «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«sourcePath»");
+            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream("«sourcePath»");
             if (stream == null) {
                 throw new IllegalStateException("Resource «sourcePath» is missing");
             }
             try {
                 stream.close();
             } catch («IOException.importedName» e) {
-                // Resource leak, but there is nothing we can do
+            // Resource leak, but there is nothing we can do
             }
         }
 
@@ -126,7 +144,7 @@ class YangModuleInfoTemplate {
 
         @Override
         public «InputStream.importedName» getModuleSourceStream() throws IOException {
-            «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«sourcePath»");
+            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream("«sourcePath»");
             if (stream == null) {
                 throw new «IOException.importedName»("Resource «sourcePath» is missing");
             }
@@ -138,7 +156,7 @@ class YangModuleInfoTemplate {
             return importedModules;
         }
     '''
-    
+
     def getSourcePath() {
         return "/" + module.moduleSourcePath.replace(java.io.File.separatorChar, '/')
     }
@@ -151,7 +169,6 @@ class YangModuleInfoTemplate {
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
-        
     '''
 
     final protected def importedName(Class<?> cls) {
@@ -226,7 +243,7 @@ class YangModuleInfoTemplate {
             return "?";
         }
         val StringBuilder builder = new StringBuilder();
-        
+
         var int i = 0;
         for (pType : pTypes) {
             val Type t = pTypes.get(i)
