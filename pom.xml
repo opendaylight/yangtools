@@ -58,6 +58,7 @@
         <module>code-generator</module>
         <module>model</module>
         <module>restconf</module>
+        <module>integration-test</module>
         <module>mockito-configuration</module>
         <!-- module>third-party</module -->
     </modules>
