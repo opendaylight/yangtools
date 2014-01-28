@@ -14,6 +14,14 @@ public abstract class GeneratedClassLoadingStrategy {
 
     private static final GeneratedClassLoadingStrategy TCCL_STRATEGY = new TCCLClassLoadingStrategy();
 
+    private static final GeneratedClassLoadingStrategy ALWAYS_FAIL_STRATEGY = new GeneratedClassLoadingStrategy() {
+
+        @Override
+        public Class<?> loadClass(String fullyQualifiedName) throws ClassNotFoundException {
+            throw new ClassNotFoundException(fullyQualifiedName);
+        }
+    };
+
     public Class<?> loadClass(Type type) throws ClassNotFoundException {
         return loadClass(type.getFullyQualifiedName());
     }
@@ -22,6 +30,10 @@ public abstract class GeneratedClassLoadingStrategy {
 
     public static final GeneratedClassLoadingStrategy getTCCLClassLoadingStrategy() {
         return TCCL_STRATEGY;
+    }
+
+    public static final GeneratedClassLoadingStrategy getAlwaysFailClassLoadingStrategy() {
+        return ALWAYS_FAIL_STRATEGY;
     }
 
     private static final class TCCLClassLoadingStrategy extends GeneratedClassLoadingStrategy {
