@@ -11,6 +11,7 @@ import java.beans.MethodDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.RpcService;
+import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.annotations.ModuleQName;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,6 +42,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 public class BindingReflections {
 
@@ -213,6 +217,26 @@ public class BindingReflections {
     public static boolean isNotification(Class<?> potentialNotification) {
         checkArgument(potentialNotification != null);
         return Notification.class.isAssignableFrom(potentialNotification);
+    }
+    
+    public static ImmutableSet<YangModuleInfo> loadModuleInfos() {
+        return loadModuleInfos(Thread.currentThread().getContextClassLoader());
+    }
+    
+    public static ImmutableSet<YangModuleInfo> loadModuleInfos(ClassLoader loader) {
+        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
+        ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class, loader);
+        for(YangModelBindingProvider bindingProvider : serviceLoader) {
+            collectYangModuleInfo(bindingProvider.getModuleInfo(),moduleInfoSet);
+        }
+        return  moduleInfoSet.build();
+    }
+
+    private static void collectYangModuleInfo(YangModuleInfo moduleInfo, Builder<YangModuleInfo> moduleInfoSet) {
+        moduleInfoSet.add(moduleInfo);
+        for(YangModuleInfo dependency : moduleInfo.getImportedModules()) {
+            collectYangModuleInfo(dependency, moduleInfoSet);
+        }
     }
 
 }
