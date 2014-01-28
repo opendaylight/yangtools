@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
@@ -184,13 +185,18 @@ public class XmlDocumentUtils {
 
                         for (QName keyValue : predicates.keySet()) {
                             String predicateValue = String.valueOf(predicates.get(keyValue));
-                            textContent.append("[");
+                            textContent.append("[");                            
                             writeIdentifierWithNamespacePrefix(element, textContent, keyValue, prefixes);
                             textContent.append("='");
                             textContent.append(predicateValue);
                             textContent.append("'");
                             textContent.append("]");
                         }
+                    } else if (pathArgument instanceof NodeWithValue) {
+                        textContent.append("[.='");                            
+                        textContent.append(((NodeWithValue)pathArgument).getValue());
+                        textContent.append("'");
+                        textContent.append("]");                        
                     }
                 }
                 element.setTextContent(textContent.toString());
