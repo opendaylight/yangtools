@@ -56,15 +56,13 @@ public class GenTypesSubSetTest {
             }
         }
 
-        assertEquals("Set of to Generate Modules must contain 2 modules", 2,
-                toGenModules.size());
+        assertEquals("Set of to Generate Modules must contain 2 modules", 2, toGenModules.size());
         assertNotNull("Schema Context is null", context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
         assertFalse("genTypes is empty", genTypes.isEmpty());
-        assertEquals("Expected Generated Types from provided sub set of " +
-                "modules should be 23!", 23,
+        assertEquals("Expected Generated Types from provided sub set of " + "modules should be 25!", 25,
                 genTypes.size());
     }
 
@@ -93,6 +91,6 @@ public class GenTypesSubSetTest {
         final List<Type> genTypes = bindingGen.generateTypes(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
         assertFalse("genTypes is empty", genTypes.isEmpty());
-        assertEquals("Expected Generated Types", 24, genTypes.size());
+        assertEquals("Expected Generated Types", 27, genTypes.size());
     }
 }

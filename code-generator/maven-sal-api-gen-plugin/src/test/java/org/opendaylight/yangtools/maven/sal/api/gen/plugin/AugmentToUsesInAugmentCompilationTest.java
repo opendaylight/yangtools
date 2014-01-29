@@ -5,21 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.sal.java.api.generator.test;
+package org.opendaylight.yangtools.maven.sal.api.gen.plugin;
 
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.*;
+import static org.opendaylight.yangtools.maven.sal.api.gen.plugin.CompilationTestUtils.*;
 
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -32,23 +29,21 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "augment-uses-to-augment");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        final List<File> sourceFiles = getSourceFiles("/compilation/augment-uses-to-augment");
+        final List<File> sourceFiles = getSourceFiles("/code-gen/compilation/augment-uses-to-augment");
         final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
         final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources(context, modulesToBuild, sourcesOutputDir);
 
         // Test if all sources are generated from 'module foo'
         File fooParent = new File(sourcesOutputDir, NS_FOO);
-        assertFilesCount(fooParent, 4);
+        assertFilesCount(fooParent, 6);
         assertTrue(new File(fooParent, "IgpLinkAttributes.java").exists());
         assertTrue(new File(fooParent, "Link1.java").exists());
         assertTrue(new File(fooParent, "Link1Builder.java").exists());
 
         // Test if all sources are generated from 'module bar'
         File barParent = new File(sourcesOutputDir, NS_BAR);
-        assertFilesCount(barParent, 7);
+        assertFilesCount(barParent, 9);
         assertTrue(new File(barParent, "BarData.java").exists());
         assertTrue(new File(barParent, "NetworkTopology.java").exists());
         assertTrue(new File(barParent, "NetworkTopologyBuilder.java").exists());
@@ -71,7 +66,7 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated from 'module baz'
         File bazParent = new File(sourcesOutputDir, NS_BAZ);
-        assertFilesCount(bazParent, 4);
+        assertFilesCount(bazParent, 6);
         assertTrue(new File(bazParent, "IgpLinkAttributes1.java").exists());
         assertTrue(new File(bazParent, "IgpLinkAttributes1Builder.java").exists());
         assertTrue(new File(bazParent, "LinkAttributes.java").exists());
