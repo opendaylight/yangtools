@@ -200,7 +200,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
     }
 
     private def void moduleToGenTypes(Module m, SchemaContext context) {
-        genCtx.put(m, new ModuleContext)
+        val ModuleContext ctx = new ModuleContext
+        ctx.addTopLevelNodeType(m.createYangModeledEntityType)
+        genCtx.put(m, ctx)
+        val basePackageName = moduleNamespaceToPackageName(m);
+        
         allTypeDefinitionsToGenTypes(m)
         groupingsToGenTypes(m, m.groupings)
         rpcMethodsToGenType(m)
@@ -210,9 +214,17 @@ public class BindingGeneratorImpl implements BindingGenerator {
         if (!m.childNodes.isEmpty()) {
             val moduleType = moduleToDataType(m)
             genCtx.get(m).addModuleNode(moduleType)
-            val basePackageName = moduleNamespaceToPackageName(m);
             resolveDataSchemaNodes(m, basePackageName, moduleType, moduleType, m.childNodes)
         }
+    }
+
+    private def createYangModeledEntityType(Module m) {
+        val pkg = moduleNamespaceToPackageName(m)
+        val name = "$YangModeledEntityDef"
+        val GeneratedTypeBuilder gt = addRawInterfaceDefinition(pkg, name, "")
+        gt.addImplementsType(YANG_MODELED_ENTITY)
+        gt.addConstant(YANG_MODULE_INFO, "ODL_YANG_MODULE_INFO", "$YangModuleInfoImpl.getInstance()")
+        return gt
     }
 
     /**
@@ -1751,9 +1763,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def GeneratedTypeBuilder addRawInterfaceDefinition(String packageName, SchemaNode schemaNode,
         String prefix) {
         checkArgument(schemaNode !== null, "Data Schema Node cannot be NULL.");
-        checkArgument(packageName !== null, "Package Name for Generated Type cannot be NULL.");
         checkArgument(schemaNode.QName !== null, "QName for Data Schema Node cannot be NULL.");
         val schemaNodeName = schemaNode.QName.localName;
+        return addRawInterfaceDefinition(packageName, schemaNodeName, prefix)
+    }
+
+    private def GeneratedTypeBuilder addRawInterfaceDefinition(String packageName, String schemaNodeName,
+        String prefix) {
+        checkArgument(packageName !== null, "Package Name for Generated Type cannot be NULL.");
         checkArgument(schemaNodeName !== null, "Local Name of QName for Data Schema Node cannot be NULL.");
 
         var String genTypeName;
