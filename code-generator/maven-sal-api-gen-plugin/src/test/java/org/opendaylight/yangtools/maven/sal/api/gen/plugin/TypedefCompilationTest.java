@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.sal.java.api.generator.test;
+package org.opendaylight.yangtools.maven.sal.api.gen.plugin;
 
 import static org.junit.Assert.*;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.*;
+import static org.opendaylight.yangtools.maven.sal.api.gen.plugin.CompilationTestUtils.*;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -17,13 +17,10 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -45,12 +42,10 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "typedef");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        final List<File> sourceFiles = getSourceFiles("/compilation/typedef");
+        final List<File> sourceFiles = getSourceFiles("/code-gen/compilation/typedef");
         final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
         final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources(context, modulesToBuild, sourcesOutputDir);
 
         File parent = new File(sourcesOutputDir, NS_FOO);
         File bitsExt = new File(parent, "BitsExt.java");
@@ -77,7 +72,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertTrue(unionExt2.exists());
         assertTrue(unionExt3.exists());
         assertTrue(unionExt4.exists());
-        assertFilesCount(parent, 30);
+        assertFilesCount(parent, 33);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -293,7 +288,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(6, unionExt4Class.getDeclaredConstructors().length);
         assertContainsDefaultMethods(unionExt4Class);
 
-        //cleanUp(sourcesOutputDir, compiledOutputDir);
+        cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
 }

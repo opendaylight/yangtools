@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 
+import com.google.common.base.Preconditions;
+
 abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractBaseType implements
         GeneratedTypeBuilderBase<T> {
 
@@ -126,9 +128,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public T addImplementsType(Type genType) {
-        if (genType == null) {
-            throw new IllegalArgumentException("Type cannot be null");
-        }
+        Preconditions.checkNotNull(genType, "Type cannot be null");
         implementsTypes.add(genType);
         return thisInstance();
     }
