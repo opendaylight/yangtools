@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -23,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class ModuleContext {
     private GeneratedTypeBuilder moduleNode;
+    private GeneratedType modeledEntity;
     private final List<GeneratedTOBuilder> genTOs = new ArrayList<GeneratedTOBuilder>();
     private final Map<SchemaPath, Type> typedefs = new HashMap<SchemaPath, Type>();
     private final Map<SchemaPath, GeneratedTypeBuilder> childNodes = new HashMap<SchemaPath, GeneratedTypeBuilder>();
@@ -40,6 +42,10 @@ public final class ModuleContext {
 
         if (moduleNode != null) {
             result.add(moduleNode.toInstance());
+        }
+
+        if (modeledEntity != null) {
+            result.add(modeledEntity);
         }
 
         for (GeneratedTOBuilder b : genTOs) {
@@ -75,6 +81,10 @@ public final class ModuleContext {
         return moduleNode;
     }
 
+    public GeneratedType getModeledEntity() {
+        return modeledEntity;
+    }
+
     public GeneratedTypeBuilder getChildNode(SchemaPath p) {
         return childNodes.get(p);
     }
@@ -87,8 +97,12 @@ public final class ModuleContext {
         return cases.get(p);
     }
 
-    public void addModuleNode(GeneratedTypeBuilder moduleNode) {
+    public void setModuleNode(GeneratedTypeBuilder moduleNode) {
         this.moduleNode = moduleNode;
+    }
+
+    public void setModeledEntity(GeneratedType modeledEntity) {
+        this.modeledEntity = modeledEntity;
     }
 
     public void addGeneratedTOBuilder(GeneratedTOBuilder b) {

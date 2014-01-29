@@ -58,7 +58,7 @@ public class GenEnumResolvingTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
         assertTrue(genTypes != null);
 
-        assertEquals("Expected count of all Generated Types", 20, genTypes.size());
+        assertEquals("Expected count of all Generated Types", 23, genTypes.size());
 
         GeneratedType genInterface = null;
         for (final Type type : genTypes) {
@@ -132,9 +132,9 @@ public class GenEnumResolvingTest {
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
         assertTrue(genTypes != null);
-        assertEquals(1, genTypes.size());
+        assertEquals(2, genTypes.size());
 
-        final Type type = genTypes.get(0);
+        final Type type = genTypes.get(1);
         assertTrue(type instanceof Enumeration);
 
         final Enumeration enumer = (Enumeration) type;

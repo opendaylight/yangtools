@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.junit.*;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
 import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
