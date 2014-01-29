@@ -191,8 +191,8 @@ public final class YangParserImpl implements YangModelParser {
         final Map<InputStream, File> inputStreams = new HashMap<>();
         for (final File yangFile : yangFiles) {
             try {
-                
-                inputStreams.put(new FileInputStream(yangFile), yangFile);
+                inputStreams.put(new NamedFileInputStream(yangFile, "META-INF" + File.separator + "yang"
+                        + File.separator + yangFile.getName()), yangFile);
             } catch (FileNotFoundException e) {
                 LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
             }

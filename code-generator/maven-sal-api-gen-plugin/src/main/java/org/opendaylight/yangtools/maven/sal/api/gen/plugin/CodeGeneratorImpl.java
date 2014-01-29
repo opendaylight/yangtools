@@ -69,7 +69,6 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
 
         List<File> result = generator.generateToFile(outputBaseDir, persistentSourcesDir);
         for (Module module : yangModules) {
-            // TODO: add YangModuleInfo class
             result.add(generateYangModuleInfo(outputBaseDir, module, context));
         }
         return result;
