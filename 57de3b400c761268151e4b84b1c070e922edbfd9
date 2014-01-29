@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_35f040fd",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/LazyGeneratedCodecRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-01-29T15:41:23Z",
+      "side": 1,
+      "message": "This is logging which could help debug things at runtime.\nPlease leave BUG prefix here - this is for runtime code generation, and that means that tooling which generated class\ndoes not have access to constructor of that class. This points to bug in runtime wiring and/or security missconfiguration.\n\nIn current ODL container this never happens, unless bug is introduced into code generator.",
+      "revId": "57de3b400c761268151e4b84b1c070e922edbfd9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f5f508ed",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/LazyGeneratedCodecRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-01-29T15:41:23Z",
+      "side": 1,
+      "message": "Please leave BUG prefix here. Log level warn is ok.\nIt reports an potential bug in where search algorithm did not found schema node, but actually does not cause any side-effect, because dependant code could handle this situation.",
+      "revId": "57de3b400c761268151e4b84b1c070e922edbfd9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
