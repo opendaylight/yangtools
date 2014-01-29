@@ -13,18 +13,7 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
-import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.BaseIdentity;
-import org.opendaylight.yangtools.yang.binding.ChildOf;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.DataRoot;
-import org.opendaylight.yangtools.yang.binding.Identifiable;
-import org.opendaylight.yangtools.yang.binding.Identifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.Notification;
-import org.opendaylight.yangtools.yang.binding.NotificationListener;
-import org.opendaylight.yangtools.yang.binding.RpcService;
+import org.opendaylight.yangtools.yang.binding.*;
 
 public final class BindingTypes {
 
@@ -39,11 +28,12 @@ public final class BindingTypes {
     public static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     public static final ConcreteType NOTIFICATION_LISTENER = typeForClass(NotificationListener.class);
     public static final ConcreteType RPC_SERVICE = typeForClass(RpcService.class);
+    public static final ConcreteType YANG_MODELED_ENTITY = typeForClass(YangModeledEntity.class);
+    public static final ConcreteType YANG_MODULE_INFO = typeForClass(YangModuleInfo.class);
 
     private static final ConcreteType CHILD_OF = typeForClass(ChildOf.class);
 
     private BindingTypes() {
-
     }
 
     public static ParameterizedType augmentable(Type t) {
