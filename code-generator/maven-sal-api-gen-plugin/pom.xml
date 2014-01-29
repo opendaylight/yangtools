@@ -22,6 +22,12 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-maven-plugin-spi</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>sisu-guava</artifactId>
+                    <groupId>org.sonatype.sisu</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -39,12 +45,10 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-java-api-generator</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.sonatype.plexus</groupId>
             <artifactId>plexus-build-api</artifactId>
@@ -53,7 +57,6 @@
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-slf4j-logging</artifactId>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

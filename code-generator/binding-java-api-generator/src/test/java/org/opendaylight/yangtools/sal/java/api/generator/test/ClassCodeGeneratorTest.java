@@ -55,7 +55,7 @@ public class ClassCodeGeneratorTest {
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertTrue(genTypes != null);
-        assertEquals(7, genTypes.size());
+        assertEquals(8, genTypes.size());
 
         int genTypesCount = 0;
         int genTOsCount = 0;
@@ -95,7 +95,7 @@ public class ClassCodeGeneratorTest {
             }
         }
 
-        assertEquals(5, genTypesCount);
+        assertEquals(6, genTypesCount);
         assertEquals(2, genTOsCount);
     }
 
