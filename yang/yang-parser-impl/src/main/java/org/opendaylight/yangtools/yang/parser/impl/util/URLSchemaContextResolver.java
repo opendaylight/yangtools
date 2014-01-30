@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSet;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -41,7 +40,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
 
     private YangSourceContext currentSourceContext;
     private Optional<SchemaContext> currentSchemaContext = Optional.absent();
-    
+
     public Registration<URL> registerSource(URL source) {
         checkArgument(source != null, "Supplied source must not be null");
         InputStream yangStream = getInputStream(source);
@@ -142,7 +141,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
                 currentSchemaContext = Optional.of(schemaContext);
                 currentSourceContext = context;
                 return currentSchemaContext;
-            } 
+            }
             currentSourceContext = context;
         } catch (Exception e) {
             LOG.error("Could not create schema context for {} ",context.getValidSources());

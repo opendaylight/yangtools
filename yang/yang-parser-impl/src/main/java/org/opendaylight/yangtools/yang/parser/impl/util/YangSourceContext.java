@@ -9,15 +9,12 @@ package org.opendaylight.yangtools.yang.parser.impl.util;
 
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.management.modelmbean.ModelMBean;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -28,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProviders;
 import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo.ModuleDependencyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +34,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 
 public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStream>, AutoCloseable {
 

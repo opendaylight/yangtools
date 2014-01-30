@@ -219,7 +219,7 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         return sb.toString();
     }
 
-    private final class UnknownSchemaNodeImpl implements UnknownSchemaNode {
+    private static final class UnknownSchemaNodeImpl implements UnknownSchemaNode {
         private final QName qname;
         private final SchemaPath path;
         private ExtensionDefinition extension;
@@ -320,7 +320,7 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             final int prime = 31;
             int result = 1;
             result = prime * result + ((qname == null) ? 0 : qname.hashCode());
-            result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+            result = prime * result + ((path == null) ? 0 : path.hashCode());
             result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
             result = prime * result + ((nodeParameter == null) ? 0 : nodeParameter.hashCode());
             return result;

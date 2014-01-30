@@ -17,7 +17,7 @@ import java.util.List;
  * from a standard.
  * </p>
  */
-public interface Deviation extends YangNode {
+public interface Deviation {
 
     /**
      * Enum describing YANG deviation 'deviate' statement. It defines how the
