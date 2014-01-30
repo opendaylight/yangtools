@@ -205,7 +205,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         return "leaf-list " + qname.getLocalName();
     }
 
-    private final class LeafListSchemaNodeImpl implements LeafListSchemaNode {
+    private static final class LeafListSchemaNodeImpl implements LeafListSchemaNode {
         private final QName qname;
         private SchemaPath path;
         private String description;

@@ -33,7 +33,6 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         AugmentationTargetBuilder, DataSchemaNodeBuilder {
     private boolean isBuilt;
     private final ContainerSchemaNodeImpl instance;
-    private YangNode parent;
 
     private final SchemaPath path;
     // DataSchemaNode args
@@ -277,11 +276,11 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         } else if (!path.equals(other.path)) {
             return false;
         }
-        if (parent == null) {
-            if (other.parent != null) {
+        if (parentBuilder == null) {
+            if (other.parentBuilder != null) {
                 return false;
             }
-        } else if (!parent.equals(other.parent)) {
+        } else if (!parentBuilder.equals(other.parentBuilder)) {
             return false;
         }
         return true;
@@ -292,7 +291,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         return "container " + qname.getLocalName();
     }
 
-    public final class ContainerSchemaNodeImpl implements ContainerSchemaNode {
+    private static final class ContainerSchemaNodeImpl implements ContainerSchemaNode {
         private final QName qname;
         private SchemaPath path;
         private String description;

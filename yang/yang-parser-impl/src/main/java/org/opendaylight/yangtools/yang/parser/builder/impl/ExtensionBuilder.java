@@ -95,7 +95,7 @@ public final class ExtensionBuilder extends AbstractSchemaNodeBuilder {
         return "extension " + qname.getLocalName();
     }
 
-    private final class ExtensionDefinitionImpl implements ExtensionDefinition {
+    private static final class ExtensionDefinitionImpl implements ExtensionDefinition {
         private final QName qname;
         private String argument;
         private final SchemaPath schemaPath;

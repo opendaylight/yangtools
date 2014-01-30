@@ -266,7 +266,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
 
-    private final class GroupingDefinitionImpl implements GroupingDefinition {
+    private static final class GroupingDefinitionImpl implements GroupingDefinition {
         private final QName qname;
         private final SchemaPath path;
         private String description;
