@@ -22,7 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
  * Definition interface.
  *
  * @see InstanceIdentifierTypeDefinition
+ * @deprecated Depracated, use {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier} instead
  */
+@Deprecated
 public final class InstanceIdentifier implements InstanceIdentifierTypeDefinition {
     private static final QName NAME = BaseTypes.constructQName("instance-identifier");
     private static final SchemaPath PATH = new SchemaPath(Collections.singletonList(NAME), true);
