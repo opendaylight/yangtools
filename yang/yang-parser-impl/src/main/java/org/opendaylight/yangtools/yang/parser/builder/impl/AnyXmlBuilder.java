@@ -190,7 +190,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         return "anyxml " + qname.getLocalName();
     }
 
-    private final class AnyXmlSchemaNodeImpl implements AnyXmlSchemaNode {
+    private static final class AnyXmlSchemaNodeImpl implements AnyXmlSchemaNode {
         private final QName qname;
         private SchemaPath path;
         private String description;

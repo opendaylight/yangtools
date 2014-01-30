@@ -130,7 +130,6 @@ public abstract class YangModelDependencyInfo {
         for (Import_stmtContext importStmt : importStatements) {
             String moduleName = getArgumentString(importStmt);
             Date revision = getRevision(importStmt.revision_date_stmt());
-            String prefix = getArgumentString(importStmt.prefix_stmt());
             builder.add(new ModuleImportImpl(moduleName, revision));
         }
         return builder.build();
@@ -206,7 +205,7 @@ public abstract class YangModelDependencyInfo {
             super(name, latestRevision, imports, includes);
             this.belongsTo = belongsTo;
         }
-        
+
         @Override
         public String toString() {
             return "Submodule [name=" + getName() + ", revision=" + getRevision()
@@ -275,7 +274,7 @@ public abstract class YangModelDependencyInfo {
         public String toString() {
             return "ModuleImportImpl [name=" + name + ", revision=" + QName.formattedRevision(revision) + "]";
         }
-        
-        
+
+
     }
 }

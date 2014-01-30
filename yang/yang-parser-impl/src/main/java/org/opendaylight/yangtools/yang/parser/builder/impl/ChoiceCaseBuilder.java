@@ -238,7 +238,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         return "case " + getQName().getLocalName();
     }
 
-    public final class ChoiceCaseNodeImpl implements ChoiceCaseNode {
+    private static final class ChoiceCaseNodeImpl implements ChoiceCaseNode {
         private final QName qname;
         private SchemaPath path;
         private String description;

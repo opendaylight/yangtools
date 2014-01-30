@@ -84,7 +84,7 @@ public final class DeviationBuilder extends AbstractBuilder {
         return "deviation " + targetPathStr;
     }
 
-    private final class DeviationImpl implements Deviation {
+    private static final class DeviationImpl implements Deviation {
         private SchemaPath targetPath;
         private Deviate deviate;
         private String reference;

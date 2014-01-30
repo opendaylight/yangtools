@@ -124,7 +124,7 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         return "identity " + qname.getLocalName();
     }
 
-    public final class IdentitySchemaNodeImpl implements IdentitySchemaNode {
+    private final class IdentitySchemaNodeImpl implements IdentitySchemaNode {
         private final QName qname;
         private final SchemaPath path;
         private IdentitySchemaNode baseIdentity;
