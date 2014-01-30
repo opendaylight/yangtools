@@ -299,7 +299,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         return "list " + qname.getLocalName();
     }
 
-    public final class ListSchemaNodeImpl implements ListSchemaNode {
+    private static final class ListSchemaNodeImpl implements ListSchemaNode {
         private final QName qname;
         private SchemaPath path;
         private String description;

@@ -243,7 +243,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         return "augment " + augmentTargetStr;
     }
 
-    private final class AugmentationSchemaImpl implements AugmentationSchema {
+    private static final class AugmentationSchemaImpl implements AugmentationSchema {
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
         private final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);

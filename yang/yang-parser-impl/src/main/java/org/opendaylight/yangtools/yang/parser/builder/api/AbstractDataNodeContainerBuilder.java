@@ -141,7 +141,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         addedUsesNodes.add(usesNode);
     }
 
-    public DataSchemaNode getChildNode(Set<DataSchemaNode> childNodes, QName name) {
+    protected static DataSchemaNode getChildNode(Set<DataSchemaNode> childNodes, QName name) {
         for (DataSchemaNode node : childNodes) {
             if (node.getQName().equals(name)) {
                 return node;
@@ -150,7 +150,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         return null;
     }
 
-    public DataSchemaNode getChildNode(Set<DataSchemaNode> childNodes, String name) {
+    protected static DataSchemaNode getChildNode(Set<DataSchemaNode> childNodes, String name) {
         for (DataSchemaNode node : childNodes) {
             if (node.getQName().getLocalName().equals(name)) {
                 return node;

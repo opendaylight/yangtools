@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
@@ -78,7 +79,8 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                 unknownNodes.add(b.build());
             }
-            instance.setUnknownSchemaNodes(unknownNodes);
+            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
+            instance.addUnknownSchemaNodes(unknownNodes);
 
             isBuilt = true;
         }
@@ -238,12 +240,12 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         return "uses '" + groupingPathString + "'";
     }
 
-    public final class UsesNodeImpl implements UsesNode {
+    private static final class UsesNodeImpl implements UsesNode {
         private final SchemaPath groupingPath;
         private Set<AugmentationSchema> augmentations = Collections.emptySet();
         private boolean addedByUses;
         private Map<SchemaPath, SchemaNode> refines = Collections.emptyMap();
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
         private UsesNodeImpl(final SchemaPath groupingPath) {
             this.groupingPath = groupingPath;
@@ -290,18 +292,10 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             }
         }
 
-        public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
-        }
-
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
+        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
             if (unknownSchemaNodes != null) {
-                this.unknownNodes = unknownSchemaNodes;
+                this.unknownNodes.addAll(unknownSchemaNodes);
             }
-        }
-
-        public UsesNodeBuilder toBuilder() {
-            return UsesNodeBuilderImpl.this;
         }
 
         @Override

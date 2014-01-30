@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.EventListener;
-
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-
 public interface SchemaContextListener extends SchemaServiceListener {
 
 }
