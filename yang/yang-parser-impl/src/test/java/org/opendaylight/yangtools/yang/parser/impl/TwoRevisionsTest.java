@@ -12,8 +12,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;

@@ -184,7 +184,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
         return "rpc " + qname.getLocalName();
     }
 
-    private final class RpcDefinitionImpl implements RpcDefinition {
+    private static final class RpcDefinitionImpl implements RpcDefinition {
         private final QName qname;
         private final SchemaPath path;
         private String description;
