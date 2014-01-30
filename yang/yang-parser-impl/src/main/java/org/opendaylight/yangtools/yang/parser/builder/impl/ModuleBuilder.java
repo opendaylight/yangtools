@@ -885,7 +885,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return "module " + name;
     }
 
-    private final class ModuleImpl implements Module {
+    private static final class ModuleImpl implements Module {
         private URI namespace;
         private final String name;
         private final String sourcePath;
