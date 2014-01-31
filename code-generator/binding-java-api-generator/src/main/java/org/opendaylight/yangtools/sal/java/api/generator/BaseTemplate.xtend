@@ -263,18 +263,18 @@ abstract class BaseTemplate {
                 StringBuilder builder = new StringBuilder("«type.name» [");
                 boolean first = true;
 
-                «FOR i : 0..<properties.size»
-                    if («properties.get(i).fieldName» != null) {
+                «FOR property : properties»
+                    if («property.fieldName» != null) {
                         if (first) {
                             first = false;
                         } else {
                             builder.append(", ");
                         }
-                        builder.append("«properties.get(i).fieldName»=");
-                        «IF properties.get(i).returnType.name.contains("[")»
-                            builder.append(«Arrays.importedName».toString(«properties.get(i).fieldName»));
+                        builder.append("«property.fieldName»=");
+                        «IF property.returnType.name.contains("[")»
+                            builder.append(«Arrays.importedName».toString(«property.fieldName»));
                         «ELSE»
-                            builder.append(«properties.get(i).fieldName»);
+                            builder.append(«property.fieldName»);
                         «ENDIF»
                      }
                 «ENDFOR»
