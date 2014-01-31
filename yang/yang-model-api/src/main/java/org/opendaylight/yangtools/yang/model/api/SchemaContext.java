@@ -25,7 +25,7 @@ public interface SchemaContext extends ContainerSchemaNode {
     /**
      * Returns data schema node instances which represents direct subnodes (like
      * leaf, leaf-list, list, container) in all YANG modules in the context.
-     * 
+     *
      * @return set of <code>DataSchemaNode</code> instances which represents
      *         YANG data nodes at the module top level
      */
@@ -33,16 +33,16 @@ public interface SchemaContext extends ContainerSchemaNode {
 
     /**
      * Returns modules which are part of the schema context.
-     * 
+     *
      * @return set of the modules which belong to the schema context
      */
     Set<Module> getModules();
 
     /**
-     * 
+     *
      * Returns notification definition instances which are defined as the direct
      * subelements in all YANG modules in the context.
-     * 
+     *
      * @return set of <code>NotificationDefinition</code> instances which
      *         represents nodes defined via <code>notification</code> YANG
      *         keyword
@@ -52,7 +52,7 @@ public interface SchemaContext extends ContainerSchemaNode {
     /**
      * Returns rpc definition instances which are defined as the direct
      * subelements in all YANG modules in the context.
-     * 
+     *
      * @return set of <code>RpcDefinition</code> instances which represents
      *         nodes defined via <code>rpc</code> YANG keyword
      */
@@ -61,7 +61,7 @@ public interface SchemaContext extends ContainerSchemaNode {
     /**
      * Returns extencion definition instances which are defined as the direct
      * subelements in all YANG modules in the context
-     * 
+     *
      * @return set of <code>ExtensionDefinition</code> instances which
      *         represents nodes defined via <code>extension</code> YANG keyword
      */
@@ -70,7 +70,7 @@ public interface SchemaContext extends ContainerSchemaNode {
     /**
      * Returns module instance (from the context) with concrete name and
      * revision date.
-     * 
+     *
      * @param name
      *            string with the module name
      * @param revision
@@ -79,20 +79,29 @@ public interface SchemaContext extends ContainerSchemaNode {
      *         same as are the values specified in parameters <code>name</code>
      *         and <code>revision</code>. In other cases the <code>null</code>
      *         value is returned.
-     * 
+     *
      */
     Module findModuleByName(final String name, final Date revision);
 
     /**
-     * 
+     *
      * Returns module instance (from the context) with concrete namespace.
-     * 
+     *
      * @param namespace
      *            URI instance with specified namespace
      * @return module instance which has namespace equal to the
      *         <code>namespace</code> or <code>null</code> in other cases
      */
     Set<Module> findModuleByNamespace(final URI namespace);
-    
-    Module findModuleByNamespaceAndRevision(final URI namespace,final Date revision);
+
+    /**
+     * Returns module instance based on given namespace and revision. If
+     * revision is not specified, returns module with newest revision.
+     *
+     * @param namespace
+     * @param revision
+     * @return
+     */
+    Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision);
+
 }

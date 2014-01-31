@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -114,9 +115,22 @@ final class SchemaContextImpl implements SchemaContext {
     @Override
     public Module findModuleByNamespaceAndRevision(URI namespace, Date revision) {
         if (namespace != null) {
-            for (final Module module : modules) {
-                if (module.getNamespace().equals(namespace) && module.getRevision().equals(revision)) {
-                    return(module);
+            Set<Module> modules = findModuleByNamespace(namespace);
+
+            if (revision == null) {
+                TreeMap<Date, Module> map = new TreeMap<Date, Module>();
+                for (Module module : modules) {
+                    map.put(module.getRevision(), module);
+                }
+                if (map.isEmpty()) {
+                    return null;
+                }
+                return map.lastEntry().getValue();
+            } else {
+                for (Module module : modules) {
+                    if (module.getRevision().equals(revision)) {
+                        return(module);
+                    }
                 }
             }
         }
