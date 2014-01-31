@@ -111,6 +111,9 @@ class TransformerGenerator {
 
     @Property
     var GeneratorListener listener;
+    
+    @Property
+    var extension GeneratedClassLoadingStrategy classLoadingStrategy
 
     public static val CLASS_TYPE = Types.typeForClass(Class);
 
@@ -120,6 +123,8 @@ class TransformerGenerator {
 
         BINDING_CODEC = BindingCodec.asCtClass;
         ctQName = QName.asCtClass
+        
+        classLoadingStrategy = GeneratedClassLoadingStrategy.TCCLClassLoadingStrategy;
     }
 
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class<?> inputType) {
@@ -197,7 +202,7 @@ class TransformerGenerator {
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiable(Class<?> parentType) {
         return withClassLoaderAndLock(parentType.classLoader, lock) [ |
             val inputName = parentType.name + "Key";
-            val inputType = loadClassWithTCCL(inputName);
+            val inputType = loadClass(inputName);
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
@@ -246,24 +251,24 @@ class TransformerGenerator {
     private def Class<?> getGeneratedClass(Class<? extends Object> cls) {
 
         try {
-            return loadClassWithTCCL(cls.codecClassName)
+            return loadClass(cls.codecClassName)
         } catch (ClassNotFoundException e) {
             return null;
         }
     }
 
     private def Class<?> keyTransformer(GeneratedType type, ListSchemaNode node) {
-        val cls = loadClassWithTCCL(type.resolvedName + "Key");
+        val cls = loadClass(type.resolvedName + "Key");
         keyTransformerFor(cls, type, node);
     }
 
     private def serializer(Type type, DataSchemaNode node) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         transformerFor(cls, node);
     }
 
     private def Class<?> valueSerializer(GeneratedTransferObject type, TypeDefinition<?> typeDefinition) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         val transformer = cls.generatedClass;
         if (transformer !== null) {
             return transformer;
@@ -280,7 +285,7 @@ class TransformerGenerator {
     }
 
     private def Class<?> valueSerializer(Enumeration type, TypeDefinition<?> typeDefinition) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         val transformer = cls.generatedClass;
         if (transformer !== null) {
             return transformer;
@@ -1539,7 +1544,7 @@ class TransformerGenerator {
     }
 
     def CtClass asCtClass(Type type) {
-        val cls = loadClassWithTCCL(type.fullyQualifiedName)
+        val cls = loadClass(type.fullyQualifiedName)
         return cls.asCtClass;
     }
 

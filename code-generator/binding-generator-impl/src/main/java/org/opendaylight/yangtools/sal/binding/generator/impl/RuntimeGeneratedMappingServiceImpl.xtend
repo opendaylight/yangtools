@@ -55,6 +55,10 @@ import org.opendaylight.yangtools.yang.common.QName
 import com.google.common.collect.FluentIterable
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import java.util.HashMap
+import java.net.URI
+import org.opendaylight.yangtools.yang.model.api.Module
+import com.google.common.base.Optional
+import org.opendaylight.yangtools.yang.binding.BindingMapping
 
 class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaServiceListener, SchemaLock, AutoCloseable {
 
@@ -85,9 +89,12 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
 
     val promisedTypes = HashMultimap.<Type, SettableFuture<Type>>create;
 
+    var SchemaContext schemaContext;
+    
     //ServiceRegistration<SchemaServiceListener> listenerRegistration
 
     override onGlobalContextUpdated(SchemaContext arg0) {
+        schemaContext = arg0
         recreateBindingContext(arg0);
         registry.onGlobalContextUpdated(arg0);
     }
@@ -317,5 +324,29 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
             return ret;
         ]
     }
-
+    
+    override getRpcServiceClassFor(String namespace,String revision) {
+        val module = schemaContext?.findModuleByName(namespace.toString,QName.parseRevision(revision));
+        if(module == null) {
+            return Optional.absent();
+        }
+        try {
+        val rpcTypeName = module.rpcServiceType;
+        if(rpcTypeName.present) {
+            val rpcClass = classLoadingStrategy.loadClass(rpcTypeName.get.fullyQualifiedName);
+            return Optional.of(rpcClass as Class<? extends RpcService>);
+        }
+        } catch (Exception e) {
+            
+        }
+        return Optional.absent()
+    }
+    
+    def Optional<Type> getRpcServiceType(Module module) {
+        val namespace = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
+        if(module.rpcs.empty) {
+            return Optional.<Type>absent();
+        }
+        return Optional.<Type>of(new ReferencedTypeImpl(namespace,BindingMapping.getClassName(module.name)+BindingMapping.RPC_SERVICE_SUFFIX));
+    }
 }
