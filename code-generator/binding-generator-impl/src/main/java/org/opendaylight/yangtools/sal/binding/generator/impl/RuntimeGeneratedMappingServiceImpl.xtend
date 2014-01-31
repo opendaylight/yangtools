@@ -36,8 +36,10 @@ import org.slf4j.LoggerFactory
 import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName
 import org.opendaylight.yangtools.yang.data.impl.codec.DataContainerCodec
 import org.opendaylight.yangtools.binding.generator.util.Types
+
 //import org.osgi.framework.BundleContext
 import java.util.Hashtable
+
 //import org.osgi.framework.ServiceRegistration
 import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException
 import java.util.concurrent.Callable
@@ -55,6 +57,10 @@ import org.opendaylight.yangtools.yang.common.QName
 import com.google.common.collect.FluentIterable
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import java.util.HashMap
+import java.net.URI
+import org.opendaylight.yangtools.yang.model.api.Module
+import com.google.common.base.Optional
+import org.opendaylight.yangtools.yang.binding.BindingMapping
 
 class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaServiceListener, SchemaLock, AutoCloseable {
 
@@ -79,15 +85,17 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
     val ConcurrentMap<Type, SchemaNode> typeToSchemaNode = new ConcurrentHashMap();
 
     @Property
-    val ConcurrentMap<Type,Set<QName>> serviceTypeToRpc = new ConcurrentHashMap();
+    val ConcurrentMap<Type, Set<QName>> serviceTypeToRpc = new ConcurrentHashMap();
 
     val promisedTypeDefinitions = HashMultimap.<Type, SettableFuture<GeneratedTypeBuilder>>create;
 
     val promisedTypes = HashMultimap.<Type, SettableFuture<Type>>create;
 
-    //ServiceRegistration<SchemaServiceListener> listenerRegistration
+    var SchemaContext schemaContext;
 
+    //ServiceRegistration<SchemaServiceListener> listenerRegistration
     override onGlobalContextUpdated(SchemaContext arg0) {
+        schemaContext = arg0
         recreateBindingContext(arg0);
         registry.onGlobalContextUpdated(arg0);
     }
@@ -106,22 +114,23 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
             updateBindingFor(context.cases, schemaContext);
             val namespace = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
 
-            if(!module.rpcs.empty) {
+            if (!module.rpcs.empty) {
                 val rpcs = FluentIterable.from(module.rpcs).transform[QName].toSet
-                val serviceClass = new ReferencedTypeImpl(namespace,BindingGeneratorUtil.parseToClassName(module.name)+"Service");
-                serviceTypeToRpc.put(serviceClass,rpcs);
+                val serviceClass = new ReferencedTypeImpl(namespace,
+                    BindingGeneratorUtil.parseToClassName(module.name) + "Service");
+                serviceTypeToRpc.put(serviceClass, rpcs);
             }
 
             val typedefs = context.typedefs;
             for (typedef : typedefs.entrySet) {
-                val typeRef = new ReferencedTypeImpl(typedef.value.packageName,typedef.value.name)
+                val typeRef = new ReferencedTypeImpl(typedef.value.packageName, typedef.value.name)
                 binding.typeDefinitions.put(typeRef, typedef.value as GeneratedType);
-                val schemaNode = YangSchemaUtils.findTypeDefinition(schemaContext,typedef.key);
-                if(schemaNode != null) {
+                val schemaNode = YangSchemaUtils.findTypeDefinition(schemaContext, typedef.key);
+                if (schemaNode != null) {
 
-                    binding.typeToSchemaNode.put(typeRef,schemaNode);
+                    binding.typeToSchemaNode.put(typeRef, schemaNode);
                 } else {
-                    LOG.error("Type definition for {} is not available",typedef.value);
+                    LOG.error("Type definition for {} is not available", typedef.value);
                 }
 
             }
@@ -130,7 +139,7 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
                 binding.typeToDefinition.put(augmentation, augmentation);
             }
             binding.typeToAugmentation.putAll(context.typeToAugmentation);
-            for(augmentation : augmentations) {
+            for (augmentation : augmentations) {
                 updatePromisedSchemas(augmentation);
             }
         }
@@ -144,17 +153,17 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         Entry<InstanceIdentifier<? extends DataObject>, DataObject> entry) {
 
         try {
-        val key = toDataDom(entry.key)
-        var CompositeNode data;
-        if(Augmentation.isAssignableFrom(entry.key.targetType)) {
-            data = toCompositeNodeImplAugument(key,entry.value);
-        } else {
-          data = toCompositeNodeImpl(key,entry.value);
-        }
-        return new SimpleEntry(key, data);
+            val key = toDataDom(entry.key)
+            var CompositeNode data;
+            if (Augmentation.isAssignableFrom(entry.key.targetType)) {
+                data = toCompositeNodeImplAugument(key, entry.value);
+            } else {
+                data = toCompositeNodeImpl(key, entry.value);
+            }
+            return new SimpleEntry(key, data);
 
         } catch (Exception e) {
-            LOG.error("Error during serialization for {}.", entry.key,e);
+            LOG.error("Error during serialization for {}.", entry.key, e);
             throw e;
         }
     }
@@ -166,8 +175,9 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         val ret = codec.serialize(new ValueWithQName(null, object));
         return ret as CompositeNode;
     }
-    
-    private def CompositeNode toCompositeNodeImpl(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,DataObject object) {
+
+    private def CompositeNode toCompositeNodeImpl(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,
+        DataObject object) {
         val last = identifier.path.last;
         val cls = object.implementedInterface;
         waitForSchema(cls);
@@ -176,29 +186,29 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         return ret as CompositeNode;
     }
 
-
-    private def CompositeNode toCompositeNodeImplAugument(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,DataObject object) {
+    private def CompositeNode toCompositeNodeImplAugument(
+        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier, DataObject object) {
 
         //val cls = object.implementedInterface;
         //waitForSchema(cls);
         val last = identifier.path.last;
         val codec = registry.getCodecForAugmentation(object.implementedInterface as Class) as AugmentationCodec;
         val ret = codec.serialize(new ValueWithQName(last.nodeType, object));
-        if(last instanceof NodeIdentifierWithPredicates) {
+        if (last instanceof NodeIdentifierWithPredicates) {
             val predicates = last as NodeIdentifierWithPredicates;
             val newNodes = new ArrayList<Node<?>>(predicates.keyValues.size);
-            for(predicate : predicates.keyValues.entrySet) {
-                newNodes.add(new SimpleNodeTOImpl(predicate.key,null,predicate.value));
+            for (predicate : predicates.keyValues.entrySet) {
+                newNodes.add(new SimpleNodeTOImpl(predicate.key, null, predicate.value));
             }
             newNodes.addAll(ret.children);
-            return new CompositeNodeTOImpl(last.nodeType,null,newNodes);
+            return new CompositeNodeTOImpl(last.nodeType, null, newNodes);
         }
         return ret as CompositeNode;
     }
 
     override waitForSchema(Class class1) {
 
-        if(registry.isCodecAvailable(class1)) {
+        if (registry.isCodecAvailable(class1)) {
             return;
         }
         val ref = Types.typeForClass(class1);
@@ -214,7 +224,7 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
     }
 
     override dataObjectFromDataDom(InstanceIdentifier<? extends DataObject> path, CompositeNode node) {
-         dataObjectFromDataDom(path.targetType,node) as DataObject;
+        dataObjectFromDataDom(path.targetType, node) as DataObject;
     }
 
     override fromDataDom(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier entry) {
@@ -243,7 +253,7 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
             val schemaNode = SchemaContextUtil.findDataSchemaNode(module, entry.key);
 
             //LOG.info("{} : {}",entry.key,entry.value.fullyQualifiedName)
-            val typeRef = new ReferencedTypeImpl(entry.value.packageName,entry.value.name)
+            val typeRef = new ReferencedTypeImpl(entry.value.packageName, entry.value.name)
             typeToDefinition.put(typeRef, entry.value);
             if (schemaNode != null) {
                 typeToSchemaNode.put(typeRef, schemaNode);
@@ -263,9 +273,10 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         binding.typeToDefinition = typeToDefinition
         binding.typeToSchemaNode = typeToSchemaNode
         binding.typeDefinitions = typeDefinitions
-//        if (ctx !== null) {
-//            listenerRegistration = ctx.registerService(SchemaServiceListener, this, new Hashtable<String, String>());
-//        }
+
+    //        if (ctx !== null) {
+    //            listenerRegistration = ctx.registerService(SchemaServiceListener, this, new Hashtable<String, String>());
+    //        }
     }
 
     override getRpcQNamesFor(Class<? extends RpcService> service) {
@@ -280,9 +291,9 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         if (typeToDefinition.containsKey(type)) {
             return;
         }
-        LOG.info("Thread blocked waiting for schema for: {}",type.fullyQualifiedName)
+        LOG.info("Thread blocked waiting for schema for: {}", type.fullyQualifiedName)
         type.waitForTypeDefinition.get();
-        LOG.info("Schema for {} became available, thread unblocked",type.fullyQualifiedName)
+        LOG.info("Schema for {} became available, thread unblocked", type.fullyQualifiedName)
     }
 
     private def Future<Type> waitForTypeDefinition(Type type) {
@@ -318,4 +329,30 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
         ]
     }
 
+    override getRpcServiceClassFor(String namespace, String revision) {
+        val module = schemaContext?.findModuleByName(namespace.toString, QName.parseRevision(revision));
+        if (module == null) {
+            return Optional.absent();
+        }
+        try {
+            val rpcTypeName = module.rpcServiceType;
+            if (rpcTypeName.present) {
+                val rpcClass = classLoadingStrategy.loadClass(rpcTypeName.get.fullyQualifiedName);
+                return Optional.of(rpcClass as Class<? extends RpcService>);
+            }
+        } catch (Exception e) {
+            LOG.debug("RPC class not present for {},{}", namespace, revision, e);
+        }
+        return Optional.absent()
+    }
+
+    def Optional<Type> getRpcServiceType(Module module) {
+        val namespace = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
+        if (module.rpcs.empty) {
+            return Optional.<Type>absent();
+        }
+        return Optional.<Type>of(
+            new ReferencedTypeImpl(namespace,
+                BindingMapping.getClassName(module.name) + BindingMapping.RPC_SERVICE_SUFFIX));
+    }
 }

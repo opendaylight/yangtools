@@ -113,6 +113,9 @@ class TransformerGenerator {
     @Property
     var GeneratorListener listener;
 
+    @Property
+    var extension GeneratedClassLoadingStrategy classLoadingStrategy
+
     public static val CLASS_TYPE = Types.typeForClass(Class);
 
     public new(ClassPool pool) {
@@ -121,6 +124,8 @@ class TransformerGenerator {
 
         BINDING_CODEC = BindingCodec.asCtClass;
         ctQName = QName.asCtClass
+
+        classLoadingStrategy = GeneratedClassLoadingStrategy.TCCLClassLoadingStrategy;
     }
 
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class<?> inputType) {
@@ -154,7 +159,7 @@ class TransformerGenerator {
                 typeSpecBuilder = pathToType.get(node.path);
             }
             var schemaNode = typeToSchemaNode.get(ref);
-            if(schemaNode === null) {
+            if (schemaNode === null) {
                 schemaNode = node;
             }
             checkState(typeSpecBuilder !== null, "Could not find TypeDefinition for %s, $s", inputType.name, node);
@@ -198,7 +203,7 @@ class TransformerGenerator {
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiable(Class<?> parentType) {
         return withClassLoaderAndLock(parentType.classLoader, lock) [ |
             val inputName = parentType.name + "Key";
-            val inputType = loadClassWithTCCL(inputName);
+            val inputType = loadClass(inputName);
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
@@ -247,24 +252,24 @@ class TransformerGenerator {
     private def Class<?> getGeneratedClass(Class<? extends Object> cls) {
 
         try {
-            return loadClassWithTCCL(cls.codecClassName)
+            return loadClass(cls.codecClassName)
         } catch (ClassNotFoundException e) {
             return null;
         }
     }
 
     private def Class<?> keyTransformer(GeneratedType type, ListSchemaNode node) {
-        val cls = loadClassWithTCCL(type.resolvedName + "Key");
+        val cls = loadClass(type.resolvedName + "Key");
         keyTransformerFor(cls, type, node);
     }
 
     private def serializer(Type type, DataSchemaNode node) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         transformerFor(cls, node);
     }
 
     private def Class<?> valueSerializer(GeneratedTransferObject type, TypeDefinition<?> typeDefinition) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         val transformer = cls.generatedClass;
         if (transformer !== null) {
             return transformer;
@@ -281,7 +286,7 @@ class TransformerGenerator {
     }
 
     private def Class<?> valueSerializer(Enumeration type, TypeDefinition<?> typeDefinition) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         val transformer = cls.generatedClass;
         if (transformer !== null) {
             return transformer;
@@ -543,7 +548,7 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             «QName.name» _localQName = QNAME;
-
+                        
                             if($2 == null) {
                             return null;
                             }
@@ -552,12 +557,12 @@ class TransformerGenerator {
                             «type.builderName» _builder = new «type.builderName»();
                             boolean _is_empty = true;
                             «FOR child : node.childNodes»
-                                «val signature = properties.getFor(child)»
-                                «deserializeProperty(child, signature.value, signature.key)»
-                                _builder.«signature.key.toSetter»(«signature.key»);
+                            «val signature = properties.getFor(child)»
+                            «deserializeProperty(child, signature.value, signature.key)»
+                            _builder.«signature.key.toSetter»(«signature.key»);
                             «ENDFOR»
                             if(_is_empty) {
-                                return null;
+                            return null;
                             }
                             return _builder.build();
                         }
@@ -675,7 +680,7 @@ class TransformerGenerator {
             ''';
         }
     }
-    
+
     private def String deserializeBodyWithAugmentations(GeneratedType type, DataNodeContainer node) '''
         {
             «QName.name» _localQName = «QName.name».create($1,QNAME.getLocalName());
@@ -694,9 +699,9 @@ class TransformerGenerator {
     private def dispatch String deserializeBodyImpl(GeneratedType type, SchemaNode node) '''
         {
             «QName.name» _localQName = «QName.name».create($1,QNAME.getLocalName());
-
+        
             if($2 == null) {
-                return null;
+            return null;
             }
             java.util.Map _compositeNode = (java.util.Map) $2;
             «type.builderName» _builder = new «type.builderName»();
@@ -721,15 +726,15 @@ class TransformerGenerator {
     '''
 
     private def dispatch String deserializeBodyImpl(GeneratedType type, ContainerSchemaNode node) {
-        return deserializeBodyWithAugmentations(type,node);
-    }
-    
-    private def dispatch String deserializeBodyImpl(GeneratedType type, NotificationDefinition node) {
-        return deserializeBodyWithAugmentations(type,node);
+        return deserializeBodyWithAugmentations(type, node);
     }
 
-    private def dispatch String deserializeBodyImpl(GeneratedType type, ChoiceCaseNode node)  {
-        return deserializeBodyWithAugmentations(type,node);
+    private def dispatch String deserializeBodyImpl(GeneratedType type, NotificationDefinition node) {
+        return deserializeBodyWithAugmentations(type, node);
+    }
+
+    private def dispatch String deserializeBodyImpl(GeneratedType type, ChoiceCaseNode node) {
+        return deserializeBodyWithAugmentations(type, node);
     }
 
     private def deserializeDataNodeContainerBody(GeneratedType type, DataNodeContainer node) {
@@ -787,7 +792,7 @@ class TransformerGenerator {
                 _hasNext = _iterator.hasNext();
             }
         }
-
+        
         ////System.out.println(" list" + «propertyName»);
     '''
 
@@ -878,9 +883,9 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
-
+                        
                             if($1 == null) {
-                                return null;
+                            return null;
                             }
                             «typeSpec.resolvedName» _encapsulatedValue = («typeSpec.resolvedName») $1;
                             ////System.out.println("«inputType.simpleName»#toDomValue:Enc: "+_encapsulatedValue);
@@ -903,9 +908,9 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
-
+                        
                             if($1 == null) {
-                                return null;
+                            return null;
                             }
                             «returnType.resolvedName» _simpleValue = «deserializeValue(returnType, "$1", null)»;
                             «typeSpec.resolvedName» _value = new «typeSpec.resolvedName»(_simpleValue);
@@ -937,7 +942,7 @@ class TransformerGenerator {
         try {
             val ctCls = createClass(typeSpec.codecClassName) [
                 val properties = typeSpec.allProperties;
-                val getterToTypeDefinition = XtendHelper.getTypes(typeDef).toMap[type | type.QName.getterName];
+                val getterToTypeDefinition = XtendHelper.getTypes(typeDef).toMap[type|type.QName.getterName];
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 if (inputType.isYangBindingAvailable) {
                     implementsType(BINDING_CODEC)
@@ -948,25 +953,25 @@ class TransformerGenerator {
                 method(Object, "toDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val ctSpec = inputType.asCtClass;
-
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
-
+                        
                             if($1 == null) {
-                                return null;
+                            return null;
                             }
                             «typeSpec.resolvedName» _value = («typeSpec.resolvedName») $1;
                             «FOR property : properties.entrySet»
-                                «IF property.key != "getValue"»
-                                    «property.value.resolvedName» «property.key» = («property.value.resolvedName») _value.«property.
+                            «IF property.key != "getValue"»
+                                «property.value.resolvedName» «property.key» = («property.value.resolvedName») _value.«property.
                             key»();
-                                    if(«property.key» != null) {
-                                        return «serializeValue(property.value, property.key, getterToTypeDefinition.get(property.key))»;
-                                    }
-                                «ENDIF»
+                                if(«property.key» != null) {
+                                    return «serializeValue(property.value, property.key,
+                            getterToTypeDefinition.get(property.key))»;
+                                }
+                            «ENDIF»
                             «ENDFOR»
-
+                        
                             return null;
                         }
                     '''
@@ -983,13 +988,13 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
-
+                        
                             if($1 == null) {
-                                return null;
+                            return null;
                             }
                             if($1 instanceof String) {
-                                String _simpleValue = (String) $1;
-                                return new «typeSpec.resolvedName»(_simpleValue.toCharArray());
+                            String _simpleValue = (String) $1;
+                            return new «typeSpec.resolvedName»(_simpleValue.toCharArray());
                             }
                             return null;
                         }
@@ -1014,7 +1019,6 @@ class TransformerGenerator {
         }
     }
 
-
     private def dispatch Class<? extends BindingCodec<Map<QName, Object>, Object>> generateValueTransformer(
         Class<?> inputType, GeneratedTransferObject typeSpec, BitsTypeDefinition typeDef) {
         try {
@@ -1032,23 +1036,23 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
-
+                        
                             if($1 == null) {
-                                return null;
+                            return null;
                             }
                             «typeSpec.resolvedName» _encapsulatedValue = («typeSpec.resolvedName») $1;
                             «HashSet.resolvedName» _value = new «HashSet.resolvedName»();
                             //System.out.println("«inputType.simpleName»#toDomValue:Enc: "+_encapsulatedValue);
-
+                        
                             «FOR bit : typeDef.bits»
-                                «val getter = bit.getterName()»
-                                if(Boolean.TRUE.equals(_encapsulatedValue.«getter»())) {
-                                    _value.add("«bit.name»");
-                                }
+                            «val getter = bit.getterName()»
+                            if(Boolean.TRUE.equals(_encapsulatedValue.«getter»())) {
+                                _value.add("«bit.name»");
+                            }
                             «ENDFOR»
                             «Set.resolvedName» _domValue =  «Collections.resolvedName».unmodifiableSet(_value);
                             //System.out.println("«inputType.simpleName»#toDomValue:DeEnc: "+_domValue);
-
+                        
                             return _domValue;
                         }
                     '''
@@ -1066,15 +1070,15 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             //System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
-
+                        
                             if($1 == null) {
-                                return null;
+                            return null;
                             }
                             «Set.resolvedName» _domValue = («Set.resolvedName») $1;
                             «FOR bit : sortedBits»
-                                Boolean «bit.propertyName» = Boolean.valueOf(_domValue.contains("«bit.name»"));
+                            Boolean «bit.propertyName» = Boolean.valueOf(_domValue.contains("«bit.name»"));
                             «ENDFOR»
-
+                        
                             return new «inputType.resolvedName»(«FOR bit : sortedBits SEPARATOR ","»«bit.propertyName»«ENDFOR»);
                         }
                     '''
@@ -1318,19 +1322,19 @@ class TransformerGenerator {
     '''
 
     private def dispatch String serializeBody(GeneratedType type, ListSchemaNode node) {
-        return serializeBodyImpl(type,node);
+        return serializeBodyImpl(type, node);
     }
 
     private def dispatch String serializeBody(GeneratedType type, NotificationDefinition node) {
-        return serializeBodyImpl(type,node);
+        return serializeBodyImpl(type, node);
     }
 
     private def dispatch String serializeBody(GeneratedType type, ContainerSchemaNode node) {
-        return serializeBodyImpl(type,node);
+        return serializeBodyImpl(type, node);
     }
 
-    private def dispatch String serializeBody(GeneratedType type, ChoiceCaseNode node){
-        return serializeBodyImpl(type,node);
+    private def dispatch String serializeBody(GeneratedType type, ChoiceCaseNode node) {
+        return serializeBodyImpl(type, node);
     }
 
     private def dispatch String serializeBody(GeneratedType type, SchemaNode node) '''
@@ -1404,7 +1408,7 @@ class TransformerGenerator {
 
     private def dispatch CharSequence serializeProperty(LeafSchemaNode schema, Type type, String propertyName) '''
         «type.resolvedName» «propertyName» = value.«propertyName»();
-
+        
         if(«propertyName» != null) {
             «QName.name» _qname = «QName.name».create(_resultName,"«schema.QName.localName»");
             Object _propValue = «serializeValue(type, propertyName, schema.type)»;
@@ -1530,7 +1534,7 @@ class TransformerGenerator {
     }
 
     def CtClass asCtClass(Type type) {
-        val cls = loadClassWithTCCL(type.fullyQualifiedName)
+        val cls = loadClass(type.fullyQualifiedName)
         return cls.asCtClass;
     }
 
