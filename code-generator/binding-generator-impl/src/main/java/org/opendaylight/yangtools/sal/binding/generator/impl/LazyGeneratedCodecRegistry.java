@@ -77,6 +77,8 @@ public class LazyGeneratedCodecRegistry implements //
     private final SchemaLock lock;
 
     private SchemaContext currentSchema;
+    
+    private GeneratedClassLoadingStrategy classLoadingStrategy;
 
     LazyGeneratedCodecRegistry(SchemaLock lock) {
         this.lock = Preconditions.checkNotNull(lock);
@@ -431,10 +433,11 @@ public class LazyGeneratedCodecRegistry implements //
                 if (partialCodec.getSchema() == null) {
                     partialCodec.setSchema(caseNode);
                 }
-
-                Class<?> caseClass = ClassLoaderUtils.tryToLoadClassWithTCCL(type.getFullyQualifiedName());
-                if (caseClass != null) {
-                    getCaseCodecFor(caseClass);
+                try {
+                Class<?> caseClass = classLoadingStrategy.loadClass(type.getFullyQualifiedName());
+                getCaseCodecFor(caseClass);
+                }catch (ClassNotFoundException e) {
+                    LOG.trace("Could not proactivelly create case codec for {}",type);
                 }
             }
         }
@@ -942,6 +945,16 @@ public class LazyGeneratedCodecRegistry implements //
             ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
             WeakReference<Class> softref = typeToClass.get(typeref);
             if (softref == null) {
+                
+                try {
+                    Class<?> cls = classLoadingStrategy.loadClass(typeref.getFullyQualifiedName());
+                    if(cls != null) {
+                        serialize(cls);
+                        return cls;
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Identity {} was not deserialized, because of missing class {}",input,typeref.getFullyQualifiedName());
+                }
                 return null;
             }
             return softref.get();

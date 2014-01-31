@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.binding.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
@@ -25,11 +26,15 @@ import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.RpcService;
+import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+import org.opendaylight.yangtools.yang.binding.annotations.ModuleQName;
 import org.opendaylight.yangtools.yang.common.QName;
 
 import static com.google.common.base.Preconditions.*;
+import static org.opendaylight.yangtools.concepts.util.ClassLoaderUtils.*;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -165,6 +170,31 @@ public class BindingReflections {
         checkArgument(match.find());
         String rootPackage = match.group(0);
         return rootPackage;
+    }
+
+    public static YangModuleInfo getModuleInfo(final Class<?> cls) throws Exception {
+        checkArgument(cls != null);
+        String packageName = getModelRootPackageName(cls.getPackage());
+        final String potentialClassName = getModuleInfoClassName(packageName);
+        return withClassLoader(cls.getClassLoader(), new Callable<YangModuleInfo>() {
+        
+            @Override
+            public YangModuleInfo call() throws Exception {
+                Class<?> moduleInfoClass = Thread.currentThread().getContextClassLoader().loadClass(potentialClassName);
+                return (YangModuleInfo) moduleInfoClass.getMethod("getInstance").invoke(null);
+            }
+        });
+    }
+
+    public static String getModuleInfoClassName(String packageName) {
+        return packageName + "." + BindingMapping.MODULE_INFO_CLASS_NAME;
+    }
+
+    public static boolean isBindingClass(Class<?> cls) {
+       if(DataContainer.class.isAssignableFrom(cls) || Augmentation.class.isAssignableFrom(cls)) {
+           return true;
+       }
+       return (cls.getName().startsWith(BindingMapping.PACKAGE_PREFIX));
     }
 
 }
