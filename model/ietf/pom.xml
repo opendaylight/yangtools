@@ -32,6 +32,7 @@
         <module>ietf-topology-isis</module>
         <module>ietf-topology-l3-unicast-igp</module>
         <module>ietf-topology-ospf</module>
+        <module>ietf-restconf</module>
         <!--module>ietf-netconf</module -->
     </modules>
 
@@ -71,6 +72,11 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ietf-topology-ospf</artifactId>
                 <version>${ietf.topology.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ietf-restconf</artifactId>
+                <version>2013.10.19-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
