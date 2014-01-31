@@ -97,10 +97,9 @@ class YangModuleInfoTemplate {
                 importedModules = «Collections.importedName».emptySet();
             «ENDIF»
 
-            «val path = m.moduleSourcePath.replace(java.io.File.separatorChar, '/')»
-            «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
+            «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«sourcePath»");
             if (stream == null) {
-                throw new IllegalStateException("Resource «path» is missing");
+                throw new IllegalStateException("Resource «sourcePath» is missing");
             }
             try {
                 stream.close();
@@ -127,9 +126,9 @@ class YangModuleInfoTemplate {
 
         @Override
         public «InputStream.importedName» getModuleSourceStream() throws IOException {
-            «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«path»");
+            «InputStream.importedName» stream = «CLASS».class.getResourceAsStream("«sourcePath»");
             if (stream == null) {
-                throw new «IOException.importedName»("Resource «path» is missing");
+                throw new «IOException.importedName»("Resource «sourcePath» is missing");
             }
             return stream;
         }
@@ -139,6 +138,10 @@ class YangModuleInfoTemplate {
             return importedModules;
         }
     '''
+    
+    def getSourcePath() {
+        return "/" + module.moduleSourcePath.replace(java.io.File.separatorChar, '/')
+    }
 
     private def imports() ''' 
         «IF !importMap.empty»
