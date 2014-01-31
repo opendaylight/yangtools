@@ -53,13 +53,20 @@ public class LazyGeneratedCodecRegistry implements //
     private TransformerGenerator generator;
 
     // Concrete class to codecs
-    private static final Map<Class<?>, DataContainerCodec<?>> containerCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, DataContainerCodec<?>>());
-    private static final Map<Class<?>, IdentifierCodec<?>> identifierCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, IdentifierCodec<?>>());
-    private static final Map<Class<?>, ChoiceCodecImpl<?>> choiceCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, ChoiceCodecImpl<?>>());
-    private static final Map<Class<?>, ChoiceCaseCodecImpl<?>> caseCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, ChoiceCaseCodecImpl<?>>());
-    private static final Map<Class<?>, AugmentableCompositeCodec> augmentableCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, AugmentableCompositeCodec>());
-    private static final Map<Class<?>, AugmentationCodec<?>> augmentationCodecs = Collections.synchronizedMap(new WeakHashMap<Class<?>, AugmentationCodec<?>>());
-    private static final Map<Class<?>, QName> identityQNames = Collections.synchronizedMap(new WeakHashMap<Class<?>, QName>());
+    private static final Map<Class<?>, DataContainerCodec<?>> containerCodecs = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, DataContainerCodec<?>>());
+    private static final Map<Class<?>, IdentifierCodec<?>> identifierCodecs = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, IdentifierCodec<?>>());
+    private static final Map<Class<?>, ChoiceCodecImpl<?>> choiceCodecs = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, ChoiceCodecImpl<?>>());
+    private static final Map<Class<?>, ChoiceCaseCodecImpl<?>> caseCodecs = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, ChoiceCaseCodecImpl<?>>());
+    private static final Map<Class<?>, AugmentableCompositeCodec> augmentableCodecs = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, AugmentableCompositeCodec>());
+    private static final Map<Class<?>, AugmentationCodec<?>> augmentationCodecs = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, AugmentationCodec<?>>());
+    private static final Map<Class<?>, QName> identityQNames = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, QName>());
     private static final Map<QName, Type> qnamesToIdentityMap = new ConcurrentHashMap<>();
     /** Binding type to encountered classes mapping **/
     @SuppressWarnings("rawtypes")
@@ -77,6 +84,8 @@ public class LazyGeneratedCodecRegistry implements //
     private final SchemaLock lock;
 
     private SchemaContext currentSchema;
+
+    private GeneratedClassLoadingStrategy classLoadingStrategy;
 
     LazyGeneratedCodecRegistry(SchemaLock lock) {
         this.lock = Preconditions.checkNotNull(lock);
@@ -117,7 +126,9 @@ public class LazyGeneratedCodecRegistry implements //
             } catch (InstantiationException e) {
                 LOG.error("Can not instantiate raw augmentation codec {}", object.getSimpleName(), e);
             } catch (IllegalAccessException e) {
-                LOG.debug("Run-time consistency issue: constructor {} is not available. This indicates either a code generation bug or a misconfiguration of JVM.", object.getSimpleName(), e);
+                LOG.debug(
+                        "Run-time consistency issue: constructor {} is not available. This indicates either a code generation bug or a misconfiguration of JVM.",
+                        object.getSimpleName(), e);
             }
         Class<? extends Augmentable<?>> objectSupertype = getAugmentableArgumentFrom(object);
         if (objectSupertype != null) {
@@ -131,7 +142,7 @@ public class LazyGeneratedCodecRegistry implements //
     @Override
     public QName getQNameForAugmentation(Class<?> cls) {
         Preconditions.checkArgument(Augmentation.class.isAssignableFrom(cls));
-        return getCodecForAugmentation((Class<? extends Augmentation>)cls).getAugmentationQName();
+        return getCodecForAugmentation((Class<? extends Augmentation>) cls).getAugmentationQName();
     }
 
     private static Class<? extends Augmentable<?>> getAugmentableArgumentFrom(
@@ -350,8 +361,10 @@ public class LazyGeneratedCodecRegistry implements //
         ConcreteType typeref = Types.typeForClass(caseClass);
         ChoiceCaseCodecImpl caseCodec = typeToCaseCodecs.get(typeref);
 
-        Preconditions.checkState(caseCodec != null, "Case Codec was not created proactivelly for %s", caseClass.getName());
-        Preconditions.checkState(caseCodec.getSchema() != null, "Case schema is not available for %s", caseClass.getName());
+        Preconditions.checkState(caseCodec != null, "Case Codec was not created proactivelly for %s",
+                caseClass.getName());
+        Preconditions.checkState(caseCodec.getSchema() != null, "Case schema is not available for %s",
+                caseClass.getName());
         @SuppressWarnings("unchecked")
         Class<? extends BindingCodec> newCodec = generator.caseCodecFor(caseClass, caseCodec.getSchema());
         BindingCodec newInstance = newInstanceOf(newCodec);
@@ -431,10 +444,11 @@ public class LazyGeneratedCodecRegistry implements //
                 if (partialCodec.getSchema() == null) {
                     partialCodec.setSchema(caseNode);
                 }
-
-                Class<?> caseClass = ClassLoaderUtils.tryToLoadClassWithTCCL(type.getFullyQualifiedName());
-                if (caseClass != null) {
+                try {
+                    Class<?> caseClass = classLoadingStrategy.loadClass(type.getFullyQualifiedName());
                     getCaseCodecFor(caseClass);
+                } catch (ClassNotFoundException e) {
+                    LOG.trace("Could not proactivelly create case codec for {}", type, e);
                 }
             }
         }
@@ -633,7 +647,8 @@ public class LazyGeneratedCodecRegistry implements //
         private final BindingCodec<Map<QName, Object>, Object> delegate;
 
         @SuppressWarnings("rawtypes")
-        private final Map<Class, ChoiceCaseCodecImpl<?>> cases = Collections.synchronizedMap(new WeakHashMap<Class, ChoiceCaseCodecImpl<?>>());
+        private final Map<Class, ChoiceCaseCodecImpl<?>> cases = Collections
+                .synchronizedMap(new WeakHashMap<Class, ChoiceCaseCodecImpl<?>>());
 
         private final CaseCompositeNodeMapFacade CompositeToCase;
 
@@ -712,9 +727,10 @@ public class LazyGeneratedCodecRegistry implements //
     }
 
     /**
-     * This map is used as only facade for {@link org.opendaylight.yangtools.yang.binding.BindingCodec} in different
+     * This map is used as only facade for
+     * {@link org.opendaylight.yangtools.yang.binding.BindingCodec} in different
      * classloaders to retrieve codec dynamicly based on provided key.
-     *
+     * 
      * @param <T>
      *            Key type
      */
@@ -796,7 +812,8 @@ public class LazyGeneratedCodecRegistry implements //
 
         private final Class augmentableType;
 
-        Map<Class, AugmentationCodec<?>> localAugmentationCodecs = Collections.synchronizedMap(new WeakHashMap<Class, AugmentationCodec<?>>());
+        Map<Class, AugmentationCodec<?>> localAugmentationCodecs = Collections
+                .synchronizedMap(new WeakHashMap<Class, AugmentationCodec<?>>());
 
         public AugmentableCompositeCodec(Class type) {
             Preconditions.checkArgument(Augmentable.class.isAssignableFrom(type));
@@ -942,6 +959,17 @@ public class LazyGeneratedCodecRegistry implements //
             ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
             WeakReference<Class> softref = typeToClass.get(typeref);
             if (softref == null) {
+
+                try {
+                    Class<?> cls = classLoadingStrategy.loadClass(typeref.getFullyQualifiedName());
+                    if (cls != null) {
+                        serialize(cls);
+                        return cls;
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Identity {} was not deserialized, because of missing class {}", input,
+                            typeref.getFullyQualifiedName());
+                }
                 return null;
             }
             return softref.get();
