@@ -113,6 +113,9 @@ class TransformerGenerator {
     @Property
     var GeneratorListener listener;
 
+    @Property
+    var extension GeneratedClassLoadingStrategy classLoadingStrategy
+
     public static val CLASS_TYPE = Types.typeForClass(Class);
 
     public new(ClassPool pool) {
@@ -121,6 +124,8 @@ class TransformerGenerator {
 
         BINDING_CODEC = BindingCodec.asCtClass;
         ctQName = QName.asCtClass
+
+        classLoadingStrategy = GeneratedClassLoadingStrategy.TCCLClassLoadingStrategy;
     }
 
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class<?> inputType) {
@@ -154,7 +159,7 @@ class TransformerGenerator {
                 typeSpecBuilder = pathToType.get(node.path);
             }
             var schemaNode = typeToSchemaNode.get(ref);
-            if(schemaNode === null) {
+            if (schemaNode === null) {
                 schemaNode = node;
             }
             checkState(typeSpecBuilder !== null, "Could not find TypeDefinition for %s, $s", inputType.name, node);
@@ -198,7 +203,7 @@ class TransformerGenerator {
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiable(Class<?> parentType) {
         return withClassLoaderAndLock(parentType.classLoader, lock) [ |
             val inputName = parentType.name + "Key";
-            val inputType = loadClassWithTCCL(inputName);
+            val inputType = loadClass(inputName);
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
@@ -247,24 +252,24 @@ class TransformerGenerator {
     private def Class<?> getGeneratedClass(Class<? extends Object> cls) {
 
         try {
-            return loadClassWithTCCL(cls.codecClassName)
+            return loadClass(cls.codecClassName)
         } catch (ClassNotFoundException e) {
             return null;
         }
     }
 
     private def Class<?> keyTransformer(GeneratedType type, ListSchemaNode node) {
-        val cls = loadClassWithTCCL(type.resolvedName + "Key");
+        val cls = loadClass(type.resolvedName + "Key");
         keyTransformerFor(cls, type, node);
     }
 
     private def serializer(Type type, DataSchemaNode node) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         transformerFor(cls, node);
     }
 
     private def Class<?> valueSerializer(GeneratedTransferObject type, TypeDefinition<?> typeDefinition) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         val transformer = cls.generatedClass;
         if (transformer !== null) {
             return transformer;
@@ -281,7 +286,7 @@ class TransformerGenerator {
     }
 
     private def Class<?> valueSerializer(Enumeration type, TypeDefinition<?> typeDefinition) {
-        val cls = loadClassWithTCCL(type.resolvedName);
+        val cls = loadClass(type.resolvedName);
         val transformer = cls.generatedClass;
         if (transformer !== null) {
             return transformer;
@@ -675,7 +680,7 @@ class TransformerGenerator {
             ''';
         }
     }
-    
+
     private def String deserializeBodyWithAugmentations(GeneratedType type, DataNodeContainer node) '''
         {
             «QName.name» _localQName = «QName.name».create($1,QNAME.getLocalName());
@@ -721,15 +726,15 @@ class TransformerGenerator {
     '''
 
     private def dispatch String deserializeBodyImpl(GeneratedType type, ContainerSchemaNode node) {
-        return deserializeBodyWithAugmentations(type,node);
+        return deserializeBodyWithAugmentations(type, node);
     }
-    
+
     private def dispatch String deserializeBodyImpl(GeneratedType type, NotificationDefinition node) {
-        return deserializeBodyWithAugmentations(type,node);
+        return deserializeBodyWithAugmentations(type, node);
     }
 
     private def dispatch String deserializeBodyImpl(GeneratedType type, ChoiceCaseNode node)  {
-        return deserializeBodyWithAugmentations(type,node);
+        return deserializeBodyWithAugmentations(type, node);
     }
 
     private def deserializeDataNodeContainerBody(GeneratedType type, DataNodeContainer node) {
@@ -937,7 +942,7 @@ class TransformerGenerator {
         try {
             val ctCls = createClass(typeSpec.codecClassName) [
                 val properties = typeSpec.allProperties;
-                val getterToTypeDefinition = XtendHelper.getTypes(typeDef).toMap[type | type.QName.getterName];
+                val getterToTypeDefinition = XtendHelper.getTypes(typeDef).toMap[type|type.QName.getterName];
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 if (inputType.isYangBindingAvailable) {
                     implementsType(BINDING_CODEC)
@@ -948,7 +953,6 @@ class TransformerGenerator {
                 method(Object, "toDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val ctSpec = inputType.asCtClass;
-
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
@@ -962,7 +966,8 @@ class TransformerGenerator {
                                     «property.value.resolvedName» «property.key» = («property.value.resolvedName») _value.«property.
                             key»();
                                     if(«property.key» != null) {
-                                        return «serializeValue(property.value, property.key, getterToTypeDefinition.get(property.key))»;
+                                        return «serializeValue(property.value, property.key,
+                                            getterToTypeDefinition.get(property.key))»;
                                     }
                                 «ENDIF»
                             «ENDFOR»
@@ -1013,7 +1018,6 @@ class TransformerGenerator {
             throw exception;
         }
     }
-
 
     private def dispatch Class<? extends BindingCodec<Map<QName, Object>, Object>> generateValueTransformer(
         Class<?> inputType, GeneratedTransferObject typeSpec, BitsTypeDefinition typeDef) {
@@ -1318,19 +1322,19 @@ class TransformerGenerator {
     '''
 
     private def dispatch String serializeBody(GeneratedType type, ListSchemaNode node) {
-        return serializeBodyImpl(type,node);
+        return serializeBodyImpl(type, node);
     }
 
     private def dispatch String serializeBody(GeneratedType type, NotificationDefinition node) {
-        return serializeBodyImpl(type,node);
+        return serializeBodyImpl(type, node);
     }
 
     private def dispatch String serializeBody(GeneratedType type, ContainerSchemaNode node) {
-        return serializeBodyImpl(type,node);
+        return serializeBodyImpl(type, node);
     }
 
     private def dispatch String serializeBody(GeneratedType type, ChoiceCaseNode node){
-        return serializeBodyImpl(type,node);
+        return serializeBodyImpl(type, node);
     }
 
     private def dispatch String serializeBody(GeneratedType type, SchemaNode node) '''
@@ -1530,7 +1534,7 @@ class TransformerGenerator {
     }
 
     def CtClass asCtClass(Type type) {
-        val cls = loadClassWithTCCL(type.fullyQualifiedName)
+        val cls = loadClass(type.fullyQualifiedName)
         return cls.asCtClass;
     }
 
