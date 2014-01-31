@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
 import static org.opendaylight.yangtools.binding.generator.util.Types.*
 import java.util.HashMap
-import java.util.Collectionsimport org.opendaylight.yangtools.yang.binding.DataObject
+import java.util.Collections
+import org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.Collection
