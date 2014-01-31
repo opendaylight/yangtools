@@ -31,6 +31,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.common.base.Preconditions;
@@ -41,16 +43,15 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
     private File projectBaseDir;
     private Map<String, String> additionalConfig;
 
+    private static final Logger logger = LoggerFactory.getLogger(CodeGeneratorImpl.class);
+    private MavenProject mavenProject;
+
     @Override
     public Collection<File> generateSources(final SchemaContext context, final File outputDir,
             final Set<Module> yangModules) throws IOException {
         final File outputBaseDir;
-        if (outputDir == null) {
-            outputBaseDir = new File("target" + File.separator + "generated-sources" + File.separator
-                    + "maven-sal-api-gen");
-        } else {
-            outputBaseDir = outputDir;
-        }
+
+        outputBaseDir = outputDir == null ? getDefaultOutputBaseDir() : outputDir;
 
         final BindingGenerator bindingGenerator = new BindingGeneratorImpl();
         final List<Type> types = bindingGenerator.generateTypes(context, yangModules);
@@ -75,11 +76,24 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         return result;
     }
 
-    @Override
-    public void setLog(Log log) {
-        // use maven logging if necessary
+    public static final String DEFAULT_OUTPUT_BASE_DIR_PATH = "target" + File.separator + "generated-sources"
+            + File.separator + "maven-sal-api-gen";
 
+    private File getDefaultOutputBaseDir() {
+        File outputBaseDir;
+        outputBaseDir = new File(DEFAULT_OUTPUT_BASE_DIR_PATH);
+        setOutputBaseDirAsSourceFolder(outputBaseDir, mavenProject);
+        logger.debug("Adding " + outputBaseDir.getPath() + " as compile source root");
+        return outputBaseDir;
     }
+
+    private static void setOutputBaseDirAsSourceFolder(File outputBaseDir, MavenProject mavenProject) {
+        Preconditions.checkNotNull(mavenProject, "Maven project needs to be set in this phase");
+        mavenProject.addCompileSourceRoot(outputBaseDir.getPath());
+    }
+
+    @Override
+    public void setLog(Log log) {}
 
     @Override
     public void setAdditionalConfig(Map<String, String> additionalConfiguration) {
@@ -93,6 +107,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
 
     @Override
     public void setMavenProject(MavenProject project) {
+        this.mavenProject = project;
         this.projectBaseDir = project.getBasedir();
     }
 
