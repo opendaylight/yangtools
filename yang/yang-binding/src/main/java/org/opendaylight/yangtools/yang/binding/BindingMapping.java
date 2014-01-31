@@ -35,6 +35,8 @@ public final class BindingMapping {
 
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
+    public static final String MODULE_INFO_CLASS_NAME = "$ModuleInfoImpl";
+
     public static final String getMethodName(QName name) {
         checkArgument(name != null, "Name should not be null.");
         return getMethodName(name.getLocalName());
