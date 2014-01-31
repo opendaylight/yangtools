@@ -41,16 +41,15 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
     private File projectBaseDir;
     private Map<String, String> additionalConfig;
 
+    private MavenProject mavenProject;
+    private Log logger;
+
     @Override
     public Collection<File> generateSources(final SchemaContext context, final File outputDir,
             final Set<Module> yangModules) throws IOException {
         final File outputBaseDir;
-        if (outputDir == null) {
-            outputBaseDir = new File("target" + File.separator + "generated-sources" + File.separator
-                    + "maven-sal-api-gen");
-        } else {
-            outputBaseDir = outputDir;
-        }
+
+        outputBaseDir = outputDir == null ? getDefaultOutputBaseDir() : outputDir;
 
         final BindingGenerator bindingGenerator = new BindingGeneratorImpl();
         final List<Type> types = bindingGenerator.generateTypes(context, yangModules);
@@ -75,10 +74,25 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         return result;
     }
 
+    public static final String DEFAULT_OUTPUT_BASE_DIR_PATH = "target" + File.separator + "generated-sources"
+            + File.separator + "maven-sal-api-gen";
+
+    private File getDefaultOutputBaseDir() {
+        File outputBaseDir;
+        outputBaseDir = new File(DEFAULT_OUTPUT_BASE_DIR_PATH);
+        setOutputBaseDirAsSourceFolder(outputBaseDir, mavenProject);
+        logger.debug("Adding " + outputBaseDir.getPath() + " as compile source root");
+        return outputBaseDir;
+    }
+
+    private static void setOutputBaseDirAsSourceFolder(File outputBaseDir, MavenProject mavenProject) {
+        Preconditions.checkNotNull(mavenProject, "Maven project needs to be set in this phase");
+        mavenProject.addCompileSourceRoot(outputBaseDir.getPath());
+    }
+
     @Override
     public void setLog(Log log) {
-        // use maven logging if necessary
-
+        this.logger = log;
     }
 
     @Override
@@ -93,6 +107,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
 
     @Override
     public void setMavenProject(MavenProject project) {
+        this.mavenProject = project;
         this.projectBaseDir = project.getBasedir();
     }
 
