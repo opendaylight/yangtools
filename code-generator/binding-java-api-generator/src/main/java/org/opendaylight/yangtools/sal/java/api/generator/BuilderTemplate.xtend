@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
 import static org.opendaylight.yangtools.binding.generator.util.Types.*
 import java.util.HashMap
-import java.util.Collectionsimport org.opendaylight.yangtools.yang.binding.DataObject
+import java.util.Collections
+import org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.Collection
@@ -604,27 +605,34 @@ class BuilderTemplate extends BaseTemplate {
         «IF !properties.empty»
             @Override
             public String toString() {
-                StringBuilder builder = new StringBuilder();
-                builder.append("«type.name» [«properties.get(0).fieldName»=");
-                «IF properties.get(0).returnType.name.contains("[")»
-                    builder.append(«Arrays.importedName».toString(«properties.get(0).fieldName»));
-                «ELSE»
-                    builder.append(«properties.get(0).fieldName»);
-                «ENDIF»
-                «FOR i : 1..<properties.size»
-                    builder.append(", «properties.get(i).fieldName»=");
-                    «IF properties.get(i).returnType.name.contains("[")»
-                        builder.append(«Arrays.importedName».toString(«properties.get(i).fieldName»));
-                    «ELSE»
-                        builder.append(«properties.get(i).fieldName»);
-                    «ENDIF»
+                StringBuilder builder = new StringBuilder("«type.name» [");
+                boolean first = true;
+
+                «FOR property : properties»
+                    if («property.fieldName» != null) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            builder.append(", ");
+                        }
+                        builder.append("«property.fieldName»=");
+                        «IF property.returnType.name.contains("[")»
+                            builder.append(«Arrays.importedName».toString(«property.fieldName»));
+                        «ELSE»
+                            builder.append(«property.fieldName»);
+                        «ENDIF»
+                     }
                 «ENDFOR»
                 «IF augmentField != null»
-                    builder.append(", «augmentField.name»=");
+                    if (first) {
+                        first = false;
+                    } else {
+                        builder.append(", ");
+                    }
+                    builder.append("«augmentField.name»=");
                     builder.append(«augmentField.name».values());
                 «ENDIF»
-                builder.append("]");
-                return builder.toString();
+                return builder.append(']').toString();
             }
         «ENDIF»
     '''
