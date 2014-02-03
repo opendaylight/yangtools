@@ -789,49 +789,38 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     // Unknown nodes
     @Override
     public void enterIdentifier_stmt(YangParser.Identifier_stmtContext ctx) {
-        final int line = ctx.getStart().getLine();
-        final String nodeParameter = stringFromNode(ctx);
-        enterLog("unknown-node", nodeParameter, line);
-
-        QName nodeType;
-        final String nodeTypeStr = ctx.getChild(0).getText();
-        final String[] splittedElement = nodeTypeStr.split(":");
-        if (splittedElement.length == 1) {
-            nodeType = new QName(namespace, revision, yangModelPrefix, splittedElement[0]);
-        } else {
-            nodeType = new QName(namespace, revision, splittedElement[0], splittedElement[1]);
-        }
-
-        QName qname = null;
-        try {
-            if (!Strings.isNullOrEmpty(nodeParameter)) {
-                String[] splittedName = nodeParameter.split(":");
-                if (splittedName.length == 2) {
-                    qname = new QName(null, null, splittedName[0], splittedName[1]);
-                } else {
-                    qname = new QName(namespace, revision, yangModelPrefix, splittedName[0]);
-                }
-            } else {
-                qname = nodeType;
-            }
-        } catch (IllegalArgumentException e) {
-            qname = nodeType;
-            
-        }
-        addNodeToPath(qname);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
-
-        UnknownSchemaNodeBuilder builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
-        builder.setNodeType(nodeType);
-        builder.setNodeParameter(nodeParameter);
-
-
-        parseSchemaNodeArgs(ctx, builder);
-        moduleBuilder.enterNode(builder);
+        handleUnknownNode(ctx.getStart().getLine(), ctx);
     }
 
     @Override
     public void exitIdentifier_stmt(YangParser.Identifier_stmtContext ctx) {
+        moduleBuilder.exitNode();
+        exitLog("unknown-node", removeNodeFromPath());
+    }
+
+    @Override public void enterUnknown_statement(YangParser.Unknown_statementContext ctx) {
+        handleUnknownNode(ctx.getStart().getLine(), ctx);
+    }
+
+    @Override public void exitUnknown_statement(YangParser.Unknown_statementContext ctx) {
+        moduleBuilder.exitNode();
+        exitLog("unknown-node", removeNodeFromPath());
+    }
+
+    @Override public void enterUnknown_statement2(YangParser.Unknown_statement2Context ctx) {
+        handleUnknownNode(ctx.getStart().getLine(), ctx);
+    }
+
+    @Override public void exitUnknown_statement2(YangParser.Unknown_statement2Context ctx) {
+        moduleBuilder.exitNode();
+        exitLog("unknown-node", removeNodeFromPath());
+    }
+
+    @Override public void enterUnknown_statement3(YangParser.Unknown_statement3Context ctx) {
+        handleUnknownNode(ctx.getStart().getLine(), ctx);
+    }
+
+    @Override public void exitUnknown_statement3(YangParser.Unknown_statement3Context ctx) {
         moduleBuilder.exitNode();
         exitLog("unknown-node", removeNodeFromPath());
     }
@@ -1011,6 +1000,47 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     private void setLog(String p1, String p2) {
         LOGGER.trace("setting {} {}", p1, p2);
+    }
+
+    private void handleUnknownNode(final int line, final ParseTree ctx) {
+        final String nodeParameter = stringFromNode(ctx);
+        enterLog("unknown-node", nodeParameter, line);
+
+        QName nodeType;
+        final String nodeTypeStr = ctx.getChild(0).getText();
+        final String[] splittedElement = nodeTypeStr.split(":");
+        if (splittedElement.length == 1) {
+            nodeType = new QName(namespace, revision, yangModelPrefix, splittedElement[0]);
+        } else {
+            nodeType = new QName(namespace, revision, splittedElement[0], splittedElement[1]);
+        }
+
+        QName qname = null;
+        try {
+            if (!Strings.isNullOrEmpty(nodeParameter)) {
+                String[] splittedName = nodeParameter.split(":");
+                if (splittedName.length == 2) {
+                    qname = new QName(null, null, splittedName[0], splittedName[1]);
+                } else {
+                    qname = new QName(namespace, revision, yangModelPrefix, splittedName[0]);
+                }
+            } else {
+                qname = nodeType;
+            }
+        } catch (IllegalArgumentException e) {
+            qname = nodeType;
+
+        }
+        addNodeToPath(qname);
+        SchemaPath path = createActualSchemaPath(actualPath.peek());
+
+        UnknownSchemaNodeBuilder builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
+        builder.setNodeType(nodeType);
+        builder.setNodeParameter(nodeParameter);
+
+
+        parseSchemaNodeArgs(ctx, builder);
+        moduleBuilder.enterNode(builder);
     }
 
 }
