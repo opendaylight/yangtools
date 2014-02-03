@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.restconf.client.api;
 
 import java.net.URL;
+import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 
 /**
  * An interface for acquiring #{@link RestconfClientContext} instances.
@@ -19,5 +20,5 @@ public interface RestconfClientContextFactory {
 	 * @return RestconfClientContext attached to the backend server.
 	 * @throws UnsupportedProtocolException if the factory cannot handle the protocol specified in the URL.
 	 */
-	RestconfClientContext getRestconfClientContext(URL baseUrl) throws UnsupportedProtocolException;
+	RestconfClientContext getRestconfClientContext(URL baseUrl,RuntimeGeneratedMappingServiceImpl mappingService) throws UnsupportedProtocolException;
 }
