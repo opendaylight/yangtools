@@ -57,7 +57,7 @@ import java.util.Set;
     </code>
  */
 
-public interface Module extends DataNodeContainer, YangNode, SourceStreamAware {
+public interface Module extends DataNodeContainer, SourceStreamAware {
 
     /**
      * Returns the namespace of the module which is specified as argument of
