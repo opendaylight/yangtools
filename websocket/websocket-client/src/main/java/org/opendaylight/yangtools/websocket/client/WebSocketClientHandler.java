@@ -19,7 +19,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.CharsetUtil;
-import org.opendaylight.controller.websocket.client.callback.ClientMessageCallback;
+import org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
