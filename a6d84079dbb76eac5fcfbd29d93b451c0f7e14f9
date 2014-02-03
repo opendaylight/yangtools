@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_e3eae9d9",
+        "filename": "code-generator/maven-sal-api-gen-plugin/src/main/java/org/opendaylight/yangtools/maven/sal/api/gen/plugin/CodeGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-03T11:58:50Z",
+      "side": 1,
+      "message": "Please use SLF4J directly, the maven plugin already initializes a bridge to maven logging, so everything should work smoothly.",
+      "revId": "a6d84079dbb76eac5fcfbd29d93b451c0f7e14f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
