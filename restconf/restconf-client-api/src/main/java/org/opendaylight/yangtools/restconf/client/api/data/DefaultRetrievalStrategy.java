@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.restconf.client.api.data;
  * Default retrieval strategy, letting the server decide what to do exactly.
  */
 public final class DefaultRetrievalStrategy implements RetrievalStrategy {
+
 	private static final class Holder {
 		private static final DefaultRetrievalStrategy INSTANCE = new DefaultRetrievalStrategy();
 	}
