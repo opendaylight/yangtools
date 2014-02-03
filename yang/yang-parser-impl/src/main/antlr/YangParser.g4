@@ -21,7 +21,7 @@ yang : module_stmt | submodule_stmt ;
 
 string : STRING (PLUS STRING)*;
 
-identifier_stmt : IDENTIFIER string? stmtend;
+identifier_stmt : IDENTIFIER string? (stmtend | (LEFT_BRACE unknown_statement* RIGHT_BRACE));
 unknown_statement : (YIN_ELEMENT_KEYWORD | YANG_VERSION_KEYWORD | WHEN_KEYWORD | VALUE_KEYWORD | USES_KEYWORD | UNITS_KEYWORD | UNIQUE_KEYWORD | 
                     TYPEDEF_KEYWORD | TYPE_KEYWORD | SUBMODULE_KEYWORD | RPC_KEYWORD | REVISION_DATE_KEYWORD | REVISION_KEYWORD | 
                     REQUIRE_INSTANCE_KEYWORD | REFINE_KEYWORD | RANGE_KEYWORD | PRESENCE_KEYWORD | PREFIX_KEYWORD | 

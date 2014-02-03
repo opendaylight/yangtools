@@ -1,0 +1,44 @@
+module bug394 {
+    yang-version 1;
+    namespace "urn:test:bug394";
+    prefix "b394";
+
+    import bug394-ext {
+        prefix ext;
+        revision-date 2014-03-04;
+    }
+
+    revision "2014-03-04" {
+    }
+
+
+    container logrecords {
+        ext:info "Shows logrecords information";
+        ext:action show {
+
+            info "Shows the log records";
+            actionpoint logging-logrecord-show;
+
+            input {
+                leaf from {
+                    type yang:date-and-time;
+                    default 2000-01-01T00:00:00-00:00;
+                    description "Shows the log records from the given time";
+                }
+                leaf to {
+                    type yang:date-and-time;
+                    default 2099-01-01T00:00:00-00:00;
+                    description "Shows the log records up to the given time";
+                }
+            }
+            output {
+                leaf data {
+                    cli-drop-node-name;
+                    type string;
+                    description "Shows the log records according to the given input";
+                }
+            }
+        }
+    }
+
+}
