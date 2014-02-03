@@ -59,6 +59,7 @@
         <module>model</module>
         <module>restconf</module>
         <module>mockito-configuration</module>
+        <module>websocket</module>
         <!-- module>third-party</module -->
     </modules>
 
