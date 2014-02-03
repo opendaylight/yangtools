@@ -15,7 +15,7 @@ import java.util.Set;
  * <code>uses</code> substatement.
  *
  */
-public interface UsesNode extends YangNode {
+public interface UsesNode {
 
     /**
      * Returns the schema path to used grouping.
