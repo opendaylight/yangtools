@@ -1,0 +1,21 @@
+module bug394-ext {
+    yang-version 1;
+    namespace "urn:test:bug394-ext";
+    prefix "b394e";
+
+    revision "2014-03-04" {
+    }
+
+
+    extension info {
+        description "Takes string as argument. Provide short info message";
+    }
+
+    extension action {
+        description "Define new action.";
+        argument "show" {
+            yin-element "true";
+        }
+    }
+
+}
