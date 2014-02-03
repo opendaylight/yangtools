@@ -24,7 +24,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import java.net.URI;
-import org.opendaylight.controller.websocket.client.callback.ClientMessageCallback;
+import org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
