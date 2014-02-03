@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_e30f8935",
+        "filename": "model/ietf/ietf-restconf/src/main/java/org/opendaylight/yang/gen/v1/urn/ietf/params/xml/ns/yang/ietf/restconf/rev131019/DatastoreIdentifierBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-03T22:41:31Z",
+      "side": 1,
+      "message": "Please do implement this method.",
+      "revId": "fd8012f2ba2b436b68d590caaed512900733fe17",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c30a4525",
+        "filename": "model/ietf/ietf-restconf/src/main/java/org/opendaylight/yang/gen/v1/urn/ietf/params/xml/ns/yang/ietf/restconf/rev131019/restconf/restconf/modules/RevisionBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-03T22:41:31Z",
+      "side": 1,
+      "message": "Please do implement this method.",
+      "revId": "fd8012f2ba2b436b68d590caaed512900733fe17",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
