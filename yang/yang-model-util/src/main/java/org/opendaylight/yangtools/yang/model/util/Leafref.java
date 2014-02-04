@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -30,9 +31,11 @@ public final class Leafref implements LeafrefTypeDefinition {
     private static final String REF = "https://tools.ietf.org/html/rfc6020#section-9.9";
 
     private final RevisionAwareXPath xpath;
+    private final DataSchemaNode targetNode;
 
-    public Leafref(final RevisionAwareXPath xpath) {
+    public Leafref(final RevisionAwareXPath xpath, final DataSchemaNode targetNode) {
         this.xpath = xpath;
+        this.targetNode = targetNode;
     }
 
     @Override
@@ -83,6 +86,11 @@ public final class Leafref implements LeafrefTypeDefinition {
     @Override
     public RevisionAwareXPath getPathStatement() {
         return xpath;
+    }
+
+    @Override
+    public DataSchemaNode getTargetNode() {
+        return targetNode;
     }
 
     @Override

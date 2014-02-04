@@ -398,7 +398,7 @@ public final class TypeUtils {
             final ModuleBuilder builder, final SchemaContext context) {
 
         // union and identityref types cannot be restricted
-        if (nodeToResolve instanceof UnionTypeBuilder || nodeToResolve instanceof IdentityrefTypeBuilder) {
+        if (nodeToResolve instanceof UnionTypeBuilder || nodeToResolve instanceof IdentityrefTypeBuilder || nodeToResolve instanceof LeafrefTypeBuilder) {
             return constraints;
         }
 

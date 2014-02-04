@@ -208,7 +208,7 @@ public class YangParserTest {
         assertFalse(ifEntry.isUserOrdered());
         // test DataNodeContainer args
         assertEquals(0, ifEntry.getTypeDefinitions().size());
-        assertEquals(4, ifEntry.getChildNodes().size());
+        assertEquals(5, ifEntry.getChildNodes().size());
         assertEquals(0, ifEntry.getGroupings().size());
         assertEquals(0, ifEntry.getUses().size());
 
