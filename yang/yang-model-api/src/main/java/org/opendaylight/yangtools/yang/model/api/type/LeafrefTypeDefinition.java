@@ -7,10 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public interface LeafrefTypeDefinition extends TypeDefinition<LeafrefTypeDefinition> {
 
     RevisionAwareXPath getPathStatement();
+
+    DataSchemaNode getTargetNode();
+
 }

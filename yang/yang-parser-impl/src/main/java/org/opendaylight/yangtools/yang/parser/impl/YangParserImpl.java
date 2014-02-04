@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.base.Preconditions;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -45,6 +46,9 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
@@ -615,6 +619,7 @@ public final class YangParserImpl implements YangModelParser {
         resolveUsesForGroupings(modules, null);
         resolveUsesForNodes(modules, null);
         resolveAugments(modules, null);
+        resolveLeafrefTypes(modules, null);
         resolveDeviations(modules);
 
         // build
@@ -660,6 +665,7 @@ public final class YangParserImpl implements YangModelParser {
         resolveUsesForGroupings(modules, context);
         resolveUsesForNodes(modules, context);
         resolveAugments(modules, context);
+        resolveLeafrefTypes(modules, context);
         resolveDeviationsWithContext(modules, context);
 
         // build
@@ -738,7 +744,10 @@ public final class YangParserImpl implements YangModelParser {
                     idref.setBaseIdentity(identity);
                     nodeToResolve.setType(idref.build());
                 } else {
-                    resolveType(nodeToResolve, modules, module);
+                    // resolve types except of leafrefs which will be resolved later
+                    if (!(nodeToResolve.getTypedef() instanceof LeafrefTypeBuilder)) {
+                        resolveType(nodeToResolve, modules, module);
+                    }
                 }
             }
         }
@@ -760,7 +769,10 @@ public final class YangParserImpl implements YangModelParser {
                     idref.setBaseIdentity(identity);
                     nodeToResolve.setType(idref.build());
                 } else {
-                    resolveTypeWithContext(nodeToResolve, modules, module, context);
+                    // resolve types except of leafrefs which will be resolved later
+                    if (!(nodeToResolve.getTypedef() instanceof LeafrefTypeBuilder)) {
+                        resolveTypeWithContext(nodeToResolve, modules, module, context);
+                    }
                 }
             }
         }
@@ -1382,6 +1394,105 @@ public final class YangParserImpl implements YangModelParser {
             }
 
         }
+    }
+
+    private SchemaPath fixSchemaPath(SchemaPath path, Map<String, TreeMap<Date, ModuleBuilder>> modules, ModuleBuilder module, int line) {
+        List<QName> old = path.getPath();
+        List<QName> newPath = new ArrayList<>();
+        for (QName qname : old) {
+            String prefix = qname.getPrefix();
+            if (prefix == null || prefix.isEmpty()) {
+                newPath.add(new QName(module.getNamespace(), module.getRevision(), module.getPrefix(), qname.getLocalName()));
+            } else {
+                ModuleBuilder mb = findModuleFromBuilders(modules, module, prefix, line);
+                newPath.add(new QName(mb.getNamespace(), mb.getRevision(), prefix, qname.getLocalName()));
+            }
+        }
+        return new SchemaPath(newPath, path.isAbsolute());
+    }
+
+    private void resolveLeafrefTypes(Map<String, TreeMap<Date, ModuleBuilder>> modules, SchemaContext ctx) {
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
+                final ModuleBuilder module = childEntry.getValue();
+                final Set<TypeAwareBuilder> dirtyNodes = module.getDirtyNodes();
+                if (dirtyNodes != null) {
+                    for (TypeAwareBuilder nodeToResolve : dirtyNodes) {
+                        resolveLeafrefType(modules, module, ctx, nodeToResolve);
+                    }
+                }
+            }
+        }
+    }
+
+    private void resolveLeafrefType(Map<String, TreeMap<Date, ModuleBuilder>> modules, ModuleBuilder module,
+            SchemaContext ctx, TypeAwareBuilder nodeToResolve) {
+        if (nodeToResolve.getTypedef() instanceof LeafrefTypeBuilder) {
+            LeafrefTypeBuilder leafref = (LeafrefTypeBuilder) nodeToResolve.getTypedef();
+            String xpathString = leafref.getTargetPath().toString();
+            SchemaNodeBuilder targetNodeBuilder = null;
+            DataSchemaNode targetNode = null;
+            if (!xpathString.contains("[")) {
+                SchemaPath path = ParserUtils.parseXPathString(xpathString);
+                targetNodeBuilder = getLeafrefTarget(modules, module, ctx, nodeToResolve, path, leafref.getLine());
+                if (targetNodeBuilder instanceof LeafSchemaNodeBuilder) {
+                    targetNode = ((LeafSchemaNodeBuilder) targetNodeBuilder).getInstance();
+                } else if (targetNodeBuilder instanceof LeafListSchemaNodeBuilder) {
+                    targetNode = ((LeafListSchemaNodeBuilder) targetNodeBuilder).getInstance();
+                } else {
+                    throw new YangParseException(module.getName(), nodeToResolve.getLine(),
+                            "Unresolved leafref target node");
+                }
+                leafref.setTargetNode(targetNode);
+                nodeToResolve.setType(leafref.build());
+            }
+        }
+    }
+
+    private SchemaNodeBuilder getLeafrefTarget(Map<String, TreeMap<Date, ModuleBuilder>> modules, ModuleBuilder module,
+            SchemaContext ctx, TypeAwareBuilder nodeToResolve, SchemaPath path, int line) {
+        SchemaPath fixedPath = fixSchemaPath(path, modules, module, line);
+        List<QName> targetPath = fixedPath.getPath();
+        SchemaNodeBuilder targetNodeBuilder = null;
+        if (path.isAbsolute()) {
+            ModuleBuilder targetModule = findTargetModule(targetPath.get(0), module, modules, ctx, line);
+            if (targetModule == null) {
+                throw new YangParseException(module.getName(), nodeToResolve.getLine(),
+                        "Failed to find leafref target node");
+            }
+            targetNodeBuilder = findSchemaNodeInModule(targetPath, targetModule);
+        } else {
+            int step = 0;
+            for (QName qname : targetPath) {
+                if ("..".equals(qname.getLocalName())) {
+                    step++;
+                }
+            }
+
+            Builder parent = nodeToResolve;
+            for (int i = 0; i < step; i++) {
+                parent = parent.getParent();
+                if (parent instanceof AugmentationSchemaBuilder) {
+                    AugmentationSchemaBuilder augment = (AugmentationSchemaBuilder) parent;
+                    List<QName> augmentTargetPath = augment.getTargetPath().getPath();
+                    ModuleBuilder targetModule = findTargetModule(augmentTargetPath.get(0), module, modules, ctx, line);
+                    parent = findSchemaNodeInModule(augmentTargetPath, targetModule);
+                }
+            }
+
+            List<QName> subList = targetPath.subList(step, targetPath.size());
+            for (QName qname : subList) {
+                if (parent instanceof DataNodeContainerBuilder) {
+                    DataNodeContainerBuilder dnc = (DataNodeContainerBuilder) parent;
+                    targetNodeBuilder = dnc.getDataChildByName(qname.getLocalName());
+                    parent = targetNodeBuilder;
+                } else {
+                    throw new YangParseException(module.getName(), nodeToResolve.getLine(),
+                            "Failed to find leafref target node");
+                }
+            }
+        }
+        return targetNodeBuilder;
     }
 
     /**

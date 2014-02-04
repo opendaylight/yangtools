@@ -202,7 +202,11 @@ public final class CopyUtils {
         }
 
         if (old.getType() == null) {
-            copy.setTypedef(copy(old.getTypedef(), copy, updateQName));
+            if (old.getTypedef() instanceof LeafrefTypeBuilder) {
+                copy.setTypedef(old.getTypedef());
+            } else {
+                copy.setTypedef(copy(old.getTypedef(), copy, updateQName));
+            }
         } else {
             copy.setType(old.getType());
         }
@@ -233,7 +237,11 @@ public final class CopyUtils {
         }
 
         if (old.getType() == null) {
-            copy.setTypedef(copy(old.getTypedef(), copy, updateQName));
+            if (old.getTypedef() instanceof LeafrefTypeBuilder) {
+                copy.setTypedef(old.getTypedef());
+            } else {
+                copy.setTypedef(copy(old.getTypedef(), copy, updateQName));
+            }
         } else {
             copy.setType(old.getType());
         }
@@ -335,12 +343,21 @@ public final class CopyUtils {
             type = new IdentityrefTypeBuilder(newParent.getModuleName(), newParent.getLine(),
                     ((IdentityrefTypeBuilder) old).getBaseString(), newSchemaPath);
             type.setParent(newParent);
+        } else if (old instanceof LeafrefTypeBuilder) {
+            type = new LeafrefTypeBuilder(newParent.getModuleName(), newParent.getLine(),
+                    ((LeafrefTypeBuilder) old).getTargetPath());
+            ((LeafrefTypeBuilder)type).setTargetNode(((LeafrefTypeBuilder)old).getTargetNode());
+            type.setParent(newParent);
         } else {
             type = new TypeDefinitionBuilderImpl(old.getModuleName(), newParent.getLine(), newQName, old.getPath());
             type.setParent(newParent);
 
             if (old.getType() == null) {
-                type.setTypedef(copy(old.getTypedef(), type, updateQName));
+                if (old.getTypedef() instanceof LeafrefTypeBuilder) {
+                    type.setTypedef(old.getTypedef());
+                } else {
+                    type.setTypedef(copy(old.getTypedef(), type, updateQName));
+                }
             } else {
                 type.setType(old.getType());
             }

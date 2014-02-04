@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -824,6 +825,23 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                 dirtyNodes.add(typeParent);
             } else {
                 throw new YangParseException(name, line, "Invalid parent of identityref type.");
+            }
+        }
+    }
+
+    public void addLeafrefType(final int line, final RevisionAwareXPath targetPath) {
+        final LeafrefTypeBuilder leafref = new LeafrefTypeBuilder(name, line, targetPath);
+
+        final Builder parent = getActualNode();
+        if (parent == null) {
+            throw new YangParseException(name, line, "Unresolved parent of leafref type.");
+        } else {
+            if (parent instanceof TypeAwareBuilder) {
+                final TypeAwareBuilder typeParent = (TypeAwareBuilder) parent;
+                typeParent.setTypedef(leafref);
+                dirtyNodes.add(typeParent);
+            } else {
+                throw new YangParseException(name, line, "Invalid parent of leafref type.");
             }
         }
     }

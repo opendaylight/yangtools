@@ -235,23 +235,4 @@ public class GeneratedTypesLeafrefTest {
         assertEquals("Uri", tunnelIdType.getName());
     }
 
-    @Test
-    public void testLeafrefInvalidPathResolving() throws URISyntaxException {
-        final URI resource = getClass().getResource("/leafref-test-invalid-model/foo.yang").toURI();
-        assertNotNull(resource);
-
-        final SchemaContext context = resolveSchemaContextFromFiles(resource);
-        assertNotNull(context);
-        assertEquals(1, context.getModules().size());
-
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
-        try {
-            bindingGen.generateTypes(context);
-            fail("Expected IllegalArgumentException caused by invalid leafref path");
-        } catch (IllegalArgumentException e) {
-            String expected = "Failed to find leafref target: ../id";
-            assertEquals(expected, e.getMessage());
-        }
-    }
-
 }

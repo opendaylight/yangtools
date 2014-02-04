@@ -14,6 +14,7 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -75,6 +76,10 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
 
             isBuilt = true;
         }
+        return instance;
+    }
+
+    public LeafListSchemaNode getInstance() {
         return instance;
     }
 
