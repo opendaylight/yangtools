@@ -79,7 +79,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yin_element_argCon
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yin_element_stmtContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -95,26 +94,7 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
-import org.opendaylight.yangtools.yang.model.util.BaseTypes;
-import org.opendaylight.yangtools.yang.model.util.BinaryType;
-import org.opendaylight.yangtools.yang.model.util.BitsType;
-import org.opendaylight.yangtools.yang.model.util.Decimal64;
-import org.opendaylight.yangtools.yang.model.util.EnumerationType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.util.Int16;
-import org.opendaylight.yangtools.yang.model.util.Int32;
-import org.opendaylight.yangtools.yang.model.util.Int64;
-import org.opendaylight.yangtools.yang.model.util.Int8;
-import org.opendaylight.yangtools.yang.model.util.Leafref;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
-import org.opendaylight.yangtools.yang.model.util.StringType;
-import org.opendaylight.yangtools.yang.model.util.Uint16;
-import org.opendaylight.yangtools.yang.model.util.Uint32;
-import org.opendaylight.yangtools.yang.model.util.Uint64;
-import org.opendaylight.yangtools.yang.model.util.Uint8;
-import org.opendaylight.yangtools.yang.model.util.UnknownType;
+import org.opendaylight.yangtools.yang.model.util.*;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
@@ -1194,11 +1174,6 @@ public final class ParserListenerUtils {
             baseType = stringType;
         } else if ("bits".equals(typeName)) {
             return new BitsType(baseTypePath, getBits(typeBody, actualPath, moduleName));
-        } else if ("leafref".equals(typeName)) {
-            final String path = parseLeafrefPath(typeBody);
-            final boolean absolute = path.startsWith("/");
-            RevisionAwareXPath xpath = new RevisionAwareXPathImpl(path, absolute);
-            return new Leafref(xpath);
         } else if ("binary".equals(typeName)) {
             BinaryTypeDefinition binaryType = BinaryType.getInstance();
             constraints.addLengths(binaryType.getLengthConstraints());
@@ -1314,7 +1289,7 @@ public final class ParserListenerUtils {
      *            type body context
      * @return leafref path as String
      */
-    private static String parseLeafrefPath(Type_body_stmtsContext ctx) {
+    public static String parseLeafrefPath(Type_body_stmtsContext ctx) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Leafref_specificationContext) {

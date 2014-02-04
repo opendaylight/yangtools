@@ -18,8 +18,12 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -34,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.model.util.Leafref;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 public class TypesResolutionTest {
@@ -328,6 +333,53 @@ public class TypesResolutionTest {
 
         LeafSchemaNode type = (LeafSchemaNode) tested.getDataChildByName("type");
         assertNotNull(type);
+    }
+
+    @Test
+    public void testLeafref1() throws FileNotFoundException {
+        testedModules = TestUtils.loadModules(getClass().getResource("/model").getPath());
+
+        Module foo = TestUtils.findModule(testedModules, "foo");
+
+        AugmentationSchema augment1 = null;
+        for (AugmentationSchema as : foo.getAugmentations()) {
+            if ("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
+                augment1 = as;
+                break;
+            }
+        }
+        assertNotNull(augment1);
+        LeafSchemaNode ifcId = (LeafSchemaNode) augment1.getDataChildByName("interface-id");
+        Leafref type = (Leafref) ifcId.getType();
+        DataSchemaNode targetNode = type.getTargetNode();
+        assertNotNull(targetNode);
+
+        Module bar = TestUtils.findModule(testedModules, "bar");
+        ContainerSchemaNode interfaces = (ContainerSchemaNode) bar.getDataChildByName("interfaces");
+        ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
+        ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName("augment-holder");
+        LeafSchemaNode ifcId2 = (LeafSchemaNode) augmentHolder.getDataChildByName("interface-id");
+        Leafref type2 = (Leafref) ifcId2.getType();
+        DataSchemaNode targetNode2 = type2.getTargetNode();
+        assertNotNull(targetNode2);
+
+        assertEquals(targetNode, targetNode2);
+    }
+
+    @Test
+    public void testLeafref2() throws FileNotFoundException {
+        testedModules = TestUtils.loadModules(getClass().getResource("/model").getPath());
+
+        Module bar = TestUtils.findModule(testedModules, "bar");
+        ContainerSchemaNode interfaces = (ContainerSchemaNode) bar.getDataChildByName("interfaces");
+        ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
+        ContainerSchemaNode ifLinks = (ContainerSchemaNode) ifEntry.getDataChildByName("ifLinks");
+        LeafSchemaNode ifLinkId = (LeafSchemaNode) ifLinks.getDataChildByName("ifLinkId");
+        Leafref type = (Leafref) ifLinkId.getType();
+        DataSchemaNode targetNode = type.getTargetNode();
+        assertNotNull(targetNode);
+
+        assertEquals(targetNode, interfaces.getDataChildByName("name"));
     }
 
 }

@@ -77,6 +77,9 @@ module bar {
     }
 
     container interfaces {
+        leaf name {
+            type string;
+        }
         grouping ifEntry {
             container augment-holder;
         }
@@ -91,7 +94,13 @@ module bar {
             leaf ifMtu {
                 type int32;
             }
-
+            container ifLinks {
+                leaf ifLinkId {
+                    type leafref {
+                        path "../../../name";
+                    }
+                }
+            }
             min-elements 1;
             max-elements 11;
         }
