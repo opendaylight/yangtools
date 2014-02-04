@@ -127,7 +127,8 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsDefaultMethods(int32Ext1Class);
         assertContainsMethod(int32Ext1Class, Integer.class, GET_VAL);
         defInst = assertContainsMethod(int32Ext1Class, int32Ext1Class, "getDefaultInstance", String.class);
-        assertEquals(5, int32Ext1Class.getDeclaredMethods().length);
+        assertContainsGetLengthOrRange(int32Ext1Class, false);
+        assertEquals(6, int32Ext1Class.getDeclaredMethods().length);
 
         List<Range<Integer>> rangeConstraints = new ArrayList<>();
         rangeConstraints.add(Range.closed(new Integer("2"), new Integer("2147483647")));
@@ -147,7 +148,8 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(3, int32Ext2Class.getDeclaredConstructors().length);
         assertContainsMethod(int32Ext2Class, String.class, "toString");
         defInst = assertContainsMethod(int32Ext2Class, int32Ext2Class, "getDefaultInstance", String.class);
-        assertEquals(2, int32Ext2Class.getDeclaredMethods().length);
+        assertContainsGetLengthOrRange(int32Ext2Class, false);
+        assertEquals(3, int32Ext2Class.getDeclaredMethods().length);
 
         rangeConstraints.clear();
         rangeConstraints.add(Range.closed(new Integer("3"), new Integer("9")));
@@ -170,7 +172,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsMethod(stringExt1Class, String.class, GET_VAL);
         defInst = assertContainsMethod(stringExt1Class, stringExt1Class, "getDefaultInstance", String.class);
         assertContainsDefaultMethods(stringExt1Class);
-        assertContainsGetLength(stringExt1Class);
+        assertContainsGetLengthOrRange(stringExt1Class, true);
         assertEquals(6, stringExt1Class.getDeclaredMethods().length);
 
         List<Range<Integer>> lengthConstraints = new ArrayList<>();
@@ -188,7 +190,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsConstructor(stringExt2Class, stringExt2Class);
         assertContainsConstructor(stringExt2Class, stringExt1Class);
         assertEquals(3, stringExt2Class.getDeclaredConstructors().length);
-        assertContainsGetLength(stringExt2Class);
+        assertContainsGetLengthOrRange(stringExt2Class, true);
         defInst = assertContainsMethod(stringExt2Class, stringExt2Class, "getDefaultInstance", String.class);
         assertEquals(2, stringExt2Class.getDeclaredMethods().length);
 
@@ -224,7 +226,8 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsMethod(myDecimalTypeClass, BigDecimal.class, GET_VAL);
         assertContainsDefaultMethods(myDecimalTypeClass);
         defInst = assertContainsMethod(myDecimalTypeClass, myDecimalTypeClass, "getDefaultInstance", String.class);
-        assertEquals(5, myDecimalTypeClass.getDeclaredMethods().length);
+        assertContainsGetLengthOrRange(myDecimalTypeClass, false);
+        assertEquals(6, myDecimalTypeClass.getDeclaredMethods().length);
 
         List<Range<BigDecimal>> decimalRangeConstraints = new ArrayList<>();
         decimalRangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));

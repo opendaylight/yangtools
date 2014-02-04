@@ -125,6 +125,8 @@ class ClassTemplate extends BaseTemplate {
 
             «generateGetLength»
 
+            «generateGetRange»
+
         }
     '''
 
@@ -431,10 +433,11 @@ class ClassTemplate extends BaseTemplate {
 
     def private generateGetLength() '''
         «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
-            public static «List.importedName»<«Range.importedName»<Integer>> getLength() {
-                final «List.importedName»<«Range.importedName»<Integer>> result = new «ArrayList.importedName»<>();
+            «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
+            public static «List.importedName»<«Range.importedName»<«clazz.importedName»>> length() {
+                final «List.importedName»<«Range.importedName»<«clazz.importedName»>> result = new «ArrayList.importedName»<>();
                 «FOR r : restrictions.lengthConstraints»
-                    result.add(«Range.importedName».closed(«r.min», «r.max»));
+                    result.add(«Range.importedName».closed(new «clazz.importedName»("«r.min»"), new «clazz.importedName»("«r.max»")));
                 «ENDFOR»
                 return result;
             }
@@ -442,12 +445,12 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def private generateGetRange() '''
-        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
-            public static «List.importedName»<«Range.importedName»<Integer>> getLength() {
-                final «List.importedName»<«Range.importedName»<Integer>> result = new «ArrayList.importedName»<>();
-                «List.importedName»<«Range.importedName»<«Integer.importedName»>> lengthConstraints = new «ArrayList.importedName»<>(); 
-                «FOR r : restrictions.lengthConstraints»
-                    result.add(«Range.importedName».closed(«r.min», «r.max»));
+        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
+            «val clazz = restrictions.rangeConstraints.iterator.next.min.class»
+            public static «List.importedName»<«Range.importedName»<«clazz.importedName»>> range() {
+                final «List.importedName»<«Range.importedName»<«clazz.importedName»>> result = new «ArrayList.importedName»<>();
+                «FOR r : restrictions.rangeConstraints»
+                    result.add(«Range.importedName».closed(new «clazz.importedName»("«r.min»"), new «clazz.importedName»("«r.max»")));
                 «ENDFOR»
                 return result;
             }
