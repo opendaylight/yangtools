@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.binding.util;
 
+import java.beans.MethodDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.annotations.ModuleQName;
@@ -112,20 +114,19 @@ public class BindingReflections {
     }
 
     public static boolean isRpcMethod(Method possibleMethod) {
-        return possibleMethod != null &&
-        RpcService.class.isAssignableFrom(possibleMethod.getDeclaringClass())
-        && Future.class.isAssignableFrom(possibleMethod.getReturnType())
-        && possibleMethod.getParameterTypes().length <= 1;
+        return possibleMethod != null && RpcService.class.isAssignableFrom(possibleMethod.getDeclaringClass())
+                && Future.class.isAssignableFrom(possibleMethod.getReturnType())
+                && possibleMethod.getParameterTypes().length <= 1;
     }
 
     @SuppressWarnings("rawtypes")
     public static Optional<Class<?>> resolveRpcOutputClass(Method targetMethod) {
-        checkState(isRpcMethod(targetMethod),"Supplied method is not Rpc invocation method");
+        checkState(isRpcMethod(targetMethod), "Supplied method is not Rpc invocation method");
         Type futureType = targetMethod.getGenericReturnType();
         Type rpcResultType = ClassLoaderUtils.getFirstGenericParameter(futureType);
         Type rpcResultArgument = ClassLoaderUtils.getFirstGenericParameter(rpcResultType);
-        if(rpcResultArgument instanceof Class && !Void.class.equals(rpcResultArgument)) {
-            return Optional.<Class<?>>of((Class) rpcResultArgument);
+        if (rpcResultArgument instanceof Class && !Void.class.equals(rpcResultArgument)) {
+            return Optional.<Class<?>> of((Class) rpcResultArgument);
         }
         return Optional.absent();
     }
@@ -134,11 +135,11 @@ public class BindingReflections {
     public static Optional<Class<? extends DataContainer>> resolveRpcInputClass(Method targetMethod) {
         @SuppressWarnings("rawtypes")
         Class[] types = targetMethod.getParameterTypes();
-        if(types.length == 0) {
+        if (types.length == 0) {
             return Optional.absent();
         }
-        if(types.length == 1) {
-            return Optional.<Class<? extends DataContainer>>of(types[0]);
+        if (types.length == 1) {
+            return Optional.<Class<? extends DataContainer>> of(types[0]);
         }
         throw new IllegalArgumentException("Method has 2 or more arguments.");
     }
@@ -146,7 +147,7 @@ public class BindingReflections {
     public static QName getQName(Class<? extends BaseIdentity> context) {
         return findQName(context);
     }
-    
+
     public static boolean isAugmentationChild(Class<?> clazz) {
         // FIXME: Current resolver could be still confused when
         // child node was added by grouping
@@ -177,7 +178,7 @@ public class BindingReflections {
         String packageName = getModelRootPackageName(cls.getPackage());
         final String potentialClassName = getModuleInfoClassName(packageName);
         return withClassLoader(cls.getClassLoader(), new Callable<YangModuleInfo>() {
-        
+
             @Override
             public YangModuleInfo call() throws Exception {
                 Class<?> moduleInfoClass = Thread.currentThread().getContextClassLoader().loadClass(potentialClassName);
@@ -191,10 +192,27 @@ public class BindingReflections {
     }
 
     public static boolean isBindingClass(Class<?> cls) {
-       if(DataContainer.class.isAssignableFrom(cls) || Augmentation.class.isAssignableFrom(cls)) {
-           return true;
-       }
-       return (cls.getName().startsWith(BindingMapping.PACKAGE_PREFIX));
+        if (DataContainer.class.isAssignableFrom(cls) || Augmentation.class.isAssignableFrom(cls)) {
+            return true;
+        }
+        return (cls.getName().startsWith(BindingMapping.PACKAGE_PREFIX));
+    }
+
+    public static boolean isNotificationCallback(Method method) {
+        checkArgument(method != null);
+        if (method.getName().startsWith("on") && method.getParameterTypes().length == 1) {
+            Class<?> potentialNotification = method.getParameterTypes()[0];
+            if (isNotification(potentialNotification)
+                    && method.getName().equals("on" + potentialNotification.getSimpleName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isNotification(Class<?> potentialNotification) {
+        checkArgument(potentialNotification != null);
+        return Notification.class.isAssignableFrom(potentialNotification);
     }
 
 }
