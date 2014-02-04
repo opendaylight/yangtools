@@ -804,6 +804,23 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
     }
 
+    public void addLeafrefType(final int line, final RevisionAwareXPath targetPath) {
+        final LeafrefTypeBuilder leafref = new LeafrefTypeBuilder(name, line, targetPath);
+
+        final Builder parent = getActualNode();
+        if (parent == null) {
+            throw new YangParseException(name, line, "Unresolved parent of leafref type.");
+        } else {
+            if (parent instanceof TypeAwareBuilder) {
+                final TypeAwareBuilder typeParent = (TypeAwareBuilder) parent;
+                typeParent.setTypedef(leafref);
+                dirtyNodes.add(typeParent);
+            } else {
+                throw new YangParseException(name, line, "Invalid parent of leafref type.");
+            }
+        }
+    }
+
     public DeviationBuilder addDeviation(final int line, final String targetPath) {
         Builder parent = getActualNode();
         if (!(parent.equals(this))) {

@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.model.util.YangTypesConverter;
 import org.opendaylight.yangtools.yang.parser.builder.api.*;
 import org.opendaylight.yangtools.yang.parser.builder.impl.*;
@@ -414,6 +415,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                         addNodeToPath(qname);
                         SchemaPath path = createActualSchemaPath(actualPath.peek());
                         moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
+                        break;
+                    case "leafref":
+                        qname = BaseTypes.constructQName("leafref");
+                        addNodeToPath(qname);
+                        final String targetPath = parseLeafrefPath(typeBody);
+                        final boolean absolute = targetPath.startsWith("/");
+                        moduleBuilder.addLeafrefType(line, new RevisionAwareXPathImpl(targetPath, absolute));
                         break;
                     default:
                         type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
@@ -816,7 +824,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             }
         } catch (IllegalArgumentException e) {
             qname = nodeType;
-            
+
         }
         addNodeToPath(qname);
         SchemaPath path = createActualSchemaPath(actualPath.peek());

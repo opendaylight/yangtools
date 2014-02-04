@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -85,6 +86,10 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         return instance;
     }
 
+
+    public LeafSchemaNode getInstance() {
+        return instance;
+    }
 
     @Override
     public SchemaPath getPath() {
