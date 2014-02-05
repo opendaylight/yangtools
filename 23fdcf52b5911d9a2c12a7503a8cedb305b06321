@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_f9d17a23",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_59a2c6fd",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_d9ad96ea",
         "filename": "restconf/pom.xml",
         "patchSetId": 17
@@ -30,6 +48,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "Lose this, please. Use ${project.version} instead",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_59c1a652",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_d9ad96ea",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_39b4b2f0",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_f9b29a4a",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_b9b8a22a",
         "filename": "restconf/pom.xml",
         "patchSetId": 17
@@ -64,6 +118,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "Inherit from parent",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_19b7aef6",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_b9b8a22a",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_b9c78263",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_99b39e4c",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_19a8ced9",
         "filename": "restconf/restconf-client-api/pom.xml",
         "patchSetId": 17
@@ -98,6 +188,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "Yangtools are at 0.6.2-SNAPSHOT, please do not go back in time",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_79a58ab4",
+        "filename": "restconf/restconf-client-api/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_19a8ced9",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_99c27e51",
+        "filename": "restconf/restconf-client-api/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_39a5d203",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_7986aa67",
         "filename": "restconf/restconf-client-api/src/main/java/org/opendaylight/yangtools/restconf/client/api/dto/RestRpcService.java",
         "patchSetId": 17
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_59a8868c",
+        "filename": "restconf/restconf-client-api/src/main/java/org/opendaylight/yangtools/restconf/client/api/dto/RestRpcService.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_7986aa67",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_5989a673",
         "filename": "restconf/restconf-client-api/src/main/java/org/opendaylight/yangtools/restconf/client/api/dto/RestRpcService.java",
         "patchSetId": 17
@@ -149,6 +293,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "Either the class or this method should be final",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_39ab928a",
+        "filename": "restconf/restconf-client-api/src/main/java/org/opendaylight/yangtools/restconf/client/api/dto/RestRpcService.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_5989a673",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -189,6 +351,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_19ae8e98",
+        "filename": "restconf/restconf-client-impl/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_197fae67",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_f9997ac4",
         "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/BindingToRestRpc.java",
         "patchSetId": 17
@@ -200,6 +380,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "Any reason why these two are not final?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f9985a79",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/BindingToRestRpc.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Not really.",
+      "parentUuid": "da6255ed_f9997ac4",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -223,6 +421,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_d9935659",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestconfClientFactory.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_d994768c",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_b98f8274",
         "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestconfClientImpl.java",
         "patchSetId": 17
@@ -234,6 +450,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "also log the exception to capture any chained root cause",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b99e6261",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestconfClientImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_b98f8274",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -257,6 +491,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_598f662a",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/listener/ListenerRegistrationImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_79ed8a25",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_59f086fd",
         "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/listener/ListenerRegistrationImpl.java",
         "patchSetId": 17
@@ -274,6 +526,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_99995e7b",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/listener/ListenerRegistrationImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_59f086fd",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_39f3920b",
         "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/listener/ListenerRegistrationImpl.java",
         "patchSetId": 17
@@ -285,6 +555,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "Are we invoking close() again?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_39827200",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/listener/ListenerRegistrationImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_39f3920b",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -319,6 +607,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "synchronous call? see below",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_19856e06",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/service/ConfigurationDataStoreImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_b9bd4204",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -461,6 +767,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_f97f3a13",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestRpcError.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_19444e19",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_994f1e34",
         "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestRpcResult.java",
         "patchSetId": 17
@@ -472,6 +796,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "This class definitely needs explanation. I don\u0027t see why it is mutable for example. Also if it\u0027s not isSuccessful(), why is getErrors() null?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_d97a3623",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestRpcResult.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_994f1e34",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -495,6 +837,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_b9754233",
+        "filename": "restconf/restconf-common/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_596526b3",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_395832f9",
         "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/QueryParameters.java",
         "patchSetId": 17
@@ -506,6 +866,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "enum values should be upper-case,",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_99703e41",
+        "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/QueryParameters.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_395832f9",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -529,6 +907,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_79934a50",
+        "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/ResourceMediaTypes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_f975fa63",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_d970f673",
         "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/ResourceMediaTypes.java",
         "patchSetId": 17
@@ -540,6 +936,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "final",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_59964640",
+        "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/ResourceMediaTypes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_d970f673",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -563,6 +977,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_3999526e",
+        "filename": "restconf/restconf-jaxrs-api/src/main/java/org/opendaylight/yangtools/RestRestconfService.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_b96b0284",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_9966feb9",
         "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
         "patchSetId": 17
@@ -580,6 +1012,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_199c4e5c",
+        "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_9966feb9",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_19120e09",
         "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
         "patchSetId": 17
@@ -591,6 +1041,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "How is this ever initialized to non-null?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f9a61aad",
+        "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_19120e09",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -631,6 +1099,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_d9a11695",
+        "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "When this exception occurs method will return empty \"\".",
+      "parentUuid": "da6255ed_390f12e3",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_f9fcdab9",
         "filename": "websocket/pom.xml",
         "patchSetId": 17
@@ -642,6 +1128,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "keep the -parent in name",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b9ac228d",
+        "filename": "websocket/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_f9fcdab9",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -682,6 +1186,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_99a71ea7",
+        "filename": "websocket/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_b902e2b1",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_99fddeb3",
         "filename": "websocket/pom.xml",
         "patchSetId": 17
@@ -699,6 +1221,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_79ba2ac2",
+        "filename": "websocket/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_99fddeb3",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_5933e6aa",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/YangtoolsMappingHelper.java",
         "patchSetId": 17
@@ -710,6 +1250,24 @@
       "writtenOn": "2014-02-05T07:06:50Z",
       "side": 1,
       "message": "Okay this is copy\u0026pasted xtend-generated code. Get rid of this class and use the stuff introduced in https://git.opendaylight.org/gerrit/#/c/5122/",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_59bd26b6",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/YangtoolsMappingHelper.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 917
+      },
+      "writtenOn": "2014-02-05T08:33:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da6255ed_5933e6aa",
       "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
