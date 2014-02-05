@@ -1,0 +1,718 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_59a2c6fd",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Please do not lose the copyright header",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_d9ad96ea",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Lose this, please. Use ${project.version} instead",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f9b29a4a",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Don\u0027t specify an explicit version here, nor in child poms. We want to keep the versions synchronized.",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b9b8a22a",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Inherit from parent",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_99b39e4c",
+        "filename": "restconf/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Any reason for down-revisioning this one?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_19a8ced9",
+        "filename": "restconf/restconf-client-api/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Yangtools are at 0.6.2-SNAPSHOT, please do not go back in time",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_39a5d203",
+        "filename": "restconf/restconf-client-api/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Any particular reason why you need this?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_7986aa67",
+        "filename": "restconf/restconf-client-api/src/main/java/org/opendaylight/yangtools/restconf/client/api/dto/RestRpcService.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "use Preconditions.checkNotNull() in this assignement",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_5989a673",
+        "filename": "restconf/restconf-client-api/src/main/java/org/opendaylight/yangtools/restconf/client/api/dto/RestRpcService.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Either the class or this method should be final",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_397cb271",
+        "filename": "restconf/restconf-client-impl/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Missing copyright header",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_197fae67",
+        "filename": "restconf/restconf-client-impl/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Inherit from parent\u0027s dependencyManagement",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f9997ac4",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/BindingToRestRpc.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Any reason why these two are not final?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_d994768c",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestconfClientFactory.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "toString() is not necessary, just use the class",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b98f8274",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestconfClientImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "also log the exception to capture any chained root cause",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_79ed8a25",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/listener/ListenerRegistrationImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Not sure, do we use this in more than one place? Wouldn\u0027t an anonymous implementation suffice?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_59f086fd",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/listener/ListenerRegistrationImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "This needs to be final for sure",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_39f3920b",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/listener/ListenerRegistrationImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Are we invoking close() again?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_99b83e12",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/service/ConfigurationDataStoreImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "synchronous call? see below",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b9bd4204",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/service/ConfigurationDataStoreImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "synchronous call? see below",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_19cd6eb7",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/service/ConfigurationDataStoreImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "This looks like a synchronous call, which should be inside the callable which is submitted into the pool...",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f9c73a94",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/service/ConfigurationDataStoreImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "... which would then mean we don\u0027t have to catch these, as they\u0027d be propagated into the Future\u0027s failure cause",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_19f68ef9",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/service/ConfigurationDataStoreImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "instanceof ?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_39ca72a1",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/service/ConfigurationDataStoreImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "same as above",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_793b4a9d",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestListenableEventStreamContext.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "synchronous -- move to the block below which up until now was noop",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_593e468d",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestListenableEventStreamContext.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "This is a hard error, throw it such that it gets into the enclosing future",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_3941520b",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestListenableEventStreamContext.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "use multi-catch and exception chaining, e.g. new IllegalStateException(e), so the entire error context is preserved",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_19444e19",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestRpcError.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "final fields?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_994f1e34",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestRpcResult.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "This class definitely needs explanation. I don\u0027t see why it is mutable for example. Also if it\u0027s not isSuccessful(), why is getErrors() null?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_596526b3",
+        "filename": "restconf/restconf-common/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Version skew...",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_395832f9",
+        "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/QueryParameters.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "enum values should be upper-case,",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f975fa63",
+        "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/ResourceMediaTypes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "upper case",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_d970f673",
+        "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/ResourceMediaTypes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "final",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b96b0284",
+        "filename": "restconf/restconf-jaxrs-api/src/main/java/org/opendaylight/yangtools/RestRestconfService.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "copyright?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_9966feb9",
+        "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "be consistent: \u0027static final\u0027 not \u0027final static\u0027",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_19120e09",
+        "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "How is this ever initialized to non-null?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_590c06ed",
+        "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "multiple lines. is this a funky way of saying \u0027return \"\";\u0027 ?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_390f12e3",
+        "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/XmlToNodes.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "so ... do we still succeed below?",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_f9fcdab9",
+        "filename": "websocket/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "keep the -parent in name",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_d9f7d6d1",
+        "filename": "websocket/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "No explicit version",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b902e2b1",
+        "filename": "websocket/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Do not override parent",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_99fddeb3",
+        "filename": "websocket/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Especially here -- 4.11 in this project, 4.8.something in the others.",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_5933e6aa",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/YangtoolsMappingHelper.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-05T07:06:50Z",
+      "side": 1,
+      "message": "Okay this is copy\u0026pasted xtend-generated code. Get rid of this class and use the stuff introduced in https://git.opendaylight.org/gerrit/#/c/5122/",
+      "revId": "23fdcf52b5911d9a2c12a7503a8cedb305b06321",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
