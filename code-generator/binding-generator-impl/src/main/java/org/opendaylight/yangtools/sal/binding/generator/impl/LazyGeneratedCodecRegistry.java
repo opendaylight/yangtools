@@ -78,6 +78,8 @@ public class LazyGeneratedCodecRegistry implements //
 
     private SchemaContext currentSchema;
 
+    private GeneratedClassLoadingStrategy classLoadingStrategy = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
+
     LazyGeneratedCodecRegistry(SchemaLock lock) {
         this.lock = Preconditions.checkNotNull(lock);
     }
