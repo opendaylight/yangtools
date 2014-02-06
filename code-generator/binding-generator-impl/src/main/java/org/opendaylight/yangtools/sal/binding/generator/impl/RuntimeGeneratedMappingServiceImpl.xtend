@@ -61,8 +61,10 @@ import java.net.URI
 import org.opendaylight.yangtools.yang.model.api.Module
 import com.google.common.base.Optional
 import org.opendaylight.yangtools.yang.binding.BindingMapping
+import org.opendaylight.yangtools.yang.model.api.SchemaContextHolder
 
-class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaServiceListener, SchemaLock, AutoCloseable {
+class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaServiceListener,
+SchemaLock, AutoCloseable, SchemaContextHolder {
 
     @Property
     ClassPool pool;
@@ -91,6 +93,7 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
 
     val promisedTypes = HashMultimap.<Type, SettableFuture<Type>>create;
 
+    @Property
     var SchemaContext schemaContext;
 
     //ServiceRegistration<SchemaServiceListener> listenerRegistration
