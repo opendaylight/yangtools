@@ -122,7 +122,7 @@ public class LazyGeneratedCodecRegistry implements //
                         .augmentationTransformerFor(object);
                 BindingCodec<Map<QName, Object>, Object> rawCodec = augmentRawCodec.newInstance();
                 codec = new AugmentationCodecWrapper<T>(rawCodec);
-                augmentationCodecs.put(augmentRawCodec, codec);
+                augmentationCodecs.put(object, codec);
             } catch (InstantiationException e) {
                 LOG.error("Can not instantiate raw augmentation codec {}", object.getSimpleName(), e);
             } catch (IllegalAccessException e) {
