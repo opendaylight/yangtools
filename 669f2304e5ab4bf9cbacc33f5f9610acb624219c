@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_4f7b148c",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/GeneratedClassLoadingStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-07T03:05:13Z",
+      "side": 1,
+      "message": "ALWAYS",
+      "revId": "669f2304e5ab4bf9cbacc33f5f9610acb624219c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_2f6ea0c9",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/GeneratedClassLoadingStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-07T03:05:13Z",
+      "side": 1,
+      "message": "Always",
+      "revId": "669f2304e5ab4bf9cbacc33f5f9610acb624219c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0f719ca7",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/ModuleInfoBackedContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-07T03:05:13Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "669f2304e5ab4bf9cbacc33f5f9610acb624219c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_6f781890",
+        "filename": "code-generator/maven-sal-api-gen-plugin/src/main/java/org/opendaylight/yangtools/maven/sal/api/gen/plugin/CodeGeneratorImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-07T03:05:13Z",
+      "side": 1,
+      "message": "Nope, not going in",
+      "revId": "669f2304e5ab4bf9cbacc33f5f9610acb624219c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ef6be8b4",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/YangModelBindingProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-07T03:05:13Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "669f2304e5ab4bf9cbacc33f5f9610acb624219c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_cf66e4ec",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/YangModelBindingProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-07T03:05:13Z",
+      "side": 1,
+      "message": "javadoc",
+      "revId": "669f2304e5ab4bf9cbacc33f5f9610acb624219c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
