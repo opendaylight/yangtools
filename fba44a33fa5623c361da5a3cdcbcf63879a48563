@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_6f1c9878",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestconfClientImpl.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 866
+      },
+      "writtenOn": "2014-02-07T23:00:00Z",
+      "side": 1,
+      "message": "How the schemaContext is set?",
+      "revId": "fba44a33fa5623c361da5a3cdcbcf63879a48563",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_0f3e3cda",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/service/OperationalDataStoreImpl.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 866
+      },
+      "writtenOn": "2014-02-07T23:00:00Z",
+      "side": 1,
+      "message": "Expected media-type should be \"application/yang.operation+xml\".  Please, check all other.",
+      "revId": "fba44a33fa5623c361da5a3cdcbcf63879a48563",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
