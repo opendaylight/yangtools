@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +17,7 @@ import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.yang.common.QName;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
 
@@ -26,6 +25,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     private final List<PathArgument> path;
 
     private transient String to_string_cache = null;
+    private Integer hashCodeCache = null;
 
     public List<PathArgument> getPath() {
         return path;
@@ -41,26 +41,37 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        return result;
+        if(hashCodeCache  == null) {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((path == null) ? 0 : path.hashCode());
+            hashCodeCache = result;
+        }
+        return hashCodeCache;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         InstanceIdentifier other = (InstanceIdentifier) obj;
-        if (path == null) {
-            if (other.path != null)
-                return false;
-        } else if (!path.equals(other.path))
+        if(this.hashCode() != obj.hashCode()) {
             return false;
+        }
+        if (path == null) {
+            if (other.path != null) {
+                return false;
+            }
+        } else if (!path.equals(other.path)) {
+            return false;
+        }
         return true;
     }
 
@@ -97,7 +108,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     public static final class NodeIdentifier implements PathArgument {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -2255888212390871347L;
 
@@ -107,6 +118,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             this.nodeType = node;
         }
 
+        @Override
         public QName getNodeType() {
             return nodeType;
         }
@@ -145,7 +157,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     public static final class NodeIdentifierWithPredicates implements PathArgument {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -4787195606494761540L;
 
@@ -154,12 +166,12 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
         public NodeIdentifierWithPredicates(QName node, Map<QName, Object> keyValues) {
             this.nodeType = node;
-            this.keyValues = Collections.unmodifiableMap(new HashMap<QName, Object>(keyValues));
+            this.keyValues = ImmutableMap.copyOf(keyValues);
         }
 
         public NodeIdentifierWithPredicates(QName node, QName key, Object value) {
             this.nodeType = node;
-            this.keyValues = Collections.singletonMap(key, value);
+            this.keyValues = ImmutableMap.of(key, value);
         }
 
         @Override
@@ -211,7 +223,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     public static final class NodeWithValue implements PathArgument {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -3637456085341738431L;
 
@@ -272,7 +284,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     private static class BuilderImpl implements InstanceIdentifierBuilder {
 
-        private final ImmutableList.Builder<PathArgument> path; 
+        private final ImmutableList.Builder<PathArgument> path;
 
         public BuilderImpl() {
             path = ImmutableList.<PathArgument>builder();
