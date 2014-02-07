@@ -72,6 +72,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit
 import java.util.Set
 import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
+import org.opendaylight.yangtools.yang.binding.BindingMapping
 
 class TransformerGenerator {
 
@@ -1379,15 +1380,15 @@ class TransformerGenerator {
     }
 
     private static def String getBooleanGetterName(DataSchemaNode node) {
-        return "is" + BindingGeneratorUtil.parseToClassName(node.QName.localName);
+        return "is" + BindingMapping.getPropertyName(node.QName.localName).toFirstUpper;
     }
 
     private static def String getGetterName(DataSchemaNode node) {
-        return "get" + BindingGeneratorUtil.parseToClassName(node.QName.localName);
+        return "get" + BindingMapping.getPropertyName(node.QName.localName).toFirstUpper;
     }
 
     private static def String getGetterName(QName node) {
-        return "get" + BindingGeneratorUtil.parseToClassName(node.localName);
+        return "get" + BindingMapping.getPropertyName(node.localName).toFirstUpper;
     }
 
     private def dispatch CharSequence serializeProperty(ListSchemaNode schema, ParameterizedType type,
