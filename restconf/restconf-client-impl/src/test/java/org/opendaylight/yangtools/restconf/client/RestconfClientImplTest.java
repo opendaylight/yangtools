@@ -7,14 +7,21 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
+
+import javassist.ClassPool;
+
 import org.junit.Test;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yangtools.restconf.rev140114.TestModuleService;
 import org.opendaylight.yangtools.restconf.client.api.RestconfClientContext;
+import org.opendaylight.yangtools.restconf.client.api.UnsupportedProtocolException;
+import org.opendaylight.yangtools.restconf.client.api.data.OperationalDatastore;
+import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
+import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
+import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,16 +37,30 @@ public class RestconfClientImplTest {
 
 
     @Test
-    public void testGetRpcServiceContext() throws ExecutionException, InterruptedException {
-        URI uri = null;
-        try {
-            uri = new URL(restconfUrl).toURI();
-        } catch (URISyntaxException e) {
-            logger.trace("Error in URI syntax {}",e.getMessage(),e);
-        } catch (MalformedURLException e) {
-            logger.trace("Malformed URL :",restconfUrl,e);
-        }
-        TestModuleService proxiedService = BindingToRestRpc.getProxy(TestModuleService.class,uri);
+    public void testGetRpcServiceContext() throws ExecutionException, InterruptedException, MalformedURLException, UnsupportedProtocolException {
+        URI uri = URI.create(restconfUrl);
+        RestconfClientFactory factory = new RestconfClientFactory();
+        RuntimeGeneratedMappingServiceImpl mappingService = new RuntimeGeneratedMappingServiceImpl();
+        mappingService.setPool(new ClassPool());
+        mappingService.init();
+
+        ModuleInfoBackedContext moduleInfo = ModuleInfoBackedContext.create();
+        moduleInfo.addModuleInfos(BindingReflections.loadModuleInfos());
+
+        mappingService.onGlobalContextUpdated(moduleInfo.tryToCreateSchemaContext().get());
+
+        restconfClientContext = factory.getRestconfClientContext(uri.toURL(), mappingService, mappingService);
+        assertNotNull(restconfClientContext);
+
+        OperationalDatastore datastore = restconfClientContext.getOperationalDatastore();
+
+          // Example use of client
+//        ListenableFuture<Optional<Nodes>> result = datastore.readData(InstanceIdentifier.builder(Nodes.class).toInstance());
+//        Optional<Nodes> optionalNodes = result.get();
+//        Nodes node = optionalNodes.get();
+//        assertNotNull(node);
+
+
     }
 
 }
