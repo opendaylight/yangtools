@@ -7,20 +7,13 @@
  */
 package org.opendaylight.yangtools.restconf.client.service;
 
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
 import org.opendaylight.yangtools.restconf.client.api.data.LimitedDepthRetrievalStrategy;
 import org.opendaylight.yangtools.restconf.client.api.data.RetrievalStrategy;
@@ -35,9 +28,20 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
 
@@ -50,7 +54,7 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
     private final BindingIndependentMappingService mappingService;
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationDataStoreImpl.class.toString());
     private final ListeningExecutorService pool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
-    private SchemaContext schemaContext;
+    private final SchemaContext schemaContext;
 
 
     public ConfigurationDataStoreImpl(BindingIndependentMappingService mappingService,URI uri,SchemaContext schemaContext){
@@ -62,12 +66,13 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
         this.schemaContext = schemaContext;
     }
 
+    @Override
     public ListenableFuture<RpcResult<Boolean>> deleteData(final InstanceIdentifier<?> path) {
         ListenableFuture future = pool.submit(new Callable<RpcResult<Boolean>>() {
             @Override
             public RpcResult<Boolean> call() throws Exception {
-                WebResource resource = client.resource(defaultUri.toString() + ResourceUri.CONFIG.getPath()+"/"+
-                        RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext));
+                Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
+                WebResource resource = client.resource(defaultUri.toString() + ResourceUri.CONFIG.getPath()+"/"+ restconfEntry.getKey());
                 final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
                         .delete(ClientResponse.class);
 
@@ -78,7 +83,7 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
                     RestRpcResult rpcResult = new RestRpcResult(false,null,errors);
                     return (RpcResult<Boolean>) Optional.of(rpcResult);
                 }
-                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(), schemaContext, mappingService);
+                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(), schemaContext, mappingService,restconfEntry.getValue());
                 RestRpcResult rpcResult = new RestRpcResult(true,dataObject,null);
                 return (RpcResult<Boolean>) Optional.of(rpcResult);
             }
@@ -91,8 +96,8 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
         ListenableFuture future = pool.submit(new Callable<RpcResult<Boolean>>() {
             @Override
             public RpcResult<Boolean> call() throws Exception {
-                WebResource resource = client.resource(defaultUri.toString() + ResourceUri.CONFIG.getPath()+"/"+
-                        RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext));
+                Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
+                WebResource resource = client.resource(defaultUri.toString() + ResourceUri.CONFIG.getPath()+"/"+ restconfEntry.getKey());
                 final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
                         .put(ClientResponse.class);
 
@@ -103,7 +108,7 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
                     RestRpcResult rpcResult = new RestRpcResult(false,null,errors);
                     return (RpcResult<Boolean>) Optional.of(rpcResult);
                 }
-                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(),schemaContext,mappingService);
+                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(),schemaContext,mappingService,restconfEntry.getValue());
                 RestRpcResult rpcResult = new RestRpcResult(true,dataObject);
                 return (RpcResult<Boolean>) Optional.of(rpcResult);
             }
@@ -117,8 +122,8 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
         ListenableFuture future = pool.submit(new Callable<Optional<T>>() {
             @Override
             public Optional<T> call() throws Exception {
-                WebResource resource = client.resource(defaultUri.toString() + ResourceUri.CONFIG.getPath()+"/"+
-                        RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext));
+                Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
+                WebResource resource = client.resource(defaultUri.toString() + ResourceUri.CONFIG.getPath()+"/"+ restconfEntry.getKey());
                 final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
                         .get(ClientResponse.class);
 
@@ -126,7 +131,7 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
                     throw new RuntimeException("Failed : HTTP error code : "
                             + response.getStatus());
                 }
-                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(), schemaContext, mappingService);
+                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(), schemaContext, mappingService,restconfEntry.getValue());
                 return (Optional<T>) Optional.of(dataObject);
             }
         });
@@ -142,9 +147,8 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
                 if (strategy instanceof  LimitedDepthRetrievalStrategy){
                     _strategy = QueryParameters.DEPTH.getQueryParameter()+"="+((LimitedDepthRetrievalStrategy)strategy).getDepthLimit();
                 }
-                WebResource resource = client.resource(defaultUri.toString() + ResourceUri.CONFIG.getPath()+"/"+
-                        RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext)+
-                        _strategy);
+                Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
+                WebResource resource = client.resource(defaultUri.toString() + ResourceUri.CONFIG.getPath()+"/"+ restconfEntry.getKey());
                 final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
                         .get(ClientResponse.class);
 
@@ -153,7 +157,7 @@ public class ConfigurationDataStoreImpl implements ConfigurationDatastore  {
                             + response.getStatus());
                 }
 
-                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(),schemaContext,mappingService);
+                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(),schemaContext,mappingService,restconfEntry.getValue());
                 return (Optional<T>) Optional.of(dataObject);
             }
         });

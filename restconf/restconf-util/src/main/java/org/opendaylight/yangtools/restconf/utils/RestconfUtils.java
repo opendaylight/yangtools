@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.restconf.utils;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -30,6 +30,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException;
@@ -45,46 +47,56 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 public class RestconfUtils {
 
     private static final BiMap<URI,String> uriToModuleName = new Functions.Function0<BiMap<URI,String>>() {
+        @Override
         public BiMap<URI,String> apply() {
             HashBiMap<URI,String> _create = HashBiMap.<URI, String>create();
             return _create;
         }
     }.apply();
 
-    public static String toRestconfIdentifier(
+
+    public static Entry<String,DataSchemaNode> toRestconfIdentifier(org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> bindingIdentifier, BindingIndependentMappingService mappingService, SchemaContext schemaContext) {
+        InstanceIdentifier domIdentifier = mappingService.toDataDom(bindingIdentifier);
+        return toRestconfIdentifier(domIdentifier, schemaContext);
+
+    }
+
+    public static Entry<String,DataSchemaNode> toRestconfIdentifier(
             InstanceIdentifier xmlInstanceIdentifier,
             SchemaContext schemaContext) {
 
         final List<InstanceIdentifier.PathArgument> elements = xmlInstanceIdentifier.getPath();
-        StringBuilder _stringBuilder = new StringBuilder();
-        final StringBuilder ret = _stringBuilder;
+        final StringBuilder ret = new StringBuilder();
         InstanceIdentifier.PathArgument _head = IterableExtensions.<InstanceIdentifier.PathArgument>head(elements);
         final QName startQName = _head.getNodeType();
         URI _namespace = startQName.getNamespace();
         Date _revision = startQName.getRevision();
         final Module initialModule = schemaContext.findModuleByNamespaceAndRevision(_namespace, _revision);
-        DataNodeContainer node = ((DataNodeContainer) initialModule);
+        DataNodeContainer node = (initialModule);
+        DataSchemaNode schemaNode = null;
         for (final InstanceIdentifier.PathArgument element : elements) {
             {
-                QName _nodeType = element.getNodeType();
-                final DataSchemaNode potentialNode = schemaContext.getDataChildByName(_nodeType);
-                boolean _isListOrContainer = isListOrContainer(potentialNode);
-                boolean _not = (!_isListOrContainer);
-                if (_not) {
+                final DataSchemaNode potentialNode = schemaContext.getDataChildByName(element.getNodeType());
+                if (!isListOrContainer(potentialNode)) {
                     return null;
                 }
                 node = ((DataNodeContainer) potentialNode);
-                CharSequence _convertToRestconfIdentifier = convertToRestconfIdentifier(element, node);
-                ret.append(_convertToRestconfIdentifier);
+                schemaNode = potentialNode;
+                ret.append(convertToRestconfIdentifier(element, node,schemaContext));
             }
         }
-        return ret.toString();
+        return new SimpleEntry<>(ret.toString(),schemaNode);
     }
 
-    private static CharSequence _convertToRestconfIdentifier(final InstanceIdentifier.NodeIdentifier argument, final ContainerSchemaNode node, SchemaContext schemaContext) {
+    private static CharSequence convertContainerToRestconfIdentifier(final InstanceIdentifier.NodeIdentifier argument, final ContainerSchemaNode node, SchemaContext schemaContext) {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("/");
         QName _nodeType = argument.getNodeType();
@@ -92,7 +104,7 @@ public class RestconfUtils {
         _builder.append(_restconfIdentifier, "");
         return _builder;
     }
-    private static CharSequence _convertToRestconfIdentifier(final InstanceIdentifier.NodeIdentifierWithPredicates argument, final ListSchemaNode node,SchemaContext schemaContext) {
+    private static CharSequence convertListToRestconfIdentifier(final InstanceIdentifier.NodeIdentifierWithPredicates argument, final ListSchemaNode node,SchemaContext schemaContext) {
         QName _nodeType = argument.getNodeType();
         final CharSequence nodeIdentifier = toRestconfIdentifier(_nodeType,schemaContext);
         final Map<QName,Object> keyValues = argument.getKeyValues();
@@ -150,17 +162,14 @@ public class RestconfUtils {
         _builder.append(_localName, "");
         return _builder;
     }
-    private static CharSequence convertToRestconfIdentifier(final InstanceIdentifier.PathArgument argument, final DataNodeContainer node) {
+    private static CharSequence convertToRestconfIdentifier(final InstanceIdentifier.PathArgument argument, final DataNodeContainer node, SchemaContext schemaContext) {
         if (argument instanceof InstanceIdentifier.NodeIdentifier
                 && node instanceof ContainerSchemaNode) {
-            return _convertToRestconfIdentifier((InstanceIdentifier.NodeIdentifier)argument, (ContainerSchemaNode)node);
+            return convertContainerToRestconfIdentifier((NodeIdentifier)argument, (ContainerSchemaNode) node,schemaContext);
         } else if (argument instanceof InstanceIdentifier.NodeIdentifierWithPredicates
                 && node instanceof ListSchemaNode) {
-            return _convertToRestconfIdentifier((InstanceIdentifier.NodeIdentifierWithPredicates)argument, (ListSchemaNode)node);
-        } else if (argument != null
-                && node != null) {
-            return _convertToRestconfIdentifier(argument, node);
-        } else {
+            return convertListToRestconfIdentifier((NodeIdentifierWithPredicates) argument,(ListSchemaNode) node,schemaContext);
+        }  else {
             throw new IllegalArgumentException("Unhandled parameter types: " +
                     Arrays.<Object>asList(argument, node).toString());
         }
@@ -175,10 +184,6 @@ public class RestconfUtils {
         return _or;
     }
 
-    private static CharSequence _convertToRestconfIdentifier(final InstanceIdentifier.PathArgument argument, final DataNodeContainer node) {
-        IllegalArgumentException _illegalArgumentException = new IllegalArgumentException("Conversion of generic path argument is not supported");
-        throw _illegalArgumentException;
-    }
     public static Module findModuleByNamespace(final URI namespace,SchemaContext schemaContext) {
         boolean _tripleNotEquals = (namespace != null);
         Preconditions.checkArgument(_tripleNotEquals);
@@ -218,22 +223,15 @@ public class RestconfUtils {
         }
         return moduleName;
     }
-    public static DataSchemaNode findSchema(
-            InstanceIdentifier xmlInstanceIdentifier,SchemaContext context) {
-        // TODO Find existing implementation, create alias.
-        return null;
-    }
 
-    public static DataObject dataObjectFromInputStream(org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> path, InputStream inputStream, SchemaContext schemaContext, BindingIndependentMappingService mappingService) {
+    public static DataObject dataObjectFromInputStream(org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> path, InputStream inputStream, SchemaContext schemaContext, BindingIndependentMappingService mappingService, DataSchemaNode dataSchema) {
         // Parse stream into w3c Document
         try {
-            org.opendaylight.yangtools.yang.data.api.InstanceIdentifier xmlInstanceIdentifier = mappingService.toDataDom(path);
             DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
             documentBuilder.setNamespaceAware(true);
             DocumentBuilder builder = documentBuilder.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
             Element rootElement = doc.getDocumentElement();
-            DataSchemaNode dataSchema = RestconfUtils.findSchema(xmlInstanceIdentifier,schemaContext);
             Node<?> domNode =  XmlDocumentUtils.toDomNode(rootElement, Optional.of(dataSchema), Optional.<XmlCodecProvider>absent());
             DataObject  dataObject = mappingService.dataObjectFromDataDom(path, (CompositeNode) domNode); //getDataFromResponse
             return dataObject;

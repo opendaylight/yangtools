@@ -7,15 +7,6 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.net.URI;
@@ -26,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.restconf.client.api.RestconfClientContext;
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
@@ -35,8 +27,6 @@ import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.restconf.client.api.event.ListenableEventStreamContext;
 import org.opendaylight.yangtools.restconf.client.api.rpc.RpcServiceContext;
-import org.opendaylight.yangtools.restconf.client.service.ConfigurationDataStoreImpl;
-import org.opendaylight.yangtools.restconf.client.service.OperationalDataStoreImpl;
 import org.opendaylight.yangtools.restconf.client.to.RestListenableEventStreamContext;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcServiceContext;
 import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
@@ -45,27 +35,44 @@ import org.opendaylight.yangtools.restconf.utils.XmlTools;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextHolder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RestconfClientImpl implements RestconfClientContext, SchemaContextListener { //, RestRestconfService {
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
-
-
-
-    private final URI defaultUri;
+public class RestconfClientImpl implements RestconfClientContext, SchemaContextListener { private final URI defaultUri;
 
     private final Client client;
 
-    private final BindingIndependentMappingService mappingService;
     private final ListeningExecutorService pool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
-    private Logger logger = LoggerFactory.getLogger(RestconfClientImpl.class.toString());
-    private SchemaContext schemaContext;
+    private final Logger logger = LoggerFactory.getLogger(RestconfClientImpl.class.toString());
+
+    private final SchemaContextHolder schemaContextHolder;
+
+    private final BindingIndependentMappingService mappingService;
+
+    private OperationalDataStoreImpl operationalDatastoreAccessor;
 
 
-    public RestconfClientImpl(URL url,BindingIndependentMappingService mappingService){
+    public RestconfClientImpl(URL url,BindingIndependentMappingService mappingService, SchemaContextHolder schemaContextHolder){
+        Preconditions.checkArgument(url != null,"Restconf endpoint URL must be supplied.");
+        Preconditions.checkArgument(mappingService != null, "Mapping service must not be null.");
+        Preconditions.checkNotNull(schemaContextHolder, "Schema Context Holder must not be null.");
         ClientConfig config = new DefaultClientConfig();
         client  = Client.create(config);
         URI uri = null;
@@ -76,9 +83,26 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
         }
         this.defaultUri = uri;
         this.mappingService = mappingService;
-        this.schemaContext = schemaContext;
+        this.schemaContextHolder = schemaContextHolder;
     }
 
+    protected URI getDefaultUri() {
+        return defaultUri;
+    }
+
+    protected ListeningExecutorService getPool() {
+        return pool;
+    }
+
+    protected SchemaContextHolder getSchemaContextHolder() {
+        return schemaContextHolder;
+    }
+
+    protected BindingIndependentMappingService getMappingService() {
+        return mappingService;
+    }
+
+    @Override
     public ListenableFuture<Set<Class<? extends RpcService>>> getRpcServices() {
         ListenableFuture<Set<Class<? extends RpcService>>> future = pool.submit(new Callable<Set<Class<? extends RpcService>>>() {
             @Override
@@ -91,20 +115,20 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
                             + response.getStatus());
                 }
 
+                // FIXME: Use entityInputStream directly, when reusing it reset it.
                 StringWriter writer = new StringWriter();
                 IOUtils.copy(response.getEntityInputStream(), writer, "UTF-8");
                 String theString = writer.toString();
                                            //use XmlDocumentUtils
                 List<RestModule> modules = XmlTools.getModulesFromInputStream(new ByteArrayInputStream(theString.getBytes("UTF-8")));
 
-                Set<Class<? extends RpcService>> rpcClasses = new HashSet<Class<? extends RpcService>>();
-                Set<RpcService> rpcNamespaces =  XmlTools.fromInputStream(new ByteArrayInputStream(theString.getBytes("UTF-8")));
+                Builder<Class<? extends RpcService>> rpcClasses = ImmutableSet.builder();
 
                 for (RestModule module:modules){
                     Optional<Class<? extends RpcService>> optionalRpcService = mappingService.getRpcServiceClassFor(module.getNamespace(), module.getRevision());
                     rpcClasses.add(optionalRpcService.get());
                 }
-                return rpcClasses;
+                return rpcClasses.build();
             }
         });
         return future;
@@ -154,12 +178,14 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public ConfigurationDatastore getConfigurationDatastore() {
-        return new ConfigurationDataStoreImpl(mappingService,this.defaultUri,this.schemaContext);
+        return null;//new ConfigurationDataStoreImplOld(this);
     }
 
     @Override
     public OperationalDatastore getOperationalDatastore() {
-        return new OperationalDataStoreImpl(mappingService,this.defaultUri,this.schemaContext);
+        if(operationalDatastoreAccessor == null)
+            operationalDatastoreAccessor =  new OperationalDataStoreImpl(this);
+        return operationalDatastoreAccessor;
     }
 
     @Override
@@ -170,6 +196,59 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public void onGlobalContextUpdated(SchemaContext context) {
-        this.schemaContext = context;
+        //this.schemaContext = context;
     }
+
+    protected Client getClient() {
+        return client;
+    }
+
+    public SchemaContext getSchemaContext() {
+        return this.schemaContextHolder.getSchemaContext();
+    }
+
+    protected <T> ListenableFuture<T> get(final String path, final Function<ClientResponse, T> processingFunction) {
+        return pool.submit(new GetAndTransformTask<T>(constructPath(path),processingFunction));
+    }
+
+    protected <T> ListenableFuture<T> get(final String path,final String mediaType, final Function<ClientResponse, T> processingFunction) {
+        return pool.submit(new GetAndTransformTask<T>(constructPath(path),mediaType,processingFunction));
+    }
+
+    protected String constructPath(String path) {
+        return getDefaultUri().toString() + path;
+    }
+
+    //, RestRestconfService {
+
+    private class GetAndTransformTask<T> implements Callable<T> {
+
+        private final Function<ClientResponse, T> transformation;
+        private final String path;
+        private final String acceptType;
+
+        public GetAndTransformTask(String path, Function<ClientResponse, T> processingFunction) {
+            this.path = path;
+            this.transformation = processingFunction;
+            this.acceptType = ResourceMediaTypes.XML.getMediaType();
+        }
+
+        public GetAndTransformTask(String path, String mediaType, Function<ClientResponse, T> processingFunction) {
+            this.path = path;
+            this.transformation = processingFunction;
+            this.acceptType = mediaType;
+        }
+
+        @Override
+        public T call() {
+
+            WebResource resource = client.resource(path);
+            ClientResponse response = resource.accept(acceptType).get(ClientResponse.class);
+
+            // Applies the specific transformation for supplied resource.
+            return transformation.apply(response);
+        }
+
+    }
+
 }
