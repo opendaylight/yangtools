@@ -56,7 +56,7 @@ public class WebSocketClientTest {
         }
     }
 
-    private class ClientMessageCallback implements org.opendaylight.controller.websocket.client.callback.ClientMessageCallback {
+    private class ClientMessageCallback implements org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback {
         @Override
         public void onMessageReceived(Object message) {
            logger.info("received message {}",message);
