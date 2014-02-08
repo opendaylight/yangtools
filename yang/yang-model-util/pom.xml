@@ -26,6 +26,10 @@
             <artifactId>yang-model-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-binding</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.xtend</groupId>
             <artifactId>org.eclipse.xtend.lib</artifactId>
         </dependency>
