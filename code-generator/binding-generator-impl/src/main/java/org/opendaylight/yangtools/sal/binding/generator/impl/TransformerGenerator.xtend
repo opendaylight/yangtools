@@ -73,6 +73,7 @@ import java.util.Set
 import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.yang.binding.BindingMapping
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition
 
 class TransformerGenerator {
 
@@ -1427,8 +1428,20 @@ class TransformerGenerator {
     private def dispatch serializeValue(Enumeration type, String parameter, TypeDefinition<?> typeDefinition) {
         '''«type.valueSerializer(typeDefinition).resolvedName».toDomValue(«parameter»)'''
     }
-
+    
+    private def dispatch serializeValue(Type type, String parameter, EmptyTypeDefinition typeDefinition) {
+        '''(«parameter».booleanValue() ? "" : null)'''
+    }
+    
     private def dispatch serializeValue(Type signature, String property, TypeDefinition<?> typeDefinition) {
+        serializeValue(signature,property)
+    }
+    
+    private def dispatch serializeValue(Type signature, String property, Void typeDefinition) {
+        serializeValue(signature,property)
+    }
+    
+    private def dispatch serializeValue(Type signature, String property) {
         if (INSTANCE_IDENTIFIER == signature) {
             return '''«INSTANCE_IDENTIFIER_CODEC».serialize(«property»)'''
         } else if (CLASS_TYPE.equals(signature)) {
