@@ -74,6 +74,18 @@ public class XmlDocumentUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlDocumentUtils.class);
 
+    /**
+     * Converts Data DOM structure to XML Document for specified XML Codec Provider and corresponding 
+     * Data Node Container schema. The CompositeNode data parameter enters as root of Data DOM tree and will 
+     * be transformed to root in XML Document. Each element of Data DOM tree is compared against specified Data 
+     * Node Container Schema and transformed accordingly.
+     * 
+     * @param data Data DOM root element
+     * @param schema Data Node Container Schema
+     * @param codecProvider XML Codec Provider
+     * @return new instance of XML Document
+     * @throws UnsupportedDataTypeException
+     */
     public static Document toDocument(CompositeNode data, DataNodeContainer schema, XmlCodecProvider codecProvider)
             throws UnsupportedDataTypeException {
         Preconditions.checkNotNull(data);
@@ -95,6 +107,33 @@ public class XmlDocumentUtils {
             throw new UnsupportedDataTypeException(
                     "Schema can be ContainerSchemaNode or ListSchemaNode. Other types are not supported yet.");
         }
+    }
+
+    /**
+     * Converts Data DOM structure to XML Document for specified XML Codec Provider. The CompositeNode
+     * data parameter enters as root of Data DOM tree and will be transformed to root in XML Document. The child
+     * nodes of Data Tree are transformed accordingly.
+     * 
+     * @param data Data DOM root element
+     * @param codecProvider XML Codec Provider
+     * @return new instance of XML Document
+     * @throws UnsupportedDataTypeException
+     */
+    public static Document toDocument(CompositeNode data, XmlCodecProvider codecProvider)
+            throws UnsupportedDataTypeException {
+        Preconditions.checkNotNull(data);
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        Document doc = null;
+        try {
+            DocumentBuilder bob = dbf.newDocumentBuilder();
+            doc = bob.newDocument();
+        } catch (ParserConfigurationException e) {
+            return null;
+        }
+
+        doc.appendChild(createXmlRootElement(doc, data, null, codecProvider));
+        return doc;
     }
 
     private static Element createXmlRootElement(Document doc, Node<?> data, SchemaNode schema,
