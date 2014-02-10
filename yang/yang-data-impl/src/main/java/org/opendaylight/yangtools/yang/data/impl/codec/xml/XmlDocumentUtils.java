@@ -96,7 +96,24 @@ public class XmlDocumentUtils {
                     "Schema can be ContainerSchemaNode or ListSchemaNode. Other types are not supported yet.");
         }
     }
+    
+    public static Document toDocument(CompositeNode data, XmlCodecProvider codecProvider)
+            throws UnsupportedDataTypeException {
+        Preconditions.checkNotNull(data);
 
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        Document doc = null;
+        try {
+            DocumentBuilder bob = dbf.newDocumentBuilder();
+            doc = bob.newDocument();
+        } catch (ParserConfigurationException e) {
+            return null;
+        }
+
+        doc.appendChild(createXmlRootElement(doc, data, null, codecProvider));
+        return doc;
+    }
+    
     private static Element createXmlRootElement(Document doc, Node<?> data, SchemaNode schema,
             XmlCodecProvider codecProvider) throws UnsupportedDataTypeException {
         Element itemEl = createElementFor(doc, data);
