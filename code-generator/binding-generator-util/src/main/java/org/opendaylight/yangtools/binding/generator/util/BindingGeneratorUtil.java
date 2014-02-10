@@ -12,7 +12,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +49,18 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
  */
 public final class BindingGeneratorUtil {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyMMdd");
+    private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyMMdd");
+        }
+
+        @Override
+        public void set(SimpleDateFormat value) {
+            throw new UnsupportedOperationException();
+        }
+    };
 
     /**
      * Array of strings values which represents JAVA reserved words.
@@ -172,7 +182,7 @@ public final class BindingGeneratorUtil {
 
         packageNameBuilder.append(namespace);
         packageNameBuilder.append(".rev");
-        packageNameBuilder.append(DATE_FORMAT.format(module.getRevision()));
+        packageNameBuilder.append(DATE_FORMAT.get().format(module.getRevision()));
 
         return validateJavaPackage(packageNameBuilder.toString());
     }
@@ -253,7 +263,7 @@ public final class BindingGeneratorUtil {
      *            JAVA class name
      * @return string which is in accordance with best practices for JAVA class
      *         name.
-     *         
+     *
      * @deprecated Use {@link BindingMapping#getClassName(QName)} instead.
      */
     @Deprecated
