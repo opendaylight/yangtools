@@ -78,6 +78,10 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
+                        <Export-Package>
+                            org.opendaylight.yangtools.sal.binding.generator.impl.*,
+                            org.opendaylight.yangtools.sal.binding.generator.util.*
+                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
