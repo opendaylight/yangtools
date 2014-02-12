@@ -227,7 +227,7 @@ public class RestconfUtils {
         return moduleName;
     }
 
-    public static Set<Class<? extends RpcService>> rpcServicesFromInputStream(InputStream inputStream, BindingIndependentMappingService mappingService){
+    public static Set<Class<? extends RpcService>> rpcServicesFromInputStream(InputStream inputStream, BindingIndependentMappingService mappingService,SchemaContext schemaContext){
         try {
             DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
             documentBuilder.setNamespaceAware(true);
@@ -235,8 +235,9 @@ public class RestconfUtils {
             Document doc = builder.parse(inputStream);
             Element rootElement = doc.getDocumentElement();
 
-            List<Node<?>> domNodes = XmlDocumentUtils.toDomNodes(rootElement, Optional.<Set<DataSchemaNode>>absent());
+            XmlDocumentUtils.fromElement(rootElement).getNodeType();
 
+            List<Node<?>> domNodes = XmlDocumentUtils.toDomNodes(rootElement, Optional.of(schemaContext.getChildNodes()));
             Set<Class<? extends RpcService>> rpcServices = new HashSet<Class<? extends RpcService>>();
             for (Node<?> node:domNodes){
                 rpcServices.add(mappingService.getRpcServiceClassFor(node.getNodeType().getNamespace().toString(),node.getNodeType().getRevision().toString()).get());
