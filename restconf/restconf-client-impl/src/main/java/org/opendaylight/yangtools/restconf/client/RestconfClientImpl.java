@@ -62,6 +62,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     private final BindingIndependentMappingService mappingService;
 
     private OperationalDataStoreImpl operationalDatastoreAccessor;
+    private ConfigurationDataStoreImpl configurationDatastoreAccessor;
 
 
     public RestconfClientImpl(URL url,BindingIndependentMappingService mappingService, SchemaContextHolder schemaContextHolder){
@@ -110,7 +111,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
                             + response.getStatus());
                 }
 
-                return RestconfUtils.rpcServicesFromInputStream(response.getEntityInputStream(),mappingService);
+                return RestconfUtils.rpcServicesFromInputStream(response.getEntityInputStream(),mappingService,schemaContextHolder.getSchemaContext());
             }
         });
         return future;
@@ -160,7 +161,9 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public ConfigurationDatastore getConfigurationDatastore() {
-        return null;//new ConfigurationDataStoreImplOld(this);
+        if (configurationDatastoreAccessor == null)
+            configurationDatastoreAccessor = new ConfigurationDataStoreImpl(this);
+        return configurationDatastoreAccessor;
     }
 
     @Override
@@ -178,7 +181,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public void onGlobalContextUpdated(SchemaContext context) {
-        //this.schemaContext = context;
+
     }
 
     protected Client getRestClient() {
