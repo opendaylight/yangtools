@@ -91,6 +91,7 @@ public class YangToSourcesPluginTestIT {
         Verifier v = setUp("NoGenerators/", false);
         v.verifyErrorFreeLog();
         v.verifyTextInLog("[WARNING] yang-to-sources: No code generators provided");
+        v.verifyTextInLog("[WARNING] yang-to-sources: Dependency resolution conflict:");
     }
 
     @Test
