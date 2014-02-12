@@ -27,6 +27,11 @@
         TODO: add sample usage when finished
     </description>
 
+    <properties>
+<!--         <aether.version>0.9.0.M2</aether.version> -->
+        <aether.version>1.13.1</aether.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -68,6 +73,12 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-slf4j-logging</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>google-collections</artifactId>
+                    <groupId>com.google.collections</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -92,6 +103,27 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>
+
+<!--         <dependency> -->
+<!--             <groupId>org.eclipse.aether</groupId> -->
+<!--             <artifactId>aether-api</artifactId> -->
+<!--             <version>${aether.version}</version> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>org.eclipse.aether</groupId> -->
+<!--             <artifactId>aether-util</artifactId> -->
+<!--             <version>${aether.version}</version> -->
+<!--         </dependency> -->
+        <dependency>
+            <groupId>org.sonatype.aether</groupId>
+            <artifactId>aether-api</artifactId>
+            <version>${aether.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.aether</groupId>
+            <artifactId>aether-util</artifactId>
+            <version>${aether.version}</version>
         </dependency>
     </dependencies>
 

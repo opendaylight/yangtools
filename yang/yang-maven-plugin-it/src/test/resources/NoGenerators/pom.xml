@@ -11,9 +11,23 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <version>0.5-SNAPSHOT</version>
+        <artifactId>yang-maven-plugin-it</artifactId>
+        <version>0.6.2-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.opendaylight.yangtools</groupId>
+    <version>0.5-SNAPSHOT</version>
     <artifactId>test</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
+            <version>0.6.1</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
