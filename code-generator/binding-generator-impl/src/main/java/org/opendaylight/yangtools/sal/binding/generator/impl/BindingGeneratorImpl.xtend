@@ -897,10 +897,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
             do {
                 tmpPath.add(currentName);
-                val dataNodeParent = parent as DataNodeContainer;
-                for (u : dataNodeParent.uses) {
-                    if (result == null) {
-                        result = getResultFromUses(u, currentName.localName)
+                if (parent instanceof DataNodeContainer) {
+                    val dataNodeParent = parent as DataNodeContainer;
+                    for (u : dataNodeParent.uses) {
+                        if (result == null) {
+                            result = getResultFromUses(u, currentName.localName)
+                        }
                     }
                 }
                 if (result == null) {
@@ -988,7 +990,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
             tmpPath.remove(0);
             for (name : tmpPath) {
                 // searching by local name is must, because node has different namespace in its original location
-                newParent = (newParent as DataNodeContainer).getDataChildByName(name.localName);
+                if (newParent instanceof DataNodeContainer) {
+                    newParent = (newParent as DataNodeContainer).getDataChildByName(name.localName);
+                } else {
+                    newParent = (newParent as ChoiceNode).getCaseNodeByName(name.localName);
+                }
             }
             if (newParent != null && newParent.addedByUses) {
                 newParent = findOriginal(newParent);
