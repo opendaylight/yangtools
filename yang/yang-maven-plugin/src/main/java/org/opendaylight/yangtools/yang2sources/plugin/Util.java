@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,9 +26,21 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.util.artifact.JavaScopes;
+import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
@@ -144,6 +157,118 @@ final class Util {
             }
         }
         return dependencies;
+    }
+
+    /**
+     * Read current project dependencies and check if it don't grab incorrect
+     * artifacts versions which could be in conflict with plugin dependencies.
+     *
+     * @param project
+     *            current project
+     * @param log
+     *            logger
+     * @param repoSystem
+     *            repository system
+     * @param repoSession
+     *            repository system session
+     * @param remoteRepos
+     *            remote repositories
+     */
+    static void checkClasspath(MavenProject project, Log log, RepositorySystem repoSystem,
+            RepositorySystemSession repoSession, List<RemoteRepository> remoteRepos) {
+        Plugin plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
+        if (plugin == null) {
+            log.warn(message("%s not found, dependencies version check skipped", YangToSourcesProcessor.LOG_PREFIX,
+                    YangToSourcesMojo.PLUGIN_NAME));
+        } else {
+            Map<org.eclipse.aether.artifact.Artifact, List<org.eclipse.aether.artifact.Artifact>> pluginDependencies = new HashMap<>();
+            getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, repoSession, remoteRepos, log);
+
+            Set<Artifact> projectDependencies = project.getDependencyArtifacts();
+            for (Map.Entry<org.eclipse.aether.artifact.Artifact, List<org.eclipse.aether.artifact.Artifact>> entry : pluginDependencies
+                    .entrySet()) {
+                checkArtifact(entry.getKey(), projectDependencies, log);
+                for (org.eclipse.aether.artifact.Artifact dependency : entry.getValue()) {
+                    checkArtifact(dependency, projectDependencies, log);
+                }
+            }
+        }
+    }
+
+    /**
+     * Read transitive dependencies of given plugin and store them in map.
+     *
+     * @param plugin
+     *            plugin to read
+     * @param map
+     *            map, where founded transitive dependencies will be stored
+     * @param repoSystem
+     *            repository system
+     * @param repoSession
+     *            repository system session
+     * @param remoteRepos
+     *            list of remote repositories
+     * @param log
+     *            logger
+     */
+    private static void getPluginTransitiveDependencies(Plugin plugin,
+            Map<org.eclipse.aether.artifact.Artifact, List<org.eclipse.aether.artifact.Artifact>> map,
+            RepositorySystem repoSystem, RepositorySystemSession repoSession, List<RemoteRepository> remoteRepos,
+            Log log) {
+        for (Dependency dep : plugin.getDependencies()) {
+            String artifactCoords = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + dep.getVersion();
+            org.eclipse.aether.artifact.Artifact artifact = new org.eclipse.aether.artifact.DefaultArtifact(
+                    artifactCoords);
+
+            if (!(map.containsKey(artifact))) {
+                DependencyFilter classpathFlter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
+                CollectRequest collectRequest = new CollectRequest();
+                collectRequest.setRoot(new org.eclipse.aether.graph.Dependency(artifact, JavaScopes.COMPILE));
+                collectRequest.setRepositories(remoteRepos);
+                DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, classpathFlter);
+
+                List<ArtifactResult> artifactResults;
+                try {
+                    artifactResults = repoSystem.resolveDependencies(repoSession, dependencyRequest)
+                            .getArtifactResults();
+                    List<org.eclipse.aether.artifact.Artifact> deps = new ArrayList<>();
+                    for (ArtifactResult ar : artifactResults) {
+                        deps.add(ar.getArtifact());
+                    }
+                    map.put(artifact, deps);
+                } catch (DependencyResolutionException e) {
+                    log.warn(message("Failed to resolve plugin dependencies, version check skipped",
+                            YangToSourcesProcessor.LOG_PREFIX));
+                }
+            }
+        }
+    }
+
+    /**
+     * Check artifact against collection of dependencies. If collection contains
+     * artifact with same groupId and artifactId, but different version, logs a
+     * warning.
+     *
+     * @param artifact
+     *            artifact to check
+     * @param dependencies
+     *            collection of dependencies
+     * @param log
+     *            logger
+     */
+    private static void checkArtifact(org.eclipse.aether.artifact.Artifact artifact, Collection<Artifact> dependencies,
+            Log log) {
+        for (Artifact d : dependencies) {
+            if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())) {
+                if (!(artifact.getVersion().equals(d.getVersion()))) {
+                    log.warn(message("Dependency resolution conflict:", YangToSourcesProcessor.LOG_PREFIX));
+                    log.warn(message("'%s' dependency [%s] has different version than one "
+                            + "declared in current project [%s]. It is recommended to fix this problem "
+                            + "because it may cause compilation errors.", YangToSourcesProcessor.LOG_PREFIX,
+                            YangToSourcesMojo.PLUGIN_NAME, artifact, d));
+                }
+            }
+        }
     }
 
     private static final String JAR_SUFFIX = ".jar";
