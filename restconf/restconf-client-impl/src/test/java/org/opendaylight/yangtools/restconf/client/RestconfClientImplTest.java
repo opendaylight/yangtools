@@ -50,7 +50,7 @@ public class RestconfClientImplTest {
         final ModuleInfoBackedContext moduleInfo = ModuleInfoBackedContext.create();
         moduleInfo.addModuleInfos(BindingReflections.loadModuleInfos());
         mappingService.onGlobalContextUpdated(moduleInfo.tryToCreateSchemaContext().get());
-        this.restconfClientContext = new RestconfClientFactory().getRestconfClientContext(new URL(restconfUrl),mappingService, mappingService);
+        this.restconfClientContext = new RestconfClientFactory().getRestconfClientContext(new URL(restconfUrl),mappingService, mappingService, new AuthProvider());
         assertNotNull(this.restconfClientContext);
     }
 
