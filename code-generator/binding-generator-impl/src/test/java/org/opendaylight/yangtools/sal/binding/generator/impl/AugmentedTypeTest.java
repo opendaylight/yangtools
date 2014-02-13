@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,12 +34,12 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class AugmentedTypeTest {
 
     private final static List<File> augmentModels = new ArrayList<>();
-    private final static String augmentFolderPath = AugmentedTypeTest.class
-            .getResource("/augment-test-models").getPath();
+    private final static URL augmentFolderPath = AugmentedTypeTest.class
+            .getResource("/augment-test-models");
 
     @BeforeClass
-    public static void loadTestResources() {
-        final File augFolder = new File(augmentFolderPath);
+    public static void loadTestResources() throws URISyntaxException {
+        final File augFolder = new File(augmentFolderPath.toURI());
 
         for (final File fileEntry : augFolder.listFiles()) {
             if (fileEntry.isFile()) {
