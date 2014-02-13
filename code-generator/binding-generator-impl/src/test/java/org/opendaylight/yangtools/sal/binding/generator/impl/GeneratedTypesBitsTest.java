@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -22,30 +24,16 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GeneratedTypesBitsTest {
 
-    private SchemaContext resolveSchemaContextFromFiles(final String... yangFiles) {
-        final YangModelParser parser = new YangParserImpl();
-
-        final List<File> inputFiles = new ArrayList<File>();
-        for (int i = 0; i < yangFiles.length; ++i) {
-            inputFiles.add(new File(yangFiles[i]));
-        }
-
-        final Set<Module> modules = parser.parseYangModels(inputFiles);
-        return parser.resolveSchemaContext(modules);
-    }
 
     @Test
-    public void testGeneretedTypesBitsTest() {
-        final String yangTypesPath = getClass().getResource("/simple-bits-demo.yang").getPath();
+    public void testGeneretedTypesBitsTest() throws URISyntaxException {
+        final URI yangTypesPath = getClass().getResource("/simple-bits-demo.yang").toURI();
 
-        final SchemaContext context = resolveSchemaContextFromFiles(yangTypesPath);
+        final SchemaContext context = SupportTestUtil.resolveSchemaContextFromFiles(yangTypesPath);
         assertTrue(context != null);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
