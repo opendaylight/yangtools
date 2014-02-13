@@ -17,6 +17,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -26,6 +28,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import org.opendaylight.yangtools.restconf.client.api.RestconfClientContext;
+import org.opendaylight.yangtools.restconf.client.api.auth.AuthenticationHolder;
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
 import org.opendaylight.yangtools.restconf.client.api.data.OperationalDatastore;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestEventStreamInfo;
@@ -64,8 +67,8 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     private OperationalDataStoreImpl operationalDatastoreAccessor;
     private ConfigurationDataStoreImpl configurationDatastoreAccessor;
 
-
-    public RestconfClientImpl(URL url,BindingIndependentMappingService mappingService, SchemaContextHolder schemaContextHolder){
+    public RestconfClientImpl(URL url,BindingIndependentMappingService mappingService,
+                              SchemaContextHolder schemaContextHolder){
         Preconditions.checkArgument(url != null,"Restconf endpoint URL must be supplied.");
         Preconditions.checkArgument(mappingService != null, "Mapping service must not be null.");
         Preconditions.checkNotNull(schemaContextHolder, "Schema Context Holder must not be null.");
@@ -171,6 +174,17 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
         if(operationalDatastoreAccessor == null)
             operationalDatastoreAccessor =  new OperationalDataStoreImpl(this);
         return operationalDatastoreAccessor;
+    }
+
+    public void setAuthenticationHolder(AuthenticationHolder authenticationHolder) {
+        if(authenticationHolder.authenticationRequired()){
+            switch (authenticationHolder.getAuthType()){
+                case DIGEST: restClient.addFilter(new HTTPDigestAuthFilter(authenticationHolder.getUserName(), authenticationHolder.getPassword()));
+                    break;
+                default: restClient.addFilter(new HTTPBasicAuthFilter(authenticationHolder.getUserName(), authenticationHolder.getPassword()));
+                    break;
+            }
+        }
     }
 
     @Override
