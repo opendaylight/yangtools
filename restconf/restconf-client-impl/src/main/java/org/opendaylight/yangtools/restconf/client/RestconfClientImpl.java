@@ -17,6 +17,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,6 +34,7 @@ import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.restconf.client.api.event.ListenableEventStreamContext;
 import org.opendaylight.yangtools.restconf.client.api.rpc.RpcServiceContext;
+import org.opendaylight.yangtools.restconf.client.auth.AuthenticationHolder;
 import org.opendaylight.yangtools.restconf.client.to.RestListenableEventStreamContext;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcServiceContext;
 import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
@@ -64,13 +66,15 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     private OperationalDataStoreImpl operationalDatastoreAccessor;
     private ConfigurationDataStoreImpl configurationDatastoreAccessor;
 
-
-    public RestconfClientImpl(URL url,BindingIndependentMappingService mappingService, SchemaContextHolder schemaContextHolder){
+    public RestconfClientImpl(URL url,BindingIndependentMappingService mappingService,
+                              SchemaContextHolder schemaContextHolder,
+                              AuthenticationHolder authHolder){
         Preconditions.checkArgument(url != null,"Restconf endpoint URL must be supplied.");
         Preconditions.checkArgument(mappingService != null, "Mapping service must not be null.");
         Preconditions.checkNotNull(schemaContextHolder, "Schema Context Holder must not be null.");
         ClientConfig config = new DefaultClientConfig();
         restClient  = Client.create(config);
+        restClient.addFilter(new HTTPBasicAuthFilter(authHolder.getUserName(), authHolder.getPassword()));
         URI uri = null;
         try {
             uri = url.toURI();
