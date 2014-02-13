@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -33,8 +35,8 @@ public class IdentityrefTypeTest {
     private static List<File> testModels = null;
 
     @Before
-    public void loadTestResources() {
-        String folderPath = IdentityrefTypeTest.class.getResource("/identityref.yang").getPath();
+    public void loadTestResources() throws URISyntaxException {
+        URI folderPath = IdentityrefTypeTest.class.getResource("/identityref.yang").toURI();
         File folderFile = new File(folderPath);
         testModels = new ArrayList<File>();
 

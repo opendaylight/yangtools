@@ -10,16 +10,21 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Set;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public class TypeProviderIntegrationTest {
     private final String PKG = "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.";
@@ -28,11 +33,11 @@ public class TypeProviderIntegrationTest {
     private Module m;
 
     @BeforeClass
-    public static void setup() throws ParseException {
-        final String path1 = TypeProviderIntegrationTest.class.getResource("/type-provider/test.yang").getPath();
-        final String path2 = TypeProviderIntegrationTest.class.getResource(
-                "/type-provider/ietf-inet-types@2010-09-24.yang").getPath();
-        context = resolveSchemaContextFromFiles(path1, path2);
+    public static void setup() throws ParseException, URISyntaxException {
+        final URI path1 = TypeProviderIntegrationTest.class.getResource("/type-provider/test.yang").toURI();
+        final URI path2 = TypeProviderIntegrationTest.class.getResource(
+                "/type-provider/ietf-inet-types@2010-09-24.yang").toURI();
+        context = SupportTestUtil.resolveSchemaContextFromFiles(path1, path2);
         assertNotNull(context);
     }
 
@@ -291,17 +296,4 @@ public class TypeProviderIntegrationTest {
         assertEquals("ipv4Prefix", provider.getParamNameFromType(ipv4Pref));
         assertEquals("ipv6Prefix", provider.getParamNameFromType(ipv6Pref));
     }
-
-    private static SchemaContext resolveSchemaContextFromFiles(final String... yangFiles) {
-        final YangModelParser parser = new YangParserImpl();
-
-        final List<File> inputFiles = new ArrayList<File>();
-        for (int i = 0; i < yangFiles.length; ++i) {
-            inputFiles.add(new File(yangFiles[i]));
-        }
-
-        final Set<Module> modules = parser.parseYangModels(inputFiles);
-        return parser.resolveSchemaContext(modules);
-    }
-
 }

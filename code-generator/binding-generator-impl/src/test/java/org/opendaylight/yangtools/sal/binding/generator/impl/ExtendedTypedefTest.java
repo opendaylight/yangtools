@@ -7,9 +7,14 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,11 +34,11 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class ExtendedTypedefTest {
 
     private final static List<File> testModels = new ArrayList<File>();
-    private final static String testFolderPath = AugmentedTypeTest.class.getResource("/typedef-of-typedef").getPath();
+    private final static URL testFolderPath = AugmentedTypeTest.class.getResource("/typedef-of-typedef");
 
     @BeforeClass
-    public static void loadTestResources() {
-        final File testFolder = new File(testFolderPath);
+    public static void loadTestResources() throws URISyntaxException {
+        final File testFolder = new File(testFolderPath.toURI());
 
         for (final File fileEntry : testFolder.listFiles()) {
             if (fileEntry.isFile()) {
