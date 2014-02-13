@@ -12,6 +12,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -42,6 +43,7 @@ public class BindingToRestRpc implements InvocationHandler {
     public BindingToRestRpc(URI uri) {
         ClientConfig config = new DefaultClientConfig();
         this.client  = Client.create(config);
+        this.client.addFilter(new HTTPBasicAuthFilter("admin", "admin"));
         this.defaultUri = uri;
     }
 
@@ -73,7 +75,7 @@ public class BindingToRestRpc implements InvocationHandler {
 
 
                     if (response.getStatus() != 200) {
-                        throw new IllegalStateException("Can't get data from restconf ");
+                        throw new IllegalStateException("Can't get data from restconf. "+response.getClientResponseStatus());
                     }
                     return XmlTools.unmarshallXml(method.getReturnType(), response.getEntityInputStream());
                 }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.restconf.client.api;
 
 import java.util.Set;
 
+import org.opendaylight.yangtools.restconf.client.api.auth.AuthenticationHolder;
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
 import org.opendaylight.yangtools.restconf.client.api.data.OperationalDatastore;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;

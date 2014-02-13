@@ -7,8 +7,17 @@
  */
 package org.opendaylight.yangtools.restconf.client.to;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,13 +26,10 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
-
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.opendaylight.yangtools.concepts.AbstractListenerRegistration;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
-import org.opendaylight.yangtools.restconf.client.BindingToRestRpc;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamReplay;
 import org.opendaylight.yangtools.restconf.client.api.event.ListenableEventStreamContext;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
@@ -35,21 +41,10 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-
 
 
 @XmlRootElement
-public class RestListenableEventStreamContext<T extends NotificationListener> implements ListenableEventStreamContext,ClientMessageCallback {
+public class RestListenableEventStreamContext<L extends NotificationListener> implements ListenableEventStreamContext,ClientMessageCallback {
 
     private final URI defaultUri;
     private final Client client;
@@ -71,25 +66,16 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
     @Override
     public <L extends NotificationListener> ListenerRegistration<L> registerNotificationListener(L listener) {
 
-        try {
-            this.streamName = BindingReflections.getModuleInfo(listener.getClass()).getName();
-        } catch (Exception e) {
-            logger.trace("Error resolving stream name form listener class.");
-            throw new IllegalStateException("Error resolving stream name form listener class.");
-        }
-
         for (Method m:listener.getClass().getDeclaredMethods()){
             if (BindingReflections.isNotificationCallback(m)){
                 this.listenerCallbackMethod = m;
                 break;
             }
         }
-
-        final L listenerProxy = (L) BindingToRestRpc.getProxy(listener.getClass(), this.defaultUri);
-        return new AbstractListenerRegistration<L>(listenerProxy) {
+        return new AbstractListenerRegistration<L>(listener) {
             @Override
             protected void removeRegistration() {
-                // FIXME: implement this method
+                stopListening();
             }
         };
     }
@@ -156,13 +142,6 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
     }
     private void createWebsocketClient(URI websocketServerUri){
         this.wsClient = new WebSocketIClient(websocketServerUri,this);
-    }
-    private String getRpcInput(String path,String ns) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<input xmlns=\"urn:opendaylight:params:xml:ns:yang:controller:md:sal:remote\">");
-        sb.append("<path xmlns:int=\""+ns+"\">"+path+"</path>");
-        sb.append("</input>");
-        return sb.toString();
     }
 
     private String createUri(String prefix, String encodedPart) throws UnsupportedEncodingException {
