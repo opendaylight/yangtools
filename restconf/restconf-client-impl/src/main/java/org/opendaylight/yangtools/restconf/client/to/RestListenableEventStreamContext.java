@@ -71,25 +71,16 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
     @Override
     public <L extends NotificationListener> ListenerRegistration<L> registerNotificationListener(L listener) {
 
-        try {
-            this.streamName = BindingReflections.getModuleInfo(listener.getClass()).getName();
-        } catch (Exception e) {
-            logger.trace("Error resolving stream name form listener class.");
-            throw new IllegalStateException("Error resolving stream name form listener class.");
-        }
-
         for (Method m:listener.getClass().getDeclaredMethods()){
             if (BindingReflections.isNotificationCallback(m)){
                 this.listenerCallbackMethod = m;
                 break;
             }
         }
-
-        final L listenerProxy = (L) BindingToRestRpc.getProxy(listener.getClass(), this.defaultUri);
-        return new AbstractListenerRegistration<L>(listenerProxy) {
+        return new AbstractListenerRegistration<T>(listenerProxy) {
             @Override
             protected void removeRegistration() {
-                // FIXME: implement this method
+                stopListening();
             }
         };
     }
@@ -157,13 +148,6 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
     private void createWebsocketClient(URI websocketServerUri){
         this.wsClient = new WebSocketIClient(websocketServerUri,this);
     }
-    private String getRpcInput(String path,String ns) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<input xmlns=\"urn:opendaylight:params:xml:ns:yang:controller:md:sal:remote\">");
-        sb.append("<path xmlns:int=\""+ns+"\">"+path+"</path>");
-        sb.append("</input>");
-        return sb.toString();
-    }
 
     private String createUri(String prefix, String encodedPart) throws UnsupportedEncodingException {
         return URI.create(prefix + URLEncoder.encode(encodedPart, Charsets.US_ASCII.name()).toString()).toASCIIString();
@@ -180,6 +164,23 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
             throw new IllegalStateException(e.getMessage());
         } catch (InvocationTargetException e) {
             throw new IllegalStateException(e.getMessage());
+        }
+    }
+    private class ListenerRegistrationImpl<T extends NotificationListener> implements ListenerRegistration {
+
+        private final T listener;
+
+        public ListenerRegistrationImpl(T registeredListener){
+            this.listener =   registeredListener;
+
+        }
+        @Override
+        public Object getInstance() {
+            return listener;
+        }
+
+        @Override
+        public void close() throws Exception {
         }
     }
 }
