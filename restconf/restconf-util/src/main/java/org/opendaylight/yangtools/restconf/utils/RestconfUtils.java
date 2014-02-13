@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
@@ -235,12 +236,31 @@ public class RestconfUtils {
             Document doc = builder.parse(inputStream);
             Element rootElement = doc.getDocumentElement();
 
-            XmlDocumentUtils.fromElement(rootElement).getNodeType();
-
             List<Node<?>> domNodes = XmlDocumentUtils.toDomNodes(rootElement, Optional.of(schemaContext.getChildNodes()));
             Set<Class<? extends RpcService>> rpcServices = new HashSet<Class<? extends RpcService>>();
             for (Node<?> node:domNodes){
-                rpcServices.add(mappingService.getRpcServiceClassFor(node.getNodeType().getNamespace().toString(),node.getNodeType().getRevision().toString()).get());
+                if (node instanceof ImmutableCompositeNode){
+                    ImmutableCompositeNode icNode = (ImmutableCompositeNode)node;
+                    QName namespace = null;
+                    QName revision = null;
+                    QName name = null;
+                    for (QName q:icNode.keySet()){
+                        if (q.getLocalName().equals("namespace")){
+                            namespace = q;
+                        }
+                        if (q.getLocalName().equals("revision")){
+                            revision = q;
+                        }
+                        if (q.getLocalName().equals("name")){
+                            name = q;
+                        }
+
+                    }
+                    Optional<Class<? extends RpcService>> rpcService = mappingService.getRpcServiceClassFor(icNode.get(name).get(0).getValue().toString(),icNode.get(revision).get(0).getValue().toString());
+                    if (rpcService.isPresent()){
+                        rpcServices.add(rpcService.get());
+                    }
+                }
             }
 
             return rpcServices;
