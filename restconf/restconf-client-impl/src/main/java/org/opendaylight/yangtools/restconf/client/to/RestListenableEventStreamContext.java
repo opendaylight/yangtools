@@ -80,7 +80,15 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
             }
         }
 
-        T listenerProxy = (T) BindingToRestRpc.getProxy(listener.getClass(), this.defaultUri);
+        Class targetIfc = null;
+        if (!listener.getClass().isInterface()){
+            if (listener.getClass().getInterfaces().length>0){
+                targetIfc = listener.getClass().getInterfaces()[0];
+            }
+        } else {
+            targetIfc = listener.getClass();
+        }
+        T listenerProxy = (T) BindingToRestRpc.getProxy(targetIfc, this.defaultUri);
         ListenerRegistration listenerRegistration = new ListenerRegistrationImpl(listenerProxy);
         return listenerRegistration;
     }
@@ -147,13 +155,6 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
     }
     private void createWebsocketClient(URI websocketServerUri){
         this.wsClient = new WebSocketIClient(websocketServerUri,this);
-    }
-    private String getRpcInput(String path,String ns) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<input xmlns=\"urn:opendaylight:params:xml:ns:yang:controller:md:sal:remote\">");
-        sb.append("<path xmlns:int=\""+ns+"\">"+path+"</path>");
-        sb.append("</input>");
-        return sb.toString();
     }
 
     private String createUri(String prefix, String encodedPart) throws UnsupportedEncodingException {
