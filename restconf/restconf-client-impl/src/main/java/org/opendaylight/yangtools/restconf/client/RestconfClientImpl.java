@@ -17,6 +17,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -71,6 +72,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
         Preconditions.checkNotNull(schemaContextHolder, "Schema Context Holder must not be null.");
         ClientConfig config = new DefaultClientConfig();
         restClient  = Client.create(config);
+        restClient.addFilter(new HTTPBasicAuthFilter("admin", "admin"));
         URI uri = null;
         try {
             uri = url.toURI();
