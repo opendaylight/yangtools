@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class GenEnumResolvingTest {
 
     private SchemaContext resolveSchemaContextFromFiles(
-            final String... yangFiles) {
+            final URI... yangFiles) {
         final YangModelParser parser = new YangParserImpl();
 
         final List<File> inputFiles = new ArrayList<File>();
@@ -42,13 +46,13 @@ public class GenEnumResolvingTest {
     }
 
     @Test
-    public void testLeafEnumResolving() {
-        final String ietfInterfacesPath = getClass().getResource(
-                "/enum-test-models/ietf-interfaces@2012-11-15.yang").getPath();
-        final String ifTypePath = getClass().getResource(
-                "/enum-test-models/iana-if-type@2012-06-05.yang").getPath();
-        final String yangTypesPath = getClass().getResource(
-                "/enum-test-models/ietf-yang-types@2010-09-24.yang").getPath();
+    public void testLeafEnumResolving() throws URISyntaxException {
+        final URI ietfInterfacesPath = getClass().getResource(
+                "/enum-test-models/ietf-interfaces@2012-11-15.yang").toURI();
+        final URI ifTypePath = getClass().getResource(
+                "/enum-test-models/iana-if-type@2012-06-05.yang").toURI();
+        final URI yangTypesPath = getClass().getResource(
+                "/enum-test-models/ietf-yang-types@2010-09-24.yang").toURI();
 
         final SchemaContext context = resolveSchemaContextFromFiles(
                 ietfInterfacesPath, ifTypePath, yangTypesPath);
@@ -123,9 +127,9 @@ public class GenEnumResolvingTest {
     }
 
     @Test
-    public void testTypedefEnumResolving() {
-        final String ianaIfTypePath = getClass().getResource(
-                "/leafref-test-models/iana-if-type@2012-06-05.yang").getPath();
+    public void testTypedefEnumResolving() throws URISyntaxException {
+        final URI ianaIfTypePath = getClass().getResource(
+                "/leafref-test-models/iana-if-type@2012-06-05.yang").toURI();
 
         final SchemaContext context = resolveSchemaContextFromFiles(ianaIfTypePath);
         assertTrue(context != null);
@@ -143,19 +147,19 @@ public class GenEnumResolvingTest {
     }
 
     @Test
-    public void testLeafrefEnumResolving() {
-        final String ietfInterfacesPath = getClass().getResource(
-                "/enum-test-models/ietf-interfaces@2012-11-15.yang").getPath();
-        final String ifTypePath = getClass().getResource(
-                "/enum-test-models/iana-if-type@2012-06-05.yang").getPath();
-        final String yangTypesPath = getClass().getResource(
-                "/enum-test-models/ietf-yang-types@2010-09-24.yang").getPath();
-        final String topologyPath = getClass().getResource(
+    public void testLeafrefEnumResolving() throws URISyntaxException {
+        final URI ietfInterfacesPath = getClass().getResource(
+                "/enum-test-models/ietf-interfaces@2012-11-15.yang").toURI();
+        final URI ifTypePath = getClass().getResource(
+                "/enum-test-models/iana-if-type@2012-06-05.yang").toURI();
+        final URI yangTypesPath = getClass().getResource(
+                "/enum-test-models/ietf-yang-types@2010-09-24.yang").toURI();
+        final URI topologyPath = getClass().getResource(
                 "/enum-test-models/abstract-topology@2013-02-08.yang")
-                .getPath();
-        final String inetTypesPath = getClass().getResource(
+                .toURI();
+        final URI inetTypesPath = getClass().getResource(
                 "/enum-test-models/ietf-inet-types@2010-09-24.yang")
-                .getPath();
+                .toURI();
         final SchemaContext context = resolveSchemaContextFromFiles(
                 ietfInterfacesPath, ifTypePath, yangTypesPath, topologyPath,
                 inetTypesPath);

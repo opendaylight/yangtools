@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestU
 import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -55,8 +56,8 @@ public class BitAndUnionTOEnclosingTest {
     }
 
     @BeforeClass
-    public static void loadTestResources() {
-        final File listModelFile = new File(ExtendedTypedefTest.class.getResource("/bit_and_union.yang").getPath());
+    public static void loadTestResources() throws URISyntaxException {
+        final File listModelFile = new File(ExtendedTypedefTest.class.getResource("/bit_and_union.yang").toURI());
         testModels.add(listModelFile);
         parseResources();
     }

@@ -7,15 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.binding.util;
 
-import java.beans.MethodDescriptor;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static org.opendaylight.yangtools.concepts.util.ClassLoaderUtils.withClassLoader;
+
+import java.awt.List;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,14 +35,9 @@ import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
-import org.opendaylight.yangtools.yang.binding.annotations.ModuleQName;
 import org.opendaylight.yangtools.yang.common.QName;
 
-import static com.google.common.base.Preconditions.*;
-import static org.opendaylight.yangtools.concepts.util.ClassLoaderUtils.*;
-
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -57,7 +56,7 @@ public class BindingReflections {
             .build(new ClassToQNameLoader());
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -70,7 +69,7 @@ public class BindingReflections {
     }
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -82,7 +81,7 @@ public class BindingReflections {
     }
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -218,25 +217,102 @@ public class BindingReflections {
         checkArgument(potentialNotification != null);
         return Notification.class.isAssignableFrom(potentialNotification);
     }
-    
+
     public static ImmutableSet<YangModuleInfo> loadModuleInfos() {
         return loadModuleInfos(Thread.currentThread().getContextClassLoader());
     }
-    
+
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(ClassLoader loader) {
-        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
-        ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class, loader);
-        for(YangModelBindingProvider bindingProvider : serviceLoader) {
-            collectYangModuleInfo(bindingProvider.getModuleInfo(),moduleInfoSet);
+        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo> builder();
+        ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class,
+                loader);
+        for (YangModelBindingProvider bindingProvider : serviceLoader) {
+            collectYangModuleInfo(bindingProvider.getModuleInfo(), moduleInfoSet);
         }
-        return  moduleInfoSet.build();
+        return moduleInfoSet.build();
     }
 
     private static void collectYangModuleInfo(YangModuleInfo moduleInfo, Builder<YangModuleInfo> moduleInfoSet) {
         moduleInfoSet.add(moduleInfo);
-        for(YangModuleInfo dependency : moduleInfo.getImportedModules()) {
+        for (YangModuleInfo dependency : moduleInfo.getImportedModules()) {
             collectYangModuleInfo(dependency, moduleInfoSet);
         }
+    }
+
+    public static Iterable<String> getDataContainerLocalNames(final Class<? extends DataObject> obj) {
+        try {
+            return withClassLoader(obj.getClassLoader(), new Callable<Iterable<String>>() {
+
+                @Override
+                public Iterable<String> call() throws Exception {
+                    ImmutableSet.Builder<String> ret = ImmutableSet.builder();
+
+                    for (Method method : obj.getMethods()) {
+                        if (isDataContainerGetter(method)) {
+                            Class<? extends DataContainer> cls = getDataContainerClassFromGetter(method);
+                            ret.add(findQName(cls).getLocalName());
+                        }
+                    }
+
+                    return ret.build();
+                }
+            });
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not get local names.", e);
+
+        }
+    }
+
+    /**
+     *
+     * Checks if method is valid {@link DataContainer} getter.
+     *
+     * @param method
+     * @return
+     */
+    public static boolean isDataContainerGetter(Method method) {
+        // Method is not valid getter (does not starts with getter or has more
+        // parameters)
+        if (!method.getName().startsWith(BindingMapping.GETTER_PREFIX) || method.getParameterTypes().length != 0) {
+            return false;
+        }
+        Class<?> retType = method.getReturnType();
+        if (DataContainer.class.isAssignableFrom(retType)) {
+            return true;
+        } else if (List.class.isAssignableFrom(retType)) {
+            Type innerArg = ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+            if (innerArg instanceof Class<?>) {
+                return DataContainer.class.isAssignableFrom((Class<?>) innerArg);
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * Checks if method is valid {@link DataContainer} getter.
+     *
+     * @param method
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static Class<? extends DataContainer> getDataContainerClassFromGetter(Method method) {
+        // Method is not valid getter (does not starts with getter or has more
+        // parameters)
+        checkArgument(method.getName().startsWith(BindingMapping.GETTER_PREFIX));
+        checkArgument(method.getParameterTypes().length == 0);
+        Class<?> potentialType = method.getReturnType();
+        if (DataContainer.class.isAssignableFrom(potentialType)) {
+            return (Class<? extends DataContainer>) potentialType;
+        } else if (List.class.isAssignableFrom(potentialType)) {
+            Type innerArg = ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
+            if (innerArg instanceof Class<?>) {
+                if (DataContainer.class.isAssignableFrom((Class<?>) innerArg)) {
+                    return (Class<? extends DataContainer>) innerArg;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Supplied method is not DataContainer getter.");
     }
 
 }

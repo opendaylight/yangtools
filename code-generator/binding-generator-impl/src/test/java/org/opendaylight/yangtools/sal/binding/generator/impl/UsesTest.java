@@ -7,10 +7,14 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
-import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsInterface;
+import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,10 +32,14 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class UsesTest {
 
     private static List<File> loadTestResources(String testFile) {
+        try {
         final List<File> testModels = new ArrayList<File>();
-        final File listModelFile = new File(UsesTest.class.getResource(testFile).getPath());
+        final File listModelFile = new File(UsesTest.class.getResource(testFile).toURI());
         testModels.add(listModelFile);
         return testModels;
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Test

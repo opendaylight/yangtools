@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsInterface;
 import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,12 +34,12 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class ChoiceCaseGenTypesTest {
 
     private final static List<File> yangModels = new ArrayList<>();
-    private final static String yangModelsFolder = AugmentedTypeTest.class.getResource("/choice-case-type-test-models")
-            .getPath();
+    private final static URL yangModelsFolder = AugmentedTypeTest.class.getResource("/choice-case-type-test-models")
+            ;
 
     @BeforeClass
-    public static void loadTestResources() {
-        final File augFolder = new File(yangModelsFolder);
+    public static void loadTestResources() throws URISyntaxException {
+        final File augFolder = new File(yangModelsFolder.toURI());
         for (final File fileEntry : augFolder.listFiles()) {
             if (fileEntry.isFile()) {
                 yangModels.add(fileEntry);

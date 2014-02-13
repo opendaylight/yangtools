@@ -8,9 +8,12 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,12 +30,12 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class ControllerTest {
 
     private final static List<File> controllerModels = new ArrayList<>();
-    private final static String controllerModelsFolderPath = ControllerTest.class
-            .getResource("/controller-models").getPath();
+    private final static URL controllerModelsFolderPath = ControllerTest.class
+            .getResource("/controller-models");
 
     @BeforeClass
-    public static void loadTestResources() {
-        final File ctrlFolder = new File(controllerModelsFolderPath);
+    public static void loadTestResources() throws URISyntaxException {
+        final File ctrlFolder = new File(controllerModelsFolderPath.toURI());
 
         for (final File fileEntry : ctrlFolder.listFiles()) {
             if (fileEntry.isFile()) {

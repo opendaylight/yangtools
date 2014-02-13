@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-
-import static com.google.common.base.Preconditions.*;
 
 public final class BindingMapping {
 
@@ -32,6 +32,7 @@ public final class BindingMapping {
     public static final String NOTIFICATION_LISTENER_SUFFIX = "Listener";
     public static final String QNAME_STATIC_FIELD_NAME = "QNAME";
     public static final String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
+    public static final String GETTER_PREFIX = "get";
 
     private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
 
@@ -80,7 +81,7 @@ public final class BindingMapping {
      * Returns the {@link String} {@code s} with an
      * {@link Character#isUpperCase(char) upper case} first character. This
      * function is null-safe.
-     * 
+     *
      * @param s
      *            the string that should get an upper case first character. May
      *            be <code>null</code>.
@@ -102,7 +103,7 @@ public final class BindingMapping {
      * Returns the {@link String} {@code s} with an
      * {@link Character#isLowerCase(char) lower case} first character. This
      * function is null-safe.
-     * 
+     *
      * @param s
      *            the string that should get an lower case first character. May
      *            be <code>null</code>.
