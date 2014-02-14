@@ -48,7 +48,7 @@ public class WebSocketIClient  {
     private void initialize(){
 
         String protocol = uri.getScheme();
-        if (!"ws".equals(protocol)) {
+        if (!"ws".equals(protocol) && !"http".equals(protocol)) {
             throw new IllegalArgumentException("Unsupported protocol: " + protocol);
         }
 

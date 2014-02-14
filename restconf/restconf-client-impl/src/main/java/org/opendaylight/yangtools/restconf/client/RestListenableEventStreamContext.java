@@ -5,10 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.restconf.client.to;
+package org.opendaylight.yangtools.restconf.client;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.sun.jersey.api.client.ClientResponse;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,16 +22,15 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.opendaylight.yangtools.concepts.AbstractListenerRegistration;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
-import org.opendaylight.yangtools.restconf.client.BindingToRestRpc;
+import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamReplay;
 import org.opendaylight.yangtools.restconf.client.api.event.ListenableEventStreamContext;
+import org.opendaylight.yangtools.restconf.client.to.RestRpcResult;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
 import org.opendaylight.yangtools.websocket.client.WebSocketIClient;
 import org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback;
@@ -35,38 +40,19 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 
-
-
-@XmlRootElement
-public class RestListenableEventStreamContext<T extends NotificationListener> implements ListenableEventStreamContext,ClientMessageCallback {
-
-    private final URI defaultUri;
-    private final Client client;
+public class RestListenableEventStreamContext<L extends NotificationListener> implements ListenableEventStreamContext,ClientMessageCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(RestListenableEventStreamContext.class.toString());
     private final ListeningExecutorService pool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
-
-    private URI websocketServerUri;
     private WebSocketIClient wsClient;
-    private String streamName;
-
     private Method listenerCallbackMethod;
+    private final RestconfClientImpl restconfClient;
+    private final EventStreamInfo streamInfo;
 
-    public RestListenableEventStreamContext(URI uri){
-        this.defaultUri = uri;
-        ClientConfig config = new DefaultClientConfig();
-        client  = Client.create(config);
+    public RestListenableEventStreamContext(EventStreamInfo streamInfo,RestconfClientImpl restconfClient){
+        this.restconfClient = restconfClient;
+        this.streamInfo = streamInfo;
     }
     @Override
     public <L extends NotificationListener> ListenerRegistration<L> registerNotificationListener(L listener) {
@@ -77,7 +63,7 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
                 break;
             }
         }
-        return new AbstractListenerRegistration<T>(listenerProxy) {
+        return new AbstractListenerRegistration<L>(listener) {
             @Override
             protected void removeRegistration() {
                 stopListening();
@@ -89,7 +75,19 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
     public ListenableFuture<RpcResult<Void>> startListening() {
 
 
-        ClientResponse response = extractWebSocketUriFromRpc(this.streamName);
+        ClientResponse response = null;
+        try {
+            response = extractWebSocketUriFromRpc(this.streamInfo.getIdentifier());
+        } catch (ExecutionException e) {
+            logger.trace("Execution exception while extracting stream name {}",e);
+            throw new IllegalStateException(e);
+        } catch (InterruptedException e) {
+            logger.trace("InterruptedException while extracting stream name {}",e);
+            throw new IllegalStateException(e);
+        } catch (UnsupportedEncodingException e) {
+            logger.trace("UnsupportedEncodingException while extracting stream name {}",e);
+            throw new IllegalStateException(e);
+        }
         boolean success = true;
         if (response.getStatus() != 200) {
             success = false;
@@ -116,7 +114,7 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
 
     @Override
     public void stopListening() {
-        this.wsClient.writeAndFlush(new CloseWebSocketFrame(42,this.streamName));
+        this.wsClient.writeAndFlush(new CloseWebSocketFrame(42,this.streamInfo.getIdentifier()));
     }
 
     @Override
@@ -130,27 +128,24 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
         this.stopListening();
     }
 
-    private ClientResponse extractWebSocketUriFromRpc(String streamName){
-        String uri = null;
-        try {
-            uri = this.createUri(defaultUri+"/streams/stream/", streamName);
-        } catch (UnsupportedEncodingException e) {
-            logger.trace("Unsupported encoding.");
+    private ClientResponse extractWebSocketUriFromRpc(String methodName) throws ExecutionException, InterruptedException, UnsupportedEncodingException {
+        ListenableFuture<ClientResponse> clientFuture = restconfClient.get(ResourceUri.STREAM.getPath()+"/"+encodeUri(this.streamInfo.getIdentifier()),MediaType.APPLICATION_XML,new Function<ClientResponse, ClientResponse>(){
+
+            @Override
+            public ClientResponse apply(ClientResponse clientResponse) {
+                return clientResponse;
+            }
+        });
+        while (!clientFuture.isDone()){
+            //noop
         }
-
-        WebResource resource = client.resource(defaultUri.toString() + ResourceUri.STREAMS.getPath());
-        final ClientResponse response = resource.accept(MediaType.APPLICATION_XML)
-                .get(ClientResponse.class);
-
-        this.websocketServerUri = response.getLocation();
-        return response;
+        return clientFuture.get();
     }
     private void createWebsocketClient(URI websocketServerUri){
         this.wsClient = new WebSocketIClient(websocketServerUri,this);
     }
-
-    private String createUri(String prefix, String encodedPart) throws UnsupportedEncodingException {
-        return URI.create(prefix + URLEncoder.encode(encodedPart, Charsets.US_ASCII.name()).toString()).toASCIIString();
+    private String encodeUri(String encodedPart) throws UnsupportedEncodingException {
+        return URI.create(URLEncoder.encode(encodedPart, Charsets.US_ASCII.name()).toString()).toASCIIString();
     }
 
     @Override
@@ -166,21 +161,5 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
             throw new IllegalStateException(e.getMessage());
         }
     }
-    private class ListenerRegistrationImpl<T extends NotificationListener> implements ListenerRegistration {
 
-        private final T listener;
-
-        public ListenerRegistrationImpl(T registeredListener){
-            this.listener =   registeredListener;
-
-        }
-        @Override
-        public Object getInstance() {
-            return listener;
-        }
-
-        @Override
-        public void close() throws Exception {
-        }
-    }
 }
