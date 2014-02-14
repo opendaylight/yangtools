@@ -7,22 +7,21 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+import javax.ws.rs.core.MediaType;
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcError;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcResult;
-import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
 import org.opendaylight.yangtools.restconf.utils.RestconfUtils;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -54,28 +53,22 @@ public class ConfigurationDataStoreImpl extends AbstractDataStore implements Con
         final BindingIndependentMappingService mappingService = getClient().getMappingService();
         final Map.Entry<String, DataSchemaNode> pathWithSchema = RestconfUtils.toRestconfIdentifier(path, mappingService, schemaContext);
         final String restconfPath = getStorePrefix() + pathWithSchema.getKey();
-
-        ListenableFuture future = pool.submit(new Callable<RpcResult<Boolean>>() {
+        return getClient().delete(restconfPath,MediaType.APPLICATION_XML,new Function<ClientResponse, RpcResult<Boolean>>() {
             @Override
-            public RpcResult<Boolean> call() throws Exception {
+            public RpcResult<Boolean> apply(ClientResponse clientResponse) {
                 Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
-                WebResource resource = getClient().getRestClient().resource(getClient().constructPath(restconfPath));
-                final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
-                        .delete(ClientResponse.class);
-
-                if (response.getStatus() != 200) {
-                    RpcError rpcError = new RestRpcError(RpcError.ErrorSeverity.ERROR,RpcError.ErrorType.RPC,null,null,"HTTP status "+response.getStatus(),null,null);
+                if (clientResponse.getStatus() != 200) {
+                    RpcError rpcError = new RestRpcError(RpcError.ErrorSeverity.ERROR,RpcError.ErrorType.RPC,null,null,"HTTP status "+clientResponse.getStatus(),null,null);
                     Collection<RpcError> errors = new ArrayList<RpcError>();
                     errors.add(rpcError);
                     RestRpcResult rpcResult = new RestRpcResult(false,null,errors);
                     return (RpcResult<Boolean>) Optional.of(rpcResult);
                 }
-                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(), schemaContext, mappingService,restconfEntry.getValue());
+                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, clientResponse.getEntityInputStream(), schemaContext, mappingService,restconfEntry.getValue());
                 RestRpcResult rpcResult = new RestRpcResult(true,dataObject,null);
                 return (RpcResult<Boolean>) Optional.of(rpcResult);
             }
         });
-        return future;
     }
 
     @Override
@@ -85,26 +78,21 @@ public class ConfigurationDataStoreImpl extends AbstractDataStore implements Con
         final Map.Entry<String, DataSchemaNode> pathWithSchema = RestconfUtils.toRestconfIdentifier(path, mappingService, schemaContext);
         final String restconfPath = getStorePrefix() + pathWithSchema.getKey();
 
-        ListenableFuture future = pool.submit(new Callable<RpcResult<Boolean>>() {
+        return getClient().put(restconfPath,MediaType.APPLICATION_XML,new Function<ClientResponse, RpcResult<Boolean>>() {
             @Override
-            public RpcResult<Boolean> call() throws Exception {
+            public RpcResult<Boolean> apply(ClientResponse clientResponse) {
                 Map.Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
-                WebResource resource = getClient().getRestClient().resource(getClient().constructPath(restconfPath));
-                final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
-                        .put(ClientResponse.class);
-
-                if (response.getStatus() != 200) {
-                    RpcError rpcError = new RestRpcError(RpcError.ErrorSeverity.ERROR,RpcError.ErrorType.RPC,null,null,"HTTP status "+response.getStatus(),null,null);
+                if (clientResponse.getStatus() != 200) {
+                    RpcError rpcError = new RestRpcError(RpcError.ErrorSeverity.ERROR,RpcError.ErrorType.RPC,null,null,"HTTP status "+clientResponse.getStatus(),null,null);
                     Collection<RpcError> errors = new ArrayList<RpcError>();
                     errors.add(rpcError);
                     RestRpcResult rpcResult = new RestRpcResult(false,null,errors);
                     return (RpcResult<Boolean>) Optional.of(rpcResult);
                 }
-                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, response.getEntityInputStream(),schemaContext,mappingService,restconfEntry.getValue());
+                DataObject dataObject = RestconfUtils.dataObjectFromInputStream(path, clientResponse.getEntityInputStream(),schemaContext,mappingService,restconfEntry.getValue());
                 RestRpcResult rpcResult = new RestRpcResult(true,dataObject);
                 return (RpcResult<Boolean>) Optional.of(rpcResult);
             }
         });
-        return future;
     }
 }

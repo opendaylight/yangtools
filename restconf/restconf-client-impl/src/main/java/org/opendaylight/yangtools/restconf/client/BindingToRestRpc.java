@@ -7,90 +7,114 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
-import com.sun.jersey.api.client.Client;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
+import org.opendaylight.yangtools.restconf.client.to.RestRpcError;
+import org.opendaylight.yangtools.restconf.client.to.RestRpcResult;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
 import org.opendaylight.yangtools.restconf.utils.XmlTools;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
+import org.opendaylight.yangtools.yang.common.RpcError;
+import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 public class BindingToRestRpc implements InvocationHandler {
 
-    private final Client client;
-    private final URI defaultUri;
+    private final RestconfClientImpl client;
     private static final Logger logger = LoggerFactory.getLogger(BindingToRestRpc.class);
+    private final BindingIndependentMappingService mappingService;
+    private final SchemaContext schcemaContext;
+    private final Module module;
 
-    public BindingToRestRpc(URI uri) {
-        ClientConfig config = new DefaultClientConfig();
-        this.client  = Client.create(config);
-        this.client.addFilter(new HTTPBasicAuthFilter("admin", "admin"));
-        this.defaultUri = uri;
+    public BindingToRestRpc(Class proxiedInterface,BindingIndependentMappingService mappingService,RestconfClientImpl client,SchemaContext schemaContext) throws Exception {
+        this.mappingService = mappingService;
+        this.client  = client;
+        this.schcemaContext = schemaContext;
+        YangModuleInfo moduleInfo = BindingReflections.getModuleInfo(proxiedInterface);
+        this.module = schemaContext.findModuleByName(moduleInfo.getName(),org.opendaylight.yangtools.yang.common.QName.parseRevision(moduleInfo.getRevision()));
     }
 
     @Override
-    public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
+    public Object invoke(Object o,final Method method, Object[] objects) throws Throwable {
+        for (RpcDefinition rpcDef:module.getRpcs()){
+            if (method.getName().equals(BindingMapping.getMethodName(rpcDef.getQName()))){
 
-        YangModelParser parser = new YangParserImpl();
-
-        Method getInstanceMethod = Class.forName(method.getDeclaringClass().getPackage().getName()+".$YangModuleInfoImpl").getMethod("getInstance",new Class[0]);
-
-        YangModuleInfo yangModuleInfo = (YangModuleInfo) getInstanceMethod.invoke(null,new Object[0]);
-
-                List<InputStream> moduleStreams = new ArrayList<InputStream>();
-        moduleStreams.add(yangModuleInfo.getModuleSourceStream());
-
-        Set<Module> modules = parser.parseYangModelsFromStreams(moduleStreams);
-
-        for (Module m:modules){
-            for (RpcDefinition rpcDef:m.getRpcs()){
-                if (method.getName().equals(BindingMapping.getMethodName(rpcDef.getQName()))){
-
-                    String moduleName = BindingReflections.getModuleInfo(method.getDeclaringClass()).getName();
-                    String rpcMethodName = rpcDef.getQName().getLocalName();
-
-                    WebResource resource = client.resource(defaultUri.toString() + ResourceUri.OPERATIONS.getPath() + "/"+ moduleName+":"+rpcMethodName);
-
-                    final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
-                            .post(ClientResponse.class);
-
-
-                    if (response.getStatus() != 200) {
-                        throw new IllegalStateException("Can't get data from restconf. "+response.getClientResponseStatus());
-                    }
-                    return XmlTools.unmarshallXml(method.getReturnType(), response.getEntityInputStream());
+                String moduleName = BindingReflections.getModuleInfo(method.getDeclaringClass()).getName();
+                String rpcMethodName = rpcDef.getQName().getLocalName();
+                Document rpcInputDoc = null;
+                for (Object component:objects){
+                    CompositeNode rpcInput = mappingService.toDataDom((DataObject) component);
+                    rpcInputDoc = XmlDocumentUtils.toDocument(rpcInput,rpcDef.getInput(),XmlDocumentUtils.defaultValueCodecProvider());
                 }
+                DOMImplementationLS lsImpl = (DOMImplementationLS)rpcInputDoc.getImplementation().getFeature("LS", "3.0");
+                LSSerializer serializer = lsImpl.createLSSerializer();
+                serializer.getDomConfig().setParameter("xml-declaration", false);
+
+                String payloadString = serializer.writeToString(rpcInputDoc);
+                final Class<? extends DataContainer> desiredOutputClass = (Class<? extends DataContainer>)BindingReflections.resolveRpcOutputClass(method).get();
+                final DataSchemaNode rpcOutputSchema = rpcDef.getOutput();
+                return client.post(ResourceUri.OPERATIONS.getPath() + "/" + moduleName + ":" + rpcMethodName,payloadString,new Function<ClientResponse, Object>() {
+                    @Override
+                    public Object apply(ClientResponse clientResponse) {
+                        if (clientResponse.getStatus() != 200) {
+                            throw new IllegalStateException("Can't get data from restconf. "+clientResponse.getClientResponseStatus());
+                        }
+                        List<RpcError> errors =  new ArrayList<>();
+                        try {
+                            Document rpcOutputDocument = XmlTools.fromXml(clientResponse.getEntityInputStream());
+                            CompositeNode cn = (CompositeNode) XmlDocumentUtils.toDomNode(rpcOutputDocument.getDocumentElement(),
+                                    Optional.of(rpcOutputSchema),
+                                    Optional.of(XmlDocumentUtils.defaultValueCodecProvider()));
+                            DataContainer rpcOutputDataObject = mappingService.dataObjectFromDataDom(desiredOutputClass, cn);
+                            return new RestRpcResult(true,rpcOutputDataObject);
+                        } catch (Exception e) {
+                            logger.trace("Error while extracting rpc output in proxy method {}",e);
+                            RestRpcError error = new RestRpcError(RpcError.ErrorSeverity.ERROR, RpcError.ErrorType.APPLICATION,"Error while extracting rpc output in proxy method.",e);
+                        }
+                        return new RestRpcResult(false,errors);
+                    }
+                });
             }
         }
-        return null;
+        throw new IllegalStateException("Unexpected state of proxy method.");
     }
 
-    public static<T> T getProxy(Class<T> intf,
-                                URI uri) {
-            Object obj = (T) Proxy.newProxyInstance
+    public static<T> T getProxy(Class<T> proxiedInterface,
+                                BindingIndependentMappingService mappingService,
+                                RestconfClientImpl restconfClient,
+                                SchemaContext schemaContext) {
+            //TODO refactor this to return specific class, not proxy
+        T proxiedType = null;
+        try {
+            proxiedType = (T) Proxy.newProxyInstance
                     (BindingToRestRpc.class.getClassLoader(),
-                            new Class[]{intf}, new BindingToRestRpc(uri));
+                            new Class[]{proxiedInterface}, new BindingToRestRpc(proxiedInterface, mappingService, restconfClient, schemaContext));
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage());
+        }
 
-            return (T) obj;
+        return proxiedType;
     }
 
 

@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.restconf.common;
 public enum ResourceMediaTypes {
 
     XML("application/yang.api+xml"),
-    JSON("application/yang.api+json");
+    JSON("application/yang.api+json"),
+    TEXT_EVT("text/event-stream");
 
     private final String mediaType;
 
