@@ -11,6 +11,7 @@ import java.net.URI;
 import org.opendaylight.yangtools.restconf.client.BindingToRestRpc;
 import org.opendaylight.yangtools.restconf.client.api.rpc.RpcServiceContext;
 import org.opendaylight.yangtools.yang.binding.RpcService;
+import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,8 @@ public class RestRpcServiceContext <T extends RpcService> implements RpcServiceC
     private static final Logger logger = LoggerFactory.getLogger(RestRpcServiceContext.class);
     private T rpcServiceProxy;
 
-    public RestRpcServiceContext(Class<T> rpcService,URI uri){
-        this.rpcServiceProxy = BindingToRestRpc.getProxy(rpcService,uri);
+    public RestRpcServiceContext(Class<T> rpcService,URI uri,BindingIndependentMappingService mappingService){
+        this.rpcServiceProxy = BindingToRestRpc.getProxy(rpcService,uri,mappingService);
     }
 
     @Override
