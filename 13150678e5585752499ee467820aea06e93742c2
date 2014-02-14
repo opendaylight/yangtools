@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_5e52a367",
+        "filename": "restconf/restconf-util/src/main/java/org/opendaylight/yangtools/restconf/utils/RestconfUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-02-14T08:32:03Z",
+      "side": 1,
+      "message": "Check should be for CompositeNode, ImmutableCompositeNode is implementation specific.",
+      "revId": "13150678e5585752499ee467820aea06e93742c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
