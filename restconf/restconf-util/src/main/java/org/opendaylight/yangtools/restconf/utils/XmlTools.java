@@ -13,14 +13,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.stream.StreamSource;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestEventStreamInfo;
+import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestRpcService;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
-import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,24 +34,26 @@ import org.w3c.dom.NodeList;
 public class XmlTools {
 
     private static final Logger logger = LoggerFactory.getLogger(XmlTools.class.toString());
+    static final String JAXP_SCHEMA_LOCATION =
+            "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
-
-    public static Object unmarshallXml(Class<?> clazz,InputStream xmlStream) throws Exception{
+    public static Object unmarshallXml(Class<?> clazz,InputStream xmlStream,String namespace) throws Exception{
         if (null == xmlStream){
             throw new Exception("XML input stream can't be null");
         }
-        JAXBContext jc = null;
-        jc = JAXBContext.newInstance(clazz);
+        JAXBContext jc = JAXBContext.newInstance(clazz);
 
-        Unmarshaller unmarshaller = null;
-        Object o = null;
-        unmarshaller = jc.createUnmarshaller();
-        return unmarshaller.unmarshal(xmlStream);
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        StreamSource xmlInputSource = new StreamSource(xmlStream);
+        JAXBElement<?> obj = unmarshaller.unmarshal(xmlInputSource, clazz);
+        return obj;
     }
 
     public static Document fromXml(InputStream is) throws Exception {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+
         Document doc = dBuilder.parse(is);
         doc.getDocumentElement().normalize();
         return doc;

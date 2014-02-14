@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+import javax.ws.rs.core.MediaType;
 import org.opendaylight.yangtools.restconf.client.api.RestconfClientContext;
 import org.opendaylight.yangtools.restconf.client.api.auth.AuthenticationHolder;
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
@@ -36,7 +37,6 @@ import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.restconf.client.api.event.ListenableEventStreamContext;
 import org.opendaylight.yangtools.restconf.client.api.rpc.RpcServiceContext;
-import org.opendaylight.yangtools.restconf.client.to.RestListenableEventStreamContext;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcServiceContext;
 import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
@@ -73,7 +73,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
         Preconditions.checkArgument(mappingService != null, "Mapping service must not be null.");
         Preconditions.checkNotNull(schemaContextHolder, "Schema Context Holder must not be null.");
         ClientConfig config = new DefaultClientConfig();
-        restClient  = Client.create(config);
+        this.restClient  = Client.create(config);
         URI uri = null;
         try {
             uri = url.toURI();
@@ -103,62 +103,56 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public ListenableFuture<Set<Class<? extends RpcService>>> getRpcServices() {
-        ListenableFuture<Set<Class<? extends RpcService>>> future = pool.submit(new Callable<Set<Class<? extends RpcService>>>() {
+        return get(ResourceUri.MODULES.getPath(), ResourceMediaTypes.XML.getMediaType(),new Function<ClientResponse, Set<Class<? extends RpcService>>>() {
             @Override
-            public Set<Class<? extends RpcService>> call() throws Exception {
-                WebResource resource = restClient.resource(defaultUri.toString() + ResourceUri.MODULES.getPath());
-                final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
-                        .get(ClientResponse.class);
-                if (response.getStatus() != 200) {
+            public Set<Class<? extends RpcService>> apply(ClientResponse clientResponse) {
+                if (clientResponse.getStatus() != 200) {
                     throw new RuntimeException("Failed : HTTP error code : "
-                            + response.getStatus());
+                            + clientResponse.getStatus());
                 }
-
-                return RestconfUtils.rpcServicesFromInputStream(response.getEntityInputStream(),mappingService,schemaContextHolder.getSchemaContext());
+                return RestconfUtils.rpcServicesFromInputStream(clientResponse.getEntityInputStream(),mappingService,schemaContextHolder.getSchemaContext());
             }
         });
-        return future;
     }
 
     @Override
     public <T extends RpcService> RpcServiceContext<T> getRpcServiceContext(Class<T> rpcService) {
-        RestRpcServiceContext restRpcServiceContext = new RestRpcServiceContext(rpcService,this.defaultUri);
+        RestRpcServiceContext restRpcServiceContext = new RestRpcServiceContext(rpcService,this.mappingService,this,schemaContextHolder.getSchemaContext());
         return restRpcServiceContext;
     }
 
     @Override
     public ListenableFuture<Set<EventStreamInfo>> getAvailableEventStreams() {
-        ListenableFuture<Set<org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo>> future = pool.submit(new Callable<Set<org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo>>() {
+        return get(ResourceUri.MODULES.getPath(), ResourceMediaTypes.XML.getMediaType(),new Function<ClientResponse, Set<EventStreamInfo>>() {
             @Override
-            public Set<org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo> call() throws Exception {
-                // when restconf will support discovery by /restconf/streams change ResourceUri.MODULES to ResourceUri.STREAMS
-                WebResource resource = restClient.resource(defaultUri.toString() + ResourceUri.MODULES.getPath());
-                final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
-                        .get(ClientResponse.class);
-
-                if (response.getStatus() != 200) {
+            public Set<EventStreamInfo> apply(ClientResponse clientResponse) {
+                if (clientResponse.getStatus() != 200) {
                     throw new RuntimeException("Failed : HTTP error code : "
-                            + response.getStatus());
+                            + clientResponse.getStatus());
                 }
-                List<RestModule> modules = XmlTools.getModulesFromInputStream(response.getEntityInputStream());
+                List<RestModule> modules = null;
+                try {
+                    modules = XmlTools.getModulesFromInputStream(clientResponse.getEntityInputStream());
+                } catch (Exception e) {
+                    logger.trace("");
+                }
                 // when restconf will support discovery by /restconf/streams use this  instead of next iteration
                 //return XmlTools.evenStreamsFromInputStream(response.getEntityInputStream());
                 Set<EventStreamInfo> evtStreamInfos = new HashSet<EventStreamInfo>();
                 for (RestModule module:modules){
                     RestEventStreamInfo esi = new RestEventStreamInfo();
-                    esi.setIdentifier(module.getName());
-                    esi.setDescription(module.getNamespace()+" "+module.getRevision());
+                    esi.setIdentifier(module.getName()+":"+module.getName());
+                    esi.setDescription(module.getNamespace());
                     evtStreamInfos.add(esi);
                 }
                 return evtStreamInfos;
             }
         });
-        return future;
     }
 
     @Override
     public ListenableEventStreamContext getEventStreamContext(EventStreamInfo info) {
-        RestListenableEventStreamContext listenableEventStream = new RestListenableEventStreamContext(defaultUri);
+        RestListenableEventStreamContext listenableEventStream = new RestListenableEventStreamContext(info,this.mappingService,this,schemaContextHolder.getSchemaContext());
         return listenableEventStream;
     }
 
@@ -198,56 +192,109 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     }
 
-    protected Client getRestClient() {
-        return restClient;
-    }
-
     public SchemaContext getSchemaContext() {
         return this.schemaContextHolder.getSchemaContext();
     }
 
     protected <T> ListenableFuture<T> get(final String path, final Function<ClientResponse, T> processingFunction) {
-        return pool.submit(new GetAndTransformTask<T>(constructPath(path),processingFunction));
+        return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path), RestOperation.GET, processingFunction));
     }
 
     protected <T> ListenableFuture<T> get(final String path,final String mediaType, final Function<ClientResponse, T> processingFunction) {
-        return pool.submit(new GetAndTransformTask<T>(constructPath(path),mediaType,processingFunction));
+        return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),mediaType,RestOperation.GET,processingFunction));
+    }
+
+    protected <T> ListenableFuture<T> post(final String path, String payload, final Function<ClientResponse, T> processingFunction) {
+        return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),payload,RestOperation.POST,processingFunction));
+    }
+
+    protected <T> ListenableFuture<T> post(final String path,String payload,final String mediaType, final Function<ClientResponse, T> processingFunction) {
+        return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),payload,RestOperation.POST,mediaType,processingFunction));
+    }
+
+    protected <T> ListenableFuture<T> put(final String path, String payload, final Function<ClientResponse, T> processingFunction) {
+        return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),RestOperation.PUT,payload,processingFunction));
+    }
+
+    protected <T> ListenableFuture<T> put(final String path,String payload,final String mediaType, final Function<ClientResponse, T> processingFunction) {
+        return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),payload,RestOperation.PUT,mediaType,processingFunction));
+    }
+    protected <T> ListenableFuture<T> delete(final String path, final Function<ClientResponse, T> processingFunction) {
+        return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),RestOperation.DELETE,processingFunction));
+    }
+
+    protected <T> ListenableFuture<T> delete(final String path,final String mediaType, final Function<ClientResponse, T> processingFunction) {
+        return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),RestOperation.DELETE,mediaType,processingFunction));
     }
 
     protected String constructPath(String path) {
         return getDefaultUri().toString() + path;
     }
 
-    //, RestRestconfService {
+    private enum RestOperation{
+        PUT,POST,GET,DELETE;
+    }
 
-    private class GetAndTransformTask<T> implements Callable<T> {
-
+    private class ExecuteOperationAndTransformTask<T> implements Callable<T> {
         private final Function<ClientResponse, T> transformation;
         private final String path;
         private final String acceptType;
+        private final String payload;
+        private final RestOperation restOperation;
 
-        public GetAndTransformTask(String path, Function<ClientResponse, T> processingFunction) {
+        public ExecuteOperationAndTransformTask(String path, String payload, RestOperation operation, Function<ClientResponse, T> processingFunction) {
             this.path = path;
             this.transformation = processingFunction;
-            this.acceptType = ResourceMediaTypes.XML.getMediaType();
+            this.acceptType = MediaType.APPLICATION_XML; //ResourceMediaTypes.XML.getMediaType();
+            this.payload = payload;
+            this.restOperation = operation;
         }
 
-        public GetAndTransformTask(String path, String mediaType, Function<ClientResponse, T> processingFunction) {
+        public ExecuteOperationAndTransformTask(String path,String payload, RestOperation operation,String mediaType, Function<ClientResponse, T> processingFunction) {
             this.path = path;
             this.transformation = processingFunction;
             this.acceptType = mediaType;
+            this.payload = payload;
+            this.restOperation = operation;
+        }
+        public ExecuteOperationAndTransformTask(String path, RestOperation operation,String mediaType, Function<ClientResponse, T> processingFunction) {
+            this.path = path;
+            this.transformation = processingFunction;
+            this.acceptType = mediaType;
+            this.payload = null;
+            this.restOperation = operation;
+        }
+        public ExecuteOperationAndTransformTask(String path, RestOperation operation, Function<ClientResponse, T> processingFunction) {
+            this.path = path;
+            this.transformation = processingFunction;
+            this.acceptType =  MediaType.APPLICATION_XML;
+            this.payload = null;
+            this.restOperation = operation;
         }
 
         @Override
         public T call() {
+            ClientResponse response = null;
+            try {
+                WebResource resource = restClient.resource(path);
+                switch (restOperation){
+                    case PUT: response = resource.type(MediaType.APPLICATION_XML).accept(acceptType).put(ClientResponse.class, payload);
+                        break;
+                    case POST : response = resource.type(MediaType.APPLICATION_XML).accept(acceptType).post(ClientResponse.class, payload);
+                         break;
+                    case GET: response = resource.type(MediaType.APPLICATION_XML).accept(acceptType).get(ClientResponse.class);
+                        break;
+                    case DELETE: response = resource.type(MediaType.APPLICATION_XML).accept(acceptType).delete(ClientResponse.class);
+                        break;
+                }
 
-            WebResource resource = restClient.resource(path);
-            ClientResponse response = resource.accept(acceptType).get(ClientResponse.class);
+            } catch (Exception e){
+                logger.trace("Exception occured while posting data to client {}",e);
+            }
 
-            // Applies the specific transformation for supplied resource.
+
             return transformation.apply(response);
         }
-
     }
 
 }
