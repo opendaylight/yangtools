@@ -21,26 +21,34 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
+import javax.ws.rs.core.MediaType;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
 import org.opendaylight.yangtools.restconf.utils.XmlTools;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
+import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 public class BindingToRestRpc implements InvocationHandler {
 
     private final Client client;
     private final URI defaultUri;
     private static final Logger logger = LoggerFactory.getLogger(BindingToRestRpc.class);
+    private final BindingIndependentMappingService mappingService;
 
-    public BindingToRestRpc(URI uri) {
+    public BindingToRestRpc(URI uri,BindingIndependentMappingService mappingService) {
+        this.mappingService = mappingService;
         ClientConfig config = new DefaultClientConfig();
         this.client  = Client.create(config);
         this.client.addFilter(new HTTPBasicAuthFilter("admin", "admin"));
@@ -56,7 +64,7 @@ public class BindingToRestRpc implements InvocationHandler {
 
         YangModuleInfo yangModuleInfo = (YangModuleInfo) getInstanceMethod.invoke(null,new Object[0]);
 
-                List<InputStream> moduleStreams = new ArrayList<InputStream>();
+        List<InputStream> moduleStreams = new ArrayList<InputStream>();
         moduleStreams.add(yangModuleInfo.getModuleSourceStream());
 
         Set<Module> modules = parser.parseYangModelsFromStreams(moduleStreams);
@@ -67,11 +75,23 @@ public class BindingToRestRpc implements InvocationHandler {
 
                     String moduleName = BindingReflections.getModuleInfo(method.getDeclaringClass()).getName();
                     String rpcMethodName = rpcDef.getQName().getLocalName();
-
+                    Document mergedDoc = null;
+                    for (Object component:objects){
+                        Document doc = XmlDocumentUtils.toDocument(mappingService.toDataDom((DataObject) component), XmlDocumentUtils.defaultValueCodecProvider());
+                        if (null == mergedDoc) {
+                            mergedDoc = doc;
+                        } else {
+                            mergedDoc.importNode(doc.getFirstChild(),true);
+                        }
+                    }
+                    DOMImplementationLS lsImpl = (DOMImplementationLS)mergedDoc.getImplementation().getFeature("LS", "3.0");
+                    LSSerializer serializer = lsImpl.createLSSerializer();
+                    serializer.getDomConfig().setParameter("xml-declaration", false); //by default its true, so set it to false to get String without xml-declaration
+                    String str = serializer.writeToString(mergedDoc);
                     WebResource resource = client.resource(defaultUri.toString() + ResourceUri.OPERATIONS.getPath() + "/"+ moduleName+":"+rpcMethodName);
 
-                    final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
-                            .post(ClientResponse.class);
+                    final ClientResponse response = resource.type(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML)
+                            .post(ClientResponse.class,str);
 
 
                     if (response.getStatus() != 200) {
@@ -85,10 +105,10 @@ public class BindingToRestRpc implements InvocationHandler {
     }
 
     public static<T> T getProxy(Class<T> intf,
-                                URI uri) {
+                                URI uri,BindingIndependentMappingService mappingService) {
             Object obj = (T) Proxy.newProxyInstance
                     (BindingToRestRpc.class.getClassLoader(),
-                            new Class[]{intf}, new BindingToRestRpc(uri));
+                            new Class[]{intf}, new BindingToRestRpc(uri,mappingService));
 
             return (T) obj;
     }

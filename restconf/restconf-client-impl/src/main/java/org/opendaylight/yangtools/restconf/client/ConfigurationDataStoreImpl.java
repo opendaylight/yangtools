@@ -19,10 +19,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+import javax.ws.rs.core.MediaType;
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcError;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcResult;
-import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
 import org.opendaylight.yangtools.restconf.utils.RestconfUtils;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -60,7 +60,7 @@ public class ConfigurationDataStoreImpl extends AbstractDataStore implements Con
             public RpcResult<Boolean> call() throws Exception {
                 Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
                 WebResource resource = getClient().getRestClient().resource(getClient().constructPath(restconfPath));
-                final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
+                final ClientResponse response = resource.type(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML)
                         .delete(ClientResponse.class);
 
                 if (response.getStatus() != 200) {
@@ -90,7 +90,7 @@ public class ConfigurationDataStoreImpl extends AbstractDataStore implements Con
             public RpcResult<Boolean> call() throws Exception {
                 Map.Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
                 WebResource resource = getClient().getRestClient().resource(getClient().constructPath(restconfPath));
-                final ClientResponse response = resource.accept(ResourceMediaTypes.XML.getMediaType())
+                final ClientResponse response = resource.type(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML)
                         .put(ClientResponse.class);
 
                 if (response.getStatus() != 200) {

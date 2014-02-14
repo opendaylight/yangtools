@@ -18,6 +18,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,19 +29,27 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.restconf.client.BindingToRestRpc;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamReplay;
 import org.opendaylight.yangtools.restconf.client.api.event.ListenableEventStreamContext;
+import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
 import org.opendaylight.yangtools.websocket.client.WebSocketIClient;
 import org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback;
 import org.opendaylight.yangtools.yang.binding.NotificationListener;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.RpcResult;
+import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 
 @XmlRootElement
@@ -55,13 +64,14 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
     private URI websocketServerUri;
     private WebSocketIClient wsClient;
     private String streamName;
-
     private Method listenerCallbackMethod;
+    private final BindingIndependentMappingService mappingService;
 
-    public RestListenableEventStreamContext(URI uri){
+    public RestListenableEventStreamContext(URI uri, BindingIndependentMappingService mappingService){
         this.defaultUri = uri;
         ClientConfig config = new DefaultClientConfig();
         client  = Client.create(config);
+        this.mappingService = mappingService;
     }
     @Override
     public <T extends NotificationListener> ListenerRegistration<T> registerNotificationListener(T listener) {
@@ -88,14 +98,13 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
         } else {
             targetIfc = listener.getClass();
         }
-        T listenerProxy = (T) BindingToRestRpc.getProxy(targetIfc, this.defaultUri);
+        T listenerProxy = (T) BindingToRestRpc.getProxy(targetIfc, this.defaultUri,this.mappingService);
         ListenerRegistration listenerRegistration = new ListenerRegistrationImpl(listenerProxy);
         return listenerRegistration;
     }
 
     @Override
     public ListenableFuture<RpcResult<Void>> startListening() {
-
 
         ClientResponse response = extractWebSocketUriFromRpc(this.streamName);
         boolean success = true;
@@ -138,20 +147,49 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
         this.stopListening();
     }
 
-    private ClientResponse extractWebSocketUriFromRpc(String streamName){
+    private ClientResponse extractWebSocketUriFromRpc(String methodName){
+        WebResource resource = client.resource(defaultUri.toString() + ResourceUri.STREAMS.getPath()+"/"+subscribeAndReturnStreamName(this.streamName));
+        final ClientResponse responseWithWebsocketUrl = resource.type(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML)
+                .get(ClientResponse.class);
+
+        this.websocketServerUri = responseWithWebsocketUrl.getLocation();
+        return responseWithWebsocketUrl;
+    }
+
+    private String subscribeAndReturnStreamName(String streamName){
         String uri = null;
         try {
-            uri = this.createUri(defaultUri+"/streams/stream/", streamName);
+            uri = this.createUri(defaultUri+ResourceUri.STREAM.toString(), this.streamName);
         } catch (UnsupportedEncodingException e) {
             logger.trace("Unsupported encoding.");
         }
 
-        WebResource resource = client.resource(defaultUri.toString() + ResourceUri.STREAMS.getPath());
-        final ClientResponse response = resource.accept(MediaType.APPLICATION_XML)
+        WebResource resource = client.resource(uri);
+        final ClientResponse response = resource.type(ResourceMediaTypes.TEXT_EVT.getMediaType()).accept(MediaType.APPLICATION_XML)
                 .get(ClientResponse.class);
 
-        this.websocketServerUri = response.getLocation();
-        return response;
+        DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
+        documentBuilder.setNamespaceAware(true);
+        DocumentBuilder builder = null;
+        try {
+            builder = documentBuilder.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException(e);
+        }
+        Document doc = null;
+        try {
+            doc = builder.parse(response.getEntityInputStream());
+        } catch (SAXException e) {
+            throw new IllegalStateException(e);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        Element rootElement = doc.getDocumentElement();
+        NodeList w3cNodes = rootElement.getElementsByTagName("stream-name");
+        if (w3cNodes.getLength()<=0){
+            throw new IllegalStateException("No tag stream-name in response.");
+        }
+        return w3cNodes.item(0).getNodeValue();
     }
     private void createWebsocketClient(URI websocketServerUri){
         this.wsClient = new WebSocketIClient(websocketServerUri,this);
