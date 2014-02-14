@@ -125,7 +125,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public <T extends RpcService> RpcServiceContext<T> getRpcServiceContext(Class<T> rpcService) {
-        RestRpcServiceContext restRpcServiceContext = new RestRpcServiceContext(rpcService,this.defaultUri);
+        RestRpcServiceContext restRpcServiceContext = new RestRpcServiceContext(rpcService,this.defaultUri,this.mappingService);
         return restRpcServiceContext;
     }
 
@@ -161,7 +161,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public ListenableEventStreamContext getEventStreamContext(EventStreamInfo info) {
-        RestListenableEventStreamContext listenableEventStream = new RestListenableEventStreamContext(defaultUri);
+        RestListenableEventStreamContext listenableEventStream = new RestListenableEventStreamContext(defaultUri,this.mappingService);
         return listenableEventStream;
     }
 
