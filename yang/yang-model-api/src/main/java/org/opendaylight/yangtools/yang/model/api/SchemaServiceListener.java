@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.EventListener;
 
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-
 /**
  * @deprecated Please use {@link SchemaContextListener} instead.
  */
@@ -18,5 +16,4 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 public interface SchemaServiceListener extends EventListener {
     // FIXME: move declaration to SchemaContextListener
     void onGlobalContextUpdated(SchemaContext context);
-
 }
