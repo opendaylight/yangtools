@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_9e5c9b7e",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestconfClientImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-02-14T08:30:56Z",
+      "side": 1,
+      "message": "Authentification should be externalized, and provided in factory when constructing client, specific to factory implementaiotn.",
+      "revId": "46e47b274055e4adbc484dbbb62ec564f81ffee0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
