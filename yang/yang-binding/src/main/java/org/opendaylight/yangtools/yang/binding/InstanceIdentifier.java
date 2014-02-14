@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,10 +18,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
- * Uniquely identifies data location in the overall of data tree 
+ * Uniquely identifies data location in the overall of data tree
  * modeled by YANG.
- * 
- * 
+ *
+ *
  */
 public final class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>,Immutable {
 
@@ -40,13 +39,13 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     }
 
     /**
-     * 
+     *
      * @return path
      */
     public List<PathArgument> getPath() {
         return getPathArguments();
     }
-    
+
     public List<PathArgument> getPathArguments() {
         return this.path;
     }
@@ -63,11 +62,12 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     /**
      * Return an instance identifier trimmed at the first occurrence of a
      * specific component type.
-     * 
+     *
      * @param type component type
      * @return trimmed instance identifier, or null if the component type
      *         is not present.
      */
+    @SuppressWarnings("hiding")
     public <T extends DataObject> InstanceIdentifier<T> firstIdentifierOf(final Class<T> type) {
         int i = 1;
         for (final PathArgument a : path) {
@@ -84,7 +84,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     /**
      * Return the key associated with the first component of specified type in
      * an identifier.
-     * 
+     *
      * @param listItem component type
      * @param listKey component key type
      * @return key associated with the component, or null if the component type
@@ -104,7 +104,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
 
     /**
      * Return the key associated with the last component of the specified identifier.
-     * 
+     *
      * @param id instance identifier
      * @return key associated with the last component
      */
@@ -134,6 +134,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
             this.type = type;
         }
 
+        @Override
         public Class<T> getType() {
             return type;
         }
@@ -239,7 +240,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
                 Class<N> listItem, K listKey);
 
         <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilder<N> augmentation(Class<N> container);
-        
+
         InstanceIdentifier<T> build();
 
     }
@@ -268,15 +269,15 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
 
     private static final class BuilderImpl<T extends DataObject> implements InstanceIdentifierBuilder<T> {
 
-        private List<PathArgument> path;
+        private final ImmutableList.Builder<PathArgument> path;
         private Class<? extends DataObject> target = null;
 
         public BuilderImpl() {
-            this.path = new ArrayList<>();
+            this.path = ImmutableList.builder();
         }
 
         public BuilderImpl(List<? extends PathArgument> prefix,Class<? extends DataObject> target) {
-            this.path = new ArrayList<>(prefix);
+            this.path = ImmutableList.<PathArgument>builder().addAll(prefix);
             this.target = target;
         }
 
@@ -298,10 +299,9 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public InstanceIdentifier<T> toInstance() {
-            List<PathArgument> immutablePath = Collections.unmodifiableList(new ArrayList<PathArgument>(path));
-            return new InstanceIdentifier(immutablePath, target);
+            return new InstanceIdentifier(path.build(), target);
         }
-        
+
         @Override
         public InstanceIdentifier<T> build() {
             return toInstance();
@@ -333,6 +333,14 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         public <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilder<N> augmentation(
                 Class<N> container) {
             return addNode(container);
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((path == null) ? 0 : path.hashCode());
+            return result;
         }
     }
 
@@ -383,7 +391,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         }
         return true;
     }
-    
+
     public boolean containsWildcarded(final InstanceIdentifier<?> other) {
         if(other == null) {
             throw new IllegalArgumentException("other should not be null");
@@ -395,10 +403,11 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         }
         for(int i = 0;i<localSize;i++ ) {
             final PathArgument localArgument = path.get(i);
-            if(!localArgument.getType().equals(otherPath.get(i).getType())) {
+            final PathArgument otherArgument = otherPath.get(i);
+            if(!localArgument.getType().equals(otherArgument.getType())) {
                 return false;
-            } 
-            if(localArgument instanceof IdentifiableItem<?, ?> && !localArgument.equals(otherPath.get(i))) {
+            }
+            if(localArgument instanceof IdentifiableItem<?, ?> && otherArgument instanceof IdentifiableItem<?, ?> && !localArgument.equals(otherPath.get(i))) {
                 return false;
             }
         }
