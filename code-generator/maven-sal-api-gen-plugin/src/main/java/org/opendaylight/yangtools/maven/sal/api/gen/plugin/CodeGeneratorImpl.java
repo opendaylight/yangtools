@@ -168,6 +168,9 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
     }
 
     private File writeJavaSource(File packageDir, String className, String source) {
+        if (!packageDir.exists()) {
+            packageDir.mkdirs();
+        }
         final File file = new File(packageDir, className + ".java");
         writeFile(file, source);
         return file;
