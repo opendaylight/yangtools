@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -43,8 +44,8 @@ public class GroupingTest {
     private Set<Module> modules;
 
     @Before
-    public void init() throws FileNotFoundException {
-        modules = TestUtils.loadModules(getClass().getResource("/model").getPath());
+    public void init() throws FileNotFoundException, URISyntaxException {
+        modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         assertEquals(3, modules.size());
     }
 
@@ -345,8 +346,8 @@ public class GroupingTest {
     }
 
     @Test
-    public void testCascadeUses() throws FileNotFoundException, ParseException {
-        File yangFile = new File(getClass().getResource("/grouping-test/cascade-uses.yang").getPath());
+    public void testCascadeUses() throws Exception {
+        File yangFile = new File(getClass().getResource("/grouping-test/cascade-uses.yang").toURI());
         YangModelParser parser = new YangParserImpl();
         modules = parser.parseYangModels(Collections.singletonList(yangFile));
         assertEquals(1, modules.size());

@@ -42,12 +42,12 @@ public class YangParserWithContextTest {
     @Test
     public void testTypeFromContext() throws Exception {
         String resource = "/ietf/ietf-inet-types@2010-09-24.yang";
-        InputStream stream = new FileInputStream(getClass().getResource(resource).getPath());
+        InputStream stream = new FileInputStream(new File(getClass().getResource(resource).toURI()));
         SchemaContext context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
         stream.close();
 
         resource = "/context-test/test1.yang";
-        InputStream stream2 = new FileInputStream(getClass().getResource(resource).getPath());
+        InputStream stream2 = new FileInputStream(new File(getClass().getResource(resource).toURI()));
         Module module = TestUtils.loadModuleWithContext("test1", stream2, context);
         stream2.close();
         assertNotNull(module);
@@ -79,13 +79,14 @@ public class YangParserWithContextTest {
     @Test
     public void testUsesFromContext() throws Exception {
         SchemaContext context;
-        try (InputStream stream1 = new FileInputStream(getClass().getResource("/model/baz.yang").getPath());
-                InputStream stream2 = new FileInputStream(getClass().getResource("/model/bar.yang").getPath());
-                InputStream stream3 = new FileInputStream(getClass().getResource("/model/foo.yang").getPath())) {
+        try (InputStream stream1 = new FileInputStream(new File(getClass().getResource("/model/baz.yang").toURI()));
+                InputStream stream2 = new FileInputStream(new File(getClass().getResource("/model/bar.yang").toURI()));
+                InputStream stream3 = new FileInputStream(new File(getClass().getResource("/model/foo.yang").toURI()))) {
             context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3)));
         }
         Module testModule;
-        try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test2.yang").getPath())) {
+        try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test2.yang")
+                .toURI()))) {
             testModule = TestUtils.loadModuleWithContext("test2", stream, context);
         }
         assertNotNull(testModule);
@@ -182,13 +183,14 @@ public class YangParserWithContextTest {
     @Test
     public void testUsesRefineFromContext() throws Exception {
         SchemaContext context;
-        try (InputStream stream1 = new FileInputStream(getClass().getResource("/model/baz.yang").getPath());
-                InputStream stream2 = new FileInputStream(getClass().getResource("/model/bar.yang").getPath());
-                InputStream stream3 = new FileInputStream(getClass().getResource("/model/foo.yang").getPath())) {
+        try (InputStream stream1 = new FileInputStream(new File(getClass().getResource("/model/baz.yang").toURI()));
+                InputStream stream2 = new FileInputStream(new File(getClass().getResource("/model/bar.yang").toURI()));
+                InputStream stream3 = new FileInputStream(new File(getClass().getResource("/model/foo.yang").toURI()))) {
             context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3)));
         }
         Module module;
-        try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test2.yang").getPath())) {
+        try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test2.yang")
+                .toURI()))) {
             module = TestUtils.loadModuleWithContext("test2", stream, context);
         }
         assertNotNull(module);
@@ -258,13 +260,14 @@ public class YangParserWithContextTest {
     @Test
     public void testIdentity() throws Exception {
         SchemaContext context;
-        File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
-        File dependenciesDir = new File(getClass().getResource("/ietf").getPath());
+        File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
+        File dependenciesDir = new File(getClass().getResource("/ietf").toURI());
         YangModelParser parser = new YangParserImpl();
         context = parser.resolveSchemaContext(parser.parseYangModels(yangFile, dependenciesDir));
 
         Module module;
-        try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test3.yang").getPath())) {
+        try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test3.yang")
+                .toURI()))) {
             module = TestUtils.loadModuleWithContext("test3", stream, context);
         }
         assertNotNull(module);
@@ -290,13 +293,14 @@ public class YangParserWithContextTest {
     @Test
     public void testUnknownNodes() throws Exception {
         SchemaContext context;
-        File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
-        File dependenciesDir = new File(getClass().getResource("/ietf").getPath());
+        File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
+        File dependenciesDir = new File(getClass().getResource("/ietf").toURI());
         YangModelParser parser = new YangParserImpl();
         context = parser.resolveSchemaContext(parser.parseYangModels(yangFile, dependenciesDir));
 
         Module module;
-        try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/test3.yang").getPath())) {
+        try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test3.yang")
+                .toURI()))) {
             module = TestUtils.loadModuleWithContext("test3", stream, context);
         }
 
@@ -321,18 +325,18 @@ public class YangParserWithContextTest {
         SchemaContext context;
         String resource = "/context-augment-test/test4.yang";
 
-        try (InputStream stream = new FileInputStream(getClass().getResource(resource).getPath())) {
+        try (InputStream stream = new FileInputStream(new File(getClass().getResource(resource).toURI()))) {
             context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
         }
 
         // load another modules and parse them against already existing context
         Set<Module> modules;
-        try (InputStream stream1 = new FileInputStream(getClass().getResource("/context-augment-test/test1.yang")
-                .getPath());
-                InputStream stream2 = new FileInputStream(getClass().getResource("/context-augment-test/test2.yang")
-                        .getPath());
-                InputStream stream3 = new FileInputStream(getClass().getResource("/context-augment-test/test3.yang")
-                        .getPath())) {
+        try (InputStream stream1 = new FileInputStream(new File(getClass().getResource(
+                "/context-augment-test/test1.yang").toURI()));
+                InputStream stream2 = new FileInputStream(new File(getClass().getResource(
+                        "/context-augment-test/test2.yang").toURI()));
+                InputStream stream3 = new FileInputStream(new File(getClass().getResource(
+                        "/context-augment-test/test3.yang").toURI()))) {
             List<InputStream> input = Lists.newArrayList(stream1, stream2, stream3);
             modules = TestUtils.loadModulesWithContext(input, context);
         }
@@ -366,14 +370,14 @@ public class YangParserWithContextTest {
         SchemaContext context;
         String resource = "/model/bar.yang";
 
-        try (InputStream stream = new FileInputStream(getClass().getResource(resource).getPath())) {
+        try (InputStream stream = new FileInputStream(new File(getClass().getResource(resource).toURI()))) {
             context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
         }
 
         // load another modules and parse them against already existing context
         Set<Module> modules;
-        try (InputStream stream = new FileInputStream(getClass().getResource("/context-test/deviation-test.yang")
-                .getPath())) {
+        try (InputStream stream = new FileInputStream(new File(getClass().getResource(
+                "/context-test/deviation-test.yang").toURI()))) {
             List<InputStream> input = Lists.newArrayList(stream);
             modules = TestUtils.loadModulesWithContext(input, context);
         }

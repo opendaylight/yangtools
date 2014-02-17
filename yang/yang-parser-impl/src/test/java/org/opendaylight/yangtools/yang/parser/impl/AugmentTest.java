@@ -66,7 +66,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentParsing() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").getPath());
+        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
         SchemaPath expectedSchemaPath;
         List<QName> qnames = new ArrayList<>();
         qnames.add(q0);
@@ -171,7 +171,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentResolving() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").getPath());
+        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
         Module module2 = TestUtils.findModule(modules, "bar");
         ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName("interfaces");
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
@@ -233,7 +233,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentedChoice() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").getPath());
+        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
         Module module2 = TestUtils.findModule(modules, "bar");
         ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName("interfaces");
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
@@ -338,7 +338,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentRpc() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").getPath());
+        modules = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
         final URI NS_BAR = URI.create("urn:opendaylight:bar");
         final URI NS_FOO = URI.create("urn:opendaylight:foo");
         final Date revision = new SimpleDateFormat("yyyy-MM-dd").parse("2013-10-11");
