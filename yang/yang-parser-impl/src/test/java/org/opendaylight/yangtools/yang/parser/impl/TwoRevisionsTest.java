@@ -22,7 +22,7 @@ public class TwoRevisionsTest {
     public void testTwoRevisions() throws Exception {
         YangModelParser parser = new YangParserImpl();
 
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource("/ietf").getPath(), parser);
+        Set<Module> modules = TestUtils.loadModules(getClass().getResource("/ietf").toURI());
         assertEquals(2, TestUtils.findModules(modules, "network-topology").size());
 
         SchemaContext schemaContext = parser.resolveSchemaContext(modules);

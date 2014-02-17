@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 public class YangParserNegativeTest {
 
     @Test
-    public void testInvalidImport() throws IOException {
+    public void testInvalidImport() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/testfile1.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource("/negative-scenario/testfile1.yang")
-                    .getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("ValidationException should by thrown");
             }
@@ -35,10 +35,10 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testTypeNotFound() throws IOException {
+    public void testTypeNotFound() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/testfile2.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource("/negative-scenario/testfile2.yang")
-                    .getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should by thrown");
             }
@@ -48,14 +48,14 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidAugmentTarget() throws IOException {
+    public void testInvalidAugmentTarget() throws Exception {
+        File yang1 = new File(getClass().getResource("/negative-scenario/testfile0.yang").toURI());
+        File yang2 = new File(getClass().getResource("/negative-scenario/testfile3.yang").toURI());
         try {
             final List<InputStream> streams = new ArrayList<>(2);
-            try (InputStream testFile0 = new FileInputStream(getClass()
-                    .getResource("/negative-scenario/testfile0.yang").getPath())) {
+            try (InputStream testFile0 = new FileInputStream(yang1)) {
                 streams.add(testFile0);
-                try (InputStream testFile3 = new FileInputStream(getClass().getResource(
-                        "/negative-scenario/testfile3.yang").getPath())) {
+                try (InputStream testFile3 = new FileInputStream(yang2)) {
                     streams.add(testFile3);
                     assertEquals("Expected loaded files count is 2", 2, streams.size());
                     TestUtils.loadModules(streams);
@@ -70,10 +70,10 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidRefine() throws IOException {
+    public void testInvalidRefine() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/testfile4.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource("/negative-scenario/testfile4.yang")
-                    .getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should by thrown");
             }
@@ -83,10 +83,10 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidLength() throws IOException {
+    public void testInvalidLength() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/testfile5.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource("/negative-scenario/testfile5.yang")
-                    .getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should by thrown");
             }
@@ -96,10 +96,10 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidRange() throws IOException {
+    public void testInvalidRange() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/testfile6.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource("/negative-scenario/testfile6.yang")
-                    .getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should by thrown");
             }
@@ -109,10 +109,10 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicateContainer() throws IOException {
+    public void testDuplicateContainer() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/duplicity/container.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource(
-                    "/negative-scenario/duplicity/container.yang").getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should by thrown");
             }
@@ -123,10 +123,10 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicateContainerList() throws IOException {
+    public void testDuplicateContainerList() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/duplicity/container-list.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource(
-                    "/negative-scenario/duplicity/container-list.yang").getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should by thrown");
             }
@@ -137,10 +137,10 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicateContainerLeaf() throws IOException {
+    public void testDuplicateContainerLeaf() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/duplicity/container-leaf.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource(
-                    "/negative-scenario/duplicity/container-leaf.yang").getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should by thrown");
             }
@@ -151,10 +151,10 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicateTypedef() throws IOException {
+    public void testDuplicateTypedef() throws Exception {
+        File yang = new File(getClass().getResource("/negative-scenario/duplicity/typedef.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(getClass().getResource(
-                    "/negative-scenario/duplicity/typedef.yang").getPath())) {
+            try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should by thrown");
             }
@@ -166,11 +166,10 @@ public class YangParserNegativeTest {
 
     @Test
     public void testDuplicityInAugmentTarget1() throws Exception {
+        File yang1 = new File(getClass().getResource("/negative-scenario/duplicity/augment0.yang").toURI());
+        File yang2 = new File(getClass().getResource("/negative-scenario/duplicity/augment1.yang").toURI());
         try {
-            try (InputStream stream1 = new FileInputStream(getClass().getResource(
-                    "/negative-scenario/duplicity/augment0.yang").getPath());
-                    InputStream stream2 = new FileInputStream(getClass().getResource(
-                            "/negative-scenario/duplicity/augment1.yang").getPath())) {
+            try (InputStream stream1 = new FileInputStream(yang1); InputStream stream2 = new FileInputStream(yang2)) {
                 TestUtils.loadModules(Arrays.asList(stream1, stream2));
                 fail("YangParseException should by thrown");
             }
@@ -182,11 +181,10 @@ public class YangParserNegativeTest {
 
     @Test
     public void testDuplicityInAugmentTarget2() throws Exception {
+        File yang1 = new File(getClass().getResource("/negative-scenario/duplicity/augment0.yang").toURI());
+        File yang2 = new File(getClass().getResource("/negative-scenario/duplicity/augment2.yang").toURI());
         try {
-            try (InputStream stream1 = new FileInputStream(getClass().getResource(
-                    "/negative-scenario/duplicity/augment0.yang").getPath());
-                    InputStream stream2 = new FileInputStream(getClass().getResource(
-                            "/negative-scenario/duplicity/augment2.yang").getPath())) {
+            try (InputStream stream1 = new FileInputStream(yang1); InputStream stream2 = new FileInputStream(yang2)) {
                 TestUtils.loadModules(Arrays.asList(stream1, stream2));
                 fail("YangParseException should by thrown");
             }
@@ -197,12 +195,11 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testMandatoryInAugment() throws IOException {
+    public void testMandatoryInAugment() throws Exception {
+        File yang1 = new File(getClass().getResource("/negative-scenario/testfile8.yang").toURI());
+        File yang2 = new File(getClass().getResource("/negative-scenario/testfile7.yang").toURI());
         try {
-            try (InputStream stream1 = new FileInputStream(getClass().getResource("/negative-scenario/testfile8.yang")
-                    .getPath());
-                    InputStream stream2 = new FileInputStream(getClass().getResource(
-                            "/negative-scenario/testfile7.yang").getPath())) {
+            try (InputStream stream1 = new FileInputStream(yang1); InputStream stream2 = new FileInputStream(yang2)) {
                 TestUtils.loadModules(Arrays.asList(stream1, stream2));
                 fail("YangParseException should by thrown");
             }
@@ -215,7 +212,7 @@ public class YangParserNegativeTest {
     @Test
     public void testWrongDependenciesDir() throws Exception {
         try {
-            File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
+            File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
             File dependenciesDir = new File("/invalid");
             YangModelParser parser = new YangParserImpl();
             parser.parseYangModels(yangFile, dependenciesDir);
@@ -229,7 +226,7 @@ public class YangParserNegativeTest {
     @Test
     public void testWrongDependenciesDir2() throws Exception {
         try {
-            File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
+            File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
             File dependenciesDir = new File(getClass().getResource("/model").getPath());
             YangModelParser parser = new YangParserImpl();
             parser.parseYangModels(yangFile, dependenciesDir);

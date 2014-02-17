@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,13 +57,13 @@ public class YangParserTest {
     private Set<Module> modules;
 
     @Before
-    public void init() throws FileNotFoundException, ParseException {
+    public void init() throws Exception {
         DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         fooRev = simpleDateFormat.parse("2013-02-27");
         barRev = simpleDateFormat.parse("2013-07-03");
         bazRev = simpleDateFormat.parse("2013-02-27");
 
-        modules = TestUtils.loadModules(getClass().getResource("/model").getPath());
+        modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         assertEquals(3, modules.size());
     }
 
@@ -801,28 +802,28 @@ public class YangParserTest {
     }
 
     @Test
-    public void testParseMethod1() throws ParseException {
-        File yangFile = new File(getClass().getResource("/parse-methods/m1.yang").getPath());
-        File dependenciesDir = new File(getClass().getResource("/parse-methods").getPath());
+    public void testParseMethod1() throws Exception {
+        File yangFile = new File(getClass().getResource("/parse-methods/m1.yang").toURI());
+        File dependenciesDir = new File(getClass().getResource("/parse-methods").toURI());
         YangModelParser parser = new YangParserImpl();
         modules = parser.parseYangModels(yangFile, dependenciesDir);
         assertEquals(6, modules.size());
     }
 
     @Test
-    public void testParseMethod2() throws ParseException {
-        File yangFile = new File(getClass().getResource("/parse-methods/m1.yang").getPath());
-        File dependenciesDir = new File(getClass().getResource("/parse-methods/dependencies").getPath());
+    public void testParseMethod2() throws Exception {
+        File yangFile = new File(getClass().getResource("/parse-methods/m1.yang").toURI());
+        File dependenciesDir = new File(getClass().getResource("/parse-methods/dependencies").toURI());
         YangModelParser parser = new YangParserImpl();
         modules = parser.parseYangModels(yangFile, dependenciesDir);
         assertEquals(6, modules.size());
     }
 
     @Test
-    public void testSorting() throws FileNotFoundException {
+    public void testSorting() throws Exception {
         // Correct order: m2, m4, m6, m8, m7, m6, m3, m1
-        File yangFile = new File(getClass().getResource("/sorting-test/m1.yang").getPath());
-        File dependenciesDir = new File(getClass().getResource("/sorting-test").getPath());
+        File yangFile = new File(getClass().getResource("/sorting-test/m1.yang").toURI());
+        File dependenciesDir = new File(getClass().getResource("/sorting-test").toURI());
         YangModelParser parser = new YangParserImpl();
         modules = parser.parseYangModels(yangFile, dependenciesDir);
         SchemaContext ctx = new SchemaContextImpl(modules);
@@ -914,9 +915,9 @@ public class YangParserTest {
     }
 
     @Test
-    public void testSubmodules() {
-        String yangFilePath = getClass().getResource("/submodule-test/subfoo.yang").getPath();
-        String directoryPath = getClass().getResource("/model").getPath();
+    public void testSubmodules() throws URISyntaxException {
+        URI yangFilePath = getClass().getResource("/submodule-test/subfoo.yang").toURI();
+        URI directoryPath = getClass().getResource("/model").toURI();
 
         File directory = new File(directoryPath);
         File yangFile = new File(yangFilePath);
@@ -935,6 +936,21 @@ public class YangParserTest {
 
         assertEquals(2, foo.getExtensionSchemaNodes().size());
         assertEquals(2, foo.getAugmentations().size());
+    }
+
+    @Test
+    public void testReadFileWithAtSignInPath() throws URISyntaxException {
+        URI yangFilePath = getClass().getResource("/test@models/foo@2014-02-17.yang").toURI();
+        URI directoryPath = getClass().getResource("/test@models").toURI();
+
+        File directory = new File(directoryPath);
+        File yangFile = new File(yangFilePath);
+
+        Set<Module> modules = new YangParserImpl().parseYangModels(yangFile, directory);
+        assertEquals(1, modules.size());
+
+        Module foo = TestUtils.findModule(modules, "foo");
+        assertNotNull(foo);
     }
 
 }

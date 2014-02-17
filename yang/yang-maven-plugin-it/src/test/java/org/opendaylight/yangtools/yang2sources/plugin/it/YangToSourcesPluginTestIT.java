@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -31,7 +32,7 @@ public class YangToSourcesPluginTestIT {
     // TODO Test yang files in transitive dependencies
 
     @Test
-    public void testYangRootNotExist() {
+    public void testYangRootNotExist() throws URISyntaxException {
         try {
             setUp("YangRootNotExist/", false);
         } catch (VerificationException e) {
@@ -47,13 +48,13 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testCorrect() throws VerificationException {
+    public void testCorrect() throws Exception {
         Verifier v = setUp("Correct/", false);
         verifyCorrectLog(v);
     }
 
     @Test
-    public void testAdditionalConfiguration() throws VerificationException {
+    public void testAdditionalConfiguration() throws Exception {
         Verifier v = setUp("AdditionalConfig/", false);
         v.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl: {nm1=abcd=a.b.c.d, nm2=abcd2=a.b.c.d.2}");
         v.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl: {c1=config}");
@@ -65,7 +66,7 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testMissingYangInDep() throws VerificationException {
+    public void testMissingYangInDep() throws Exception {
         try {
             setUp("MissingYangInDep/", false);
         } catch (VerificationException e) {
@@ -86,14 +87,14 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testNoGenerators() throws VerificationException {
+    public void testNoGenerators() throws Exception {
         Verifier v = setUp("NoGenerators/", false);
         v.verifyErrorFreeLog();
         v.verifyTextInLog("[WARNING] yang-to-sources: No code generators provided");
     }
 
     @Test
-    public void testUnknownGenerator() throws VerificationException {
+    public void testUnknownGenerator() throws Exception {
         Verifier v = setUp("UnknownGenerator/", true);
         v.verifyTextInLog("[ERROR] yang-to-sources: Unable to generate sources with unknown generator");
         v.verifyTextInLog("java.lang.ClassNotFoundException: unknown");
@@ -103,7 +104,7 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testNoYangFiles() throws VerificationException {
+    public void testNoYangFiles() throws Exception {
         Verifier v = setUp("NoYangFiles/", false);
         v.verifyTextInLog("[INFO] yang-to-sources: No input files found");
     }
@@ -125,10 +126,10 @@ public class YangToSourcesPluginTestIT {
     }
 
     static Verifier setUp(String project, boolean ignoreF)
-            throws VerificationException {
+            throws VerificationException, URISyntaxException {
         final URL path = YangToSourcesPluginTestIT.class.getResource("/"
                 + project + "pom.xml");
-        File parent = new File(path.getPath());
+        File parent = new File(path.toURI());
         Verifier verifier = new Verifier(parent.getParent());
         if (ignoreF)
             verifier.addCliOption("-fn");
@@ -139,13 +140,13 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testNoOutputDir() throws VerificationException {
+    public void testNoOutputDir() throws Exception {
         Verifier v = YangToSourcesPluginTestIT.setUp("NoOutputDir/", false);
         verifyCorrectLog(v);
     }
 
     @Test
-    public void testFindResourceOnCp() throws VerificationException {
+    public void testFindResourceOnCp() throws Exception {
         Verifier v1 = new Verifier(new File(getClass().getResource(
                 "/GenerateTest1/pom.xml").getPath()).getParent());
         v1.setSystemProperties(props);

@@ -1,0 +1,14 @@
+module foo {
+    yang-version 1;
+    namespace "urn:opendaylight.foo";
+    prefix "foo";
+
+
+    revision "2014-02-17" {
+    }
+
+    leaf id {
+        type string;
+    }
+
+}
