@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,8 +58,8 @@ public class WadlGenTest {
         assertEquals(3, generatedWadlFiles.size());
     }
 
-    private static List<File> getSourceFiles(String path) throws FileNotFoundException {
-        final String resPath = WadlGenTest.class.getResource(path).getPath();
+    private static List<File> getSourceFiles(String path) throws Exception {
+        final URI resPath = WadlGenTest.class.getResource(path).toURI();
         final File sourcesDir = new File(resPath);
         if (sourcesDir.exists()) {
             final List<File> sourceFiles = new ArrayList<>();
