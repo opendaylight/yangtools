@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -40,9 +39,9 @@ public class TypesResolutionTest {
     private Set<Module> testedModules;
 
     @Before
-    public void init() throws FileNotFoundException {
-        File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").getPath());
-        File dependenciesDir = new File(getClass().getResource("/ietf").getPath());
+    public void init() throws Exception {
+        File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
+        File dependenciesDir = new File(getClass().getResource("/ietf").toURI());
         YangModelParser parser = new YangParserImpl();
         testedModules = parser.parseYangModels(yangFile, dependenciesDir);
         assertEquals(4, testedModules.size());
