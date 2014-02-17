@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,9 +32,9 @@ public class GeneratedTypesStringTest {
     private final static List<File> testModels = new ArrayList<File>();
 
     @BeforeClass
-    public static void loadTestResources() {
+    public static void loadTestResources() throws URISyntaxException {
         final File listModelFile = new File(GeneratedTypesStringTest.class.getResource("/simple-string-demo.yang")
-                .getPath());
+                .toURI());
         testModels.add(listModelFile);
     }
 

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.*;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -33,9 +32,9 @@ public class YangParserSimpleTest {
     private Set<Module> modules;
 
     @Before
-    public void init() throws FileNotFoundException, ParseException {
+    public void init() throws Exception {
         snRev = simpleDateFormat.parse("2013-07-30");
-        modules = TestUtils.loadModules(getClass().getResource("/simple-test").getPath());
+        modules = TestUtils.loadModules(getClass().getResource("/simple-test").toURI());
     }
 
     @Test

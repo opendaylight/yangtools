@@ -23,17 +23,14 @@ final class TestUtils {
     private TestUtils() {
     }
 
-    public static Set<Module> loadModules(String resourceDirectory) throws FileNotFoundException {
-        YangModelParser parser = new YangParserImpl();
-        return loadModules(resourceDirectory, parser);
-    }
 
-    public static Set<Module> loadModules(String resourceDirectory, YangModelParser parser) throws FileNotFoundException {
+    public static Set<Module> loadModules(URI resourceDirectory) throws FileNotFoundException {
+        final YangModelParser parser = new YangParserImpl();
         final File testDir = new File(resourceDirectory);
         final String[] fileList = testDir.list();
         final List<File> testFiles = new ArrayList<>();
         if (fileList == null) {
-            throw new FileNotFoundException(resourceDirectory);
+            throw new FileNotFoundException(resourceDirectory.toString());
         }
         for (String fileName : fileList) {
             testFiles.add(new File(testDir, fileName));

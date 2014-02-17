@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,8 +56,8 @@ public class DocGenTest {
         generator.generateSources(context, GENERATOR_OUTPUT_DIR, modulesToBuild);
     }
 
-    private static List<File> getSourceFiles(String path) throws FileNotFoundException {
-        final String resPath = DocGenTest.class.getResource(path).getPath();
+    private static List<File> getSourceFiles(String path) throws Exception {
+        final URI resPath = DocGenTest.class.getResource(path).toURI();
         final File sourcesDir = new File(resPath);
         if (sourcesDir.exists()) {
             final List<File> sourceFiles = new ArrayList<>();
