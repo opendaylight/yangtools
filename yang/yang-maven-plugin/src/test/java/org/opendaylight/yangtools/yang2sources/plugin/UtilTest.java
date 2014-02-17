@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -18,10 +17,8 @@ import org.junit.Test;
 public class UtilTest {
 
     @Test
-    public void testCache() throws FileNotFoundException {
-        String yang = new File(getClass().getResource("/yang/mock.yang")
-                .getFile())
-                .getParent();
+    public void testCache() throws Exception {
+        String yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
         Collection<File> files = Util.listFiles(new File(yang));
         Collection<File> files2 = Util.listFiles(new File(yang));
         assertTrue(files == files2);

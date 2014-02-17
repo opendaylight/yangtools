@@ -11,8 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
@@ -40,8 +42,8 @@ public class XmlTreeBuilderTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		final String inputFile = getClass().getResource("/rpc-getDeviceEquipment.xml").getPath();
-		inputStream = new FileInputStream(inputFile);
+		final URI inputFile = getClass().getResource("/rpc-getDeviceEquipment.xml").toURI();
+		inputStream = new FileInputStream(new File(inputFile));
 	}
 
 	/**

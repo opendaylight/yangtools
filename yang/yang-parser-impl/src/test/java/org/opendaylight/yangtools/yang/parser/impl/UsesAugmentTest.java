@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -113,7 +114,7 @@ public class UsesAugmentTest {
      */
     @Test
     public void testAugmentInUses() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/grouping-test").getPath());
+        modules = TestUtils.loadModules(getClass().getResource("/grouping-test").toURI());
         Module testModule = TestUtils.findModule(modules, "uses-grouping");
 
         LinkedList<QName> path = new LinkedList<>();
@@ -609,8 +610,8 @@ public class UsesAugmentTest {
     }
 
     @Test
-    public void testTypedefs() throws FileNotFoundException {
-        modules = TestUtils.loadModules(getClass().getResource("/grouping-test").getPath());
+    public void testTypedefs() throws FileNotFoundException, URISyntaxException {
+        modules = TestUtils.loadModules(getClass().getResource("/grouping-test").toURI());
         Module testModule = TestUtils.findModule(modules, "grouping-definitions");
         Set<TypeDefinition<?>> types = testModule.getTypeDefinitions();
 

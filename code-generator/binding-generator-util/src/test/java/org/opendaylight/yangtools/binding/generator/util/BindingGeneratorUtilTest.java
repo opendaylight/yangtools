@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,12 @@ public class BindingGeneratorUtilTest {
 
     private static List<File> loadTestResources(String testFile) {
         final List<File> testModels = new ArrayList<File>();
-        final File listModelFile = new File(BindingGeneratorUtilTest.class.getResource(testFile).getPath());
+        File listModelFile;
+        try {
+            listModelFile = new File(BindingGeneratorUtilTest.class.getResource(testFile).toURI());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Failed to load sources from " + testFile);
+        }
         testModels.add(listModelFile);
         return testModels;
     }

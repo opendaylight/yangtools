@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
@@ -43,10 +42,10 @@ public class GenerateSourcesTest {
     private MavenProject project;
 
     @Before
-    public void setUp() throws MojoFailureException {
+    public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        yang = new File(getClass().getResource("/yang/mock.yang").getFile()).getParent();
+        yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
         outDir = new File("/outputDir");
         YangProvider mock = mock(YangProvider.class);
         doNothing().when(mock).addYangsToMetaInf(any(Log.class), any(MavenProject.class), any(File.class),

@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.sal.java.api.generator.test;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GenerateInnerClassForBitsAndUnionInLeavesTest {
 
-    private SchemaContext resolveSchemaContextFromFiles(final String... yangFiles) {
+    private SchemaContext resolveSchemaContextFromFiles(final URI... yangFiles) {
         final YangModelParser parser = new YangParserImpl();
 
         final List<File> inputFiles = new ArrayList<File>();
@@ -41,8 +43,8 @@ public class GenerateInnerClassForBitsAndUnionInLeavesTest {
     }
 
     @Test
-    public void testInnerClassCreationForBitsAndUnionsInLeafes() {
-        final String yangTypesPath = getClass().getResource("/bit_and_union_in_leaf.yang").getPath();
+    public void testInnerClassCreationForBitsAndUnionsInLeafes() throws URISyntaxException {
+        final URI yangTypesPath = getClass().getResource("/bit_and_union_in_leaf.yang").toURI();
 
         final SchemaContext context = resolveSchemaContextFromFiles(yangTypesPath);
         assertTrue(context != null);
