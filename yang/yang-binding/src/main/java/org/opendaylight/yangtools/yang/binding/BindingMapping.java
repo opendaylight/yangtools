@@ -45,7 +45,7 @@ public final class BindingMapping {
 
     public static final String getClassName(String localName) {
         checkArgument(localName != null, "Name should not be null.");
-        return toFirstUpper(toCamelCase(localName));
+        return createClassName(localName);
     }
 
     public static final String getMethodName(String yangIdentifier) {
@@ -55,7 +55,8 @@ public final class BindingMapping {
 
     public static final String getClassName(QName name) {
         checkArgument(name != null, "Name should not be null.");
-        return toFirstUpper(toCamelCase(name.getLocalName()));
+        checkState(name.getLocalName() != null, "Local name should not be null");
+        return createClassName(name.getLocalName());
     }
 
     public static String getPropertyName(String yangIdentifier) {
@@ -64,6 +65,12 @@ public final class BindingMapping {
             return "xmlClass";
         }
         return potential;
+    }
+
+    private static final String createClassName(String name) {
+        String camel = toCamelCase(name);
+        camel = camel.replace(".", "");
+        return toFirstUpper(camel);
     }
 
     private static final String toCamelCase(String rawString) {
@@ -80,7 +87,7 @@ public final class BindingMapping {
      * Returns the {@link String} {@code s} with an
      * {@link Character#isUpperCase(char) upper case} first character. This
      * function is null-safe.
-     * 
+     *
      * @param s
      *            the string that should get an upper case first character. May
      *            be <code>null</code>.
@@ -102,7 +109,7 @@ public final class BindingMapping {
      * Returns the {@link String} {@code s} with an
      * {@link Character#isLowerCase(char) lower case} first character. This
      * function is null-safe.
-     * 
+     *
      * @param s
      *            the string that should get an lower case first character. May
      *            be <code>null</code>.
