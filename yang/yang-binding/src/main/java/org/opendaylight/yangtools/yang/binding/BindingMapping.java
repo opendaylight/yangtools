@@ -68,7 +68,8 @@ public final class BindingMapping {
 
     private static final String toCamelCase(String rawString) {
         checkArgument(rawString != null, "String should not be null");
-        Iterable<String> components = SPACE_SPLITTER.split(rawString.replace('-', ' ').replace('_', ' '));
+        Iterable<String> components = SPACE_SPLITTER.split(rawString.replace('-', ' ').replace('_', ' ')
+                .replace('.', ' '));
         StringBuilder builder = new StringBuilder();
         for (String comp : components) {
             builder.append(toFirstUpper(comp));
@@ -80,7 +81,7 @@ public final class BindingMapping {
      * Returns the {@link String} {@code s} with an
      * {@link Character#isUpperCase(char) upper case} first character. This
      * function is null-safe.
-     * 
+     *
      * @param s
      *            the string that should get an upper case first character. May
      *            be <code>null</code>.
@@ -102,7 +103,7 @@ public final class BindingMapping {
      * Returns the {@link String} {@code s} with an
      * {@link Character#isLowerCase(char) lower case} first character. This
      * function is null-safe.
-     * 
+     *
      * @param s
      *            the string that should get an lower case first character. May
      *            be <code>null</code>.
