@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.sal.java.api.generator.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -38,9 +39,9 @@ public class ClassCodeGeneratorTest {
     private final static List<File> testModels = new ArrayList<File>();
 
     @BeforeClass
-    public static void loadTestResources() {
+    public static void loadTestResources() throws URISyntaxException {
         final File listModelFile = new File(ClassCodeGeneratorTest.class
-                .getResource("/list-composite-key.yang").getPath());
+                .getResource("/list-composite-key.yang").toURI());
         testModels.add(listModelFile);
     }
 

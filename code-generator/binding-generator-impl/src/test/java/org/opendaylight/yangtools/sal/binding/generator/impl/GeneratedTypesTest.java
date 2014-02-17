@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GeneratedTypesTest {
 
-    private SchemaContext resolveSchemaContextFromFiles(final String... yangFiles) {
+    private SchemaContext resolveSchemaContextFromFiles(final URI... yangFiles) {
         final YangModelParser parser = new YangParserImpl();
 
         final List<File> inputFiles = new ArrayList<File>();
@@ -41,9 +43,9 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testMultipleModulesResolving() {
-        final String topologyPath = getClass().getResource("/abstract-topology.yang").getPath();
-        final String typesPath = getClass().getResource("/ietf-inet-types@2010-09-24.yang").getPath();
+    public void testMultipleModulesResolving() throws URISyntaxException {
+        final URI topologyPath = getClass().getResource("/abstract-topology.yang").toURI();
+        final URI typesPath = getClass().getResource("/ietf-inet-types@2010-09-24.yang").toURI();
         final SchemaContext context = resolveSchemaContextFromFiles(topologyPath, typesPath);
         assertNotNull(context);
 
@@ -55,17 +57,15 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testLeafrefResolving() {
-        final String topologyPath = getClass().getResource("/leafref-test-models/abstract-topology@2013-02-08.yang")
-                .getPath();
-        final String interfacesPath = getClass().getResource("/leafref-test-models/ietf-interfaces@2012-11-15.yang")
-                .getPath();
-        // final String ifTypePath = getClass().getResource(
-        // "/leafref-test-models/iana-if-type@2012-06-05.yang").getPath();
-        final String inetTypesPath = getClass().getResource("/leafref-test-models/ietf-inet-types@2010-09-24.yang")
-                .getPath();
-        final String yangTypesPath = getClass().getResource("/leafref-test-models/ietf-yang-types@2010-09-24.yang")
-                .getPath();
+    public void testLeafrefResolving() throws URISyntaxException {
+        final URI topologyPath = getClass().getResource("/leafref-test-models/abstract-topology@2013-02-08.yang")
+                .toURI();
+        final URI interfacesPath = getClass().getResource("/leafref-test-models/ietf-interfaces@2012-11-15.yang")
+                .toURI();
+        final URI inetTypesPath = getClass().getResource("/leafref-test-models/ietf-inet-types@2010-09-24.yang")
+                .toURI();
+        final URI yangTypesPath = getClass().getResource("/leafref-test-models/ietf-yang-types@2010-09-24.yang")
+                .toURI();
 
         assertNotNull(topologyPath);
         assertNotNull(interfacesPath);
@@ -253,8 +253,8 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testContainerResolving() {
-        final String filePath = getClass().getResource("/simple-container-demo.yang").getPath();
+    public void testContainerResolving() throws URISyntaxException {
+        final URI filePath = getClass().getResource("/simple-container-demo.yang").toURI();
         final SchemaContext context = resolveSchemaContextFromFiles(filePath);
         assert (context != null);
 
@@ -338,8 +338,8 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testLeafListResolving() {
-        final String filePath = getClass().getResource("/simple-leaf-list-demo.yang").getPath();
+    public void testLeafListResolving() throws URISyntaxException {
+        final URI filePath = getClass().getResource("/simple-leaf-list-demo.yang").toURI();
         final SchemaContext context = resolveSchemaContextFromFiles(filePath);
         assertNotNull(context);
 
@@ -422,8 +422,8 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testListResolving() {
-        final String filePath = getClass().getResource("/simple-list-demo.yang").getPath();
+    public void testListResolving() throws URISyntaxException {
+        final URI filePath = getClass().getResource("/simple-list-demo.yang").toURI();
         final SchemaContext context = resolveSchemaContextFromFiles(filePath);
         assertNotNull(context);
 
@@ -545,8 +545,8 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testListCompositeKeyResolving() {
-        final String filePath = getClass().getResource("/list-composite-key.yang").getPath();
+    public void testListCompositeKeyResolving() throws URISyntaxException {
+        final URI filePath = getClass().getResource("/list-composite-key.yang").toURI();
         final SchemaContext context = resolveSchemaContextFromFiles(filePath);
 
         assertNotNull(context);
@@ -598,8 +598,8 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testGeneratedTypes() {
-        final String filePath = getClass().getResource("/demo-topology.yang").getPath();
+    public void testGeneratedTypes() throws URISyntaxException {
+        final URI filePath = getClass().getResource("/demo-topology.yang").toURI();
         final SchemaContext context = resolveSchemaContextFromFiles(filePath);
         assertNotNull(context);
 

@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -410,8 +411,8 @@ public class CompilationTestUtils {
         return result;
     }
 
-    static List<File> getSourceFiles(String path) throws FileNotFoundException {
-        final String resPath = BaseCompilationTest.class.getResource(path).getPath();
+    static List<File> getSourceFiles(String path) throws Exception {
+        final URI resPath = BaseCompilationTest.class.getResource(path).toURI();
         final File sourcesDir = new File(resPath);
         if (sourcesDir.exists()) {
             final List<File> sourceFiles = new ArrayList<>();
