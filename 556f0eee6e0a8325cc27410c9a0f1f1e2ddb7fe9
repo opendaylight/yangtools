@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_ceb25ce4",
+        "filename": "restconf/restconf-client-api/src/main/java/org/opendaylight/yangtools/restconf/client/api/RestconfClientContextFactory.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-02-18T15:34:35Z",
+      "side": 1,
+      "message": "Consider setting these via fields of factory - builder like pattern, not changing method signatures in API breaking way (which will break downstream projects, after merge.)",
+      "revId": "556f0eee6e0a8325cc27410c9a0f1f1e2ddb7fe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_aecde867",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/BindingToRestRpc.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-02-18T15:34:35Z",
+      "side": 1,
+      "message": "Please remove hardcoded authentification filters - use proper injections (e.g. reusing Client across components).",
+      "revId": "556f0eee6e0a8325cc27410c9a0f1f1e2ddb7fe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_8ec8e455",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/to/RestListenableEventStreamContext.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-02-18T15:34:35Z",
+      "side": 1,
+      "message": "Relationship between RPCs and Notification Listeners is not obvious, could you elaborate on that? Why you are getting Rpc Proxies?",
+      "revId": "556f0eee6e0a8325cc27410c9a0f1f1e2ddb7fe9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
