@@ -191,7 +191,7 @@ public final class YangParserImpl implements YangModelParser {
         final Map<InputStream, File> inputStreams = new HashMap<>();
         for (final File yangFile : yangFiles) {
             try {
-                
+
                 inputStreams.put(new FileInputStream(yangFile), yangFile);
             } catch (FileNotFoundException e) {
                 LOG.warn("Exception while reading yang file: " + yangFile.getName(), e);
@@ -481,8 +481,28 @@ public final class YangParserImpl implements YangModelParser {
         return result;
     }
 
+    /**
+     * Creates builder-to-module map based on given modules. Method first
+     * resolve unresolved type references, instantiate groupings through uses
+     * statements and perform augmentation.
+     *
+     * Node resolving must be performed in following order:
+     * <ol>
+     * <li>
+     * unresolved type references</li>
+     * <li>
+     * uses in groupings</li>
+     * <li>
+     * uses in other nodes</li>
+     * <li>
+     * augments</li>
+     * </ol>
+     *
+     * @param modules
+     *            all loaded modules
+     * @return modules mapped on their builders
+     */
     private Map<ModuleBuilder, Module> build(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        // fix unresolved nodes
         resolveDirtyNodes(modules);
         resolveAugmentsTargetPath(modules, null);
         resolveUsesTargetGrouping(modules, null);
@@ -503,9 +523,31 @@ public final class YangParserImpl implements YangModelParser {
         return result;
     }
 
+    /**
+     * Creates builder-to-module map based on given modules. Method first
+     * resolve unresolved type references, instantiate groupings through uses
+     * statements and perform augmentation.
+     *
+     * Node resolving must be performed in following order:
+     * <ol>
+     * <li>
+     * unresolved type references</li>
+     * <li>
+     * uses in groupings</li>
+     * <li>
+     * uses in other nodes</li>
+     * <li>
+     * augments</li>
+     * </ol>
+     *
+     * @param modules
+     *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
+     * @return modules mapped on their builders
+     */
     private Map<ModuleBuilder, Module> buildWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final SchemaContext context) {
-        // fix unresolved nodes
         resolvedDirtyNodesWithContext(modules, context);
         resolveAugmentsTargetPath(modules, context);
         resolveUsesTargetGrouping(modules, context);
@@ -526,6 +568,12 @@ public final class YangParserImpl implements YangModelParser {
         return result;
     }
 
+    /**
+     * Resolve all unresolved type references.
+     *
+     * @param modules
+     *            all loaded modules
+     */
     private void resolveDirtyNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
@@ -537,6 +585,14 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Resolve all unresolved type references.
+     *
+     * @param modules
+     *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
+     */
     private void resolvedDirtyNodesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final SchemaContext context) {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
@@ -605,10 +661,13 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     /**
-     * Correct augment target path.
+     * Traverse through augmentations of modules and fix their child nodes
+     * schema path.
      *
      * @param modules
      *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
      */
     private void resolveAugmentsTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             SchemaContext context) {
@@ -625,6 +684,16 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Find augment target and set correct schema path for all its child nodes.
+     *
+     * @param modules
+     *            all loaded modules
+     * @param augment
+     *            augment to resolve
+     * @param context
+     *            SchemaContext containing already resolved modules
+     */
     private void setCorrectAugmentTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final AugmentationSchemaBuilder augment, final SchemaContext context) {
         ModuleBuilder module = ParserUtils.getParentModule(augment);
@@ -656,7 +725,6 @@ public final class YangParserImpl implements YangModelParser {
                 newPath.add(new QName(ns, revision, prefix, qn.getLocalName()));
             }
         } else {
-
             for (QName qn : oldPath) {
                 URI ns = module.getNamespace();
                 Date rev = module.getRevision();
@@ -690,6 +758,15 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Set new schema path to node and all its child nodes based on given parent
+     * path. This method do not change the namespace.
+     *
+     * @param node
+     *            node which schema path should be updated
+     * @param parentPath
+     *            schema path of parent node
+     */
     private void correctPathForAugmentNodes(DataSchemaNodeBuilder node, SchemaPath parentPath) {
         SchemaPath newPath = ParserUtils.createSchemaPath(parentPath, node.getQName());
         node.setPath(newPath);
@@ -734,9 +811,7 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     /**
-     * Go through all augment definitions and resolve them. This method works in
-     * same way as {@link #resolveAugments(Map)} except that if target node is
-     * not found in loaded modules, it search for target node in given context.
+     * Go through all augment definitions and resolve them.
      *
      * @param modules
      *            all loaded modules
@@ -776,6 +851,19 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Perform augmentation defined under uses statement.
+     *
+     * @param augment
+     *            augment to resolve
+     * @param module
+     *            current module
+     * @param modules
+     *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
+     * @return true if augment process succeed
+     */
     private boolean resolveUsesAugment(final AugmentationSchemaBuilder augment, final ModuleBuilder module,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
         if (augment.isResolved()) {
@@ -786,9 +874,9 @@ public final class YangParserImpl implements YangModelParser {
         DataNodeContainerBuilder parentNode = usesNode.getParent();
         SchemaNodeBuilder targetNode;
         if (parentNode instanceof ModuleBuilder) {
-            targetNode = findSchemaNodeInModule(augment.getTargetPath().getPath(), (ModuleBuilder)parentNode);
+            targetNode = findSchemaNodeInModule(augment.getTargetPath().getPath(), (ModuleBuilder) parentNode);
         } else {
-            targetNode = findSchemaNode(augment.getTargetPath().getPath(), (SchemaNodeBuilder)parentNode);
+            targetNode = findSchemaNode(augment.getTargetPath().getPath(), (SchemaNodeBuilder) parentNode);
         }
 
         fillAugmentTarget(augment, targetNode);
@@ -796,6 +884,19 @@ public final class YangParserImpl implements YangModelParser {
         return true;
     }
 
+    /**
+     * Find augment target module and perform augmentation.
+     *
+     * @param augment
+     *            augment to resolve
+     * @param module
+     *            current module
+     * @param modules
+     *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
+     * @return true if augment process succeed
+     */
     private boolean resolveAugment(final AugmentationSchemaBuilder augment, final ModuleBuilder module,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
         if (augment.isResolved()) {
@@ -947,6 +1048,14 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Resolve uses statements defined in groupings.
+     *
+     * @param modules
+     *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
+     */
     private void resolveUsesForGroupings(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
         final Set<GroupingBuilder> allGroupings = new HashSet<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
@@ -965,6 +1074,14 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Resolve uses statements.
+     *
+     * @param modules
+     *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
+     */
     private void resolveUsesForNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
@@ -978,6 +1095,17 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Find target grouping and copy its child nodes to current location with
+     * new namespace.
+     *
+     * @param usesNode
+     *            uses node to resolve
+     * @param modules
+     *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
+     */
     private void resolveUses(UsesNodeBuilder usesNode,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
         if (!usesNode.isResolved()) {
@@ -1004,6 +1132,17 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Copy target grouping child nodes to current location with
+     * new namespace.
+     *
+     * @param usesNode
+     *            uses node to resolve
+     * @param modules
+     *            all loaded modules
+     * @param context
+     *            SchemaContext containing already resolved modules
+     */
     private void resolveUsesWithContext(UsesNodeBuilder usesNode) {
         final int line = usesNode.getLine();
         DataNodeContainerBuilder parent = usesNode.getParent();
@@ -1059,6 +1198,15 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Try to find extension builder describing this unknown node and assign it
+     * to unknown node builder.
+     *
+     * @param modules
+     *            all loaded modules
+     * @param module
+     *            current module
+     */
     private void resolveUnknownNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         for (UnknownSchemaNodeBuilder usnb : module.getAllUnknownNodes()) {
             QName nodeType = usnb.getNodeType();
@@ -1079,6 +1227,18 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    /**
+     * Try to find extension builder describing this unknown node and assign it
+     * to unknown node builder. If extension is not found in loaded modules, try
+     * to find it in context.
+     *
+     * @param modules
+     *            all loaded modules
+     * @param module
+     *            current module
+     * @param context
+     *            SchemaContext containing already resolved modules
+     */
     private void resolveUnknownNodesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder module, final SchemaContext context) {
         for (UnknownSchemaNodeBuilder usnb : module.getAllUnknownNodes()) {
