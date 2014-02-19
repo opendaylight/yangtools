@@ -127,7 +127,7 @@ class TransformerGenerator {
         BINDING_CODEC = BindingCodec.asCtClass;
         ctQName = QName.asCtClass
 
-        classLoadingStrategy = GeneratedClassLoadingStrategy.TCCLClassLoadingStrategy;
+        this.classLoadingStrategy = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
     }
 
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class<?> inputType) {

@@ -76,6 +76,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         return cls;
     }
 
+
     private synchronized Optional<SchemaContext> recreateSchemaContext() {
         try {
             ImmutableList<InputStream> streams = getAvailableStreams();
@@ -88,6 +89,10 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         }
         return Optional.absent();
     }
+
+    // TODO finish schema parsing and expose as SchemaService
+    // Unite with current SchemaService
+    // Implement remove ModuleInfo to update SchemaContext
 
     public synchronized Optional<SchemaContext> tryToCreateSchemaContext() {
         return recreateSchemaContext();
@@ -139,7 +144,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         }
     }
 
-    private Registration<YangModuleInfo> registerModuleInfo(YangModuleInfo yangModuleInfo) {
+    public Registration<YangModuleInfo> registerModuleInfo(YangModuleInfo yangModuleInfo) {
         YangModuleInfoRegistration registration = new YangModuleInfoRegistration(yangModuleInfo, this);
 
         resolveModuleInfo(yangModuleInfo);
@@ -182,6 +187,6 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
     }
 
     private void remove(YangModuleInfoRegistration registration) {
-
+        // FIXME implement
     }
 }
