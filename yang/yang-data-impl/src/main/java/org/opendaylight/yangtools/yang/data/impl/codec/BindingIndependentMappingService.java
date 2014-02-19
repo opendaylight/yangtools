@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 import com.google.common.base.Optional;
 
@@ -31,7 +32,7 @@ public interface BindingIndependentMappingService {
 
     org.opendaylight.yangtools.yang.data.api.InstanceIdentifier toDataDom(InstanceIdentifier<? extends DataObject> path);
 
-    DataObject dataObjectFromDataDom(InstanceIdentifier<? extends DataObject> path, CompositeNode result) throws DeserializationException;
+    DataObject dataObjectFromDataDom(InstanceIdentifier<? extends DataObject> path, CompositeNode result, SchemaNode schemaNode) throws DeserializationException;
 
     InstanceIdentifier<?> fromDataDom(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier entry)  throws DeserializationException;
 
@@ -42,9 +43,9 @@ public interface BindingIndependentMappingService {
      * @return List of QNames. The user may not modify this list.
      */
     Set<QName> getRpcQNamesFor(Class<? extends RpcService> service);
-    
+
     Optional<Class<? extends RpcService>> getRpcServiceClassFor(String namespace, String revision);
 
-    DataContainer dataObjectFromDataDom(Class<? extends DataContainer> inputClass, CompositeNode domInput);
+    DataContainer dataObjectFromDataDom(Class<? extends DataContainer> inputClass, CompositeNode domInput, SchemaNode schemaNode);
 
 }

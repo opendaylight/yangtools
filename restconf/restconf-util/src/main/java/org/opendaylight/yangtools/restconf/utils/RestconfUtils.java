@@ -282,7 +282,7 @@ public class RestconfUtils {
             Document doc = builder.parse(inputStream);
             Element rootElement = doc.getDocumentElement();
             Node<?> domNode =  XmlDocumentUtils.toDomNode(rootElement, Optional.of(dataSchema), Optional.<XmlCodecProvider>absent());
-            DataObject  dataObject = mappingService.dataObjectFromDataDom(path, (CompositeNode) domNode); //getDataFromResponse
+            DataObject  dataObject = mappingService.dataObjectFromDataDom(path, (CompositeNode) domNode, dataSchema); //getDataFromResponse
             return dataObject;
         } catch (DeserializationException e) {
 

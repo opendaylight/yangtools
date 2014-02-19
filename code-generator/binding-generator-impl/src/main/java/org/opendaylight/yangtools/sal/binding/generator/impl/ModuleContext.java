@@ -21,6 +21,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 public final class ModuleContext {
     private GeneratedTypeBuilder moduleNode;
     private final List<GeneratedTOBuilder> genTOs = new ArrayList<GeneratedTOBuilder>();
@@ -31,7 +34,7 @@ public final class ModuleContext {
     private final Map<QName,GeneratedTOBuilder> identities = new HashMap<>();
     private final Set<GeneratedTypeBuilder> topLevelNodes = new HashSet<GeneratedTypeBuilder>();
     private final List<GeneratedTypeBuilder> augmentations = new ArrayList<GeneratedTypeBuilder>();
-    private final Map<Type,AugmentationSchema> typeToAugmentation = new HashMap<>();
+    private final BiMap<Type,AugmentationSchema> typeToAugmentation = HashBiMap.create();
 
 
 
@@ -151,7 +154,7 @@ public final class ModuleContext {
         return augmentations;
     }
 
-    public Map<Type, AugmentationSchema> getTypeToAugmentation() {
+    public BiMap<Type, AugmentationSchema> getTypeToAugmentation() {
         return typeToAugmentation;
     }
 
