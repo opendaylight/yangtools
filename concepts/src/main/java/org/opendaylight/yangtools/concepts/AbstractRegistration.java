@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Utility registration handle. It is a convenience for register-style method
  * which can return an AutoCloseable realized by a subclass of this class.
@@ -14,8 +16,7 @@ package org.opendaylight.yangtools.concepts;
  * installed.
  */
 public abstract class AbstractRegistration implements AutoCloseable {
-
-    private boolean closed = false;
+    private AtomicBoolean closed = new AtomicBoolean();
     
     /**
      * Remove the state referenced by this registration. This method is
@@ -25,9 +26,8 @@ public abstract class AbstractRegistration implements AutoCloseable {
     protected abstract void removeRegistration();
 
     @Override
-    public synchronized void close() throws Exception {
-        if (!closed) {
-            closed = true;
+    public final void close() {
+        if (closed.compareAndSet(false, true)) {
             removeRegistration();
         }
     }
