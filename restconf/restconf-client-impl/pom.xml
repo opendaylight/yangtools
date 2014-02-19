@@ -17,7 +17,6 @@
   </parent>
 
 
-  <groupId>org.opendaylight.yangtools</groupId>
   <artifactId>restconf-client-impl</artifactId>
   <packaging>bundle</packaging>
 

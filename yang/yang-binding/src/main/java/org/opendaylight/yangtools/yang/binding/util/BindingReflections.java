@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.binding.util;
 
-import java.beans.MethodDescriptor;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static org.opendaylight.yangtools.concepts.util.ClassLoaderUtils.withClassLoader;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -15,7 +18,6 @@ import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,14 +33,9 @@ import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
-import org.opendaylight.yangtools.yang.binding.annotations.ModuleQName;
 import org.opendaylight.yangtools.yang.common.QName;
 
-import static com.google.common.base.Preconditions.*;
-import static org.opendaylight.yangtools.concepts.util.ClassLoaderUtils.*;
-
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -57,7 +54,7 @@ public class BindingReflections {
             .build(new ClassToQNameLoader());
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -70,7 +67,7 @@ public class BindingReflections {
     }
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -82,7 +79,7 @@ public class BindingReflections {
     }
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -218,11 +215,11 @@ public class BindingReflections {
         checkArgument(potentialNotification != null);
         return Notification.class.isAssignableFrom(potentialNotification);
     }
-    
+
     public static ImmutableSet<YangModuleInfo> loadModuleInfos() {
         return loadModuleInfos(Thread.currentThread().getContextClassLoader());
     }
-    
+
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(ClassLoader loader) {
         Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
         ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class, loader);

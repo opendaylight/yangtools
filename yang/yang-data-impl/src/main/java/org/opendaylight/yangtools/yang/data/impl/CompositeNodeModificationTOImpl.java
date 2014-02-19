@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.Node;
  *
  */
 public class CompositeNodeModificationTOImpl extends CompositeNodeTOImpl {
+    private static final long serialVersionUID = 1L;
 
     /**
      * @param qname

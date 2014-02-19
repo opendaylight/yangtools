@@ -69,7 +69,7 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
         client  = Client.create(config);
     }
     @Override
-    public <T extends NotificationListener> ListenerRegistration<T> registerNotificationListener(T listener) {
+    public <L extends NotificationListener> ListenerRegistration<L> registerNotificationListener(L listener) {
 
         try {
             this.streamName = BindingReflections.getModuleInfo(listener.getClass()).getName();
@@ -85,8 +85,8 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
             }
         }
 
-        final T listenerProxy = (T) BindingToRestRpc.getProxy(listener.getClass(), this.defaultUri);
-        return new AbstractListenerRegistration<T>(listenerProxy) {
+        final L listenerProxy = (L) BindingToRestRpc.getProxy(listener.getClass(), this.defaultUri);
+        return new AbstractListenerRegistration<L>(listenerProxy) {
             @Override
             protected void removeRegistration() {
                 // FIXME: implement this method

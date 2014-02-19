@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
 public class CodeGenerationException extends RuntimeException{
+    private static final long serialVersionUID = 1L;
 
     public CodeGenerationException() {
         super();

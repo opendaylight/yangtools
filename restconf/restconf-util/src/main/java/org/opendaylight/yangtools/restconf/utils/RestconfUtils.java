@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.restconf.utils;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -23,9 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -53,6 +51,11 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class RestconfUtils {
 
@@ -213,7 +216,7 @@ public class RestconfUtils {
     }
 
     public String findModuleNameByNamespace(final URI namespace,SchemaContext schemaContext) {
-        String moduleName = this.uriToModuleName.get(namespace);
+        String moduleName = uriToModuleName.get(namespace);
         boolean _tripleEquals = (moduleName == null);
         if (_tripleEquals) {
             final Module module = findModuleByNamespace(namespace, schemaContext);
@@ -223,7 +226,7 @@ public class RestconfUtils {
             }
             String _name = module.getName();
             moduleName = _name;
-            this.uriToModuleName.put(namespace, moduleName);
+            uriToModuleName.put(namespace, moduleName);
         }
         return moduleName;
     }

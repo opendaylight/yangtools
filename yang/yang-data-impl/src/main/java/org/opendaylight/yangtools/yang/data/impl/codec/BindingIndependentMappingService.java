@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import java.net.URI;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -42,7 +41,7 @@ public interface BindingIndependentMappingService {
      * @return List of QNames. The user may not modify this list.
      */
     Set<QName> getRpcQNamesFor(Class<? extends RpcService> service);
-    
+
     Optional<Class<? extends RpcService>> getRpcServiceClassFor(String namespace, String revision);
 
     DataContainer dataObjectFromDataDom(Class<? extends DataContainer> inputClass, CompositeNode domInput);

@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.ModifyAction;
  *
  */
 public class SimpleNodeModificationTOImpl<T> extends SimpleNodeTOImpl<T> {
+    private static final long serialVersionUID = 1L;
 
     /**
      * @param qname
