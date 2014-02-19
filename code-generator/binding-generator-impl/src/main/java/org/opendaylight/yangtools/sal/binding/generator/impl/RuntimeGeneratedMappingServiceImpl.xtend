@@ -93,8 +93,18 @@ SchemaLock, AutoCloseable, SchemaContextHolder {
 
     val promisedTypes = HashMultimap.<Type, SettableFuture<Type>>create;
 
+    val GeneratedClassLoadingStrategy classLoadingStrategy;
+
     @Property
     var SchemaContext schemaContext;
+
+    new() {
+        this(GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy())
+    }
+
+    new(GeneratedClassLoadingStrategy strat){
+        classLoadingStrategy = strat
+    }
 
     //ServiceRegistration<SchemaServiceListener> listenerRegistration
     override onGlobalContextUpdated(SchemaContext arg0) {
@@ -268,7 +278,8 @@ SchemaLock, AutoCloseable, SchemaContextHolder {
 
     public def void init() {
         binding = new TransformerGenerator(pool);
-        registry = new LazyGeneratedCodecRegistry(this)
+        registry = new LazyGeneratedCodecRegistry(this, classLoadingStrategy)
+
         registry.generator = binding
 
         //binding.staticFieldsInitializer = registry
@@ -340,7 +351,7 @@ SchemaLock, AutoCloseable, SchemaContextHolder {
         try {
             val rpcTypeName = module.rpcServiceType;
             if (rpcTypeName.present) {
-                val rpcClass = classLoadingStrategy.loadClass(rpcTypeName.get.fullyQualifiedName);
+                val rpcClass = binding.classLoadingStrategy.loadClass(rpcTypeName.get.fullyQualifiedName);
                 return Optional.of(rpcClass as Class<? extends RpcService>);
             }
         } catch (Exception e) {

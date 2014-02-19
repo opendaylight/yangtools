@@ -57,7 +57,7 @@ public class BindingReflections {
             .build(new ClassToQNameLoader());
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -70,7 +70,7 @@ public class BindingReflections {
     }
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -82,7 +82,7 @@ public class BindingReflections {
     }
 
     /**
-     * 
+     *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
@@ -170,7 +170,8 @@ public class BindingReflections {
 
     public static String getModelRootPackageName(String name) {
         checkArgument(name != null, "Package name should not be null.");
-        checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX));
+        checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
+                BindingMapping.PACKAGE_PREFIX, name);
         Matcher match = ROOT_PACKAGE_PATTERN.matcher(name);
         checkArgument(match.find());
         String rootPackage = match.group(0);
@@ -218,11 +219,11 @@ public class BindingReflections {
         checkArgument(potentialNotification != null);
         return Notification.class.isAssignableFrom(potentialNotification);
     }
-    
+
     public static ImmutableSet<YangModuleInfo> loadModuleInfos() {
         return loadModuleInfos(Thread.currentThread().getContextClassLoader());
     }
-    
+
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(ClassLoader loader) {
         Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
         ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class, loader);

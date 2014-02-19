@@ -85,10 +85,11 @@ public class LazyGeneratedCodecRegistry implements //
 
     private SchemaContext currentSchema;
 
-    private GeneratedClassLoadingStrategy classLoadingStrategy = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
+    private final GeneratedClassLoadingStrategy classLoadingStrategy;
 
-    LazyGeneratedCodecRegistry(SchemaLock lock) {
+    LazyGeneratedCodecRegistry(SchemaLock lock, GeneratedClassLoadingStrategy identityClassLoadingStrategy) {
         this.lock = Preconditions.checkNotNull(lock);
+        this.classLoadingStrategy = identityClassLoadingStrategy;
     }
 
     public SchemaLock getLock() {
@@ -730,7 +731,7 @@ public class LazyGeneratedCodecRegistry implements //
      * This map is used as only facade for
      * {@link org.opendaylight.yangtools.yang.binding.BindingCodec} in different
      * classloaders to retrieve codec dynamicly based on provided key.
-     * 
+     *
      * @param <T>
      *            Key type
      */
