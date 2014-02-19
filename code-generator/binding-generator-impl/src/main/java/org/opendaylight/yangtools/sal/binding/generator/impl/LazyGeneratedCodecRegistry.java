@@ -483,6 +483,57 @@ public class LazyGeneratedCodecRegistry implements //
         return ret;
     }
 
+    public void updateCodecRegistry(SchemaNode schemaNode) {
+        BindingGeneratorImpl newBinding = new BindingGeneratorImpl();
+        newBinding.generateTypes(currentSchema);
+        updateCodecRegistry(schemaNode, newBinding);
+    }
+
+    public void updateCodecRegistry(SchemaNode schemaNode, BindingGeneratorImpl newBinding) {
+        if (schemaNode instanceof AugmentationTarget) {
+            AugmentationTarget schemaTarget = (AugmentationTarget) schemaNode;
+            Set<AugmentationSchema> augments = schemaTarget.getAvailableAugmentations();
+            Set<Type> augmentTypes = new HashSet<>();
+            if (augments != null) {
+                for (AugmentationSchema augment : augments) {
+                    Type augmentType = getAugmentType(newBinding, augment);
+                    if (augmentType == null) {
+                        LOG.warn("Failed to find type for augmentation of " + augment);
+                    }
+                    augmentTypes.add(augmentType);
+                }
+                for (Type augmentType : augmentTypes) {
+                    Class<? extends Augmentation<?>> clazz = null;
+                    try {
+                        clazz = (Class<? extends Augmentation<?>>) classLoadingStrategy.loadClass(augmentType);
+                    } catch (ClassNotFoundException e) {
+                        LOG.warn("Failed to found class for augmentation of " + augmentType);
+                    }
+                    getCodecForAugmentation(clazz);
+                }
+            }
+        }
+
+        if (schemaNode instanceof DataNodeContainer) {
+            Set<DataSchemaNode> childNodes = ((DataNodeContainer) schemaNode).getChildNodes();
+            for (DataSchemaNode child : childNodes) {
+                updateCodecRegistry(child, newBinding);
+            }
+        }
+    }
+
+    private Type getAugmentType(BindingGeneratorImpl newBinding, AugmentationSchema augment) {
+        for (Map.Entry<Module, ModuleContext> entry : newBinding.getModuleContexts().entrySet()) {
+            ModuleContext ctx = entry.getValue();
+            Map<AugmentationSchema, Type> map = ctx.getTypeToAugmentation().inverse();
+            Type augmentType = map.get(augment);
+            if (augmentType != null) {
+                return augmentType;
+            }
+        }
+        return null;
+    }
+
     private static abstract class IntermediateCodec<T> implements //
             DomCodec<T>, Delegator<BindingCodec<Map<QName, Object>, Object>> {
 

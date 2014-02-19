@@ -226,8 +226,8 @@ SchemaLock, AutoCloseable, SchemaContextHolder {
         return registry.instanceIdentifierCodec.serialize(path);
     }
 
-    override dataObjectFromDataDom(InstanceIdentifier<? extends DataObject> path, CompositeNode node) {
-        dataObjectFromDataDom(path.targetType, node) as DataObject;
+    override dataObjectFromDataDom(InstanceIdentifier<? extends DataObject> path, CompositeNode node, SchemaNode schemaNode) {
+        dataObjectFromDataDom(path.targetType, node, schemaNode) as DataObject;
     }
 
     override fromDataDom(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier entry) {
@@ -321,7 +321,8 @@ SchemaLock, AutoCloseable, SchemaContextHolder {
         //listenerRegistration?.unregister();
     }
 
-    override dataObjectFromDataDom(Class<? extends DataContainer> container, CompositeNode domData) {
+    override dataObjectFromDataDom(Class<? extends DataContainer> container, CompositeNode domData, SchemaNode schemaNode) {
+        registry.updateCodecRegistry(schemaNode)
         return tryDeserialization[ |
             if (domData == null) {
                 return null;
