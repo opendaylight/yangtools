@@ -17,7 +17,6 @@
   </parent>
 
 
-  <groupId>org.opendaylight.yangtools</groupId>
   <artifactId>restconf-test-service</artifactId>
   <dependencies>
       <dependency>

@@ -41,7 +41,7 @@ import com.google.common.base.Preconditions;
 
 public class LazyGeneratedCodecRegistry implements //
         CodecRegistry, //
-        SchemaServiceListener, //
+        SchemaContextListener, //
         GeneratorListener {
 
     private final static Logger LOG = LoggerFactory.getLogger(LazyGeneratedCodecRegistry.class);
@@ -563,7 +563,6 @@ public class LazyGeneratedCodecRegistry implements //
         private ChoiceCaseNode schema;
 
         public void setSchema(ChoiceCaseNode caseNode) {
-            this.schema = schema;
             this.schema = caseNode;
             validNames = new HashSet<>();
             validQNames = new HashSet<>();

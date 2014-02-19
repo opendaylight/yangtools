@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 public class DeserializationException extends Exception {
+    private static final long serialVersionUID = 1L;
 
     public DeserializationException() {
     }

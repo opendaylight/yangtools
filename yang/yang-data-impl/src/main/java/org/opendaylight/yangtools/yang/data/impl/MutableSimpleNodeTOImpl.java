@@ -17,10 +17,10 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
  * @author michal.rehak
  * @param <T>
  *            type of simple node value
- * 
+ *
  */
 public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T> implements MutableSimpleNode<T> {
-
+    private static final long serialVersionUID = 1L;
     private SimpleNode<T> original;
 
     /**

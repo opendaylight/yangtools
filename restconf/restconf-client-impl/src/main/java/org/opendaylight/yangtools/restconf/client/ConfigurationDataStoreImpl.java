@@ -7,18 +7,13 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcError;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcResult;
@@ -32,6 +27,13 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 
 public class ConfigurationDataStoreImpl extends AbstractDataStore implements ConfigurationDatastore  {
@@ -55,7 +57,7 @@ public class ConfigurationDataStoreImpl extends AbstractDataStore implements Con
         final Map.Entry<String, DataSchemaNode> pathWithSchema = RestconfUtils.toRestconfIdentifier(path, mappingService, schemaContext);
         final String restconfPath = getStorePrefix() + pathWithSchema.getKey();
 
-        ListenableFuture future = pool.submit(new Callable<RpcResult<Boolean>>() {
+        ListenableFuture<RpcResult<Boolean>> future = pool.submit(new Callable<RpcResult<Boolean>>() {
             @Override
             public RpcResult<Boolean> call() throws Exception {
                 Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
@@ -85,7 +87,7 @@ public class ConfigurationDataStoreImpl extends AbstractDataStore implements Con
         final Map.Entry<String, DataSchemaNode> pathWithSchema = RestconfUtils.toRestconfIdentifier(path, mappingService, schemaContext);
         final String restconfPath = getStorePrefix() + pathWithSchema.getKey();
 
-        ListenableFuture future = pool.submit(new Callable<RpcResult<Boolean>>() {
+        ListenableFuture<RpcResult<Boolean>> future = pool.submit(new Callable<RpcResult<Boolean>>() {
             @Override
             public RpcResult<Boolean> call() throws Exception {
                 Map.Entry<String, DataSchemaNode> restconfEntry = RestconfUtils.toRestconfIdentifier(mappingService.toDataDom(path), schemaContext);
