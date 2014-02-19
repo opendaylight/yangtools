@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -23,12 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.opendaylight.yangtools.sal.binding.generator.impl.LazyGeneratedCodecRegistry;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -39,6 +43,7 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifie
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
+import org.opendaylight.yangtools.yang.data.impl.codec.CodecRegistry;
 import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
@@ -282,6 +287,11 @@ public class RestconfUtils {
             Document doc = builder.parse(inputStream);
             Element rootElement = doc.getDocumentElement();
             Node<?> domNode =  XmlDocumentUtils.toDomNode(rootElement, Optional.of(dataSchema), Optional.<XmlCodecProvider>absent());
+            CodecRegistry registry = mappingService.getCodecRegistry();
+            if (registry instanceof LazyGeneratedCodecRegistry) {
+                LazyGeneratedCodecRegistry lazyReg = (LazyGeneratedCodecRegistry) registry;
+                lazyReg.updateCodecRegistry(dataSchema);
+            }
             DataObject  dataObject = mappingService.dataObjectFromDataDom(path, (CompositeNode) domNode); //getDataFromResponse
             return dataObject;
         } catch (DeserializationException e) {
