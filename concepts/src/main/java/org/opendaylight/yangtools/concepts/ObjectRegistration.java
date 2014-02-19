@@ -14,20 +14,13 @@ package org.opendaylight.yangtools.concepts;
  * usual Java reference mechanism, as the entity where the object is
  * registered may reside outside of the Java Virtual Machine.
  */
-public interface Registration<T> extends AutoCloseable {
+public interface ObjectRegistration<T> extends Registration<T> {
     /**
      * Return the object instance.
      *
      * @return Registered object.
-     *
-     * @deprecated This class is currently deprecated pending its rework for
-     *             general-purpose registration. This rework will remove the
-     *             getInstance() method, such that the registration is no
-     *             longer tied to a particular object. Please use
-     *             {@link ObjectRegistration} to ensure your code does not
-     *             break when that happens.
      */
-    @Deprecated
+    @Override
     T getInstance();
 
     /**
