@@ -80,6 +80,7 @@ public class LazyGeneratedCodecRegistry implements //
     private static final Map<SchemaPath, GeneratedTypeBuilder> pathToType = new ConcurrentHashMap<>();
     private static final Map<List<QName>, Type> pathToInstantiatedType = new ConcurrentHashMap<>();
     private static final Map<Type, QName> typeToQname = new ConcurrentHashMap<>();
+    private static final Map<AugmentationSchema, Type> augmentToType = new ConcurrentHashMap<>();
 
     private final SchemaLock lock;
 
@@ -382,6 +383,7 @@ public class LazyGeneratedCodecRegistry implements //
 
     public void onModuleContextAdded(SchemaContext schemaContext, Module module, ModuleContext context) {
         pathToType.putAll(context.getChildNodes());
+        augmentToType.putAll(context.getTypeToAugmentation().inverse());
         qnamesToIdentityMap.putAll(context.getIdentities());
         for (Entry<QName, GeneratedTOBuilder> identity : context.getIdentities().entrySet()) {
             typeToQname.put(
@@ -481,7 +483,46 @@ public class LazyGeneratedCodecRegistry implements //
         }
         ret = new AugmentableCompositeCodec(dataClass);
         augmentableCodecs.put(dataClass, ret);
+
+        Map<Type, SchemaNode> typeToSchemaNode = generator.getTypeToSchemaNode();
+        Type refType = new ReferencedTypeImpl(dataClass.getPackage().getName(), dataClass.getSimpleName());
+        SchemaNode node = typeToSchemaNode.get(refType);
+        tryToLoadAugmentations(node);
+
         return ret;
+    }
+
+    private void tryToLoadAugmentations(SchemaNode schemaNode) {
+        if (schemaNode instanceof AugmentationTarget) {
+            AugmentationTarget augmentationTarget = (AugmentationTarget) schemaNode;
+            Set<AugmentationSchema> augments = augmentationTarget.getAvailableAugmentations();
+            Set<Type> augmentTypes = new HashSet<>();
+            if (augments != null) {
+                for (AugmentationSchema augment : augments) {
+                    Type augmentType = augmentToType.get(augment);
+                    if (augmentType == null) {
+                        LOG.warn("Failed to find type for augmentation of " + augment);
+                    }
+                    augmentTypes.add(augmentType);
+                }
+                for (Type augmentType : augmentTypes) {
+                    Class<? extends Augmentation<?>> clazz = null;
+                    try {
+                        clazz = (Class<? extends Augmentation<?>>) classLoadingStrategy.loadClass(augmentType);
+                    } catch (ClassNotFoundException e) {
+                        LOG.warn("Failed to find class for augmentation of " + augmentType);
+                    }
+                    getCodecForAugmentation(clazz);
+                }
+            }
+        }
+
+        if (schemaNode instanceof DataNodeContainer) {
+            Set<DataSchemaNode> childNodes = ((DataNodeContainer) schemaNode).getChildNodes();
+            for (DataSchemaNode child : childNodes) {
+                tryToLoadAugmentations(child);
+            }
+        }
     }
 
     private static abstract class IntermediateCodec<T> implements //

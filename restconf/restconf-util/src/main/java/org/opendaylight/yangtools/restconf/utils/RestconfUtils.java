@@ -231,6 +231,18 @@ public class RestconfUtils {
         return moduleName;
     }
 
+    /**
+     * Parse rpc services from input stream.
+     *
+     * @param inputStream
+     *            stream containing rpc services definition in xml
+     *            representation
+     * @param mappingService
+     *            current mapping service
+     * @param schemaContext
+     *            parsed yang data context
+     * @return Set of classes representing rpc services parsed from input stream
+     */
     public static Set<Class<? extends RpcService>> rpcServicesFromInputStream(InputStream inputStream, BindingIndependentMappingService mappingService,SchemaContext schemaContext){
         try {
             DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
@@ -276,6 +288,22 @@ public class RestconfUtils {
         }
         return null;
     }
+
+    /**
+     * Parse DataObject from input stream.
+     *
+     * @param path
+     *            identifier of expected result object
+     * @param inputStream
+     *            stream containing xml data to parse
+     * @param schemaContext
+     *            parsed yang data context
+     * @param mappingService
+     *            current mapping service
+     * @param dataSchema
+     *            yang data schema node representation of resulting data object
+     * @return DataObject instance parsed from input stream
+     */
     public static DataObject dataObjectFromInputStream(org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> path, InputStream inputStream, SchemaContext schemaContext, BindingIndependentMappingService mappingService, DataSchemaNode dataSchema) {
         // Parse stream into w3c Document
         try {
@@ -288,8 +316,7 @@ public class RestconfUtils {
             DataObject  dataObject = mappingService.dataObjectFromDataDom(path, (CompositeNode) domNode); //getDataFromResponse
             return dataObject;
         } catch (DeserializationException e) {
-
-
+            logger.trace("Deserialization exception {}",e);
         } catch (ParserConfigurationException e) {
             logger.trace("Parse configuration exception {}",e);
         } catch (SAXException e) {
