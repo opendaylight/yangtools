@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.data.impl.codec.DataContainerCodec
 import org.opendaylight.yangtools.binding.generator.util.Types
 
 //import org.osgi.framework.BundleContext
-import java.util.Hashtable
 
 //import org.osgi.framework.ServiceRegistration
 import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException
@@ -56,8 +55,6 @@ import java.util.Set
 import org.opendaylight.yangtools.yang.common.QName
 import com.google.common.collect.FluentIterable
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
-import java.util.HashMap
-import java.net.URI
 import org.opendaylight.yangtools.yang.model.api.Module
 import com.google.common.base.Optional
 import org.opendaylight.yangtools.yang.binding.BindingMapping
