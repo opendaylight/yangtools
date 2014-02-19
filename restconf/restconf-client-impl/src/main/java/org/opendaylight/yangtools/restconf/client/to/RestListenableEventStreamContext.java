@@ -7,17 +7,8 @@
  */
 package org.opendaylight.yangtools.restconf.client.to;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,8 +17,11 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.opendaylight.yangtools.concepts.AbstractListenerRegistration;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.restconf.client.BindingToRestRpc;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamReplay;
@@ -40,6 +34,17 @@ import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 
 
@@ -80,9 +85,13 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
             }
         }
 
-        T listenerProxy = (T) BindingToRestRpc.getProxy(listener.getClass(), this.defaultUri);
-        ListenerRegistration listenerRegistration = new ListenerRegistrationImpl(listenerProxy);
-        return listenerRegistration;
+        final T listenerProxy = (T) BindingToRestRpc.getProxy(listener.getClass(), this.defaultUri);
+        return new AbstractListenerRegistration<T>(listenerProxy) {
+            @Override
+            protected void removeRegistration() {
+                // FIXME: implement this method
+            }
+        };
     }
 
     @Override
@@ -171,24 +180,6 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
             throw new IllegalStateException(e.getMessage());
         } catch (InvocationTargetException e) {
             throw new IllegalStateException(e.getMessage());
-        }
-    }
-
-    private class ListenerRegistrationImpl<T extends NotificationListener> implements ListenerRegistration {
-
-        private final T listener;
-
-        public ListenerRegistrationImpl(T registeredListener){
-            this.listener =   registeredListener;
-
-        }
-        @Override
-        public Object getInstance() {
-            return listener;
-        }
-
-        @Override
-        public void close() throws Exception {
         }
     }
 }
