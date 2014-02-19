@@ -14,11 +14,9 @@ package org.opendaylight.yangtools.concepts;
  * installed.
  */
 public abstract class AbstractObjectRegistration<T> extends AbstractRegistration implements Registration<T> {
-
-    
     private final T instance;
 
-    public AbstractObjectRegistration(T instance) {
+    protected AbstractObjectRegistration(final T instance) {
         this.instance = instance;
     }
 
@@ -26,5 +24,5 @@ public abstract class AbstractObjectRegistration<T> extends AbstractRegistration
     public final T getInstance() {
         return instance;
     }
-
 }
+
