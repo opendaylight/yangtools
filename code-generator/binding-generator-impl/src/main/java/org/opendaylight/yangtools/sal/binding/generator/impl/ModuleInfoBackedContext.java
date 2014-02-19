@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
-import org.opendaylight.yangtools.concepts.Registration;
+import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
@@ -139,7 +139,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         }
     }
 
-    private Registration<YangModuleInfo> registerModuleInfo(YangModuleInfo yangModuleInfo) {
+    private ObjectRegistration<YangModuleInfo> registerModuleInfo(YangModuleInfo yangModuleInfo) {
         YangModuleInfoRegistration registration = new YangModuleInfoRegistration(yangModuleInfo, this);
 
         resolveModuleInfo(yangModuleInfo);

@@ -14,7 +14,7 @@ import java.util.EventListener;
  * is interface provides the additional guarantee that the process of
  * unregistration cannot fail for predictable reasons.
  */
-public interface ListenerRegistration<T extends EventListener> extends Registration<T> {
+public interface ListenerRegistration<T extends EventListener> extends ObjectRegistration<T> {
     /**
      * Unregister the listener. No events should be delivered to the listener
      * once this method returns successfully. While the interface contract

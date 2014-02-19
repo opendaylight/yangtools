@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -18,7 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.Identifiable;
-import org.opendaylight.yangtools.concepts.Registration;
+import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
@@ -31,8 +33,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<InputStream> {
 
     private static final Logger LOG = LoggerFactory.getLogger(URLSchemaContextResolver.class);
@@ -41,7 +41,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     private YangSourceContext currentSourceContext;
     private Optional<SchemaContext> currentSchemaContext = Optional.absent();
 
-    public Registration<URL> registerSource(URL source) {
+    public ObjectRegistration<URL> registerSource(URL source) {
         checkArgument(source != null, "Supplied source must not be null");
         InputStream yangStream = getInputStream(source);
         YangModelDependencyInfo modelInfo = YangModelDependencyInfo.fromInputStream(yangStream);
@@ -93,6 +93,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
             this.dependencyInfo = modelInfo;
         }
 
+        @Override
         public SourceIdentifier getIdentifier() {
             return identifier;
         }

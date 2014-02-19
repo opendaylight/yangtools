@@ -13,7 +13,7 @@ package org.opendaylight.yangtools.concepts;
  * Invoking the close() method triggers unregistration of the state the method
  * installed.
  */
-public abstract class AbstractObjectRegistration<T> extends AbstractRegistration implements Registration<T> {
+public abstract class AbstractObjectRegistration<T> extends AbstractRegistration implements ObjectRegistration<T> {
     private final T instance;
 
     protected AbstractObjectRegistration(final T instance) {
