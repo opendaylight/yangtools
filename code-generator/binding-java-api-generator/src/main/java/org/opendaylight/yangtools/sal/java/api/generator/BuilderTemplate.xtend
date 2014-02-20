@@ -602,7 +602,7 @@ class BuilderTemplate extends BaseTemplate {
     '''
 
     def override generateToString(Collection<GeneratedProperty> properties) '''
-        «IF !properties.empty»
+        «IF !(properties === null)»
             @Override
             public String toString() {
                 StringBuilder builder = new StringBuilder("«type.name» [");
