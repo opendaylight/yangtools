@@ -5,16 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.api;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Map;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 
-import org.opendaylight.yangtools.yang.common.QName;
+public interface LeafNode<T> extends //
+        DataContainerChild<NodeIdentifier, T> {
 
-public interface AttributesContainer {
-
-    Map<QName, String> getAttributes();
-
-    Object getAttributeValue(QName value);
+    @Override
+    public NodeIdentifier getIdentifier();
 
 }

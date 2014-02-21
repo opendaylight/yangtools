@@ -30,8 +30,19 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  *
  */
-public interface CompositeNode extends Node<List<Node<?>>>, NodeModification, Map<QName,List<Node<?>>> {
+public interface CompositeNode extends //
+    Node<List<Node<?>>>, //
+    NodeModification, //
+    Map<QName,List<Node<?>>> {
 
+    /**
+     * Returns a list of children as seens in resulting XML serialization
+     * defined by YANG specification.
+     *
+     *
+     * @return
+     */
+    @Deprecated
     List<Node<?>> getChildren();
 
     List<CompositeNode> getCompositesByName(QName children);
@@ -49,6 +60,7 @@ public interface CompositeNode extends Node<List<Node<?>>>, NodeModification, Ma
     /**
      * @return cast self to mutable, if possible
      */
+    @Deprecated
     MutableCompositeNode asMutable();
-    
+
 }

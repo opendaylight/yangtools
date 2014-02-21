@@ -7,26 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import org.opendaylight.yangtools.concepts.Mutable;
+
 
 /**
  * Base representation of node in the data tree, defines basic parameters of
  * node such as a QName.
- * 
- * 
+ *
+ *
  * @param <T>
  */
-public interface MutableNode<T> extends Node<T> {
+public interface MutableNode<T> extends Node<T>,Mutable {
 
     /**
      * @param parent value to set
      */
     void setParent(CompositeNode parent);
-    
+
     /**
      * @param value value to set (children list or leaf value)
      */
+    @Override
     T setValue(T value);
-    
+
     /**
      * @param action value to set
      */

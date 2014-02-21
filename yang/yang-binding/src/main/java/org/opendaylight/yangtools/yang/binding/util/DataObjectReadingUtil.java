@@ -235,6 +235,7 @@ public class DataObjectReadingUtil {
             try {
                 Object potentialList = getGetterMethod().invoke(parent);
                 if (potentialList instanceof Iterable) {
+
                     final Iterable<Identifiable> dataList = (Iterable<Identifiable>) potentialList;
                     if (childArgument instanceof IdentifiableItem<?, ?>) {
                         return readUsingIdentifiableItem(dataList, (IdentifiableItem) childArgument, builder);
