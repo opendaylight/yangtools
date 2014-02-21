@@ -24,5 +24,5 @@ public interface ListenerRegistration<T extends EventListener> extends ObjectReg
      * circumstances.
      */
     @Override
-    void close();
+    void close() throws Exception;
 }
