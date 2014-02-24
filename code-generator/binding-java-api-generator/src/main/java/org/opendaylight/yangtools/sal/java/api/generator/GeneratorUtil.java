@@ -40,7 +40,7 @@ public final class GeneratorUtil {
      * name. To the map are added packages for <code>genType</code> and for all
      * enclosed types, constants, methods (parameter types, return values),
      * implemented types.
-     *
+     * 
      * @param genType
      *            generated type for which the map of the imports is created
      * @return map of the necessary imports
@@ -102,7 +102,7 @@ public final class GeneratorUtil {
      * Evaluates if it is necessary to add the package name for
      * <code>type</code> to the map of imports for <code>parentGenType</code>.
      * If it is so the package name is saved to the map <code>imports</code>.
-     *
+     * 
      * @param parentGenType
      *            generated type for which is the map of the necessary imports
      *            built
@@ -128,8 +128,8 @@ public final class GeneratorUtil {
      */
     public static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
             final Map<String, String> imports) {
-        checkArgument(parentGenType != null,
-                "Parent Generated Type parameter MUST be specified and cannot be " + "NULL!");
+        checkArgument(parentGenType != null, "Parent Generated Type parameter MUST be specified and cannot be "
+                + "NULL!");
         checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
         checkArgument(parentGenType.getPackageName() != null,
                 "Parent Generated Type cannot have Package Name referenced as NULL!");
@@ -142,8 +142,7 @@ public final class GeneratorUtil {
         final String typePackageName = type.getPackageName();
         final String parentTypeName = parentGenType.getName();
         final String parentTypePackageName = parentGenType.getPackageName();
-        if (typeName.equals(parentTypeName) || typePackageName.startsWith("java.lang")
-                 || typePackageName.isEmpty()) {
+        if (typeName.equals(parentTypeName) || typePackageName.startsWith("java.lang") || typePackageName.isEmpty()) {
             return;
         }
         if (!imports.containsKey(typeName)) {
@@ -163,7 +162,7 @@ public final class GeneratorUtil {
     /**
      * Checks if the constant with the name <code>constName</code> is in the
      * list of the constant definition for <code>genTO</code>.
-     *
+     * 
      * @param constName
      *            string with the name of constant which is sought
      * @param genTO
@@ -198,7 +197,7 @@ public final class GeneratorUtil {
      * Creates the map which maps the type name to package name and contains
      * only package names for enclosed types of <code>genType</code> and
      * recursivelly their enclosed types.
-     *
+     * 
      * @param genType
      *            JAVA <code>Type</code> for which is the map created
      * @return map of the package names for all the enclosed types and
@@ -220,7 +219,7 @@ public final class GeneratorUtil {
      * Builds the string which contains either the full path to the type
      * (package name with type) or only type name if the package is among
      * <code>imports</code>.
-     *
+     * 
      * @param parentGenType
      *            generated type which contains <code>type</code>
      * @param type
@@ -282,7 +281,7 @@ public final class GeneratorUtil {
      * Adds actual type parameters from <code>type</code> to
      * <code>builder</code> if <code>type</code> is
      * <code>ParametrizedType</code>.
-     *
+     * 
      * @param builder
      *            string builder which contains type name
      * @param type
@@ -311,7 +310,7 @@ public final class GeneratorUtil {
     /**
      * Generates the string with all actual type parameters from
      * <code>pTypes</code>
-     *
+     * 
      * @param parentGenType
      *            generated type for which is the JAVA code generated
      * @param pTypes
@@ -352,7 +351,7 @@ public final class GeneratorUtil {
 
     /**
      * Returns the reference to highest (top parent) Generated Transfer Object.
-     *
+     * 
      * @param childTransportObject
      *            is generated transfer object which can be extended by other
      *            generated transfer object
@@ -376,7 +375,7 @@ public final class GeneratorUtil {
     /**
      * Selects from input list of properties only those which have read only
      * attribute set to true.
-     *
+     * 
      * @param properties
      *            list of properties of generated transfer object
      * @return subset of <code>properties</code> which have read only attribute
@@ -398,7 +397,7 @@ public final class GeneratorUtil {
      * Returns the list of the read only properties of all extending generated
      * transfer object from <code>genTO</code> to highest parent generated
      * transfer object
-     *
+     * 
      * @param genTO
      *            generated transfer object for which is the list of read only
      *            properties generated
@@ -417,4 +416,19 @@ public final class GeneratorUtil {
         return propertiesOfAllParents;
     }
 
+    public static void removeImportsForAnnotation(GeneratedType genType, Map<String, String> imports) {
+        final List<MethodSignature> methods = genType.getMethodDefinitions();
+        if (methods != null) {
+            for (final MethodSignature method : methods) {
+                for (final AnnotationType at : method.getAnnotations()) {
+                    removeTypeFromImports(at, imports);
+                }
+            }
+        }
+    }
+
+    private static void removeTypeFromImports(Type type, Map<String, String> imports) {
+        checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
+        imports.remove(type.getName());
+    }
 }
