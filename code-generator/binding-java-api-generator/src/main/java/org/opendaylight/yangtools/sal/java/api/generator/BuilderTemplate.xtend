@@ -68,6 +68,7 @@ class BuilderTemplate extends BaseTemplate {
     new(GeneratedType genType) {
         super(genType)
         this.properties = propertiesFromMethods(createMethods)
+        GeneratorUtil.removeImportsForAnnotation(genType,importMap)
     }
 
     /**
