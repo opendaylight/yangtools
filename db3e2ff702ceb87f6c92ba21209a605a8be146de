@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba57610f_08460724",
+        "filename": "concepts/src/main/java/org/opendaylight/yangtools/concepts/ListenerRegistration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-02-24T08:31:59Z",
+      "side": 1,
+      "message": "Closing registration should not allow for throwing any checked exceptions and let client code to deal with it. The implementation code must deal with checked exceptions and do proper state cleanup.",
+      "revId": "db3e2ff702ceb87f6c92ba21209a605a8be146de",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
