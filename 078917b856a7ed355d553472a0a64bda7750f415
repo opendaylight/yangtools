@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba57610f_48a63fc3",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/LazyGeneratedCodecRegistry.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-02-24T14:56:15Z",
+      "side": 1,
+      "message": "Why you are iterating over typeToSchemaNode, comparing key set and then getting value? You could directly use get only ond construct using new ReferencedTypeImpl(dataClass.getPackageName(), dataClass.getSimpleName()),",
+      "revId": "078917b856a7ed355d553472a0a64bda7750f415",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba57610f_28ab0b8b",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/LazyGeneratedCodecRegistry.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-02-24T14:56:15Z",
+      "side": 1,
+      "message": "THis method should be really named after what is does - tryToLoadAugmentations()",
+      "revId": "078917b856a7ed355d553472a0a64bda7750f415",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
