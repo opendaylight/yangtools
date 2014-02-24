@@ -147,33 +147,6 @@ public class RestListenableEventStreamContext<T extends NotificationListener> im
         }
         return clientFuture.get();
     }
-
-/*
-    private String subscribeAndReturnStreamName(String streamName) throws UnsupportedEncodingException, ExecutionException, InterruptedException {
-        ListenableFuture<String> streamNameInFuture = restconfClient.get(ResourceUri.STREAM.getPath()+"/"+encodeUri(this.streamInfo.getIdentifier()),MediaType.APPLICATION_XML,new Function<ClientResponse,String>(){
-            @Override
-            public String apply(ClientResponse clientResponse) {
-                Element rootElement = null;
-                try {
-                    Document responseDocument = XmlTools.fromXml(clientResponse.getEntityInputStream());
-                    rootElement = responseDocument.getDocumentElement();
-                } catch (Exception e) {
-                    logger.trace("Error occurred while parsing client response {}",e);
-                    throw new IllegalStateException(e);
-                }
-                NodeList w3cNodes = rootElement.getElementsByTagName("stream-name");
-                if (w3cNodes.getLength()<=0){
-                    throw new IllegalStateException("No tag stream-name in response.");
-                }
-                return w3cNodes.item(0).getNodeValue();
-            }
-        });
-        while (!streamNameInFuture.isDone()){
-            //noop
-        }
-        return streamNameInFuture.get();
-    }
-*/
     private void createWebsocketClient(URI websocketServerUri){
         this.wsClient = new WebSocketIClient(websocketServerUri,this);
     }

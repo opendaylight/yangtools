@@ -22,8 +22,6 @@ import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -32,13 +30,10 @@ import org.opendaylight.yangtools.restconf.client.api.RestconfClientContext;
 import org.opendaylight.yangtools.restconf.client.api.auth.AuthenticationHolder;
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
 import org.opendaylight.yangtools.restconf.client.api.data.OperationalDatastore;
-import org.opendaylight.yangtools.restconf.client.api.dto.RestEventStreamInfo;
-import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.restconf.client.api.event.ListenableEventStreamContext;
 import org.opendaylight.yangtools.restconf.client.api.rpc.RpcServiceContext;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcServiceContext;
-import org.opendaylight.yangtools.restconf.common.ResourceMediaTypes;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
 import org.opendaylight.yangtools.restconf.utils.RestconfUtils;
 import org.opendaylight.yangtools.restconf.utils.XmlTools;
@@ -103,7 +98,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public ListenableFuture<Set<Class<? extends RpcService>>> getRpcServices() {
-        return get(ResourceUri.MODULES.getPath(), ResourceMediaTypes.XML.getMediaType(),new Function<ClientResponse, Set<Class<? extends RpcService>>>() {
+        return get(ResourceUri.MODULES.getPath(), MediaType.APPLICATION_XML,new Function<ClientResponse, Set<Class<? extends RpcService>>>() {
             @Override
             public Set<Class<? extends RpcService>> apply(ClientResponse clientResponse) {
                 if (clientResponse.getStatus() != 200) {
@@ -123,29 +118,19 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
     @Override
     public ListenableFuture<Set<EventStreamInfo>> getAvailableEventStreams() {
-        return get(ResourceUri.MODULES.getPath(), ResourceMediaTypes.XML.getMediaType(),new Function<ClientResponse, Set<EventStreamInfo>>() {
+        return get(ResourceUri.STREAM.getPath(), MediaType.APPLICATION_XML, new Function<ClientResponse, Set<EventStreamInfo>>() {
             @Override
             public Set<EventStreamInfo> apply(ClientResponse clientResponse) {
                 if (clientResponse.getStatus() != 200) {
                     throw new RuntimeException("Failed : HTTP error code : "
                             + clientResponse.getStatus());
                 }
-                List<RestModule> modules = null;
                 try {
-                    modules = XmlTools.getModulesFromInputStream(clientResponse.getEntityInputStream());
+                    return XmlTools.evenStreamsFromInputStream(clientResponse.getEntityInputStream());
                 } catch (Exception e) {
-                    logger.trace("");
+                    logger.trace("Stream discovery failed due to {}",e);
+                    throw new IllegalStateException(e);
                 }
-                // when restconf will support discovery by /restconf/streams use this  instead of next iteration
-                //return XmlTools.evenStreamsFromInputStream(response.getEntityInputStream());
-                Set<EventStreamInfo> evtStreamInfos = new HashSet<EventStreamInfo>();
-                for (RestModule module:modules){
-                    RestEventStreamInfo esi = new RestEventStreamInfo();
-                    esi.setIdentifier(module.getName()+":"+module.getName());
-                    esi.setDescription(module.getNamespace());
-                    evtStreamInfos.add(esi);
-                }
-                return evtStreamInfos;
             }
         });
     }
