@@ -417,4 +417,19 @@ public final class GeneratorUtil {
         return propertiesOfAllParents;
     }
 
+    public static void removeImportsForAnnotation(GeneratedType genType,Map<String, String> imports) {
+        final List<MethodSignature> methods = genType.getMethodDefinitions();
+        if (methods != null) {
+            for (final MethodSignature method : methods) {
+                for (final AnnotationType at : method.getAnnotations()) {
+                    removeTypeFromImports(at, imports);
+                }
+            }
+        }        
+    }
+
+    private static void removeTypeFromImports(Type type, Map<String, String> imports) {
+        checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
+        imports.remove(type.getName());
+    }
 }
