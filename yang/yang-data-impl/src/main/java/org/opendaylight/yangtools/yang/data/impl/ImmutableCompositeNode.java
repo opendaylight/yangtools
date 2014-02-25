@@ -9,12 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl;
 
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.*;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.util.AbstractCompositeNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
 import com.google.common.collect.ImmutableList;
@@ -301,8 +297,12 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     public static ImmutableCompositeNode create(QName qName, List<Node<?>> childNodes) {
         return new ImmutableCompositeNode(qName, ImmutableMap.<QName, String>of(),childNodes);
     }
-    
+
     public static ImmutableCompositeNode create(QName qName, Map<QName, String> attributes, List<Node<?>> childNodes) {
         return new ImmutableCompositeNode(qName, attributes,childNodes);
+    }
+
+    public static ImmutableCompositeNode create(QName qName, List<Node<?>> childNodes, ModifyAction modifyAction) {
+        return new ImmutableCompositeNode(qName, childNodes, modifyAction);
     }
 }

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author michal.rehak
@@ -46,7 +47,6 @@ public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
     public SimpleNodeTOImpl(QName qname, CompositeNode parent, T value, ModifyAction modifyAction) {
         super(qname, parent, value, modifyAction);
     }
-
 
     @Override
     public MutableSimpleNode<T> asMutable() {
@@ -79,4 +79,5 @@ public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
         aStream.writeObject(getValue());
         aStream.writeObject(getModificationAction());
     }
+
 }
