@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba57610f_4ebf67d1",
+        "filename": "yang/yang-maven-plugin-it/src/test/resources/NoGenerators/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-25T16:54:48Z",
+      "side": 1,
+      "message": "${it-project.version} here, otherwise the release process will break!",
+      "revId": "ad0e273c0cde363264ee968883df790b6b21ef4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba57610f_2eb433f1",
+        "filename": "yang/yang-maven-plugin-it/src/test/resources/NoGenerators/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-25T16:54:48Z",
+      "side": 1,
+      "message": "Why this specific version?",
+      "revId": "ad0e273c0cde363264ee968883df790b6b21ef4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba57610f_0eb96fe9",
+        "filename": "yang/yang-maven-plugin/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-02-25T16:54:48Z",
+      "side": 1,
+      "message": "Put versions into depedencyManagement section, please.",
+      "revId": "ad0e273c0cde363264ee968883df790b6b21ef4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
