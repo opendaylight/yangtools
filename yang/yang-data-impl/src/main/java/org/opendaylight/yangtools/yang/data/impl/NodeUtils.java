@@ -23,6 +23,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.google.common.collect.Maps;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
@@ -42,7 +43,7 @@ import com.google.common.collect.Lists;
 
 /**
  * @author michal.rehak
- * 
+ *
  */
 public abstract class NodeUtils {
 
@@ -142,13 +143,13 @@ public abstract class NodeUtils {
 
     /**
      * build NodeMap, where key = qName; value = node
-     * 
+     *
      * @param value
      * @return map of children, where key = qName and value is list of children
      *         groupped by qName
      */
     public static Map<QName, List<Node<?>>> buildNodeMap(List<Node<?>> value) {
-        Map<QName, List<Node<?>>> nodeMapTmp = new HashMap<>();
+        Map<QName, List<Node<?>>> nodeMapTmp = Maps.newLinkedHashMap();
         if (value == null) {
             throw new IllegalStateException("nodeList should not be null or empty");
         }
@@ -201,7 +202,7 @@ public abstract class NodeUtils {
 
     /**
      * add given node to it's parent's list of children
-     * 
+     *
      * @param newNode
      */
     public static void fixParentRelation(Node<?> newNode) {
@@ -215,7 +216,7 @@ public abstract class NodeUtils {
 
     /**
      * crawl all children of given node and assign it as their parent
-     * 
+     *
      * @param parentNode
      */
     public static void fixChildrenRelation(CompositeNode parentNode) {

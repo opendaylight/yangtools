@@ -7,17 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.NodeModification;
+import org.opendaylight.yangtools.yang.data.api.*;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * @author michal.rehak
  * @param <T>
  *            type of node value
- * 
+ *
  */
 public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
 
@@ -37,9 +40,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
      * @param value
      */
     public AbstractNodeTO(QName qname, CompositeNode parent, T value) {
-        this.qName = qname;
-        this.parent = parent;
-        this.value = value;
+        this(qname, parent, value, null);
     }
 
     /**
@@ -119,8 +120,8 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
                 .getLocalName(), getModificationAction() == null ? "n/a" : getModificationAction()));
         return out.toString();
     }
-    
-    
+
+
     @Override
     public final QName getKey() {
         return getNodeType();
@@ -131,7 +132,6 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((modifyAction == null) ? 0 : modifyAction.hashCode());
         result = prime * result + ((qName == null) ? 0 : qName.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result % 2;
@@ -150,9 +150,6 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
         }
         @SuppressWarnings("unchecked")
         AbstractNodeTO<T> other = (AbstractNodeTO<T>) obj;
-        if (modifyAction != other.modifyAction) {
-            return false;
-        }
         if (parent == null) {
             if (other.parent != null) {
                 return false;

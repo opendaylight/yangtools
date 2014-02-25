@@ -23,15 +23,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.google.common.collect.Maps;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.*;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
@@ -51,9 +49,7 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -75,11 +71,11 @@ public class XmlDocumentUtils {
     private static final Logger logger = LoggerFactory.getLogger(XmlDocumentUtils.class);
 
     /**
-     * Converts Data DOM structure to XML Document for specified XML Codec Provider and corresponding 
-     * Data Node Container schema. The CompositeNode data parameter enters as root of Data DOM tree and will 
-     * be transformed to root in XML Document. Each element of Data DOM tree is compared against specified Data 
+     * Converts Data DOM structure to XML Document for specified XML Codec Provider and corresponding
+     * Data Node Container schema. The CompositeNode data parameter enters as root of Data DOM tree and will
+     * be transformed to root in XML Document. Each element of Data DOM tree is compared against specified Data
      * Node Container Schema and transformed accordingly.
-     * 
+     *
      * @param data Data DOM root element
      * @param schema Data Node Container Schema
      * @param codecProvider XML Codec Provider
@@ -92,6 +88,7 @@ public class XmlDocumentUtils {
         Preconditions.checkNotNull(schema);
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
         Document doc = null;
         try {
             DocumentBuilder bob = dbf.newDocumentBuilder();
@@ -113,7 +110,7 @@ public class XmlDocumentUtils {
      * Converts Data DOM structure to XML Document for specified XML Codec Provider. The CompositeNode
      * data parameter enters as root of Data DOM tree and will be transformed to root in XML Document. The child
      * nodes of Data Tree are transformed accordingly.
-     * 
+     *
      * @param data Data DOM root element
      * @param codecProvider XML Codec Provider
      * @return new instance of XML Document
@@ -124,6 +121,7 @@ public class XmlDocumentUtils {
         Preconditions.checkNotNull(data);
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
         Document doc = null;
         try {
             DocumentBuilder bob = dbf.newDocumentBuilder();
@@ -372,7 +370,9 @@ public class XmlDocumentUtils {
         } else {
             value = xmlElement.getTextContent();
         }
-        return new SimpleNodeTOImpl<Object>(schema.getQName(), null, value);
+
+        Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
+        return new SimpleNodeTOImpl<>(schema.getQName(), null, value, modifyAction.orNull());
     }
 
     private static Node<?> toSimpleNodeWithType(Element xmlElement, LeafListSchemaNode schema,
@@ -386,13 +386,29 @@ public class XmlDocumentUtils {
         } else {
             value = xmlElement.getTextContent();
         }
-        return new SimpleNodeTOImpl<Object>(schema.getQName(), null, value);
+
+        Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
+        return new SimpleNodeTOImpl<>(schema.getQName(), null, value, modifyAction.orNull());
     }
 
     private static Node<?> toCompositeNodeWithSchema(Element xmlElement, QName qName, DataNodeContainer schema,
             XmlCodecProvider codecProvider) {
         List<Node<?>> values = toDomNodes(xmlElement, Optional.fromNullable(schema.getChildNodes()));
-        return ImmutableCompositeNode.create(qName, values);
+        Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
+        return ImmutableCompositeNode.create(qName, values, modifyAction.orNull());
+    }
+
+    public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "operation");
+
+    public static Optional<ModifyAction> getModifyOperationFromAttributes(Element xmlElement) {
+        Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
+        if(attributeNodeNS == null)
+            return Optional.absent();
+
+        ModifyAction action = ModifyAction.fromXmlValue(attributeNodeNS.getValue());
+        Preconditions.checkArgument(action.isOnElementPermitted(), "Unexpected operation %s on %s", action, xmlElement);
+
+        return Optional.of(action);
     }
 
     private static void checkQName(Element xmlElement, QName qName) {
@@ -467,7 +483,7 @@ public class XmlDocumentUtils {
         });
 
     }
-    
+
     /**
      * Converts XML Document containing notification data from Netconf device to
      * Data DOM Nodes. <br>
@@ -480,7 +496,7 @@ public class XmlDocumentUtils {
      * begins in element which is equal to notifications name defined in
      * corresponding yang model. Rest of notification metadata are obfuscated,
      * thus Data DOM contains only pure notification body.
-     * 
+     *
      * @param document
      *            XML Document containing notification body
      * @param notifications
