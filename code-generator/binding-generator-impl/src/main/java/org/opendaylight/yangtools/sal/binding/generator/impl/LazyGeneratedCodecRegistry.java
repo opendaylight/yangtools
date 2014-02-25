@@ -10,29 +10,66 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
-import org.opendaylight.yangtools.yang.data.impl.codec.*;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.yangtools.yang.binding.*;
+import org.opendaylight.yangtools.yang.binding.Augmentable;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.BaseIdentity;
+import org.opendaylight.yangtools.yang.binding.BindingCodec;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.data.impl.codec.AugmentationCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.ChoiceCaseCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.ChoiceCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.CodecRegistry;
+import org.opendaylight.yangtools.yang.data.impl.codec.DataContainerCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.DomCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.IdentifierCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.IdentityCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextListener;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +112,7 @@ public class LazyGeneratedCodecRegistry implements //
     @SuppressWarnings("rawtypes")
     private static final ConcurrentMap<Type, ChoiceCaseCodecImpl> typeToCaseCodecs = new ConcurrentHashMap<>();
 
-    private CaseClassMapFacade classToCaseRawCodec = new CaseClassMapFacade();
+    private final CaseClassMapFacade classToCaseRawCodec = new CaseClassMapFacade();
 
     private static final Map<SchemaPath, GeneratedTypeBuilder> pathToType = new ConcurrentHashMap<>();
     private static final Map<List<QName>, Type> pathToInstantiatedType = new ConcurrentHashMap<>();
@@ -219,6 +256,7 @@ public class LazyGeneratedCodecRegistry implements //
         return newWrapper;
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
     public void bindingClassEncountered(Class cls) {
 
@@ -244,7 +282,8 @@ public class LazyGeneratedCodecRegistry implements //
             return;
         }
         LOG.trace("Binding Class {} encountered.", cls);
-        WeakReference<Class> weakRef = new WeakReference<>((Class) cls);
+        @SuppressWarnings("rawtypes")
+        WeakReference<Class> weakRef = new WeakReference<Class>(cls);
         typeToClass.put(typeRef, weakRef);
     }
 
@@ -430,7 +469,7 @@ public class LazyGeneratedCodecRegistry implements //
         BindingCodec<Map<QName, Object>, Object> delegate = newInstanceOf(choiceCodec);
         ChoiceCodecImpl<?> newCodec = new ChoiceCodecImpl(delegate);
         choiceCodecs.put(choiceClass, newCodec);
-        CodecMapping.setClassToCaseMap(choiceCodec, (Map<Class<?>, BindingCodec<?, ?>>) classToCaseRawCodec);
+        CodecMapping.setClassToCaseMap(choiceCodec, classToCaseRawCodec);
         CodecMapping.setCompositeNodeToCaseMap(choiceCodec, newCodec.getCompositeToCase());
 
         tryToCreateCasesCodecs(schema);
@@ -502,8 +541,9 @@ public class LazyGeneratedCodecRegistry implements //
                     Type augmentType = augmentToType.get(augment);
                     if (augmentType == null) {
                         LOG.warn("Failed to find type for augmentation of " + augment);
+                    } else {
+                        augmentTypes.add(augmentType);
                     }
-                    augmentTypes.add(augmentType);
                 }
                 for (Type augmentType : augmentTypes) {
                     Class<? extends Augmentation<?>> clazz = null;
@@ -634,6 +674,7 @@ public class LazyGeneratedCodecRegistry implements //
             throw new UnsupportedOperationException("Direct invocation of this codec is not allowed.");
         }
 
+        @Override
         public BindingCodec getDelegate() {
             return delegate;
         }
@@ -946,8 +987,8 @@ public class LazyGeneratedCodecRegistry implements //
     private static class AugmentationCodecWrapper<T extends Augmentation<?>> implements AugmentationCodec<T>,
             Delegator<BindingCodec> {
 
-        private BindingCodec delegate;
-        private QName augmentationQName;
+        private final BindingCodec delegate;
+        private final QName augmentationQName;
 
         public AugmentationCodecWrapper(BindingCodec<Map<QName, Object>, Object> rawCodec) {
             this.delegate = rawCodec;
@@ -973,7 +1014,7 @@ public class LazyGeneratedCodecRegistry implements //
         @Override
         @SuppressWarnings("unchecked")
         public ValueWithQName<T> deserialize(Node<?> input) {
-            Object rawCodecValue = getDelegate().deserialize((Map<QName, Object>) input);
+            Object rawCodecValue = getDelegate().deserialize(input);
             return new ValueWithQName<T>(input.getNodeType(), (T) rawCodecValue);
         }
 
