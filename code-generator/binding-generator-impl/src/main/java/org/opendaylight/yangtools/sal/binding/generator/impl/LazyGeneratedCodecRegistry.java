@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
+import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationException;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
@@ -540,7 +541,7 @@ public class LazyGeneratedCodecRegistry implements //
                 for (AugmentationSchema augment : augments) {
                     Type augmentType = augmentToType.get(augment);
                     if (augmentType == null) {
-                        LOG.warn("Failed to find type for augmentation of " + augment);
+                        LOG.warn("Failed to find type for augmentation of {}", augment);
                     } else {
                         augmentTypes.add(augmentType);
                     }
@@ -549,10 +550,12 @@ public class LazyGeneratedCodecRegistry implements //
                     Class<? extends Augmentation<?>> clazz = null;
                     try {
                         clazz = (Class<? extends Augmentation<?>>) classLoadingStrategy.loadClass(augmentType);
+                        getCodecForAugmentation(clazz);
                     } catch (ClassNotFoundException e) {
-                        LOG.warn("Failed to find class for augmentation of " + augmentType);
+                        LOG.warn("Failed to find class for augmentation of {}, reason: {}", augmentType, e.toString());
+                    } catch (CodeGenerationException e) {
+                        LOG.warn("Failed to proactively generate augment coded for {}, reason: {}",  augmentType, e.toString());
                     }
-                    getCodecForAugmentation(clazz);
                 }
             }
         }
