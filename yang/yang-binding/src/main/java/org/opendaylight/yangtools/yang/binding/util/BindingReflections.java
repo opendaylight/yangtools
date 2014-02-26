@@ -45,7 +45,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 public class BindingReflections {
 
     private static final long EXPIRATION_TIME = 60;
-    private static final String ROOT_PACKAGE_PATTERN_STRING = "(org.opendaylight.yang.gen.v1.[a-z0-9\\.]*.rev[0-9][0-9][0-1][0-9][0-3][0-9])";
+    private static final String ROOT_PACKAGE_PATTERN_STRING = "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*\\.rev[0-9][0-9][0-1][0-9][0-3][0-9])";
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
 
     private static final LoadingCache<Class<?>, Optional<QName>> classToQName = CacheBuilder.newBuilder() //
@@ -170,7 +170,7 @@ public class BindingReflections {
         checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
                 BindingMapping.PACKAGE_PREFIX, name);
         Matcher match = ROOT_PACKAGE_PATTERN.matcher(name);
-        checkArgument(match.find());
+        checkArgument(match.find(),"Package name '%s' does not match required pattern '%s'",name,ROOT_PACKAGE_PATTERN_STRING);
         String rootPackage = match.group(0);
         return rootPackage;
     }
