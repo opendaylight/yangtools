@@ -1,0 +1,52 @@
+module test-bug466-augmentation {
+    yang-version 1;
+    namespace "urn:opendaylight:yang:test:regression:bug466:augmentation:empty";
+    prefix "bug466-aug-empty";
+    
+    import test-bug466-base { prefix base; revision-date "2014-02-26";}
+    import yang-ext { prefix ext; revision-date "2013-07-09";}
+
+    contact "Anton Tkacik <ttkacik@cisco.com>";
+
+    description 
+            "Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+
+            This program and the accompanying materials are made available under the
+            terms of the Eclipse Public License v1.0 which accompanies this distribution,
+            and is available at http://www.eclipse.org/legal/epl-v10.html";
+
+
+    revision "2014-02-26" {
+        description "";
+    }
+
+    augment "/base:bug-466" {
+        description "Empty augmentation without conditions.";
+    }
+
+    augment "/base:bug-466" {
+        description "Empty augmentation with extensions.";
+        ext:context-instance "base:bug-466-identity";
+    }
+
+    augment "/base:bug-466" {
+        description "augmentation with data.";
+        container data {
+        
+        }
+    }
+
+    augment "/base:bug-466" {
+        when "./base:condition='renamed-augment'";
+        ext:augment-identifier "renamed-augmentation-with-condition";
+        
+    }
+
+    augment "/base:bug-466" {
+        ext:augment-identifier "renamed-augmentation-with-child";
+        container child {
+        
+        }
+    }
+
+}
