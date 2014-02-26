@@ -626,7 +626,7 @@ class GeneratorImpl {
                 }
 
                 if (!(node instanceof ChoiceNode) && !(node instanceof ChoiceCaseNode)) {
-                    var String prefix = node.QName.prefix
+                    var String prefix = name.prefix
                     var String moduleName
                     if (prefix == null || "".equals(prefix) || prefix.equals(module.prefix)) {
                         moduleName = module.name
@@ -635,7 +635,7 @@ class GeneratorImpl {
                     }
                     pathString.append(moduleName)
                     pathString.append(":")
-                    pathString.append(node.QName.localName)
+                    pathString.append(name.localName)
                     pathString.append("/")
                 }
                 parent = node

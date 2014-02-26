@@ -401,13 +401,7 @@ public final class ParserUtils {
         var Builder targetNode = findSchemaNodeInModule(path, firstNodeParent)
         if(targetNode === null) return false;
 
-        if ((targetNode instanceof DataNodeContainerBuilder)) {
-            val targetDataNodeContainer = targetNode as DataNodeContainerBuilder;
-            augment.setTargetNodeSchemaPath(targetDataNodeContainer.getPath());
-        } else if (targetNode instanceof ChoiceBuilder) {
-            val targetChoiceBuilder = targetNode as ChoiceBuilder;
-            augment.setTargetNodeSchemaPath(targetChoiceBuilder.getPath());
-        } else {
+        if (!(targetNode instanceof DataNodeContainerBuilder || targetNode instanceof ChoiceBuilder)) {
             throw new YangParseException(augment.getModuleName(), augment.getLine(),
                 "Error in augment parsing: The target node MUST be either a container, list, choice, case, input, output, or notification node.");
         }
