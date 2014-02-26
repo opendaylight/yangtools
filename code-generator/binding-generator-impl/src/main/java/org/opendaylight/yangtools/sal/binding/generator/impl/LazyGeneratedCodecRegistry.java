@@ -546,13 +546,13 @@ public class LazyGeneratedCodecRegistry implements //
                     }
                 }
                 for (Type augmentType : augmentTypes) {
-                    Class<? extends Augmentation<?>> clazz = null;
                     try {
-                        clazz = (Class<? extends Augmentation<?>>) classLoadingStrategy.loadClass(augmentType);
+                        final Class<? extends Augmentation<?>> clazz = (Class<? extends Augmentation<?>>) classLoadingStrategy.loadClass(augmentType);
+                        getCodecForAugmentation(clazz);
                     } catch (ClassNotFoundException e) {
                         LOG.warn("Failed to find class for augmentation of " + augmentType);
                     }
-                    getCodecForAugmentation(clazz);
+
                 }
             }
         }

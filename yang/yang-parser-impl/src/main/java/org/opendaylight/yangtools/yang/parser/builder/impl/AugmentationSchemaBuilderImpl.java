@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -27,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
@@ -43,7 +47,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private String whenCondition;
 
     private final String augmentTargetStr;
-    private SchemaPath targetPath;
+    private final SchemaPath targetPath;
     private SchemaPath targetNodeSchemaPath;
 
     private boolean resolved;
@@ -78,6 +82,14 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     @Override
     public AugmentationSchema build() {
         if (!built) {
+
+            Builder parent = getParent();
+            if(parent instanceof ModuleBuilder) {
+                ModuleBuilder moduleBuilder = (ModuleBuilder) parent;
+                instance.setNamespace(moduleBuilder.getNamespace());
+                instance.setRevision(moduleBuilder.getRevision());
+            }
+
             instance.setTargetPath(targetNodeSchemaPath);
 
             RevisionAwareXPath whenStmt;
@@ -123,10 +135,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         this.resolved = resolved;
     }
 
+    @Override
     public String getWhenCondition() {
         return whenCondition;
     }
 
+    @Override
     public void addWhenCondition(String whenCondition) {
         this.whenCondition = whenCondition;
     }
@@ -239,11 +253,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         return true;
     }
 
+    @Override
     public String toString() {
         return "augment " + augmentTargetStr;
     }
 
-    private static final class AugmentationSchemaImpl implements AugmentationSchema {
+    private static final class AugmentationSchemaImpl implements AugmentationSchema, NamespaceRevisionAware {
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
         private final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
@@ -251,6 +266,9 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         private String description;
         private String reference;
         private Status status;
+
+        private URI namespace;
+        private Date revision;
         private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
         private AugmentationSchemaImpl(SchemaPath targetPath) {
@@ -349,6 +367,24 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         @Override
         public DataSchemaNode getDataChildByName(String name) {
             return getChildNode(childNodes, name);
+        }
+
+        @Override
+        public URI getNamespace() {
+            return namespace;
+        }
+
+        protected void setNamespace(URI namespace) {
+            this.namespace = namespace;
+        }
+
+        @Override
+        public Date getRevision() {
+            return revision;
+        }
+
+        protected void setRevision(Date revision) {
+            this.revision = revision;
         }
 
         @Override

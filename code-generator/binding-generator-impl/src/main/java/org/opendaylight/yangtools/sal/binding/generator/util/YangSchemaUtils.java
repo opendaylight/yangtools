@@ -7,12 +7,23 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-
-import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 public class YangSchemaUtils {
 
@@ -25,17 +36,30 @@ public class YangSchemaUtils {
 
 
     public static QName getAugmentationQName(AugmentationSchema augmentation) {
-        Preconditions.checkNotNull(augmentation, "Augmentation must not be null.");
+        checkNotNull(augmentation, "Augmentation must not be null.");
         QName identifier = getAugmentationIdentifier(augmentation);
         if(identifier != null) {
             return identifier;
         }
-        for(DataSchemaNode child : augmentation.getChildNodes()) {
-            // FIXME: Return true name
-            return QName.create(child.getQName(), "foo_augment");
+        URI namespace = null;
+        Date revision = null;
+        if(augmentation instanceof NamespaceRevisionAware) {
+            namespace = ((NamespaceRevisionAware) augmentation).getNamespace();
+            revision = ((NamespaceRevisionAware) augmentation).getRevision();
         }
+        if(namespace == null || revision == null)
+        for(DataSchemaNode child : augmentation.getChildNodes()) {
+            // Derive QName from child nodes
+            if(!child.isAugmenting()) {
+                namespace = child.getQName().getNamespace();
+                revision = child.getQName().getRevision();
+                break;
+            }
+        }
+        checkState(namespace != null, "Augmentation namespace must not be null");
+        checkState(revision != null, "Augmentation revision must not be null");
         // FIXME: Allways return a qname with module namespace.
-        return null;
+        return QName.create(namespace,revision, "foo_augment");
     }
 
     public static QName getAugmentationIdentifier(AugmentationSchema augmentation) {
@@ -56,7 +80,7 @@ public class YangSchemaUtils {
         if(previous == null) {
             return null;
         }
-        Preconditions.checkArgument(arguments.size() == 1);
+        checkArgument(arguments.size() == 1);
         for (QName qName : arguments) {
             //previous.getDataChildByName(qName);
         }
