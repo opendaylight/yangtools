@@ -565,6 +565,11 @@ public class LazyGeneratedCodecRegistry implements //
             for (DataSchemaNode child : childNodes) {
                 tryToLoadAugmentations(child);
             }
+        } else if (schemaNode instanceof ChoiceNode) {
+            Set<ChoiceCaseNode> cases = ((ChoiceNode)schemaNode).getCases();
+            for (ChoiceCaseNode caseNode : cases) {
+                tryToLoadAugmentations(caseNode);
+            }
         }
     }
 
