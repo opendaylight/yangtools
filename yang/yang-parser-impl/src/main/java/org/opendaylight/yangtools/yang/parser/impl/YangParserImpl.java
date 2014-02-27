@@ -728,7 +728,6 @@ public final class YangParserImpl implements YangModelParser {
             for (QName qn : oldPath) {
                 URI ns = module.getNamespace();
                 Date rev = module.getRevision();
-                String pref = module.getPrefix();
                 String localPrefix = qn.getPrefix();
                 if (localPrefix != null && !("".equals(localPrefix))) {
                     ModuleBuilder currentModule = ParserUtils.findModuleFromBuilders(modules, module, localPrefix,
@@ -741,14 +740,12 @@ public final class YangParserImpl implements YangModelParser {
                         }
                         ns = m.getNamespace();
                         rev = m.getRevision();
-                        pref = m.getPrefix();
                     } else {
                         ns = currentModule.getNamespace();
                         rev = currentModule.getRevision();
-                        pref = currentModule.getPrefix();
                     }
                 }
-                newPath.add(new QName(ns, rev, pref, qn.getLocalName()));
+                newPath.add(new QName(ns, rev, localPrefix, qn.getLocalName()));
             }
         }
         augment.setTargetNodeSchemaPath(new SchemaPath(newPath, augment.getTargetPath().isAbsolute()));
