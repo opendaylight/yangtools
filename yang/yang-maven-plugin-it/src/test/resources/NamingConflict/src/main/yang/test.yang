@@ -1,0 +1,18 @@
+module test {
+    namespace "urn:yang:test";
+    prefix "t";
+
+    revision 2014-03-03 {
+    }
+
+    typedef network-topology-ref {
+        type instance-identifier;
+    }
+
+    grouping network-topology-ref {
+        leaf network-topology-ref {
+            type string;
+        }
+    }
+
+}
