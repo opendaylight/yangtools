@@ -14,7 +14,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +60,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
 
         final BindingGenerator bindingGenerator = new BindingGeneratorImpl();
         final List<Type> types = bindingGenerator.generateTypes(context, yangModules);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(buildContext, new HashSet<>(types));
+        final GeneratorJavaFile generator = new GeneratorJavaFile(buildContext, types);
 
         File persistentSourcesDir = null;
         if (additionalConfig != null) {
