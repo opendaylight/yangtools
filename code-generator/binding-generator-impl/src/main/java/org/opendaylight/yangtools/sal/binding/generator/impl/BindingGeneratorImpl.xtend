@@ -12,6 +12,7 @@ import static extension org.opendaylight.yangtools.binding.generator.util.Types.
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1803,17 +1804,23 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * @param methodName
      *            string with the name of the getter method
      * @param returnType return type
+     * @param getterWithGetPrefix
+     *            specify whether getter method is generated with get|is prefix
      * @return string with the name of the getter method for
      *         <code>methodName</code> in JAVA method format
      */
-    public static def String getterMethodName(String localName, Type returnType) {
+    public static def String getterMethodName(String localName, Type returnType,boolean getterWithGetPrefix) {
         val method = new StringBuilder();
-        if (BOOLEAN.equals(returnType)) {
-            method.append("is");
-        } else {
-            method.append("get");
+        var propertyName = BindingMapping.getPropertyName(localName)
+        if (getterWithGetPrefix) {
+            if (BOOLEAN.equals(returnType)) {
+                method.append("is");
+            } else {
+                method.append("get");
+            }
+            propertyName = propertyName.toFirstUpper
         }
-        method.append(BindingMapping.getPropertyName(localName).toFirstUpper);
+        method.append(propertyName);
         return method.toString();
     }
 
@@ -1839,11 +1846,16 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *         <code>interfaceBuilder</code>
      */
     private def MethodSignatureBuilder constructGetter(GeneratedTypeBuilder interfaceBuilder, String schemaNodeName,
-        String comment, Type returnType) {
-        val getMethod = interfaceBuilder.addMethod(getterMethodName(schemaNodeName, returnType));
+        String comment, Type returnType, boolean getterWithGetPrefix) {
+        val getMethod = interfaceBuilder.addMethod(getterMethodName(schemaNodeName, returnType,getterWithGetPrefix));
         getMethod.setComment(comment);
         getMethod.setReturnType(returnType);
         return getMethod;
+    }
+
+    private def MethodSignatureBuilder constructGetter(GeneratedTypeBuilder interfaceBuilder, String schemaNodeName,
+        String comment, Type returnType) {
+        return constructGetter(interfaceBuilder, schemaNodeName,comment,returnType,true)
     }
 
     /**
@@ -1899,7 +1911,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         if (genTOBuilder !== null) {
             val genTO = genTOBuilder.toInstance();
-            constructGetter(typeBuilder, "key", "Returns Primary Key of Yang List Type", genTO);
+            constructGetter(typeBuilder, KEY_FIELD_NAME, "Returns Primary Key of Yang List Type", genTO,false);
             genCtx.get(module).addGeneratedTOBuilder(genTOBuilder)
         }
     }
