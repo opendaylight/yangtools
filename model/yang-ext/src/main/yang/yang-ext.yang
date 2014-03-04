@@ -42,6 +42,12 @@ module yang-ext {
         argument "identifier";
     }
 
+    extension "mount" {
+        description
+            "YANG language extension";
+
+    }
+
 
     // Context-aware RPCs
 
