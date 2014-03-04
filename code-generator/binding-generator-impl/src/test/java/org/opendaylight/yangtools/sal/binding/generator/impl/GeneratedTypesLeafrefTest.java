@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.*;
 
 public class GeneratedTypesLeafrefTest {
 
@@ -141,7 +142,7 @@ public class GeneratedTypesLeafrefTest {
         MethodSignature getIfcKey = null;
         MethodSignature getHigherLayerIf = null;
         for (final MethodSignature method : gtIfcMethods) {
-            if (method.getName().equals("getKey")) {
+            if (method.getName().equals(KEY_FIELD_NAME)) {
                 getIfcKey = method;
             } else if (method.getName().equals("getHigherLayerIf")) {
                 getHigherLayerIf = method;
@@ -209,7 +210,7 @@ public class GeneratedTypesLeafrefTest {
         assertNotNull(gtTunnelMethods);
         MethodSignature getTunnelKey = null;
         for (MethodSignature method : gtTunnelMethods) {
-            if (method.getName().equals("getKey")) {
+            if (method.getName().equals(KEY_FIELD_NAME)) {
                 getTunnelKey = method;
             }
         }

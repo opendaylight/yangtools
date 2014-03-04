@@ -258,7 +258,9 @@ public class DataObjectReadingUtil {
                     .<InstanceIdentifier, DataContainer> builder();
             for (Identifiable item : dataList) {
                 @SuppressWarnings("unchecked")
-                InstanceIdentifier childPath = parentPath.child(getChildType(), item.getKey());
+                InstanceIdentifier childPath = InstanceIdentifier.builder(parentPath) //
+                        .child(getChildType(), item.key())//
+                        .build();
                 result.put(childPath, (DataContainer) item);
             }
             return result.build();
@@ -269,11 +271,11 @@ public class DataObjectReadingUtil {
                 IdentifiableItem childArgument, InstanceIdentifier parentPath) {
             final Identifier<?> key = childArgument.getKey();
             for (Identifiable item : dataList) {
-                if (key.equals(item.getKey()) && item instanceof DataContainer) {
+                if (key.equals(item.key()) && item instanceof DataContainer) {
                     checkState(childArgument.getType().isInstance(item),
                             "Found child is not instance of requested type");
-                    InstanceIdentifier childPath = parentPath
-                            .child(childArgument.getType(), item.getKey());
+                    InstanceIdentifier childPath = InstanceIdentifier.builder(parentPath)
+                            .child(childArgument.getType(), item.key()).build();
                     return Collections.singletonMap(childPath, (DataContainer) item);
                 }
             }
@@ -298,7 +300,8 @@ public class DataObjectReadingUtil {
             DataContainer aug = read(parent, childArgument.getType());
             if (aug != null) {
                 @SuppressWarnings("unchecked")
-                final InstanceIdentifier childPath = builder.child(childArgument.getType());
+                final InstanceIdentifier childPath = InstanceIdentifier.builder(builder).child(childArgument.getType())
+                        .build();
                 return Collections.singletonMap(childPath, aug);
             } else {
                 return Collections.emptyMap();

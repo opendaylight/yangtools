@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.*;
 
 public class GeneratedTypesTest {
 
@@ -275,7 +276,7 @@ public class GeneratedTypesTest {
                     simpleListMethodsCount = genType.getMethodDefinitions().size();
                     final List<MethodSignature> methods = genType.getMethodDefinitions();
                     for (final MethodSignature method : methods) {
-                        if (method.getName().equals("getKey")) {
+                        if (method.getName().equals(KEY_FIELD_NAME)) {
                             getSimpleListKeyMethodCount++;
                             getSimpleListKeyMethodReturnTypeName = method.getReturnType().getName();
                         } else if (method.getName().equals("getListChildContainer")) {
