@@ -14,8 +14,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
@@ -43,7 +43,7 @@ public final class GeneratorJavaFile {
     /**
      * Set of <code>Type</code> instances for which the JAVA code is generated.
      */
-    private final Set<? extends Type> types;
+    private final Collection<? extends Type> types;
 
     /**
      * BuildContext used for instantiating files
@@ -61,7 +61,7 @@ public final class GeneratorJavaFile {
      * @param types
      *            set of types for which JAVA code should be generated
      */
-    public GeneratorJavaFile(final BuildContext buildContext, final Set<? extends Type> types) {
+    public GeneratorJavaFile(final BuildContext buildContext, final Collection<? extends Type> types) {
         this.buildContext = Preconditions.checkNotNull(buildContext);
         this.types = Preconditions.checkNotNull(types);
         generators.add(new InterfaceGenerator());
@@ -80,7 +80,7 @@ public final class GeneratorJavaFile {
      * @param types
      *            set of types for which JAVA code should be generated
      */
-    public GeneratorJavaFile(final Set<? extends Type> types) {
+    public GeneratorJavaFile(final Collection<? extends Type> types) {
         this(new DefaultBuildContext(), types);
     }
 
@@ -172,6 +172,14 @@ public final class GeneratorJavaFile {
                 throw new IllegalStateException("Generated code should not be empty!");
             }
             final File file = new File(packageDir, generator.getUnitName(type) + ".java");
+
+            if (file.exists()) {
+                LOG.warn(
+                        "Naming conflict for type '{}': file with same name already exists and will not be generated.",
+                        type.getFullyQualifiedName());
+                return null;
+            }
+
             try (final OutputStream stream = buildContext.newFileOutputStream(file)) {
                 try (final Writer fw = new OutputStreamWriter(stream)) {
                     try (final BufferedWriter bw = new BufferedWriter(fw)) {
@@ -183,41 +191,9 @@ public final class GeneratorJavaFile {
                 }
             }
             return file;
+
         }
         return null;
-    }
-
-    private File generateStringToJavaFile(final File parentDir, final String generatedCode, String packageName,
-            final CodeGenerator generator) throws IOException {
-        if (parentDir == null) {
-            LOG.warn("Parent Directory not specified, files will be generated "
-                    + "accordingly to generated Type package path.");
-        }
-        if (generator == null) {
-            LOG.error("Cannot generate Type into Java File because " + "Code Generator instance is NULL!");
-            throw new IllegalArgumentException("Code Generator Cannot be NULL!");
-        }
-        final File packageDir = packageToDirectory(parentDir, packageName);
-
-        if (!packageDir.exists()) {
-            packageDir.mkdirs();
-        }
-
-        if (generatedCode.isEmpty()) {
-            throw new IllegalStateException("Generated code should not be empty!");
-        }
-        final File file = new File(packageDir, "YangModuleInfoImpl.java");
-        try (final OutputStream stream = buildContext.newFileOutputStream(file)) {
-            try (final Writer fw = new OutputStreamWriter(stream)) {
-                try (final BufferedWriter bw = new BufferedWriter(fw)) {
-                    bw.write(generatedCode);
-                }
-            } catch (IOException e) {
-                LOG.error("Failed to write generate output into {}", file.getPath(), e);
-                throw e;
-            }
-        }
-        return file;
     }
 
     /**

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.it.VerificationException;
@@ -77,6 +78,21 @@ public class YangToSourcesPluginTestIT {
         }
 
         fail("Verification exception should have been thrown");
+    }
+
+    @Test
+    public void testNamingConflict() throws Exception {
+        Verifier v = setUp("NamingConflict/", false);
+        v.verifyErrorFreeLog();
+        String baseDir = v.getBasedir();
+        String fileName = v.getLogFileName();
+        List<String> lines = v.loadFile(baseDir, fileName, false);
+        for (String s : lines) {
+            if (s.contains("conflict")) {
+                System.err.println(s);
+            }
+        }
+        v.verifyTextInLog("[WARNING] Naming conflict for type 'org.opendaylight.yang.gen.v1.urn.yang.test.rev140303.NetworkTopologyRef': file with same name already exists and will not be generated.");
     }
 
     static void verifyCorrectLog(Verifier v) throws VerificationException {
