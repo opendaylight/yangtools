@@ -75,6 +75,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition
 import java.util.Collection
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.*;
 
 class TransformerGenerator {
 
@@ -280,7 +281,7 @@ class TransformerGenerator {
 
     def getIdentifierDefinition(GeneratedTypeBuilder builder) {
         val inst = builder.toInstance
-        val keyMethod = inst.methodDefinitions.findFirst[name == "getKey"]
+        val keyMethod = inst.methodDefinitions.findFirst[name == KEY_INTERFACE_GETTER_NAME]
         return keyMethod.returnType as GeneratedTransferObject
     }
 
@@ -741,7 +742,7 @@ class TransformerGenerator {
         if (node.keyDefinition != null && !node.keyDefinition.empty) {
             return '''
                 «type.resolvedName»Key getKey = («type.resolvedName»Key) «keyTransformer(type, node).canonicalName».fromDomStatic(_localQName,_compositeNode);
-                _builder.setKey(getKey);
+                _builder.«KEY_SETTER_NAME»(getKey);
             ''';
         }
     }
