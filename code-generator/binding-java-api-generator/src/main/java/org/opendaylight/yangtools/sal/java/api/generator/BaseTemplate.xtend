@@ -88,7 +88,7 @@ abstract class BaseTemplate {
      * generated property with data about field which is generated as the getter method
      * @return string with the getter method source code in JAVA format 
      */
-    final protected def getterMethod(GeneratedProperty field) {
+    protected def getterMethod(GeneratedProperty field) {
         '''
             public «field.returnType.importedName» «field.getterMethodName»() {
                 return «field.fieldName»;

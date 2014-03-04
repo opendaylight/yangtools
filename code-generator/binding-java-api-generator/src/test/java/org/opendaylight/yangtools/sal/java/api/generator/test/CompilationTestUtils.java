@@ -43,6 +43,8 @@ public class CompilationTestUtils {
     static final String NS_FOO = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
     static final String NS_BAR = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "bar" + FS + "rev131008";
     static final String NS_BAZ = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "baz" + FS + "rev131008";
+    static final String NS_LST_KEY = BASE_PATH + FS + "urn" + FS + "list" + FS + "key" + FS + "vs" + FS + "list" + FS
+            + "subnode" + FS + "equal" + FS + "names" + FS + "rev140303";
 
     /**
      * Method to clean resources. It is manually called at the end of each test
