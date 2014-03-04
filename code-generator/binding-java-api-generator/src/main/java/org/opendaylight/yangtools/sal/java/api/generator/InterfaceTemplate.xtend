@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignatureimport org.opendaylight.yangtools.sal.binding.model.api.AnnotationType
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.*
 
 /**
  * Template for generating JAVA interfaces. 
@@ -177,7 +178,11 @@ class InterfaceTemplate extends BaseTemplate {
             «FOR m : methods SEPARATOR "\n"»
                 «m.comment.asJavadoc»
                 «m.annotations.generateAnnotations»
-                «m.returnType.importedName» «m.name»(«m.parameters.generateParameters»);
+                «IF !m.name.equals(KEY_FIELD_NAME)»
+                    «m.returnType.importedName» «m.name»(«m.parameters.generateParameters»);
+                «ELSE»
+                    «m.returnType.importedName» «KEY_INTERFACE_GETTER_NAME»(«m.parameters.generateParameters»);
+                «ENDIF»
             «ENDFOR»
         «ENDIF»
     '''

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import static org.junit.Assert.*;
 
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.*;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -158,7 +159,7 @@ public class GeneratedTypesTest {
         MethodSignature getIfcKey = null;
         MethodSignature getHigherLayerIf = null;
         for (final MethodSignature method : gtIfcMethods) {
-            if (method.getName().equals("getKey")) {
+            if (method.getName().equals(KEY_FIELD_NAME)) {
                 getIfcKey = method;
             } else if (method.getName().equals("getHigherLayerIf")) {
                 getHigherLayerIf = method;
@@ -226,7 +227,7 @@ public class GeneratedTypesTest {
         assertNotNull(gtTunnelMethods);
         MethodSignature getTunnelKey = null;
         for (MethodSignature method : gtTunnelMethods) {
-            if (method.getName().equals("getKey")) {
+            if (method.getName().equals(KEY_FIELD_NAME)) {
                 getTunnelKey = method;
             }
         }
@@ -471,7 +472,7 @@ public class GeneratedTypesTest {
                     simpleListMethodsCount = genType.getMethodDefinitions().size();
                     final List<MethodSignature> methods = genType.getMethodDefinitions();
                     for (final MethodSignature method : methods) {
-                        if (method.getName().equals("getKey")) {
+                        if (method.getName().equals(KEY_FIELD_NAME)) {
                             getSimpleListKeyMethodCount++;
                             getSimpleListKeyMethodReturnTypeName = method.getReturnType().getName();
                         } else if (method.getName().equals("getListChildContainer")) {

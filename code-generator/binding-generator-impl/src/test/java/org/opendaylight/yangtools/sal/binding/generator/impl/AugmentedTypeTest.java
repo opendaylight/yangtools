@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.KEY_FIELD_NAME;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -87,7 +88,7 @@ public class AugmentedTypeTest {
         assertNotNull("gtInterfaceMethods is null", gtInterfaceMethods);
         MethodSignature getIfcKeyMethod = null;
         for (final MethodSignature method : gtInterfaceMethods) {
-            if (method.getName().equals("getKey")) {
+            if (method.getName().equals(KEY_FIELD_NAME)) {
                 getIfcKeyMethod = method;
                 break;
             }
@@ -138,7 +139,7 @@ public class AugmentedTypeTest {
         assertNotNull("tunnelMethods is null", tunnelMethods);
         MethodSignature getTunnelKeyMethod = null;
         for (MethodSignature method : tunnelMethods) {
-            if (method.getName().equals("getKey")) {
+            if (method.getName().equals(KEY_FIELD_NAME)) {
                 getTunnelKeyMethod = method;
                 break;
             }

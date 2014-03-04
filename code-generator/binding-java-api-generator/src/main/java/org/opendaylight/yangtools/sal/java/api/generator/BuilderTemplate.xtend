@@ -30,6 +30,8 @@ import java.util.HashSet
 import java.util.Collection
 import org.opendaylight.yangtools.yang.binding.Identifiable
 
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.*
+
 /**
  * Template for generating JAVA builder classes. 
  */
@@ -187,6 +189,8 @@ class BuilderTemplate extends BaseTemplate {
         var prefix = "get";
         if(BOOLEAN.equals(method.returnType)) {
             prefix = "is";
+        } else if (method.getName().startsWith(KEY_FIELD_NAME)) {
+            prefix = ""
         } 
         if (method.name.startsWith(prefix)) {
             val fieldName = method.getName().substring(prefix.length()).toFirstLower
@@ -211,7 +215,7 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateMethodFieldsFrom(type)»
 
-            «generateGetters(false)»
+            «generateGetters(false,KEY_BUILDER_GETTER_NAME)»
 
             «generateSetters»
 
@@ -227,7 +231,7 @@ class BuilderTemplate extends BaseTemplate {
 
                 «generateConstructor»
 
-                «generateGetters(true)»
+                «generateGetters(true,KEY_INTERFACE_GETTER_NAME)»
 
                 «generateHashCode()»
 
@@ -410,12 +414,16 @@ class BuilderTemplate extends BaseTemplate {
 	 */
     def private generateSetters() '''
         «FOR field : properties SEPARATOR '\n'»
+            «IF (!field.name?.equals(KEY_FIELD_NAME))»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
                 «generateRestrictions(field, "value")»
 
                 this.«field.fieldName» = value;
                 return this;
             }
+            «ELSE»
+                «field.setterMethodForKey»
+            «ENDIF»
         «ENDFOR»
         «IF augmentField != null»
 
@@ -446,9 +454,9 @@ class BuilderTemplate extends BaseTemplate {
                 «FOR field : keyProps»
                     «removeProperty(allProps, field.name)»
                 «ENDFOR»
-                «removeProperty(allProps, "key")»
-                if (builder.getKey() == null) {
-                    this._key = new «keyType.importedName»(
+                «removeProperty(allProps, KEY_FIELD_NAME)»
+                if (builder.«KEY_BUILDER_GETTER_NAME»() == null) {
+                    this._«KEY_FIELD_NAME» = new «keyType.importedName»(
                         «FOR keyProp : keyProps SEPARATOR ", "»
                             builder.«keyProp.getterMethodName»()
                         «ENDFOR»
@@ -457,9 +465,9 @@ class BuilderTemplate extends BaseTemplate {
                         this.«field.fieldName» = builder.«field.getterMethodName»();
                     «ENDFOR»
                 } else {
-                    this._key = builder.getKey();
+                    this._«KEY_FIELD_NAME» = builder.«KEY_BUILDER_GETTER_NAME»();
                     «FOR field : keyProps»
-                           this.«field.fieldName» = _key.«field.getterMethodName»();
+                           this.«field.fieldName» = _«KEY_FIELD_NAME».«field.getterMethodName»();
                     «ENDFOR»
                 }
             «ENDIF»
@@ -483,7 +491,7 @@ class BuilderTemplate extends BaseTemplate {
 
     private def Type getKey(GeneratedType type) {
         for (m : type.methodDefinitions) {
-            if ("getKey".equals(m.name)) {
+            if (KEY_FIELD_NAME.equals(m.name)) {
                 return m.returnType;
             }
         }
@@ -507,11 +515,11 @@ class BuilderTemplate extends BaseTemplate {
      * 
      * @return string with getter methods
      */
-    def private generateGetters(boolean addOverride) '''
+    def private generateGetters(boolean addOverride,String keyGetterMethodName) '''
         «IF !properties.empty»
             «FOR field : properties SEPARATOR '\n'»
                 «IF addOverride»@Override«ENDIF»
-                «field.getterMethod»
+                «field.getterMethod(keyGetterMethodName)»
             «ENDFOR»
         «ENDIF»
         «IF augmentField != null»
@@ -646,6 +654,25 @@ class BuilderTemplate extends BaseTemplate {
         return «type.importedName».class;
     }
     '''
+    
+    def getterMethod(GeneratedProperty field,String keyGetterMethodName) {
+        '''
+            public «field.returnType.importedName» «
+                if (field.name?.equals(KEY_FIELD_NAME))
+                    '''«keyGetterMethodName»'''
+                else field.getterMethodName»() {
+                return «field.fieldName»;
+            }
+        '''
+    }    
 
+    def setterMethodForKey(GeneratedProperty field) '''
+        public «type.name»«BUILDER» «KEY_SETTER_NAME»(«field.returnType.importedName» value) {
+                «generateRestrictions(field, "value")»
+
+                this._«KEY_FIELD_NAME» = value;
+                return this;
+            }
+    '''    
 }
 
