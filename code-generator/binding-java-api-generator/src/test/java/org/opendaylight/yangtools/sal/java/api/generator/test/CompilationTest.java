@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.*;
 
@@ -34,12 +35,82 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 import com.google.common.collect.Range;
+import static org.opendaylight.yangtools.binding.generator.util.ListKeyConstants.*;
 
 /**
  * Test correct code generation.
  *
  */
 public class CompilationTest extends BaseCompilationTest {
+
+    @Test
+    public void testListGenerationWithLeafWithNameKey() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "list-with-leaf-with-name-key");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "list-with-leaf-with-name-key");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        final List<File> sourceFiles = getSourceFiles("/compilation/list-with-leaf-with-name-key");
+        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
+        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
+        final List<Type> types = bindingGenerator.generateTypes(context);
+        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        generator.generateToFile(sourcesOutputDir);
+
+        // Test if all sources necessary for test are generated
+        File parent = new File(sourcesOutputDir, NS_LST_KEY);
+        File builder = new File(parent, "LstBuilder.java");
+        File lst = new File(parent, "Lst.java");
+        assertTrue(builder.exists());
+        assertTrue(lst.exists());
+
+        // Test if sources are compilable
+        testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        String namespace = ".urn.list.key.vs.list.subnode.equal.names.rev140303";
+        Class<?> builderClass = Class.forName(BASE_PKG + namespace + ".LstBuilder", true, loader);
+        Class<?> lstClass = Class.forName(BASE_PKG + namespace + ".Lst", true, loader);
+        Class<?> lstKeyClass = Class.forName(BASE_PKG + namespace + ".LstKey", true, loader);
+
+        // LstBuilder
+        checkClassContent(builderClass, lstKeyClass, true);
+
+        Class<?>[] innerClasses = builderClass.getDeclaredClasses();
+        assertEquals(2, innerClasses.length);
+
+        // LstBuilder$LstImpl
+        Class<?> lstImplClass = findConcreteClass(innerClasses, BASE_PKG + namespace + ".LstBuilder$LstImpl");
+        assertNotNull(lstImplClass);
+        checkClassContent(lstImplClass, lstKeyClass, false);
+
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    private void checkClassContent(Class<?> clazz, Class<?> lstKeyClass, boolean isBuilderClass)
+            throws NoSuchFieldException, NoSuchMethodException {
+        clazz.getDeclaredField("_" + KEY_FIELD_NAME);
+        clazz.getDeclaredField("_key1");
+        clazz.getDeclaredField("_key");
+
+        // Try to get all getter and setter for this keys
+        if (isBuilderClass) {
+            Method listKeyGetter = clazz.getDeclaredMethod(KEY_BUILDER_GETTER_NAME);
+            Method listKeySetter = clazz.getDeclaredMethod(KEY_SETTER_NAME, lstKeyClass);
+            assertEquals(lstKeyClass, listKeyGetter.getReturnType());
+            assertEquals(clazz, listKeySetter.getReturnType());
+        } else {
+            Method listKeyGetter = clazz.getDeclaredMethod(KEY_INTERFACE_GETTER_NAME);
+            assertEquals(lstKeyClass, listKeyGetter.getReturnType());
+        }
+
+        clazz.getDeclaredMethod("getKey");
+        clazz.getDeclaredMethod("getKey1");
+        if (isBuilderClass) {
+            clazz.getDeclaredMethod("setKey", String.class);
+            clazz.getDeclaredMethod("setKey1", String.class);
+        }
+    }
 
     @Test
     public void testListGeneration() throws Exception {
@@ -548,6 +619,16 @@ public class CompilationTest extends BaseCompilationTest {
         } catch (NoSuchMethodException e) {
             throw new AssertionError("Method '" + methodName + "' not found");
         }
+    }
+
+    private Class<?> findConcreteClass(Class<?>[] classes, String wantedClass) {
+        for (Class<?> clazz : classes) {
+            if (clazz.getName().equals(wantedClass)) {
+                return clazz;
+            }
+        }
+        return null;
+
     }
 
 }

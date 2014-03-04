@@ -1,0 +1,21 @@
+module list-key-vs-list-subnode-equal-names {
+    yang-version 1;
+    namespace "urn:list:key:vs:list:subnode:equal:names";
+    prefix "lstequal";
+
+    revision "2014-03-03" {
+    }
+    
+    list lst {
+        key "key key1"; 
+        
+        leaf key {
+            type string;
+        }
+        
+        leaf key1 {
+            type string;
+        }
+    }
+    
+}
