@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_6ae9f719",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug394/bug394.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-03-04T16:39:53Z",
+      "side": 1,
+      "message": "This should be fully qualified name, also provide extension statement for that action.",
+      "revId": "5cdfd86ad23585ffdb5d26d2b43ff03f63ea1431",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
