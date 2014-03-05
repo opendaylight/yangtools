@@ -7,7 +7,16 @@
  */
 package org.opendaylight.yangtools.websocket.client.callback;
 
+/**
+ * {@link ClientMessageCallback} notifies client that some event has occurred.
+ */
 public interface ClientMessageCallback {
 
+    /**
+     * Notifies client that some event has occurred.
+     * 
+     * @param message
+     *            the message which aid to will be client notified
+     */
     public void onMessageReceived(Object message);
 }

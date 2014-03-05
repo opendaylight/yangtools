@@ -25,14 +25,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A HTTP server which serves Web Socket requests at:
- *
+ * 
  * http://localhost:8080/websocket
- *
- * Open your browser at http://localhost:8080/, then the demo page will be loaded and a Web Socket connection will be
- * made automatically.
- *
- * This server illustrates support for the different web socket specification versions and will work with:
- *
+ * 
+ * Open your browser at http://localhost:8080/, then the demo page will be
+ * loaded and a Web Socket connection will be made automatically.
+ * 
+ * This server illustrates support for the different web socket specification
+ * versions and will work with:
+ * 
  * <ul>
  * <li>Safari 5+ (draft-ietf-hybi-thewebsocketprotocol-00)
  * <li>Chrome 6-13 (draft-ietf-hybi-thewebsocketprotocol-00)
@@ -48,28 +49,40 @@ public class WebSocketServer implements Runnable {
     private final ServerBootstrap bootstrap = new ServerBootstrap();
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class.toString());
+    private static final Logger logger = LoggerFactory
+            .getLogger(WebSocketServer.class.toString());
 
     public WebSocketServer(int port) {
         this.port = port;
     }
 
-    public void run(){
+    /**
+     * Tries to start web socket server.
+     */
+    public void run() {
         try {
             startServer();
         } catch (Exception e) {
-            logger.info("Exception occured while starting webSocket server {}",e);
+            logger.info("Exception occured while starting webSocket server {}",
+                    e);
         }
     }
+
+    /**
+     * Start web socket server at {@link #port}.
+     * 
+     * @throws Exception
+     */
     public void startServer() throws Exception {
         try {
             bootstrap.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class)
-             .childHandler(new WebSocketServerInitializer());
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new WebSocketServerInitializer());
 
             Channel ch = bootstrap.bind(port).sync().channel();
             logger.info("Web socket server started at port " + port + '.');
-            logger.info("Open your browser and navigate to http://localhost:" + port + '/');
+            logger.info("Open your browser and navigate to http://localhost:"
+                    + port + '/');
 
             ch.closeFuture().sync();
         } finally {
@@ -77,6 +90,5 @@ public class WebSocketServer implements Runnable {
             workerGroup.shutdownGracefully();
         }
     }
-
 
 }
