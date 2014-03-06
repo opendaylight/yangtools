@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_2d9f9905",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/AbstractDataContainerNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-03-06T17:39:37Z",
+      "side": 1,
+      "message": "Also please add extends Immutable (from concepts) to all immutable classes.",
+      "revId": "f42a5a3fe0d371e9e0d2664705350065b2448473",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_0da4d555",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableMapNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-03-06T17:39:37Z",
+      "side": 1,
+      "message": "Not sure if this should be values() from map, since MapNode represents list, which may be user ordered, and we need to preserve user-submitted ordering.",
+      "revId": "f42a5a3fe0d371e9e0d2664705350065b2448473",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
