@@ -307,7 +307,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val basePackageName = moduleNamespaceToPackageName(module);
         for (usesNode : node.uses) {
             for (augment : usesNode.augmentations) {
-                augmentationToGenTypes(basePackageName, augment, module, usesNode);
+                usesAugmentationToGenTypes(basePackageName, augment, module, usesNode, node);
                 processUsesAugments(augment, module);
             }
         }
@@ -339,7 +339,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val basePackageName = moduleNamespaceToPackageName(module);
         val List<AugmentationSchema> augmentations = resolveAugmentations(module);
         for (augment : augmentations) {
-            augmentationToGenTypes(basePackageName, augment, module, null);
+            augmentationToGenTypes(basePackageName, augment, module);
         }
     }
 
@@ -731,8 +731,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             <li>if target path of <code>augSchema</code> equals null</li>
      *             </ul>
      */
-    private def void augmentationToGenTypes(String augmentPackageName, AugmentationSchema augSchema, Module module,
-        UsesNode parentUsesNode) {
+    private def void augmentationToGenTypes(String augmentPackageName, AugmentationSchema augSchema, Module module) {
         checkArgument(augmentPackageName !== null, "Package Name cannot be NULL.");
         checkArgument(augSchema !== null, "Augmentation Schema cannot be NULL.");
         checkState(augSchema.targetPath !== null,
@@ -740,45 +739,76 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         processUsesAugments(augSchema, module);
         val targetPath = augSchema.targetPath;
-        var targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
+        var SchemaNode targetSchemaNode = null
+
+        targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
         if (targetSchemaNode instanceof DataSchemaNode && (targetSchemaNode as DataSchemaNode).isAddedByUses()) {
-            if (parentUsesNode == null) {
-                targetSchemaNode = findOriginal(targetSchemaNode as DataSchemaNode);
-            } else {
-                targetSchemaNode = findOriginalTargetFromGrouping(targetSchemaNode.QName.localName, parentUsesNode);
-            }
+            targetSchemaNode = findOriginal(targetSchemaNode as DataSchemaNode);
             if (targetSchemaNode == null) {
                 throw new NullPointerException(
-                    "Failed to find target node from grouping for augmentation " + augSchema + " in module " +
+                    "Failed to find target node from grouping in augmentation " + augSchema + " in module " +
                         module.name);
             }
         }
-
         if (targetSchemaNode == null) {
             throw new IllegalArgumentException("augment target not found: " + targetPath)
         }
 
-        if (targetSchemaNode !== null) {
-            var targetTypeBuilder = findChildNodeByPath(targetSchemaNode.path)
-            if (targetTypeBuilder === null) {
-                targetTypeBuilder = findCaseByPath(targetSchemaNode.path)
+        var targetTypeBuilder = findChildNodeByPath(targetSchemaNode.path)
+        if (targetTypeBuilder === null) {
+            targetTypeBuilder = findCaseByPath(targetSchemaNode.path)
+        }
+        if (targetTypeBuilder === null) {
+            throw new NullPointerException("Target type not yet generated: " + targetSchemaNode);
+        }
+
+        if (!(targetSchemaNode instanceof ChoiceNode)) {
+            var packageName = augmentPackageName;
+            val augTypeBuilder = addRawAugmentGenTypeDefinition(module, packageName, augmentPackageName,
+                targetTypeBuilder.toInstance, augSchema);
+            genCtx.get(module).addAugmentType(augTypeBuilder)
+            genCtx.get(module).addTypeToAugmentation(augTypeBuilder, augSchema);
+        } else {
+            generateTypesFromAugmentedChoiceCases(module, augmentPackageName, targetTypeBuilder.toInstance,
+                targetSchemaNode as ChoiceNode, augSchema.childNodes);
+        }
+    }
+
+    private def void usesAugmentationToGenTypes(String augmentPackageName, AugmentationSchema augSchema, Module module,
+        UsesNode usesNode, DataNodeContainer usesNodeParent) {
+        checkArgument(augmentPackageName !== null, "Package Name cannot be NULL.");
+        checkArgument(augSchema !== null, "Augmentation Schema cannot be NULL.");
+        checkState(augSchema.targetPath !== null,
+            "Augmentation Schema does not contain Target Path (Target Path is NULL).");
+
+        processUsesAugments(augSchema, module);
+        val targetPath = augSchema.targetPath;
+        var SchemaNode targetSchemaNode = null
+        targetSchemaNode = findOriginalTargetFromGrouping(targetPath, usesNode);
+        if (targetSchemaNode == null) {
+            throw new IllegalArgumentException("augment target not found: " + targetPath)
+        }
+
+        var targetTypeBuilder = findChildNodeByPath(targetSchemaNode.path)
+        if (targetTypeBuilder === null) {
+            targetTypeBuilder = findCaseByPath(targetSchemaNode.path)
+        }
+        if (targetTypeBuilder === null) {
+            throw new NullPointerException("Target type not yet generated: " + targetSchemaNode);
+        }
+
+        if (!(targetSchemaNode instanceof ChoiceNode)) {
+            var packageName = augmentPackageName;
+            if (usesNodeParent instanceof SchemaNode) {
+                packageName = packageNameForGeneratedType(augmentPackageName, (usesNodeParent as SchemaNode).path, true)
             }
-            if (targetTypeBuilder === null) {
-                throw new NullPointerException("Target type not yet generated: " + targetSchemaNode);
-            }
-            if (!(targetSchemaNode instanceof ChoiceNode)) {
-                var packageName = augmentPackageName;
-                if (parentUsesNode != null) {
-                    packageName = packageNameForGeneratedType(augmentPackageName, augSchema.targetPath);
-                }
-                val augTypeBuilder = addRawAugmentGenTypeDefinition(module, packageName, augmentPackageName,
-                    targetTypeBuilder.toInstance, augSchema);
-                genCtx.get(module).addAugmentType(augTypeBuilder)
-                genCtx.get(module).addTypeToAugmentation(augTypeBuilder,augSchema);
-            } else {
-                generateTypesFromAugmentedChoiceCases(module, augmentPackageName, targetTypeBuilder.toInstance,
-                    targetSchemaNode as ChoiceNode, augSchema.childNodes);
-            }
+            val augTypeBuilder = addRawAugmentGenTypeDefinition(module, packageName, augmentPackageName,
+                targetTypeBuilder.toInstance, augSchema);
+            genCtx.get(module).addAugmentType(augTypeBuilder)
+            genCtx.get(module).addTypeToAugmentation(augTypeBuilder, augSchema);
+        } else {
+            generateTypesFromAugmentedChoiceCases(module, augmentPackageName, targetTypeBuilder.toInstance,
+                targetSchemaNode as ChoiceNode, augSchema.childNodes);
         }
     }
 
@@ -1007,31 +1037,41 @@ public class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Convenient method to find node added by uses statement.
      */
-    private def DataSchemaNode findOriginalTargetFromGrouping(String targetSchemaNodeName, UsesNode parentUsesNode) {
+    private def DataSchemaNode findOriginalTargetFromGrouping(SchemaPath targetPath, UsesNode parentUsesNode) {
         var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, parentUsesNode.groupingPath.path);
         if (!(targetGrouping instanceof GroupingDefinition)) {
             throw new IllegalArgumentException("Failed to generate code for augment in " + parentUsesNode);
         }
 
         var grouping = targetGrouping as GroupingDefinition;
-        var result = grouping.getDataChildByName(targetSchemaNodeName);
+        var SchemaNode result = grouping;
+        val List<QName> path = targetPath.path
+        for (node : path) {
+            // finding by local name is valid, grouping cannot contain nodes with same name and different namespace
+            if (result instanceof DataNodeContainer) {
+                result = (result as DataNodeContainer).getDataChildByName(node.localName)
+            } else if (result instanceof ChoiceNode) {
+                result = (result as ChoiceNode).getCaseNodeByName(node.localName)
+            }
+        }
         if (result == null) {
             return null;
         }
-        var boolean fromUses = result.addedByUses;
 
+        val String targetSchemaNodeName = result.QName.localName;
+        var boolean fromUses = (result as DataSchemaNode).addedByUses
         var Iterator<UsesNode> groupingUses = grouping.uses.iterator;
         while (fromUses) {
             if (groupingUses.hasNext()) {
                 grouping = findNodeInSchemaContext(schemaContext, groupingUses.next().groupingPath.path) as GroupingDefinition;
                 result = grouping.getDataChildByName(targetSchemaNodeName);
-                fromUses = result.addedByUses;
+                fromUses = (result as DataSchemaNode).addedByUses;
             } else {
                 throw new NullPointerException("Failed to generate code for augment in " + parentUsesNode);
             }
         }
 
-        return result;
+        return result as DataSchemaNode
     }
 
     /**

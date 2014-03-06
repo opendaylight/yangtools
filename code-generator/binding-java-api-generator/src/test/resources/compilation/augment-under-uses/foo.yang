@@ -32,6 +32,16 @@ module foo {
         }
     }
 
+    grouping closed-object {
+        uses b:route-subobjects {
+            augment "links/link" {
+                leaf id {
+                    type string;
+                }
+            }
+        }
+    }
+
     grouping explicit-route-object {
         list subobjects {
             leaf loose {
