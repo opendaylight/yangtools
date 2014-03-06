@@ -280,17 +280,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
     }
 
-    public Builder getActualParent() {
-        if (actualPath.size() < 2) {
-            return null;
-        } else {
-            Builder builderChild = actualPath.removeFirst();
-            Builder builderParent = actualPath.peekFirst();
-            actualPath.addFirst(builderChild);
-            return builderParent;
-        }
-    }
-
     public Set<TypeAwareBuilder> getDirtyNodes() {
         return dirtyNodes;
     }

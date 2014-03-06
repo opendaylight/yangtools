@@ -949,16 +949,16 @@ public final class ParserListenerUtils {
      *
      * @param ctx
      *            context to parse
-     * @param parent
-     *            parent node
+     * @param node
+     *            current node
      * @param moduleName
      *            name of current module
      * @param line
      *            line in current module
      * @return config statement parsed from given context
      */
-    public static Boolean getConfig(final ParseTree ctx, final Builder parent, final String moduleName, final int line) {
-        Boolean result;
+    public static boolean getConfig(final ParseTree ctx, final Builder node, final String moduleName, final int line) {
+        boolean result;
         // parse configuration statement
         Boolean config = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -971,29 +971,35 @@ public final class ParserListenerUtils {
 
         // If 'config' is not specified, the default is the same as the parent
         // schema node's 'config' value
+        boolean parentConfig = getParentConfig(node);
         if (config == null) {
-            if (parent instanceof DataSchemaNodeBuilder) {
-                Boolean parentConfig = ((DataSchemaNodeBuilder) parent).isConfiguration();
-                // If the parent node is a rpc input or output, it can has
-                // config set to null
-                result = parentConfig == null ? true : parentConfig;
-            } else {
-                result = true;
-            }
+            result = parentConfig;
         } else {
-            // Check first: if a node has 'config' set to 'false', no node
-            // underneath it can have 'config' set to 'true'
-            if (parent instanceof DataSchemaNodeBuilder && !(parent instanceof ChoiceCaseBuilder)) {
-                Boolean parentConfig = ((DataSchemaNodeBuilder) parent).isConfiguration();
-                if (!parentConfig && config) {
-                    throw new YangParseException(moduleName, line,
-                            "Can not set 'config' to 'true' if parent node has 'config' set to 'false'");
-                }
+            // Check: if a node has 'config' set to 'false', no node underneath
+            // it can have 'config' set to 'true'
+            if (!parentConfig && config) {
+                throw new YangParseException(moduleName, line,
+                        "Can not set 'config' to 'true' if parent node has 'config' set to 'false'");
             }
             result = config;
         }
 
         return result;
+    }
+
+    private static boolean getParentConfig(Builder node) {
+        Builder parent = node.getParent();
+        boolean config = false;
+
+        if (parent instanceof ChoiceCaseBuilder) {
+            parent = parent.getParent();
+        }
+        if (parent instanceof DataSchemaNodeBuilder) {
+            config = ((DataSchemaNodeBuilder) parent).isConfiguration();
+        } else {
+            config = true;
+        }
+        return config;
     }
 
     /**
