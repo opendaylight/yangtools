@@ -187,6 +187,10 @@ public final class BindingGeneratorUtil {
         return validateJavaPackage(packageNameBuilder.toString());
     }
 
+    public static String packageNameForGeneratedType(final String basePackageName, final SchemaPath schemaPath) {
+        return packageNameForGeneratedType(basePackageName, schemaPath, false);
+    }
+
     /**
      * Creates package name from specified <code>basePackageName</code> (package
      * name for module) and <code>schemaPath</code>.
@@ -202,7 +206,8 @@ public final class BindingGeneratorUtil {
      *            name of this node
      * @return string with valid JAVA package name
      */
-    public static String packageNameForGeneratedType(final String basePackageName, final SchemaPath schemaPath) {
+    public static String packageNameForGeneratedType(final String basePackageName, final SchemaPath schemaPath,
+            boolean isUsesAugment) {
         if (basePackageName == null) {
             throw new IllegalArgumentException("Base Package Name cannot be NULL!");
         }
@@ -213,7 +218,12 @@ public final class BindingGeneratorUtil {
         final StringBuilder builder = new StringBuilder();
         builder.append(basePackageName);
         final List<QName> pathToNode = schemaPath.getPath();
-        final int traversalSteps = (pathToNode.size() - 1);
+        final int traversalSteps;
+        if (isUsesAugment) {
+            traversalSteps = (pathToNode.size());
+        } else {
+            traversalSteps = (pathToNode.size() - 1);
+        }
         for (int i = 0; i < traversalSteps; ++i) {
             builder.append(".");
             String nodeLocalName = pathToNode.get(i).getLocalName();

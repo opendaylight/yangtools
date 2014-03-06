@@ -133,14 +133,23 @@ public class CompilationTest extends BaseCompilationTest {
         // Test if all sources were generated from 'module foo'
         File parent = new File(sourcesOutputDir, NS_FOO);
         assertTrue(new File(parent, "Object.java").exists());
+        assertTrue(new File(parent, "ClosedObject.java").exists());
         assertTrue(new File(parent, "OpenObject.java").exists());
         assertTrue(new File(parent, "ExplicitRouteObject.java").exists());
         assertTrue(new File(parent, "PathKeySubobject.java").exists());
-        assertFilesCount(parent, 7);
+        assertFilesCount(parent, 9);
 
         parent = new File(parent, "object");
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
+        assertFilesCount(parent, 2);
+
+        parent = new File(sourcesOutputDir, NS_FOO + FS + "closed");
+        assertFilesCount(parent, 1);
+
+        parent = new File(parent, "object");
+        assertTrue(new File(parent, "Link1.java").exists());
+        assertTrue(new File(parent, "Link1Builder.java").exists());
         assertFilesCount(parent, 2);
 
         parent = new File(sourcesOutputDir, NS_FOO + FS + "open");
@@ -185,9 +194,12 @@ public class CompilationTest extends BaseCompilationTest {
         parent = new File(sourcesOutputDir, NS_BAR);
         assertTrue(new File(parent, "BasicExplicitRouteSubobjects.java").exists());
         assertTrue(new File(parent, "ExplicitRouteSubobjects.java").exists());
-        assertFilesCount(parent, 3);
+        assertTrue(new File(parent, "RouteSubobjects.java").exists());
+        assertFilesCount(parent, 5);
 
-        parent = new File(parent, "basic");
+        parent = new File(parent, "route");
+        assertFilesCount(parent, 1);
+        parent = new File(new File(sourcesOutputDir, NS_BAR), "basic");
         assertFilesCount(parent, 1);
         parent = new File(parent, "explicit");
         assertFilesCount(parent, 1);

@@ -90,7 +90,17 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
                 instance.setRevision(moduleBuilder.getRevision());
             }
 
-            instance.setTargetPath(targetNodeSchemaPath);
+            if (parent instanceof UsesNodeBuilder) {
+                ModuleBuilder mb = ParserUtils.getParentModule(this);
+                List<QName> newPath = new ArrayList<>();
+                List<QName> parsedPath = targetPath.getPath();
+                for (QName name : parsedPath) {
+                    newPath.add(new QName(mb.getNamespace(), mb.getRevision(), name.getPrefix(), name.getLocalName()));
+                }
+                instance.setTargetPath(new SchemaPath(newPath, false));
+            } else {
+                instance.setTargetPath(targetNodeSchemaPath);
+            }
 
             RevisionAwareXPath whenStmt;
             if (whenCondition == null) {

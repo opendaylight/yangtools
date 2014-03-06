@@ -26,4 +26,11 @@ module bar {
         uses basic-explicit-route-subobjects;
     }
 
+    grouping route-subobjects {
+        container links {
+            container link {
+            }
+        }
+    }
+
 }
