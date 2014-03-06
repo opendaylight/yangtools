@@ -36,7 +36,6 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
 
     private final SchemaPath path;
     // DataSchemaNode args
-    private Boolean configuration;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
     private final List<AugmentationSchemaBuilder> augmentationBuilders = new ArrayList<>();
@@ -77,20 +76,12 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         instance.uses.addAll(base.getUses());
         instance.presence = base.isPresenceContainer();
         instance.configuration = base.isConfiguration();
-        this.configuration = base.isConfiguration();
+        instance.configuration = base.isConfiguration();
     }
 
     @Override
     public ContainerSchemaNode build() {
         if (!isBuilt) {
-
-            // if this builder represents rpc input or output, it can has
-            // configuration value set to null
-            if (configuration == null) {
-                configuration = false;
-            }
-            instance.setConfiguration(configuration);
-
             // USES
             for (UsesNodeBuilder builder : addedUsesNodes) {
                 usesNodes.add(builder.build());
@@ -227,12 +218,12 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     }
 
     @Override
-    public Boolean isConfiguration() {
+    public boolean isConfiguration() {
         return instance.configuration;
     }
 
     @Override
-    public void setConfiguration(Boolean configuration) {
+    public void setConfiguration(boolean configuration) {
         instance.configuration = configuration;
     }
 
@@ -352,10 +343,6 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         @Override
         public boolean isConfiguration() {
             return configuration;
-        }
-
-        private void setConfiguration(boolean configuration) {
-            this.configuration = configuration;
         }
 
         @Override

@@ -42,14 +42,14 @@ public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember
      *
      * @return value of config statement
      */
-    Boolean isConfiguration();
+    boolean isConfiguration();
 
     /**
      * Set config statement.
      *
      * @param config
      */
-    void setConfiguration(Boolean config);
+    void setConfiguration(boolean config);
 
     /**
      * Get constraints of this builder.

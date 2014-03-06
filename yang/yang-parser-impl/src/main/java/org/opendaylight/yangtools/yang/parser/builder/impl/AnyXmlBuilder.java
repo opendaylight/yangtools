@@ -139,12 +139,12 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     @Override
-    public Boolean isConfiguration() {
+    public boolean isConfiguration() {
         return instance.configuration;
     }
 
     @Override
-    public void setConfiguration(final Boolean configuration) {
+    public void setConfiguration(final boolean configuration) {
         instance.configuration = configuration;
     }
 

@@ -235,12 +235,12 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     @Override
-    public Boolean isConfiguration() {
+    public boolean isConfiguration() {
         return instance.configuration;
     }
 
     @Override
-    public void setConfiguration(Boolean configuration) {
+    public void setConfiguration(boolean configuration) {
         instance.configuration = configuration;
     }
 

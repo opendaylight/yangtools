@@ -493,7 +493,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         ContainerSchemaNodeBuilder builder = moduleBuilder.addContainerNode(line, containerQName, path);
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
-        builder.setConfiguration(getConfig(ctx, moduleBuilder.getActualParent(), moduleName, line));
+        builder.setConfiguration(getConfig(ctx, builder, moduleName, line));
 
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             final ParseTree childNode = ctx.getChild(i);
@@ -525,7 +525,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         LeafSchemaNodeBuilder builder = moduleBuilder.addLeafNode(line, leafQName, path);
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
-        builder.setConfiguration(getConfig(ctx, moduleBuilder.getActualParent(), moduleName, line));
+        builder.setConfiguration(getConfig(ctx, builder, moduleName, line));
 
         String defaultStr = null;
         String unitsStr = null;
@@ -628,7 +628,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
-        builder.setConfiguration(getConfig(ctx, moduleBuilder.getActualParent(), moduleName, ctx.getStart().getLine()));
+        builder.setConfiguration(getConfig(ctx, builder, moduleName, ctx.getStart().getLine()));
 
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             final ParseTree childNode = ctx.getChild(i);
@@ -662,7 +662,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
-        builder.setConfiguration(getConfig(ctx, moduleBuilder.getActualParent(), moduleName, line));
+        builder.setConfiguration(getConfig(ctx, builder, moduleName, line));
 
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             ParseTree childNode = ctx.getChild(i);
@@ -698,7 +698,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
-        builder.setConfiguration(getConfig(ctx, moduleBuilder.getActualParent(), moduleName, line));
+        builder.setConfiguration(getConfig(ctx, builder, moduleName, line));
     }
 
     @Override
@@ -722,7 +722,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
-        builder.setConfiguration(getConfig(ctx, moduleBuilder.getActualParent(), moduleName, line));
+        builder.setConfiguration(getConfig(ctx, builder, moduleName, line));
 
         // set 'default' case
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -860,6 +860,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         ContainerSchemaNodeBuilder builder = moduleBuilder.addRpcInput(line, rpcQName, path);
         moduleBuilder.enterNode(builder);
+        builder.setConfiguration(true);
 
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
@@ -883,6 +884,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         ContainerSchemaNodeBuilder builder = moduleBuilder.addRpcOutput(path, rpcQName, line);
         moduleBuilder.enterNode(builder);
+        builder.setConfiguration(true);
 
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
