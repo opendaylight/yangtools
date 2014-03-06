@@ -287,7 +287,7 @@ public final class RefineUtils {
         Boolean config = refine.isConfiguration();
         if (config != null) {
             try {
-                Method method = cls.getDeclaredMethod("setConfiguration", Boolean.class);
+                Method method = cls.getDeclaredMethod("setConfiguration", Boolean.TYPE);
                 method.invoke(node, config);
             } catch (Exception e) {
                 throw new YangParseException(moduleName, line, "Cannot refine config in " + cls.getName(), e);

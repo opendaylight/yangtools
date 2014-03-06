@@ -177,12 +177,12 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     @Override
-    public Boolean isConfiguration() {
+    public boolean isConfiguration() {
         return false;
     }
 
     @Override
-    public void setConfiguration(final Boolean configuration) {
+    public void setConfiguration(final boolean configuration) {
         throw new YangParseException(moduleName, line, "Can not add config statement to choice case.");
     }
 
