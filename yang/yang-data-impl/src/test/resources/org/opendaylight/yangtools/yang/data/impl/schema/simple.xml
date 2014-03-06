@@ -1,0 +1,8 @@
+<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
+    <boolean>true</boolean>
+    <innerContainer>
+        <uint16>44</uint16>
+    </innerContainer>
+    <leafList>a</leafList>
+    <leafList>b</leafList>
+</container>

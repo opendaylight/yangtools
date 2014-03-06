@@ -342,7 +342,7 @@ public class XmlDocumentUtils {
         return node.toInstance();
     }
 
-    private static QName qNameFromElement(Element xmlElement) {
+    public static QName qNameFromElement(Element xmlElement) {
         String namespace = xmlElement.getNamespaceURI();
         String localName = xmlElement.getLocalName();
         return QName.create(namespace != null ? URI.create(namespace) : null, null, localName);
@@ -400,7 +400,7 @@ public class XmlDocumentUtils {
         checkState(qName.getLocalName().equals(xmlElement.getLocalName()));
     }
 
-    private static final Optional<DataSchemaNode> findFirstSchema(QName qname, Set<DataSchemaNode> dataSchemaNode) {
+    public static final Optional<DataSchemaNode> findFirstSchema(QName qname, Set<DataSchemaNode> dataSchemaNode) {
         if (dataSchemaNode != null && !dataSchemaNode.isEmpty() && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {

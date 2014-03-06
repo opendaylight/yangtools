@@ -21,7 +21,8 @@ import com.google.common.base.Optional;
  */
 public interface ChoiceNode extends //
         MixinNode, //
-        DataContainerNode<NodeIdentifier> {
+        DataContainerNode<NodeIdentifier>,
+        DataContainerChild<NodeIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
 
     @Override
     public NodeIdentifier getIdentifier();
