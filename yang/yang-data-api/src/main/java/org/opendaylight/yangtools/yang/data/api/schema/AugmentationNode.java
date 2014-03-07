@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 
@@ -22,15 +23,15 @@ import com.google.common.base.Optional;
  */
 public interface AugmentationNode extends //
     MixinNode, //
-    DataContainerNode<AugmentationIdentifier> {
+    DataContainerNode<AugmentationIdentifier>,
+    DataContainerChild<InstanceIdentifier.AugmentationIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
+
+    @Override
+    public Iterable<DataContainerChild<? extends PathArgument, ?>> getValue();
 
 
     @Override
-    public Iterable<DataContainerChild<?, ?>> getValue();
-
-
-    @Override
-    public Optional<DataContainerChild<?, ?>> getChild(PathArgument child);
+    public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
 
     @Override
     public AugmentationIdentifier getIdentifier();
