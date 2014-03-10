@@ -7,29 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.*;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveType;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnion;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnionWithContext;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeWithContext;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.*;
-
+import com.google.common.base.Preconditions;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -40,19 +37,65 @@ import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.*;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.GroupingSort;
 import org.opendaylight.yangtools.yang.parser.util.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
+import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.fillAugmentTarget;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentity;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentityFromContext;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNode;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNodeInModule;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.processAugmentation;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.setNodeAddedByUses;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNode;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNodes;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapGroupings;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapTypedefs;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapUnknownNodes;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveType;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnion;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnionWithContext;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeWithContext;
 
 
 public final class YangParserImpl implements YangModelParser {
@@ -68,7 +111,7 @@ public final class YangParserImpl implements YangModelParser {
 
         final String yangFileName = yangFile.getName();
         final String[] fileList = directory.list();
-        Preconditions.checkNotNull(fileList, directory + " not found");
+        checkNotNull(fileList, directory + " not found");
 
         FileInputStream yangFileStream = null;
         LinkedHashMap<InputStream, File> streamToFileMap = new LinkedHashMap<>();
@@ -221,21 +264,67 @@ public final class YangParserImpl implements YangModelParser {
         return result;
     }
 
+    // TODO: fix exception handling
     @Override
     public Map<InputStream, Module> parseYangModelsFromStreamsMapped(final List<InputStream> yangModelStreams) {
         if (yangModelStreams == null) {
             return Collections.emptyMap();
         }
 
-        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
-        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, builderToStreamMap,
+
+        // copy input streams so that they can be read more than once
+        Map<InputStream/*array backed copy */, InputStream/* original for returning*/> arrayBackedToOriginalInputStreams = new HashMap<>();
+        for (final InputStream originalIS : yangModelStreams) {
+            InputStream arrayBackedIs;
+            try {
+                arrayBackedIs = NamedByteArrayInputStream.create(originalIS);
+            } catch (IOException e) {
+                // FIXME: throw IOException here
+                throw new IllegalStateException("Can not get yang as String from " + originalIS, e);
+            }
+            arrayBackedToOriginalInputStreams.put(arrayBackedIs, originalIS);
+        }
+
+        // it would be better if all code from here used string representation of yang sources instead of input streams
+        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>(); // FIXME: do not modify input parameter
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(new ArrayList<>(arrayBackedToOriginalInputStreams.keySet()),
+                builderToStreamMap,
                 null);
-        Map<InputStream, Module> result = new LinkedHashMap<>();
+
+
+        // TODO move deeper
+        for(TreeMap<Date, ModuleBuilder> value : modules.values()) {
+            Collection<ModuleBuilder> values = value.values();
+            for(ModuleBuilder builder: values) {
+                InputStream is = builderToStreamMap.get(builder);
+                try {
+                    is.reset();
+                } catch (IOException e) {
+                    // this cannot happen because it is ByteArrayInputStream
+                    throw new IllegalStateException("Possible error in code", e);
+                }
+                String content;
+                try {
+                    content = IOUtils.toString(is);
+                } catch (IOException e) {
+                    // this cannot happen because it is ByteArrayInputStream
+                    throw new IllegalStateException("Possible error in code", e);
+                }
+                builder.setSource(content);
+            }
+        }
+
+
         Map<ModuleBuilder, Module> builderToModuleMap = build(modules);
+
         Set<ModuleBuilder> keyset = builderToModuleMap.keySet();
         List<ModuleBuilder> sorted = ModuleDependencySort.sort(keyset.toArray(new ModuleBuilder[keyset.size()]));
+        Map<InputStream, Module> result = new LinkedHashMap<>();
         for (ModuleBuilder key : sorted) {
-            result.put(builderToStreamMap.get(key), builderToModuleMap.get(key));
+            Module value = checkNotNull(builderToModuleMap.get(key), "Cannot get module for %s", key);
+            InputStream arrayBackedIS = checkNotNull(builderToStreamMap.get(key), "Cannot get is for %s", key);
+            InputStream originalIS = arrayBackedToOriginalInputStreams.get(arrayBackedIS);
+            result.put(originalIS, value);
         }
         return result;
     }
@@ -245,6 +334,8 @@ public final class YangParserImpl implements YangModelParser {
         return new SchemaContextImpl(modules);
     }
 
+    // FIXME: why a list is required?
+    // FIXME: streamToBuilderMap is output of this method, not input
     private Map<InputStream, ModuleBuilder> parseModuleBuilders(List<InputStream> inputStreams,
             Map<ModuleBuilder, InputStream> streamToBuilderMap) {
         Map<InputStream, ModuleBuilder> modules = parseBuilders(inputStreams, streamToBuilderMap);
@@ -252,6 +343,8 @@ public final class YangParserImpl implements YangModelParser {
         return result;
     }
 
+    // FIXME: why a list is required?
+    // FIXME: streamToBuilderMap is output of this method, not input
     private Map<InputStream, ModuleBuilder> parseBuilders(List<InputStream> inputStreams,
             Map<ModuleBuilder, InputStream> streamToBuilderMap) {
         final ParseTreeWalker walker = new ParseTreeWalker();
@@ -265,15 +358,15 @@ public final class YangParserImpl implements YangModelParser {
         for (Map.Entry<InputStream, ParseTree> entry : trees.entrySet()) {
             InputStream is = entry.getKey();
             String path = null;
-            if (is instanceof NamedFileInputStream) {
-                NamedFileInputStream nis = (NamedFileInputStream)is;
-                path = nis.getFileDestination();
+            if (is instanceof NamedInputStream) {
+                path = is.toString();
             }
             yangModelParser = new YangParserListenerImpl(path);
             walker.walk(yangModelParser, entry.getValue());
             ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
 
             // We expect the order of trees and streams has to be the same
+            // FIXME: input parameters should be treated as immutable
             streamToBuilderMap.put(moduleBuilder, entry.getKey());
 
             builders.put(entry.getKey(), moduleBuilder);
@@ -359,6 +452,8 @@ public final class YangParserImpl implements YangModelParser {
         module.getAllUnknownNodes().addAll(submodule.getAllUnknownNodes());
     }
 
+    // FIXME: why a list is required?
+    // FIXME: streamToBuilderMap is output of this method, not input
     private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuilders(final List<InputStream> yangFileStreams,
             final Map<ModuleBuilder, InputStream> streamToBuilderMap, final SchemaContext context) {
         Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(yangFileStreams, streamToBuilderMap);
@@ -440,6 +535,7 @@ public final class YangParserImpl implements YangModelParser {
         }
     }
 
+    // FIXME: why a list is required?
     private Map<InputStream, ParseTree> parseStreams(final List<InputStream> yangStreams) {
         final Map<InputStream, ParseTree> trees = new HashMap<>();
         for (InputStream yangStream : yangStreams) {
@@ -461,6 +557,7 @@ public final class YangParserImpl implements YangModelParser {
             result = parser.yang();
             errorListener.validate();
         } catch (IOException e) {
+            // TODO: fix this ASAP
             LOG.warn("Exception while reading yang file: " + yangStream, e);
         }
         return result;

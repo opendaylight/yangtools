@@ -7,21 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.model.parser.api;
 
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-
 /**
  * Yang Model Parser interface is designed for parsing yang models and convert
  * the information to Data Schema Tree.
  * 
  */
+// refactor methods returning input streams, after introducing
 public interface YangModelParser {
 
     /**
@@ -107,6 +108,8 @@ public interface YangModelParser {
      *            yang streams to parse
      * @return Map of Yang Modules
      */
+    //TODO: when working with input streams do not swallow IOException, it should be propagated without having to wrap it in a runtime exception
+    //FIXME: it is not defined in which state are the returning streams.
     Map<InputStream, Module> parseYangModelsFromStreamsMapped(final List<InputStream> yangModelStreams);
 
     /**

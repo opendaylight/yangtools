@@ -75,7 +75,8 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl
-import org.opendaylight.yangtools.yang.common.QNameimport org.opendaylight.yangtools.yang.binding.BindingMapping
+import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase
 
 import com.google.common.collect.Sets
@@ -189,7 +190,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         val List<Type> filteredGenTypes = new ArrayList();
         for (Module m : modules) {
-            filteredGenTypes.addAll(genCtx.get(m).generatedTypes);
+            val ctx = checkNotNull(genCtx.get(m), "Module context not found for module %s", m)
+            filteredGenTypes.addAll(ctx.generatedTypes);
             val Set<Type> additionalTypes = (typeProvider as TypeProviderImpl).additionalTypes.get(m)
             if (additionalTypes != null) {
                 filteredGenTypes.addAll(additionalTypes)

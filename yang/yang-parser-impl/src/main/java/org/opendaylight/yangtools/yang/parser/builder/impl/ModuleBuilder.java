@@ -7,16 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.net.URI;
-import java.util.*;
-
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ModuleImportImpl;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Builder of Module object. If this module is dependent on external
@@ -36,6 +67,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private final boolean submodule;
     private String belongsTo;
     private ModuleBuilder parent;
+    private String source;
 
     public ModuleBuilder getParent() {
         return parent;
@@ -43,6 +75,10 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     public void setParent(ModuleBuilder parent) {
         this.parent = parent;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     private final Deque<Builder> actualPath = new LinkedList<>();
@@ -132,6 +168,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         instance.setRevision(revision);
         instance.setImports(imports);
         instance.setNamespace(namespace);
+        instance.setSource(source);
 
         // TYPEDEFS
         for (TypeDefinitionBuilder tdb : addedTypedefs) {
@@ -896,6 +933,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         private String reference;
         private String organization;
         private String contact;
+        private String source;
         private final Set<ModuleImport> imports = new HashSet<>();
         private final Set<FeatureDefinition> features = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final Set<TypeDefinition<?>> typeDefinitions = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
@@ -1149,6 +1187,15 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         @Override
         public DataSchemaNode getDataChildByName(String name) {
             return getChildNode(childNodes, name);
+        }
+
+        @Override
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
         }
 
         @Override

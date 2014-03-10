@@ -7,8 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+// TODO: merge into Module, makes no sense as standalone interface
 public interface SourceStreamAware {
 
+    /**
+     * Get descriptive source path (usually file path) from which this module was parsed.
+     */
     String getModuleSourcePath();
+
+    /**
+     * Get string representing yang source code from which this module was parsed.
+     */
+    String getSource();
 
 }
