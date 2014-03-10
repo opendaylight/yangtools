@@ -59,6 +59,7 @@ import org.opendaylight.yangtools.yang.model.api.Module
 import com.google.common.base.Optional
 import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.yang.model.api.SchemaContextHolder
+import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy
 
 class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaServiceListener,
 SchemaLock, AutoCloseable, SchemaContextHolder {
@@ -90,7 +91,7 @@ SchemaLock, AutoCloseable, SchemaContextHolder {
 
     val promisedTypes = HashMultimap.<Type, SettableFuture<Type>>create;
 
-    val GeneratedClassLoadingStrategy classLoadingStrategy;
+    val ClassLoadingStrategy classLoadingStrategy;
 
     @Property
     var SchemaContext schemaContext;
@@ -99,7 +100,7 @@ SchemaLock, AutoCloseable, SchemaContextHolder {
         this(GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy())
     }
 
-    new(GeneratedClassLoadingStrategy strat){
+    new(ClassLoadingStrategy strat){
         classLoadingStrategy = strat
     }
 

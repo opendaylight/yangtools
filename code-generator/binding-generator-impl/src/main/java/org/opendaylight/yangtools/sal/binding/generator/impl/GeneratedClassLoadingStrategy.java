@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
-public abstract class GeneratedClassLoadingStrategy {
+public abstract class GeneratedClassLoadingStrategy implements ClassLoadingStrategy {
 
     private static final GeneratedClassLoadingStrategy TCCL_STRATEGY = new TCCLClassLoadingStrategy();
 

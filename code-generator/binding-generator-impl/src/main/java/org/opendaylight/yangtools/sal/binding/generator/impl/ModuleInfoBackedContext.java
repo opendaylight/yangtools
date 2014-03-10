@@ -7,6 +7,25 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
+import org.opendaylight.yangtools.concepts.ObjectRegistration;
+import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
+import org.opendaylight.yangtools.sal.binding.generator.api.ModuleInfoRegistry;
+import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
+import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
+import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -14,28 +33,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
-import org.opendaylight.yangtools.concepts.ObjectRegistration;
-import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
-import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
-import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
 public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         implements //
-        AdvancedSchemaSourceProvider<InputStream> {
+        AdvancedSchemaSourceProvider<InputStream>, ModuleInfoRegistry, SchemaContextProvider {
 
-    private ModuleInfoBackedContext(GeneratedClassLoadingStrategy loadingStrategy) {
+    private ModuleInfoBackedContext(ClassLoadingStrategy loadingStrategy) {
         this.backingLoadingStrategy = loadingStrategy;
     }
 
@@ -43,7 +45,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         return new ModuleInfoBackedContext(getTCCLClassLoadingStrategy());
     }
 
-    public static ModuleInfoBackedContext create(GeneratedClassLoadingStrategy loadingStrategy) {
+    public static ModuleInfoBackedContext create(ClassLoadingStrategy loadingStrategy) {
         return new ModuleInfoBackedContext(loadingStrategy);
     }
 
@@ -52,7 +54,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
     private final ConcurrentMap<String, WeakReference<ClassLoader>> packageNameToClassLoader = new ConcurrentHashMap<>();
     private final ConcurrentMap<SourceIdentifier, YangModuleInfo> sourceIdentifierToModuleInfo = new ConcurrentHashMap<>();
 
-    private final GeneratedClassLoadingStrategy backingLoadingStrategy;
+    private final ClassLoadingStrategy backingLoadingStrategy;
 
     @Override
     public Class<?> loadClass(String fullyQualifiedName) throws ClassNotFoundException {
@@ -144,6 +146,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         }
     }
 
+    @Override
     public ObjectRegistration<YangModuleInfo> registerModuleInfo(YangModuleInfo yangModuleInfo) {
         YangModuleInfoRegistration registration = new YangModuleInfoRegistration(yangModuleInfo, this);
 
@@ -188,5 +191,10 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
 
     private void remove(YangModuleInfoRegistration registration) {
         // FIXME implement
+    }
+
+    @Override
+    public SchemaContext getSchemaContext() {
+        return tryToCreateSchemaContext().get();
     }
 }

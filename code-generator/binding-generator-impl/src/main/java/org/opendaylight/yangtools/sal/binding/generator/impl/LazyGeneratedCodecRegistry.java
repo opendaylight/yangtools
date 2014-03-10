@@ -7,29 +7,12 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationException;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
@@ -75,7 +58,24 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class LazyGeneratedCodecRegistry implements //
         CodecRegistry, //
@@ -124,9 +124,9 @@ public class LazyGeneratedCodecRegistry implements //
 
     private SchemaContext currentSchema;
 
-    private final GeneratedClassLoadingStrategy classLoadingStrategy;
+    private final ClassLoadingStrategy classLoadingStrategy;
 
-    LazyGeneratedCodecRegistry(SchemaLock lock, GeneratedClassLoadingStrategy identityClassLoadingStrategy) {
+    LazyGeneratedCodecRegistry(SchemaLock lock, ClassLoadingStrategy identityClassLoadingStrategy) {
         this.lock = Preconditions.checkNotNull(lock);
         this.classLoadingStrategy = identityClassLoadingStrategy;
     }
