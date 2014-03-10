@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_b0c75e64",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-03-10T15:50:28Z",
+      "side": 1,
+      "message": "Is this cast known to be safe?",
+      "revId": "4e7e32a6f2eb960d9e6727043e6b4dc4ba26429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
