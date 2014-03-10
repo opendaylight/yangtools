@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.base.Optional;
+import org.opendaylight.yangtools.yang.common.QName;
+
 import java.net.URI;
 import java.util.Date;
 import java.util.Set;
-
-import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * The interface contains the methods for manipulating all the top level context
@@ -103,5 +104,21 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return
      */
     Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision);
+
+
+    /**
+     * Get yang source code represented as string for matching
+     * {@link org.opendaylight.yangtools.yang.model.api.ModuleIdentifier}.
+     * @param moduleIdentifier must provide a non-null
+     * {@link org.opendaylight.yangtools.yang.model.api.ModuleIdentifier#getName()},
+     * other methods might return null.
+     * @return value iif matching module is found in schema context.
+     */
+    Optional<String> getModuleSource(ModuleIdentifier moduleIdentifier);
+
+    /**
+     * Get all module and submodule identifiers.
+     */
+    Set<ModuleIdentifier> getAllModuleIdentifiers();
 
 }

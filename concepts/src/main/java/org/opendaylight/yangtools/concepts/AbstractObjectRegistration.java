@@ -24,5 +24,13 @@ public abstract class AbstractObjectRegistration<T> extends AbstractRegistration
     public final T getInstance() {
         return instance;
     }
+
+
+    @Override
+    public String toString() {
+        return "AbstractObjectRegistration{" +
+                "instance=" + instance +
+                '}';
+    }
 }
 

@@ -7,16 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
+import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -24,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -34,11 +26,24 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 final class SchemaContextImpl implements SchemaContext {
     private final Set<Module> modules;
+    private final Map<ModuleIdentifier, String> identifiersToSources;
 
-    SchemaContextImpl(final Set<Module> modules) {
+    SchemaContextImpl(final Set<Module> modules, Map<ModuleIdentifier, String> identifiersToSources) {
         this.modules = modules;
+        this.identifiersToSources = identifiersToSources;
     }
 
     @Override
@@ -257,4 +262,15 @@ final class SchemaContextImpl implements SchemaContext {
         return Collections.emptySet();
     }
 
+    //FIXME: should work for submodules too
+    @Override
+    public Set<ModuleIdentifier> getAllModuleIdentifiers() {
+        return identifiersToSources.keySet();
+    }
+
+    @Override
+    public Optional<String> getModuleSource(ModuleIdentifier moduleIdentifier) {
+        String maybeSource = identifiersToSources.get(moduleIdentifier);
+        return Optional.fromNullable(maybeSource);
+    }
 }
