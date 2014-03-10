@@ -7,18 +7,8 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -36,8 +26,19 @@ import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
 import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
@@ -148,7 +149,8 @@ class YangToSourcesProcessor {
 
                 projectYangModules = new HashSet<>();
                 for (InputStream inProject : yangsInProject) {
-                    projectYangModules.add(allYangModules.get(inProject));
+                    Module module = checkNotNull(allYangModules.get(inProject), "Cannot find module by %s", inProject);
+                    projectYangModules.add(module);
                 }
 
             } finally {

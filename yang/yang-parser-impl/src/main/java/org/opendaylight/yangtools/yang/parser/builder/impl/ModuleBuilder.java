@@ -7,16 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.net.URI;
-import java.util.*;
-
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ModuleImportImpl;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Builder of Module object. If this module is dependent on external
@@ -79,6 +110,8 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private final List<UnknownSchemaNodeBuilder> allUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
     private final List<ListSchemaNodeBuilder> allLists = new ArrayList<ListSchemaNodeBuilder>();
+
+    private String source;
 
     public ModuleBuilder(final String name, final String sourcePath) {
         this(name, false, sourcePath);
@@ -206,6 +239,8 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
         Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
         instance.setUnknownSchemaNodes(unknownNodes);
+
+        instance.setSource(source);
 
         return instance;
     }
@@ -885,7 +920,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return "module " + name;
     }
 
-    private static final class ModuleImpl implements Module {
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public static final class ModuleImpl implements Module {
         private URI namespace;
         private final String name;
         private final String sourcePath;
@@ -909,6 +948,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         private final List<ExtensionDefinition> extensionNodes = new ArrayList<>();
         private final Set<IdentitySchemaNode> identities = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+        private String source;
 
         private ModuleImpl(String name, String sourcePath) {
             this.name = name;
@@ -1151,6 +1191,15 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return getChildNode(childNodes, name);
         }
 
+        void setSource(String source){
+            this.source = source;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        // FIXME: prefix should not be taken into consideration, perhaps namespace too
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -1401,5 +1450,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
         return true;
     }
+
 
 }

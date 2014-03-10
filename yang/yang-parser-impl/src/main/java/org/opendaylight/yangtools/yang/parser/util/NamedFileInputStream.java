@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class NamedFileInputStream extends FileInputStream {
+public class NamedFileInputStream extends FileInputStream implements NamedInputStream {
     private final String fileDestination;
 
     public NamedFileInputStream(File file, String fileDestination) throws FileNotFoundException {
@@ -23,4 +23,8 @@ public class NamedFileInputStream extends FileInputStream {
         return fileDestination;
     }
 
+    @Override
+    public String toString() {
+        return fileDestination;
+    }
 }
