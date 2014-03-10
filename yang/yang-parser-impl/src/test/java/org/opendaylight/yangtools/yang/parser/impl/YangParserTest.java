@@ -7,7 +7,43 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
+import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.util.Decimal64;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.Int16;
+import org.opendaylight.yangtools.yang.model.util.Int32;
+import org.opendaylight.yangtools.yang.model.util.StringType;
+import org.opendaylight.yangtools.yang.model.util.Uint32;
+import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +56,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -27,22 +64,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
-import org.opendaylight.yangtools.yang.model.util.Decimal64;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.Int16;
-import org.opendaylight.yangtools.yang.model.util.Int32;
-import org.opendaylight.yangtools.yang.model.util.StringType;
-import org.opendaylight.yangtools.yang.model.util.Uint32;
-import org.opendaylight.yangtools.yang.model.util.UnionType;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class YangParserTest {
     public static final String FS = File.separator;
@@ -826,7 +853,7 @@ public class YangParserTest {
         File dependenciesDir = new File(getClass().getResource("/sorting-test").toURI());
         YangModelParser parser = new YangParserImpl();
         modules = parser.parseYangModels(yangFile, dependenciesDir);
-        SchemaContext ctx = new SchemaContextImpl(modules);
+        SchemaContext ctx = new SchemaContextImpl(modules, Collections.<ModuleIdentifier, String>emptyMap());
         checkOrder(modules);
         assertSetEquals(modules, ctx.getModules());
 
@@ -843,12 +870,12 @@ public class YangParserTest {
         }
         Set<Module> newModules = parser.parseYangModels(testFiles);
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules);
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         newModules = parser.parseYangModels(testFiles, null);
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules);
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         List<InputStream> streams = new ArrayList<>();
@@ -857,7 +884,7 @@ public class YangParserTest {
         }
         newModules = parser.parseYangModelsFromStreams(streams);
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules);
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         streams.clear();
@@ -866,13 +893,13 @@ public class YangParserTest {
         }
         newModules = parser.parseYangModelsFromStreams(streams, null);
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules);
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         Map<File, Module> mapped = parser.parseYangModelsMapped(testFiles);
         newModules = new LinkedHashSet<>(mapped.values());
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules);
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         streams.clear();
@@ -882,7 +909,7 @@ public class YangParserTest {
         Map<InputStream, Module> mappedStreams = parser.parseYangModelsFromStreamsMapped(streams);
         newModules = new LinkedHashSet<>(mappedStreams.values());
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules);
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
     }
 

@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.api;
 
-// TODO: merge into Module, makes no sense as standalone interface
-public interface SourceStreamAware {
+package org.opendaylight.yangtools.yang.parser.util;
+
+public interface NamedInputStream {
 
     /**
-     * Get descriptive source path (usually file path) from which this module was parsed.
+     * @return name of resource from which this input stream is derived, typically file path.
      */
-    String getModuleSourcePath();
-
+    String toString();
 }

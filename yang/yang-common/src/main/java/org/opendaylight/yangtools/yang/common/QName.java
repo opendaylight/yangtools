@@ -7,19 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -47,17 +48,7 @@ public final class QName implements Immutable,Serializable {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
-    private static final ThreadLocal<SimpleDateFormat> REVISION_FORMAT = new ThreadLocal<SimpleDateFormat>() {
 
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd");
-        };
-
-        public void set(SimpleDateFormat value) {
-            throw new UnsupportedOperationException();
-        };
-
-    };
     static final String QNAME_REVISION_DELIMITER = "?revision=";
     static final String QNAME_LEFT_PARENTHESIS = "(";
     static final String QNAME_RIGHT_PARENTHESIS = ")";
@@ -92,7 +83,7 @@ public final class QName implements Immutable,Serializable {
         this.revision = revision;
         this.prefix = prefix;
         if(revision != null) {
-            this.formattedRevision = REVISION_FORMAT.get().format(revision);
+            this.formattedRevision = getRevisionFormat().format(revision);
         } else {
             this.formattedRevision = null;
         }
@@ -157,7 +148,7 @@ public final class QName implements Immutable,Serializable {
         if (nsAndRev.contains("?")) {
             String[] splitted = nsAndRev.split("\\?");
             this.namespace = URI.create(splitted[0]);
-            revision = REVISION_FORMAT.get().parse(splitted[1]);
+            revision = getRevisionFormat().parse(splitted[1]);
         } else {
             this.namespace = URI.create(nsAndRev);
         }
@@ -166,7 +157,7 @@ public final class QName implements Immutable,Serializable {
         this.revision = revision;
         this.prefix = null;
         if (revision != null) {
-            this.formattedRevision = REVISION_FORMAT.get().format(revision);
+            this.formattedRevision = getRevisionFormat().format(revision);
         } else {
             this.formattedRevision = null;
         }
@@ -315,7 +306,7 @@ public final class QName implements Immutable,Serializable {
             sb.append(QNAME_LEFT_PARENTHESIS + namespace);
 
             if (revision != null) {
-                sb.append(QNAME_REVISION_DELIMITER + REVISION_FORMAT.get().format(revision));
+                sb.append(QNAME_REVISION_DELIMITER + getRevisionFormat().format(revision));
             }
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }
@@ -365,7 +356,7 @@ public final class QName implements Immutable,Serializable {
 
     public static Date parseRevision(String formatedDate) {
         try {
-            return REVISION_FORMAT.get().parse(formatedDate);
+            return getRevisionFormat().parse(formatedDate);
         } catch (ParseException| RuntimeException e) {
             throw new IllegalArgumentException("Revision is not in supported format:" + formatedDate,e);
         }
@@ -375,7 +366,7 @@ public final class QName implements Immutable,Serializable {
         if(revision == null) {
             return null;
         }
-        return REVISION_FORMAT.get().format(revision);
+        return getRevisionFormat().format(revision);
     }
 
     public boolean isEqualWithoutRevision(QName other) {
