@@ -14,6 +14,5 @@ import java.util.EventListener;
  */
 @Deprecated
 public interface SchemaServiceListener extends EventListener {
-    // FIXME: move declaration to SchemaContextListener
     void onGlobalContextUpdated(SchemaContext context);
 }

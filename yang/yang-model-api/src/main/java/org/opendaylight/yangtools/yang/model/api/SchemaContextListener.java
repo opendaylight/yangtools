@@ -8,5 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 public interface SchemaContextListener extends SchemaServiceListener {
-
+    @Override
+    void onGlobalContextUpdated(SchemaContext context);
 }
