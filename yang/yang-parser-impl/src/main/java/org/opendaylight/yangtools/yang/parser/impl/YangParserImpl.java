@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -877,6 +878,7 @@ public final class YangParserImpl implements YangModelParser {
         }
 
         fillAugmentTarget(augment, targetNode);
+        ((AugmentationTargetBuilder) targetNode).addAugmentation(augment);
         augment.setResolved(true);
         return true;
     }
