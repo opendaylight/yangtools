@@ -58,22 +58,27 @@ class YangModuleInfoTemplate {
         val body = '''
             public final class «MODULE_INFO_CLASS_NAME» implements «YangModuleInfo.importedName» {
 
-                    private static final «YangModuleInfo.importedName» INSTANCE = new «MODULE_INFO_CLASS_NAME»();
+                private static final «YangModuleInfo.importedName» INSTANCE = new «MODULE_INFO_CLASS_NAME»();
 
-                    private final Set<YangModuleInfo> importedModules;
+                private final «String.importedName» name = "«module.name»";
+                private final «String.importedName» namespace = "«module.namespace.toString»";
+                «val DateFormat df = new SimpleDateFormat("yyyy-MM-dd")»
+                private final «String.importedName» revision = "«df.format(module.revision)»";
+                private final «String.importedName» resourcePath = "«sourcePath»";
+                
+                private final «Set.importedName»<YangModuleInfo> importedModules;
 
-                    public static «YangModuleInfo.importedName» getInstance() {
+                public static «YangModuleInfo.importedName» getInstance() {
                     return INSTANCE;
-                    }
-
-                    «module.classBody»
                 }
+
+                «module.classBody»
+            }
         '''
         return '''
-            
-                package «packageName» ;
-                «imports»
-                «body»
+            package «packageName» ;
+            «imports»
+            «body»
         '''.toString
     }
 
@@ -115,9 +120,9 @@ class YangModuleInfoTemplate {
             «ELSE»
                 importedModules = «Collections.importedName».emptySet();
             «ENDIF»
-            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream("«sourcePath»");
+            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream(resourcePath);
             if (stream == null) {
-                throw new IllegalStateException("Resource «sourcePath» is missing");
+                throw new IllegalStateException("Resource '" + resourcePath + "' is missing");
             }
             try {
                 stream.close();
@@ -128,25 +133,24 @@ class YangModuleInfoTemplate {
 
         @Override
         public «String.importedName» getName() {
-            return "«m.name»";
+            return name;
         }
 
         @Override
         public «String.importedName» getRevision() {
-            «val DateFormat df = new SimpleDateFormat("yyyy-MM-dd")»
-            return "«df.format(m.revision)»";
+            return revision;
         }
 
         @Override
         public «String.importedName» getNamespace() {
-            return "«m.namespace.toString»";
+            return namespace;
         }
 
         @Override
         public «InputStream.importedName» getModuleSourceStream() throws IOException {
-            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream("«sourcePath»");
+            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream(resourcePath);
             if (stream == null) {
-                throw new «IOException.importedName»("Resource «sourcePath» is missing");
+                throw new «IOException.importedName»("Resource " + resourcePath + " is missing");
             }
             return stream;
         }
@@ -154,6 +158,19 @@ class YangModuleInfoTemplate {
         @Override
         public «Set.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
             return importedModules;
+        }
+
+        @Override
+        public «String.importedName» toString() {
+            «StringBuilder.importedName» sb = new «StringBuilder.importedName»(this.getClass().getCanonicalName());
+            sb.append("[");
+            sb.append("name = " + name);
+            sb.append(", namespace = " + namespace);
+            sb.append(", revision = " + revision);
+            sb.append(", resourcePath = " + resourcePath);
+            sb.append(", imports = " + importedModules);
+            sb.append("]");
+            return sb.toString();
         }
     '''
 
