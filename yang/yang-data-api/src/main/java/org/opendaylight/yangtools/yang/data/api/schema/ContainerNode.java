@@ -13,12 +13,13 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import com.google.common.base.Optional;
 
 public interface ContainerNode extends //
-        DataContainerNode<NodeIdentifier> {
+        DataContainerNode<NodeIdentifier>,
+        DataContainerChild<NodeIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
 
     @Override
     public NodeIdentifier getIdentifier();
 
     @Override
-    public Optional<DataContainerChild<?, ?>> getChild(PathArgument child);
+    public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
 
 }
