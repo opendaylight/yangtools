@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.data.api;
 
 /**
  * @author michal.rehak
- * 
+ *
  */
+@Deprecated
 public interface NodeModification {
 
     /**

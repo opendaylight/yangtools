@@ -10,14 +10,21 @@ package org.opendaylight.yangtools.yang.data.api;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
 
@@ -32,26 +39,27 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     public InstanceIdentifier(final List<? extends PathArgument> path) {
-        this.path =ImmutableList.copyOf(path);
+        this.path = ImmutableList.copyOf(path);
     }
 
     private InstanceIdentifier(NodeIdentifier nodeIdentifier) {
-        this.path = ImmutableList.<PathArgument>of(nodeIdentifier);
+        this.path = ImmutableList.<PathArgument> of(nodeIdentifier);
     }
 
     @Override
     public int hashCode() {
         /*
-         * The hashCodeCache is safe, since the object contract requires immutability
-         * of the object and all objects referenced from this object.
+         * The hashCodeCache is safe, since the object contract requires
+         * immutability of the object and all objects referenced from this
+         * object.
          *
-         * Used lists, maps are immutable. Path Arguments (elements) are also immutable,
-         * since the PathArgument contract requires immutability.
+         * Used lists, maps are immutable. Path Arguments (elements) are also
+         * immutable, since the PathArgument contract requires immutability.
          *
-         * The cache is thread-safe - if multiple computations occurs at the same time,
-         * cache will be overwritten with same result.
+         * The cache is thread-safe - if multiple computations occurs at the
+         * same time, cache will be overwritten with same result.
          */
-        if(hashCodeCache  == null) {
+        if (hashCodeCache == null) {
             final int prime = 31;
             int result = 1;
             result = prime * result + ((path == null) ? 0 : path.hashCode());
@@ -72,7 +80,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             return false;
         }
         InstanceIdentifier other = (InstanceIdentifier) obj;
-        if(this.hashCode() != obj.hashCode()) {
+        if (this.hashCode() != obj.hashCode()) {
             return false;
         }
         if (path == null) {
@@ -100,6 +108,16 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     public interface PathArgument extends Immutable, Serializable {
+
+        /**
+         * If applicable returns uniqee QName of data node as defined in YANG
+         * Schema.
+         *
+         * This method may return null, if the corresponding schema node, does
+         * not have QName associated, such as in cases of augmentations.
+         *
+         * @return
+         */
         QName getNodeType();
 
     }
@@ -113,8 +131,15 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
         @Deprecated
         InstanceIdentifier getIdentifier();
+
+        InstanceIdentifier build();
     }
 
+    /**
+     * Simple path argument identifying a {@link ContainerNode} or {@link LeafNode} leaf
+     * overal data tree.
+     *
+     */
     public static final class NodeIdentifier implements PathArgument {
 
         /**
@@ -164,6 +189,12 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
     }
 
+    /**
+     *
+     * Composite path argument identifying a {@link MapEntryNode} leaf
+     * overal data tree.
+     *
+     */
     public static final class NodeIdentifierWithPredicates implements PathArgument {
 
         /**
@@ -230,11 +261,19 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
     }
 
+    /**
+     * Simple path argument identifying a {@link LeafSetEntryNode} leaf
+     * overal data tree.
+     *
+     */
     public static final class NodeWithValue implements PathArgument {
 
-        /**
-         *
-         */
+       /**
+        *
+        * Composite path argument identifying a {@link AugmentationNode} leaf
+        * overal data tree.
+        *
+        */
         private static final long serialVersionUID = -3637456085341738431L;
 
         private final QName nodeType;
@@ -292,16 +331,41 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     }
 
+
+    public static final class AugmentationIdentifier implements PathArgument {
+
+
+        private static final long serialVersionUID = -8122335594681936939L;
+        private final QName nodeType;
+        private final ImmutableSet<QName> childNames;
+
+        @Override
+        public QName getNodeType() {
+            return nodeType;
+        }
+
+        public AugmentationIdentifier(QName nodeType, Set<QName> childNames) {
+            super();
+            this.nodeType = nodeType;
+            this.childNames = ImmutableSet.copyOf(childNames);
+        }
+
+        public Set<QName> getPossibleChildNames() {
+            return childNames;
+        }
+
+    }
+
     private static class BuilderImpl implements InstanceIdentifierBuilder {
 
         private final ImmutableList.Builder<PathArgument> path;
 
         public BuilderImpl() {
-            path = ImmutableList.<PathArgument>builder();
+            path = ImmutableList.<PathArgument> builder();
         }
 
         public BuilderImpl(List<? extends PathArgument> prefix) {
-            path = ImmutableList.<PathArgument>builder();
+            path = ImmutableList.<PathArgument> builder();
             path.addAll(prefix);
         }
 
@@ -324,13 +388,20 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
 
         @Override
+        @Deprecated
         public InstanceIdentifier toInstance() {
+            return build();
+        }
+
+        @Override
+        public InstanceIdentifier build() {
             return new InstanceIdentifier(path.build());
         }
 
         @Override
+        @Deprecated
         public InstanceIdentifier getIdentifier() {
-            return toInstance();
+            return build();
         }
     }
 
@@ -355,14 +426,15 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     @Override
     public String toString() {
         /*
-         * The toStringCache is safe, since the object contract requires immutability
-         * of the object and all objects referenced from this object.
+         * The toStringCache is safe, since the object contract requires
+         * immutability of the object and all objects referenced from this
+         * object.
          *
-         * Used lists, maps are immutable. Path Arguments (elements) are also immutable,
-         * since the PathArgument contract requires immutability.
+         * Used lists, maps are immutable. Path Arguments (elements) are also
+         * immutable, since the PathArgument contract requires immutability.
          *
-         * The cache is thread-safe - if multiple computations occurs at the same time,
-         * cache will be overwritten with same result.
+         * The cache is thread-safe - if multiple computations occurs at the
+         * same time, cache will be overwritten with same result.
          */
         if (toStringCache != null) {
             return toStringCache;

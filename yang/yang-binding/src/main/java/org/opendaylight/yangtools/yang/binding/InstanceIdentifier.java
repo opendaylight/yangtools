@@ -124,7 +124,6 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     public interface PathArgument {
 
         Class<? extends DataObject> getType();
-
     }
 
     public static final class Item<T extends DataObject> implements PathArgument {

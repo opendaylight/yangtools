@@ -32,6 +32,7 @@ public interface Node<T> extends Entry<QName, T> {
      *
      * @return parent node
      */
+    @Deprecated
     CompositeNode getParent();
 
     /**
@@ -40,5 +41,6 @@ public interface Node<T> extends Entry<QName, T> {
      *
      * @return Returns the value that holds current node.
      */
+    @Override
     T getValue();
 }

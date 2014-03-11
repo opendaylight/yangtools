@@ -5,16 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.api;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Map;
-
-import org.opendaylight.yangtools.yang.common.QName;
-
-public interface AttributesContainer {
-
-    Map<QName, String> getAttributes();
-
-    Object getAttributeValue(QName value);
+/**
+ *
+ * Marker interface for nodes, which are mixins - their content
+ * belongs to parent node and in serialized form this node
+ * does not exists, but it's children are present.
+ *
+ */
+public interface MixinNode {
 
 }

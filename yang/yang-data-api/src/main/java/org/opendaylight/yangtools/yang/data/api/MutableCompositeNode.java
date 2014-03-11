@@ -15,12 +15,13 @@ import java.util.List;
  *
  */
 public interface MutableCompositeNode extends MutableNode<List<Node<?>>>, CompositeNode {
-    
+
     /**
      * update internal map
      */
+    @Deprecated
     void init();
-    
+
     /**
      * @return original node, if available
      */
