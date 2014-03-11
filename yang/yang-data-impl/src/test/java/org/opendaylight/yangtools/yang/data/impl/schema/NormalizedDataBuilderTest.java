@@ -12,14 +12,18 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.*;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.dom.parser.ContainerNodeDomParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.dom.serializer.ContainerNodeDomSerializer;
 import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
@@ -69,6 +73,22 @@ public class NormalizedDataBuilderTest {
     public void setUp() throws Exception {
         schema = parseTestSchema();
         containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
+    }
+
+    @Test
+    public void testFromXml() throws Exception {
+
+        Document doc = loadDocument("simple.xml");
+        System.out.println(toString(doc.getDocumentElement()));
+
+        ContainerNode built = new ContainerNodeDomParser().fromDom(Collections.singletonList(doc.getDocumentElement()), containerNode,
+                XmlDocumentUtils.defaultValueCodecProvider());
+        System.out.println(built);
+
+        Element el = new ContainerNodeDomSerializer().toDomElement(containerNode, built);
+        System.out.println(toString(el));
+
+        Assert.assertEquals(toString(doc.getDocumentElement()).replaceAll("\\s*", ""), toString(el).replaceAll("\\s*", ""));
     }
 
     @Test
