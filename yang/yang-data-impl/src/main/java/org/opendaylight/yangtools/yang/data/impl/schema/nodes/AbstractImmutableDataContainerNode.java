@@ -33,8 +33,8 @@ public abstract class AbstractImmutableDataContainerNode<K extends InstanceIdent
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("ImmutableContainerNode{");
-        sb.append("nodeIdentifier=").append(nodeIdentifier);
+        final StringBuffer sb = new StringBuffer(getClass().getSimpleName());
+        sb.append("{nodeIdentifier=").append(nodeIdentifier);
         sb.append(", children=").append(children);
         sb.append('}');
         return sb.toString();

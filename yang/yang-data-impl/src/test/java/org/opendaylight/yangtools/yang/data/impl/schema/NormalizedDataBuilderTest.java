@@ -12,14 +12,18 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.*;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.dom.parser.ContainerNodeDomParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.dom.serializer.ContainerNodeDomSerializer;
 import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
@@ -72,121 +76,143 @@ public class NormalizedDataBuilderTest {
     }
 
     @Test
+    public void testFromXml() throws Exception {
+
+        Document doc = loadDocument("simple.xml");
+        System.out.println(toString(doc.getDocumentElement()));
+
+        ContainerNode built = new ContainerNodeDomParser().fromDom(Collections.singletonList(doc.getDocumentElement()),
+                containerNode, XmlDocumentUtils.defaultValueCodecProvider());
+        System.out.println(built);
+
+        List<Element> els = new ContainerNodeDomSerializer().toDom(containerNode, built,
+                XmlDocumentUtils.defaultValueCodecProvider(), newDocument());
+        Element el = els.get(0);
+        System.out.println(toString(el));
+
+        Assert.assertEquals(toString(doc.getDocumentElement()).replaceAll("\\s*", ""),
+                toString(el).replaceAll("\\s*", ""));
+    }
+
+    @Test
     public void testSchemaUnaware() throws Exception {
         // Container
-        DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> builder = Builders.containerBuilder().withNodeIdentifier(
-                getNodeIdentifier("container"));
+        DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> builder = Builders
+                .containerBuilder().withNodeIdentifier(getNodeIdentifier("container"));
 
         // leaf
-        LeafNode<String> leafChild = Builders.<String>leafBuilder()
-                .withNodeIdentifier(getNodeIdentifier("leaf")).withValue("String").build();
+        LeafNode<String> leafChild = Builders.<String> leafBuilder().withNodeIdentifier(getNodeIdentifier("leaf"))
+                .withValue("String").build();
         builder.withChild(leafChild);
 
         // leafList
-        LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder()
+        LeafSetNode<Integer> leafList = Builders
+                .<Integer> leafSetBuilder()
                 .withNodeIdentifier(getNodeIdentifier("leaf"))
                 .withChildValue(1)
-                .withChild(Builders.<Integer>leafSetEntryBuilder().withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
+                .withChild(
+                        Builders.<Integer> leafSetEntryBuilder()
+                                .withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
                 .build();
         builder.withChild(leafList);
 
         // list
-        MapEntryNode listChild1 = Builders.mapEntryBuilder()
+        MapEntryNode listChild1 = Builders
+                .mapEntryBuilder()
                 .withChild(
-                        Builders.<Integer>leafBuilder()
-                                .withNodeIdentifier(getNodeIdentifier("uint32InList")).withValue(1).build())
-                .withChild(
-                        Builders.containerBuilder().withNodeIdentifier(
-                                getNodeIdentifier("containerInList"))
-                                .build())
+                        Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"))
+                                .withValue(1).build())
+                .withChild(Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("containerInList")).build())
                 .withNodeIdentifier(
                         new InstanceIdentifier.NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
                                 Collections.singletonMap(getNodeIdentifier("uint32InList").getNodeType(), (Object) 1)))
                 .build();
 
-        MapNode list = Builders.mapBuilder().withChild(listChild1).withNodeIdentifier(getNodeIdentifier("list")).build();
+        MapNode list = Builders.mapBuilder().withChild(listChild1).withNodeIdentifier(getNodeIdentifier("list"))
+                .build();
         builder.withChild(list);
 
-        AugmentationNode augmentation = Builders.augmentationBuilder()
-                .withNodeIdentifier(new InstanceIdentifier.AugmentationIdentifier(null, Sets.newHashSet(getQName("augmentUint32"))))
+        AugmentationNode augmentation = Builders
+                .augmentationBuilder()
+                .withNodeIdentifier(
+                        new InstanceIdentifier.AugmentationIdentifier(null, Sets.newHashSet(getQName("augmentUint32"))))
                 .withChild(
-                        Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32")).withValue(11).build())
-                .build();
+                        Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
+                                .withValue(11).build()).build();
 
         builder.withChild(augmentation);
 
-        // This works without schema (adding child from augment as a direct child)
-        builder.withChild(Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32")).withValue(11).build());
+        // This works without schema (adding child from augment as a direct
+        // child)
+        builder.withChild(Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
+                .withValue(11).build());
 
         System.out.println(builder.build());
     }
 
     @Test
     public void testSchemaAware() throws Exception {
-        DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> builder =  Builders.containerBuilder(containerNode);
+        DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> builder = Builders
+                .containerBuilder(containerNode);
 
         LeafSchemaNode schemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "uint32");
-        LeafNode<String> leafChild = Builders.<String>leafBuilder(schemaNode)
-                .withValue("String").build();
+        LeafNode<String> leafChild = Builders.<String> leafBuilder(schemaNode).withValue("String").build();
         builder.withChild(leafChild);
 
         LeafListSchemaNode leafListSchemaNode = (LeafListSchemaNode) getSchemaNode(schema, "test", "leafList");
-        LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder(leafListSchemaNode)
-                .withChildValue(1)
-                .withChild(Builders.<Integer>leafSetEntryBuilder(leafListSchemaNode).withValue(3).build())
-                .build();
+        LeafSetNode<Integer> leafList = Builders.<Integer> leafSetBuilder(leafListSchemaNode).withChildValue(1)
+                .withChild(Builders.<Integer> leafSetEntryBuilder(leafListSchemaNode).withValue(3).build()).build();
         builder.withChild(leafList);
 
         ListSchemaNode listSchema = (ListSchemaNode) getSchemaNode(schema, "test", "list");
         LeafSchemaNode uint32InListSchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "uint32InList");
-        ContainerSchemaNode containerInListSchemaNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "containerInList");
+        ContainerSchemaNode containerInListSchemaNode = (ContainerSchemaNode) getSchemaNode(schema, "test",
+                "containerInList");
 
         MapEntryNode listChild1 = Builders.mapEntryBuilder(listSchema)
-                .withChild(
-                        Builders.<Integer>leafBuilder(uint32InListSchemaNode).withValue(1).build())
-                .withChild(
-                        Builders.containerBuilder(containerInListSchemaNode).build())
-                .build();
+                .withChild(Builders.<Integer> leafBuilder(uint32InListSchemaNode).withValue(1).build())
+                .withChild(Builders.containerBuilder(containerInListSchemaNode).build()).build();
 
         MapNode list = ImmutableMapNodeSchemaAwareBuilder.create(listSchema).withChild(listChild1).build();
         builder.withChild(list);
 
         LeafSchemaNode augmentUint32SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentUint32");
-        AugmentationSchema augmentationSchema = getAugmentationSchemaForChild(containerNode, augmentUint32SchemaNode.getQName());
+        AugmentationSchema augmentationSchema = getAugmentationSchemaForChild(containerNode,
+                augmentUint32SchemaNode.getQName());
 
-        AugmentationNode augmentation = Builders.augmentationBuilder(augmentationSchema).withChild(
-                Builders.<Integer>leafBuilder(augmentUint32SchemaNode).withValue(11).build())
-                .build();
+        AugmentationNode augmentation = Builders.augmentationBuilder(augmentationSchema)
+                .withChild(Builders.<Integer>leafBuilder(augmentUint32SchemaNode).withValue(11).build()).build();
 
         builder.withChild(augmentation);
 
         // This should fail with schema, since the leaf comes from augmentation
-//        builder.withChild(ImmutableLeafNodeSchemaAwareBuilder.<Integer>get(augmentUint32SchemaNode).withValue(11).build());
+        // builder.withChild(ImmutableLeafNodeSchemaAwareBuilder.<Integer>get(augmentUint32SchemaNode).withValue(11).build());
 
         LeafSchemaNode augumentString1SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentString1");
         LeafSchemaNode augumentString2SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentString2");
 
         ChoiceNode choice1SchemaNode = (ChoiceNode) getSchemaNode(schema, "test", "choice");
-        org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode choice = ImmutableChoiceNodeSchemaAwareBuilder.create(choice1SchemaNode)
-                .withChild(Builders.<String>leafBuilder(augumentString1SchemaNode).withValue("case1")
-                        .build())
-                        // This should fail, since child node belongs to different case
-//                .withChild(Builders.<String>leafBuilder(augumentString2SchemaNode).withValue("case2")
-//                        .build())
+        org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode choice = ImmutableChoiceNodeSchemaAwareBuilder
+                .create(choice1SchemaNode)
+                .withChild(Builders.<String> leafBuilder(augumentString1SchemaNode).withValue("case1").build())
+                // This should fail, since child node belongs to different case
+                // .withChild(Builders.<String>leafBuilder(augumentString2SchemaNode).withValue("case2")
+                // .build())
                 .build();
 
-;        builder.withChild(choice);
+        ;
+        builder.withChild(choice);
 
         // This should fail, child from case
-//        builder.withChild(Builders.<String>leafBuilder(augumentString1SchemaNode).withValue("case1")
-//                .build());
+        // builder.withChild(Builders.<String>leafBuilder(augumentString1SchemaNode).withValue("case1")
+        // .build());
 
         System.out.println(builder.build());
     }
 
     private AugmentationSchema getAugmentationSchemaForChild(ContainerSchemaNode containerNode, QName qName) {
         for (AugmentationSchema augmentationSchema : containerNode.getAvailableAugmentations()) {
-            if(augmentationSchema.getDataChildByName(qName) != null) {
+            if (augmentationSchema.getDataChildByName(qName) != null) {
                 return augmentationSchema;
             }
         }
@@ -246,6 +272,16 @@ public class NormalizedDataBuilderTest {
         return doc;
     }
 
+    private Document newDocument() {
+        DocumentBuilder dBuilder;
+        try {
+            dBuilder = BUILDERFACTORY.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException("Failed to parse XML document", e);
+        }
+        return dBuilder.newDocument();
+    }
+
     public static String toString(Element xml) {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -265,7 +301,7 @@ public class NormalizedDataBuilderTest {
         for (Module module : context.getModules()) {
             if (module.getName().equals(moduleName)) {
                 DataSchemaNode found = findChildNode(module.getChildNodes(), childNodeName);
-                Preconditions.checkState(found!=null, "Unable to find %s", childNodeName);
+                Preconditions.checkState(found != null, "Unable to find %s", childNodeName);
                 return found;
             }
         }
@@ -278,16 +314,16 @@ public class NormalizedDataBuilderTest {
         for (DataSchemaNode dataSchemaNode : children) {
             if (dataSchemaNode.getQName().getLocalName().equals(name))
                 return dataSchemaNode;
-            if(dataSchemaNode instanceof DataNodeContainer) {
+            if (dataSchemaNode instanceof DataNodeContainer) {
                 containers.add((DataNodeContainer) dataSchemaNode);
-            } else if(dataSchemaNode instanceof ChoiceNode) {
+            } else if (dataSchemaNode instanceof ChoiceNode) {
                 containers.addAll(((ChoiceNode) dataSchemaNode).getCases());
             }
         }
 
         for (DataNodeContainer container : containers) {
             DataSchemaNode retVal = findChildNode(container.getChildNodes(), name);
-            if(retVal != null) {
+            if (retVal != null) {
                 return retVal;
             }
         }
