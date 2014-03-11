@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.impl.codec.ChoiceCaseCodec;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeSchemaAwareBuilder;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,9 +39,17 @@ public class DataNodeContainerValidator {
                     return true;
                 }
             }
-            // check regular child node
+            // check regular child node (also in child cases)
+        } else if(schema.getDataChildByName(child.getNodeType()) == null) {
+            for (DataSchemaNode dataSchemaNode : schema.getChildNodes()) {
+                if(dataSchemaNode instanceof ChoiceCaseNode) {
+                    if(((ChoiceCaseNode) dataSchemaNode).getDataChildByName(child.getNodeType()) != null) {
+                        return true;
+                    }
+                }
+            }
         } else {
-            return schema.getDataChildByName(child.getNodeType()) != null;
+            return true;
         }
 
         return false;
@@ -61,12 +68,12 @@ public class DataNodeContainerValidator {
     // FIXME, need to compare Set of QNames(AugmentationIdentifier) with Set of DataSchemaNodes(AugmentationSchema)
     // throw away set is created just to compare
     // Or if augmentationSchemaNode had a QName, we would just compare a QName
-    private boolean equalAugments(AugmentationSchema augmentationSchema, InstanceIdentifier.AugmentationIdentifier identifier) {
+    public static boolean equalAugments(AugmentationSchema augmentationSchema, InstanceIdentifier.AugmentationIdentifier identifier) {
         return identifier.getPossibleChildNames().equals(ImmutableAugmentationNodeSchemaAwareBuilder.getChildQNames(augmentationSchema));
     }
 
     public void validateChild(InstanceIdentifier.PathArgument child) {
-        Preconditions.checkArgument(isKnownChild(child), "Unknown child node: %s, does not belong to: %s", child.getNodeType(), schema);
+        Preconditions.checkArgument(isKnownChild(child), "Unknown child node: %s, does not belong to: %s", child, schema);
 
         // FIXME make a cache for augmentation child sets in constructor
         Optional<AugmentationSchema> augmentChild = isAugmentChild(child);
