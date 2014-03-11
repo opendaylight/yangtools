@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_b0a99e26",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/YangModuleInfoTemplate.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-03-11T08:22:25Z",
+      "side": 1,
+      "message": "please retain package name of this object, e.g. this.getClass().getCanonicalName()",
+      "revId": "4a4781618dc58baa4764be378e92c26c7d15f5a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
