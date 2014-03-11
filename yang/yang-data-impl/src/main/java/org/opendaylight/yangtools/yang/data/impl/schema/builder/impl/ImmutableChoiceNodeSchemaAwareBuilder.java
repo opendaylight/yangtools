@@ -7,15 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.Sets;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 import com.google.common.base.Preconditions;
+
+import java.util.Set;
 
 public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBuilder {
 

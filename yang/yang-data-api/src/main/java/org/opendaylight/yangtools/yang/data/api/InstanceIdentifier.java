@@ -354,6 +354,34 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             return childNames;
         }
 
+        @Override
+        public String toString() {
+            final StringBuffer sb = new StringBuffer("AugmentationIdentifier{");
+            sb.append("childNames=").append(childNames);
+            sb.append(", nodeType=").append(nodeType);
+            sb.append('}');
+            return sb.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof AugmentationIdentifier)) return false;
+
+            AugmentationIdentifier that = (AugmentationIdentifier) o;
+
+            if (childNames != null ? !childNames.equals(that.childNames) : that.childNames != null) return false;
+            if (nodeType != null ? !nodeType.equals(that.nodeType) : that.nodeType != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = nodeType != null ? nodeType.hashCode() : 0;
+            result = 31 * result + (childNames != null ? childNames.hashCode() : 0);
+            return result;
+        }
     }
 
     private static class BuilderImpl implements InstanceIdentifierBuilder {
