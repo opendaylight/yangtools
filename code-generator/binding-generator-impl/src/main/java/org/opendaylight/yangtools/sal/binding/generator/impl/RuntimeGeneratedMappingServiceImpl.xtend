@@ -7,61 +7,56 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl
 
-import javassist.ClassPool
-import org.opendaylight.yangtools.yang.model.api.SchemaContext
-import org.opendaylight.yangtools.yang.model.api.SchemaServiceListener
-import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl
-import java.util.Map
-import java.util.Collections
-import org.opendaylight.yangtools.sal.binding.model.api.Type
-import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder
-import org.opendaylight.yangtools.yang.model.api.SchemaNode
-import java.util.concurrent.ConcurrentHashMap
-import org.opendaylight.yangtools.yang.data.api.CompositeNode
-import org.opendaylight.yangtools.yang.binding.DataObject
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.Map.Entry
-import java.util.AbstractMap.SimpleEntry
-import org.opendaylight.yangtools.yang.model.api.SchemaPath
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil
-import org.opendaylight.yangtools.yang.binding.DataContainer
-import java.util.concurrent.ConcurrentMap
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
+import com.google.common.base.Optional
+import com.google.common.collect.FluentIterable
 import com.google.common.collect.HashMultimap
 import com.google.common.util.concurrent.SettableFuture
-import java.util.concurrent.Future
-import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
-import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService
-import org.slf4j.LoggerFactory
-import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName
-import org.opendaylight.yangtools.yang.data.impl.codec.DataContainerCodec
-import org.opendaylight.yangtools.binding.generator.util.Types
-
-//import org.osgi.framework.BundleContext
-
-//import org.osgi.framework.ServiceRegistration
-import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException
-import java.util.concurrent.Callable
-import org.opendaylight.yangtools.yang.binding.Augmentation
-import org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils
-import org.opendaylight.yangtools.yang.data.impl.codec.AugmentationCodec
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates
+import java.util.AbstractMap.SimpleEntry
 import java.util.ArrayList
-import org.opendaylight.yangtools.yang.data.api.Node
-import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl
-import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl
-import org.opendaylight.yangtools.yang.binding.RpcService
+import java.util.Collections
+import java.util.Map
+import java.util.Map.Entry
 import java.util.Set
-import org.opendaylight.yangtools.yang.common.QName
-import com.google.common.collect.FluentIterable
+import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.Future
+import javassist.ClassPool
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
-import org.opendaylight.yangtools.yang.model.api.Module
-import com.google.common.base.Optional
-import org.opendaylight.yangtools.yang.binding.BindingMapping
-import org.opendaylight.yangtools.yang.model.api.SchemaContextHolder
+import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
+import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy
+import org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.sal.binding.model.api.Type
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder
+import org.opendaylight.yangtools.yang.binding.Augmentation
+import org.opendaylight.yangtools.yang.binding.BindingMapping
+import org.opendaylight.yangtools.yang.binding.DataContainer
+import org.opendaylight.yangtools.yang.binding.DataObject
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yangtools.yang.binding.RpcService
+import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.data.api.CompositeNode
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates
+import org.opendaylight.yangtools.yang.data.api.Node
+import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl
+import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl
+import org.opendaylight.yangtools.yang.data.impl.codec.AugmentationCodec
+import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService
+import org.opendaylight.yangtools.yang.data.impl.codec.DataContainerCodec
+import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException
+import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName
+import org.opendaylight.yangtools.yang.model.api.Module
+import org.opendaylight.yangtools.yang.model.api.SchemaContext
+import org.opendaylight.yangtools.yang.model.api.SchemaContextHolder
+import org.opendaylight.yangtools.yang.model.api.SchemaContextListener
+import org.opendaylight.yangtools.yang.model.api.SchemaNode
+import org.opendaylight.yangtools.yang.model.api.SchemaPath
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil
+import org.slf4j.LoggerFactory
 
-class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaServiceListener,
+class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaContextListener,
 SchemaLock, AutoCloseable, SchemaContextHolder {
 
     @Property
@@ -86,8 +81,6 @@ SchemaLock, AutoCloseable, SchemaContextHolder {
 
     @Property
     val ConcurrentMap<Type, Set<QName>> serviceTypeToRpc = new ConcurrentHashMap();
-
-    val promisedTypeDefinitions = HashMultimap.<Type, SettableFuture<GeneratedTypeBuilder>>create;
 
     val promisedTypes = HashMultimap.<Type, SettableFuture<Type>>create;
 
