@@ -1,9 +1,9 @@
-<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
+<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test" name="test" xmlns:foo="http://www.foo.com/" foo:baz="baz">
     <boolean>true</boolean>
-    <innerContainer>
+    <innerContainer name="test">
         <uint16>44</uint16>
     </innerContainer>
-    <leafList>a</leafList>
+    <leafList name="test">a</leafList>
     <leafList>b</leafList>
 
     <list>
@@ -18,14 +18,14 @@
     <list>
         <uint32InList>2</uint32InList>
         <containerInList>
-            <uint32>32</uint32>
+            <uint32 name="test">32</uint32>
             <uint16>16</uint16>
         </containerInList>
         <!--<stringAugmentedToListInCase1>augmentInListCase1</stringAugmentedToListInCase1>-->
         <stringAugmentedToListInCase2>augmentInListCase2</stringAugmentedToListInCase2>
     </list>
     <list>
-        <uint32InList>3</uint32InList>
+        <uint32InList name="test"  foo:baz="baz">3</uint32InList>
     </list>
 
     <augmentString1>choice1Case1</augmentString1>
@@ -33,10 +33,6 @@
     <augmentInt1>41</augmentInt1>
     <!--<stringInAugmentedCaseInAugmentedChoice>deep</stringInAugmentedCaseInAugmentedChoice>-->
     <stringInAugmentedCaseInAugmentedChoiceFromAugment>deep</stringInAugmentedCaseInAugmentedChoiceFromAugment>
-
-    <augmentContainer>
-        <augmentStringInaugmentContainer>choice2Case1</augmentStringInaugmentContainer>
-    </augmentContainer>
 
     <augmentUint32>999</augmentUint32>
 

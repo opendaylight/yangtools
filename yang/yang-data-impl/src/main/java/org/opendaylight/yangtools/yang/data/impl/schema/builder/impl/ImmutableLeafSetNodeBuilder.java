@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class ImmutableLeafSetNodeBuilder<T>
         implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
@@ -61,7 +61,12 @@ public class ImmutableLeafSetNodeBuilder<T>
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(T value) {
-        return withChild(new ImmutableLeafSetEntryNodeBuilder.ImmutableLeafSetEntryNode<>(new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value));
+        return withChildValue(value, Collections.EMPTY_MAP);
+    }
+
+    @Override
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(T value, Map<QName, String> attributes) {
+        return withChild(new ImmutableLeafSetEntryNodeBuilder.ImmutableLeafSetEntryNode<>(new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value, attributes));
     }
 
     final class ImmutableLeafSetNode<T> extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements LeafSetNode<T> {
