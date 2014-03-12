@@ -95,6 +95,25 @@ public class NormalizedDataBuilderTest {
     }
 
     @Test
+    public void testFromXmlWithAttributes() throws Exception {
+
+        Document doc = loadDocument("simple_xml_with_attributes.xml");
+        System.out.println(toString(doc.getDocumentElement()));
+
+        ContainerNode built = new ContainerNodeDomParser().fromDom(Collections.singletonList(doc.getDocumentElement()),
+                containerNode, XmlDocumentUtils.defaultValueCodecProvider());
+        System.out.println(built);
+
+        List<Element> els = new ContainerNodeDomSerializer().toDom(containerNode, built,
+                XmlDocumentUtils.defaultValueCodecProvider(), newDocument());
+        Element el = els.get(0);
+        System.out.println(toString(el));
+
+        Assert.assertEquals(toString(doc.getDocumentElement()).replaceAll("\\s*", ""),
+                toString(el).replaceAll("\\s*", ""));
+    }
+
+    @Test
     public void testSchemaUnaware() throws Exception {
         // Container
         DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> builder = Builders
