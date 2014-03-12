@@ -7,17 +7,10 @@
  */
 package org.opendaylight.yangtools.maven.sal.api.gen.plugin;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
@@ -36,10 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware {
     private static final String FS = File.separator;
@@ -80,11 +79,17 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
     }
 
     private Collection<? extends File> generateModuleInfos(File outputBaseDir, Set<Module> yangModules,
-            SchemaContext context) {
+                                                           SchemaContext context) {
         Builder<File> result = ImmutableSet.builder();
         Builder<String> bindingProviders = ImmutableSet.builder();
         for (Module module : yangModules) {
-            result.addAll(generateYangModuleInfo(outputBaseDir, module, context, bindingProviders));
+            Builder<String> currentProvidersBuilder = ImmutableSet.builder();
+            // TODO: do not mutate parameters, output of a method is defined by its return value
+            Set<File> moduleInfoProviders = generateYangModuleInfo(outputBaseDir, module, context, currentProvidersBuilder);
+            ImmutableSet<String> currentProviders = currentProvidersBuilder.build();
+            logger.info("Adding ModuleInfo providers {}", currentProviders);
+            bindingProviders.addAll(currentProviders);
+            result.addAll(moduleInfoProviders);
         }
 
         result.add(writeMetaInfServices(resourceBaseDir, YangModelBindingProvider.class, bindingProviders.build()));
