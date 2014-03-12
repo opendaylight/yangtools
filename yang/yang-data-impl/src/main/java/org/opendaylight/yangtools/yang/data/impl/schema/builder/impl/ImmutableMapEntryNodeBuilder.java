@@ -7,24 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class ImmutableMapEntryNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> {
 
     protected final Map<QName, InstanceIdentifier.PathArgument> childrenQNamesToPaths;
+    protected Map<QName, String> attributes = Collections.EMPTY_MAP;
 
     protected ImmutableMapEntryNodeBuilder() {
         this.childrenQNamesToPaths = Maps.newLinkedHashMap();
@@ -50,9 +51,15 @@ public class ImmutableMapEntryNodeBuilder
         return super.withChild(child);
     }
 
+    public DataContainerNodeBuilder withAttributes(Map<QName, String> attributes){
+        this.attributes = attributes;
+        return this;
+    }
+
+
     public MapEntryNode build() {
         checkKeys();
-        return new ImmutableMapEntryNode(nodeIdentifier, value);
+        return new ImmutableMapEntryNode(nodeIdentifier, value, attributes);
     }
 
     private void checkKeys() {
@@ -72,9 +79,23 @@ public class ImmutableMapEntryNodeBuilder
 
     static final class ImmutableMapEntryNode extends AbstractImmutableDataContainerNode<InstanceIdentifier.NodeIdentifierWithPredicates> implements MapEntryNode {
 
+        private final Map<QName, String> attributes;
         ImmutableMapEntryNode(InstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifier,
-                              Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
+                              Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children,
+                              Map<QName, String> attributes) {
             super(children, nodeIdentifier);
+            Preconditions.checkNotNull(attributes);
+            this.attributes = ImmutableMap.copyOf(attributes);
+        }
+
+        @Override
+        public Map<QName, String> getAttributes() {
+            return attributes;
+        }
+
+        @Override
+        public Object getAttributeValue(QName value) {
+            return attributes.get(value);
         }
     }
 }
