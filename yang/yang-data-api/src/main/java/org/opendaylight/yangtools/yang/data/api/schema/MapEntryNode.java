@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 
-public interface MapEntryNode extends DataContainerNode<NodeIdentifierWithPredicates> {
+public interface MapEntryNode extends
+        AttributesContainer,
+        DataContainerNode<NodeIdentifierWithPredicates> {
 
     @Override
     public NodeIdentifierWithPredicates getIdentifier();

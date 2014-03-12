@@ -7,21 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.dom.parser;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Preconditions;
+import com.google.common.collect.LinkedListMultimap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.AttributesBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.dom.DomUtils;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.LinkedListMultimap;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 abstract class AbstractDispatcherParser<I extends InstanceIdentifier.PathArgument, N extends DataContainerNode<I>, S>
         implements DomParser<I, N, S> {
@@ -84,8 +91,14 @@ abstract class AbstractDispatcherParser<I extends InstanceIdentifier.PathArgumen
                     augmentSchema, codecProvider));
         }
 
+
+        if(containerBuilder instanceof AttributesBuilder){
+            ((AttributesBuilder) containerBuilder).withAttributes(DomUtils.toAttributes(xml.get(0).getAttributes()));
+        }
+
         return containerBuilder.build();
     }
+
 
     private boolean isMarkedAs(Map<QName, ?> mappedAugmentChildNodes, QName qName) {
         return mappedAugmentChildNodes.containsKey(qName);

@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.dom.parser;
 
-import java.util.List;
-
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.AttributesBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Preconditions;
+import java.util.List;
 
 public final class LeafSetEntryNodeDomParser implements
         DomParser<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<?>, LeafListSchemaNode> {
@@ -28,6 +27,11 @@ public final class LeafSetEntryNodeDomParser implements
     public LeafSetEntryNode<Object> fromDom(List<Element> xml, LeafListSchemaNode schema, XmlCodecProvider codecProvider) {
         Preconditions.checkArgument(xml.size() == 1, "Xml elements mapped to leaf node illegal count: %s", xml.size());
         Object value = DomUtils.parseXmlValue(xml.get(0), codecProvider, schema.getType());
-        return Builders.leafSetEntryBuilder(schema).withValue(value).build();
+        ImmutableLeafSetEntryNodeBuilder builder = (ImmutableLeafSetEntryNodeBuilder) Builders.leafSetEntryBuilder(schema);
+        builder.withValue(value);
+        if(builder instanceof AttributesBuilder){
+            builder.withAttributes(DomUtils.toAttributes(xml.get(0).getAttributes()));
+        }
+        return builder.build();
     }
 }
