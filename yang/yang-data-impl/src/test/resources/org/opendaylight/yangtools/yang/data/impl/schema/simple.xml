@@ -1,14 +1,15 @@
-<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
+<!-- Test -->
+<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test" name="test" xmlns:foo="http://www.foo.com/" foo:baz="baz">
     <boolean>true</boolean>
-    <innerContainer>
+    <innerContainer name="test">
         <uint16>44</uint16>
     </innerContainer>
-    <leafList>a</leafList>
+    <leafList name="test">a</leafList>
     <leafList>b</leafList>
 
     <list>
         <uint32InList>1</uint32InList>
-        <containerInList>
+        <containerInList name="inContainer">
             <uint32>32</uint32>
             <uint16>16</uint16>
         </containerInList>
@@ -18,14 +19,14 @@
     <list>
         <uint32InList>2</uint32InList>
         <containerInList>
-            <uint32>32</uint32>
+            <uint32 name="test">32</uint32>
             <uint16>16</uint16>
         </containerInList>
         <!--<stringAugmentedToListInCase1>augmentInListCase1</stringAugmentedToListInCase1>-->
         <stringAugmentedToListInCase2>augmentInListCase2</stringAugmentedToListInCase2>
     </list>
     <list>
-        <uint32InList>3</uint32InList>
+        <uint32InList name="test">3</uint32InList>
     </list>
 
     <augmentString1>choice1Case1</augmentString1>
