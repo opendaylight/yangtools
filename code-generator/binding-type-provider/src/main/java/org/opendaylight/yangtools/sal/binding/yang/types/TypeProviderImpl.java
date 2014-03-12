@@ -400,6 +400,9 @@ public final class TypeProviderImpl implements TypeProvider {
                 }
             }
         }
+        if (returnType == null) {
+            throw new IllegalArgumentException("Failed to find leafref target: " + strXPath);
+        }
         return returnType;
     }
 
