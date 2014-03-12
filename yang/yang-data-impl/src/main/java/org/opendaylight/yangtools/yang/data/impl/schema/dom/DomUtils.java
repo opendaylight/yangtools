@@ -10,17 +10,36 @@ package org.opendaylight.yangtools.yang.data.impl.schema.dom;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.imageio.metadata.IIOMetadataNode;
-import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DomUtils {
     private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
@@ -180,4 +199,25 @@ public class DomUtils {
 
         return allChildNodes;
     }
+
+    public static Map<QName, String> toAttributes(NamedNodeMap xmlAttributes){
+        Map<QName, String> attributes = new HashMap<>();
+
+        for(int i=0; i < xmlAttributes.getLength();i++){
+            Node node = xmlAttributes.item(i);
+            try {
+                String namespace = node.getNamespaceURI();
+                if(namespace == null){
+                    namespace = "";
+                }
+                QName qName = new QName(new URI(namespace), node.getNodeName());
+                attributes.put(qName, node.getNodeValue());
+            } catch (URISyntaxException e) {
+                Exceptions.sneakyThrow(e);
+            }
+        }
+        return attributes;
+    }
+
+
 }
