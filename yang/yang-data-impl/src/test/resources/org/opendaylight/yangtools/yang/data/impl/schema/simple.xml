@@ -1,0 +1,37 @@
+<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
+    <boolean>true</boolean>
+    <innerContainer>
+        <uint16>44</uint16>
+    </innerContainer>
+    <leafList>a</leafList>
+    <leafList>b</leafList>
+
+    <list>
+        <uint32InList>1</uint32InList>
+        <containerInList>
+            <uint32>32</uint32>
+            <uint16>16</uint16>
+        </containerInList>
+    </list>
+    <list>
+        <uint32InList>2</uint32InList>
+        <containerInList>
+            <uint32>32</uint32>
+            <uint16>16</uint16>
+        </containerInList>
+    </list>
+    <list>
+        <uint32InList>3</uint32InList>
+    </list>
+
+    <augmentUint32>999</augmentUint32>
+
+    <augmentString1>choice1Case1</augmentString1>
+    <augmentInt1>41</augmentInt1>
+
+    <augmentContainer>
+        <augmentStringInaugmentContainer>choice2Case1</augmentStringInaugmentContainer>
+    </augmentContainer>
+
+
+</container>

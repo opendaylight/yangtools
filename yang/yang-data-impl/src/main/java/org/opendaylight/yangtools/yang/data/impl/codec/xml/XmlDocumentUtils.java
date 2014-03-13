@@ -87,15 +87,7 @@ public class XmlDocumentUtils {
         Preconditions.checkNotNull(data);
         Preconditions.checkNotNull(schema);
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        Document doc = null;
-        try {
-            DocumentBuilder bob = dbf.newDocumentBuilder();
-            doc = bob.newDocument();
-        } catch (ParserConfigurationException e) {
-            return null;
-        }
+        Document doc = getDocument();
 
         if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode) {
             doc.appendChild(createXmlRootElement(doc, data, (SchemaNode) schema, codecProvider));
@@ -104,6 +96,18 @@ public class XmlDocumentUtils {
             throw new UnsupportedDataTypeException(
                     "Schema can be ContainerSchemaNode or ListSchemaNode. Other types are not supported yet.");
         }
+    }
+
+    public static Document getDocument() {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        Document doc = null;
+        try {
+            DocumentBuilder bob = dbf.newDocumentBuilder();
+            doc = bob.newDocument();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        return doc;
     }
 
     /**
@@ -169,7 +173,7 @@ public class XmlDocumentUtils {
         return itemEl;
     }
 
-    private static Element createElementFor(Document doc, Node<?> data) {
+    public static Element createElementFor(Document doc, Node<?> data) {
         QName dataType = data.getNodeType();
         Element ret;
         if (dataType.getNamespace() != null) {
@@ -189,11 +193,17 @@ public class XmlDocumentUtils {
 
     public static void writeValueByType(Element element, SimpleNode<?> node, TypeDefinition<?> type,
             DataSchemaNode schema, XmlCodecProvider codecProvider) {
-        TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
 
+        Object nodeValue = node.getValue();
+
+        writeValueByType(element, type, codecProvider, nodeValue);
+    }
+
+    public static void writeValueByType(Element element, TypeDefinition<?> type, XmlCodecProvider codecProvider, Object nodeValue) {
+        TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
         if (baseType instanceof IdentityrefTypeDefinition) {
-            if (node.getValue() instanceof QName) {
-                QName value = (QName) node.getValue();
+            if (nodeValue instanceof QName) {
+                QName value = (QName) nodeValue;
                 String prefix = "x";
                 if (value.getPrefix() != null && !value.getPrefix().isEmpty()) {
                     prefix = value.getPrefix();
@@ -201,7 +211,7 @@ public class XmlDocumentUtils {
                 element.setAttribute("xmlns:" + prefix, value.getNamespace().toString());
                 element.setTextContent(prefix + ":" + value.getLocalName());
             } else {
-                Object value = node.getValue();
+                Object value = nodeValue;
                 logger.debug("Value of {}:{} is not instance of QName but is {}", baseType.getQName().getNamespace(),
                         baseType.getQName().getLocalName(), value != null ? value.getClass() : "null");
                 if (value != null) {
@@ -209,10 +219,10 @@ public class XmlDocumentUtils {
                 }
             }
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            if (node.getValue() instanceof InstanceIdentifier) {
+            if (nodeValue instanceof InstanceIdentifier) {
                 // Map< key = namespace, value = prefix>
                 Map<String, String> prefixes = new HashMap<>();
-                InstanceIdentifier instanceIdentifier = (InstanceIdentifier) node.getValue();
+                InstanceIdentifier instanceIdentifier = (InstanceIdentifier) nodeValue;
                 StringBuilder textContent = new StringBuilder();
                 for (PathArgument pathArgument : instanceIdentifier.getPath()) {
                     textContent.append("/");
@@ -239,7 +249,7 @@ public class XmlDocumentUtils {
                 element.setTextContent(textContent.toString());
 
             } else {
-                Object value = node.getValue();
+                Object value = nodeValue;
                 logger.debug("Value of {}:{} is not instance of InstanceIdentifier but is {}", baseType.getQName()
                         .getNamespace(), //
                         baseType.getQName().getLocalName(), value != null ? value.getClass() : "null");
@@ -248,19 +258,19 @@ public class XmlDocumentUtils {
                 }
             }
         } else {
-            if (node.getValue() != null) {
+            if (nodeValue != null) {
                 final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(baseType);
                 if (codec != null) {
                     try {
-                        final String text = codec.serialize(node.getValue());
+                        final String text = codec.serialize(nodeValue);
                         element.setTextContent(text);
                     } catch (ClassCastException e) {
-                        logger.error("Provided node {} did not have type {} required by mapping. Using stream instead.", node, baseType, e);
-                        element.setTextContent(String.valueOf(node.getValue()));
+                        logger.error("Provided node value {} did not have type {} required by mapping. Using stream instead.", nodeValue, baseType, e);
+                        element.setTextContent(String.valueOf(nodeValue));
                     }
                 } else {
                     logger.error("Failed to find codec for {}, falling back to using stream", baseType);
-                    element.setTextContent(String.valueOf(node.getValue()));
+                    element.setTextContent(String.valueOf(nodeValue));
                 }
             }
         }
@@ -340,7 +350,7 @@ public class XmlDocumentUtils {
         return node.toInstance();
     }
 
-    private static QName qNameFromElement(Element xmlElement) {
+    public static QName qNameFromElement(Element xmlElement) {
         String namespace = xmlElement.getNamespaceURI();
         String localName = xmlElement.getLocalName();
         return QName.create(namespace != null ? URI.create(namespace) : null, null, localName);
@@ -416,7 +426,7 @@ public class XmlDocumentUtils {
         checkState(qName.getLocalName().equals(xmlElement.getLocalName()));
     }
 
-    private static final Optional<DataSchemaNode> findFirstSchema(QName qname, Set<DataSchemaNode> dataSchemaNode) {
+    public static final Optional<DataSchemaNode> findFirstSchema(QName qname, Set<DataSchemaNode> dataSchemaNode) {
         if (dataSchemaNode != null && !dataSchemaNode.isEmpty() && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
