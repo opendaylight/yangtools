@@ -32,7 +32,7 @@ public class CodecMapping {
         Field instanceIdField;
         try {
             instanceIdField = obj.getField(INSTANCE_IDENTIFIER_CODEC);
-            if(obj != null) {
+            if (instanceIdField != null) {
                 instanceIdField.set(null, codec);
             }
         } catch (NoSuchFieldException e) {
@@ -42,12 +42,11 @@ public class CodecMapping {
         }
     }
 
-
     public static void setIdentityRefCodec(Class<?> obj,IdentityCodec<?> codec) {
         Field instanceIdField;
         try {
             instanceIdField = obj.getField(IDENTITYREF_CODEC);
-            if(obj != null) {
+            if (instanceIdField != null) {
                 instanceIdField.set(null, codec);
             }
         } catch (NoSuchFieldException e) {
