@@ -9,26 +9,27 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 
-public abstract class AbstractImmutableDataContainerNode<K extends InstanceIdentifier.PathArgument>
-        extends AbstractImmutableNormalizedNode<K, Iterable<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>>>
+public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
+        extends AbstractImmutableNormalizedNode<K, Iterable<DataContainerChild<? extends PathArgument, ?>>>
         implements DataContainerNode<K> {
 
-    protected Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children;
+    protected Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children;
 
-    public AbstractImmutableDataContainerNode(Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children, K nodeIdentifier) {
+    public AbstractImmutableDataContainerNode(ImmutableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, K nodeIdentifier) {
         super(nodeIdentifier, children.values());
         this.children = children;
     }
 
     @Override
-    public Optional<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> getChild(InstanceIdentifier.PathArgument child) {
-        return Optional.<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>>fromNullable(children.get(child));
+    public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child) {
+        return Optional.<DataContainerChild<? extends PathArgument, ?>>fromNullable(children.get(child));
     }
 
     @Override

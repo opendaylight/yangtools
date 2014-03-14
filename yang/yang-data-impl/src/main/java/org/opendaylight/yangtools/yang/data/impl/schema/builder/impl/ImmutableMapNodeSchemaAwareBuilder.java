@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
@@ -25,19 +26,19 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
         super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(ListSchemaNode schema) {
+    public static CollectionNodeBuilder<NodeIdentifierWithPredicates,MapEntryNode, MapNode> create(ListSchemaNode schema) {
         return new ImmutableMapNodeSchemaAwareBuilder(schema);
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(MapEntryNode child) {
+    public CollectionNodeBuilder<NodeIdentifierWithPredicates,MapEntryNode, MapNode> withChild(MapEntryNode child) {
         Preconditions.checkArgument(schema.getQName().equals(child.getNodeType()),
                 "Incompatible node type, should be: %s, is: %s", schema.getQName(), child.getNodeType());
         return super.withChild(child);
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public ImmutableMapNodeSchemaAwareBuilder withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

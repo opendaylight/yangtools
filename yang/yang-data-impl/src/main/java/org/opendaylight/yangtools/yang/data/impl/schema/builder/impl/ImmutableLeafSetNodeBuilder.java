@@ -18,19 +18,19 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 public class ImmutableLeafSetNodeBuilder<T>
-        implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
+        implements ListNodeBuilder<T> {
 
     protected Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> value;
     protected InstanceIdentifier.NodeIdentifier nodeIdentifier;
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
+    public static <T> ListNodeBuilder<T> create() {
         return new ImmutableLeafSetNodeBuilder<>();
     }
 
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(LeafSetEntryNode<T> child) {
+    @Override
+    public ListNodeBuilder<T> withChild(LeafSetEntryNode<T> child) {
         if(this.value == null) {
             this.value = Maps.newLinkedHashMap();
         }
@@ -45,13 +45,13 @@ public class ImmutableLeafSetNodeBuilder<T>
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public ListNodeBuilder<T> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withValue(List<LeafSetEntryNode<T>> value) {
+    public ListNodeBuilder<T> withValue(List<LeafSetEntryNode<T>> value) {
         for (LeafSetEntryNode<T> leafSetEntry : value) {
             withChild(leafSetEntry);
         }
@@ -60,7 +60,7 @@ public class ImmutableLeafSetNodeBuilder<T>
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(T value) {
+    public ListNodeBuilder<T> withChildValue(T value) {
         return withChild(new ImmutableLeafSetEntryNodeBuilder.ImmutableLeafSetEntryNode<>(new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value));
     }
 

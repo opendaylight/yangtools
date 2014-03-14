@@ -8,14 +8,39 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.*;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.*;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 public class Builders {
 
@@ -37,12 +62,12 @@ public class Builders {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder() {
+    public static <T> ListNodeBuilder<T> leafSetBuilder() {
         return ImmutableLeafSetNodeBuilder.create();
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(LeafListSchemaNode schema) {
-        return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema);
+    public static <T> ListNodeBuilder<T> leafSetBuilder(LeafListSchemaNode schema) {
+        return (ListNodeBuilder<T>) ImmutableLeafSetNodeSchemaAwareBuilder.create(schema);
     }
 
     public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder() {
@@ -63,11 +88,11 @@ public class Builders {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder() {
+    public static CollectionNodeBuilder<NodeIdentifierWithPredicates,MapEntryNode, MapNode> mapBuilder() {
         return ImmutableMapNodeBuilder.create();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(ListSchemaNode schema) {
+    public static CollectionNodeBuilder<NodeIdentifierWithPredicates,MapEntryNode, MapNode> mapBuilder(ListSchemaNode schema) {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema);
     }
 

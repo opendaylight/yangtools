@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.Map;
-
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+
+import com.google.common.collect.ImmutableMap;
 
 public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> {
 
@@ -21,8 +21,9 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         return new ImmutableChoiceNodeBuilder();
     }
 
+    @Override
     public ChoiceNode build() {
-        return new ImmutableChoiceNode(nodeIdentifier, value);
+        return new ImmutableChoiceNode(nodeIdentifier, ImmutableMap.copyOf(value));
     }
 
     static final class ImmutableChoiceNode
@@ -30,7 +31,7 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
             implements ChoiceNode {
 
         ImmutableChoiceNode(InstanceIdentifier.NodeIdentifier nodeIdentifier,
-                            Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
+                            ImmutableMap<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
             super(children, nodeIdentifier);
         }
 

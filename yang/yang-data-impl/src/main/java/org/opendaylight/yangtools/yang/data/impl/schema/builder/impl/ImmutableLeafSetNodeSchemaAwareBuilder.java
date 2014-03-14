@@ -24,25 +24,25 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
         super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(LeafListSchemaNode schema) {
+    public static <T> ListNodeBuilder<T> create(LeafListSchemaNode schema) {
         return new ImmutableLeafSetNodeSchemaAwareBuilder<>(schema);
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(T value) {
+    public ListNodeBuilder<T> withChildValue(T value) {
         // TODO check value type
         return super.withChildValue(value);
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(LeafSetEntryNode<T> child) {
+    public ListNodeBuilder<T>  withChild(LeafSetEntryNode<T> child) {
         Preconditions.checkArgument(schema.getQName().equals(child.getNodeType()),
                 "Incompatible node type, should be: %s, is: %s", schema.getQName(), child.getNodeType());
         return super.withChild(child);
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public ListNodeBuilder<T>  withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }
