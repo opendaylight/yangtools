@@ -13,8 +13,6 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -37,13 +35,14 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(DataContainerChild<?, ?> child) {
+    public ImmutableMapEntryNodeSchemaAwareBuilder withChild(DataContainerChild<?, ?> child) {
         validator.validateChild(child.getIdentifier());
-        return super.withChild(child);
+        super.withChild(child);
+        return this;
     }
 
     @Override
-    public MapEntryNode build() {
+    public ImmutableMapEntryNode build() {
         super.withNodeIdentifier(constructNodeIdentifier());
         return super.build();
     }

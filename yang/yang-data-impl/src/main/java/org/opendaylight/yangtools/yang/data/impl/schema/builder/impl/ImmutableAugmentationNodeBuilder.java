@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.Map;
-
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -16,6 +14,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 
 public class ImmutableAugmentationNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> {
@@ -37,14 +36,14 @@ public class ImmutableAugmentationNodeBuilder
 
     @Override
     public AugmentationNode build() {
-        return new ImmutableAugmentationNode(nodeIdentifier, value);
+        return new ImmutableAugmentationNode(nodeIdentifier, ImmutableMap.copyOf(value));
     }
 
     static final class ImmutableAugmentationNode
             extends AbstractImmutableDataContainerNode<InstanceIdentifier.AugmentationIdentifier>
             implements AugmentationNode {
 
-        ImmutableAugmentationNode(InstanceIdentifier.AugmentationIdentifier nodeIdentifier, Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
+        ImmutableAugmentationNode(InstanceIdentifier.AugmentationIdentifier nodeIdentifier, ImmutableMap<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
             super(children, nodeIdentifier);
         }
     }
