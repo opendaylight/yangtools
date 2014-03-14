@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 public class ImmutableMapNodeBuilder
@@ -25,10 +26,11 @@ public class ImmutableMapNodeBuilder
     protected Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
     protected InstanceIdentifier.NodeIdentifier nodeIdentifier;
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> create() {
+    public static ImmutableMapNodeBuilder create() {
         return new ImmutableMapNodeBuilder();
     }
 
+    @Override
     public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(MapEntryNode child) {
         if(this.value == null) {
             this.value = Maps.newLinkedHashMap();
@@ -39,7 +41,7 @@ public class ImmutableMapNodeBuilder
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(List<MapEntryNode> value) {
+    public ImmutableMapNodeBuilder withValue(List<MapEntryNode> value) {
         // TODO replace or putAll ?
         for (MapEntryNode mapEntryNode : value) {
             withChild(mapEntryNode);
@@ -48,14 +50,15 @@ public class ImmutableMapNodeBuilder
         return this;
     }
 
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    @Override
+    public ImmutableMapNodeBuilder withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }
 
     @Override
-    public MapNode build() {
-        return new ImmutableMapNode(nodeIdentifier, value);
+    public ImmutableMapNode build() {
+        return new ImmutableMapNode(nodeIdentifier, ImmutableMap.copyOf(value));
     }
 
     static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements MapNode {
@@ -63,7 +66,7 @@ public class ImmutableMapNodeBuilder
         private final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mappedChildren;
 
         ImmutableMapNode(InstanceIdentifier.NodeIdentifier nodeIdentifier,
-                         Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
+                         ImmutableMap<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
             super(nodeIdentifier, children.values());
             this.mappedChildren = children;
         }
