@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 public class ImmutableLeafSetNodeBuilder<T>
         implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
