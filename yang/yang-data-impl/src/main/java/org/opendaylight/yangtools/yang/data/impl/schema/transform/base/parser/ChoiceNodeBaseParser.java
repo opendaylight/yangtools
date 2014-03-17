@@ -27,10 +27,6 @@ import com.google.common.collect.Sets;
 public abstract class ChoiceNodeBaseParser<E> extends
         BaseDispatcherParser<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> {
 
-    protected ChoiceNodeBaseParser() {
-        super();
-    }
-
     @Override
     protected DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> getBuilder(
             org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {

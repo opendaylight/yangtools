@@ -20,10 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.*;
 
 public abstract class MapEntryNodeBaseParser<E> extends BaseDispatcherParser<E, MapEntryNode, ListSchemaNode> {
 
-    public MapEntryNodeBaseParser() {
-        super();
-    }
-
     @Override
     protected DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> getBuilder(
             ListSchemaNode schema) {
@@ -47,4 +43,7 @@ public abstract class MapEntryNodeBaseParser<E> extends BaseDispatcherParser<E, 
     protected Map<QName, AugmentationSchema> mapChildElementsFromAugments(ListSchemaNode schema) {
         return SchemaUtils.mapChildElementsFromAugments(schema);
     }
+
+    @Override
+    protected abstract Map<QName, String> getAttributes(E e);
 }

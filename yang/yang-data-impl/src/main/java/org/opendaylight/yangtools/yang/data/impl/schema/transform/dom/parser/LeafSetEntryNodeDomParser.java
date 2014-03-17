@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import java.util.List;
+import java.util.Map;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafSetEntryNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -27,5 +29,10 @@ public class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Elemen
     @Override
     protected Object parseLeafListEntry(List<Element> xmlElement, LeafListSchemaNode schema) {
         return DomUtils.parseXmlValue(xmlElement.get(0), codecProvider, schema.getType());
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes(Element element) {
+        return DomUtils.toAttributes(element.getAttributes());
     }
 }
