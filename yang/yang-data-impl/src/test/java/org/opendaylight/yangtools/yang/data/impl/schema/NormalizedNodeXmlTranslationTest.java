@@ -11,16 +11,21 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.junit.Assert;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.*;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser.ContainerNodeDomParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer.ContainerNodeDomSerializer;
@@ -56,9 +61,12 @@ public class NormalizedNodeXmlTranslationTest {
                 {"augment_choice_hell.yang", "augment_choice_hell_ok.xml", augmentChoiceHell()},
                 {"augment_choice_hell.yang", "augment_choice_hell_ok2.xml", null},
                 {"test.yang", "simple.xml", null},
-                {"test.yang", "simple2.xml", null}
+                {"test.yang", "simple2.xml", null},
+                // TODO check attributes
+                {"test.yang", "simple_xml_with_attributes.xml", withAttributes()}
         });
     }
+
 
     public static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
     private static Date revision;
@@ -68,6 +76,47 @@ public class NormalizedNodeXmlTranslationTest {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static ContainerNode withAttributes() {
+        DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> b = Builders.containerBuilder();
+        b.withNodeIdentifier(getNodeIdentifier("container"));
+
+        CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
+                getNodeIdentifier("list"));
+
+        Map<QName, Object> predicates = Maps.newHashMap();
+        predicates.put(getNodeIdentifier("uint32InList").getNodeType(), 3L);
+
+        DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
+                .mapEntryBuilder().withNodeIdentifier(
+                        new InstanceIdentifier.NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
+                                predicates));
+        NormalizedNodeBuilder<InstanceIdentifier.NodeIdentifier,Object,LeafNode<Object>> uint32InListBuilder
+                = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
+
+        list1Builder.withChild(uint32InListBuilder.withValue(3L).build());
+
+        listBuilder.withChild(list1Builder.build());
+        b.withChild(listBuilder.build());
+
+        NormalizedNodeBuilder<InstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> booleanBuilder
+                = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
+        booleanBuilder.withValue(false);
+        b.withChild(booleanBuilder.build());
+
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder
+                = Builders.leafSetBuilder().withNodeIdentifier(getNodeIdentifier("leafList"));
+
+        NormalizedNodeBuilder<InstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder
+                = Builders.leafSetEntryBuilder().withNodeIdentifier(new InstanceIdentifier.NodeWithValue(getNodeIdentifier("leafList").getNodeType(), "a"));
+
+        leafList1Builder.withValue("a");
+
+        leafListBuilder.withChild(leafList1Builder.build());
+        b.withChild(leafListBuilder.build());
+
+        return b.build();
     }
 
     private static ContainerNode augmentChoiceHell() {
@@ -132,7 +181,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     public NormalizedNodeXmlTranslationTest(String yangPath, String xmlPath, ContainerNode expectedNode) {
-        this.schema = parseTestSchema(yangPath);
+        SchemaContext schema = parseTestSchema(yangPath);
         this.xmlPath = xmlPath;
         this.containerNode = (ContainerSchemaNode) NormalizedDataBuilderTest.getSchemaNode(schema, "test", "container");
         this.expectedNode = expectedNode;
@@ -140,7 +189,6 @@ public class NormalizedNodeXmlTranslationTest {
 
     private final ContainerNode expectedNode;
     private final ContainerSchemaNode containerNode;
-    private final SchemaContext schema;
     private final String xmlPath;
 
 
@@ -178,10 +226,12 @@ public class NormalizedNodeXmlTranslationTest {
 
         Element el = els.get(0);
 
-        Assert.assertEquals(toString(doc.getDocumentElement()).replaceAll("\\s*", ""),
-                toString(el).replaceAll("\\s*", ""));
-    }
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setIgnoreComments(true);
 
+        XMLAssert.assertXMLEqual(XMLUnit.buildControlDocument(toString(doc.getDocumentElement())),
+                XMLUnit.buildTestDocument(toString(el)));
+    }
 
     private Document loadDocument(String xmlPath) throws Exception {
         InputStream resourceAsStream = getClass().getResourceAsStream(xmlPath);

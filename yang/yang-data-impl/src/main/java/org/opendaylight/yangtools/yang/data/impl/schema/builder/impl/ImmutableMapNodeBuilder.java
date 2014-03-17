@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Sets;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -64,7 +65,7 @@ public class ImmutableMapNodeBuilder
 
         ImmutableMapNode(InstanceIdentifier.NodeIdentifier nodeIdentifier,
                          Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier, children.values());
+            super(nodeIdentifier, Sets.newLinkedHashSet(children.values()));
             this.mappedChildren = children;
         }
 

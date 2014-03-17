@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -17,26 +18,24 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableContainerNodeBuilder {
 
     private final DataNodeContainerValidator validator;
-
-    // TODO remove schema aware builders, replace by validator called at build()
+    // TODO remove schema aware builders, replace by validator called at build() ?
 
     private ImmutableContainerNodeSchemaAwareBuilder(ContainerSchemaNode schema) {
-        super();
         this.validator = new DataNodeContainerValidator(schema);
         super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> create(ContainerSchemaNode schema) {
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> create(ContainerSchemaNode schema) {
         return new ImmutableContainerNodeSchemaAwareBuilder(schema);
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> withChild(DataContainerChild<?, ?> child) {
+    public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> withChild(DataContainerChild<?, ?> child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
     }

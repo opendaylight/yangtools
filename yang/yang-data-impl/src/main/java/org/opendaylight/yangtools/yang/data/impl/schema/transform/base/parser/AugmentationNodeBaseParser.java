@@ -24,10 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 public abstract class AugmentationNodeBaseParser<E> extends
         BaseDispatcherParser<E,AugmentationNode, AugmentationSchema> {
 
-    protected AugmentationNodeBaseParser() {
-        super();
-    }
-
     @Override
     protected DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> getBuilder(AugmentationSchema schema) {
         return Builders.augmentationBuilder(schema);

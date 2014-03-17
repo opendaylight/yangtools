@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import java.util.List;
+import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -30,9 +31,14 @@ public final class ContainerNodeDomParser extends ContainerNodeBaseParser<Elemen
     }
 
     @Override
-    public ContainerNode parse(List<Element> xml, ContainerSchemaNode schema) {
-        checkOnlyOneNode(schema, xml);
-        return super.parse(xml, schema);
+    public ContainerNode parse(List<Element> elements, ContainerSchemaNode schema) {
+        checkOnlyOneNode(schema, elements);
+        return super.parse(elements, schema);
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes(Element element) {
+        return DomUtils.toAttributes(element.getAttributes());
     }
 
     @Override
@@ -44,5 +50,4 @@ public final class ContainerNodeDomParser extends ContainerNodeBaseParser<Elemen
     protected LinkedListMultimap<QName, Element> mapChildElements(List<Element> elements) {
         return DomUtils.mapChildElementsForSingletonNode(elements.iterator().next());
     }
-
 }

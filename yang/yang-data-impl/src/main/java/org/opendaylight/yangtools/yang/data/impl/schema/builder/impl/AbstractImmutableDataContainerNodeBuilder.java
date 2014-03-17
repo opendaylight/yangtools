@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Maps;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 
-import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Map;
 
 abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
         implements DataContainerNodeBuilder<I, R> {
