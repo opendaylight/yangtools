@@ -22,9 +22,6 @@ public abstract class LeafSetNodeBaseParser<E> implements
 
     protected LeafSetEntryNodeBaseParser<E> leafSetEntryNodeBaseParser = null;
 
-    public LeafSetNodeBaseParser() {
-    }
-
     @Override
     public LeafSetNode<?> parse(List<E> childNodes, LeafListSchemaNode schema) {
 

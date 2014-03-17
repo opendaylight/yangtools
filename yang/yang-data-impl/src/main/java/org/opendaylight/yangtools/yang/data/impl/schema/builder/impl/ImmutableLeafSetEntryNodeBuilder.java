@@ -7,28 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedAttrNode;
 
 import com.google.common.base.Preconditions;
 
+import java.util.Map;
+
 public class ImmutableLeafSetEntryNodeBuilder<T> extends AbstractImmutableNormalizedNodeBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> {
 
-    public static <T> NormalizedNodeBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> create() {
+    public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> create() {
         return new ImmutableLeafSetEntryNodeBuilder<>();
     }
 
     @Override
     public LeafSetEntryNode<T> build() {
-        return new ImmutableLeafSetEntryNode<>(nodeIdentifier, value);
+        return new ImmutableLeafSetEntryNode<>(nodeIdentifier, value, attributes);
     }
 
-    static final class ImmutableLeafSetEntryNode<T> extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeWithValue, T> implements LeafSetEntryNode<T> {
+    static final class ImmutableLeafSetEntryNode<T> extends AbstractImmutableNormalizedAttrNode<InstanceIdentifier.NodeWithValue, T> implements LeafSetEntryNode<T> {
 
-        ImmutableLeafSetEntryNode(InstanceIdentifier.NodeWithValue nodeIdentifier, T value) {
-            super(nodeIdentifier, value);
+        ImmutableLeafSetEntryNode(InstanceIdentifier.NodeWithValue nodeIdentifier, T value, Map<QName, String> attributes) {
+            super(nodeIdentifier, value, attributes);
             Preconditions.checkArgument(nodeIdentifier.getValue().equals(value),
                     "Node identifier contains different value: %s than value itself: %s", nodeIdentifier, value);
         }
@@ -41,5 +45,6 @@ public class ImmutableLeafSetEntryNodeBuilder<T> extends AbstractImmutableNormal
             sb.append('}');
             return sb.toString();
         }
+
     }
 }

@@ -10,29 +10,26 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.*;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.*;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.*;
 import org.opendaylight.yangtools.yang.model.api.*;
 
 public class Builders {
 
-    public static <T> NormalizedNodeBuilder<InstanceIdentifier.NodeIdentifier, T, LeafNode<T>> leafBuilder() {
+    public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, T, LeafNode<T>> leafBuilder() {
         return ImmutableLeafNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeBuilder<InstanceIdentifier.NodeIdentifier, T, LeafNode<T>> leafBuilder(
+    public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, T, LeafNode<T>> leafBuilder(
             LeafSchemaNode schema) {
         return ImmutableLeafNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> NormalizedNodeBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
+    public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
         return ImmutableLeafSetEntryNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
+    public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
             LeafListSchemaNode schema) {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
     }
@@ -45,20 +42,20 @@ public class Builders {
         return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder() {
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder() {
         return ImmutableContainerNodeBuilder.create();
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder(
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder(
             ContainerSchemaNode schema) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
         return ImmutableMapEntryNodeBuilder.create();
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             ListSchemaNode schema) {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
     }
