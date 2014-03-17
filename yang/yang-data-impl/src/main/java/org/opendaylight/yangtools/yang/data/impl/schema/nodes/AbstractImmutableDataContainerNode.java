@@ -22,6 +22,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     protected Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children;
 
+
     public AbstractImmutableDataContainerNode(
             final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, final K nodeIdentifier) {
         super(nodeIdentifier, children.values());
@@ -35,8 +36,8 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("ImmutableContainerNode{");
-        sb.append("nodeIdentifier=").append(nodeIdentifier);
+        final StringBuffer sb = new StringBuffer(getClass().getSimpleName());
+        sb.append("{nodeIdentifier=").append(nodeIdentifier);
         sb.append(", children=").append(children);
         sb.append('}');
         return sb.toString();
