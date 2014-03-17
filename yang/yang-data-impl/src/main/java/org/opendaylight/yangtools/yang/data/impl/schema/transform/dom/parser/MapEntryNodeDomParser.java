@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import java.util.List;
+import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
@@ -27,7 +28,6 @@ public final class MapEntryNodeDomParser extends MapEntryNodeBaseParser<Element>
         this.codecProvider = codecProvider;
     }
 
-
     @Override
     protected LinkedListMultimap<QName, Element> mapChildElements(List<Element> elements) {
         return DomUtils.mapChildElementsForSingletonNode(elements.iterator().next());
@@ -38,5 +38,8 @@ public final class MapEntryNodeDomParser extends MapEntryNodeBaseParser<Element>
         return DomNodeDispatcher.getInstance(codecProvider);
     }
 
-
+    @Override
+    protected Map<QName, String> getAttributes(Element element) {
+        return DomUtils.toAttributes(element.getAttributes());
+    }
 }

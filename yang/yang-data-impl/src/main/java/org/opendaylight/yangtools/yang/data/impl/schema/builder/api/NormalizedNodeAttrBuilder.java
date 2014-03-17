@@ -7,19 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
-import java.util.List;
-
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public interface CollectionNodeBuilder<V, R extends NormalizedNode<InstanceIdentifier.NodeIdentifier, ?>>
-        extends NormalizedNodeBuilder<InstanceIdentifier.NodeIdentifier, List<V>, R> {
+public interface NormalizedNodeAttrBuilder<I extends InstanceIdentifier.PathArgument, V, R extends NormalizedNode<I, ?>>
+        extends AttributesBuilder<NormalizedNodeAttrBuilder<I, V, R>>,
+        NormalizedNodeBuilder<I, V, R> {
 
     @Override
-    CollectionNodeBuilder<V, R> withValue(List<V> value);
+    NormalizedNodeAttrBuilder<I, V, R> withValue(V value);
 
     @Override
-    CollectionNodeBuilder<V, R> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier);
+    NormalizedNodeAttrBuilder<I, V, R> withNodeIdentifier(I nodeIdentifier);
 
-    CollectionNodeBuilder<V, R> withChild(V child);
 }
