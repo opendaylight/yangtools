@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -417,6 +418,23 @@ public class AugmentTest {
         assertEquals(expectedPath, destroy.getPath());
         Set<DataSchemaNode> destroyChildren = destroy.getChildNodes();
         assertEquals(1, destroyChildren.size());
+    }
+
+    @Test
+    public void testAugmentInUsesResolving() throws Exception {
+        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-uses").toURI());
+        assertEquals(1, modules.size());
+
+        Module test = modules.iterator().next();
+        DataNodeContainer links = (DataNodeContainer) test.getDataChildByName("links");
+        DataNodeContainer link = (DataNodeContainer) links.getDataChildByName("link");
+        DataNodeContainer nodes = (DataNodeContainer) link.getDataChildByName("nodes");
+        ContainerSchemaNode node = (ContainerSchemaNode) nodes.getDataChildByName("node");
+        Set<AugmentationSchema> augments = node.getAvailableAugmentations();
+        assertEquals(1, augments.size());
+        assertEquals(1, node.getChildNodes().size());
+        LeafSchemaNode id = (LeafSchemaNode) node.getDataChildByName("id");
+        assertTrue(id.isAugmenting());
     }
 
 }

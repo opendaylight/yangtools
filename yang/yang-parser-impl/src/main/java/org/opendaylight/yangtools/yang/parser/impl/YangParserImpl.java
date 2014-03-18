@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -981,9 +982,15 @@ public final class YangParserImpl implements YangModelParser {
             targetNode = findSchemaNode(augment.getTargetPath().getPath(), (SchemaNodeBuilder) parentNode);
         }
 
-        fillAugmentTarget(augment, targetNode);
-        augment.setResolved(true);
-        return true;
+        if (targetNode instanceof AugmentationTargetBuilder) {
+            fillAugmentTarget(augment, targetNode);
+            ((AugmentationTargetBuilder) targetNode).addAugmentation(augment);
+            augment.setResolved(true);
+            return true;
+        } else {
+            throw new YangParseException(module.getName(), augment.getLine(),
+                    "Failed to resolve augment in uses. Invalid augment target: " + targetNode);
+        }
     }
 
     /**
