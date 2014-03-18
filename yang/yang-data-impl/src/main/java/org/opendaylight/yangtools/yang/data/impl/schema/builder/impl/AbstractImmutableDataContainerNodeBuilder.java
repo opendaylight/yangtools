@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -20,7 +21,7 @@ import com.google.common.collect.Maps;
 abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
         implements DataContainerNodeBuilder<I, R> {
 
-    protected Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value;
+    protected final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value;
     protected I nodeIdentifier;
 
     protected AbstractImmutableDataContainerNodeBuilder() {
@@ -28,7 +29,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> withValue(List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
+    public DataContainerNodeBuilder<I, R> withValue(final List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
         // TODO Replace or putAll ?
         for (DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> dataContainerChild : value) {
             withChild(dataContainerChild);
@@ -37,15 +38,21 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> withChild(DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<I, R> withChild(final DataContainerChild<?, ?> child) {
         this.value.put(child.getIdentifier(), child);
         return this;
     }
 
 
     @Override
-    public DataContainerNodeBuilder<I, R> withNodeIdentifier(I nodeIdentifier) {
+    public DataContainerNodeBuilder<I, R> withNodeIdentifier(final I nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
+    }
+
+    @Override
+    public DataContainerNodeBuilder<I, R> addChild(
+            final DataContainerChild<? extends PathArgument, ?> child) {
+        return withChild(child);
     }
 }

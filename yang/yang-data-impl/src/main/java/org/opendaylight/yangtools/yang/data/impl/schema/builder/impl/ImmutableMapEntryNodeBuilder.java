@@ -15,10 +15,10 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 public class ImmutableMapEntryNodeBuilder
@@ -37,7 +37,7 @@ public class ImmutableMapEntryNodeBuilder
     // FIXME, find better solution than 2 maps (map from QName to Child ?)
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withValue(List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
+    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withValue(final List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
         for (DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> childId : value) {
             this.childrenQNamesToPaths.put(childId.getNodeType(), childId.getIdentifier());
         }
@@ -45,11 +45,12 @@ public class ImmutableMapEntryNodeBuilder
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
         childrenQNamesToPaths.put(child.getNodeType(), child.getIdentifier());
         return super.withChild(child);
     }
 
+    @Override
     public MapEntryNode build() {
         checkKeys();
         return new ImmutableMapEntryNode(nodeIdentifier, value);
@@ -72,9 +73,9 @@ public class ImmutableMapEntryNodeBuilder
 
     static final class ImmutableMapEntryNode extends AbstractImmutableDataContainerNode<InstanceIdentifier.NodeIdentifierWithPredicates> implements MapEntryNode {
 
-        ImmutableMapEntryNode(InstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifier,
-                              Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
-            super(children, nodeIdentifier);
+        ImmutableMapEntryNode(final InstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifier,
+                              final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
+            super(ImmutableMap.copyOf(children), nodeIdentifier);
         }
     }
 }

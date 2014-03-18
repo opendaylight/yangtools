@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -22,24 +23,21 @@ import com.google.common.collect.Maps;
 public class ImmutableMapNodeBuilder
         implements CollectionNodeBuilder<MapEntryNode, MapNode> {
 
-    protected Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
+    protected Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value = Maps.newLinkedHashMap();
     protected InstanceIdentifier.NodeIdentifier nodeIdentifier;
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> create() {
         return new ImmutableMapNodeBuilder();
     }
 
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(MapEntryNode child) {
-        if(this.value == null) {
-            this.value = Maps.newLinkedHashMap();
-        }
-
+    @Override
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
         this.value.put(child.getIdentifier(), child);
         return this;
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(List<MapEntryNode> value) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(final List<MapEntryNode> value) {
         // TODO replace or putAll ?
         for (MapEntryNode mapEntryNode : value) {
             withChild(mapEntryNode);
@@ -48,7 +46,8 @@ public class ImmutableMapNodeBuilder
         return this;
     }
 
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    @Override
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final InstanceIdentifier.NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }
@@ -58,18 +57,24 @@ public class ImmutableMapNodeBuilder
         return new ImmutableMapNode(nodeIdentifier, value);
     }
 
-    static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements MapNode {
+    @Override
+    public CollectionNodeBuilder<MapEntryNode, MapNode> addChild(
+            final MapEntryNode child) {
+        return withChild(child);
+    }
+
+    static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements Immutable,MapNode {
 
         private final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mappedChildren;
 
-        ImmutableMapNode(InstanceIdentifier.NodeIdentifier nodeIdentifier,
-                         Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
+        ImmutableMapNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
+                         final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
             super(nodeIdentifier, children.values());
             this.mappedChildren = children;
         }
 
         @Override
-        public Optional<MapEntryNode> getChild(InstanceIdentifier.NodeIdentifierWithPredicates child) {
+        public Optional<MapEntryNode> getChild(final InstanceIdentifier.NodeIdentifierWithPredicates child) {
             return Optional.fromNullable(mappedChildren.get(child));
         }
 
