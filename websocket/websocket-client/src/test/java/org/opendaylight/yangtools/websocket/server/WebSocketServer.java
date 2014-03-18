@@ -54,6 +54,9 @@ public class WebSocketServer implements Runnable {
         this.port = port;
     }
 
+    /**
+     * Tries to start web socket server. 
+     */
     public void run(){
         try {
             startServer();
@@ -61,6 +64,11 @@ public class WebSocketServer implements Runnable {
             logger.info("Exception occured while starting webSocket server {}",e);
         }
     }
+    
+    /**
+     * Start web socket server at {@link #port}.
+     * @throws Exception
+     */
     public void startServer() throws Exception {
         try {
             bootstrap.group(bossGroup, workerGroup)
