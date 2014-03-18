@@ -10,31 +10,30 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-public class ImmutableLeafSetNodeBuilder<T>
-        implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
+public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
 
-    protected Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> value;
+    protected Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> value = Maps.newLinkedHashMap();
     protected InstanceIdentifier.NodeIdentifier nodeIdentifier;
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
         return new ImmutableLeafSetNodeBuilder<>();
     }
 
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(LeafSetEntryNode<T> child) {
-        if(this.value == null) {
-            this.value = Maps.newLinkedHashMap();
-        }
-
+    @Override
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(final LeafSetEntryNode<T> child) {
         this.value.put(child.getIdentifier(), child);
         return this;
     }
@@ -45,13 +44,14 @@ public class ImmutableLeafSetNodeBuilder<T>
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(
+            final InstanceIdentifier.NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withValue(List<LeafSetEntryNode<T>> value) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withValue(final List<LeafSetEntryNode<T>> value) {
         for (LeafSetEntryNode<T> leafSetEntry : value) {
             withChild(leafSetEntry);
         }
@@ -60,21 +60,25 @@ public class ImmutableLeafSetNodeBuilder<T>
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(T value) {
-        return withChild(new ImmutableLeafSetEntryNodeBuilder.ImmutableLeafSetEntryNode<>(new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value));
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value) {
+        return withChild(new ImmutableLeafSetEntryNodeBuilder.ImmutableLeafSetEntryNode<>(
+                new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value));
     }
 
-    final class ImmutableLeafSetNode<T> extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements LeafSetNode<T> {
+    final class ImmutableLeafSetNode<T> extends
+            AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements
+            Immutable, LeafSetNode<T> {
 
         private final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> mappedChildren;
 
-        ImmutableLeafSetNode(InstanceIdentifier.NodeIdentifier nodeIdentifier, Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
+        ImmutableLeafSetNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
+                final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
             super(nodeIdentifier, children.values());
             this.mappedChildren = children;
         }
 
         @Override
-        public Optional<LeafSetEntryNode<T>> getChild(InstanceIdentifier.NodeWithValue child) {
+        public Optional<LeafSetEntryNode<T>> getChild(final InstanceIdentifier.NodeWithValue child) {
             return Optional.fromNullable(mappedChildren.get(child));
         }
 
@@ -86,6 +90,12 @@ public class ImmutableLeafSetNodeBuilder<T>
             sb.append('}');
             return sb.toString();
         }
+    }
+
+    @Override
+    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, LeafSetEntryNode<T>, LeafSetNode<T>> addChild(
+            final LeafSetEntryNode<T> child) {
+        return withChild(child);
     }
 
 }

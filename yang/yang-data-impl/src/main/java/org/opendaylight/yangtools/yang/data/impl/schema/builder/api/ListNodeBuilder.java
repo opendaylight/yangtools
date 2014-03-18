@@ -10,19 +10,20 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 
 public interface ListNodeBuilder<T, V>
-        extends CollectionNodeBuilder<V, LeafSetNode<T>> {
+        extends CollectionNodeBuilder<LeafSetEntryNode<T>, LeafSetNode<T>> {
 
     @Override
     ListNodeBuilder<T, V> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier);
 
     @Override
-    ListNodeBuilder<T, V> withValue(List<V> value);
+    ListNodeBuilder<T, V> withValue(List<LeafSetEntryNode<T>> value);
 
     @Override
-    ListNodeBuilder<T, V> withChild(V child);
+    ListNodeBuilder<T, V> withChild(LeafSetEntryNode<T> child);
 
     ListNodeBuilder<T, V> withChildValue(T child);
 }
