@@ -11,8 +11,8 @@ import org.opendaylight.yangtools.yang.binding.Identifier;
 
 public class NodeChildKey implements //
         Identifier<NodeChild> {
-
-    private final int id;
+	private static final long serialVersionUID = 1L;
+	private final int id;
 
     public NodeChildKey(int id) {
         super();
