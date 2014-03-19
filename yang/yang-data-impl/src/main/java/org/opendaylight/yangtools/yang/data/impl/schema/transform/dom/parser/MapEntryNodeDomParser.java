@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -37,5 +38,8 @@ public final class MapEntryNodeDomParser extends MapEntryNodeBaseParser<Element>
         return DomNodeDispatcher.getInstance(codecProvider);
     }
 
-
+    @Override
+    protected Map<QName, String> getAttributes(Element element) {
+        return DomUtils.toAttributes(element.getAttributes());
+    }
 }

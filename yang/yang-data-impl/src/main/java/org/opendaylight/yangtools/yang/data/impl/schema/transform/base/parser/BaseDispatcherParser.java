@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.AugmentationSchemaProxy;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -89,14 +87,14 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
     protected abstract NodeParserDispatcher<E> getDispatcher();
 
     @Override
-    public N parse(List<E> element, S schema) {
+    public N parse(List<E> elements, S schema) {
 
-        checkAtLeastOneNode(schema, element);
+        checkAtLeastOneNode(schema, elements);
 
         DataContainerNodeBuilder<?, N> containerBuilder = getBuilder(schema);
 
         // Map child nodes to QName
-        LinkedListMultimap<QName, E> mappedChildElements = mapChildElements(element);
+        LinkedListMultimap<QName, E> mappedChildElements = mapChildElements(elements);
 
         // Map child nodes from Augments
         Map<QName, AugmentationSchema> mappedAugmentChildNodes = mapChildElementsFromAugments(schema);
@@ -139,7 +137,17 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
             containerBuilder.withChild(getDispatcher().dispatchChildElement(augSchemaProxy, augmentsToElements.get(augmentSchema)));
         }
 
+        if(containerBuilder instanceof AttributesBuilder){
+            Preconditions.checkArgument(elements.size() == 1, "Unexpected number of elements: %s, should be 1 for: %s",
+                    elements.size(), schema);
+            ((AttributesBuilder) containerBuilder).withAttributes(getAttributes(elements.get(0)));
+        }
+
         return containerBuilder.build();
+    }
+
+    protected Map<QName, String> getAttributes(E e) {
+        return Collections.emptyMap();
     }
 
     private boolean isMarkedAs(Map<QName, ?> mappedAugmentChildNodes, QName qName) {

@@ -8,13 +8,15 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-import com.google.common.base.Preconditions;
+import java.util.Collection;
+import java.util.Iterator;
 
 public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifier.PathArgument,V>
         implements NormalizedNode<K, V>, Immutable {

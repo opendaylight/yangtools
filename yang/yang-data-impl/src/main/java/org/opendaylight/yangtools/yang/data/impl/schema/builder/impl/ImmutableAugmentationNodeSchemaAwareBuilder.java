@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
@@ -25,7 +26,7 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
     private final DataNodeContainerValidator validator;
 
     protected ImmutableAugmentationNodeSchemaAwareBuilder(AugmentationSchema schema) {
-        super();
+        Preconditions.checkNotNull(schema);
         this.validator = new DataNodeContainerValidator(schema);
         // TODO no QName for augmentation
         super.withNodeIdentifier(new InstanceIdentifier.AugmentationIdentifier(null, getChildQNames(schema)));

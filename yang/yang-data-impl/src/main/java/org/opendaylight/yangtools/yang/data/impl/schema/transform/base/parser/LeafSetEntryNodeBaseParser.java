@@ -8,9 +8,13 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import java.util.List;
+import java.util.Map;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
@@ -26,9 +30,15 @@ public abstract class LeafSetEntryNodeBaseParser<E> implements
 
     @Override
     public final LeafSetEntryNode<Object> parse(List<E> elements, LeafListSchemaNode schema) {
-        Preconditions.checkArgument(elements.size() == 1, "Xml elements mapped to leaf node illegal count: %s", elements.size());
-        Object value = parseLeafListEntry(elements.get(0),schema);
-        return Builders.leafSetEntryBuilder(schema).withValue(value).build();
+        Preconditions.checkArgument(elements.size() == 1, "Xml elements mapped to leaf node illegal count: %s",
+                elements.size());
+        Object value = parseLeafListEntry(elements.get(0), schema);
+
+        NormalizedNodeAttrBuilder<InstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafEntryBuilder = Builders
+                .leafSetEntryBuilder(schema);
+        leafEntryBuilder.withAttributes(getAttributes(elements.get(0)));
+
+        return leafEntryBuilder.withValue(value).build();
     }
 
     /**
@@ -40,4 +50,12 @@ public abstract class LeafSetEntryNodeBaseParser<E> implements
      * @return parsed element as an Object
      */
     protected abstract Object parseLeafListEntry(E element, LeafListSchemaNode schema);
+
+    /**
+     *
+     * @param e
+     * @return attributes mapped to QNames
+     */
+    protected abstract Map<QName, String> getAttributes(E e);
+
 }

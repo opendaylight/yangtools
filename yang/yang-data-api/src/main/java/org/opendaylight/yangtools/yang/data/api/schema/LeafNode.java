@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 
 public interface LeafNode<T> extends //
+        AttributesContainer,
         DataContainerChild<NodeIdentifier, T> {
 
     @Override

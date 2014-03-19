@@ -56,4 +56,7 @@ public abstract class MapEntryNodeBaseParser<E> extends BaseDispatcherParser<E, 
     protected final Map<QName, AugmentationSchema> mapChildElementsFromAugments(ListSchemaNode schema) {
         return SchemaUtils.mapChildElementsFromAugments(schema);
     }
+
+    @Override
+    protected abstract Map<QName, String> getAttributes(E e);
 }

@@ -8,7 +8,7 @@
 
     <list>
         <uint32InList>1</uint32InList>
-        <containerInList>
+        <containerInList name="inContainer">
             <uint32>32</uint32>
             <uint16>16</uint16>
         </containerInList>

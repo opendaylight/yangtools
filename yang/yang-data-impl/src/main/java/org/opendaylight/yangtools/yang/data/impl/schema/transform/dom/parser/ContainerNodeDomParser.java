@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,6 +29,10 @@ public final class ContainerNodeDomParser extends ContainerNodeBaseParser<Elemen
     public ContainerNodeDomParser(XmlCodecProvider codecProvider) {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
+    @Override
+    protected Map<QName, String> getAttributes(Element element) {
+        return DomUtils.toAttributes(element.getAttributes());
+    }
 
     @Override
     protected NodeParserDispatcher<Element> getDispatcher() {
@@ -38,5 +43,4 @@ public final class ContainerNodeDomParser extends ContainerNodeBaseParser<Elemen
     protected LinkedListMultimap<QName, Element> mapChildElements(List<Element> elements) {
         return DomUtils.mapChildElementsForSingletonNode(elements.iterator().next());
     }
-
 }
