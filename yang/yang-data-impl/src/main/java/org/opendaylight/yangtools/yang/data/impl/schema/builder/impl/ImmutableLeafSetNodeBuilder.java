@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.Sets;
 import org.opendaylight.yangtools.concepts.Immutable;
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
@@ -21,8 +21,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuil
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
 
@@ -60,11 +61,18 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         return this;
     }
 
-    @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value) {
+
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value, Map<QName, String> attributes) {
         return withChild(new ImmutableLeafSetEntryNodeBuilder.ImmutableLeafSetEntryNode<>(
-                new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value));
+                new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value, attributes));
+
     }
+    
+    @Override
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(T value) {
+        return withChildValue(value, Collections.<QName,String>emptyMap());
+    }
+
 
     private final static class ImmutableLeafSetNode<T> extends
             AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements
