@@ -20,8 +20,19 @@ import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.SocketAddress;
+import java.net.InetSocketAddress;
+
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import com.google.common.util.concurrent.SettableFuture;
 
 /**
  * A HTTP server which serves Web Socket requests at:
@@ -44,19 +55,28 @@ import org.slf4j.LoggerFactory;
  */
 public class WebSocketServer implements Runnable {
 
-    private final int port;
+    /**
+     * Utilized to get the port on which the server listens. This is a future as
+     * the port is selected dynamically from available ports, thus until the
+     * server is started the value will not be established.
+     */
+    private final SettableFuture<Integer> port;
+
+    /**
+     * Maintains the port number with which the class was initialized.
+     */
+    private final int inPort;
     private final ServerBootstrap bootstrap = new ServerBootstrap();
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class.toString());
 
-    public WebSocketServer(int port) {
-        this.port = port;
+
+    public WebSocketServer(int inPort) {
+        this.inPort = inPort;
+        port = SettableFuture.<Integer>create();
     }
 
-    /**
-     * Tries to start web socket server. 
-     */
     public void run(){
         try {
             startServer();
@@ -64,27 +84,35 @@ public class WebSocketServer implements Runnable {
             logger.info("Exception occured while starting webSocket server {}",e);
         }
     }
-    
-    /**
-     * Start web socket server at {@link #port}.
-     * @throws Exception
-     */
+
+    public Future<Integer> getPort() {
+        return port;
+    }
+
     public void startServer() throws Exception {
         try {
             bootstrap.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
              .childHandler(new WebSocketServerInitializer());
 
-            Channel ch = bootstrap.bind(port).sync().channel();
-            logger.info("Web socket server started at port " + port + '.');
-            logger.info("Open your browser and navigate to http://localhost:" + port + '/');
+            Channel ch = bootstrap.bind(inPort).sync().channel();
+            SocketAddress localSocket = ch.localAddress();
+            try {
+                port.set(((InetSocketAddress) localSocket).getPort());
+            } catch (ClassCastException cce) {
+                throw new ExecutionException("Unknown socket address type", cce);
+            }
+            logger.info("Web socket server started at port " + port.get() + '.');
+            logger.info("Open your browser and navigate to http://localhost:" + port.get() + '/');
 
-            ch.closeFuture().sync();
+            try {
+                ch.closeFuture().sync();
+            } catch (InterruptedException ie) {
+                // No op, sometimes the server is shutdown hard
+            }
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
     }
-
-
 }
