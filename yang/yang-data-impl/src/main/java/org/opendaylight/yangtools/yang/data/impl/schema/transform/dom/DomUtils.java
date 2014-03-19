@@ -98,7 +98,7 @@ public class DomUtils {
                 namespace = "";
             }
 
-            // SKip namespace definitions
+            // Skip namespace definitions
             if(namespace.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
                 continue;
             }
