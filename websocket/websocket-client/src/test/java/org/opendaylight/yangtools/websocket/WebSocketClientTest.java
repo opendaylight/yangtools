@@ -20,27 +20,30 @@ import org.slf4j.LoggerFactory;
 public class WebSocketClientTest {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketClientTest.class.toString());
     private static final String MESSAGE = "Take me to your leader!";
-    private static final int port = 8080;
     private Thread webSocketServerThread;
+    private static int port = 0;
 
 
     @Before
     public void startWebSocketServer(){
         try {
-            WebSocketServer webSocketServer = new WebSocketServer(port);
+            WebSocketServer webSocketServer = new WebSocketServer(0);
             webSocketServerThread = new Thread(webSocketServer);
             webSocketServerThread.setDaemon(false);
             webSocketServerThread.start();
+            port = webSocketServer.getPort().get();
         } catch (Exception e) {
             logger.trace("Error starting websocket server");
         }
     }
+
     @Test
     public void connectAndSendData(){
 
         URI uri = null;
         try {
-            uri = new URI("ws://localhost:8080/websocket");
+            uri = new URI(String.format("ws://localhost:%d/websocket", port));
+            logger.info("CLIENT: " + uri);
             ClientMessageCallback messageCallback = new ClientMessageCallback();
             WebSocketIClient wsClient = new WebSocketIClient(uri,messageCallback);
             try {
