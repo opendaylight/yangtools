@@ -58,23 +58,23 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
-    
+
     private static final Pattern intPattern = Pattern.compile("[+-]?[1-9][0-9]*$");
     private static final Pattern hexPattern = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
     private static final Pattern octalPattern = Pattern.compile("[+-]?0[1-7][0-7]*$");
-    
+
     private final Optional<T> typeDefinition;
     private final Class<J> inputClass;
-    
+
     private static final int provideBase(final String integer) {
         if (integer == null) {
             throw new IllegalArgumentException("String representing integer number cannot be NULL!");
         }
-        
+
         if ((integer.length() == 1) && (integer.charAt(0) == '0')) {
             return 10;
         }
-        
+
         final Matcher intMatcher = intPattern.matcher(integer);
         if (intMatcher.matches()) {
             return 10;
@@ -87,7 +87,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 if (octMatcher.matches()) {
                     return 8;
                 } else {
-                    throw new NumberFormatException("Incorrect lexical representation of Integer value!"
+                    throw new NumberFormatException("Incorrect lexical representation of Integer value: " + integer
                             + "The Integer value can be defined as Integer Number, Hexadecimal Number or"
                             + "Octal Number. The sign vlues are allowed. "
                             + "Spaces between digits are NOT allowed!");
@@ -95,7 +95,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
             }
         }
     }
-    
+
     private static String normalizeHexadecimal(final String hexInt) {
         if (hexInt == null) {
             throw new IllegalArgumentException(
@@ -111,7 +111,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
         return normalizedString;
     }
-    
+
     public static final BinaryCodecStringImpl BINARY_DEFAULT_CODEC = new BinaryCodecStringImpl(
             Optional.<BinaryTypeDefinition> absent());
 

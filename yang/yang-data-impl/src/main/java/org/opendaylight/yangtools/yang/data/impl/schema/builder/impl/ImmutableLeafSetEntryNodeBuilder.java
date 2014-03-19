@@ -33,13 +33,5 @@ public class ImmutableLeafSetEntryNodeBuilder<T> extends AbstractImmutableNormal
                     "Node identifier contains different value: %s than value itself: %s", nodeIdentifier, value);
         }
 
-        @Override
-        public String toString() {
-            final StringBuffer sb = new StringBuffer("ImmutableLeafSetEntryNode{");
-            sb.append("nodeIdentifier=").append(nodeIdentifier);
-            sb.append(", value=").append(value);
-            sb.append('}');
-            return sb.toString();
-        }
     }
 }
