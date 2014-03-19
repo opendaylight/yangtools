@@ -20,7 +20,6 @@ public interface ObjectRegistration<T> extends Registration<T> {
      *
      * @return Registered object.
      */
-    @Override
     T getInstance();
 
     /**
