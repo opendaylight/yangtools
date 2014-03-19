@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
@@ -73,7 +76,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
         ImmutableLeafSetNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                 final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
-            super(nodeIdentifier, children.values());
+            super(nodeIdentifier, ImmutableList.copyOf(children.values()));
             this.mappedChildren = children;
         }
 
@@ -82,14 +85,6 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
             return Optional.fromNullable(mappedChildren.get(child));
         }
 
-        @Override
-        public String toString() {
-            final StringBuffer sb = new StringBuffer("ImmutableLeafSetNode{");
-            sb.append("nodeIdentifier=").append(nodeIdentifier);
-            sb.append(", children=").append(value);
-            sb.append('}');
-            return sb.toString();
-        }
     }
 
     @Override

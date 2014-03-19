@@ -12,6 +12,8 @@
             <uint32>32</uint32>
             <uint16>16</uint16>
         </containerInList>
+        <stringAugmentedToList>augmentInList</stringAugmentedToList>
+        <stringAugmentedToListInCase1>augmentInListCase1</stringAugmentedToListInCase1>
     </list>
     <list>
         <uint32InList>2</uint32InList>
@@ -19,19 +21,25 @@
             <uint32>32</uint32>
             <uint16>16</uint16>
         </containerInList>
+        <!--<stringAugmentedToListInCase1>augmentInListCase1</stringAugmentedToListInCase1>-->
+        <stringAugmentedToListInCase2>augmentInListCase2</stringAugmentedToListInCase2>
     </list>
     <list>
         <uint32InList>3</uint32InList>
     </list>
 
-    <augmentUint32>999</augmentUint32>
-
     <augmentString1>choice1Case1</augmentString1>
+    <!--<augmentString2>choice1Case1</augmentString2>-->
     <augmentInt1>41</augmentInt1>
+    <!--<stringInAugmentedCaseInAugmentedChoice>deep</stringInAugmentedCaseInAugmentedChoice>-->
+    <stringInAugmentedCaseInAugmentedChoiceFromAugment>deep</stringInAugmentedCaseInAugmentedChoiceFromAugment>
 
     <augmentContainer>
         <augmentStringInaugmentContainer>choice2Case1</augmentStringInaugmentContainer>
     </augmentContainer>
+
+    <augmentUint32>999</augmentUint32>
+
 
 
 </container>

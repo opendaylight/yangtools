@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -69,7 +71,7 @@ public class ImmutableMapNodeBuilder
 
         ImmutableMapNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                          final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier, children.values());
+            super(nodeIdentifier, ImmutableList.copyOf(children.values()));
             this.mappedChildren = children;
         }
 
@@ -78,13 +80,5 @@ public class ImmutableMapNodeBuilder
             return Optional.fromNullable(mappedChildren.get(child));
         }
 
-        @Override
-        public String toString() {
-            final StringBuffer sb = new StringBuffer("ImmutableMapNode{");
-            sb.append("nodeIdentifier=").append(nodeIdentifier);
-            sb.append(", children=").append(mappedChildren);
-            sb.append('}');
-            return sb.toString();
-        }
     }
 }

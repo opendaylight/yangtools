@@ -68,6 +68,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
             keysToValues.put(key, valueForKey.getValue());
         }
 
+
         return new InstanceIdentifier.NodeIdentifierWithPredicates(schema.getQName(), keysToValues);
     }
 

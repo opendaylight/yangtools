@@ -32,13 +32,5 @@ public class ImmutableLeafNodeBuilder<T> extends AbstractImmutableNormalizedNode
             super(nodeIdentifier, value);
         }
 
-        @Override
-        public String toString() {
-            final StringBuffer sb = new StringBuffer("ImmutableLeafNode{");
-            sb.append("nodeIdentifier=").append(nodeIdentifier);
-            sb.append(", value=").append(value);
-            sb.append('}');
-            return sb.toString();
-        }
     }
 }

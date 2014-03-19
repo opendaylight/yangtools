@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import com.google.common.base.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -54,6 +55,14 @@ public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifi
     @Override
     public V setValue(V value) {
         throw new UnsupportedOperationException("Immutable");
+    }
+
+    @Override
+    public final String toString() {
+        return Objects.toStringHelper(this)
+                .add("nodeIdentifier", nodeIdentifier)
+                .add("value", value)
+                .toString();
     }
 
     @Override
