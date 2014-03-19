@@ -12,8 +12,6 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -31,10 +29,10 @@ public class Immutables {
 
     /**
      * Determines if object is known to be immutable
-     * 
+     *
      * Note: This method may return false to immutable objects which
      * immutability is not known, was defined not using concepts term.
-     * 
+     *
      * @param o
      *            Reference to check
      * @return true if object is known to be immutable false otherwise.
@@ -50,17 +48,6 @@ public class Immutables {
         } else if (o instanceof String) {
             return true;
         } else if (KNOWN_IMMUTABLES.contains(o.getClass())) {
-            return true;
-        }
-        return false;
-    }
-
-    private static boolean isNumberImmutable(Number o) {
-        if(o instanceof AtomicInteger) {
-            return false;
-        } else if(o instanceof AtomicLong) {
-            return false;
-        } else if(o instanceof Short) {
             return true;
         }
         return false;
