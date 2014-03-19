@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.sun.jersey.api.client.ClientResponse;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.opendaylight.yangtools.restconf.client.to.RestRpcError;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcResult;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
@@ -38,6 +36,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.sun.jersey.api.client.ClientResponse;
+
 public class BindingToRestRpc implements InvocationHandler {
 
     private final RestconfClientImpl client;
@@ -46,7 +48,7 @@ public class BindingToRestRpc implements InvocationHandler {
     private final SchemaContext schcemaContext;
     private final Module module;
 
-    public BindingToRestRpc(Class proxiedInterface,BindingIndependentMappingService mappingService,RestconfClientImpl client,SchemaContext schemaContext) throws Exception {
+    public BindingToRestRpc(Class<?> proxiedInterface,BindingIndependentMappingService mappingService,RestconfClientImpl client,SchemaContext schemaContext) throws Exception {
         this.mappingService = mappingService;
         this.client  = client;
         this.schcemaContext = schemaContext;
