@@ -16,6 +16,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.model.api.*;
@@ -271,13 +273,31 @@ public class SchemaUtils {
 
     public static Optional<ChoiceCaseNode> detectCase(ChoiceNode schema, DataContainerChild<?, ?> child) {
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
-            for (DataSchemaNode childFromCase : choiceCaseNode.getChildNodes()) {
-                if (childFromCase.getQName().equals(child.getNodeType())) {
-                    return Optional.of(choiceCaseNode);
-                }
+            if (child instanceof AugmentationNode
+                    && belongsToCaseAugment(choiceCaseNode,
+                            (InstanceIdentifier.AugmentationIdentifier) child.getIdentifier())) {
+                return Optional.of(choiceCaseNode);
+            } else if (choiceCaseNode.getDataChildByName(child.getNodeType()) != null) {
+                return Optional.of(choiceCaseNode);
             }
         }
 
         return Optional.absent();
+    }
+
+    public static boolean belongsToCaseAugment(ChoiceCaseNode caseNode, InstanceIdentifier.AugmentationIdentifier childToProcess) {
+        for (AugmentationSchema augmentationSchema : caseNode.getAvailableAugmentations()) {
+
+            Set<QName> currentAugmentChildNodes = Sets.newHashSet();
+            for (DataSchemaNode dataSchemaNode : augmentationSchema.getChildNodes()) {
+                currentAugmentChildNodes.add(dataSchemaNode.getQName());
+            }
+
+            if(childToProcess.getPossibleChildNames().equals(currentAugmentChildNodes)){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
