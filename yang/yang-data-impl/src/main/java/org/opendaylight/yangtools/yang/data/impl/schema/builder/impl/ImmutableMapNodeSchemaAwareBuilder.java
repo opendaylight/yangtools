@@ -20,8 +20,7 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
     private final ListSchemaNode schema;
 
     protected ImmutableMapNodeSchemaAwareBuilder(ListSchemaNode schema) {
-        super();
-        this.schema = schema;
+        this.schema = Preconditions.checkNotNull(schema);
         super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 

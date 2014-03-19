@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
 
-public interface LeafSetEntryNode<T> extends NormalizedNode<NodeWithValue, T> {
+public interface LeafSetEntryNode<T> extends
+        AttributesContainer,
+        NormalizedNode<NodeWithValue, T> {
 
     @Override
     public NodeWithValue getIdentifier();

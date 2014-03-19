@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
@@ -15,10 +18,13 @@ import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
+import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
 
 public class DomUtils {
 
@@ -81,4 +87,24 @@ public class DomUtils {
     }
 
 
+    public static Map<QName, String> toAttributes(NamedNodeMap xmlAttributes) {
+        Map<QName, String> attributes = new HashMap<>();
+
+        for (int i = 0; i < xmlAttributes.getLength(); i++) {
+            Node node = xmlAttributes.item(i);
+            String namespace = node.getNamespaceURI();
+            if (namespace == null) {
+                namespace = "";
+            }
+
+            // SKip namespace definitions
+            if(namespace.equals(NamespaceContext.XMLNS_URI)) {
+                continue;
+            }
+
+            QName qName = new QName(URI.create(namespace), node.getLocalName());
+            attributes.put(qName, node.getNodeValue());
+        }
+        return attributes;
+    }
 }
