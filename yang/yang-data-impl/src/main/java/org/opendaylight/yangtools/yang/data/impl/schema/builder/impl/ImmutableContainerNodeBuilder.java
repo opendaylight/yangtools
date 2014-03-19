@@ -39,6 +39,5 @@ public class ImmutableContainerNodeBuilder extends
                 final Map<QName, String> attributes) {
             super(ImmutableMap.copyOf(children), nodeIdentifier, attributes);
         }
-
     }
 }
