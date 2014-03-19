@@ -9,33 +9,35 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
 import com.google.common.collect.ImmutableMap;
 
-public class ImmutableContainerNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> {
+public class ImmutableContainerNodeBuilder extends
+        AbstractImmutableDataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> {
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> create() {
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> create() {
         return new ImmutableContainerNodeBuilder();
     }
 
     @Override
     public ContainerNode build() {
-        return new ImmutableContainerNode(nodeIdentifier, value);
+        return new ImmutableContainerNode(nodeIdentifier, value, attributes);
     }
 
-    final class ImmutableContainerNode
-            extends AbstractImmutableDataContainerNode<InstanceIdentifier.NodeIdentifier>
-            implements ContainerNode {
+    final class ImmutableContainerNode extends
+            AbstractImmutableDataContainerAttrNode<InstanceIdentifier.NodeIdentifier> implements ContainerNode {
 
         ImmutableContainerNode(
                 final InstanceIdentifier.NodeIdentifier nodeIdentifier,
-                final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
-            super(ImmutableMap.copyOf(children), nodeIdentifier);
+                final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children,
+                final Map<QName, String> attributes) {
+            super(ImmutableMap.copyOf(children), nodeIdentifier, attributes);
         }
 
     }

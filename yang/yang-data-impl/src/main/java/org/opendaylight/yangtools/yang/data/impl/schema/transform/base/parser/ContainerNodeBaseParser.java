@@ -22,10 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.*;
 public abstract class ContainerNodeBaseParser<E> extends
         BaseDispatcherParser<E, ContainerNode, ContainerSchemaNode> {
 
-    public ContainerNodeBaseParser() {
-        super();
-    }
-
     @Override
     protected DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> getBuilder(
             ContainerSchemaNode schema) {
@@ -58,4 +54,6 @@ public abstract class ContainerNodeBaseParser<E> extends
         return SchemaUtils.mapChildElementsFromAugments(schema);
     }
 
+    @Override
+    protected abstract Map<QName, String> getAttributes(E e);
 }
