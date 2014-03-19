@@ -36,6 +36,5 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
                             final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
             super(ImmutableMap.copyOf(children), nodeIdentifier);
         }
-
     }
 }
