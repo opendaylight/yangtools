@@ -1,0 +1,344 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_900575c4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/builder/impl/ImmutableLeafSetNodeBuilder.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "ImmutableSortedSet.copyOf()?",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_700a01d4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/builder/impl/ImmutableMapEntryNodeSchemaAwareBuilder.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Rephrase/fix this",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_500ffde1",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/nodes/AbstractImmutableDataContainerNode.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "please use toStringHelper() and make toString() final",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_301489f4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/FromNormalizedNodeSerializer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "A short description of the interface (and its sibling would be nice. Please include description of E, N and S.",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_10f985c8",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/AugmentationSchemaProxy.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Either expand the description of FIXME, or fix it, please",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_f0f5d1cb",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/AugmentationSchemaProxy.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Do we need the implementation or not?",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_d002cdb3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/SchemaUtils.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Trailing whitespace, fix your editor :)",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_5026dd69",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/BaseDispatcherParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Document the expectations -- when is it invoked, can it return always the same object, etc.\n\nSame goes for abstract methods at the bottom -- please keep them together.",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_7031e1a1",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/BaseDispatcherParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Should this be final?",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_302b6932",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/ChoiceNodeBaseParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Should these implementations be final? Also, the class is abstract, but does not carry that in its name ... comments explaining this would be appropriate",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_f01cb115",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/LeafSetEntryNodeBaseParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Document abstract method",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_b01639f0",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/LeafSetNodeBaseParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "this is referenced in parse() below. What is the lifecycle and what is the thread-safety model here?\n\nCould this be made final such that it is always non-null and thread-safe?",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_90d33538",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/serializer/ContainerNodeBaseSerializer.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Should these be final?",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_70d8c153",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/DomUtils.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Move this into the coded !\u003d null case or reuse it for value",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_50ddbd41",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/AugmentationNodeDomParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "final?",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_30e24904",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/AugmentationNodeDomParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Can codecProvider be null? Preconditions.checkNotNull() or document what happens for null.",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_10e74514",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/LeafSetEntryNodeDomParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Can this be null?",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_f0e39103",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/LeafSetNodeDomParser.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Smells like a constructor argument...",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_d0f08dcb",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/serializer/DomNodeSerializerDispatcher.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "This looks like a race ... what is the story of doc vs. document? Document the intent here. Synchronized block is probably needed, too.",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_b0ed19f2",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/NormalizedDataBuilderTest.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-19T14:56:28Z",
+      "side": 1,
+      "message": "Please set your editor to expand .* imports.",
+      "revId": "8b3c9d76e586e5901a9169145a0538479e4d3fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
