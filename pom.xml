@@ -29,7 +29,7 @@
 
         <!-- Build Plugin Versions -->
         <maven.bundle.version>2.4.0</maven.bundle.version>
-        <maven.jar.version>2.4</maven.jar.version>
+        <maven.jar.version>2.3.2</maven.jar.version>
         <maven.javadoc.version>2.9.1</maven.javadoc.version>
         <maven.release.version>2.4.2</maven.release.version>
         <maven.source.version>2.2.1</maven.source.version>

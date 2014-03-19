@@ -13,13 +13,14 @@ import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifier.PathArgument,V>
         implements NormalizedNode<K, V>, Immutable {
 
     protected final K nodeIdentifier;
-    protected V value;
+    protected final V value;
 
     protected AbstractImmutableNormalizedNode(K nodeIdentifier, V value) {
         this.nodeIdentifier = Preconditions.checkNotNull(nodeIdentifier, "nodeIdentifier");
@@ -27,33 +28,41 @@ public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifi
     }
 
     @Override
-    public QName getNodeType() {
+    public final QName getNodeType() {
         return getIdentifier().getNodeType();
     }
 
     @Override
-    public K getIdentifier() {
+    public final K getIdentifier() {
         return nodeIdentifier;
     }
 
     @Override
-    public CompositeNode getParent() {
+    public final CompositeNode getParent() {
         throw new UnsupportedOperationException("Deprecated");
     }
 
     @Override
-    public QName getKey() {
+    public final QName getKey() {
         return getNodeType();
     }
 
     @Override
-    public V getValue() {
+    public final V getValue() {
         return value;
     }
 
     @Override
-    public V setValue(V value) {
+    public final V setValue(V value) {
         throw new UnsupportedOperationException("Immutable");
+    }
+
+    @Override
+    public final String toString() {
+        return Objects.toStringHelper(this)
+                .add("nodeIdentifier", nodeIdentifier)
+                .add("value", value)
+                .toString();
     }
 
     @Override
@@ -61,7 +70,7 @@ public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifi
         if (this == o) return true;
         if (!(o instanceof AbstractImmutableNormalizedNode)) return false;
 
-        AbstractImmutableNormalizedNode that = (AbstractImmutableNormalizedNode) o;
+        AbstractImmutableNormalizedNode<?, ?> that = (AbstractImmutableNormalizedNode<?, ?>) o;
 
         if (!nodeIdentifier.equals(that.nodeIdentifier)) return false;
         if (!value.equals(that.value)) return false;

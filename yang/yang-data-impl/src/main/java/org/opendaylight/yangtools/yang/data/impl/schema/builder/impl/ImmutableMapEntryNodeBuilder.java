@@ -39,14 +39,24 @@ public class ImmutableMapEntryNodeBuilder
     @Override
     public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withValue(final List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
         for (DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> childId : value) {
-            this.childrenQNamesToPaths.put(childId.getNodeType(), childId.getIdentifier());
+            InstanceIdentifier.PathArgument identifier = childId.getIdentifier();
+
+            // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
+            if(identifier instanceof InstanceIdentifier.AugmentationIdentifier) {
+                continue;
+            }
+
+            this.childrenQNamesToPaths.put(childId.getNodeType(), identifier);
         }
         return super.withValue(value);
     }
 
     @Override
     public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
-        childrenQNamesToPaths.put(child.getNodeType(), child.getIdentifier());
+        // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
+        if(child.getIdentifier() instanceof InstanceIdentifier.AugmentationIdentifier == false) {
+            childrenQNamesToPaths.put(child.getNodeType(), child.getIdentifier());
+        }
         return super.withChild(child);
     }
 

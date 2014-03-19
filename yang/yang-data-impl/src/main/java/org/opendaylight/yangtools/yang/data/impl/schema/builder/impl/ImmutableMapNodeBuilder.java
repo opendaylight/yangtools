@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 public class ImmutableMapNodeBuilder
@@ -69,7 +70,7 @@ public class ImmutableMapNodeBuilder
 
         ImmutableMapNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                          final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier, children.values());
+            super(nodeIdentifier, ImmutableList.copyOf(children.values()));
             this.mappedChildren = children;
         }
 
@@ -78,13 +79,5 @@ public class ImmutableMapNodeBuilder
             return Optional.fromNullable(mappedChildren.get(child));
         }
 
-        @Override
-        public String toString() {
-            final StringBuffer sb = new StringBuffer("ImmutableMapNode{");
-            sb.append("nodeIdentifier=").append(nodeIdentifier);
-            sb.append(", children=").append(mappedChildren);
-            sb.append('}');
-            return sb.toString();
-        }
     }
 }
