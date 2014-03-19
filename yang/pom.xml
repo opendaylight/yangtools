@@ -25,6 +25,7 @@
         <module>yang-data-api</module>
         <module>yang-data-util</module>
         <module>yang-data-impl</module>
+        <module>yang-data-operations</module>
         <module>yang-model-api</module>
         <module>yang-maven-plugin</module>
         <module>yang-maven-plugin-it</module>
@@ -47,6 +48,11 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-data-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
