@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Supplier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import com.google.common.base.Preconditions;
 
 public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBuilder {
 
@@ -35,9 +34,15 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> withChild(DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
         if(detectedCase == null) {
-            detectedCase = detectCase(child);
+            detectedCase = SchemaUtils.detectCase(schema, child).or(new Supplier<ChoiceCaseNode>() {
+                @Override
+                public ChoiceCaseNode get() {
+                    throw new IllegalArgumentException(String.format("Unknown child node: %s, for choice: %s", child.getNodeType(),
+                            schema.getQName()));
+                }
+            });
             validator = new DataNodeContainerValidator(detectedCase);
         }
 
@@ -50,19 +55,6 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
     public ChoiceNode build() {
         // TODO validate when statement
         return super.build();
-    }
-
-    private ChoiceCaseNode detectCase(DataContainerChild<?, ?> child) {
-        for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
-            for (DataSchemaNode childFromCase : choiceCaseNode.getChildNodes()) {
-                if (childFromCase.getQName().equals(child.getNodeType())) {
-                    return choiceCaseNode;
-                }
-            }
-        }
-
-        throw new IllegalArgumentException(String.format("Unknown child node: %s, for choice: %s", child.getNodeType(),
-                schema.getQName()));
     }
 
     public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> create(org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {

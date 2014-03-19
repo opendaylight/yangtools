@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
@@ -73,7 +74,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
         ImmutableLeafSetNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                 final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
-            super(nodeIdentifier, children.values());
+            super(nodeIdentifier, ImmutableList.copyOf(children.values()));
             this.mappedChildren = children;
         }
 
@@ -82,14 +83,6 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
             return Optional.fromNullable(mappedChildren.get(child));
         }
 
-        @Override
-        public String toString() {
-            final StringBuffer sb = new StringBuffer("ImmutableLeafSetNode{");
-            sb.append("nodeIdentifier=").append(nodeIdentifier);
-            sb.append(", children=").append(value);
-            sb.append('}');
-            return sb.toString();
-        }
     }
 
     @Override
