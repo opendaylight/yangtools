@@ -50,7 +50,7 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
             registrations = new HashSet<>();
         }
 
-        public CompositeObjectRegistrationBuilder<T> add(Registration<? super T> registration) {
+        public CompositeObjectRegistrationBuilder<T> add(ObjectRegistration<? super T> registration) {
             if (registration.getInstance() != instance) {
                 throw new IllegalArgumentException("Instance must be same.");
             }
@@ -58,14 +58,14 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
             return this;
         }
 
-        public CompositeObjectRegistrationBuilder<T> remove(Registration<? super T> registration) {
+        public CompositeObjectRegistrationBuilder<T> remove(ObjectRegistration<? super T> registration) {
             if (registration.getInstance() != instance) {
                 throw new IllegalArgumentException("Instance must be same.");
             }
             registrations.remove(registration);
             return this;
         }
-        
+
         @Override
         public CompositeObjectRegistration<T> toInstance() {
             return new CompositeObjectRegistration<>(instance, registrations);
