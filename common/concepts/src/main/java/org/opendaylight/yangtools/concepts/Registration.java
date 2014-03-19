@@ -16,21 +16,6 @@ package org.opendaylight.yangtools.concepts;
  */
 public interface Registration<T> extends AutoCloseable {
     /**
-     * Return the object instance.
-     *
-     * @return Registered object.
-     *
-     * @deprecated This class is currently deprecated pending its rework for
-     *             general-purpose registration. This rework will remove the
-     *             getInstance() method, such that the registration is no
-     *             longer tied to a particular object. Please use
-     *             {@link ObjectRegistration} to ensure your code does not
-     *             break when that happens.
-     */
-    @Deprecated
-    T getInstance();
-
-    /**
      * Unregisters the object. This operation is required not to invoke
      * blocking operations. Implementations which require interaction
      * with outside world must provide guarantees that any work is done
