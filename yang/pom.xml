@@ -32,6 +32,7 @@
         <module>yang-model-util</module>
         <module>yang-parser-api</module>
         <module>yang-parser-impl</module>
+        <module>yang-data-json</module>
     </modules>
 
     <properties>
@@ -100,6 +101,16 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
                 <version>3.0.5</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.yangtools</groupId>
+              <artifactId>yang-data-json</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.yangtools</groupId>
+              <artifactId>yang-data-impl</artifactId>
+              <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

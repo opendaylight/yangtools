@@ -27,7 +27,11 @@ public class ImmutableLeafNodeBuilder<T> extends AbstractImmutableNormalizedNode
         return new ImmutableLeafNode<>(nodeIdentifier, value, attributes);
     }
 
+<<<<<<< HEAD
     static final class ImmutableLeafNode<T> extends AbstractImmutableNormalizedAttrNode<InstanceIdentifier.NodeIdentifier, T> implements LeafNode<T> {
+=======
+    public static final class ImmutableLeafNode<T> extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, T> implements LeafNode<T> {
+>>>>>>> 040a1a5... laco
 
         ImmutableLeafNode(InstanceIdentifier.NodeIdentifier nodeIdentifier, T value, Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);
