@@ -25,7 +25,6 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
     private final DataNodeContainerValidator validator;
 
     protected ImmutableAugmentationNodeSchemaAwareBuilder(AugmentationSchema schema) {
-        super();
         this.validator = new DataNodeContainerValidator(schema);
         // TODO no QName for augmentation
         super.withNodeIdentifier(new InstanceIdentifier.AugmentationIdentifier(null, getChildQNames(schema)));

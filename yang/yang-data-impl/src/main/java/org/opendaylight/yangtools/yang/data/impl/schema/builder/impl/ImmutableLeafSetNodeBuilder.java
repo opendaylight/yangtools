@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
@@ -60,11 +62,19 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         return this;
     }
 
+
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value, Map<QName, String> attributes) {
         return withChild(new ImmutableLeafSetEntryNodeBuilder.ImmutableLeafSetEntryNode<>(
-                new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value));
+                new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value, attributes));
+
     }
+
+    @Override
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(T value) {
+        return withChildValue(value, Collections.<QName,String>emptyMap());
+    }
+
 
     private final static class ImmutableLeafSetNode<T> extends
             AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements

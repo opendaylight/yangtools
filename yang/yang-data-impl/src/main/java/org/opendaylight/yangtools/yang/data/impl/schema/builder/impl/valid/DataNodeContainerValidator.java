@@ -12,7 +12,11 @@ import java.util.Collections;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeSchemaAwareBuilder;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -23,10 +27,10 @@ import com.google.common.base.Preconditions;
 public class DataNodeContainerValidator {
 
     private final DataNodeContainer schema;
-    private Collection<AugmentationSchema> augmentations;
+    private final Collection<AugmentationSchema> augmentations;
 
     public DataNodeContainerValidator(DataNodeContainer schema) {
-        this.schema = schema;
+        this.schema = Preconditions.checkNotNull(schema);
         augmentations = schema instanceof AugmentationTarget ? ((AugmentationTarget) schema)
                 .getAvailableAugmentations() : Collections.<AugmentationSchema> emptyList();
     }
