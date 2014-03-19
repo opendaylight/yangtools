@@ -58,6 +58,8 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         // FIXME should be all PRESENT child nodes, not all from schema
         if(keys.isEmpty()) {
             keys = childrenQNamesToPaths.keySet();
+            // remove nulls, augments have null QName therefore nulls might be present, FIXME
+            keys.remove(null);
         }
 
         Map<QName, Object> keysToValues = Maps.newHashMap();
@@ -67,6 +69,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
             Preconditions.checkState(valueForKey != null, "Key value: %s cannot be empty for: %s", key, schema.getQName());
             keysToValues.put(key, valueForKey.getValue());
         }
+
 
         return new InstanceIdentifier.NodeIdentifierWithPredicates(schema.getQName(), keysToValues);
     }
