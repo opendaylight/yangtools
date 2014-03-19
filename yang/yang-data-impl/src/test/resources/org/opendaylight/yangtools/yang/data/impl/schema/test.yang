@@ -72,7 +72,33 @@ module test {
             type string;
         }
 
-        uses listGroup;
+        uses listGroup {
+            augment "list/" {
+                leaf stringAugmentedToList{
+                    type string;
+                }
+
+                choice choiceInList {
+                    case caseInList1 {
+                        leaf stringAugmentedToListInCase1 {
+                            type string;
+                        }
+                    }
+                    case caseInList2 {
+                        leaf stringAugmentedToListInCase2 {
+                            type string;
+                        }
+                    }
+                }
+            }
+        }
+
+        list directList {
+            leaf stringInDirectList {
+                type string;
+            }
+        }
+
         uses innerContainerGrouping;
 
         choice choice{}
@@ -101,6 +127,12 @@ module test {
         }
     }
 
+    augment "/container/directList/" {
+        leaf augmentedString {
+            type uint32;
+        }
+    }
+
     augment "/container/choice/" {
         case test-identity-augment {
             when "/container/identityRef = 'test-identity'";
@@ -124,6 +156,32 @@ module test {
         }
     }
 
+    augment "/container/choice/test-identity-augment/" {
+
+        choice augmentedChoiceInCase {
+
+            case augmentedCaseInAugmentedChoice {
+                leaf stringInAugmentedCaseInAugmentedChoice {
+                    type string;
+                }
+            }
+
+            case augmentedCaseInAugmentedChoice2 {
+                leaf stringInAugmentedCaseInAugmentedChoice2 {
+                    type string;
+                }
+            }
+        }
+    }
+
+    augment "/container/choice/test-identity-augment/augmentedChoiceInCase/" {
+        case augmentedCaseInAugmentedChoiceFromAugment {
+            leaf stringInAugmentedCaseInAugmentedChoiceFromAugment {
+                type string;
+            }
+        }
+    }
+
     augment "/container/choice2/" {
         case test-identity-augment {
             when "/container/identityRef = 'test-identity'";
@@ -143,6 +201,21 @@ module test {
         }
     }
 
+
+    augment "/container/choice2/test-identity-augment2/augmentedList/" {
+
+        container augmentedContainerInAugmentedListInAugmentedCase {
+            leaf-list leafInAugmentedContainerInAugmentedListInAugmentedCase {
+                type uint32;
+            }
+        }
+
+        list augmentedListInAugmentedListInAugmentedCase {
+            leaf-list leafInAugmentedListInAugmentedListInAugmentedCase {
+                    type uint32;
+                }
+        }
+    }
 
     identity test-identity {}
     identity test-identity2 {
