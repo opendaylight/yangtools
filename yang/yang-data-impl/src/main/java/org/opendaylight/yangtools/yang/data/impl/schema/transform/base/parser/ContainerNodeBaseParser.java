@@ -62,4 +62,6 @@ public abstract class ContainerNodeBaseParser<E> extends
         return SchemaUtils.mapChildElementsFromAugments(schema);
     }
 
+    @Override
+    protected abstract Map<QName, String> getAttributes(E e);
 }

@@ -19,8 +19,7 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
     private final LeafListSchemaNode schema;
 
     private ImmutableLeafSetNodeSchemaAwareBuilder(LeafListSchemaNode schema) {
-        super();
-        this.schema = schema;
+        this.schema = Preconditions.checkNotNull(schema);
         super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 

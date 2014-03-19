@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base;
 
+
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -18,11 +19,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.model.api.*;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class SchemaUtils {
 
@@ -270,10 +267,9 @@ public final class SchemaUtils {
             AugmentationSchema augmentSchema) {
         Set<DataSchemaNode> realChildNodes = Sets.newHashSet();
         for (DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
-            DataSchemaNode realChild = ((DataNodeContainer) targetSchema).getDataChildByName(dataSchemaNode.getQName());
+            DataSchemaNode realChild = targetSchema.getDataChildByName(dataSchemaNode.getQName());
             realChildNodes.add(realChild);
         }
-
         return realChildNodes;
     }
 
