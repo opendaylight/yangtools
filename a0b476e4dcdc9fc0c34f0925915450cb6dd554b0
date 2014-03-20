@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_d0808d8d",
+        "filename": "websocket/websocket-client/src/test/java/org/opendaylight/yangtools/websocket/WebSocketClientTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-20T08:57:51Z",
+      "side": 1,
+      "message": "I don\u0027t think this variable should be static",
+      "revId": "a0b476e4dcdc9fc0c34f0925915450cb6dd554b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_b07d19b4",
+        "filename": "websocket/websocket-client/src/test/java/org/opendaylight/yangtools/websocket/server/WebSocketServer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-20T08:57:51Z",
+      "side": 1,
+      "message": "Please use http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/util/concurrent/SettableFuture.html instead.",
+      "revId": "a0b476e4dcdc9fc0c34f0925915450cb6dd554b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
