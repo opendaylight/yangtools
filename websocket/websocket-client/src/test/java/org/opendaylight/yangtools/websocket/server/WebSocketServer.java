@@ -31,6 +31,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+
+import com.google.common.util.concurrent.SettableFuture;
+
 /**
  * A HTTP server which serves Web Socket requests at:
  *
@@ -53,87 +56,15 @@ import java.util.concurrent.TimeoutException;
 public class WebSocketServer implements Runnable {
 
     /**
-     * Simple Future implementation to allow the retrival of the port number
-     * used by the server when a random port is assigned. Essentially the
-     * port number is not known until after the server is started and as
-     * such clients that request the port before the server is start must
-     * wait.
+     * Utilized to get the port on which the server listens. This is a future as
+     * the port is selected dynamically from available ports, thus until the
+     * server is started the value will not be established.
      */
-    private class AssignedPort implements Future<Integer> {
+    private final SettableFuture<Integer> port;
 
-        /**
-         * The value, null is used to indicate the value has not been set
-         */
-        private Integer value = null;
-
-        /**
-         * Cancel is not supported in this implementation
-         */
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            throw new UnsupportedOperationException();
-        }
-
-        /*
-         * Wait until the value is set, then return it
-         */
-        @Override
-        public Integer get() throws InterruptedException, ExecutionException {
-            synchronized (this) {
-                if (value == null) {
-					this.wait();
-                }
-            }
-            return value;
-        }
-
-        /*
-         * Wait for a specified time and then return the value
-         */
-        @Override
-        public Integer get(long timeout, TimeUnit unit) throws  InterruptedException,
-             ExecutionException, TimeoutException {
-            synchronized (this) {
-                if (value == null) {
-					this.wait(TimeUnit.MILLISECONDS.convert(timeout, unit));
-
-                    // If after the wait returns the value is still null, then
-                    // the wait timed out, so throw a time out exception.
-                    if (value == null) {
-                        throw new TimeoutException();
-                    }
-                }
-            }
-            return value;
-        }
-
-        /**
-         * Cancel is not supported
-         */
-        @Override
-        public boolean isCancelled() {
-            return false;
-        }
-
-        @Override
-        public boolean isDone() {
-            return value != null;
-        }
-
-        /**
-         * Assigns a value ot the future and notifies anyone waiting on that
-         * value.
-         * @param value the value for the future
-         */
-        void setValue(Integer value) {
-            synchronized (this) {
-                this.value = value;
-                this.notifyAll();
-            }
-        }
-    }
-
-    private AssignedPort port;
+    /**
+     * Maintains the port number with which the class was initialized.
+     */
     private final int inPort;
     private final ServerBootstrap bootstrap = new ServerBootstrap();
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -143,7 +74,7 @@ public class WebSocketServer implements Runnable {
 
     public WebSocketServer(int inPort) {
         this.inPort = inPort;
-        port = new AssignedPort();
+        port = SettableFuture.<Integer>create();
     }
 
     public void run(){
@@ -166,18 +97,22 @@ public class WebSocketServer implements Runnable {
 
             Channel ch = bootstrap.bind(inPort).sync().channel();
             SocketAddress localSocket = ch.localAddress();
-            if (localSocket instanceof InetSocketAddress) {
-                port.setValue(((InetSocketAddress) localSocket).getPort());
+            try {
+                port.set(((InetSocketAddress) localSocket).getPort());
+            } catch (ClassCastException cce) {
+                throw new ExecutionException("Unknown socket address type", cce);
             }
             logger.info("Web socket server started at port " + port.get() + '.');
             logger.info("Open your browser and navigate to http://localhost:" + port.get() + '/');
 
-            ch.closeFuture().sync();
+            try {
+                ch.closeFuture().sync();
+            } catch (InterruptedException ie) {
+                // No op, sometimes the server is shutdown hard
+            }
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
     }
-
-
 }

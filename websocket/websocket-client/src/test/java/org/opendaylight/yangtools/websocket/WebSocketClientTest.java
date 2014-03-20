@@ -7,22 +7,41 @@
  */
 package org.opendaylight.yangtools.websocket;
 
-import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.websocket.client.WebSocketIClient;
-import org.opendaylight.yangtools.websocket.server.WebSocketServer;
+import org.junit.Assert;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.opendaylight.yangtools.websocket.client.WebSocketIClient;
+import org.opendaylight.yangtools.websocket.server.WebSocketServer;
+
+import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
+
+import com.google.common.util.concurrent.SettableFuture;
 
 public class WebSocketClientTest {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketClientTest.class.toString());
     private static final String MESSAGE = "Take me to your leader!";
     private Thread webSocketServerThread;
-    private static int port = 0;
 
+    /**
+     * Tracks if the message from the server has been received
+     */
+    private SettableFuture<Boolean> messageReceived = SettableFuture.<Boolean>create();
+
+    /**
+     * Tracks the port on which the server is listening
+     */
+    private int port = 0;
 
     @Before
     public void startWebSocketServer(){
@@ -50,20 +69,33 @@ public class WebSocketClientTest {
                 wsClient.connect();
                 wsClient.writeAndFlush(MESSAGE);
                 wsClient.writeAndFlush(new CloseWebSocketFrame());
+
+                /*
+                 * Wait for up to 5 seconds for the message to be received. If
+                 * after that time, the message has not been received then
+                 * consider this a failed test.
+                 */
+                messageReceived.get(5, TimeUnit.SECONDS);
+
                 webSocketServerThread.interrupt();
             } catch (InterruptedException e) {
-                logger.info("WebSocket client couldn't connect to : "+uri);
+                logger.info("WebSocket client couldn't connect to : " + uri);
+                Assert.fail("WebSocker client could not connect to : " + uri);
+            } catch (ExecutionException | TimeoutException toe) {
+                logger.info("Message not received");
+                Assert.fail(toe.toString());
             }
         } catch (URISyntaxException e) {
             logger.info("There is an error in URL sytnax {}",e);
+            Assert.fail("There is an error in URL sytnax");
         }
     }
 
     private class ClientMessageCallback implements org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback {
         @Override
         public void onMessageReceived(Object message) {
-           logger.info("received message {}",message);
-           System.out.println("received message : " + message);
+            logger.info("received message {}",message);
+            messageReceived.set(true);
         }
     }
 }
