@@ -9,13 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import java.util.List;
 
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -40,39 +35,31 @@ public interface NodeParserDispatcher<E> {
      * The same instance of parser can be provided in case it is immutable.
      */
     public static abstract class BaseNodeParserDispatcher<E> implements NodeParserDispatcher<E> {
+        private final ToNormalizedNodeParserFactory<E> factory;
+
+        protected BaseNodeParserDispatcher(final ToNormalizedNodeParserFactory<E> factory) {
+            this.factory = Preconditions.checkNotNull(factory);
+        }
 
         @Override
         public final DataContainerChild<?, ?> dispatchChildElement(Object schema, List<E> childNodes) {
             Preconditions.checkArgument(childNodes.isEmpty() == false);
 
             if (schema instanceof ContainerSchemaNode) {
-                return getContainerNodeParser().parse(childNodes, (ContainerSchemaNode) schema);
+                return factory.getContainerNodeParser().parse(childNodes, (ContainerSchemaNode) schema);
             } else if (schema instanceof LeafSchemaNode) {
-                return getLeafNodeParser().parse(childNodes, (LeafSchemaNode) schema);
+                return factory.getLeafNodeParser().parse(childNodes, (LeafSchemaNode) schema);
             } else if (schema instanceof LeafListSchemaNode) {
-                return getLeafSetNodeParser().parse(childNodes, (LeafListSchemaNode) schema);
+                return factory.getLeafSetNodeParser().parse(childNodes, (LeafListSchemaNode) schema);
             } else if (schema instanceof ListSchemaNode) {
-                return getMapNodeParser().parse(childNodes, (ListSchemaNode) schema);
+                return factory.getMapNodeParser().parse(childNodes, (ListSchemaNode) schema);
             } else if (schema instanceof ChoiceNode) {
-                return getChoiceNodeParser().parse(childNodes, (ChoiceNode) schema);
+                return factory.getChoiceNodeParser().parse(childNodes, (ChoiceNode) schema);
             } else if (schema instanceof AugmentationSchema) {
-                return getAugmentationNodeParser().parse(childNodes, (AugmentationSchema) schema);
+                return factory.getAugmentationNodeParser().parse(childNodes, (AugmentationSchema) schema);
             }
 
             throw new IllegalArgumentException("Unable to parse node, unknown schema type: " + schema.getClass());
         }
-
-        protected abstract ToNormalizedNodeParser<E, ContainerNode, ContainerSchemaNode> getContainerNodeParser();
-
-        protected abstract ToNormalizedNodeParser<E, LeafNode<?>, LeafSchemaNode> getLeafNodeParser();
-
-        protected abstract ToNormalizedNodeParser<E, LeafSetNode<?>, LeafListSchemaNode> getLeafSetNodeParser();
-
-        protected abstract ToNormalizedNodeParser<E, MapNode, ListSchemaNode> getMapNodeParser();
-
-        protected abstract ToNormalizedNodeParser<E, org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode, ChoiceNode> getChoiceNodeParser();
-
-        protected abstract ToNormalizedNodeParser<E, AugmentationNode, AugmentationSchema> getAugmentationNodeParser();
-
     }
 }

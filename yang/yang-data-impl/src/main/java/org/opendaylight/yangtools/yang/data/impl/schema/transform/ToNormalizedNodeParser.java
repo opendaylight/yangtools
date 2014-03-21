@@ -34,6 +34,4 @@ public interface ToNormalizedNodeParser<E, N extends NormalizedNode<?, ?>, S> {
      * @return NormalizedNode as a result of parsing list of E elements with schema S
      */
     N parse(Iterable<E> xmlDom, S schema);
-
-
 }

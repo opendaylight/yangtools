@@ -13,11 +13,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serialize
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
-public class MapNodeDomSerializer extends MapNodeBaseSerializer<Element> {
+final class MapNodeDomSerializer extends MapNodeBaseSerializer<Element> {
 
     private final FromNormalizedNodeSerializer<Element, MapEntryNode, ListSchemaNode> mapEntrySerializer;
 
-    public MapNodeDomSerializer(MapEntryNodeDomSerializer mapEntrySerializer) {
+    MapNodeDomSerializer(MapEntryNodeDomSerializer mapEntrySerializer) {
         this.mapEntrySerializer = mapEntrySerializer;
     }
 

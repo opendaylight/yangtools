@@ -19,13 +19,13 @@ import org.w3c.dom.Element;
 
 import com.google.common.base.Preconditions;
 
-public class ContainerNodeDomSerializer extends
+final class ContainerNodeDomSerializer extends
         ContainerNodeBaseSerializer<Element> {
 
-    private final Document doc;
     private final NodeSerializerDispatcher<Element> dispatcher;
+    private final Document doc;
 
-    public ContainerNodeDomSerializer(final Document doc, final NodeSerializerDispatcher<Element> dispatcher) {
+    ContainerNodeDomSerializer(final Document doc, final NodeSerializerDispatcher<Element> dispatcher) {
         this.doc = Preconditions.checkNotNull(doc);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }

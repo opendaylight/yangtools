@@ -13,11 +13,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.Le
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.w3c.dom.Element;
 
-public class LeafSetNodeDomParser extends LeafSetNodeBaseParser<Element> {
+final class LeafSetNodeDomParser extends LeafSetNodeBaseParser<Element> {
 
     private final LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser;
 
-    public LeafSetNodeDomParser(LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser) {
+    LeafSetNodeDomParser(LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser) {
         this.leafSetEntryNodeBaseParser = leafSetEntryNodeBaseParser;
     }
 

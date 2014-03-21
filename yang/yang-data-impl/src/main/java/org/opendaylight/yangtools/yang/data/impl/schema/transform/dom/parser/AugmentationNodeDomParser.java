@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.AugmentationNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -17,12 +16,12 @@ import org.w3c.dom.Element;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedListMultimap;
 
-public final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element> {
+final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element> {
 
-    private final XmlCodecProvider codecProvider;
+    private final NodeParserDispatcher<Element> dispatcher;
 
-    public AugmentationNodeDomParser(XmlCodecProvider codecProvider) {
-        this.codecProvider = Preconditions.checkNotNull(codecProvider);
+    AugmentationNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
     @Override
@@ -32,7 +31,7 @@ public final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<
 
     @Override
     protected NodeParserDispatcher<Element> getDispatcher() {
-        return DomNodeDispatcher.getInstance(codecProvider);
+        return dispatcher;
     }
 
 }

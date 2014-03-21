@@ -7,23 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.LeafSetEntryNodeBaseSerializer;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class LeafSetEntryNodeDomSerializer extends
+import com.google.common.base.Preconditions;
+
+final class LeafSetEntryNodeDomSerializer extends
         LeafSetEntryNodeBaseSerializer<Element> {
 
     private final Document doc;
     private final XmlCodecProvider codecProvider;
 
-    public LeafSetEntryNodeDomSerializer(Document doc, XmlCodecProvider codecProvider) {
+    LeafSetEntryNodeDomSerializer(Document doc, XmlCodecProvider codecProvider) {
         this.doc = Preconditions.checkNotNull(doc);
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
