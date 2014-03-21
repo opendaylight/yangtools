@@ -5,24 +5,25 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
+package org.opendaylight.yangtools.yang.data.json.schema.cnsn.parser;
 
+import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.MapNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.w3c.dom.Element;
 
-final class MapNodeDomParser extends MapNodeBaseParser<Element> {
+public final class MapNodeCnSnParser extends MapNodeBaseParser<Node<?>> {
 
-    private final MapEntryNodeDomParser mapEntryParser;
+    private final MapEntryNodeCnSnParser mapEntryNodeCnSnParser;
 
-    MapNodeDomParser(MapEntryNodeDomParser mapEntryParser) {
-        this.mapEntryParser = mapEntryParser;
+    public MapNodeCnSnParser() {
+        this.mapEntryNodeCnSnParser = new MapEntryNodeCnSnParser();
     }
 
     @Override
-    protected ToNormalizedNodeParser<Element, MapEntryNode, ListSchemaNode> getMapEntryNodeParser() {
-        return mapEntryParser;
+    protected ToNormalizedNodeParser<Node<?>, MapEntryNode, ListSchemaNode> getMapEntryNodeParser() {
+        return mapEntryNodeCnSnParser;
     }
+
 }

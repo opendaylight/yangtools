@@ -5,24 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
+package org.opendaylight.yangtools.yang.data.json.schema.cnsn.parser;
 
+import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafSetNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.w3c.dom.Element;
 
-final class LeafSetNodeDomParser extends LeafSetNodeBaseParser<Element> {
+public class LeafSetNodeCnSnParser extends LeafSetNodeBaseParser<Node<?>> {
 
-    private final LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser;
+    private final LeafSetEntryNodeCnSnParser leafSetEntryNodeCnSnParser;
 
-    LeafSetNodeDomParser(LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser) {
-        this.leafSetEntryNodeBaseParser = leafSetEntryNodeBaseParser;
+    public LeafSetNodeCnSnParser() {
+        leafSetEntryNodeCnSnParser = new LeafSetEntryNodeCnSnParser();
     }
 
     @Override
-    protected ToNormalizedNodeParser<Element, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeParser() {
-        return leafSetEntryNodeBaseParser;
+    protected ToNormalizedNodeParser<Node<?>, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeParser() {
+        return leafSetEntryNodeCnSnParser;
     }
 }
