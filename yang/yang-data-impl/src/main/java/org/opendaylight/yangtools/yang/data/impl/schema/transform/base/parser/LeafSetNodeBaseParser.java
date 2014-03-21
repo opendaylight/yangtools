@@ -29,7 +29,7 @@ public abstract class LeafSetNodeBaseParser<E> implements
 
         ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder = Builders.leafSetBuilder(schema);
         for (E childNode : childNodes) {
-            LeafSetEntryNode<?> builtChild = getLeafSetEntryNodeBaseParser().parse(
+            LeafSetEntryNode<?> builtChild = getLeafSetEntryNodeParser().parse(
                     Collections.singletonList(childNode), schema);
 
             // TODO: can we get rid of this cast/SuppressWarnings somehow?
@@ -45,5 +45,5 @@ public abstract class LeafSetNodeBaseParser<E> implements
      *
      * @return parser for inner LeafSetEntryNodes used to parse every entry of LeafSetNode, might be the same instance in case its immutable
      */
-    protected abstract ToNormalizedNodeParser<E, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeBaseParser();
+    protected abstract ToNormalizedNodeParser<E, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeParser();
 }
