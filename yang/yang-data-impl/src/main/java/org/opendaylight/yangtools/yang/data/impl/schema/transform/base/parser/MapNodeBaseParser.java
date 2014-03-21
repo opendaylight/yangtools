@@ -28,7 +28,7 @@ public abstract class MapNodeBaseParser<E> implements ToNormalizedNodeParser<E, 
         CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder(schema);
 
         for (E childNode : childNodes) {
-            MapEntryNode listChild = getMapEntryNodeDomParser().parse(Collections.singletonList(childNode), schema);
+            MapEntryNode listChild = getMapEntryNodeParser().parse(Collections.singletonList(childNode), schema);
             listBuilder.withChild(listChild);
         }
 
@@ -39,6 +39,6 @@ public abstract class MapNodeBaseParser<E> implements ToNormalizedNodeParser<E, 
      *
      * @return parser for inner MapEntryNodes used to parse every entry of MapNode, might be the same instance in case its immutable
      */
-    protected abstract ToNormalizedNodeParser<E, MapEntryNode, ListSchemaNode> getMapEntryNodeDomParser();
+    protected abstract ToNormalizedNodeParser<E, MapEntryNode, ListSchemaNode> getMapEntryNodeParser();
 
 }
