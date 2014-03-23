@@ -11,7 +11,7 @@
 
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools</artifactId>
+        <artifactId>common-parent</artifactId>
         <version>0.6.2-SNAPSHOT</version>
     </parent>
 
