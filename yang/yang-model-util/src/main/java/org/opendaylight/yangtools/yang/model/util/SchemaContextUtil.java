@@ -7,28 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.*;
 
 import com.google.common.base.Preconditions;
 
@@ -390,6 +379,244 @@ public class SchemaContextUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Utility method which search for original node defined in grouping.
+     *
+     * @param node
+     * @return
+     */
+    public static DataSchemaNode findOriginal(DataSchemaNode node, SchemaContext ctx) {
+        DataSchemaNode result = findCorrectTargetFromGrouping(node, ctx);
+        if (result == null) {
+            result = findCorrectTargetFromAugment(node, ctx);
+            if (result != null) {
+                if (result.isAddedByUses()) {
+                    result = findOriginal(result, ctx);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static DataSchemaNode findCorrectTargetFromGrouping(DataSchemaNode node, SchemaContext ctx) {
+        if (node.getPath().getPath().size() == 1) {
+            // uses is under module statement
+            Module m = findParentModule(ctx, node);
+            DataSchemaNode result = null;
+            for (UsesNode u : m.getUses()) {
+                SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPath());
+                if (!(targetGrouping instanceof GroupingDefinition)) {
+                    throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                }
+                GroupingDefinition gr = (GroupingDefinition) targetGrouping;
+                result = gr.getDataChildByName(node.getQName().getLocalName());
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("Failed to generate code for augment");
+            }
+            return result;
+        } else {
+            DataSchemaNode result = null;
+            QName currentName = node.getQName();
+            List<QName> tmpPath = new ArrayList<>();
+            Object parent = null;
+
+            SchemaPath sp = node.getPath();
+            List<QName> names = sp.getPath();
+            List<QName> newNames = new ArrayList<>(names);
+            newNames.remove(newNames.size() - 1);
+            SchemaPath newSp = new SchemaPath(newNames, sp.isAbsolute());
+            parent = findDataSchemaNode(ctx, newSp);
+
+            do {
+                tmpPath.add(currentName);
+                if (parent instanceof DataNodeContainer) {
+                    DataNodeContainer dataNodeParent = (DataNodeContainer) parent;
+                    for (UsesNode u : dataNodeParent.getUses()) {
+                        if (result == null) {
+                            result = getResultFromUses(u, currentName.getLocalName(), ctx);
+                        }
+                    }
+                }
+                if (result == null) {
+                    currentName = ((SchemaNode) parent).getQName();
+                    if (parent instanceof SchemaNode) {
+                        SchemaPath nodeSp = ((SchemaNode) parent).getPath();
+                        List<QName> nodeNames = nodeSp.getPath();
+                        List<QName> nodeNewNames = new ArrayList<>(nodeNames);
+                        nodeNewNames.remove(nodeNewNames.size() - 1);
+                        if (nodeNewNames.isEmpty()) {
+                            parent = getParentModule((SchemaNode) parent, ctx);
+                        } else {
+                            SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.isAbsolute());
+                            parent = findDataSchemaNode(ctx, nodeNewSp);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Failed to generate code for augment");
+                    }
+                }
+            } while (result == null && !(parent instanceof Module));
+
+            if (result != null) {
+                result = getTargetNode(tmpPath, result, ctx);
+            }
+            return result;
+        }
+    }
+
+    private static DataSchemaNode findCorrectTargetFromAugment(DataSchemaNode node, SchemaContext ctx) {
+        if (!node.isAugmenting()) {
+            return null;
+        }
+
+        QName currentName = node.getQName();
+        Object currentNode = node;
+        Object parent = node;
+        List<QName> tmpPath = new ArrayList<QName>();
+        List<SchemaNode> tmpTree = new ArrayList<SchemaNode>();
+
+        AugmentationSchema augment = null;
+        do {
+            SchemaPath sp = ((SchemaNode) parent).getPath();
+            List<QName> names = sp.getPath();
+            List<QName> newNames = new ArrayList<>(names);
+            newNames.remove(newNames.size() - 1);
+            SchemaPath newSp = new SchemaPath(newNames, sp.isAbsolute());
+            parent = findDataSchemaNode(ctx, newSp);
+            if (parent instanceof AugmentationTarget) {
+                tmpPath.add(currentName);
+                tmpTree.add((SchemaNode) currentNode);
+                augment = findNodeInAugment(((AugmentationTarget) parent).getAvailableAugmentations(), currentName);
+                if (augment == null) {
+                    currentName = ((DataSchemaNode) parent).getQName();
+                    currentNode = parent;
+                }
+            }
+        } while (((DataSchemaNode) parent).isAugmenting() && augment == null);
+
+        if (augment == null) {
+            return null;
+        } else {
+            Collections.reverse(tmpPath);
+            Collections.reverse(tmpTree);
+            Object actualParent = augment;
+            DataSchemaNode result = null;
+            for (QName name : tmpPath) {
+                if (actualParent instanceof DataNodeContainer) {
+                    result = ((DataNodeContainer) actualParent).getDataChildByName(name.getLocalName());
+                    actualParent = ((DataNodeContainer) actualParent).getDataChildByName(name.getLocalName());
+                } else {
+                    if (actualParent instanceof ChoiceNode) {
+                        result = ((ChoiceNode) actualParent).getCaseNodeByName(name.getLocalName());
+                        actualParent = ((ChoiceNode) actualParent).getCaseNodeByName(name.getLocalName());
+                    }
+                }
+            }
+
+            if (result.isAddedByUses()) {
+                result = findCorrectTargetFromAugmentGrouping(result, augment, tmpTree, ctx);
+            }
+
+            return result;
+        }
+    }
+
+    private static DataSchemaNode getResultFromUses(UsesNode u, String currentName, SchemaContext ctx) {
+        SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPath());
+        if (!(targetGrouping instanceof GroupingDefinition)) {
+            throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+        }
+        GroupingDefinition gr = (GroupingDefinition) targetGrouping;
+        return gr.getDataChildByName(currentName);
+    }
+
+    private static Module getParentModule(SchemaNode node, SchemaContext ctx) {
+        QName qname = node.getPath().getPath().get(0);
+        URI namespace = qname.getNamespace();
+        Date revision = qname.getRevision();
+        return ctx.findModuleByNamespaceAndRevision(namespace, revision);
+    }
+
+    private static DataSchemaNode getTargetNode(List<QName> tmpPath, DataSchemaNode node, SchemaContext ctx) {
+        DataSchemaNode result = node;
+        if (tmpPath.size() == 1) {
+            if (result != null && result.isAddedByUses()) {
+                result = findOriginal(result, ctx);
+            }
+            return result;
+        } else {
+            DataSchemaNode newParent = result;
+            Collections.reverse(tmpPath);
+
+            tmpPath.remove(0);
+            for (QName name : tmpPath) {
+                // searching by local name is must, because node has different
+                // namespace in its original location
+                if (newParent == null) {
+                    break;
+                }
+                if (newParent instanceof DataNodeContainer) {
+                    newParent = ((DataNodeContainer) newParent).getDataChildByName(name.getLocalName());
+                } else {
+                    newParent = ((ChoiceNode) newParent).getCaseNodeByName(name.getLocalName());
+                }
+            }
+            if (newParent != null && newParent.isAddedByUses()) {
+                newParent = findOriginal(newParent, ctx);
+            }
+            return newParent;
+        }
+    }
+
+    private static AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, QName name) {
+        for (AugmentationSchema augment : augments) {
+            DataSchemaNode node = augment.getDataChildByName(name);
+            if (node != null) {
+                return augment;
+            }
+        }
+        return null;
+    }
+
+    private static DataSchemaNode findCorrectTargetFromAugmentGrouping(DataSchemaNode node,
+            AugmentationSchema parentNode, List<SchemaNode> dataTree, SchemaContext ctx) {
+
+        DataSchemaNode result = null;
+        QName currentName = node.getQName();
+        List<QName> tmpPath = new ArrayList<>();
+        tmpPath.add(currentName);
+        int i = 1;
+        Object parent = null;
+
+        do {
+            if (dataTree.size() < 2 || dataTree.size() == i) {
+                parent = parentNode;
+            } else {
+                parent = dataTree.get(dataTree.size() - (i + 1));
+                tmpPath.add(((SchemaNode) parent).getQName());
+            }
+
+            if (parent instanceof DataNodeContainer) {
+                DataNodeContainer dataNodeParent = (DataNodeContainer) parent;
+                for (UsesNode u : dataNodeParent.getUses()) {
+                    if (result == null) {
+                        result = getResultFromUses(u, currentName.getLocalName(), ctx);
+                    }
+                }
+            }
+
+            if (result == null) {
+                i = i + 1;
+                currentName = ((SchemaNode) parent).getQName();
+            }
+        } while (result == null);
+
+        if (result != null) {
+            result = getTargetNode(tmpPath, result, ctx);
+        }
+        return result;
     }
 
     /**

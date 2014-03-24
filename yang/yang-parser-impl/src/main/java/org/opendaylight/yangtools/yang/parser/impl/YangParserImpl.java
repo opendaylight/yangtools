@@ -854,7 +854,7 @@ public final class YangParserImpl implements YangModelParser {
                 newPath.add(new QName(ns, rev, localPrefix, qn.getLocalName()));
             }
         }
-        augment.setTargetNodeSchemaPath(new SchemaPath(newPath, augment.getTargetPath().isAbsolute()));
+        augment.setTargetNodeSchemaPath(new SchemaPath(newPath, true));
 
         for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
             correctPathForAugmentNodes(childNode, augment.getTargetNodeSchemaPath());

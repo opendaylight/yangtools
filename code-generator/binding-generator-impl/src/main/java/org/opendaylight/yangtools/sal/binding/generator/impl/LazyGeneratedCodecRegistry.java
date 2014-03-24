@@ -478,8 +478,16 @@ public class LazyGeneratedCodecRegistry implements //
     }
 
     private void tryToCreateCasesCodecs(ChoiceNode schema) {
-        for (ChoiceCaseNode caseNode : schema.getCases()) {
+        for (ChoiceCaseNode choiceCase : schema.getCases()) {
+            ChoiceCaseNode caseNode = choiceCase;
+            if (caseNode.isAddedByUses()) {
+                DataSchemaNode origCaseNode = SchemaContextUtil.findOriginal(caseNode, currentSchema);
+                if (origCaseNode instanceof ChoiceCaseNode) {
+                    caseNode = (ChoiceCaseNode) origCaseNode;
+                }
+            }
             SchemaPath path = caseNode.getPath();
+
             GeneratedTypeBuilder type;
             if (path != null && (type = pathToType.get(path)) != null) {
                 ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
@@ -640,6 +648,7 @@ public class LazyGeneratedCodecRegistry implements //
     private static class ChoiceCaseCodecImpl<T extends DataContainer> implements ChoiceCaseCodec<T>, //
             Delegator<BindingCodec> {
         private boolean augmenting;
+        private boolean uses;
         private BindingCodec delegate;
 
         private Set<String> validNames;
@@ -656,6 +665,7 @@ public class LazyGeneratedCodecRegistry implements //
                 validNames.add(qname.getLocalName());
             }
             augmenting = caseNode.isAugmenting();
+            uses = caseNode.isAddedByUses();
         }
 
         public ChoiceCaseCodecImpl() {
@@ -693,7 +703,7 @@ public class LazyGeneratedCodecRegistry implements //
         @Override
         public boolean isAcceptable(Node<?> input) {
             if (input instanceof CompositeNode) {
-                if (augmenting) {
+                if (augmenting && !uses) {
                     return checkAugmenting((CompositeNode) input);
                 } else {
                     return checkLocal((CompositeNode) input);

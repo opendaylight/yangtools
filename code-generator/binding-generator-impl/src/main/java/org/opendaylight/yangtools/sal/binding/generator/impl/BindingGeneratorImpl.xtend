@@ -69,7 +69,6 @@ import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder
 import org.opendaylight.yangtools.yang.model.api.ModuleImport
 import org.opendaylight.yangtools.yang.binding.DataContainer
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
@@ -80,8 +79,6 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase
 
 import com.google.common.collect.Sets
-import java.net.URI
-import java.util.Date
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -745,7 +742,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
         if (targetSchemaNode instanceof DataSchemaNode && (targetSchemaNode as DataSchemaNode).isAddedByUses()) {
-            targetSchemaNode = findOriginal(targetSchemaNode as DataSchemaNode);
+            targetSchemaNode = findOriginal(targetSchemaNode as DataSchemaNode, schemaContext);
             if (targetSchemaNode == null) {
                 throw new NullPointerException(
                     "Failed to find target node from grouping in augmentation " + augSchema + " in module " +
@@ -813,228 +810,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 targetSchemaNode as ChoiceNode, augSchema.childNodes);
         }
     }
-
-    /**
-     * Utility method which search for original node defined in grouping.
-     */
-    private def DataSchemaNode findOriginal(DataSchemaNode node) {
-        var DataSchemaNode result = findCorrectTargetFromGrouping(node);
-        if (result == null) {
-            result = findCorrectTargetFromAugment(node);
-            if (result != null) {
-                if (result.addedByUses) {
-                    result = findOriginal(result);
-                }
-            }
-        }
-        return result;
-    }
-
-    private def DataSchemaNode findCorrectTargetFromAugment(DataSchemaNode node) {
-        if (!node.augmenting) {
-            return null
-        }
-
-        var QName currentName = node.QName
-        var Object currentNode = node
-        var Object parent = node;
-        val tmpPath = new ArrayList<QName>()
-        val tmpTree = new ArrayList<SchemaNode>()
-
-        var AugmentationSchema augment = null;
-        do {
-            val SchemaPath sp = (parent as SchemaNode).path
-            val List<QName> names = sp.path
-            val List<QName> newNames = new ArrayList(names)
-            newNames.remove(newNames.size - 1)
-            val SchemaPath newSp = new SchemaPath(newNames, sp.absolute)
-            parent = findDataSchemaNode(schemaContext, newSp)
-            if (parent instanceof AugmentationTarget) {
-                tmpPath.add(currentName);
-                tmpTree.add(currentNode as SchemaNode)
-                augment = findNodeInAugment((parent as AugmentationTarget).availableAugmentations, currentName);
-                if (augment == null) {
-                    currentName = (parent as DataSchemaNode).QName
-                    currentNode = parent
-                }
-            }
-        } while ((parent as DataSchemaNode).augmenting && augment == null);
-
-        if (augment == null) {
-            return null;
-        } else {
-            Collections.reverse(tmpPath);
-            Collections.reverse(tmpTree);
-            var Object actualParent = augment;
-            var DataSchemaNode result = null;
-            for (name : tmpPath) {
-                if (actualParent instanceof DataNodeContainer) {
-                    result = (actualParent as DataNodeContainer).getDataChildByName(name.localName);
-                    actualParent = (actualParent as DataNodeContainer).getDataChildByName(name.localName);
-                } else {
-                    if (actualParent instanceof ChoiceNode) {
-                        result = (actualParent as ChoiceNode).getCaseNodeByName(name.localName);
-                        actualParent = (actualParent as ChoiceNode).getCaseNodeByName(name.localName);
-                    }
-                }
-            }
-
-            if (result.addedByUses) {
-                result = findCorrectTargetFromAugmentGrouping(result, augment, tmpTree);
-            }
-
-            return result;
-        }
-    }
-
-    private def AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, QName name) {
-        for (augment : augments) {
-            val DataSchemaNode node = augment.getDataChildByName(name);
-            if (node != null) {
-                return augment;
-            }
-        }
-        return null;
-    }
-
-    private def DataSchemaNode findCorrectTargetFromGrouping(DataSchemaNode node) {
-        if (node.path.path.size == 1) {
-            // uses is under module statement
-            val Module m = findParentModule(schemaContext, node);
-            var DataSchemaNode result = null;
-            for (u : m.uses) {
-                var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.groupingPath.path);
-                if (!(targetGrouping instanceof GroupingDefinition)) {
-                    throw new IllegalArgumentException("Failed to generate code for augment in " + u);
-                }
-                var gr = targetGrouping as GroupingDefinition;
-                result = gr.getDataChildByName(node.QName.localName);
-            }
-            if (result == null) {
-                throw new IllegalArgumentException("Failed to generate code for augment")
-            }
-            return result
-        } else {
-            var DataSchemaNode result = null;
-            var QName currentName = node.QName
-            var tmpPath = new ArrayList<QName>()
-            var Object parent = null
-
-            val SchemaPath sp = node.path
-            val List<QName> names = sp.path
-            val List<QName> newNames = new ArrayList(names)
-            newNames.remove(newNames.size - 1)
-            val SchemaPath newSp = new SchemaPath(newNames, sp.absolute)
-            parent = findDataSchemaNode(schemaContext, newSp)
-
-            do {
-                tmpPath.add(currentName);
-                if (parent instanceof DataNodeContainer) {
-                    val dataNodeParent = parent as DataNodeContainer;
-                    for (u : dataNodeParent.uses) {
-                        if (result == null) {
-                            result = getResultFromUses(u, currentName.localName)
-                        }
-                    }
-                }
-                if (result == null) {
-                    currentName = (parent as SchemaNode).QName
-                    if (parent instanceof SchemaNode) {
-                        val SchemaPath nodeSp = (parent as SchemaNode).path
-                        val List<QName> nodeNames = nodeSp.path
-                        val List<QName> nodeNewNames = new ArrayList(nodeNames)
-                        nodeNewNames.remove(nodeNewNames.size - 1)
-                        if (nodeNewNames.empty) {
-                            parent = getParentModule(parent as SchemaNode)
-                        } else {
-                            val SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.absolute)
-                            parent = findDataSchemaNode(schemaContext, nodeNewSp)
-                        }
-                    } else {
-                        throw new IllegalArgumentException("Failed to generate code for augment")
-                    }
-                }
-            } while (result == null && !(parent instanceof Module));
-
-            if (result != null) {
-                result = getTargetNode(tmpPath, result)
-            }
-            return result;
-        }
-    }
-
-    private def DataSchemaNode findCorrectTargetFromAugmentGrouping(DataSchemaNode node, AugmentationSchema parentNode,
-        List<SchemaNode> dataTree) {
-
-        var DataSchemaNode result = null;
-        var QName currentName = node.QName
-        var tmpPath = new ArrayList<QName>()
-        tmpPath.add(currentName)
-        var int i = 1;
-        var Object parent = null
-
-        do {
-            if (dataTree.size < 2 || dataTree.size == i) {
-                parent = parentNode
-            } else {
-                parent = dataTree.get(dataTree.size - (i+1))
-                tmpPath.add((parent as SchemaNode).QName)
-            }
-
-            val dataNodeParent = parent as DataNodeContainer;
-            for (u : dataNodeParent.uses) {
-                if (result == null) {
-                    result = getResultFromUses(u, currentName.localName)
-                }
-            }
-            if (result == null) {
-                i = i + 1
-                currentName = (parent as SchemaNode).QName
-            }
-        } while (result == null);
-
-        if (result != null) {
-            result = getTargetNode(tmpPath, result)
-        }
-        return result;
-    }
-
-    private def getResultFromUses(UsesNode u, String currentName) {
-        var SchemaNode targetGrouping = findNodeInSchemaContext(schemaContext, u.groupingPath.path)
-        if (!(targetGrouping instanceof GroupingDefinition)) {
-            throw new IllegalArgumentException("Failed to generate code for augment in " + u)
-        }
-        var gr = targetGrouping as GroupingDefinition
-        return gr.getDataChildByName(currentName)
-    }
-
-    private def getTargetNode(List<QName> tmpPath, DataSchemaNode node) {
-        var DataSchemaNode result = node
-        if (tmpPath.size == 1) {
-            if (result != null && result.addedByUses) {
-                result = findOriginal(result);
-            }
-            return result;
-        } else {
-            var DataSchemaNode newParent = result;
-            Collections.reverse(tmpPath);
-
-            tmpPath.remove(0);
-            for (name : tmpPath) {
-                // searching by local name is must, because node has different namespace in its original location
-                if (newParent instanceof DataNodeContainer) {
-                    newParent = (newParent as DataNodeContainer).getDataChildByName(name.localName);
-                } else {
-                    newParent = (newParent as ChoiceNode).getCaseNodeByName(name.localName);
-                }
-            }
-            if (newParent != null && newParent.addedByUses) {
-                newParent = findOriginal(newParent);
-            }
-            return newParent;
-        }
-    }
-
 
     /**
      * Convenient method to find node added by uses statement.
@@ -1356,7 +1131,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         var targetSchemaNode = findDataSchemaNode(schemaContext, targetPath)
                         if (targetSchemaNode instanceof DataSchemaNode &&
                             (targetSchemaNode as DataSchemaNode).isAddedByUses()) {
-                            targetSchemaNode = findOriginal(targetSchemaNode as DataSchemaNode);
+                            targetSchemaNode = findOriginal(targetSchemaNode as DataSchemaNode, schemaContext);
                             if (targetSchemaNode == null) {
                                 throw new NullPointerException(
                                     "Failed to find target node from grouping for augmentation " + augSchema +
@@ -2112,13 +1887,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
         }
         return null
-    }
-
-    private def Module getParentModule(SchemaNode node) {
-        val QName qname = node.getPath().getPath().get(0);
-        val URI namespace = qname.getNamespace();
-        val Date revision = qname.getRevision();
-        return schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
     }
 
     public def getModuleContexts() {
