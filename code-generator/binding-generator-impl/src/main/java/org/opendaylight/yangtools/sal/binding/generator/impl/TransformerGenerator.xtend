@@ -160,13 +160,10 @@ class TransformerGenerator {
             if (typeSpecBuilder == null) {
                 typeSpecBuilder = pathToType.get(node.path);
             }
-            var schemaNode = typeToSchemaNode.get(ref);
-            if (schemaNode === null) {
-                schemaNode = node;
-            }
+
             checkState(typeSpecBuilder !== null, "Could not find TypeDefinition for %s, $s", inputType.name, node);
             val typeSpec = typeSpecBuilder.toInstance();
-            val newret = generateTransformerFor(inputType, typeSpec, schemaNode);
+            val newret = generateTransformerFor(inputType, typeSpec, node);
             listener.onClassProcessed(inputType);
             return newret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         ]

@@ -1,0 +1,20 @@
+module foo {
+    yang-version 1;
+    namespace "urn:yang:foo";
+    prefix "foo";
+
+    import bar {
+        prefix bar;
+    }
+
+    revision "2014-03-21" {
+    }
+
+
+
+    augment "/bar:alpha/bar:beta" {
+        uses bar:group-b;
+    }
+
+}
+

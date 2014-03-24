@@ -18,6 +18,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>bug527-test-model</module>
         <module>regression-test-model</module>
         <module>yang-runtime-tests</module>
     </modules>

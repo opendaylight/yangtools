@@ -30,6 +30,12 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
 import java.util.Date
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition
 import java.util.Set
+import java.util.ArrayList
+import java.util.Collections
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema
+import org.opendaylight.yangtools.yang.model.api.UsesNode
+import java.util.Collection
 
 /**
  * The Schema Context Util contains support methods for searching through Schema Context modules for specified schema
@@ -368,7 +374,7 @@ public  class SchemaContextUtil {
         }
         return null
     }
-    
+
     private static def SchemaNode findNodeInNotification(NotificationDefinition rpc,List<QName> path) {
         if(path.empty) return rpc;
         val current = path.get(0)
@@ -376,7 +382,7 @@ public  class SchemaContextUtil {
         if(node != null) return findNode(node,path.nextLevel)
         return null
     }
-    
+
     private static dispatch def SchemaNode findNode(ChoiceNode parent,List<QName> path) {
         if(path.empty) return parent;
         val current = path.get(0)
@@ -384,7 +390,7 @@ public  class SchemaContextUtil {
         if (node != null) return findNodeInCase(node,path.nextLevel)
         return null
     }
-    
+
     private static dispatch def SchemaNode findNode(ContainerSchemaNode parent,List<QName> path) {
         if(path.empty) return parent;
          val current = path.get(0)
@@ -392,7 +398,7 @@ public  class SchemaContextUtil {
         if (node != null) return findNode(node,path.nextLevel)
         return null
     }
-    
+
     private static dispatch def SchemaNode findNode(ListSchemaNode parent,List<QName> path) {
         if(path.empty) return parent;
          val current = path.get(0)
@@ -400,7 +406,7 @@ public  class SchemaContextUtil {
         if (node != null) return findNode(node,path.nextLevel)
         return null
     }
-    
+
     private static dispatch def SchemaNode findNode(DataSchemaNode parent,List<QName> path){
         if(path.empty) {
             return parent
@@ -408,7 +414,7 @@ public  class SchemaContextUtil {
             throw new IllegalArgumentException("Path nesting violation");
         }
     }
-    
+
     public static  def SchemaNode findNodeInCase(ChoiceCaseNode parent,List<QName> path) {
         if(path.empty) return parent;
          val current = path.get(0)
@@ -416,8 +422,7 @@ public  class SchemaContextUtil {
         if (node != null) return findNode(node,path.nextLevel)
         return null
     }
-    
-     
+
     public static def RpcDefinition getRpcByName(Module module, QName name) {
         for (rpc : module.rpcs) {
             if (rpc.QName.equals(name)) {
@@ -426,12 +431,11 @@ public  class SchemaContextUtil {
         }
         return null;
     }
-    
-    
+
     private static def nextLevel(List<QName> path){
         return path.subList(1,path.size)
     }
-    
+
     public static def NotificationDefinition getNotificationByName(Module module, QName name) {
         for(notification : module.notifications) {
             if(notification.QName.equals(name)) {
@@ -440,7 +444,7 @@ public  class SchemaContextUtil {
         }
         return null;
     }
-    
+
     public static def GroupingDefinition getGroupingByName(Module module, QName name) {
         for (grouping : module.groupings) {
             if (grouping.QName.equals(name)) {
@@ -448,6 +452,209 @@ public  class SchemaContextUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Utility method which search for original node defined in grouping.
+     */
+    public static def DataSchemaNode findOriginal(DataSchemaNode node, SchemaContext ctx) {
+        var DataSchemaNode result = findCorrectTargetFromGrouping(node, ctx);
+        if (result == null) {
+            result = findCorrectTargetFromAugment(node, ctx);
+            if (result != null) {
+                if (result.addedByUses) {
+                    result = findOriginal(result, ctx);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static def DataSchemaNode findCorrectTargetFromGrouping(DataSchemaNode node, SchemaContext ctx) {
+        if (node.path.path.size == 1) {
+            // uses is under module statement
+            val Module m = findParentModule(ctx, node);
+            var DataSchemaNode result = null;
+            for (u : m.uses) {
+                var SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.groupingPath.path);
+                if (!(targetGrouping instanceof GroupingDefinition)) {
+                    throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                }
+                var gr = targetGrouping as GroupingDefinition;
+                result = gr.getDataChildByName(node.QName.localName);
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("Failed to generate code for augment")
+            }
+            return result
+        } else {
+            var DataSchemaNode result = null;
+            var QName currentName = node.QName
+            var tmpPath = new ArrayList<QName>()
+            var Object parent = null
+
+            val SchemaPath sp = node.path
+            val List<QName> names = sp.path
+            val List<QName> newNames = new ArrayList(names)
+            newNames.remove(newNames.size - 1)
+            val SchemaPath newSp = new SchemaPath(newNames, sp.absolute)
+            parent = findDataSchemaNode(ctx, newSp)
+
+            do {
+                tmpPath.add(currentName);
+                if (parent instanceof DataNodeContainer) {
+                    val dataNodeParent = parent as DataNodeContainer;
+                    for (u : dataNodeParent.uses) {
+                        if (result == null) {
+                            result = getResultFromUses(u, currentName.localName, ctx)
+                        }
+                    }
+                }
+                if (result == null) {
+                    currentName = (parent as SchemaNode).QName
+                    if (parent instanceof SchemaNode) {
+                        val SchemaPath nodeSp = (parent as SchemaNode).path
+                        val List<QName> nodeNames = nodeSp.path
+                        val List<QName> nodeNewNames = new ArrayList(nodeNames)
+                        nodeNewNames.remove(nodeNewNames.size - 1)
+                        if (nodeNewNames.empty) {
+                            parent = getParentModule(parent as SchemaNode, ctx)
+                        } else {
+                            val SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.absolute)
+                            parent = findDataSchemaNode(ctx, nodeNewSp)
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Failed to generate code for augment")
+                    }
+                }
+            } while (result == null && !(parent instanceof Module));
+
+            if (result != null) {
+                result = getTargetNode(tmpPath, result, ctx)
+            }
+            return result;
+        }
+    }
+
+    private static def DataSchemaNode findCorrectTargetFromAugment(DataSchemaNode node, SchemaContext ctx) {
+        if (!node.augmenting) {
+            return null
+        }
+
+        var QName currentName = node.QName
+        var Object currentNode = node
+        var Object parent = node;
+        val tmpPath = new ArrayList<QName>()
+        val tmpTree = new ArrayList<SchemaNode>()
+
+        var AugmentationSchema augment = null;
+        do {
+            val SchemaPath sp = (parent as SchemaNode).path
+            val List<QName> names = sp.path
+            val List<QName> newNames = new ArrayList(names)
+            newNames.remove(newNames.size - 1)
+            val SchemaPath newSp = new SchemaPath(newNames, sp.absolute)
+            parent = findDataSchemaNode(ctx, newSp)
+            if (parent instanceof AugmentationTarget) {
+                tmpPath.add(currentName);
+                tmpTree.add(currentNode as SchemaNode)
+                augment = findNodeInAugment((parent as AugmentationTarget).availableAugmentations, currentName);
+                if (augment == null) {
+                    currentName = (parent as DataSchemaNode).QName
+                    currentNode = parent
+                }
+            }
+        } while ((parent as DataSchemaNode).augmenting && augment == null);
+
+        if (augment == null) {
+            return null;
+        } else {
+            Collections.reverse(tmpPath);
+            Collections.reverse(tmpTree);
+            var Object actualParent = augment;
+            var DataSchemaNode result = null;
+            for (name : tmpPath) {
+                if (actualParent instanceof DataNodeContainer) {
+                    result = (actualParent as DataNodeContainer).getDataChildByName(name.localName);
+                    actualParent = (actualParent as DataNodeContainer).getDataChildByName(name.localName);
+                } else {
+                    if (actualParent instanceof ChoiceNode) {
+                        result = (actualParent as ChoiceNode).getCaseNodeByName(name.localName);
+                        actualParent = (actualParent as ChoiceNode).getCaseNodeByName(name.localName);
+                    }
+                }
+            }
+
+            if (result.addedByUses) {
+                result = findCorrectTargetFromAugmentGrouping(result, augment, tmpTree, ctx);
+            }
+
+            return result;
+        }
+    }
+
+    private static def getResultFromUses(UsesNode u, String currentName, SchemaContext ctx) {
+        var SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.groupingPath.path)
+        if (!(targetGrouping instanceof GroupingDefinition)) {
+            throw new IllegalArgumentException("Failed to generate code for augment in " + u)
+        }
+        var gr = targetGrouping as GroupingDefinition
+        return gr.getDataChildByName(currentName)
+    }
+
+    private static def Module getParentModule(SchemaNode node, SchemaContext ctx) {
+        val QName qname = node.getPath().getPath().get(0);
+        val URI namespace = qname.getNamespace();
+        val Date revision = qname.getRevision();
+        return ctx.findModuleByNamespaceAndRevision(namespace, revision);
+    }
+
+    private static def AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, QName name) {
+        for (augment : augments) {
+            val DataSchemaNode node = augment.getDataChildByName(name);
+            if (node != null) {
+                return augment;
+            }
+        }
+        return null;
+    }
+
+    private static def DataSchemaNode findCorrectTargetFromAugmentGrouping(DataSchemaNode node,
+        AugmentationSchema parentNode, List<SchemaNode> dataTree, SchemaContext ctx) {
+
+        var DataSchemaNode result = null;
+        var QName currentName = node.QName
+        var tmpPath = new ArrayList<QName>()
+        tmpPath.add(currentName)
+        var int i = 1;
+        var Object parent = null
+
+        do {
+            if (dataTree.size < 2 || dataTree.size == i) {
+                parent = parentNode
+            } else {
+                parent = dataTree.get(dataTree.size - (i+1))
+                tmpPath.add((parent as SchemaNode).QName)
+            }
+
+            if (parent instanceof DataNodeContainer) {
+                val dataNodeParent = parent as DataNodeContainer;
+                for (u : dataNodeParent.uses) {
+                    if (result == null) {
+                        result = getResultFromUses(u, currentName.localName, ctx)
+                    }
+                }
+            }
+            if (result == null) {
+                i = i + 1
+                currentName = (parent as SchemaNode).QName
+            }
+        } while (result == null);
+
+        if (result != null) {
+            result = getTargetNode(tmpPath, result, ctx)
+        }
+        return result;
     }
 
     /**
@@ -484,6 +691,33 @@ public  class SchemaContextUtil {
             }
         }
         return path;
+    }
+
+    private static def getTargetNode(List<QName> tmpPath, DataSchemaNode node, SchemaContext ctx) {
+        var DataSchemaNode result = node
+        if (tmpPath.size == 1) {
+            if (result != null && result.addedByUses) {
+                result = findOriginal(result, ctx);
+            }
+            return result;
+        } else {
+            var DataSchemaNode newParent = result;
+            Collections.reverse(tmpPath);
+
+            tmpPath.remove(0);
+            for (name : tmpPath) {
+                // searching by local name is must, because node has different namespace in its original location
+                if (newParent instanceof DataNodeContainer) {
+                    newParent = (newParent as DataNodeContainer).getDataChildByName(name.localName);
+                } else {
+                    newParent = (newParent as ChoiceNode).getCaseNodeByName(name.localName);
+                }
+            }
+            if (newParent != null && newParent.addedByUses) {
+                newParent = findOriginal(newParent, ctx);
+            }
+            return newParent;
+        }
     }
 
     /**
