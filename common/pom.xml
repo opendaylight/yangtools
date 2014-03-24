@@ -23,6 +23,7 @@
         <module>concepts</module>
         <module>mockito-configuration</module>
         <module>object-cache-api</module>
+        <module>object-cache-guava</module>
         <module>object-cache-noop</module>
     </modules>
 
@@ -31,6 +32,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>object-cache-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>object-cache-guava</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
