@@ -13,10 +13,10 @@ import org.w3c.dom.Element;
 
 import com.google.common.base.Preconditions;
 
-public class ChoiceNodeDomSerializer extends ChoiceNodeBaseSerializer<Element> {
+final class ChoiceNodeDomSerializer extends ChoiceNodeBaseSerializer<Element> {
     private final NodeSerializerDispatcher<Element> dispatcher;
 
-    public ChoiceNodeDomSerializer(final NodeSerializerDispatcher<Element> dispatcher) {
+    ChoiceNodeDomSerializer(final NodeSerializerDispatcher<Element> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 

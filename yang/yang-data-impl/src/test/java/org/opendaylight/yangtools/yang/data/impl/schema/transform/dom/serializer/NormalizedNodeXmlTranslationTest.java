@@ -51,9 +51,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser.ContainerNodeDomParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser.DomToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -235,7 +234,8 @@ public class NormalizedNodeXmlTranslationTest {
     public void testTranslation() throws Exception {
         Document doc = loadDocument(xmlPath);
 
-        ContainerNode built = new ContainerNodeDomParser(DomUtils.defaultValueCodecProvider()).parse(
+        ContainerNode built =
+                DomToNormalizedNodeParserFactory.getInstance(DomUtils.defaultValueCodecProvider()).getContainerNodeParser().parse(
                 Collections.singletonList(doc.getDocumentElement()), containerNode);
 
         if (expectedNode != null)
@@ -243,11 +243,8 @@ public class NormalizedNodeXmlTranslationTest {
 
         logger.info("{}", built);
 
-        final Document newDoc = XmlDocumentUtils.getDocument();
-        final NodeSerializerDispatcher<Element> dispatcher = new DomNodeSerializerDispatcher(newDoc, DomUtils.defaultValueCodecProvider());
-
-        Iterable<Element> els = new ContainerNodeDomSerializer(newDoc,
-                dispatcher).serialize(containerNode, built);
+        Iterable<Element> els = DomFromNormalizedNodeSerializerFactory.getInstance(XmlDocumentUtils.getDocument(), DomUtils.defaultValueCodecProvider())
+                .getContainerNodeSerializer().serialize(containerNode, built);
 
         Element el = els.iterator().next();
 

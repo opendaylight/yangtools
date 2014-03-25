@@ -13,12 +13,12 @@ import org.w3c.dom.Element;
 
 import com.google.common.base.Preconditions;
 
-public class AugmentationNodeDomSerializer extends
+final class AugmentationNodeDomSerializer extends
         AugmentationNodeBaseSerializer<Element> {
 
     private final NodeSerializerDispatcher<Element> dispatcher;
 
-    public AugmentationNodeDomSerializer(NodeSerializerDispatcher<Element> dispatcher) {
+    AugmentationNodeDomSerializer(NodeSerializerDispatcher<Element> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 

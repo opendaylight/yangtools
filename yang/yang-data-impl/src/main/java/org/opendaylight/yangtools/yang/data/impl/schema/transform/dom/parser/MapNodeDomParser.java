@@ -13,11 +13,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.Ma
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
-public final class MapNodeDomParser extends MapNodeBaseParser<Element> {
+final class MapNodeDomParser extends MapNodeBaseParser<Element> {
 
     private final MapEntryNodeDomParser mapEntryParser;
 
-    public MapNodeDomParser(MapEntryNodeDomParser mapEntryParser) {
+    MapNodeDomParser(MapEntryNodeDomParser mapEntryParser) {
         this.mapEntryParser = mapEntryParser;
     }
 

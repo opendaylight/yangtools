@@ -18,11 +18,11 @@ import org.w3c.dom.Element;
 
 import com.google.common.base.Preconditions;
 
-public class LeafNodeDomParser extends LeafNodeBaseParser<Element> {
+final class LeafNodeDomParser extends LeafNodeBaseParser<Element> {
 
     private final XmlCodecProvider codecProvider;
 
-    public LeafNodeDomParser(XmlCodecProvider codecProvider) {
+    LeafNodeDomParser(XmlCodecProvider codecProvider) {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
 

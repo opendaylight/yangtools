@@ -19,13 +19,11 @@ import org.w3c.dom.Element;
 
 import com.google.common.base.Preconditions;
 
-public class MapEntryNodeDomSerializer extends
-        MapEntryNodeBaseSerializer<Element> {
-
-    private final Document doc;
+final class MapEntryNodeDomSerializer extends MapEntryNodeBaseSerializer<Element> {
     private final NodeSerializerDispatcher<Element> dispatcher;
+    private final Document doc;
 
-    public MapEntryNodeDomSerializer(final Document doc, final NodeSerializerDispatcher<Element> dispatcher) {
+    MapEntryNodeDomSerializer(final Document doc, final NodeSerializerDispatcher<Element> dispatcher) {
         this.doc = Preconditions.checkNotNull(doc);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }

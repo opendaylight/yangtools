@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.MapEntryNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -19,12 +18,12 @@ import org.w3c.dom.Element;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedListMultimap;
 
-public final class MapEntryNodeDomParser extends MapEntryNodeBaseParser<Element> {
+final class MapEntryNodeDomParser extends MapEntryNodeBaseParser<Element> {
 
-    private final XmlCodecProvider codecProvider;
+    private final NodeParserDispatcher<Element> dispatcher;
 
-    public MapEntryNodeDomParser(XmlCodecProvider codecProvider) {
-        this.codecProvider = Preconditions.checkNotNull(codecProvider);
+    MapEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
     @Override
@@ -34,7 +33,7 @@ public final class MapEntryNodeDomParser extends MapEntryNodeBaseParser<Element>
 
     @Override
     protected NodeParserDispatcher<Element> getDispatcher() {
-        return DomNodeDispatcher.getInstance(codecProvider);
+        return dispatcher;
     }
 
     @Override
