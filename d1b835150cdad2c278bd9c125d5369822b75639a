@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_e9accc37",
+        "filename": "integration-test/bug527-test-model/src/main/yang/bar.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-25T11:11:10Z",
+      "side": 1,
+      "message": "Copyright header?",
+      "revId": "d1b835150cdad2c278bd9c125d5369822b75639a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_c9a90826",
+        "filename": "integration-test/bug527-test-model/src/main/yang/foo.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-25T11:11:10Z",
+      "side": 1,
+      "message": "Copyright header?",
+      "revId": "d1b835150cdad2c278bd9c125d5369822b75639a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_a9a6d451",
+        "filename": "restconf/restconf-util/src/test/resources/topology-bug527.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-03-25T11:11:10Z",
+      "side": 1,
+      "message": "Copyright header?",
+      "revId": "d1b835150cdad2c278bd9c125d5369822b75639a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
