@@ -54,14 +54,13 @@
     </scm>
 
     <modules>
-        <module>concepts</module>
-        <module>yang</module>
         <module>code-generator</module>
+        <module>common</module>
+        <module>integration-test</module>
         <module>model</module>
         <module>restconf</module>
-        <module>integration-test</module>
-        <module>mockito-configuration</module>
         <module>websocket</module>
+        <module>yang</module>
         <!-- module>third-party</module -->
     </modules>
 
