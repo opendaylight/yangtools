@@ -24,9 +24,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.xbase.lib.Functions;
-import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -56,19 +53,13 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterables;
 
 public class RestconfUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(RestconfUtils.class);
 
-    private static final BiMap<URI,String> uriToModuleName = new Functions.Function0<BiMap<URI,String>>() {
-        @Override
-        public BiMap<URI,String> apply() {
-            HashBiMap<URI,String> _create = HashBiMap.<URI, String>create();
-            return _create;
-        }
-    }.apply();
-
+    private static final BiMap<URI,String> uriToModuleName = HashBiMap.<URI, String>create();
 
     public static Entry<String,DataSchemaNode> toRestconfIdentifier(org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> bindingIdentifier, BindingIndependentMappingService mappingService, SchemaContext schemaContext) {
         InstanceIdentifier domIdentifier = mappingService.toDataDom(bindingIdentifier);
@@ -82,8 +73,7 @@ public class RestconfUtils {
 
         final List<InstanceIdentifier.PathArgument> elements = xmlInstanceIdentifier.getPath();
         final StringBuilder ret = new StringBuilder();
-        InstanceIdentifier.PathArgument _head = IterableExtensions.<InstanceIdentifier.PathArgument>head(elements);
-        final QName startQName = _head.getNodeType();
+        final QName startQName = elements.iterator().next().getNodeType();
         URI _namespace = startQName.getNamespace();
         Date _revision = startQName.getRevision();
         final Module initialModule = schemaContext.findModuleByNamespaceAndRevision(_namespace, _revision);
@@ -104,21 +94,17 @@ public class RestconfUtils {
     }
 
     private static CharSequence convertContainerToRestconfIdentifier(final InstanceIdentifier.NodeIdentifier argument, final ContainerSchemaNode node, SchemaContext schemaContext) {
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append("/");
-        QName _nodeType = argument.getNodeType();
-        CharSequence _restconfIdentifier = toRestconfIdentifier(_nodeType,schemaContext);
-        _builder.append(_restconfIdentifier, "");
-        return _builder;
+        return "/" + toRestconfIdentifier(argument.getNodeType(), schemaContext);
     }
+
     private static CharSequence convertListToRestconfIdentifier(final InstanceIdentifier.NodeIdentifierWithPredicates argument, final ListSchemaNode node,SchemaContext schemaContext) {
         QName _nodeType = argument.getNodeType();
         final CharSequence nodeIdentifier = toRestconfIdentifier(_nodeType,schemaContext);
         final Map<QName,Object> keyValues = argument.getKeyValues();
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append("/");
-        _builder.append(nodeIdentifier, "");
-        _builder.append("/");
+
+        StringBuilder sb = new StringBuilder("/");
+        sb.append(nodeIdentifier);
+        sb.append('/');
         {
             List<QName> _keyDefinition = node.getKeyDefinition();
             boolean _hasElements = false;
@@ -126,14 +112,13 @@ public class RestconfUtils {
                 if (!_hasElements) {
                     _hasElements = true;
                 } else {
-                    _builder.appendImmediate("/", "");
+                    sb.append('/');
                 }
                 Object _get = keyValues.get(key);
-                String _uriString = toUriString(_get);
-                _builder.append(_uriString, "");
+                sb.append(toUriString(_get));
             }
         }
-        return _builder;
+        return sb.toString();
     }
     private static String toUriString(final Object object) {
         boolean _tripleEquals = (object == null);
@@ -162,12 +147,8 @@ public class RestconfUtils {
             String _name_1 = moduleSchema.getName();
             module = _name_1;
         }
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append(module, "");
-        _builder.append(":");
-        String _localName = qname.getLocalName();
-        _builder.append(_localName, "");
-        return _builder;
+
+        return module + ':' + qname.getLocalName();
     }
     private static CharSequence convertToRestconfIdentifier(final InstanceIdentifier.PathArgument argument, final DataNodeContainer node, SchemaContext schemaContext) {
         if (argument instanceof InstanceIdentifier.NodeIdentifier
@@ -203,7 +184,7 @@ public class RestconfUtils {
     }
 
     private static Module filterLatestModule(final Iterable<Module> modules) {
-        Module latestModule = IterableExtensions.<Module>head(modules);
+        Module latestModule = Iterables.getFirst(modules, null);
         for (final Module module : modules) {
             Date _revision = module.getRevision();
             Date _revision_1 = latestModule.getRevision();
