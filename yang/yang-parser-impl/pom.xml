@@ -52,10 +52,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.xtend</groupId>
-            <artifactId>org.eclipse.xtend.lib</artifactId>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -89,10 +85,6 @@
                     <visitor>true</visitor>
                     <listener>true</listener>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.xtend</groupId>
-                <artifactId>xtend-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
