@@ -53,8 +53,6 @@ public class TestUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
-    private final static YangModelParser parser = new YangParserImpl();
-
     private static final String NAMESPACE_BASE = "simple:container:yang";
     private static final String NAMESPACE_AUGMENT = "augment:container:yang";
     private static Date revision_base;
@@ -69,25 +67,23 @@ public class TestUtils {
         }
     }
 
-    private static Set<Module> loadModules(String resourceDirectory) throws FileNotFoundException {
-        final File testDir = new File(resourceDirectory);
+    public static Set<Module> loadModules(URI resourceURI) throws FileNotFoundException {
+        final YangModelParser parser = new YangParserImpl();
+        final File testDir = new File(resourceURI);
         final String[] fileList = testDir.list();
-        final List<File> testFiles = new ArrayList<File>();
+        final List<File> testFiles = new ArrayList<>();
         if (fileList == null) {
-            throw new FileNotFoundException(resourceDirectory);
+            throw new FileNotFoundException(resourceURI.toString());
         }
-        for (int i = 0; i < fileList.length; i++) {
-            String fileName = fileList[i];
-            if (new File(testDir, fileName).isDirectory() == false) {
-                testFiles.add(new File(testDir, fileName));
-            }
+        for (String fileName : fileList) {
+            testFiles.add(new File(testDir, fileName));
         }
         return parser.parseYangModels(testFiles);
     }
 
-    public static Set<Module> loadModulesFrom(String yangPath) {
+    public static Set<Module> loadModulesFrom(String yangPath) throws URISyntaxException {
         try {
-            return loadModules(TestUtils.class.getResource(yangPath).getPath());
+            return loadModules(TestUtils.class.getResource(yangPath).toURI());
         } catch (FileNotFoundException e) {
             LOG.error("Yang files at path: " + yangPath + " weren't loaded.");
         }
@@ -209,7 +205,6 @@ public class TestUtils {
                         Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("lf21"))
                                 .withValue("value in cont2/lf21").build()).build());
 
-
         CollectionNodeBuilder<MapEntryNode, MapNode> lst1 = Builders.mapBuilder().withNodeIdentifier(
                 getNodeIdentifier("lst1"));
         lst1.withChild(Builders.mapEntryBuilder()
@@ -270,7 +265,6 @@ public class TestUtils {
                                                 .withNodeIdentifier(
                                                         getNodeIdentifier("lf31", NAMESPACE_AUGMENT, revision_augment))
                                                 .withValue("value in leaf in augment").build()).build()).build());
-
 
         ContainerNode build = containerBuilder.build();
         return build;
