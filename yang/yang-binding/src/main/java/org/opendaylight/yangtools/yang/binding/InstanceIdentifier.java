@@ -20,9 +20,9 @@ import com.google.common.collect.Iterables;
 /**
  *
  * This instance identifier uniquely identifies a specific DataObject in the data tree modeled by YANG.
- *
+ * <br/><br/>
  * For Example let's say you were trying to refer to a node in inventory which was modeled in YANG as follows,
- *
+ * <br/> <br/>
  * <pre>
  * module opendaylight-inventory {
  *      ....
@@ -40,11 +40,14 @@ import com.google.common.collect.Iterables;
  * </pre>
  *
  * You could create an instance identifier as follows to get to a node with id "openflow:1"
- *
+ * <br/><br/>
+ * <pre>
  * InstanceIdentifierBuilder.builder(Nodes.class).child(Node.class, new NodeKey(new NodeId("openflow:1")).build();
- *
+ * </pre>
+ * <br/>
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  *
+ * @see org.opendaylight.yangtools.yang.binding.InstanceIdentifier.InstanceIdentifierBuilder#build()
  */
 public final class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>,Immutable {
 
@@ -53,8 +56,9 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
 
     /**
      * Create an instance identifier for a very specific object type.
-     *
+     * <br/><br/>
      * For example
+     * <br/>
      * <pre>
      *      new InstanceIdentifier(Nodes.class)
      * </pre>
@@ -68,8 +72,9 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
 
     /**
      * Create an instance identifier for a very specific object type.
-     *
-     * Example
+     * <br/><br/>
+     * For example
+     * <br/>
      * <pre>
      *  List<PathArgument> path = Arrays.asList(new Item(Nodes.class))
      *  new InstanceIdentifier(path, Nodes.class);
@@ -116,14 +121,14 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     /**
      * Return an instance identifier trimmed at the first occurrence of a
      * specific component type.
-     *
+     * <br/><br/>
      * For example let's say an instance identifier was built like so,
+     * <br/>
      * <pre>
      *      identifier = InstanceIdentifierBuilder.builder(Nodes.class).child(Node.class, new NodeKey(new NodeId("openflow:1")).build();
      * </pre>
-     *
      * And you wanted to obtain the Instance identifier which represented Nodes you would do it like so,
-     *
+     * <br/>
      * <pre>
      *      identifier.firstIdentifierOf(Nodes.class)
      * </pre>
@@ -314,16 +319,17 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
 
         /**
          * Append the specified container as a child of the current InstanceIdentifier referenced by the builder.
-         *
+         * <br/><br/>
          * This method should be used when you want to build an instance identifier by appending top-level
          * elements
-         *
+         * <br/><br/>
          * Example,
+         * <br/>
          * <pre>
          *     InstanceIdentifier.builder().child(Nodes.class).build();
          *
          * </pre>
-         *
+         * <br/>
          * NOTE :- The above example is only for illustration purposes InstanceIdentifier.builder() has been deprecated
          * and should not be used. Use InstanceIdentifier.builder(Nodes.class) instead
          *
@@ -335,10 +341,10 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
 
         /**
          * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder.
-         *
+         * <br/><br/>
          * This method should be used when you want to build an instance identifier by appending a specific list element
          * to the identifier
-         *
+         * <br/>
          * @param listItem
          * @param listKey
          * @param <N>
@@ -523,16 +529,20 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
      * The contains method checks if the other identifier is fully contained within the current identifier. It does this
      * by looking at only the types of the path arguments and not by comparing the path arguments themselse.
      * If you want to compare path arguments you must use containsWildcarded
-     *
+     * <br/><br/>
      * To illustrate here is an example which explains the working of this api.
-     *
+     * <br/><br/>
      * Let's say you have two instance identifiers as follows,
-     *
+     * <br/><br/>
+     * <pre>
      * this = /nodes/node/openflow:1
      * other = /nodes/node/openflow:2
-     *
+     * </pre>
+     * <br/>
      * then this.contains(other) will return true. To ensure that this and other are compared properly you must use
      * containsWildcarded
+     *
+     * @see InstanceIdentifier#containsWildcarded(InstanceIdentifier)
      *
      * @param other
      * @return
