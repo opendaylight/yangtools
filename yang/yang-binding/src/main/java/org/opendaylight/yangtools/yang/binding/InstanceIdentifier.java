@@ -103,7 +103,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -115,11 +115,43 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         }
 
         final InstanceIdentifier<?> other = (InstanceIdentifier<?>) obj;
+        if (pathArguments == other.pathArguments) {
+            return true;
+        }
+
+        /*
+         * We could now just go and compare the pathArguments, but that
+         * can be potentially expensive. Let's try to avoid that by
+         * checking various things that we have cached from pathArguments
+         * and trying to prove the identifiers are *not* equal.
+         */
         if (hash != other.hash) {
             return false;
         }
+        if (wildcarded != other.wildcarded) {
+            return false;
+        }
+        if (targetType != other.targetType) {
+            return false;
+        }
+        if (fastNonEqual(other)) {
+            return false;
+        }
 
+        // Everything checks out so far, so we have to do a full equals
         return Iterables.elementsEqual(pathArguments, other.pathArguments);
+    }
+
+    /**
+     * Perform class-specific fast checks for non-equality. This allows
+     * subclasses to avoid iterating over the pathArguments by performing
+     * quick checks on their specific fields.
+     *
+     * @param other The other identifier, guaranteed to be the same class
+     * @return @true if the other identifier cannot be equal to this one.
+     */
+    protected boolean fastNonEqual(final InstanceIdentifier<?> other) {
+        return false;
     }
 
     @Override

@@ -23,4 +23,16 @@ public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K e
     public final InstanceIdentifierBuilder<T> builder() {
         return new InstanceIdentifierBuilderImpl<T>(new InstanceIdentifier.IdentifiableItem<T, K>(getTargetType(), key), getPathArguments(), hashCode(), isWildcarded());
     }
+
+    @Override
+    protected boolean fastNonEqual(final InstanceIdentifier<?> other) {
+        final KeyedInstanceIdentifier<?, ?> kii = (KeyedInstanceIdentifier<?, ?>) other;
+
+        /*
+         * We could do an equals() here, but that may actually be expensive.
+         * equals() in superclass falls back to a full compare, which will
+         * end up running that equals anyway, so do not bother here.
+         */
+        return (key == null) != (kii.key == null);
+    }
 }
