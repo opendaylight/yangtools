@@ -33,7 +33,7 @@ public class InstanceIdentifierTest {
         assertEquals(Nodes.class, nodes.getTargetType());
 
 
-        InstanceIdentifier<Node> node = InstanceIdentifier.builder(nodes).child(Node.class).toInstance();
+        InstanceIdentifier<Node> node = nodes.builder().child(Node.class).toInstance();
 
         assertNotNull(node);
         assertEquals(Node.class, node.getTargetType());
