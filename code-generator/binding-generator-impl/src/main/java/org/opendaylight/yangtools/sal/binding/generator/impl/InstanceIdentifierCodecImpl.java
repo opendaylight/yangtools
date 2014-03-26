@@ -80,7 +80,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
             }
             baArgs.add(baArg);
         }
-        InstanceIdentifier ret = new InstanceIdentifier(baArgs, (Class<? extends DataObject>) baType);
+        InstanceIdentifier ret = InstanceIdentifier.create(baArgs);
         LOG.debug("DOM Instance Identifier {} deserialized to {}", input, ret);
         return ret;
     }
