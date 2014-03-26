@@ -194,8 +194,7 @@ public class DataObjectReadingUtil {
             final DataContainer result = read(parent, childArgument.getType());
             if (result != null) {
                 @SuppressWarnings("unchecked")
-                InstanceIdentifier childPath = InstanceIdentifier.builder(parentPath).child(childArgument.getType())
-                        .build();
+                InstanceIdentifier childPath = parentPath.child(childArgument.getType());
                 return Collections.singletonMap(childPath, result);
             }
             return Collections.emptyMap();
@@ -259,9 +258,7 @@ public class DataObjectReadingUtil {
                     .<InstanceIdentifier, DataContainer> builder();
             for (Identifiable item : dataList) {
                 @SuppressWarnings("unchecked")
-                InstanceIdentifier childPath = InstanceIdentifier.builder(parentPath) //
-                        .child(getChildType(), item.getKey())//
-                        .build();
+                InstanceIdentifier childPath = parentPath.child(getChildType(), item.getKey());
                 result.put(childPath, (DataContainer) item);
             }
             return result.build();
@@ -275,8 +272,8 @@ public class DataObjectReadingUtil {
                 if (key.equals(item.getKey()) && item instanceof DataContainer) {
                     checkState(childArgument.getType().isInstance(item),
                             "Found child is not instance of requested type");
-                    InstanceIdentifier childPath = InstanceIdentifier.builder(parentPath)
-                            .child(childArgument.getType(), item.getKey()).build();
+                    InstanceIdentifier childPath = parentPath
+                            .child(childArgument.getType(), item.getKey());
                     return Collections.singletonMap(childPath, (DataContainer) item);
                 }
             }
@@ -301,8 +298,7 @@ public class DataObjectReadingUtil {
             DataContainer aug = read(parent, childArgument.getType());
             if (aug != null) {
                 @SuppressWarnings("unchecked")
-                final InstanceIdentifier childPath = InstanceIdentifier.builder(builder).child(childArgument.getType())
-                        .build();
+                final InstanceIdentifier childPath = builder.child(childArgument.getType());
                 return Collections.singletonMap(childPath, aug);
             } else {
                 return Collections.emptyMap();
