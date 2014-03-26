@@ -43,28 +43,26 @@ public class BindingReadingTest {
     private NetworkTopology networkModel;
     private Link linkModel;
 
-    private static final InstanceIdentifier<Topology> TOPOLOGY_BAR_PATH = InstanceIdentifier.builder(NETWORK_TOPOLOGY_PATH) //
-            .child(Topology.class, new TopologyKey(TOPOLOGY_BAR_ID)) //
-            .build();
+    private static final InstanceIdentifier<Topology> TOPOLOGY_BAR_PATH = NETWORK_TOPOLOGY_PATH //
+            .child(Topology.class, new TopologyKey(TOPOLOGY_BAR_ID));
 
-    private static final InstanceIdentifier<Link> LINK_BAR_PATH = InstanceIdentifier.builder(NETWORK_TOPOLOGY_PATH) //
+    private static final InstanceIdentifier<Link> LINK_BAR_PATH = NETWORK_TOPOLOGY_PATH.builder() //
             .child(Topology.class, new TopologyKey(TOPOLOGY_BAR_ID)) //
             .child(Link.class, new LinkKey(LINK_BAR_ID)) //
             .build();
 
-    private static final InstanceIdentifier<Link> WILDCARDED_LINK_PATH = InstanceIdentifier
-            .builder(NETWORK_TOPOLOGY_PATH) //
+    private static final InstanceIdentifier<Link> WILDCARDED_LINK_PATH = NETWORK_TOPOLOGY_PATH.builder() //
             .child(Topology.class) //
             .child(Link.class) //
             .build();
 
-    private static final InstanceIdentifier<Source> ABSOLUTE_SOURCE_PATH = InstanceIdentifier.builder(TOPOLOGY_BAR_PATH)
+    private static final InstanceIdentifier<Source> ABSOLUTE_SOURCE_PATH = TOPOLOGY_BAR_PATH.builder() //
             .child(Link.class, new LinkKey(LINK_BAR_ID)) //
             .child(Source.class) //
             .build();
 
-    private static final InstanceIdentifier<Source> WILDCARDED_SOURCE_PATH = InstanceIdentifier
-            .builder(NETWORK_TOPOLOGY_PATH).child(Topology.class) //
+    private static final InstanceIdentifier<Source> WILDCARDED_SOURCE_PATH = NETWORK_TOPOLOGY_PATH.builder() //
+            .child(Topology.class) //
             .child(Link.class, new LinkKey(LINK_BAR_ID)) //
             .child(Source.class) //
             .build();
@@ -139,7 +137,7 @@ public class BindingReadingTest {
 
     @Test
     public void testInstanceIdentifierReadNonExistingValue() {
-        InstanceIdentifier<Source> sourcePath = InstanceIdentifier.builder(NETWORK_TOPOLOGY_PATH) //
+        InstanceIdentifier<Source> sourcePath = NETWORK_TOPOLOGY_PATH.builder() //
                 .child(Topology.class, new TopologyKey(TOPOLOGY_BAZ_ID)) //
                 .child(Link.class, new LinkKey(LINK_BAR_ID)) //
                 .child(Source.class) //
