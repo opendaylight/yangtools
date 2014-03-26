@@ -69,25 +69,23 @@ public class TestUtils {
         }
     }
 
-    private static Set<Module> loadModules(String resourceDirectory) throws FileNotFoundException {
-        final File testDir = new File(resourceDirectory);
+    public static Set<Module> loadModules(URI resourceURI) throws FileNotFoundException {
+        final YangModelParser parser = new YangParserImpl();
+        final File testDir = new File(resourceURI);
         final String[] fileList = testDir.list();
-        final List<File> testFiles = new ArrayList<File>();
+        final List<File> testFiles = new ArrayList<>();
         if (fileList == null) {
-            throw new FileNotFoundException(resourceDirectory);
+            throw new FileNotFoundException(resourceURI.toString());
         }
-        for (int i = 0; i < fileList.length; i++) {
-            String fileName = fileList[i];
-            if (new File(testDir, fileName).isDirectory() == false) {
-                testFiles.add(new File(testDir, fileName));
-            }
+        for (String fileName : fileList) {
+            testFiles.add(new File(testDir, fileName));
         }
         return parser.parseYangModels(testFiles);
     }
 
-    public static Set<Module> loadModulesFrom(String yangPath) {
+    public static Set<Module> loadModulesFrom(String yangPath) throws URISyntaxException {
         try {
-            return loadModules(TestUtils.class.getResource(yangPath).getPath());
+            return loadModules(TestUtils.class.getResource(yangPath).toURI());
         } catch (FileNotFoundException e) {
             LOG.error("Yang files at path: " + yangPath + " weren't loaded.");
         }

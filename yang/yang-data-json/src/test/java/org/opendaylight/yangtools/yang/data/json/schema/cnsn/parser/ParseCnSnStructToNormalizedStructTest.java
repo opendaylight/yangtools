@@ -29,7 +29,7 @@ public class ParseCnSnStructToNormalizedStructTest {
     private static DataSchemaNode resolvedDataSchemaNode;
 
     @BeforeClass
-    public static void loadData() {
+    public static void loadData() throws URISyntaxException {
         Set<Module> modules = TestUtils.loadModulesFrom("/cnsn-to-normalized-node/yang");
         Module resolvedModule = TestUtils.resolveModule("simple-container-yang", modules);
         resolvedDataSchemaNode = TestUtils.resolveDataSchemaNode("cont", resolvedModule);
