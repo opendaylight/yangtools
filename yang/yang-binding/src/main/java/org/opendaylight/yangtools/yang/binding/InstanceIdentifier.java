@@ -8,12 +8,17 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -46,71 +51,101 @@ import com.google.common.collect.Iterables;
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  *
  */
-public final class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>,Immutable {
-
-    private final List<PathArgument> path;
+public abstract class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>, Immutable {
+    // protected to differentiate internal and external access
+    protected final Iterable<PathArgument> pathArguments;
     private final Class<T> targetType;
+    private final int hashCode;
 
-    /**
-     * Create an instance identifier for a very specific object type.
-     *
-     * For example
-     * <pre>
-     *      new InstanceIdentifier(Nodes.class)
-     * </pre>
-     * would create an InstanceIdentifier for an object of type Nodes
-     *
-     * @param type The type of the object which this instance identifier represents
-     */
-    public InstanceIdentifier(Class<T> type) {
-        this(Collections.<PathArgument> singletonList(new Item<>(type)), type);
+    private InstanceIdentifier(final Class<T> type, final Iterable<PathArgument> pathArguments, final int hashCode) {
+        this.pathArguments = Preconditions.checkNotNull(pathArguments);
+        this.targetType = Preconditions.checkNotNull(type);
+        this.hashCode = hashCode;
     }
 
     /**
-     * Create an instance identifier for a very specific object type.
+     * Check whether an instance identifier contains any wildcards. A wildcard
+     * is an path argument which has a null key.
      *
-     * Example
-     * <pre>
-     *  List<PathArgument> path = Arrays.asList(new Item(Nodes.class))
-     *  new InstanceIdentifier(path, Nodes.class);
-     * </pre>
-     *
-     * @param path The path to a specific node in the data tree
-     * @param type The type of the object which this instance identifier represents
+     * @return @true if any of the path arguments has a null key.
      */
-    public InstanceIdentifier(List<PathArgument> path, Class<T> type) {
-        this.path = ImmutableList.copyOf(path);
-        this.targetType = type;
+    public abstract boolean isWildcarded();
+
+    /**
+     * Return the type of data which this InstanceIdentifier identifies.
+     *
+     * @return Target type
+     */
+    public final Class<T> getTargetType() {
+        return targetType;
     }
 
     /**
+     * Return the path argument chain which makes up this instance identifier.
      *
-     * @return A list of the elements of the path
+     * @return Path argument chain. Immutable and does not contain nulls.
      */
-    public List<PathArgument> getPath() {
-        return getPathArguments();
-    }
-
-    /**
-     *
-     * @return A list of the elements of the path
-     */
-
-    public List<PathArgument> getPathArguments() {
-        return this.path;
-    }
-
-    /**
-     *
-     * @return The target type of this instance identifier
-     */
-    public Class<T> getTargetType() {
-        return this.targetType;
+    public final Iterable<PathArgument> getPathArguments() {
+        return Iterables.unmodifiableIterable(pathArguments);
     }
 
     @Override
-    public String toString() {
-        return "InstanceIdentifier [path=" + path + "]";
+    public final int hashCode() {
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        if (hashCode() != obj.hashCode()) {
+            return false;
+        }
+
+        final InstanceIdentifier<?> other = (InstanceIdentifier<?>) obj;
+        return Iterables.elementsEqual(pathArguments, other.pathArguments);
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(Objects.toStringHelper(this)).toString();
+    }
+
+    /**
+     * Add class-specific toString attributes.
+     *
+     * @param toStringHelper ToStringHelper instance
+     * @return ToStringHelper instance which was passed in
+     */
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("targetType", targetType).add("path", Iterables.toString(getPathArguments()));
+    }
+
+    /**
+     * Return the key associated with the last component of the specified identifier.
+     *
+     * @param id instance identifier
+     * @return key associated with the last component
+     */
+    public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K keyOf(final InstanceIdentifier<N> id) {
+        @SuppressWarnings("unchecked")
+        final K ret = ((KeyedInstanceIdentifier<N, K>)id).getKey();
+        return ret;
+    }
+
+    /**
+     * @deprecated Use {@link #getPathComponents()} instead.
+     */
+    @Deprecated
+    public final List<PathArgument> getPath() {
+        return ImmutableList.<PathArgument>copyOf(getPathArguments());
     }
 
     /**
@@ -133,11 +168,13 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
      *         is not present.
      */
     @SuppressWarnings("hiding")
-    public <T extends DataObject> InstanceIdentifier<T> firstIdentifierOf(final Class<T> type) {
+    public final <T extends DataObject> InstanceIdentifier<T> firstIdentifierOf(final Class<T> type) {
         int i = 1;
-        for (final PathArgument a : path) {
+        for (final PathArgument a : getPathArguments()) {
             if (type.equals(a.getType())) {
-                return new InstanceIdentifier<>(path.subList(0, i), type);
+                @SuppressWarnings("unchecked")
+                final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) create(Iterables.limit(getPathArguments(), i));
+                return ret;
             }
 
             ++i;
@@ -155,8 +192,8 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
      * @return key associated with the component, or null if the component type
      *         is not present.
      */
-    public <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K firstKeyOf(final Class<N> listItem, final Class<K> listKey) {
-        for (PathArgument i : path) {
+    public final <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K firstKeyOf(final Class<N> listItem, final Class<K> listKey) {
+        for (final PathArgument i : getPathArguments()) {
             if (listItem.equals(i.getType())) {
                 @SuppressWarnings("unchecked")
                 final K ret = ((IdentifiableItem<N, K>)i).getKey();
@@ -168,15 +205,106 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
     }
 
     /**
-     * Return the key associated with the last component of the specified identifier.
+     * The contains method checks if the other identifier is fully contained within the current identifier. It does this
+     * by looking at only the types of the path arguments and not by comparing the path arguments themselse.
+     * If you want to compare path arguments you must use containsWildcarded
      *
-     * @param id instance identifier
-     * @return key associated with the last component
+     * To illustrate here is an example which explains the working of this api.
+     *
+     * Let's say you have two instance identifiers as follows,
+     *
+     * this = /nodes/node/openflow:1
+     * other = /nodes/node/openflow:2
+     *
+     * then this.contains(other) will return true. To ensure that this and other are compared properly you must use
+     * containsWildcarded
+     *
+     * @param other
+     * @return
      */
-    public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K keyOf(final InstanceIdentifier<N> id) {
-        @SuppressWarnings("unchecked")
-        final K ret = ((IdentifiableItem<N, K>)Iterables.getLast(id.getPath())).getKey();
-        return ret;
+    @Override
+    public final boolean contains(final InstanceIdentifier<? extends DataObject> other) {
+        Preconditions.checkNotNull(other, "other should not be null");
+
+        final Iterator<?> lit = pathArguments.iterator();
+        final Iterator<?> oit = other.pathArguments.iterator();
+
+        while (lit.hasNext()) {
+            if (!oit.hasNext()) {
+                return false;
+            }
+
+            if (!lit.next().equals(oit.next())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * The containsWildcarded method checks if the other identifier is fully contained within the current identifier.
+     * It does this by looking at both the type and identity of the path arguments.
+     *
+     * @param other
+     * @return
+     */
+    public final boolean containsWildcarded(final InstanceIdentifier<?> other) {
+        Preconditions.checkNotNull(other, "other should not be null");
+
+        final Iterator<PathArgument> lit = pathArguments.iterator();
+        final Iterator<PathArgument> oit = other.pathArguments.iterator();
+
+        while (lit.hasNext()) {
+            if (!oit.hasNext()) {
+                return false;
+            }
+
+            final PathArgument la = lit.next();
+            final PathArgument oa = oit.next();
+
+            if (!la.getType().equals(oa.getType())) {
+                return false;
+            }
+            if (la instanceof IdentifiableItem<?, ?> && oa instanceof IdentifiableItem<?, ?> && !la.equals(oa)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Create a builder rooted at this key.
+     *
+     * @return A builder instance
+     */
+    public InstanceIdentifierBuilder<T> builder() {
+        return new BuilderImpl<T>(new Item<T>(targetType), pathArguments, hashCode, isWildcarded());
+    }
+
+    private InstanceIdentifier<?> childIdentifer(final PathArgument arg) {
+        return trustedCreate(arg, Iterables.concat(pathArguments, Collections.singleton(arg)), HashCodeBuilder.nextHashCode(hashCode, arg), isWildcarded());
+    }
+
+    @SuppressWarnings("unchecked")
+    public final <N extends ChildOf<? super T>> InstanceIdentifier<N> child(final Class<N> container) {
+        final PathArgument arg = new Item<>(container);
+        return (InstanceIdentifier<N>) childIdentifer(arg);
+    }
+
+    @SuppressWarnings("unchecked")
+    public final <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifier<N> child(
+            final Class<N> listItem, final K listKey) {
+        final PathArgument arg = new IdentifiableItem<>(listItem, listKey);
+        return (InstanceIdentifier<N>) childIdentifer(arg);
+    }
+
+    @SuppressWarnings("unchecked")
+    public final <N extends DataObject & Augmentation<? super T>> InstanceIdentifier<N> augmentation(
+            final Class<N> container) {
+        final PathArgument arg = new Item<>(container);
+        return (InstanceIdentifier<N>) childIdentifer(arg);
     }
 
     /**
@@ -184,134 +312,12 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
      * <p>
      * Interface which implementations are used as path components of the
      * path in overall data tree.
-     *
      */
     public interface PathArgument {
-
         Class<? extends DataObject> getType();
     }
 
-
-    /**
-     * An Item represents an object that probably is only one of it's kind. For example a Nodes object is only one of
-     * a kind. In YANG terms this would probably represent a container.
-     *
-     * @param <T>
-     */
-    public static final class Item<T extends DataObject> implements PathArgument {
-        private final Class<T> type;
-
-        public Item(Class<T> type) {
-            this.type = type;
-        }
-
-        @Override
-        public Class<T> getType() {
-            return type;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((type == null) ? 0 : type.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            Item<?> other = (Item<?>) obj;
-            if (type == null) {
-                if (other.type != null)
-                    return false;
-            } else if (!type.equals(other.type))
-                return false;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return type.getName();
-        }
-    }
-
-    /**
-     * An IdentifiableItem represents a object that is usually present in a collection and can be identified uniquely
-     * by a key. In YANG terms this would probably represent an item in a list.
-     *
-     * @param <I> An object that is identifiable by an identifier
-     * @param <T> The identifier of the object
-     */
-    public static final class IdentifiableItem<I extends Identifiable<T> & DataObject, T extends Identifier<I>> implements
-            PathArgument {
-
-        private final T key;
-        private final Class<I> type;
-
-        public IdentifiableItem(Class<I> type, T key) {
-            if (type == null)
-                throw new IllegalArgumentException("Type must not be null.");
-            if (key == null)
-                throw new IllegalArgumentException("Key must not be null.");
-            this.type = type;
-            this.key = key;
-        }
-
-        public T getKey() {
-            return this.key;
-        }
-
-        @Override
-        public Class<I> getType() {
-            return this.type;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (obj.hashCode() != hashCode()) {
-                return false;
-            }
-            if (!(obj instanceof IdentifiableItem<?, ?>)) {
-                return false;
-            }
-            IdentifiableItem<?, ?> foreign = (IdentifiableItem<?, ?>) obj;
-            return key.equals(foreign.getKey());
-        }
-
-        @Override
-        public int hashCode() {
-            return key.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return type.getName() + "[key=" + key + "]";
-        }
-    }
-
     public interface InstanceIdentifierBuilder<T extends DataObject> extends Builder<InstanceIdentifier<T>> {
-        /**
-         * @deprecated use {@link child(Class)} or {@link augmentation(Class)} instead.
-         */
-        @Deprecated
-        <N extends DataObject> InstanceIdentifierBuilder<N> node(Class<N> container);
-
-        /**
-         * @deprecated use {@link child(Class,Identifier)} or {@link augmentation(Class,Identifier)} instead.
-         */
-        @Deprecated
-        <N extends Identifiable<K> & DataObject, K extends Identifier<N>> InstanceIdentifierBuilder<N> node(
-                Class<N> listItem, K listKey);
-
         /**
          * Append the specified container as a child of the current InstanceIdentifier referenced by the builder.
          *
@@ -364,16 +370,292 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
          * @return
          */
         InstanceIdentifier<T> build();
+    }
 
+    private static abstract class AbstractPathArgument<T extends DataObject> implements PathArgument {
+        private final Class<T> type;
+
+        protected AbstractPathArgument(final Class<T> type) {
+            this.type = Preconditions.checkNotNull(type, "Type may not be null.");
+        }
+
+        @Override
+        public final Class<T> getType() {
+            return type;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((type == null) ? 0 : type.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final AbstractPathArgument<?> other = (AbstractPathArgument<?>) obj;
+            if (type == null) {
+                if (other.type != null) {
+                    return false;
+                }
+            } else if (!type.equals(other.type)) {
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
-     * @deprecated use {@link builder(Class)} or {@link builder(Class,Identifier)} instead.
+     * An Item represents an object that probably is only one of it's kind. For example a Nodes object is only one of
+     * a kind. In YANG terms this would probably represent a container.
+     *
+     * @param <T>
+     */
+    public static final class Item<T extends DataObject> extends AbstractPathArgument<T> {
+        public Item(final Class<T> type) {
+            super(type);
+        }
+
+        @Override
+        public String toString() {
+            return getType().getName();
+        }
+    }
+
+    /**
+     * An IdentifiableItem represents a object that is usually present in a collection and can be identified uniquely
+     * by a key. In YANG terms this would probably represent an item in a list.
+     *
+     * @param <I> An object that is identifiable by an identifier
+     * @param <T> The identifier of the object
+     */
+    public static final class IdentifiableItem<I extends Identifiable<T> & DataObject, T extends Identifier<I>> extends AbstractPathArgument<I> {
+        private final T key;
+
+        public IdentifiableItem(final Class<I> type, final T key) {
+            super(type);
+            this.key = Preconditions.checkNotNull(key, "Key may not be null.");
+        }
+
+        public T getKey() {
+            return this.key;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return super.equals(obj) && obj.hashCode() == hashCode() && key.equals(((IdentifiableItem<?, ?>) obj).getKey());
+        }
+
+        @Override
+        public int hashCode() {
+            return key.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return getType().getName() + "[key=" + key + "]";
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static InstanceIdentifier<?> create(final PathArgument arg, final Iterable<? extends PathArgument> pathArguments, final int hashCode, final boolean wildcard) {
+        if (wildcard) {
+            return new WildcardInstanceIdentifier(arg.getType(), pathArguments, hashCode);
+        } else {
+            return new ConcreteInstanceIdentifier(arg.getType(), pathArguments, hashCode);
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static InstanceIdentifier<?> createKeyed(final PathArgument arg, final Iterable<? extends PathArgument> pathArguments, final int hashCode, final boolean wildcard) {
+        Identifier<?> key = null;
+        if (arg instanceof IdentifiableItem<?, ?>) {
+            key = ((IdentifiableItem<?, ?>)arg).key;
+        }
+
+        if (wildcard) {
+            return new KeyedWildcardInstanceIdentifier(arg.getType(), pathArguments, hashCode, key);
+        } else {
+            return new KeyedConcreteInstanceIdentifier(arg.getType(), pathArguments, hashCode, key);
+        }
+    }
+
+    private static final class HashCodeBuilder implements Builder<Integer> {
+        int hashCode;
+
+        HashCodeBuilder() {
+            this(1);
+        }
+
+        HashCodeBuilder(final int seedHashCode) {
+            this.hashCode = seedHashCode;
+        }
+
+        public static int nextHashCode(final int hashCode, final PathArgument arg) {
+            return 31 * hashCode + arg.hashCode();
+        }
+
+        private void addArgument(final PathArgument arg) {
+            hashCode = nextHashCode(hashCode, arg);
+        }
+
+        @Override
+        public Integer toInstance() {
+            return hashCode;
+        }
+    }
+
+    private static InstanceIdentifier<?> trustedCreate(final PathArgument arg, final Iterable<PathArgument> pathArguments, final int hashCode, final boolean wildcard) {
+        if (Identifiable.class.isAssignableFrom(arg.getType())) {
+            return createKeyed(arg, pathArguments, hashCode, wildcard);
+        } else {
+            return create(arg, pathArguments, hashCode, wildcard);
+        }
+    }
+
+    /**
+     * Create an instance identifier for a very specific object type.
+     *
+     * Example
+     * <pre>
+     *  List<PathArgument> path = Arrays.asList(new Item(Nodes.class))
+     *  new InstanceIdentifier(path);
+     * </pre>
+     *
+     * @param path The path to a specific node in the data tree
+     * @return InstanceIdentifier instance
+     * @throws IllegalArgumentException if pathArguments is empty or
+     *         contains a null element.
+     */
+    public static InstanceIdentifier<?> create(final Iterable<? extends PathArgument> pathArguments) {
+        final Iterator<? extends PathArgument> it = Preconditions.checkNotNull(pathArguments, "pathArguments may not be null").iterator();
+        final HashCodeBuilder hashBuilder = new HashCodeBuilder();
+        boolean wildcard = false;
+        PathArgument a = null;
+
+        while (it.hasNext()) {
+            a = it.next();
+            Preconditions.checkArgument(a != null, "pathArguments may not contain null elements");
+
+            // TODO: sanity check ChildOf();
+            hashBuilder.addArgument(a);
+
+            if (Identifiable.class.isAssignableFrom(a.getType()) && !(a instanceof IdentifiableItem<?, ?>)) {
+                wildcard = true;
+            }
+        }
+        Preconditions.checkArgument(a != null, "pathArguments may not be empty");
+
+        final Iterable<PathArgument> immutableArguments;
+        if (pathArguments instanceof ImmutableCollection<?>) {
+            immutableArguments = (Iterable<PathArgument>) pathArguments;
+        } else {
+            immutableArguments = ImmutableList.copyOf(pathArguments);
+        }
+
+        return trustedCreate(a, immutableArguments, hashBuilder.toInstance(), wildcard);
+    }
+
+    /**
+     * Create an instance identifier for a very specific object type.
+     *
+     * For example
+     * <pre>
+     *      new InstanceIdentifier(Nodes.class)
+     * </pre>
+     * would create an InstanceIdentifier for an object of type Nodes
+     *
+     * @param type The type of the object which this instance identifier represents
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends DataObject> InstanceIdentifier<T> create(final Class<T> type) {
+        return (InstanceIdentifier<T>) create(Collections.<PathArgument> singletonList(new Item<>(type)));
+    }
+
+    public static class ConcreteInstanceIdentifier<T extends DataObject> extends InstanceIdentifier<T> {
+        private ConcreteInstanceIdentifier(final Class<T> type, final Iterable<PathArgument> path, final int hashCode) {
+            super(type, path, hashCode);
+        }
+
+        @Override
+        public boolean isWildcarded() {
+            return false;
+        }
+    }
+
+    public static class WildcardInstanceIdentifier<T extends DataObject> extends InstanceIdentifier<T> {
+        private WildcardInstanceIdentifier(final Class<T> type, final Iterable<PathArgument> path, final int hashCode) {
+            super(type, path, hashCode);
+        }
+
+        @Override
+        public boolean isWildcarded() {
+            return true;
+        }
+    }
+
+    public static abstract class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K extends Identifier<T>> extends InstanceIdentifier<T> {
+        private final K key;
+
+        private KeyedInstanceIdentifier(final Class<T> type, final Iterable<PathArgument> pathArguments, final int hashCode, final K key) {
+            super(type, pathArguments, hashCode);
+            this.key = key;
+        }
+
+        public final K getKey() {
+            return key;
+        }
+
+        @Override
+        public final InstanceIdentifierBuilder<T> builder() {
+            return new BuilderImpl<T>(new IdentifiableItem<T, K>(getTargetType(), key), getPathArguments(), hashCode(), isWildcarded());
+        }
+    }
+
+    public static final class KeyedConcreteInstanceIdentifier<T extends Identifiable<K> & DataObject, K extends Identifier<T>> extends KeyedInstanceIdentifier<T, K> {
+        private KeyedConcreteInstanceIdentifier(final Class<T> type, final Iterable<PathArgument> path, final int hashCode, final K key) {
+            super(type, path, hashCode, key);
+        }
+
+        @Override
+        public boolean isWildcarded() {
+            return false;
+        }
+    }
+
+    public static final class KeyedWildcardInstanceIdentifier<T extends Identifiable<K> & DataObject, K extends Identifier<T>> extends KeyedInstanceIdentifier<T, K> {
+        private KeyedWildcardInstanceIdentifier(final Class<T> type, final Iterable<PathArgument> path, final int hashCode, final K key) {
+            super(type, path, hashCode, key);
+        }
+
+        @Override
+        public boolean isWildcarded() {
+            return true;
+        }
+    }
+
+    /**
+     * Create a new InstanceIdentifierBuilder given a base InstanceIdentifier
+     *
+     * @param basePath
+     * @param <T>
+     * @return
+     *
+     * @deprecated Use {@link #builder()} instead.
      */
     @Deprecated
-    @SuppressWarnings("rawtypes")
-    public static InstanceIdentifierBuilder<?> builder() {
-        return new BuilderImpl();
+    public static <T extends DataObject> InstanceIdentifierBuilder<T> builder(final InstanceIdentifier<T> base) {
+        return base.builder();
     }
 
     /**
@@ -383,7 +665,7 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
      * @param <T>
      * @return
      */
-    public static <T extends ChildOf<? extends DataRoot>> InstanceIdentifierBuilder<T> builder(Class<T> container) {
+    public static <T extends ChildOf<? extends DataRoot>> InstanceIdentifierBuilder<T> builder(final Class<T> container) {
         return new BuilderImpl<T>().addNode(container);
     }
 
@@ -397,54 +679,55 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
      * @return
      */
     public static <N extends Identifiable<K> & ChildOf<? extends DataRoot>, K extends Identifier<N>> InstanceIdentifierBuilder<N> builder(
-            Class<N> listItem, K listKey) {
+            final Class<N> listItem, final K listKey) {
         return new BuilderImpl<N>().addNode(listItem, listKey);
     }
 
-    /**
-     * Create a new InstanceIdentifierBuilder given a base InstanceIdentifier
-     *
-     * @param basePath
-     * @param <T>
-     * @return
-     */
-    public static <T extends DataObject> InstanceIdentifierBuilder<T> builder(InstanceIdentifier<T> basePath) {
-        return new BuilderImpl<T>(basePath.path,basePath.targetType);
-    }
-
     private static final class BuilderImpl<T extends DataObject> implements InstanceIdentifierBuilder<T> {
-
-        private final ImmutableList.Builder<PathArgument> path;
-        private Class<? extends DataObject> target = null;
+        private final ImmutableList.Builder<PathArgument> pathBuilder;
+        private final HashCodeBuilder hashBuilder;
+        private boolean wildcard = false;
+        private PathArgument arg = null;
 
         public BuilderImpl() {
-            this.path = ImmutableList.builder();
+            this.pathBuilder = ImmutableList.builder();
+            this.hashBuilder = new HashCodeBuilder();
         }
 
-        public BuilderImpl(List<? extends PathArgument> prefix,Class<? extends DataObject> target) {
-            this.path = ImmutableList.<PathArgument>builder().addAll(prefix);
-            this.target = target;
+        private BuilderImpl(final PathArgument item, final Iterable<? extends PathArgument> pathArguments, final int hashCode, final boolean wildcard) {
+            this.pathBuilder = ImmutableList.<PathArgument>builder().addAll(pathArguments);
+            this.hashBuilder = new HashCodeBuilder(hashCode);
+            this.wildcard = wildcard;
+            this.arg = item;
         }
 
         @SuppressWarnings("unchecked")
-        private <N extends DataObject> InstanceIdentifierBuilder<N> addNode(Class<N> container) {
-            target = container;
-            path.add(new Item<N>(container));
+        private <N extends DataObject> InstanceIdentifierBuilder<N> addNode(final Class<N> container) {
+            arg = new Item<N>(container);
+            hashBuilder.addArgument(arg);
+            pathBuilder.add(arg);
+
+            if (Identifiable.class.isAssignableFrom(container)) {
+                wildcard = true;
+            }
+
             return (InstanceIdentifierBuilder<N>) this;
         }
 
         @SuppressWarnings("unchecked")
         private <N extends DataObject & Identifiable<K> , K extends Identifier<N>> InstanceIdentifierBuilder<N> addNode(
-                Class<N> listItem, K listKey) {
-            target = listItem;
-            path.add(new IdentifiableItem<N, K>(listItem, listKey));
+                final Class<N> listItem, final K listKey) {
+            arg = new IdentifiableItem<N, K>(listItem, listKey);
+            hashBuilder.addArgument(arg);
+            pathBuilder.add(arg);
             return (InstanceIdentifierBuilder<N>) this;
         }
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings("unchecked")
         @Override
         public InstanceIdentifier<T> toInstance() {
-            return new InstanceIdentifier(path.build(), target);
+            Preconditions.checkState(arg != null, "No path arguments present");
+            return (InstanceIdentifier<T>) trustedCreate(arg, pathBuilder.build(), hashBuilder.toInstance(), wildcard);
         }
 
         @Override
@@ -453,143 +736,25 @@ public final class InstanceIdentifier<T extends DataObject> implements Path<Inst
         }
 
         @Override
-        public <N extends DataObject> InstanceIdentifierBuilder<N> node(Class<N> container) {
-            return addNode(container);
-        }
-
-        @Override
-        public <N extends DataObject & Identifiable<K> , K extends Identifier<N>> InstanceIdentifierBuilder<N> node(
-                Class<N> listItem, K listKey) {
-            return addNode(listItem, listKey);
-        }
-
-        @Override
-        public <N extends ChildOf<? super T>> InstanceIdentifierBuilder<N> child(Class<N> container) {
+        public <N extends ChildOf<? super T>> InstanceIdentifierBuilder<N> child(final Class<N> container) {
             return addNode(container);
         }
 
         @Override
         public <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilder<N> child(
-                Class<N> listItem, K listKey) {
-            return addNode(listItem,listKey);
+                final Class<N> listItem, final K listKey) {
+            return addNode(listItem, listKey);
         }
 
         @Override
         public <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilder<N> augmentation(
-                Class<N> container) {
+                final Class<N> container) {
             return addNode(container);
         }
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((path == null) ? 0 : path.hashCode());
-            return result;
+            return hashBuilder.toInstance();
         }
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        InstanceIdentifier<?> other = (InstanceIdentifier<?>) obj;
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * The contains method checks if the other identifier is fully contained within the current identifier. It does this
-     * by looking at only the types of the path arguments and not by comparing the path arguments themselse.
-     * If you want to compare path arguments you must use containsWildcarded
-     *
-     * To illustrate here is an example which explains the working of this api.
-     *
-     * Let's say you have two instance identifiers as follows,
-     *
-     * this = /nodes/node/openflow:1
-     * other = /nodes/node/openflow:2
-     *
-     * then this.contains(other) will return true. To ensure that this and other are compared properly you must use
-     * containsWildcarded
-     *
-     * @param other
-     * @return
-     */
-    @Override
-    public boolean contains(final InstanceIdentifier<?> other) {
-        if(other == null) {
-            throw new IllegalArgumentException("other should not be null");
-        }
-        final int localSize = this.path.size();
-        final List<PathArgument> otherPath = other.getPath();
-        if(localSize > other.path.size()) {
-            return false;
-        }
-        for(int i = 0;i<localSize;i++ ) {
-            if(!path.get(i).equals(otherPath.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * The containsWildcarded method checks if the other identifier is fully contained within the current identifier.
-     * It does this by looking at both the type and identity of the path arguments.
-     *
-     * @param other
-     * @return
-     */
-    public boolean containsWildcarded(final InstanceIdentifier<?> other) {
-        if(other == null) {
-            throw new IllegalArgumentException("other should not be null");
-        }
-        final int localSize = this.path.size();
-        final List<PathArgument> otherPath = other.getPath();
-        if(localSize > other.path.size()) {
-            return false;
-        }
-        for(int i = 0;i<localSize;i++ ) {
-            final PathArgument localArgument = path.get(i);
-            final PathArgument otherArgument = otherPath.get(i);
-            if(!localArgument.getType().equals(otherArgument.getType())) {
-                return false;
-            }
-            if(localArgument instanceof IdentifiableItem<?, ?> && otherArgument instanceof IdentifiableItem<?, ?> && !localArgument.equals(otherPath.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean isWildcarded() {
-        for(PathArgument pathArgument : path) {
-            if(Identifiable.class.isAssignableFrom(pathArgument.getType()) && !(pathArgument instanceof IdentifiableItem<?, ?>)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

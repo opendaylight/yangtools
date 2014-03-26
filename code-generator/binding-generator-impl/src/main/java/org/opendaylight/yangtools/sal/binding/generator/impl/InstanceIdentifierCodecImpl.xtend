@@ -48,14 +48,13 @@ class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
 
 
     override deserialize(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier input) {
-        var Class<?> baType = null
         val biArgs = input.path
         val scannedPath = new ArrayList<QName>(biArgs.size);
         val baArgs = new ArrayList<InstanceIdentifier.PathArgument>(biArgs.size)
         for(biArg : biArgs) {
             scannedPath.add(biArg.nodeType);
             val baArg = deserializePathArgument(biArg,scannedPath)
-            baType = baArg?.type
+            val baType = baArg?.type
             val injectAugment = classToPreviousAugment.get(baType);
             if(injectAugment != null) {
                 val augment = injectAugment.get(scannedPath) as Class<? extends DataObject>;
@@ -65,7 +64,7 @@ class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
             }
             baArgs.add(baArg)
         }
-        val ret = new InstanceIdentifier(baArgs,baType as Class<? extends DataObject>);
+        val ret = InstanceIdentifier.create(baArgs);
         LOG.debug("DOM Instance Identifier {} deserialized to {}",input,ret);
         return ret;
     }
