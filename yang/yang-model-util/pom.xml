@@ -30,10 +30,6 @@
             <artifactId>yang-binding</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.xtend</groupId>
-            <artifactId>org.eclipse.xtend.lib</artifactId>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
@@ -41,10 +37,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.eclipse.xtend</groupId>
-                <artifactId>xtend-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -56,4 +48,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
