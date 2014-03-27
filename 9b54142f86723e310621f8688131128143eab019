@@ -16,6 +16,23 @@
       "revId": "9b54142f86723e310621f8688131128143eab019",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_44173f52",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 795
+      },
+      "writtenOn": "2014-03-27T01:28:00Z",
+      "side": 1,
+      "message": "InstanceIdentifier itself is not abstract - in that case won\u0027t this cause equals to return false even before the pathArguments are compared.",
+      "revId": "9b54142f86723e310621f8688131128143eab019",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
