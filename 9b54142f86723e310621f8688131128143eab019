@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_24256bc2",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 795
+      },
+      "writtenOn": "2014-03-27T01:23:47Z",
+      "side": 1,
+      "message": "wouldn\u0027t it be better to leave this abstract?",
+      "revId": "9b54142f86723e310621f8688131128143eab019",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
