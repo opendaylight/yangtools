@@ -115,7 +115,7 @@ public class NormalizedDataBuilderTest {
         AugmentationNode augmentation = Builders
                 .augmentationBuilder()
                 .withNodeIdentifier(
-                        new InstanceIdentifier.AugmentationIdentifier(null, Sets.newHashSet(getQName("augmentUint32"))))
+                        new InstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(getQName("augmentUint32"))))
                 .withChild(
                         Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
                                 .withValue(11).build()).build();

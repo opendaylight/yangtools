@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableContainerNodeBuilder {
 
     private final DataNodeContainerValidator validator;
-    // TODO remove schema aware builders, replace by validator called at build() ?
 
     private ImmutableContainerNodeSchemaAwareBuilder(ContainerSchemaNode schema) {
         this.validator = new DataNodeContainerValidator(schema);
@@ -35,8 +34,7 @@ public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableCon
 
     @Override
     public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> withChild(DataContainerChild<?, ?> child) {
-        validator.validateChild(child.getIdentifier());
-        return super.withChild(child);
+        return super.withChild(validator.validateChild(child));
     }
 
     @Override

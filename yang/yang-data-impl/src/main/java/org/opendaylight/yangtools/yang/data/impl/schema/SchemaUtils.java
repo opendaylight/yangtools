@@ -5,13 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.transform.base;
+package org.opendaylight.yangtools.yang.data.impl.schema;
 
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -95,22 +94,6 @@ public final class SchemaUtils {
     }
 
     /**
-     * Recursively find all child nodes that come from choices in augment.
-     *
-     * @return Map with all child nodes, to their most top augmentation
-     */
-    public static Map<QName,ChoiceNode> mapChildElementsFromChoicesInAugment(AugmentationSchema schema, Set<DataSchemaNode> realChildSchemas) {
-        Map<QName, ChoiceNode> mappedChoices = Maps.newLinkedHashMap();
-
-        for (DataSchemaNode realChildSchema : realChildSchemas) {
-            if(realChildSchema instanceof ChoiceNode)
-                mappedChoices.putAll(mapChildElementsFromChoices(schema, realChildSchemas));
-        }
-
-        return mappedChoices;
-    }
-
-    /**
      * Recursively find all child nodes that come from choices.
      *
      * @return Map with all child nodes, to their most top augmentation
@@ -126,29 +109,35 @@ public final class SchemaUtils {
 
         for (final DataSchemaNode childSchema : childNodes) {
             if(childSchema instanceof ChoiceNode) {
+
+                if(isFromAugment(schema, childSchema)) {
+                    continue;
+                }
+
                 for (ChoiceCaseNode choiceCaseNode : ((ChoiceNode) childSchema).getCases()) {
 
-                    for (QName qName : getChildNodes(choiceCaseNode)) {
+                    for (QName qName : getChildNodesRecursive(choiceCaseNode)) {
                         mappedChoices.put(qName, (ChoiceNode) childSchema);
                     }
                 }
             }
         }
 
-        // Remove augmented choices
-        // TODO ineffective, mapping augments one more time is not necessary, the map could be injected
-        if(schema instanceof AugmentationTarget) {
-            final Map<QName, AugmentationSchema> augments = mapChildElementsFromAugments((AugmentationTarget) schema);
+        return mappedChoices;
+    }
 
-            return Maps.filterKeys(mappedChoices, new Predicate<QName>() {
-                @Override
-                public boolean apply(QName input) {
-                    return augments.containsKey(input) == false;
-                }
-            });
+    private static boolean isFromAugment(DataNodeContainer schema, DataSchemaNode childSchema) {
+        if(schema instanceof AugmentationTarget == false) {
+            return false;
         }
 
-        return mappedChoices;
+        for (AugmentationSchema augmentationSchema : ((AugmentationTarget) schema).getAvailableAugmentations()) {
+            if(augmentationSchema.getDataChildByName(childSchema.getQName()) != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -181,12 +170,12 @@ public final class SchemaUtils {
 
                 // recursively add all child nodes in case of augment, case and choice
                 if (child instanceof AugmentationSchema || child instanceof ChoiceCaseNode) {
-                    for (QName qName : getChildNodes((DataNodeContainer) child)) {
+                    for (QName qName : getChildNodesRecursive((DataNodeContainer) child)) {
                         childNodesToAugmentation.put(qName, mostTopAugmentation);
                     }
                 } else if (child instanceof ChoiceNode) {
                     for (ChoiceCaseNode choiceCaseNode : ((ChoiceNode) child).getCases()) {
-                        for (QName qName : getChildNodes(choiceCaseNode)) {
+                        for (QName qName : getChildNodesRecursive(choiceCaseNode)) {
                             childNodesToAugmentation.put(qName, mostTopAugmentation);
                         }
                     }
@@ -203,7 +192,7 @@ public final class SchemaUtils {
                     continue;
                 }
 
-                for (QName qName : getChildNodes(choiceCaseNode)) {
+                for (QName qName : getChildNodesRecursive(choiceCaseNode)) {
                     childNodesToAugmentation.put(qName, augments.get(choiceCaseNode.getQName()));
                 }
             }
@@ -217,16 +206,16 @@ public final class SchemaUtils {
      *
      * In case of choice, augment and cases, step in.
      */
-    public static Set<QName> getChildNodes(DataNodeContainer nodeContainer) {
+    public static Set<QName> getChildNodesRecursive(DataNodeContainer nodeContainer) {
         Set<QName> allChildNodes = Sets.newHashSet();
 
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
             if(childSchema instanceof ChoiceNode) {
                 for (ChoiceCaseNode choiceCaseNode : ((ChoiceNode) childSchema).getCases()) {
-                    allChildNodes.addAll(getChildNodes(choiceCaseNode));
+                    allChildNodes.addAll(getChildNodesRecursive(choiceCaseNode));
                 }
             } else if(childSchema instanceof AugmentationSchema || childSchema instanceof ChoiceCaseNode) {
-                allChildNodes.addAll(getChildNodes((DataNodeContainer) childSchema));
+                allChildNodes.addAll(getChildNodesRecursive((DataNodeContainer) childSchema));
             }
             else {
                 allChildNodes.add(childSchema.getQName());
@@ -255,7 +244,7 @@ public final class SchemaUtils {
         } else if(targetSchema instanceof ChoiceNode) {
             for (DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
                 for (ChoiceCaseNode choiceCaseNode : ((ChoiceNode) targetSchema).getCases()) {
-                    if(getChildNodes(choiceCaseNode).contains(dataSchemaNode.getQName())) {
+                    if(getChildNodesRecursive(choiceCaseNode).contains(dataSchemaNode.getQName())) {
                         realChildNodes.add(choiceCaseNode.getDataChildByName(dataSchemaNode.getQName()));
                     }
                 }
@@ -303,5 +292,19 @@ public final class SchemaUtils {
         }
 
         return false;
+    }
+
+    public static InstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(AugmentationSchema schema) {
+        return new InstanceIdentifier.AugmentationIdentifier(getChildQNames(schema));
+    }
+
+    public static Set<QName> getChildQNames(AugmentationSchema schema) {
+        Set<QName> qnames = Sets.newHashSet();
+
+        for (DataSchemaNode dataSchemaNode : schema.getChildNodes()) {
+            qnames.add(dataSchemaNode.getQName());
+        }
+
+        return qnames;
     }
 }

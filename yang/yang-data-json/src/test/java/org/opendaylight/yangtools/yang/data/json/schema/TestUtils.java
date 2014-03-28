@@ -297,7 +297,7 @@ public class TestUtils {
 
     private static InstanceIdentifier.AugmentationIdentifier getAugmentationIdentifier(String localName,
             String namespace, Date revision, Set<QName> children) {
-        return new InstanceIdentifier.AugmentationIdentifier(null, children);
+        return new InstanceIdentifier.AugmentationIdentifier(children);
     }
 
 }
