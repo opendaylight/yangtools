@@ -7,14 +7,35 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.*;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.checkMissingBody;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.createActualSchemaPath;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.createListKey;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.getConfig;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.getIdentityrefBase;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseConstraints;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseDefault;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseRefine;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseSchemaNodeArgs;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseStatus;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseTypeWithBody;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUnits;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUnknownTypeWithBody;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUserOrdered;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseYinValue;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.stringFromNode;
 
 import java.net.URI;
-import java.text.*;
-import java.util.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Stack;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.opendaylight.yangtools.antlrv4.code.gen.*;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Base_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Contact_stmtContext;
@@ -45,13 +66,33 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Type_body_stmtsCon
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Units_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.When_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParserBaseListener;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.YangTypesConverter;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
-import org.opendaylight.yangtools.yang.parser.builder.impl.*;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.FeatureBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +112,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private final Stack<Stack<QName>> actualPath = new Stack<>();
+    private Collection<ModuleBuilder> builders;
 
     private void addNodeToPath(QName name) {
         actualPath.peek().push(name);
@@ -78,6 +120,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     private QName removeNodeFromPath() {
         return actualPath.peek().pop();
+    }
+
+    public void setBuilders(Collection<ModuleBuilder> collection) {
+        if (builders == null)
+            builders = new ArrayList<>();
+        builders = collection;
     }
 
     public YangParserListenerImpl(String sourcePath) {
@@ -117,8 +165,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         actualPath.pop();
     }
 
-    @Override public void enterSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
+    @Override
+    public void enterSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
+
+        setNamespaceOfModuleToSubmodule(moduleName);
+
         LOGGER.debug("entering submodule " + moduleName);
         enterLog("submodule", moduleName, 0);
         actualPath.push(new Stack<QName>());
@@ -143,12 +195,48 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         moduleBuilder.setReference(reference);
     }
 
-    @Override public void exitSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
+    /**
+     * Sets the namespace of module to submodule.
+     * 
+     * @param moduleName
+     *            the name of the module
+     */
+    private void setNamespaceOfModuleToSubmodule(String moduleName) {
+        String moduleBelongsTo = "";
+
+        for (ModuleBuilder builder : builders) {
+
+            if (moduleName.equals(builder.getModuleName())) {
+                moduleBelongsTo = builder.getBelongsTo();
+                ModuleBuilder searchedModuleBuilder = findModuleBuilderByName(moduleBelongsTo);
+                if (searchedModuleBuilder != null)
+                    namespace = searchedModuleBuilder.getNamespace();
+
+            }
+        }
+    }
+
+    private ModuleBuilder findModuleBuilderByName(String searchedModuleName) {
+        ModuleBuilder searchedBuilder = null;
+
+        for (ModuleBuilder aBuilder : builders) {
+            if (aBuilder.getModuleName().equals(searchedModuleName)) {
+                searchedBuilder = aBuilder;
+                break;
+            }
+        }
+
+        return searchedBuilder;
+    }
+
+    @Override
+    public void exitSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
         exitLog("submodule", "");
         actualPath.pop();
     }
 
-    @Override public void enterBelongs_to_stmt(YangParser.Belongs_to_stmtContext ctx) {
+    @Override
+    public void enterBelongs_to_stmt(YangParser.Belongs_to_stmtContext ctx) {
         moduleBuilder.setBelongsTo(stringFromNode(ctx));
     }
 
@@ -401,25 +489,25 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             } else {
                 QName qname;
                 switch (typeName) {
-                    case "union":
-                        qname = BaseTypes.constructQName("union");
-                        addNodeToPath(qname);
-                        UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
-                        Builder parent = moduleBuilder.getActualNode();
-                        unionBuilder.setParent(parent);
-                        moduleBuilder.enterNode(unionBuilder);
-                        break;
-                    case "identityref":
-                        qname = BaseTypes.constructQName("identityref");
-                        addNodeToPath(qname);
-                        SchemaPath path = createActualSchemaPath(actualPath.peek());
-                        moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
-                        break;
-                    default:
-                        type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
-                                yangModelPrefix, moduleBuilder.getActualNode());
-                        moduleBuilder.setType(type);
-                        addNodeToPath(type.getQName());
+                case "union":
+                    qname = BaseTypes.constructQName("union");
+                    addNodeToPath(qname);
+                    UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
+                    Builder parent = moduleBuilder.getActualNode();
+                    unionBuilder.setParent(parent);
+                    moduleBuilder.enterNode(unionBuilder);
+                    break;
+                case "identityref":
+                    qname = BaseTypes.constructQName("identityref");
+                    addNodeToPath(qname);
+                    SchemaPath path = createActualSchemaPath(actualPath.peek());
+                    moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
+                    break;
+                default:
+                    type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
+                            yangModelPrefix, moduleBuilder.getActualNode());
+                    moduleBuilder.setType(type);
+                    addNodeToPath(type.getQName());
                 }
             }
         } else {
@@ -816,7 +904,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             }
         } catch (IllegalArgumentException e) {
             qname = nodeType;
-            
+
         }
         addNodeToPath(qname);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
@@ -824,7 +912,6 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         UnknownSchemaNodeBuilder builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
         builder.setNodeType(nodeType);
         builder.setNodeParameter(nodeParameter);
-
 
         parseSchemaNodeArgs(ctx, builder);
         moduleBuilder.enterNode(builder);
@@ -848,7 +935,6 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         RpcDefinitionBuilder rpcBuilder = moduleBuilder.addRpc(line, rpcQName, path);
         moduleBuilder.enterNode(rpcBuilder);
-
 
         parseSchemaNodeArgs(ctx, rpcBuilder);
     }
@@ -974,7 +1060,6 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         IdentitySchemaNodeBuilder builder = moduleBuilder.addIdentity(identityQName, line, path);
         moduleBuilder.enterNode(builder);
-
 
         parseSchemaNodeArgs(ctx, builder);
 
