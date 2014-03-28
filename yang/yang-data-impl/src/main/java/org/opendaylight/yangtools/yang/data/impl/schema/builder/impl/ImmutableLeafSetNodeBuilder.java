@@ -95,7 +95,6 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         for (final LeafSetEntryNode<T> leafSetEntry : value) {
             withChild(leafSetEntry);
         }
-
         return this;
     }
 

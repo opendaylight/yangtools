@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 
 import com.google.common.base.Preconditions;
@@ -21,11 +23,10 @@ import com.google.common.base.Supplier;
 public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBuilder {
 
     private final org.opendaylight.yangtools.yang.model.api.ChoiceNode schema;
-    private ChoiceCaseNode detectedCase;
     private DataNodeContainerValidator validator;
 
     protected ImmutableChoiceNodeSchemaAwareBuilder(org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
-        this.schema = Preconditions.checkNotNull(schema);
+        this.schema = Preconditions.checkNotNull(schema, "Schema was null");
         super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
@@ -36,20 +37,13 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
 
     @Override
     public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
-        if(detectedCase == null) {
-            detectedCase = SchemaUtils.detectCase(schema, child).or(new Supplier<ChoiceCaseNode>() {
-                @Override
-                public ChoiceCaseNode get() {
-                    throw new IllegalArgumentException(String.format("Unknown child node: %s, for choice: %s", child.getNodeType(),
-                            schema.getQName()));
-                }
-            });
-            validator = new DataNodeContainerValidator(detectedCase);
+        if(validator == null) {
+            Optional<ChoiceCaseNode> detectedCaseOpt = SchemaUtils.detectCase(schema, child);
+            DataValidationException.checkLegalChild(detectedCaseOpt.isPresent(), child.getIdentifier(), schema);
+            validator = new DataNodeContainerValidator(detectedCaseOpt.get());
         }
 
-        validator.validateChild(child.getIdentifier());
-
-        return super.withChild(child);
+        return super.withChild(validator.validateChild(child));
     }
 
     @Override
