@@ -197,7 +197,7 @@ public class NormalizedNodeXmlTranslationTest {
             qn.add(getNodeIdentifier(childName).getNodeType());
         }
 
-        return new InstanceIdentifier.AugmentationIdentifier(null, qn);
+        return new InstanceIdentifier.AugmentationIdentifier(qn);
     }
 
     public NormalizedNodeXmlTranslationTest(String yangPath, String xmlPath, ContainerNode expectedNode) {

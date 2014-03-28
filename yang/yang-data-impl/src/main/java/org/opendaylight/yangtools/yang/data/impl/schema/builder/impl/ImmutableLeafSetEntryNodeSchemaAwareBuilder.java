@@ -29,7 +29,7 @@ public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends Immuta
     @Override
     public NormalizedNodeAttrBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> withValue(T value) {
         super.withNodeIdentifier(new InstanceIdentifier.NodeWithValue(schema.getQName(), value));
-        // TODO check value type
+        // TODO check value type using TypeProvider ?
         return super.withValue(value);
     }
 

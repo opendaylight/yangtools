@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 import com.google.common.base.Preconditions;
@@ -28,7 +29,7 @@ public class ImmutableAugmentationNodeBuilder
     public DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> withChild(
             final DataContainerChild<?, ?> child) {
         // Check nested augments
-        Preconditions.checkArgument(child instanceof AugmentationNode == false,
+        DataValidationException.checkLegalData(child instanceof AugmentationNode == false,
                 "Unable to add: %s, as a child for: %s, Nested augmentations are not permitted", child.getNodeType(),
                 getNodeIdentifier() == null ? this : getNodeIdentifier());
 

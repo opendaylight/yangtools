@@ -7,18 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.Set;
-
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import com.google.common.collect.Sets;
 
 public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmentationNodeBuilder {
 
@@ -26,19 +21,7 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
 
     protected ImmutableAugmentationNodeSchemaAwareBuilder(AugmentationSchema schema) {
         this.validator = new DataNodeContainerValidator(schema);
-        // TODO no QName for augmentation
-        super.withNodeIdentifier(new InstanceIdentifier.AugmentationIdentifier(null, getChildQNames(schema)));
-    }
-
-    // TODO move somewhere to UTIL
-    public static Set<QName> getChildQNames(AugmentationSchema schema) {
-        Set<QName> qnames = Sets.newHashSet();
-
-        for (DataSchemaNode dataSchemaNode : schema.getChildNodes()) {
-            qnames.add(dataSchemaNode.getQName());
-        }
-
-        return qnames;
+        super.withNodeIdentifier(SchemaUtils.getNodeIdentifierForAugmentation(schema));
     }
 
     @Override
@@ -48,8 +31,7 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
 
     @Override
     public DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> withChild(DataContainerChild<?, ?> child) {
-        validator.validateChild(child.getIdentifier());
-        return super.withChild(child);
+        return super.withChild(validator.validateChild(child));
     }
 
     public static DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(AugmentationSchema schema) {
