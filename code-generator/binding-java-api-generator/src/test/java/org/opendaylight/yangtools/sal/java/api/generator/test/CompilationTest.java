@@ -48,12 +48,7 @@ public class CompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "list-gen");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        final List<File> sourceFiles = getSourceFiles("/compilation/list-gen");
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/compilation/list-gen", sourcesOutputDir);
 
         // Test if all sources are generated
         File parent = new File(sourcesOutputDir, NS_TEST);
@@ -123,12 +118,7 @@ public class CompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "augment-under-uses");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        final List<File> sourceFiles = getSourceFiles("/compilation/augment-under-uses");
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/compilation/augment-under-uses", sourcesOutputDir);
 
         // Test if all sources were generated from 'module foo'
         File parent = new File(sourcesOutputDir, NS_FOO);
@@ -233,12 +223,7 @@ public class CompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "aug-of-aug");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        final List<File> sourceFiles = getSourceFiles("/compilation/augment-of-augment");
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/compilation/augment-of-augment", sourcesOutputDir);
 
         // Test if all sources were generated from 'module foo'
         File parent = new File(sourcesOutputDir, NS_FOO);
@@ -378,12 +363,7 @@ public class CompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "leaf-return-types");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        final List<File> sourceFiles = getSourceFiles("/compilation/leaf-return-types");
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/compilation/leaf-return-types", sourcesOutputDir);
 
         File parent = new File(sourcesOutputDir, NS_TEST);
         assertTrue(new File(parent, "TestData.java").exists());
@@ -449,12 +429,7 @@ public class CompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "context-reference");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        final List<File> sourceFiles = getSourceFiles("/compilation/context-reference");
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/compilation/context-reference", sourcesOutputDir);
 
         // Test if all sources are generated
         File fooParent = new File(sourcesOutputDir, NS_FOO);
@@ -505,12 +480,7 @@ public class CompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "yang");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        final List<File> sourceFiles = getSourceFiles("/yang");
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/yang", sourcesOutputDir);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -518,6 +488,29 @@ public class CompilationTest extends BaseCompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
+    @Test
+    public void bug586Test() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "bug586");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "bug586");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        generateTestSources("/compilation/bug586", sourcesOutputDir);
+
+        // Test if sources are compilable
+        testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    private void generateTestSources(String resourceDirPath, File sourcesOutputDir) throws Exception {
+        final List<File> sourceFiles = getSourceFiles(resourceDirPath);
+        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
+        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
+        final List<Type> types = bindingGenerator.generateTypes(context);
+        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        generator.generateToFile(sourcesOutputDir);
+    }
 
     private void testReturnTypeIdentityref(Class<?> clazz, String methodName, String returnTypeStr) throws Exception {
         Method method;
