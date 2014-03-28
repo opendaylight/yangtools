@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 import com.google.common.base.Preconditions;
@@ -27,8 +28,8 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     private final DataNodeContainerValidator validator;
 
     protected ImmutableMapEntryNodeSchemaAwareBuilder(ListSchemaNode schema) {
-        this.schema = Preconditions.checkNotNull(schema);
         this.validator = new DataNodeContainerValidator(schema);
+        this.schema = schema;
     }
 
     @Override
@@ -38,8 +39,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
 
     @Override
     public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(DataContainerChild<?, ?> child) {
-        validator.validateChild(child.getIdentifier());
-        return super.withChild(child);
+        return super.withChild(validator.validateChild(child));
     }
 
     @Override
@@ -54,20 +54,17 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     private InstanceIdentifier.NodeIdentifierWithPredicates constructNodeIdentifier() {
         Collection<QName> keys = schema.getKeyDefinition();
 
-        // If no keys defined, add all child elements as key
-        // FIXME should be all PRESENT child nodes, not all from schema
         if(keys.isEmpty()) {
             keys = childrenQNamesToPaths.keySet();
         }
 
         Map<QName, Object> keysToValues = Maps.newHashMap();
         for (QName key : keys) {
-            // TODO two maps ? find better solution
             DataContainerChild<?, ?> valueForKey = value.get(childrenQNamesToPaths.get(key));
-            Preconditions.checkState(valueForKey != null, "Key value: %s cannot be empty for: %s", key, schema.getQName());
+            DataValidationException.checkListKey(valueForKey, key, new InstanceIdentifier.NodeIdentifierWithPredicates(
+                    schema.getQName(), keysToValues));
             keysToValues.put(key, valueForKey.getValue());
         }
-
 
         return new InstanceIdentifier.NodeIdentifierWithPredicates(schema.getQName(), keysToValues);
     }

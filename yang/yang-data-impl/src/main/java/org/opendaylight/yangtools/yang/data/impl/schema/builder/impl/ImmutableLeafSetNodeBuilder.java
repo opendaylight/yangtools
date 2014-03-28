@@ -58,7 +58,6 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         for (LeafSetEntryNode<T> leafSetEntry : value) {
             withChild(leafSetEntry);
         }
-
         return this;
     }
 
@@ -67,7 +66,6 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value, Map<QName, String> attributes) {
         return withChild(new ImmutableLeafSetEntryNodeBuilder.ImmutableLeafSetEntryNode<>(
                 new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value), value, attributes));
-
     }
 
     @Override

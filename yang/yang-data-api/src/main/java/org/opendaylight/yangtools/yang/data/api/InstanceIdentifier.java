@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -334,20 +335,25 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     public static final class AugmentationIdentifier implements PathArgument {
 
-
         private static final long serialVersionUID = -8122335594681936939L;
-        private final QName nodeType;
         private final ImmutableSet<QName> childNames;
 
         @Override
         public QName getNodeType() {
-            return nodeType;
+            // This should rather throw exception than return always null
+            throw new UnsupportedOperationException("Augmentation node has no QName");
         }
 
-        public AugmentationIdentifier(QName nodeType, Set<QName> childNames) {
-            super();
-            this.nodeType = nodeType;
+        public AugmentationIdentifier(Set<QName> childNames) {
             this.childNames = ImmutableSet.copyOf(childNames);
+        }
+
+        /**
+         * Augmentation node has no QName
+         */
+        @Deprecated
+        public AugmentationIdentifier(QName nodeType, Set<QName> childNames) {
+            this(childNames);
         }
 
         public Set<QName> getPossibleChildNames() {
@@ -369,17 +375,14 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
             AugmentationIdentifier that = (AugmentationIdentifier) o;
 
-            if (childNames != null ? !childNames.equals(that.childNames) : that.childNames != null) return false;
-            if (nodeType != null ? !nodeType.equals(that.nodeType) : that.nodeType != null) return false;
+            if (!childNames.equals(that.childNames)) return false;
 
             return true;
         }
 
         @Override
         public int hashCode() {
-            int result = nodeType != null ? nodeType.hashCode() : 0;
-            result = 31 * result + (childNames != null ? childNames.hashCode() : 0);
-            return result;
+            return childNames.hashCode();
         }
     }
 
