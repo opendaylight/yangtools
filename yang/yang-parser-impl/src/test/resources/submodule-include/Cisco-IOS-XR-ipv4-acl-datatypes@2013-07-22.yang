@@ -1,0 +1,393 @@
+module Cisco-IOS-XR-ipv4-acl-datatypes {
+
+  /*** NAMESPACE / PREFIX DEFINITION ***/
+
+  namespace "http://cisco.com/ns"+
+    "/yang/Cisco-IOS-XR-ipv4-acl-datatypes";
+
+
+  prefix "ipv4-acl-datatypes";
+
+  /*** LINKAGE (IMPORTS / INCLUDES) ***/
+
+  /*** META INFORMATION ***/
+
+  organization "Cisco Systems, Inc.";
+
+  contact
+    "Cisco Systems, Inc.
+     Customer Service
+
+     Postal: 170 West Tasman Drive
+     San Jose, CA 95134
+
+     Tel: +1 800 553-NETS
+
+     E-mail: cs-yang@cisco.com";
+
+  description 
+    "This module contains a collection of generally useful
+     derived YANG data types.
+
+     Copyright (c) 2013 by Cisco Systems, Inc.
+     All rights reserved.";
+
+  revision "2013-07-22" {
+    description
+      "Initial revision.";
+  }
+
+  typedef Ipv4-acl-prefix-match-range {
+    type uint32 {
+      range "0..32";
+    }
+    description "Ipv4 acl prefix match range";
+  }
+  typedef Ipv4-acl-protocol-number {
+    type uint32 {
+      range "0..255";
+    }
+    description "Ipv4 acl protocol number";
+  }
+  typedef Ipv4-acl-prefix-length-range {
+    type uint32 {
+      range "0..32";
+    }
+    description "Ipv4 acl prefix length range";
+  }
+  typedef Ipv4-acl-tcp-match-operator-enum {
+    type enumeration {
+      enum match-all {
+        value 1;
+        description "Match only packet with all the given TCP bits";
+      }
+      enum match-any {
+        value 3;
+        description
+          "Match only packet with any of the given TCP
+          bits";
+      }
+    }
+    description "Ipv4 acl tcp match operator enum";
+  }
+  typedef Ipv4-acl-grant-enum {
+    type enumeration {
+      enum deny {
+        value 0;
+        description "Deny";
+      }
+      enum permit {
+        value 1;
+        description "Permit";
+      }
+    }
+    description "Ipv4 acl grant enum";
+  }
+  typedef Ipv4-acl-operator-enum {
+    type enumeration {
+      enum equal {
+        value 1;
+        description "Match only packets on a given port number";
+      }
+      enum greater-than {
+        value 2;
+        description "Match only packet with a greater port number";
+      }
+      enum less-than {
+        value 3;
+        description "Match only packet with a lower port number";
+      }
+      enum not-equal {
+        value 4;
+        description "Match only packets not on a given port number";
+      }
+      enum range {
+        value 5;
+        description
+          "Match only packets in the range of port numbers";
+      }
+    }
+    description "Ipv4 acl operator enum";
+  }
+  typedef Ipv4-acl-precedence-number {
+    type uint32 {
+      range "0..7";
+    }
+    description "Ipv4 acl precedence number";
+  }
+  typedef Ipv4-acl-plen-range {
+    type uint32 {
+      range "0..65535";
+    }
+    description "Ipv4 acl plen range";
+  }
+  typedef Ipv4-acl-ttl-range {
+    type uint32 {
+      range "0..255";
+    }
+    description "Ipv4 acl ttl range";
+  }
+  typedef Ipv4-acl-port-number {
+    type uint32 {
+      range "0..65535";
+    }
+    description "Ipv4 acl port number";
+  }
+  typedef Ipv4-acl-log-rate-range {
+    type uint32 {
+      range "1..1000";
+    }
+    description "Ipv4 acl log rate range";
+  }
+  typedef Ipv4-acl-igmp-number {
+    type uint32 {
+      range "0..255";
+    }
+    description "Ipv4 acl igmp number";
+  }
+  typedef Ipv4-acl-dscp-number {
+    type uint32 {
+      range "0..63";
+    }
+    description "Ipv4 acl dscp number";
+  }
+  typedef Ipv4-acl-status-enum {
+    type enumeration {
+      enum disabled {
+        value 0;
+        description "Disabled";
+      }
+      enum enabled {
+        value 1;
+        description "Enabled";
+      }
+    }
+    description "Ipv4 acl status enum";
+  }
+  typedef Ipv4-acl-icmp-code-range {
+    type uint32 {
+      range "0..255";
+    }
+    description "Ipv4 acl icmp code range";
+  }
+  typedef Ipv4-acl-log-threshold-range {
+    type uint32 {
+      range "1..2147483647";
+    }
+    description "Ipv4 acl log threshold range";
+  }
+  typedef Ipv4-acl-icmp-type-code-enum {
+    type enumeration {
+      enum echo-reply {
+        value 65535;
+        description "Echo reply";
+      }
+      enum network-unreachable {
+        value 196608;
+        description "Network unreachable";
+      }
+      enum host-unreachable {
+        value 196609;
+        description "Host unreachable";
+      }
+      enum protocol-unreachable {
+        value 196610;
+        description "Protocol unreachable";
+      }
+      enum port-unreachable {
+        value 196611;
+        description "Port unreachable";
+      }
+      enum packet-too-big {
+        value 196612;
+        description "Fragmentation needed and DF set";
+      }
+      enum source-route-failed {
+        value 196613;
+        description "Source route failed";
+      }
+      enum network-unknown {
+        value 196614;
+        description "Network unknown";
+      }
+      enum host-unknown {
+        value 196615;
+        description "Host unknown";
+      }
+      enum host-isolated {
+        value 196616;
+        description "Host isolated";
+      }
+      enum dod-net-prohibited {
+        value 196617;
+        description "Network prohibited";
+      }
+      enum dod-host-prohibited {
+        value 196618;
+        description "Host prohibited";
+      }
+      enum host-tos-unreachable {
+        value 196619;
+        description "Host unreachable for TOS";
+      }
+      enum net-tos-unreachable {
+        value 196620;
+        description "Network unreachable for TOS";
+      }
+      enum administratively-prohibited {
+        value 196621;
+        description "Administratively prohibited";
+      }
+      enum host-precedence-unreachable {
+        value 196622;
+        description "Host unreachable for precedence";
+      }
+      enum precedence-unreachable {
+        value 196623;
+        description "Precedence cutoff";
+      }
+      enum unreachable {
+        value 262143;
+        description "All unreachables";
+      }
+      enum source-quench {
+        value 327679;
+        description "Source quenches";
+      }
+      enum network-redirect {
+        value 327680;
+        description "Network redirect";
+      }
+      enum host-redirect {
+        value 327681;
+        description "Host redirect";
+      }
+      enum net-tos-redirect {
+        value 327682;
+        description "Network redirect for TOS";
+      }
+      enum host-tos-redirect {
+        value 327683;
+        description "Host redirect for TOS";
+      }
+      enum redirect {
+        value 393215;
+        description "All redirects";
+      }
+      enum alternate-address {
+        value 458751;
+        description "Alternate address";
+      }
+      enum echo {
+        value 589823;
+        description "Echo (ping)";
+      }
+      enum router-advertisement {
+        value 655359;
+        description "Router discovery advertisements";
+      }
+      enum router-solicitation {
+        value 720895;
+        description "Router discovery solicitations";
+      }
+      enum ttl-exceeded {
+        value 720896;
+        description "TTL exceeded";
+      }
+      enum reassembly-timeout {
+        value 720897;
+        description "Reassembly timeout";
+      }
+      enum time-exceeded {
+        value 786431;
+        description "All time exceeds";
+      }
+      enum general-parameter-problem {
+        value 786432;
+        description "Parameter problem";
+      }
+      enum option-missing {
+        value 786433;
+        description "Parameter required but not present";
+      }
+      enum no-room-for-option {
+        value 786434;
+        description "Parameter required but no room";
+      }
+      enum parameter-problem {
+        value 851967;
+        description "All parameter problems";
+      }
+      enum timestamp-request {
+        value 917503;
+        description "Timestamp requests";
+      }
+      enum timestamp-reply {
+        value 983039;
+        description "Timestamp replies";
+      }
+      enum information-request {
+        value 1048575;
+        description "Information request";
+      }
+      enum information-reply {
+        value 1114111;
+        description "Information replies";
+      }
+      enum mask-request {
+        value 1179647;
+        description "Mask requests";
+      }
+      enum mask-reply {
+        value 1245183;
+        description "Mask replies";
+      }
+      enum traceroute {
+        value 2031615;
+        description "Traceroute";
+      }
+      enum conversion-error {
+        value 2097151;
+        description "Datagram conversion";
+      }
+      enum mobile-redirect {
+        value 2162687;
+        description "Mobile host redirect";
+      }
+    }
+    description "Ipv4 acl icmp type code enum";
+  }
+  typedef Ipv4-acl-sequence-number-range {
+    type uint32 {
+      range "1..2147483646";
+    }
+    description "Ipv4 acl sequence number range";
+  }
+  typedef Ipv4-acl-tcp-bits-number {
+    type uint32 {
+      range "1..32";
+    }
+    description "Ipv4 acl tcp bits number";
+  }
+  typedef Ipv4-acl-icmp-type-range {
+    type uint32 {
+      range "0..255";
+    }
+    description "Ipv4 acl icmp type range";
+  }
+  typedef Ipv4-acl-logging-enum {
+    type enumeration {
+      enum log {
+        value 1;
+        description "Log matches against this entry";
+      }
+      enum log-input {
+        value 2;
+        description
+          "Log matches against this entry, including input
+          interface";
+      }
+    }
+    description "Ipv4 acl logging enum";
+  }
+}
