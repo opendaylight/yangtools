@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
 import com.google.common.base.Preconditions;
@@ -53,7 +54,7 @@ public class ImmutableMapEntryNodeBuilder
             final InstanceIdentifier.PathArgument identifier = childId.getIdentifier();
 
             // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-            if(identifier instanceof InstanceIdentifier.AugmentationIdentifier) {
+            if(isAugment(identifier)) {
                 continue;
             }
 
@@ -61,7 +62,6 @@ public class ImmutableMapEntryNodeBuilder
         }
     }
 
-    // FIXME, find better solution than 2 maps (map from QName to Child ?)
 
     @Override
     public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withValue(final List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
@@ -69,12 +69,17 @@ public class ImmutableMapEntryNodeBuilder
         return super.withValue(value);
     }
 
+    private static boolean isAugment(InstanceIdentifier.PathArgument identifier) {
+        return identifier instanceof InstanceIdentifier.AugmentationIdentifier;
+    }
+
     @Override
     public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
         // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-        if(child.getIdentifier() instanceof InstanceIdentifier.AugmentationIdentifier == false) {
+        if(isAugment(child.getIdentifier()) == false) {
             childrenQNamesToPaths.put(child.getNodeType(), child.getIdentifier());
         }
+
         return super.withChild(child);
     }
 
@@ -86,16 +91,8 @@ public class ImmutableMapEntryNodeBuilder
 
     private void checkKeys() {
         for (final QName keyQName : getNodeIdentifier().getKeyValues().keySet()) {
-
-            final InstanceIdentifier.PathArgument childNodePath = childrenQNamesToPaths.get(keyQName);
-            final DataContainerChild<?, ?> childNode = getChild(childNodePath);
-
-            Preconditions.checkNotNull(childNode, "Key child node: %s, not present", keyQName);
-
-            final Object actualValue = getNodeIdentifier().getKeyValues().get(keyQName);
-            final Object expectedValue = childNode.getValue();
-            Preconditions.checkArgument(expectedValue.equals(actualValue),
-                    "Key child node with unexpected value, is: %s, should be: %s", actualValue, expectedValue);
+            DataContainerChild<?, ?> childNode = getChild(childrenQNamesToPaths.get(keyQName));
+            DataValidationException.checkListKey(childNode, getNodeIdentifier().getKeyValues(), keyQName, getNodeIdentifier());
         }
     }
 

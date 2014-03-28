@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.Sets;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 import com.google.common.base.Preconditions;
@@ -44,8 +46,7 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
 
     @Override
     public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
-        Preconditions.checkArgument(schema.getQName().equals(child.getNodeType()),
-                "Incompatible node type, should be: %s, is: %s", schema.getQName(), child.getNodeType());
+        DataValidationException.checkLegalChild(schema.getQName().equals(child.getNodeType()), child.getIdentifier(), schema, Sets.newHashSet(schema.getQName()));
         return super.withChild(child);
     }
 
