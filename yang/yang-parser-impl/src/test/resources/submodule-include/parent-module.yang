@@ -1,0 +1,13 @@
+module parent-module {
+	namespace "test:submodule:namespace";
+	
+	prefix "pm";
+	
+	include child-module {
+		revision-date 2014-03-31;
+	}
+	
+	revision "2014-03-31" {
+		description "Initial revision.";
+	}
+}

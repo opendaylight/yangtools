@@ -7,7 +7,45 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.fillAugmentTarget;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentity;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentityFromContext;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNode;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNodeInModule;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.processAugmentation;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.setNodeAddedByUses;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNode;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNodes;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapGroupings;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapTypedefs;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapUnknownNodes;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveType;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnion;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnionWithContext;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeWithContext;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -61,45 +99,7 @@ import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.fillAugmentTarget;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentity;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentityFromContext;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNode;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNodeInModule;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.processAugmentation;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.setNodeAddedByUses;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNode;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNodes;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapGroupings;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapTypedefs;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapUnknownNodes;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveType;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnion;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnionWithContext;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeWithContext;
-
+import com.google.common.base.Preconditions;
 
 public final class YangParserImpl implements YangModelParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
@@ -180,8 +180,8 @@ public final class YangParserImpl implements YangModelParser {
 
         List<InputStream> yangModelStreams = new ArrayList<>(inputStreams.keySet());
         Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
-        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams,
-                builderToStreamMap, null);
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, builderToStreamMap,
+                null);
 
         for (InputStream is : inputStreams.keySet()) {
             try {
@@ -274,9 +274,11 @@ public final class YangParserImpl implements YangModelParser {
             return Collections.emptyMap();
         }
 
-
         // copy input streams so that they can be read more than once
-        Map<InputStream/*array backed copy */, InputStream/* original for returning*/> arrayBackedToOriginalInputStreams = new HashMap<>();
+        Map<InputStream/* array backed copy */, InputStream/*
+                                                            * original for
+                                                            * returning
+                                                            */> arrayBackedToOriginalInputStreams = new HashMap<>();
         for (final InputStream originalIS : yangModelStreams) {
             InputStream arrayBackedIs;
             try {
@@ -288,17 +290,21 @@ public final class YangParserImpl implements YangModelParser {
             arrayBackedToOriginalInputStreams.put(arrayBackedIs, originalIS);
         }
 
-        // it would be better if all code from here used string representation of yang sources instead of input streams
-        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>(); // FIXME: do not modify input parameter
-        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(new ArrayList<>(arrayBackedToOriginalInputStreams.keySet()),
-                builderToStreamMap,
-                null);
-
+        // it would be better if all code from here used string representation
+        // of yang sources instead of input streams
+        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>(); // FIXME:
+                                                                              // do
+                                                                              // not
+                                                                              // modify
+                                                                              // input
+                                                                              // parameter
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(new ArrayList<>(
+                arrayBackedToOriginalInputStreams.keySet()), builderToStreamMap, null);
 
         // TODO move deeper
-        for(TreeMap<Date, ModuleBuilder> value : modules.values()) {
+        for (TreeMap<Date, ModuleBuilder> value : modules.values()) {
             Collection<ModuleBuilder> values = value.values();
-            for(ModuleBuilder builder: values) {
+            for (ModuleBuilder builder : values) {
                 InputStream is = builderToStreamMap.get(builder);
                 try {
                     is.reset();
@@ -317,7 +323,6 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
 
-
         Map<ModuleBuilder, Module> builderToModuleMap = build(modules);
 
         Set<ModuleBuilder> keyset = builderToModuleMap.keySet();
@@ -334,9 +339,10 @@ public final class YangParserImpl implements YangModelParser {
 
     @Override
     public SchemaContext resolveSchemaContext(final Set<Module> modules) {
-        // after merging parse method with this one, add support for getting submodule sources.
+        // after merging parse method with this one, add support for getting
+        // submodule sources.
         Map<ModuleIdentifier, String> identifiersToSources = new HashMap<>();
-        for(Module module: modules) {
+        for (Module module : modules) {
             ModuleImpl moduleImpl = (ModuleImpl) module;
             identifiersToSources.put(module, moduleImpl.getSource());
         }
@@ -358,7 +364,9 @@ public final class YangParserImpl implements YangModelParser {
             Map<ModuleBuilder, InputStream> streamToBuilderMap) {
         final ParseTreeWalker walker = new ParseTreeWalker();
         final Map<InputStream, ParseTree> trees = parseStreams(inputStreams);
-        final Map<InputStream, ModuleBuilder> builders = new LinkedHashMap<>();
+        final Set<ModuleBuilder> resBuilders = resolveNamespaceForSubmodules(trees, streamToBuilderMap,
+                walker);
+        final Map<InputStream, ModuleBuilder> builders = new HashMap<>();
 
         // validate yang
         new YangModelBasicValidator(walker).validate(new ArrayList<>(trees.values()));
@@ -371,6 +379,7 @@ public final class YangParserImpl implements YangModelParser {
                 path = is.toString();
             }
             yangModelParser = new YangParserListenerImpl(path);
+            yangModelParser.setBuilders(resBuilders);
             walker.walk(yangModelParser, entry.getValue());
             ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
 
@@ -379,6 +388,45 @@ public final class YangParserImpl implements YangModelParser {
             streamToBuilderMap.put(moduleBuilder, entry.getKey());
 
             builders.put(entry.getKey(), moduleBuilder);
+        }
+
+        return builders;
+    }
+
+    private Set<ModuleBuilder> resolveNamespaceForSubmodules(Map<InputStream, ParseTree> trees,
+            Map<ModuleBuilder, InputStream> streamToBuilderMap, ParseTreeWalker walker) {
+
+        YangNamespaceForSubmodulesResolver yangListener;
+        Set<ModuleBuilder> builders = new LinkedHashSet<>();
+
+        for (Map.Entry<InputStream, ParseTree> entry : trees.entrySet()) {
+            InputStream is = entry.getKey();
+            String path = null;
+            if (is instanceof NamedInputStream) {
+                path = is.toString();
+            }
+            yangListener = new YangNamespaceForSubmodulesResolver(path);
+            walker.walk(yangListener, entry.getValue());
+            ModuleBuilder moduleBuilder = yangListener.getModuleBuilder();
+
+            streamToBuilderMap.put(moduleBuilder, entry.getKey());
+
+            builders.add(moduleBuilder);
+        }
+
+        Set<ModuleBuilder> submodules = new HashSet<>();
+        for (ModuleBuilder moduleBuilder : builders) {
+            if (moduleBuilder.isSubmodule()) {
+                submodules.add(moduleBuilder);
+            }
+        }
+
+        for (ModuleBuilder submodule : submodules) {
+            for (ModuleBuilder module : builders) {
+                if (module.getName().equals(submodule.getBelongsTo())) {
+                    submodule.setNamespace(module.getNamespace());
+                }
+            }
         }
 
         return builders;
@@ -430,6 +478,7 @@ public final class YangParserImpl implements YangModelParser {
 
     private void addSubmoduleToModule(ModuleBuilder submodule, ModuleBuilder module) {
         submodule.setParent(module);
+
         module.getDirtyNodes().addAll(submodule.getDirtyNodes());
         module.getModuleImports().addAll(submodule.getModuleImports());
         module.getAugments().addAll(submodule.getAugments());
@@ -481,7 +530,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Order modules by name and revision.
-     *
+     * 
      * @param modules
      *            modules to order
      * @return modules ordered by name and revision
@@ -591,7 +640,7 @@ public final class YangParserImpl implements YangModelParser {
      * Creates builder-to-module map based on given modules. Method first
      * resolve unresolved type references, instantiate groupings through uses
      * statements and perform augmentation.
-     *
+     * 
      * Node resolving must be performed in following order:
      * <ol>
      * <li>
@@ -603,7 +652,7 @@ public final class YangParserImpl implements YangModelParser {
      * <li>
      * augments</li>
      * </ol>
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @return modules mapped on their builders
@@ -633,7 +682,7 @@ public final class YangParserImpl implements YangModelParser {
      * Creates builder-to-module map based on given modules. Method first
      * resolve unresolved type references, instantiate groupings through uses
      * statements and perform augmentation.
-     *
+     * 
      * Node resolving must be performed in following order:
      * <ol>
      * <li>
@@ -645,7 +694,7 @@ public final class YangParserImpl implements YangModelParser {
      * <li>
      * augments</li>
      * </ol>
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -676,7 +725,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Resolve all unresolved type references.
-     *
+     * 
      * @param modules
      *            all loaded modules
      */
@@ -693,7 +742,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Resolve all unresolved type references.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -714,7 +763,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Search for dirty nodes (node which contains UnknownType) and resolve
      * unknown types.
-     *
+     * 
      * @param modules
      *            all available modules
      * @param module
@@ -769,7 +818,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Traverse through augmentations of modules and fix their child nodes
      * schema path.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -792,7 +841,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Find augment target and set correct schema path for all its child nodes.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param augment
@@ -864,7 +913,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Set new schema path to node and all its child nodes based on given parent
      * path. This method do not change the namespace.
-     *
+     * 
      * @param node
      *            node which schema path should be updated
      * @param parentPath
@@ -879,7 +928,7 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
         if (node instanceof ChoiceBuilder) {
-            for (ChoiceCaseBuilder child : ((ChoiceBuilder)node).getCases()) {
+            for (ChoiceCaseBuilder child : ((ChoiceBuilder) node).getCases()) {
                 correctPathForAugmentNodes(child, node.getPath());
             }
         }
@@ -889,7 +938,7 @@ public final class YangParserImpl implements YangModelParser {
      * Check augments for mandatory nodes. If the target node is in another
      * module, then nodes added by the augmentation MUST NOT be mandatory nodes.
      * If mandatory node is found, throw an exception.
-     *
+     * 
      * @param augments
      *            augments to check
      */
@@ -915,7 +964,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Go through all augment definitions and resolve them.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -956,7 +1005,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Perform augmentation defined under uses statement.
-     *
+     * 
      * @param augment
      *            augment to resolve
      * @param module
@@ -995,7 +1044,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Find augment target module and perform augmentation.
-     *
+     * 
      * @param augment
      *            augment to resolve
      * @param module
@@ -1026,7 +1075,7 @@ public final class YangParserImpl implements YangModelParser {
      * Find module from loaded modules or from context based on given qname. If
      * module is found in context, create wrapper over this module and add it to
      * collection of loaded modules.
-     *
+     * 
      * @param qname
      * @param module
      *            current module
@@ -1068,7 +1117,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Go through identity statements defined in current module and resolve
      * their 'base' statement if present.
-     *
+     * 
      * @param modules
      *            all modules
      * @param module
@@ -1094,7 +1143,7 @@ public final class YangParserImpl implements YangModelParser {
      * Go through identity statements defined in current module and resolve
      * their 'base' statement. Method tries to find base identity in given
      * modules. If base identity is not found, method will search it in context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1123,7 +1172,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Find and add reference of uses target grouping.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -1159,13 +1208,14 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Resolve uses statements defined in groupings.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUsesForGroupings(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
+    private void resolveUsesForGroupings(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final SchemaContext context) {
         final Set<GroupingBuilder> allGroupings = new HashSet<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
@@ -1185,13 +1235,14 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Resolve uses statements.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUsesForNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
+    private void resolveUsesForNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final SchemaContext context) {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 ModuleBuilder module = inner.getValue();
@@ -1207,7 +1258,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Find target grouping and copy its child nodes to current location with
      * new namespace.
-     *
+     * 
      * @param usesNode
      *            uses node to resolve
      * @param modules
@@ -1215,8 +1266,8 @@ public final class YangParserImpl implements YangModelParser {
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUses(UsesNodeBuilder usesNode,
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
+    private void resolveUses(UsesNodeBuilder usesNode, final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final SchemaContext context) {
         if (!usesNode.isResolved()) {
             DataNodeContainerBuilder parent = usesNode.getParent();
             ModuleBuilder module = ParserUtils.getParentModule(parent);
@@ -1242,9 +1293,8 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     /**
-     * Copy target grouping child nodes to current location with
-     * new namespace.
-     *
+     * Copy target grouping child nodes to current location with new namespace.
+     * 
      * @param usesNode
      *            uses node to resolve
      * @param modules
@@ -1265,35 +1315,34 @@ public final class YangParserImpl implements YangModelParser {
             rev = module.getRevision();
             pref = module.getPrefix();
             if (parent instanceof AugmentationSchemaBuilder) {
-                parentPath = ((AugmentationSchemaBuilder)parent).getTargetNodeSchemaPath();
+                parentPath = ((AugmentationSchemaBuilder) parent).getTargetNodeSchemaPath();
             } else {
-                parentPath = ((ModuleBuilder)parent).getPath();
+                parentPath = ((ModuleBuilder) parent).getPath();
             }
         } else {
             ns = ((DataSchemaNodeBuilder) parent).getQName().getNamespace();
             rev = ((DataSchemaNodeBuilder) parent).getQName().getRevision();
             pref = ((DataSchemaNodeBuilder) parent).getQName().getPrefix();
-            parentPath = ((DataSchemaNodeBuilder)parent).getPath();
+            parentPath = ((DataSchemaNodeBuilder) parent).getPath();
         }
 
         GroupingDefinition gd = usesNode.getGroupingDefinition();
 
-        Set<DataSchemaNodeBuilder> childNodes = wrapChildNodes(module.getModuleName(), line,
-                gd.getChildNodes(), parentPath, ns, rev, pref);
+        Set<DataSchemaNodeBuilder> childNodes = wrapChildNodes(module.getModuleName(), line, gd.getChildNodes(),
+                parentPath, ns, rev, pref);
         parent.getChildNodeBuilders().addAll(childNodes);
         for (DataSchemaNodeBuilder childNode : childNodes) {
             setNodeAddedByUses(childNode);
         }
 
-        Set<TypeDefinitionBuilder> typedefs = wrapTypedefs(module.getModuleName(), line, gd, parentPath, ns,
-                rev, pref);
+        Set<TypeDefinitionBuilder> typedefs = wrapTypedefs(module.getModuleName(), line, gd, parentPath, ns, rev, pref);
         parent.getTypeDefinitionBuilders().addAll(typedefs);
         for (TypeDefinitionBuilder typedef : typedefs) {
             setNodeAddedByUses(typedef);
         }
 
-        Set<GroupingBuilder> groupings = wrapGroupings(module.getModuleName(), line, usesNode
-                .getGroupingDefinition().getGroupings(), parentPath, ns, rev, pref);
+        Set<GroupingBuilder> groupings = wrapGroupings(module.getModuleName(), line, usesNode.getGroupingDefinition()
+                .getGroupings(), parentPath, ns, rev, pref);
         parent.getGroupingBuilders().addAll(groupings);
         for (GroupingBuilder gb : groupings) {
             setNodeAddedByUses(gb);
@@ -1310,7 +1359,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Try to find extension builder describing this unknown node and assign it
      * to unknown node builder.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1340,7 +1389,7 @@ public final class YangParserImpl implements YangModelParser {
      * Try to find extension builder describing this unknown node and assign it
      * to unknown node builder. If extension is not found in loaded modules, try
      * to find it in context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1386,7 +1435,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Traverse through modules and resolve their deviation statements.
-     *
+     * 
      * @param modules
      *            all loaded modules
      */
@@ -1401,7 +1450,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Traverse through module and resolve its deviation statements.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1426,7 +1475,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Traverse through modules and resolve their deviation statements with
      * given context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -1445,7 +1494,7 @@ public final class YangParserImpl implements YangModelParser {
     /**
      * Traverse through module and resolve its deviation statements with given
      * context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1494,7 +1543,7 @@ public final class YangParserImpl implements YangModelParser {
 
     /**
      * Correct deviation target path in deviation builder.
-     *
+     * 
      * @param dev
      *            deviation
      * @param dependentModuleBuilder

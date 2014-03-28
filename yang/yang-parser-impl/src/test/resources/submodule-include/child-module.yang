@@ -1,0 +1,25 @@
+submodule child-module {
+	
+	belongs-to parent-module {
+		prefix pm;
+	}
+	
+	revision "2014-03-31" {
+		description
+			"Initial version.";
+	}
+	
+	typedef config-type {
+		type enumeration {
+			enum running-config {
+				description "Base running config.";
+			}
+			enum startup-config {
+				description "Startup config.";
+			}
+			enum empty-config {
+				description "Config is empty yet.";
+			}
+		}
+	}
+}
