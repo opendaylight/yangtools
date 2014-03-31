@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_553b67eb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-03-31T13:21:49Z",
+      "side": 1,
+      "message": "This variable should not be called submoduleName. We use this listener to parse yang modules and submodules, so binding variable name to module or submodule is maybe not the best option. I think it will be sufficient to call it simply name.",
+      "revId": "57afa0c667214c1716aced5a9e9893a2c35739d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
