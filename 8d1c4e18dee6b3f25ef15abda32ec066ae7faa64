@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_fa08082f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "Next, when YangParserListenerImpl sets properties to submodule \nbuilder, sets correct submodule namespace according to the module.\n\n-\u003e\n\nThen when module builder for submodule is created also correct (according to \"belongs to\" statement) namespace is set for whole submodule.",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_1a5e3c46",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserBaseListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "YangParserBaseListenerListenerImpl isnt self describing. Use something more self-explanatory e.g. YangNamespaceForSubmodulesResolver",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_fa5a484f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserBaseListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "what is purpose of this variable? It is only created and written but never red.",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_da578425",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserBaseListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "I think this branch is unnecessary. It isn\u0027t necessary to keep info about prefix.",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_7a365805",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserBaseListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "description and reference variables aren\u0027t necessary",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_9a310c0e",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserBaseListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "unnecessary cycle for",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_3a40e055",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "maybe better name for method\nresolveNamespacesFromYangs()\nwould be\nresolveNamespaceForSubmodules()\n\nresBuilders -\u003e allNamespacesInBuilders",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_1a251cc2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "only ModuleBuilders are required (no InputStream) therefore more suitable output structure would be Set\u003cModuleBuilder\u003e",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_9a18ec85",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "builders -\u003e buildersWithNamespaces",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_fa2128b5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "why it is firstly checked if builders is null and then parameter collection is assigned to builders (row 128 should be enough)",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_ba2bb093",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "moduleName -\u003e submoduleName",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_da2e64a5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "setNamespaceOfModuleToSubmodule() -\u003e setSubmoduleNamespaceAccordingToParentModule()",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_7a1d3873",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "searchedModuleBuilder -\u003e parentModuleBuilder",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_3a17c053",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "where is found namespace set to namespace of submodule?",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_1a0cfc41",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/impl/YangParserIncludedSubmoduleTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T06:59:16Z",
+      "side": 1,
+      "message": "some remark that all typedefinitions are from submodule and that there is only one typedefinition would be suitable",
+      "revId": "8d1c4e18dee6b3f25ef15abda32ec066ae7faa64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
