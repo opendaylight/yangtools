@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_55e7e7e4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T11:02:33Z",
+      "side": 1,
+      "message": "streamToBuilderMap parametr is probably unnecessary\nand also adding to this map at line 412 is incorrect. The content of the map will be overwritten in method parseBuilders()",
+      "revId": "b7ecd7450d5903a8ba8f03865efcd5e1b6e084ff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_d5f19796",
+        "filename": "yang/yang-parser-impl/src/test/resources/submodule-include/child-module.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T11:02:33Z",
+      "side": 1,
+      "message": "for indent use 4 spaces instead of tabulator",
+      "revId": "b7ecd7450d5903a8ba8f03865efcd5e1b6e084ff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_b5ee23b3",
+        "filename": "yang/yang-parser-impl/src/test/resources/submodule-include/parent-module.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-03-31T11:02:33Z",
+      "side": 1,
+      "message": "indent!",
+      "revId": "b7ecd7450d5903a8ba8f03865efcd5e1b6e084ff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
