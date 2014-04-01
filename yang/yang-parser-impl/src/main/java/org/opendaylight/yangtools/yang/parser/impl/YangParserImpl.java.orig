@@ -105,8 +105,11 @@ public final class YangParserImpl implements YangModelParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
 
     private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
+<<<<<<< HEAD
+=======
 
     private final Map<ModuleBuilder, InputStream> streamToBuilderMap = new HashMap<>();
+>>>>>>> 50ca078... Refactoring yang-parser-impl
 
     @Override
     public Set<Module> parseYangModels(final File yangFile, final File directory) {
@@ -141,7 +144,8 @@ public final class YangParserImpl implements YangModelParser {
             }
         }
 
-        Map<InputStream, ModuleBuilder> parsedBuilders = parseBuilders(new ArrayList<>(streamToFileMap.keySet()));
+        Map<InputStream, ModuleBuilder> parsedBuilders = parseBuilders(new ArrayList<>(streamToFileMap.keySet()),
+                new HashMap<ModuleBuilder, InputStream>());
         ModuleBuilder main = parsedBuilders.get(yangFileStream);
 
         List<ModuleBuilder> moduleBuilders = new ArrayList<>();
@@ -180,7 +184,9 @@ public final class YangParserImpl implements YangModelParser {
         }
 
         List<InputStream> yangModelStreams = new ArrayList<>(inputStreams.keySet());
-        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, null);
+        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, builderToStreamMap,
+                null);
 
         for (InputStream is : inputStreams.keySet()) {
             try {
@@ -213,7 +219,9 @@ public final class YangParserImpl implements YangModelParser {
             return Collections.emptySet();
         }
 
-        final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, context);
+        final Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
+        final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams,
+                builderToStreamMap, context);
         final Set<Module> unsorted = new LinkedHashSet<>(buildWithContext(modules, context).values());
         if (context != null) {
             for (Module m : context.getModules()) {
@@ -242,7 +250,13 @@ public final class YangParserImpl implements YangModelParser {
         }
 
         List<InputStream> yangModelStreams = new ArrayList<>(inputStreams.keySet());
+<<<<<<< HEAD
+        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>();
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, builderToStreamMap,
+                null);
+=======
         Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(yangModelStreams, null);
+>>>>>>> 50ca078... Refactoring yang-parser-impl
 
         for (InputStream is : inputStreams.keySet()) {
             try {
@@ -287,9 +301,17 @@ public final class YangParserImpl implements YangModelParser {
 
         // it would be better if all code from here used string representation
         // of yang sources instead of input streams
-
+<<<<<<< HEAD
+        Map<ModuleBuilder, InputStream> builderToStreamMap = new HashMap<>(); // FIXME:
+                                                                              // do
+                                                                              // not
+                                                                              // modify
+                                                                              // input
+                                                                              // parameter
+=======
+>>>>>>> 50ca078... Refactoring yang-parser-impl
         Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModuleBuilders(new ArrayList<>(
-                arrayBackedToOriginalInputStreams.keySet()), null);
+                arrayBackedToOriginalInputStreams.keySet()), builderToStreamMap, null);
 
         // TODO move deeper
         for (TreeMap<Date, ModuleBuilder> value : modules.values()) {
@@ -339,13 +361,28 @@ public final class YangParserImpl implements YangModelParser {
         return new SchemaContextImpl(modules, identifiersToSources);
     }
 
+<<<<<<< HEAD
+    // FIXME: why a list is required?
+    // FIXME: streamToBuilderMap is output of this method, not input
+    private Map<InputStream, ModuleBuilder> parseModuleBuilders(List<InputStream> inputStreams,
+            Map<ModuleBuilder, InputStream> streamToBuilderMap) {
+        Map<InputStream, ModuleBuilder> modules = parseBuilders(inputStreams, streamToBuilderMap);
+=======
     private Map<InputStream, ModuleBuilder> parseModuleBuilders(Iterable<InputStream> inputStreams) {
         Map<InputStream, ModuleBuilder> modules = parseBuilders(inputStreams);
+>>>>>>> 50ca078... Refactoring yang-parser-impl
         Map<InputStream, ModuleBuilder> result = resolveSubmodules(modules);
         return result;
     }
 
+<<<<<<< HEAD
+    // FIXME: why a list is required?
+    // FIXME: streamToBuilderMap is output of this method, not input
+    private Map<InputStream, ModuleBuilder> parseBuilders(List<InputStream> inputStreams,
+            Map<ModuleBuilder, InputStream> streamToBuilderMap) {
+=======
     private Map<InputStream, ModuleBuilder> parseBuilders(Iterable<InputStream> inputStreams) {
+>>>>>>> 50ca078... Refactoring yang-parser-impl
         final ParseTreeWalker walker = new ParseTreeWalker();
         final Map<InputStream, ParseTree> trees = parseStreams(inputStreams);
         final Set<ModuleBuilder> resBuilders = resolveNamespaceForSubmodules(trees, walker);
@@ -367,7 +404,12 @@ public final class YangParserImpl implements YangModelParser {
             final ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
 
             // We expect the order of trees and streams has to be the same
+<<<<<<< HEAD
+            // FIXME: input parameters should be treated as immutable
+            streamToBuilderMap.put(moduleBuilder, entry.getKey());
+=======
             streamToBuilderMap.put(moduleBuilder, is);
+>>>>>>> 50ca078... Refactoring yang-parser-impl
 
             builders.put(entry.getKey(), moduleBuilder);
         }
@@ -488,9 +530,17 @@ public final class YangParserImpl implements YangModelParser {
         module.getAllUnknownNodes().addAll(submodule.getAllUnknownNodes());
     }
 
+<<<<<<< HEAD
+    // FIXME: why a list is required?
+    // FIXME: streamToBuilderMap is output of this method, not input
+    private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuilders(final List<InputStream> yangFileStreams,
+            final Map<ModuleBuilder, InputStream> streamToBuilderMap, final SchemaContext context) {
+        Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(yangFileStreams, streamToBuilderMap);
+=======
     private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuilders(final Iterable<InputStream> yangFileStreams,
             final SchemaContext context) {
         Map<InputStream, ModuleBuilder> parsedBuilders = parseModuleBuilders(yangFileStreams);
+>>>>>>> 50ca078... Refactoring yang-parser-impl
         ModuleBuilder[] builders = new ModuleBuilder[parsedBuilders.size()];
         parsedBuilders.values().toArray(builders);
 
