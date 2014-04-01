@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a5c5d37_f99ed562",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-04-01T11:05:53Z",
+      "side": 1,
+      "message": "The difference is \"Item\" vs. \"IdentifiableItem\" -- one of them has identifier. The former indicates \u0027match anything\u0027, the latter indicates a concrete value.",
+      "parentUuid": "9a5c5d37_c4544f23",
+      "revId": "1c65f738204194b015a3b6f3769e8ca58ae697f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a5c5d37_a4315b0d",
         "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifier.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-03-27T01:14:08Z",
       "side": 1,
       "message": "typo in childIdentifer missing i",
+      "revId": "1c65f738204194b015a3b6f3769e8ca58ae697f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_998d9934",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-04-01T11:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a5c5d37_a4315b0d",
       "revId": "1c65f738204194b015a3b6f3769e8ca58ae697f0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
