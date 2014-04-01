@@ -118,7 +118,7 @@ public class RefineTest {
 
         Method methodResolveModuleBuilders = null;
         try {
-            methodResolveModuleBuilders = cl.getDeclaredMethod("resolveModuleBuilders", List.class, Map.class, SchemaContext.class);
+            methodResolveModuleBuilders = cl.getDeclaredMethod("resolveModuleBuilders", Iterable.class, SchemaContext.class);
         } catch (NoSuchMethodException | SecurityException e1) {
         }
         assertNotNull("The method resolveModuleBuilders cannot be found", methodResolveModuleBuilders);
@@ -133,12 +133,11 @@ public class RefineTest {
         }
         assertEquals("Map with input streams contains incorrect number of files.", 1, inputStreams.size());
 
-        Map<ModuleBuilder, InputStream> builderToStreamMap = Maps.newHashMap();
         Map<String, Map<Date, ModuleBuilder>> modules = null;
         try {
             methodResolveModuleBuilders.setAccessible(true);
             modules = (Map<String, Map<Date, ModuleBuilder>>) methodResolveModuleBuilders.invoke(yangParserImpl,
-                    Lists.newArrayList(inputStreams.keySet()), builderToStreamMap, null);
+                    Lists.newArrayList(inputStreams.keySet()), null);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
