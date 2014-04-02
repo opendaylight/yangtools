@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class ImmutableMapNodeBuilder
@@ -40,7 +41,7 @@ public class ImmutableMapNodeBuilder
     @Override
     public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(final List<MapEntryNode> value) {
         // TODO replace or putAll ?
-        for (MapEntryNode mapEntryNode : value) {
+        for (final MapEntryNode mapEntryNode : value) {
             withChild(mapEntryNode);
         }
 
@@ -79,5 +80,14 @@ public class ImmutableMapNodeBuilder
             return Optional.fromNullable(mappedChildren.get(child));
         }
 
+        @Override
+        protected int valueHashCode() {
+            return children.hashCode();
+        }
+
+        @Override
+        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+            return children.equals(((ImmutableMapNode) other).children);
+        }
     }
 }
