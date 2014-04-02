@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_3f41ed39",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-04-02T11:47:59Z",
+      "side": 1,
+      "message": "how about this?\n\nif (result !\u003d 0) {\n    return result;\n}\n\ne.g. do a partial check and immediate return. I think the code will  be much more readable. see more examples below ...",
+      "revId": "fe5b6c5139874430c5cf6dc3f7194f432ac014eb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_1f3e29b9",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-04-02T11:47:59Z",
+      "side": 1,
+      "message": "if (other.namespace !\u003d null) {\n    return -1;\n}",
+      "revId": "fe5b6c5139874430c5cf6dc3f7194f432ac014eb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a5c5d37_ff4a3554",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-04-02T11:47:59Z",
+      "side": 1,
+      "message": "if (other.namespace \u003d\u003d null) {\n    return 1;\n}\n\nresult \u003d namespace.compareTo();\nif (result !\u003d 0) {\n    return result;\n}\n\n....",
+      "revId": "fe5b6c5139874430c5cf6dc3f7194f432ac014eb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
