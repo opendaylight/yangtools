@@ -14,11 +14,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class ImmutableMapNodeBuilder
@@ -40,7 +42,7 @@ public class ImmutableMapNodeBuilder
     @Override
     public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(final List<MapEntryNode> value) {
         // TODO replace or putAll ?
-        for (MapEntryNode mapEntryNode : value) {
+        for (final MapEntryNode mapEntryNode : value) {
             withChild(mapEntryNode);
         }
 
@@ -79,5 +81,23 @@ public class ImmutableMapNodeBuilder
             return Optional.fromNullable(mappedChildren.get(child));
         }
 
+        @Override
+        protected int valueHashCode() {
+            int result = 0;
+            for (final MapEntryNode e : getValue()) {
+                result = 31 * result + e.hashCode();
+            }
+            return result;
+        }
+
+        @Override
+        protected boolean valueEquals(final NormalizedNode<?, ?> other) {
+            if (!(other instanceof MapNode)) {
+                return false;
+            }
+
+            final MapNode map = (MapNode) other;
+            return Iterables.elementsEqual(getValue(), map.getValue());
+        }
     }
 }

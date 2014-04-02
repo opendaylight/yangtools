@@ -9,14 +9,15 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import java.util.Map;
 
-import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 public abstract class AbstractImmutableDataContainerNode<K extends PathArgument> //
         extends AbstractImmutableNormalizedNode<K, Iterable<DataContainerChild<? extends PathArgument, ?>>> //
@@ -36,4 +37,22 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
         return Optional.<DataContainerChild<? extends PathArgument, ?>> fromNullable(children.get(child));
     }
 
+    @Override
+    protected int valueHashCode() {
+        int result = 0;
+        for (final Object e : getValue()) {
+            result = 31 * result + e.hashCode();
+        }
+        return result;
+    }
+
+    @Override
+    protected boolean valueEquals(final NormalizedNode<?, ?> other) {
+        if (!(other instanceof DataContainerNode<?>)) {
+            return false;
+        }
+
+        final DataContainerNode<?> container = (DataContainerNode<?>) other;
+        return Iterables.elementsEqual(getValue(), container.getValue());
+    }
 }

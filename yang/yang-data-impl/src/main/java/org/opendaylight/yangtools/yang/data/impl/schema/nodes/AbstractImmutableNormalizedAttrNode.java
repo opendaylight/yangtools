@@ -8,11 +8,15 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 
 public abstract class AbstractImmutableNormalizedAttrNode<K extends InstanceIdentifier.PathArgument,V>
@@ -21,7 +25,7 @@ public abstract class AbstractImmutableNormalizedAttrNode<K extends InstanceIden
 
     private final Map<QName, String> attributes;
 
-    protected AbstractImmutableNormalizedAttrNode(K nodeIdentifier, V value, Map<QName, String> attributes) {
+    protected AbstractImmutableNormalizedAttrNode(final K nodeIdentifier, final V value, final Map<QName, String> attributes) {
         super(nodeIdentifier, value);
         this.attributes = ImmutableMap.copyOf(attributes);
     }
@@ -32,8 +36,44 @@ public abstract class AbstractImmutableNormalizedAttrNode<K extends InstanceIden
     }
 
     @Override
-    public final Object getAttributeValue(QName value) {
+    public final Object getAttributeValue(final QName value) {
         return attributes.get(value);
     }
 
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("attributes", attributes);
+    }
+
+    @Override
+    protected int valueHashCode() {
+        int result = getValue().hashCode();
+        for (final Entry<?, ?> a : attributes.entrySet()) {
+            result = 31 * result + a.hashCode();
+        }
+        return result;
+    }
+
+    @Override
+    protected boolean valueEquals(final NormalizedNode<?, ?> other) {
+        if (!getValue().equals(other.getValue())) {
+            return false;
+        }
+
+        if (!(other instanceof AttributesContainer)) {
+            return false;
+        }
+
+        final AttributesContainer container = (AttributesContainer) other;
+        if (!interfaceEquals(container)) {
+            return false;
+        }
+
+        final Set<Entry<QName, String>> tas = getAttributes().entrySet();
+        final Set<Entry<QName, String>> oas = container.getAttributes().entrySet();
+
+        return tas.containsAll(oas) && oas.containsAll(tas);
+    }
+
+    protected abstract boolean interfaceEquals(AttributesContainer other);
 }
