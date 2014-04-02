@@ -139,7 +139,7 @@ public class YangDataOperationsTest {
             return ModifyAction.MERGE;
         }
 
-        return ModifyAction.fromXmlValue(Files.toString(new File(resource.getFile()), Charsets.UTF_8).trim());
+        return ModifyAction.fromXmlValue(Files.toString(new File(resource.toURI()), Charsets.UTF_8).trim());
     }
 
     private void verifyModificationResult(Optional<ContainerNode> result, Optional<ContainerNode> expectedResult)
