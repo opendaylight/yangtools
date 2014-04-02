@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import java.net.URISyntaxException;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -46,6 +47,10 @@ public class SerializeNormalizedStructToCnSnStructTest {
         assertNotNull(serialized.iterator().hasNext());
 
         CompositeNode compNode = TestUtils.prepareCompositeNodeStruct();
-        assertEquals(serialized.iterator().next(), compNode);
+
+        assertEquals(serialized.iterator().next().getNodeType(), compNode.getNodeType());
+
+        Set<Node<?>> value = Sets.newHashSet(((CompositeNode)serialized.iterator().next()).getValue());
+        assertEquals(value, Sets.newHashSet(compNode.getValue()));
     }
 }

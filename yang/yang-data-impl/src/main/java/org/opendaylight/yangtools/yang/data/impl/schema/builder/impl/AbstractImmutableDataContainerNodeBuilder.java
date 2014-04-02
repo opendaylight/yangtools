@@ -25,7 +25,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
     protected I nodeIdentifier;
 
     protected AbstractImmutableDataContainerNodeBuilder() {
-        this.value = Maps.newLinkedHashMap();
+        this.value = Maps.newHashMap();
     }
 
     @Override
