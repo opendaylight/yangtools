@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 
 public class ImmutableAugmentationNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> {
@@ -31,14 +30,14 @@ public class ImmutableAugmentationNodeBuilder
         // Check nested augments
         Preconditions.checkArgument(child instanceof AugmentationNode == false,
                 "Unable to add: %s, as a child for: %s, Nested augmentations are not permitted", child.getNodeType(),
-                nodeIdentifier == null ? this : nodeIdentifier);
+                getNodeIdentifier() == null ? this : getNodeIdentifier());
 
         return super.withChild(child);
     }
 
     @Override
     public AugmentationNode build() {
-        return new ImmutableAugmentationNode(nodeIdentifier, value);
+        return new ImmutableAugmentationNode(getNodeIdentifier(), buildValue());
     }
 
     static final class ImmutableAugmentationNode
@@ -46,7 +45,7 @@ public class ImmutableAugmentationNodeBuilder
             implements AugmentationNode {
 
         ImmutableAugmentationNode(final InstanceIdentifier.AugmentationIdentifier nodeIdentifier, final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
-            super(ImmutableMap.copyOf(children), nodeIdentifier);
+            super(children, nodeIdentifier);
         }
     }
 }
