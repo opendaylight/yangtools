@@ -81,17 +81,17 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
             AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements
             Immutable, LeafSetNode<T> {
 
-        private final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> mappedChildren;
+        private final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children;
 
         ImmutableLeafSetNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                 final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
             super(nodeIdentifier, Collections.unmodifiableCollection(children.values()));
-            this.mappedChildren = children;
+            this.children = children;
         }
 
         @Override
         public Optional<LeafSetEntryNode<T>> getChild(final InstanceIdentifier.NodeWithValue child) {
-            return Optional.fromNullable(mappedChildren.get(child));
+            return Optional.fromNullable(children.get(child));
         }
 
         @Override
