@@ -26,18 +26,18 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     private final ListSchemaNode schema;
     private final DataNodeContainerValidator validator;
 
-    protected ImmutableMapEntryNodeSchemaAwareBuilder(ListSchemaNode schema) {
+    protected ImmutableMapEntryNodeSchemaAwareBuilder(final ListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
         this.validator = new DataNodeContainerValidator(schema);
     }
 
     @Override
-    public ImmutableMapEntryNodeBuilder withNodeIdentifier(InstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifier) {
+    public ImmutableMapEntryNodeBuilder withNodeIdentifier(final InstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(DataContainerChild<?, ?> child) {
+    public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
     }
@@ -60,10 +60,10 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
             keys = childrenQNamesToPaths.keySet();
         }
 
-        Map<QName, Object> keysToValues = Maps.newHashMap();
-        for (QName key : keys) {
+        final Map<QName, Object> keysToValues = Maps.newHashMap();
+        for (final QName key : keys) {
             // TODO two maps ? find better solution
-            DataContainerChild<?, ?> valueForKey = value.get(childrenQNamesToPaths.get(key));
+            final DataContainerChild<?, ?> valueForKey = getChild(childrenQNamesToPaths.get(key));
             Preconditions.checkState(valueForKey != null, "Key value: %s cannot be empty for: %s", key, schema.getQName());
             keysToValues.put(key, valueForKey.getValue());
         }
@@ -72,7 +72,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         return new InstanceIdentifier.NodeIdentifierWithPredicates(schema.getQName(), keysToValues);
     }
 
-    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> create(ListSchemaNode schema) {
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> create(final ListSchemaNode schema) {
         return new ImmutableMapEntryNodeSchemaAwareBuilder(schema);
     }
 
