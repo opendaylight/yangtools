@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -19,22 +20,30 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class ImmutableMapNodeBuilder
         implements CollectionNodeBuilder<MapEntryNode, MapNode> {
 
-    protected Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value = Maps.newLinkedHashMap();
-    protected InstanceIdentifier.NodeIdentifier nodeIdentifier;
+    private Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value = Maps.newLinkedHashMap();
+    private InstanceIdentifier.NodeIdentifier nodeIdentifier;
+    private boolean dirty = false;
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> create() {
         return new ImmutableMapNodeBuilder();
     }
 
+    private void checkDirty() {
+        if (dirty) {
+            value = Maps.newLinkedHashMap(value);
+            dirty = false;
+        }
+    }
+
     @Override
     public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
+        checkDirty();
         this.value.put(child.getIdentifier(), child);
         return this;
     }
@@ -57,6 +66,7 @@ public class ImmutableMapNodeBuilder
 
     @Override
     public MapNode build() {
+        dirty = true;
         return new ImmutableMapNode(nodeIdentifier, value);
     }
 
@@ -72,7 +82,7 @@ public class ImmutableMapNodeBuilder
 
         ImmutableMapNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                          final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier, ImmutableList.copyOf(children.values()));
+            super(nodeIdentifier, Collections.unmodifiableCollection(children.values()));
             this.mappedChildren = children;
         }
 

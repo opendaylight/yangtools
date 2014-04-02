@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -16,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 public abstract class AbstractImmutableDataContainerNode<K extends PathArgument> //
@@ -28,7 +28,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     public AbstractImmutableDataContainerNode(
             final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, final K nodeIdentifier) {
-        super(nodeIdentifier, ImmutableSet.copyOf(children.values()));
+        super(nodeIdentifier, Collections.unmodifiableCollection(children.values()));
         this.children = children;
     }
 

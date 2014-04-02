@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 public class ImmutableMapEntryNodeBuilder
@@ -64,18 +63,18 @@ public class ImmutableMapEntryNodeBuilder
     @Override
     public MapEntryNode build() {
         checkKeys();
-        return new ImmutableMapEntryNode(nodeIdentifier, value, attributes);
+        return new ImmutableMapEntryNode(getNodeIdentifier(), buildValue(), attributes);
     }
 
     private void checkKeys() {
-        for (final QName keyQName : nodeIdentifier.getKeyValues().keySet()) {
+        for (final QName keyQName : getNodeIdentifier().getKeyValues().keySet()) {
 
             final InstanceIdentifier.PathArgument childNodePath = childrenQNamesToPaths.get(keyQName);
-            final DataContainerChild<?, ?> childNode = value.get(childNodePath);
+            final DataContainerChild<?, ?> childNode = getChild(childNodePath);
 
             Preconditions.checkNotNull(childNode, "Key child node: %s, not present", keyQName);
 
-            final Object actualValue = nodeIdentifier.getKeyValues().get(keyQName);
+            final Object actualValue = getNodeIdentifier().getKeyValues().get(keyQName);
             final Object expectedValue = childNode.getValue();
             Preconditions.checkArgument(expectedValue.equals(actualValue),
                     "Key child node with unexpected value, is: %s, should be: %s", actualValue, expectedValue);
@@ -86,7 +85,7 @@ public class ImmutableMapEntryNodeBuilder
 
         ImmutableMapEntryNode(final InstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifier,
                               final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children, final Map<QName, String> attributes) {
-            super(ImmutableMap.copyOf(children), nodeIdentifier, attributes);
+            super(children, nodeIdentifier, attributes);
         }
 
         @Override
