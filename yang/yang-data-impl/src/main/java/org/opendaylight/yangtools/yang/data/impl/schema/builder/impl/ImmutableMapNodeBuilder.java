@@ -76,17 +76,17 @@ public class ImmutableMapNodeBuilder
 
     static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements Immutable,MapNode {
 
-        private final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mappedChildren;
+        private final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children;
 
         ImmutableMapNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                          final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
             super(nodeIdentifier, Iterables.unmodifiableIterable(children.values()));
-            this.mappedChildren = children;
+            this.children = children;
         }
 
         @Override
         public Optional<MapEntryNode> getChild(final InstanceIdentifier.NodeIdentifierWithPredicates child) {
-            return Optional.fromNullable(mappedChildren.get(child));
+            return Optional.fromNullable(children.get(child));
         }
 
         @Override
