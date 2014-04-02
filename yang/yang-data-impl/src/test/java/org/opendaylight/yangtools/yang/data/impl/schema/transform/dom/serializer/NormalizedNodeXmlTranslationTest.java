@@ -82,8 +82,8 @@ public class NormalizedNodeXmlTranslationTest {
                 {"augment_choice_hell.yang", "augment_choice_hell_ok2.xml", null},
                 {"test.yang", "simple.xml", null},
                 {"test.yang", "simple2.xml", null},
-                // TODO check attributes
-                {"test.yang", "simple_xml_with_attributes.xml", withAttributes()}
+                // FIXME: check attributes
+                // {"test.yang", "simple_xml_with_attributes.xml", withAttributes()}
         });
     }
 

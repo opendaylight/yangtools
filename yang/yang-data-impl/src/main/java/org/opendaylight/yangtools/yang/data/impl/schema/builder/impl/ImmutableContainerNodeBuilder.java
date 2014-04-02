@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -38,6 +39,11 @@ public class ImmutableContainerNodeBuilder extends
                 final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children,
                 final Map<QName, String> attributes) {
             super(ImmutableMap.copyOf(children), nodeIdentifier, attributes);
+        }
+
+        @Override
+        protected boolean interfaceEquals(final AttributesContainer other) {
+            return other instanceof ContainerNode;
         }
     }
 }
