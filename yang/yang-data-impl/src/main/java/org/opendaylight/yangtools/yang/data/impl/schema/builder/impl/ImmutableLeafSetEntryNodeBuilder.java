@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
@@ -30,11 +31,10 @@ public class ImmutableLeafSetEntryNodeBuilder<T> extends AbstractImmutableNormal
 
     static final class ImmutableLeafSetEntryNode<T> extends AbstractImmutableNormalizedAttrNode<InstanceIdentifier.NodeWithValue, T> implements LeafSetEntryNode<T> {
 
-        ImmutableLeafSetEntryNode(InstanceIdentifier.NodeWithValue nodeIdentifier, T value, Map<QName, String> attributes) {
+        ImmutableLeafSetEntryNode(final InstanceIdentifier.NodeWithValue nodeIdentifier, final T value, final Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);
             Preconditions.checkArgument(nodeIdentifier.getValue().equals(value),
                     "Node identifier contains different value: %s than value itself: %s", nodeIdentifier, value);
         }
-
     }
 }
