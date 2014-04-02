@@ -11,8 +11,7 @@ import org.junit.Test;
 
 import java.net.URI;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class QNameTest {
     private final String namespace = "urn:foo", revision = "2013-12-24", localName = "bar";
@@ -56,6 +55,57 @@ public class QNameTest {
         assertLocalNameFails(")");
         assertLocalNameFails("?");
         assertLocalNameFails("&");
+    }
+
+    @Test
+    public void testCompareTo() throws Exception {
+        String A = "a";
+        String B = "b";
+
+        QName a = QName.create(A);
+        QName b = QName.create(A);
+        assertTrue(a.compareTo(b) == 0);
+        assertTrue(b.compareTo(a) == 0);
+
+        // compare with localName
+        a = QName.create(A);
+        b = QName.create(B);
+        assertTrue(a.compareTo(b) < 0);
+        assertTrue(b.compareTo(a) > 0);
+
+        // compare with namespace
+        a = QName.create(A, revision, A);
+        b = QName.create(B, revision, A);
+        assertTrue(a.compareTo(b) < 0);
+        assertTrue(b.compareTo(a) > 0);
+
+        // compare with 1 null namespace
+        a = new QName(null, QName.parseRevision(revision), A);
+        b = new QName(URI.create(A), QName.parseRevision(revision), A);
+        assertTrue(a.compareTo(b) < 0);
+        assertTrue(b.compareTo(a) > 0);
+
+        // compare with both null namespace
+        b = new QName(null, QName.parseRevision(revision), A);
+        assertTrue(a.compareTo(b) == 0);
+        assertTrue(b.compareTo(a) == 0);
+
+        // compare with revision
+        a = QName.create(A, "2013-12-24", A);
+        b = QName.create(A, "2013-12-25", A);
+        assertTrue(a.compareTo(b) < 0);
+        assertTrue(b.compareTo(a) > 0);
+
+        // compare with 1 null revision
+        a = new QName(URI.create(A), null, A);
+        b = new QName(URI.create(A), QName.parseRevision(revision), A);
+        assertTrue(a.compareTo(b) < 0);
+        assertTrue(b.compareTo(a) > 0);
+
+        // compare with both null revision
+        b = new QName(URI.create(A), null, A);
+        assertTrue(a.compareTo(b) == 0);
+        assertTrue(b.compareTo(a) == 0);
     }
 
     private void assertLocalNameFails(String localName) {

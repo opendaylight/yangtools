@@ -42,7 +42,7 @@ import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRev
  *
  *
  */
-public final class QName implements Immutable,Serializable {
+public final class QName implements Immutable, Serializable, Comparable<QName> {
 
     private static final long serialVersionUID = 5398411242927766414L;
 
@@ -372,4 +372,46 @@ public final class QName implements Immutable,Serializable {
     public boolean isEqualWithoutRevision(QName other) {
         return localName.equals(other.getLocalName()) && Objects.equals(namespace, other.getNamespace());
     }
+
+    @Override
+    public int compareTo(QName other) {
+        // compare mandatory localName parameter
+        int result = localName.compareTo(other.localName);
+        if (result != 0) {
+            return result;
+        }
+
+        // compare nullable namespace parameter
+        if (namespace == null) {
+            if (other.namespace != null) {
+                return -1;
+            }
+        } else {
+            if (other.namespace == null) {
+                return 1;
+            }
+            result = namespace.compareTo(other.namespace);
+            if (result != 0) {
+                return result;
+            }
+        }
+
+        // compare nullable revision parameter
+        if (revision == null) {
+            if (other.revision != null) {
+                return -1;
+            }
+        } else {
+            if (other.revision == null) {
+                return 1;
+            }
+            result = revision.compareTo(other.revision);
+            if (result != 0) {
+                return result;
+            }
+        }
+
+        return result;
+    }
+
 }
