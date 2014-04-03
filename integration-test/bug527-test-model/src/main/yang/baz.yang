@@ -5,26 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-module foo {
+module baz {
     yang-version 1;
-    namespace "urn:yang:foo";
-    prefix "foo";
-
-    import bar {
-        prefix bar;
-    }
+    namespace "urn:yang:baz";
+    prefix "baz";
 
     revision "2014-03-21" {
     }
 
 
-
-    augment "/bar:factory/bar:alpha/bar:machine/bar:atts" {
-        uses bar:machine-ext;
-    }
-
-    augment "/bar:factory/bar:beta/bar:machine/bar:atts" {
-        uses bar:machine-ext;
+    grouping machine-def {
+        container machine {
+            container atts {
+            }
+        }
     }
 
 }
