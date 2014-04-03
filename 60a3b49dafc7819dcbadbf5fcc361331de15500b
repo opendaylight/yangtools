@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a5c5d37_ff9235f5",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/nodes/AbstractImmutableNormalizedAttrNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-04-03T07:38:54Z",
+      "side": 1,
+      "message": "where is this called ?",
+      "revId": "60a3b49dafc7819dcbadbf5fcc361331de15500b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
