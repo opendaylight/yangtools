@@ -1,0 +1,54 @@
+module test-augmentation-ext {
+    yang-version 1;
+    namespace "urn:opendaylight:yang:test:regression:augmentation:ext";
+    prefix "aug-ext";
+    
+    import test-augmentation-base {
+        prefix b;
+    }
+    
+    import yang-ext {
+        prefix ext;
+    }
+
+    contact "Anton Tkacik <ttkacik@cisco.com>";
+
+    description 
+            "Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+
+            This program and the accompanying materials are made available under the
+            terms of the Eclipse Public License v1.0 which accompanies this distribution,
+            and is available at http://www.eclipse.org/legal/epl-v10.html";
+
+    revision "2014-04-24" {
+        description "";
+    }
+    
+    
+
+    augment "/b:choices/b:augmentable-choice" {
+        case ext-not-augmented {
+            container ext-not-augmented {
+                uses b:grouping;
+            }
+        }
+        case ext-with-augmented-grouping {
+            container ext-with-augmented-grouping {
+                uses b:augmented-grouping;
+            }
+        }
+
+        case ext-with-grouping-augmentations {
+            container ext-with-grouping-augmentations {
+                uses b:grouping {
+                    augment grouping-data {
+                        ext:augment-identifier "in-uses-augment";
+                        leaf ext-aumentation {
+                            type string;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

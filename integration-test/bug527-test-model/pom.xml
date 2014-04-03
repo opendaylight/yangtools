@@ -38,5 +38,13 @@
         </plugins>
     </build>
 
+    <dependencies>
+    <dependency>
+        <groupId>org.opendaylight.yangtools.model</groupId>
+        <artifactId>yang-ext</artifactId>
+        <version>2013.09.07.4-SNAPSHOT</version>
+    </dependency>
+    </dependencies>
+
 </project>
 

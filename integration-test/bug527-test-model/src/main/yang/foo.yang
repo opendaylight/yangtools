@@ -13,15 +13,36 @@ module foo {
     import bar {
         prefix bar;
     }
+    
+    import yang-ext {
+        prefix ext;
+    }
 
     revision "2014-03-21" {
     }
 
-
-
-    augment "/bar:alpha/bar:beta" {
-        uses bar:group-b;
+    augment "/bar:factory/bar:alpha/bar:machine/bar:atts" {
+        description "Alpha Augmentation";
+        ext:augment-identifier alpha-ext;
+        uses bar:machine-ext;
     }
 
+    augment "/bar:factory/bar:beta/bar:machine/bar:atts" {
+        description "Beta Augmentation";
+        ext:augment-identifier beta-ext;
+        uses bar:machine-ext;
+    }
+
+    augment "/bar:create-factory/bar:input/bar:machine/bar:atts" {
+        description "Create Factory Augmentation";
+        ext:augment-identifier create-ext;
+        uses bar:machine-ext;
+    }
+
+    augment "/bar:create-nested-factory/bar:input/bar:nested/bar:machine/bar:atts" {
+        description "Create Nested Augmentation";
+        ext:augment-identifier create-nested-ext;
+        uses bar:machine-ext;
+    }
 }
 

@@ -11,6 +11,8 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javassist.ClassPool;
 
@@ -26,8 +28,11 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.nt.l3.unicast.igp
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+
+import com.google.common.collect.Lists;
 
 public class RestconfUtilsTest {
 
@@ -47,7 +52,7 @@ public class RestconfUtilsTest {
     @Test
     public void testToDataObjectMappingWithNestedAugmentations() {
         final InstanceIdentifier<Topology> topologyIdentifier = InstanceIdentifier.builder(NetworkTopology.class)
-                .child(Topology.class, new TopologyKey(new TopologyId("topology"))).toInstance();
+                .child(Topology.class).build();
         final InputStream is = this.getClass().getClassLoader().getResourceAsStream("topology.xml");
         final DataSchemaNode dataSchema = RestconfUtils.toRestconfIdentifier(topologyIdentifier, this.mappingService,
                 this.mappingService.getSchemaContext()).getValue();

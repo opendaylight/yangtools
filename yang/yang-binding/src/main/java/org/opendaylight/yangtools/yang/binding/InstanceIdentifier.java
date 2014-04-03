@@ -458,7 +458,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static InstanceIdentifier<?> trustedCreate(final PathArgument arg, final Iterable<PathArgument> pathArguments, final int hash, boolean wildcarded) {
-        if (Identifiable.class.isAssignableFrom(arg.getType())) {
+        if (Identifiable.class.isAssignableFrom(arg.getType()) && !(wildcarded)) {
             Identifier<?> key = null;
             if (arg instanceof IdentifiableItem<?, ?>) {
                 key = ((IdentifiableItem<?, ?>)arg).key;
