@@ -770,10 +770,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         if (!(targetSchemaNode instanceof ChoiceNode)) {
             var packageName = augmentPackageName;
-            val augTypeBuilder = addRawAugmentGenTypeDefinition(module, packageName, augmentPackageName,
-                targetTypeBuilder.toInstance, augSchema);
-            genCtx.get(module).addAugmentType(augTypeBuilder)
-            genCtx.get(module).addTypeToAugmentation(augTypeBuilder, augSchema);
+            val targetType = new ReferencedTypeImpl(targetTypeBuilder.packageName,targetTypeBuilder.name);
+            addRawAugmentGenTypeDefinition(module, packageName, augmentPackageName,targetType, augSchema);
+            
         } else {
             generateTypesFromAugmentedChoiceCases(module, augmentPackageName, targetTypeBuilder.toInstance,
                 targetSchemaNode as ChoiceNode, augSchema.childNodes);
@@ -808,10 +807,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
             if (usesNodeParent instanceof SchemaNode) {
                 packageName = packageNameForGeneratedType(augmentPackageName, (usesNodeParent as SchemaNode).path, true)
             }
-            val augTypeBuilder = addRawAugmentGenTypeDefinition(module, packageName, augmentPackageName,
+            addRawAugmentGenTypeDefinition(module, packageName, augmentPackageName,
                 targetTypeBuilder.toInstance, augSchema);
-            genCtx.get(module).addAugmentType(augTypeBuilder)
-            genCtx.get(module).addTypeToAugmentation(augTypeBuilder, augSchema);
         } else {
             generateTypesFromAugmentedChoiceCases(module, augmentPackageName, targetTypeBuilder.toInstance,
                 targetSchemaNode as ChoiceNode, augSchema.childNodes);
@@ -901,6 +898,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         augSchemaNodeToMethods(module, basePackageName, augTypeBuilder, augTypeBuilder, augSchema.childNodes);
         augmentBuilders.put(augTypeName, augTypeBuilder);
+        
+        genCtx.get(module).addTargetToAugmentation(targetTypeRef,augTypeBuilder);
+        genCtx.get(module).addAugmentType(augTypeBuilder);
+        genCtx.get(module).addTypeToAugmentation(augTypeBuilder, augSchema);
         return augTypeBuilder;
     }
 

@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-
-import static com.google.common.base.Preconditions.*;
 
 public final class BindingMapping {
 
@@ -38,27 +38,30 @@ public final class BindingMapping {
     public static final String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
     public static final String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
 
-    public static final String getMethodName(QName name) {
+    public static final String RPC_INPUT_SUFFIX = "Input";
+    public static final String RPC_OUTPUT_SUFFIX = "Output";
+
+    public static final String getMethodName(final QName name) {
         checkArgument(name != null, "Name should not be null.");
         return getMethodName(name.getLocalName());
     }
 
-    public static final String getClassName(String localName) {
+    public static final String getClassName(final String localName) {
         checkArgument(localName != null, "Name should not be null.");
         return toFirstUpper(toCamelCase(localName));
     }
 
-    public static final String getMethodName(String yangIdentifier) {
+    public static final String getMethodName(final String yangIdentifier) {
         checkArgument(yangIdentifier != null,"Identifier should not be null");
         return toFirstLower(toCamelCase(yangIdentifier));
     }
 
-    public static final String getClassName(QName name) {
+    public static final String getClassName(final QName name) {
         checkArgument(name != null, "Name should not be null.");
         return toFirstUpper(toCamelCase(name.getLocalName()));
     }
 
-    public static String getPropertyName(String yangIdentifier) {
+    public static String getPropertyName(final String yangIdentifier) {
         final String potential = toFirstLower(toCamelCase(yangIdentifier));
         if("class".equals(potential)) {
             return "xmlClass";
@@ -66,7 +69,7 @@ public final class BindingMapping {
         return potential;
     }
 
-    private static final String toCamelCase(String rawString) {
+    private static final String toCamelCase(final String rawString) {
         checkArgument(rawString != null, "String should not be null");
         Iterable<String> components = SPACE_SPLITTER.split(rawString.replace('-', ' ').replace('_', ' ')
                 .replace('.', ' '));
@@ -89,7 +92,7 @@ public final class BindingMapping {
      *         or <code>null</code> if the input {@link String} {@code s} was
      *         <code>null</code>.
      */
-    private static String toFirstUpper(String s) {
+    private static String toFirstUpper(final String s) {
         if (s == null || s.length() == 0)
             return s;
         if (Character.isUpperCase(s.charAt(0)))
@@ -111,7 +114,7 @@ public final class BindingMapping {
      *         or <code>null</code> if the input {@link String} {@code s} was
      *         <code>null</code>.
      */
-    private static String toFirstLower(String s) {
+    private static String toFirstLower(final String s) {
         if (s == null || s.length() == 0)
             return s;
         if (Character.isLowerCase(s.charAt(0)))

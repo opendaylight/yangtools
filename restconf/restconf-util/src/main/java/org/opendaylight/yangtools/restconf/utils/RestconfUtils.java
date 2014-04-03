@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -93,7 +94,7 @@ public class RestconfUtils {
         return new SimpleEntry<>(ret.toString(),schemaNode);
     }
 
-    private static CharSequence convertContainerToRestconfIdentifier(final InstanceIdentifier.NodeIdentifier argument, final ContainerSchemaNode node, SchemaContext schemaContext) {
+    private static CharSequence convertContainerToRestconfIdentifier(final InstanceIdentifier.NodeIdentifier argument, SchemaContext schemaContext) {
         return "/" + toRestconfIdentifier(argument.getNodeType(), schemaContext);
     }
 
@@ -151,9 +152,8 @@ public class RestconfUtils {
         return module + ':' + qname.getLocalName();
     }
     private static CharSequence convertToRestconfIdentifier(final InstanceIdentifier.PathArgument argument, final DataNodeContainer node, SchemaContext schemaContext) {
-        if (argument instanceof InstanceIdentifier.NodeIdentifier
-                && node instanceof ContainerSchemaNode) {
-            return convertContainerToRestconfIdentifier((NodeIdentifier)argument, (ContainerSchemaNode) node,schemaContext);
+        if (argument instanceof InstanceIdentifier.NodeIdentifier) {
+            return convertContainerToRestconfIdentifier((NodeIdentifier)argument, schemaContext);
         } else if (argument instanceof InstanceIdentifier.NodeIdentifierWithPredicates
                 && node instanceof ListSchemaNode) {
             return convertListToRestconfIdentifier((NodeIdentifierWithPredicates) argument,(ListSchemaNode) node,schemaContext);

@@ -86,42 +86,56 @@ public class BindingReflections {
      * @return Augmentation target - class which augmentation provides
      *         additional extensions.
      */
-    public static Class<?> findHierarchicalParent(DataObject childClass) {
+    public static Class<?> findHierarchicalParent(final DataObject childClass) {
         if (childClass instanceof ChildOf) {
             return ClassLoaderUtils.findFirstGenericArgument(childClass.getImplementedInterface(), ChildOf.class);
         }
         return null;
     }
 
-    public static final QName findQName(Class<?> dataType) {
+    /**
+     * Returns a QName associated to supplied type
+     *
+     * @param dataType
+     * @return QName associated to supplied dataType. If dataType is Augmentation
+     *    method does not return canonical QName, but QName with correct namespace
+     *    revision, but virtual local name, since augmentations do not have name.
+     */
+    public static final QName findQName(final Class<?> dataType) {
         return classToQName.getUnchecked(dataType).orNull();
     }
 
     private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
 
         @Override
-        public Optional<QName> load(Class<?> key) throws Exception {
+        public Optional<QName> load(final Class<?> key) throws Exception {
             try {
                 Field field = key.getField(BindingMapping.QNAME_STATIC_FIELD_NAME);
                 Object obj = field.get(null);
                 if (obj instanceof QName) {
                     return Optional.of((QName) obj);
                 }
-            } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            } catch (NoSuchFieldException e) {
+                if(Augmentation.class.isAssignableFrom(key)) {
+                    YangModuleInfo moduleInfo = getModuleInfo(key);
+                    return Optional.of(QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(), moduleInfo.getName()));
+                }
+
+            } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
                 // NOOP
             }
             return Optional.absent();
         }
     }
 
-    public static boolean isRpcMethod(Method possibleMethod) {
+    public static boolean isRpcMethod(final Method possibleMethod) {
         return possibleMethod != null && RpcService.class.isAssignableFrom(possibleMethod.getDeclaringClass())
                 && Future.class.isAssignableFrom(possibleMethod.getReturnType())
                 && possibleMethod.getParameterTypes().length <= 1;
     }
 
     @SuppressWarnings("rawtypes")
-    public static Optional<Class<?>> resolveRpcOutputClass(Method targetMethod) {
+    public static Optional<Class<?>> resolveRpcOutputClass(final Method targetMethod) {
         checkState(isRpcMethod(targetMethod), "Supplied method is not Rpc invocation method");
         Type futureType = targetMethod.getGenericReturnType();
         Type rpcResultType = ClassLoaderUtils.getFirstGenericParameter(futureType);
@@ -133,7 +147,7 @@ public class BindingReflections {
     }
 
     @SuppressWarnings("unchecked")
-    public static Optional<Class<? extends DataContainer>> resolveRpcInputClass(Method targetMethod) {
+    public static Optional<Class<? extends DataContainer>> resolveRpcInputClass(final Method targetMethod) {
         @SuppressWarnings("rawtypes")
         Class[] types = targetMethod.getParameterTypes();
         if (types.length == 0) {
@@ -145,11 +159,11 @@ public class BindingReflections {
         throw new IllegalArgumentException("Method has 2 or more arguments.");
     }
 
-    public static QName getQName(Class<? extends BaseIdentity> context) {
+    public static QName getQName(final Class<? extends BaseIdentity> context) {
         return findQName(context);
     }
 
-    public static boolean isAugmentationChild(Class<?> clazz) {
+    public static boolean isAugmentationChild(final Class<?> clazz) {
         // FIXME: Current resolver could be still confused when
         // child node was added by grouping
         checkArgument(clazz != null);
@@ -161,11 +175,11 @@ public class BindingReflections {
         return !clazzModelPackage.equals(parentModelPackage);
     }
 
-    public static String getModelRootPackageName(Package pkg) {
+    public static String getModelRootPackageName(final Package pkg) {
         return getModelRootPackageName(pkg.getName());
     }
 
-    public static String getModelRootPackageName(String name) {
+    public static String getModelRootPackageName(final String name) {
         checkArgument(name != null, "Package name should not be null.");
         checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
                 BindingMapping.PACKAGE_PREFIX, name);
@@ -189,18 +203,18 @@ public class BindingReflections {
         });
     }
 
-    public static String getModuleInfoClassName(String packageName) {
+    public static String getModuleInfoClassName(final String packageName) {
         return packageName + "." + BindingMapping.MODULE_INFO_CLASS_NAME;
     }
 
-    public static boolean isBindingClass(Class<?> cls) {
+    public static boolean isBindingClass(final Class<?> cls) {
         if (DataContainer.class.isAssignableFrom(cls) || Augmentation.class.isAssignableFrom(cls)) {
             return true;
         }
         return (cls.getName().startsWith(BindingMapping.PACKAGE_PREFIX));
     }
 
-    public static boolean isNotificationCallback(Method method) {
+    public static boolean isNotificationCallback(final Method method) {
         checkArgument(method != null);
         if (method.getName().startsWith("on") && method.getParameterTypes().length == 1) {
             Class<?> potentialNotification = method.getParameterTypes()[0];
@@ -212,7 +226,7 @@ public class BindingReflections {
         return false;
     }
 
-    public static boolean isNotification(Class<?> potentialNotification) {
+    public static boolean isNotification(final Class<?> potentialNotification) {
         checkArgument(potentialNotification != null);
         return Notification.class.isAssignableFrom(potentialNotification);
     }
@@ -221,20 +235,29 @@ public class BindingReflections {
         return loadModuleInfos(Thread.currentThread().getContextClassLoader());
     }
 
-    public static ImmutableSet<YangModuleInfo> loadModuleInfos(ClassLoader loader) {
+    public static ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
         Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
         ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class, loader);
         for(YangModelBindingProvider bindingProvider : serviceLoader) {
+            YangModuleInfo moduleInfo = bindingProvider.getModuleInfo();
+            checkState(moduleInfo != null, "Module Info for %s is not available.",bindingProvider.getClass());
             collectYangModuleInfo(bindingProvider.getModuleInfo(),moduleInfoSet);
         }
         return  moduleInfoSet.build();
     }
 
-    private static void collectYangModuleInfo(YangModuleInfo moduleInfo, Builder<YangModuleInfo> moduleInfoSet) {
+    private static void collectYangModuleInfo(final YangModuleInfo moduleInfo, final Builder<YangModuleInfo> moduleInfoSet) {
         moduleInfoSet.add(moduleInfo);
         for(YangModuleInfo dependency : moduleInfo.getImportedModules()) {
             collectYangModuleInfo(dependency, moduleInfoSet);
         }
+    }
+
+    public static boolean isRpcType(final Class<? extends DataObject> targetType) {
+        return  DataContainer.class.isAssignableFrom(targetType) //
+                && !ChildOf.class.isAssignableFrom(targetType) //
+                && !Notification.class.isAssignableFrom(targetType) //
+                && (targetType.getName().endsWith("Input") || targetType.getName().endsWith("Output"));
     }
 
 }
