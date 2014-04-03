@@ -39,6 +39,8 @@ import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+import com.google.common.base.Optional;
+
 public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContainerBuilder implements
         AugmentationSchemaBuilder {
     private boolean built;
@@ -51,6 +53,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private SchemaPath targetNodeSchemaPath;
 
     private boolean resolved;
+    private AugmentationSchemaBuilder copyOf;
 
     public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr) {
         super(moduleName, line, null);
@@ -70,7 +73,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public void addGrouping(GroupingBuilder grouping) {
+    public void addGrouping(final GroupingBuilder grouping) {
         throw new YangParseException(moduleName, line, "augment can not contains grouping statement");
     }
 
@@ -100,6 +103,10 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
                 instance.setTargetPath(new SchemaPath(newPath, false));
             } else {
                 instance.setTargetPath(targetNodeSchemaPath);
+            }
+
+            if(copyOf != null) {
+                instance.setCopyOf(copyOf.build());
             }
 
             RevisionAwareXPath whenStmt;
@@ -141,7 +148,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public void setResolved(boolean resolved) {
+    public void setResolved(final boolean resolved) {
         this.resolved = resolved;
     }
 
@@ -151,7 +158,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public void addWhenCondition(String whenCondition) {
+    public void addWhenCondition(final String whenCondition) {
         this.whenCondition = whenCondition;
     }
 
@@ -161,7 +168,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public void addTypedef(TypeDefinitionBuilder type) {
+    public void addTypedef(final TypeDefinitionBuilder type) {
         throw new YangParseException(moduleName, line, "Augmentation can not contains typedef statement.");
     }
 
@@ -191,7 +198,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         if (status != null) {
             instance.status = status;
         }
@@ -213,7 +220,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public void setTargetNodeSchemaPath(SchemaPath path) {
+    public void setTargetNodeSchemaPath(final SchemaPath path) {
         this.targetNodeSchemaPath = path;
     }
 
@@ -228,7 +235,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -268,6 +275,10 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         return "augment " + augmentTargetStr;
     }
 
+    public void setCopyOf(final AugmentationSchemaBuilder old) {
+        copyOf = old;
+    }
+
     private static final class AugmentationSchemaImpl implements AugmentationSchema, NamespaceRevisionAware {
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
@@ -280,17 +291,26 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         private URI namespace;
         private Date revision;
         private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+        private AugmentationSchema copyOf;
 
-        private AugmentationSchemaImpl(SchemaPath targetPath) {
+        private AugmentationSchemaImpl(final SchemaPath targetPath) {
             this.targetPath = targetPath;
         }
 
+        public void setCopyOf(final AugmentationSchema build) {
+            this.copyOf = build;
+        }
+
+        @Override
+        public Optional<AugmentationSchema> getOriginalDefinition() {
+            return Optional.fromNullable(this.copyOf);
+        }
         @Override
         public SchemaPath getTargetPath() {
             return targetPath;
         }
 
-        private void setTargetPath(SchemaPath path) {
+        private void setTargetPath(final SchemaPath path) {
             this.targetPath = path;
         }
 
@@ -299,7 +319,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return whenCondition;
         }
 
-        private void setWhenCondition(RevisionAwareXPath whenCondition) {
+        private void setWhenCondition(final RevisionAwareXPath whenCondition) {
             this.whenCondition = whenCondition;
         }
 
@@ -308,7 +328,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return Collections.unmodifiableSet(childNodes);
         }
 
-        private void addChildNodes(Set<DataSchemaNode> childNodes) {
+        private void addChildNodes(final Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
                 this.childNodes.addAll(childNodes);
             }
@@ -328,7 +348,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return Collections.unmodifiableSet(uses);
         }
 
-        private void addUses(Set<UsesNode> uses) {
+        private void addUses(final Set<UsesNode> uses) {
             if (uses != null) {
                 this.uses.addAll(uses);
             }
@@ -363,19 +383,19 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
+        private void addUnknownSchemaNodes(final List<UnknownSchemaNode> unknownSchemaNodes) {
             if (unknownSchemaNodes != null) {
                 this.unknownNodes.addAll(unknownSchemaNodes);
             }
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             return getChildNode(childNodes, name);
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(String name) {
+        public DataSchemaNode getDataChildByName(final String name) {
             return getChildNode(childNodes, name);
         }
 
@@ -384,7 +404,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return namespace;
         }
 
-        protected void setNamespace(URI namespace) {
+        protected void setNamespace(final URI namespace) {
             this.namespace = namespace;
         }
 
@@ -393,7 +413,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return revision;
         }
 
-        protected void setRevision(Date revision) {
+        protected void setRevision(final Date revision) {
             this.revision = revision;
         }
 
@@ -408,7 +428,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }

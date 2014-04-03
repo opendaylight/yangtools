@@ -11,9 +11,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 /**
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
@@ -23,7 +33,7 @@ public final class AugmentationSchemaProxy implements AugmentationSchema {
     private final Set<DataSchemaNode> realChildSchemas;
     private final Map<QName, DataSchemaNode> mappedChildSchemas;
 
-    public AugmentationSchemaProxy(AugmentationSchema augmentSchema, Set<DataSchemaNode> realChildSchemas) {
+    public AugmentationSchemaProxy(final AugmentationSchema augmentSchema, final Set<DataSchemaNode> realChildSchemas) {
         this.delegate = augmentSchema;
         this.realChildSchemas = realChildSchemas;
 
@@ -79,7 +89,7 @@ public final class AugmentationSchemaProxy implements AugmentationSchema {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(QName name) {
+    public DataSchemaNode getDataChildByName(final QName name) {
         if(mappedChildSchemas.containsKey(name)) {
             return mappedChildSchemas.get(name);
         }
@@ -88,7 +98,7 @@ public final class AugmentationSchemaProxy implements AugmentationSchema {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(String name) {
+    public DataSchemaNode getDataChildByName(final String name) {
         // Unused
         throw new UnsupportedOperationException("Unable to retrieve child node by name");
     }
@@ -96,5 +106,10 @@ public final class AugmentationSchemaProxy implements AugmentationSchema {
     @Override
     public Set<UsesNode> getUses() {
         return delegate.getUses();
+    }
+
+    @Override
+    public Optional<AugmentationSchema> getOriginalDefinition() {
+        return delegate.getOriginalDefinition();
     }
 }

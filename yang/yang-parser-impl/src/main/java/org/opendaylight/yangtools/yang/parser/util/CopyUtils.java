@@ -21,7 +21,22 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.*;
+import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.AugmentationSchemaBuilderImpl;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingBuilderImpl;
+import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UsesNodeBuilderImpl;
 
 public final class CopyUtils {
 
@@ -41,7 +56,7 @@ public final class CopyUtils {
      *            parent location
      * @return copy of given builder
      */
-    public static DataSchemaNodeBuilder copy(DataSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    public static DataSchemaNodeBuilder copy(final DataSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         if (old instanceof AnyXmlBuilder) {
             return copy((AnyXmlBuilder) old, newParent, updateQName);
         } else if (old instanceof ChoiceBuilder) {
@@ -62,7 +77,7 @@ public final class CopyUtils {
         }
     }
 
-    private static AnyXmlBuilder copy(AnyXmlBuilder old, Builder newParent, boolean updateQName) {
+    private static AnyXmlBuilder copy(final AnyXmlBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -83,7 +98,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static ChoiceBuilder copy(ChoiceBuilder old, Builder newParent, boolean updateQName) {
+    private static ChoiceBuilder copy(final ChoiceBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -110,7 +125,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static ChoiceCaseBuilder copy(ChoiceCaseBuilder old, Builder newParent, boolean updateQName) {
+    private static ChoiceCaseBuilder copy(final ChoiceCaseBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -142,8 +157,8 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static ContainerSchemaNodeBuilder copy(ContainerSchemaNodeBuilder old, Builder newParent,
-            boolean updateQName) {
+    private static ContainerSchemaNodeBuilder copy(final ContainerSchemaNodeBuilder old, final Builder newParent,
+            final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -182,7 +197,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static LeafSchemaNodeBuilder copy(LeafSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    private static LeafSchemaNodeBuilder copy(final LeafSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -213,7 +228,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static LeafListSchemaNodeBuilder copy(LeafListSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    public static LeafListSchemaNodeBuilder copy(final LeafListSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -243,7 +258,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static ListSchemaNodeBuilder copy(ListSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    private static ListSchemaNodeBuilder copy(final ListSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -284,7 +299,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static GroupingBuilder copy(GroupingBuilder old, Builder newParent, boolean updateQName) {
+    public static GroupingBuilder copy(final GroupingBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -315,7 +330,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static TypeDefinitionBuilder copy(TypeDefinitionBuilder old, Builder newParent, boolean updateQName) {
+    public static TypeDefinitionBuilder copy(final TypeDefinitionBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -364,7 +379,7 @@ public final class CopyUtils {
         return type;
     }
 
-    private static ConstraintsBuilder copyConstraints(ConstraintsBuilder newConstraints, ConstraintsBuilder old) {
+    private static ConstraintsBuilder copyConstraints(final ConstraintsBuilder newConstraints, final ConstraintsBuilder old) {
         newConstraints.getMustDefinitions().addAll(old.getMustDefinitions());
         newConstraints.addWhenCondition(old.getWhenCondition());
         newConstraints.setMandatory(old.isMandatory());
@@ -373,7 +388,7 @@ public final class CopyUtils {
         return newConstraints;
     }
 
-    private static UsesNodeBuilder copyUses(UsesNodeBuilder old, Builder newParent) {
+    private static UsesNodeBuilder copyUses(final UsesNodeBuilder old, final Builder newParent) {
         UsesNodeBuilder copy = new UsesNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
                 old.getGroupingPathAsString());
         copy.setParent(newParent);
@@ -387,11 +402,11 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static AugmentationSchemaBuilder copyAugment(AugmentationSchemaBuilder old, Builder newParent) {
+    private static AugmentationSchemaBuilder copyAugment(final AugmentationSchemaBuilder old, final Builder newParent) {
         AugmentationSchemaBuilderImpl copy = new AugmentationSchemaBuilderImpl(newParent.getModuleName(),
                 newParent.getLine(), old.getTargetPathAsString());
         copy.setParent(newParent);
-
+        copy.setCopyOf(old);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
@@ -410,7 +425,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static UnknownSchemaNodeBuilder copy(UnknownSchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    public static UnknownSchemaNodeBuilder copy(final UnknownSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -434,7 +449,7 @@ public final class CopyUtils {
         return c;
     }
 
-    private static DataBean getdata(SchemaNodeBuilder old, Builder newParent, boolean updateQName) {
+    private static DataBean getdata(final SchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         List<QName> newPath = null;
         QName newQName = null;
         if (newParent instanceof ModuleBuilder) {
@@ -481,10 +496,10 @@ public final class CopyUtils {
     }
 
     private static final class DataBean {
-        private QName qname;
-        private SchemaPath schemaPath;
+        private final QName qname;
+        private final SchemaPath schemaPath;
 
-        private DataBean(QName qname, SchemaPath schemaPath) {
+        private DataBean(final QName qname, final SchemaPath schemaPath) {
             this.qname = qname;
             this.schemaPath = schemaPath;
         }

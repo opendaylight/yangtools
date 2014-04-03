@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public final class ModuleContext {
     private GeneratedTypeBuilder moduleNode;
@@ -36,7 +38,9 @@ public final class ModuleContext {
     private final List<GeneratedTypeBuilder> augmentations = new ArrayList<GeneratedTypeBuilder>();
     private final BiMap<Type,AugmentationSchema> typeToAugmentation = HashBiMap.create();
 
+    private final Multimap<Type, Type> choiceToCases = HashMultimap.create();
 
+    private final Multimap<Type, Type> augmentableToAugmentations = HashMultimap.create();
 
     List<Type> getGeneratedTypes() {
         List<Type> result = new ArrayList<>();
@@ -74,55 +78,63 @@ public final class ModuleContext {
         return result;
     }
 
+    public Multimap<Type, Type> getChoiceToCases() {
+        return choiceToCases;
+    }
+
+    public Multimap<Type, Type> getAugmentableToAugmentations() {
+        return augmentableToAugmentations;
+    }
+
     public GeneratedTypeBuilder getModuleNode() {
         return moduleNode;
     }
 
-    public GeneratedTypeBuilder getChildNode(SchemaPath p) {
+    public GeneratedTypeBuilder getChildNode(final SchemaPath p) {
         return childNodes.get(p);
     }
 
-    public GeneratedTypeBuilder getGrouping(SchemaPath p) {
+    public GeneratedTypeBuilder getGrouping(final SchemaPath p) {
         return groupings.get(p);
     }
 
-    public GeneratedTypeBuilder getCase(SchemaPath p) {
+    public GeneratedTypeBuilder getCase(final SchemaPath p) {
         return cases.get(p);
     }
 
-    public void addModuleNode(GeneratedTypeBuilder moduleNode) {
+    public void addModuleNode(final GeneratedTypeBuilder moduleNode) {
         this.moduleNode = moduleNode;
     }
 
-    public void addGeneratedTOBuilder(GeneratedTOBuilder b) {
+    public void addGeneratedTOBuilder(final GeneratedTOBuilder b) {
         genTOs.add(b);
     }
 
-    public void addChildNodeType(SchemaPath p, GeneratedTypeBuilder b) {
+    public void addChildNodeType(final SchemaPath p, final GeneratedTypeBuilder b) {
         childNodes.put(p, b);
     }
 
-    public void addGroupingType(SchemaPath p, GeneratedTypeBuilder b) {
+    public void addGroupingType(final SchemaPath p, final GeneratedTypeBuilder b) {
         groupings.put(p, b);
     }
 
-    public void addTypedefType(SchemaPath p, Type t) {
+    public void addTypedefType(final SchemaPath p, final Type t) {
         typedefs.put(p, t);
     }
 
-    public void addCaseType(SchemaPath p, GeneratedTypeBuilder b) {
+    public void addCaseType(final SchemaPath p, final GeneratedTypeBuilder b) {
         cases.put(p, b);
     }
 
-    public void addIdentityType(QName name,GeneratedTOBuilder b) {
+    public void addIdentityType(final QName name,final GeneratedTOBuilder b) {
         identities.put(name,b);
     }
 
-    public void addTopLevelNodeType(GeneratedTypeBuilder b) {
+    public void addTopLevelNodeType(final GeneratedTypeBuilder b) {
         topLevelNodes.add(b);
     }
 
-    public void addAugmentType(GeneratedTypeBuilder b) {
+    public void addAugmentType(final GeneratedTypeBuilder b) {
         augmentations.add(b);
     }
 
@@ -158,8 +170,12 @@ public final class ModuleContext {
         return typeToAugmentation;
     }
 
-    public void addTypeToAugmentation(GeneratedTypeBuilder builder, AugmentationSchema schema) {
+    public void addTypeToAugmentation(final GeneratedTypeBuilder builder, final AugmentationSchema schema) {
         typeToAugmentation.put(builder, schema);
+    }
+
+    public void addTargetToAugmentation(final Type target, final GeneratedTypeBuilder augmentation) {
+        augmentableToAugmentations.put(target,augmentation);
     }
 
 }

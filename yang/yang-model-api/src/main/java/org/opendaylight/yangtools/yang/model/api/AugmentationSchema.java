@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 /**
  * AugmentationSchema represents augment definition. The "augment" statement
  * allows a module or submodule to add to the schema tree defined in an external
@@ -51,5 +53,13 @@ public interface AugmentationSchema extends DataNodeContainer {
      * @return collection of all unknown nodes defined in this augmentation
      */
     List<UnknownSchemaNode> getUnknownSchemaNodes();
+    /**
+     * Returns Augmentation Definition from which this augmentation is derived
+     * if augmentation was added transitively via augmented uses.
+     *
+     * @return ugmentation Definition from which this augmentation is derived
+     * if augmentation was added transitively via augmented uses.
+     */
+    Optional<AugmentationSchema> getOriginalDefinition();
 
 }
