@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.unified.doc.generator.maven;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,8 +25,7 @@ public class DocumentationGeneratorImpl extends GeneratorImpl implements CodeGen
     @Override
     public Collection<File> generateSources(SchemaContext arg0, File arg1, Set<Module> arg2) throws IOException {
         // TODO Auto-generated method stub
-         generate(arg0, arg1, arg2);
-         return Collections.emptySet();
+         return generate(arg0, arg1, arg2);
     }
 
     @Override

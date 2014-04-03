@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.unified.doc.generator.maven;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +55,8 @@ public class DocGenTest {
         final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
         final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
         final CodeGenerator generator = new DocumentationGeneratorImpl();
-        generator.generateSources(context, GENERATOR_OUTPUT_DIR, modulesToBuild);
+        Collection<File> generatedFiles = generator.generateSources(context, GENERATOR_OUTPUT_DIR, modulesToBuild);
+        assertEquals(4, generatedFiles.size());
     }
 
     private static List<File> getSourceFiles(String path) throws Exception {
