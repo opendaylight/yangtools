@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -67,10 +69,12 @@ public class JavassistUtils {
     }
 
     public void method(final CtClass it, final Class<? extends Object> returnType, final String name,
-            final Class<? extends Object> parameter1, final Class<? extends Object> parameter2,
-            final MethodGenerator function1) {
+            final Collection<? extends Class<?>> parameters, final MethodGenerator function1) {
         try {
-            List<CtClass> _asList = Arrays.<CtClass> asList(asCtClass(parameter1), asCtClass(parameter2));
+            List<CtClass> _asList = new ArrayList<>();
+            for (Class<? extends Object> parameter : parameters) {
+                _asList.add(asCtClass(parameter));
+            }
             CtMethod method = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(_asList,
                     CtClass.class)), it);
             function1.process(method);
