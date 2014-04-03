@@ -254,7 +254,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         // waitForSchema(cls);
         org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument last = identifier.getPath().get(
                 identifier.getPath().size() - 1);
-        AugmentationCodec codec = registry.getCodecForAugmentation((Class) object.getImplementedInterface());
+        AugmentationCodec codec = registry.getCodecForAugmentation((Class) object.getImplementedInterface(), null);
         CompositeNode ret = codec.serialize(new ValueWithQName<DataObject>(last.getNodeType(), object));
         if (last instanceof NodeIdentifierWithPredicates) {
             NodeIdentifierWithPredicates predicates = (NodeIdentifierWithPredicates) last;
