@@ -19,4 +19,7 @@ public interface BindingCodec<P, I> extends //
 
     @Override
     public I deserialize(P input);
+
+    public I deserialize(P input, InstanceIdentifier<?> bindingIdentifier);
+
 }

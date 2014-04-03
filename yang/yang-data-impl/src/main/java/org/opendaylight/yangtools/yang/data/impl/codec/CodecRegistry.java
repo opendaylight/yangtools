@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 
 public interface CodecRegistry {
@@ -30,6 +31,8 @@ public interface CodecRegistry {
     <T extends Identifier<?>> IdentifierCodec<T> getCodecForIdentifier(Class<T> object);
 
     <T extends Augmentation<?>> AugmentationCodec<T> getCodecForAugmentation(Class<T> object);
+
+    <T extends Augmentation<?>> AugmentationCodec<T> getCodecForAugmentation(Class<T> object, SchemaPath path);
 
     <T extends BaseIdentity> IdentityCodec<T> getCodecForIdentity(Class<T> codec);
 
