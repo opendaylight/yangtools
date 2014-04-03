@@ -289,7 +289,32 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     public DataObject dataObjectFromDataDom(
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> path,
             final CompositeNode node) {
-        return (DataObject) dataObjectFromDataDom(path.getTargetType(), node);
+
+        final Class<? extends DataContainer> container = path.getTargetType();
+        final CompositeNode domData = node;
+
+        try {
+            return tryDeserialization(new Callable<DataObject>() {
+                @Override
+                public DataObject call() throws Exception {
+                    if (Objects.equal(domData, null)) {
+                        return null;
+                    }
+                    final DataContainerCodec<? extends DataContainer> transformer = getRegistry()
+                            .getCodecForDataObject(container);
+                    // TODO: deprecate use without iid
+                    ValueWithQName<? extends DataContainer> deserialize = transformer.deserialize(domData, path);
+                    DataContainer value = null;
+                    if (deserialize != null) {
+                        value = deserialize.getValue();
+                    }
+                    return ((DataObject) value);
+                }
+            });
+        } catch (Throwable _e) {
+            throw Exceptions.sneakyThrow(_e);
+        }
+
     }
 
     @Override
@@ -400,26 +425,10 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     @Override
     public DataContainer dataObjectFromDataDom(final Class<? extends DataContainer> container,
             final CompositeNode domData) {
-        try {
-            return tryDeserialization(new Callable<DataObject>() {
-                @Override
-                public DataObject call() throws Exception {
-                    if (Objects.equal(domData, null)) {
-                        return null;
-                    }
-                    final DataContainerCodec<? extends DataContainer> transformer = getRegistry()
-                            .getCodecForDataObject(container);
-                    ValueWithQName<? extends DataContainer> deserialize = transformer.deserialize(domData);
-                    DataContainer value = null;
-                    if (deserialize != null) {
-                        value = deserialize.getValue();
-                    }
-                    return ((DataObject) value);
-                }
-            });
-        } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
-        }
+        org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataContainer> id = org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+                .create((Class) container);
+
+        return dataObjectFromDataDom(id, domData);
     }
 
     @Override

@@ -85,6 +85,13 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         return ret;
     }
 
+    @Override
+    public InstanceIdentifier<? extends Object> deserialize(
+            final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier input,
+            InstanceIdentifier<?> bindingIdentifier) {
+        return deserialize(input);
+    }
+
     private org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument _deserializePathArgument(
             final NodeIdentifier argument, final List<QName> processedPath) {
         final Class cls = codecRegistry.getClassForPath(processedPath);
