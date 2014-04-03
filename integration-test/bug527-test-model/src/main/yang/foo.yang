@@ -19,8 +19,12 @@ module foo {
 
 
 
-    augment "/bar:alpha/bar:beta" {
-        uses bar:group-b;
+    augment "/bar:factory/bar:alpha/bar:machine/bar:atts" {
+        uses bar:machine-ext;
+    }
+
+    augment "/bar:factory/bar:beta/bar:machine/bar:atts" {
+        uses bar:machine-ext;
     }
 
 }

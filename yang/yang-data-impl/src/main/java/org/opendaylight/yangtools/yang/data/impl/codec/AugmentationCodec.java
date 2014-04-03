@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import java.util.List;
+
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -22,4 +24,16 @@ public interface AugmentationCodec<A extends Augmentation<?>> extends DomCodec<A
     public ValueWithQName<A> deserialize(Node<?> input);
 
     public QName getAugmentationQName();
+
+    /**
+     * Check if this codec was created for augmentation with given target node
+     * path.
+     *
+     * @param path
+     *            schema path of augmentation target node
+     * @return true, if this codec is generated for augmentation pointing node
+     *         with given path, false otherwise
+     */
+    boolean isAcceptable(List<QName> targetPath);
+
 }

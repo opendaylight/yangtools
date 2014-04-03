@@ -74,6 +74,8 @@ import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition
+import java.util.ArrayList
+import org.opendaylight.yangtools.yang.binding.AugmentableCodec
 
 class TransformerGenerator {
 
@@ -112,6 +114,8 @@ class TransformerGenerator {
     @Property
     var Map<Type, AugmentationSchema> typeToAugmentation = new ConcurrentHashMap();
 
+    val Map<String/* node-class-name */, Map<SchemaNode/* node */, Class<?>/* codec-class */>> codecs = new HashMap();
+
     @Property
     var GeneratorListener listener;
 
@@ -139,6 +143,7 @@ class TransformerGenerator {
             }
             val ref = Types.typeForClass(inputType)
             val node = typeToSchemaNode.get(ref)
+
             val typeSpecBuilder = typeToDefinition.get(ref)
             checkState(typeSpecBuilder !== null, "Could not find typedefinition for %s", inputType.name);
             val typeSpec = typeSpecBuilder.toInstance();
@@ -150,11 +155,19 @@ class TransformerGenerator {
 
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class<?> inputType, DataSchemaNode node) {
         return withClassLoaderAndLock(inputType.classLoader, lock) [ |
+
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
-                listener.onClassProcessed(inputType);
-                return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
+                val Map<SchemaNode, Class<?>> mapping = codecs.get(inputType.canonicalName)
+                if (mapping !== null) {
+                    val Class<?> codecClass = mapping.get(node)
+                    if (codecClass !== null) {
+                        listener.onClassProcessed(inputType);
+                        return codecClass as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
+                    }
+                }
             }
+
             val ref = Types.typeForClass(inputType)
             var typeSpecBuilder = typeToDefinition.get(ref)
             if (typeSpecBuilder == null) {
@@ -165,6 +178,16 @@ class TransformerGenerator {
             val typeSpec = typeSpecBuilder.toInstance();
             val newret = generateTransformerFor(inputType, typeSpec, node);
             listener.onClassProcessed(inputType);
+            
+            var Map<SchemaNode, Class<?>> mapping = codecs.get(inputType.canonicalName)
+            if (mapping === null) {
+                mapping = new HashMap
+                mapping.put(node, newret)
+                codecs.put(inputType.canonicalName, mapping)
+            } else {
+                mapping.put(node, newret)
+            }
+            
             return newret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         ]
     }
@@ -249,9 +272,16 @@ class TransformerGenerator {
     }
 
     private def Class<?> getGeneratedClass(Class<? extends Object> cls) {
-
         try {
             return loadClass(cls.codecClassName)
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    private def Class<?> getGeneratedClass(String codecClassName) {
+        try {
+            return loadClass(codecClassName)
         } catch (ClassNotFoundException e) {
             return null;
         }
@@ -302,7 +332,8 @@ class TransformerGenerator {
 
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
             val properties = typeSpec.allProperties;
-            val ctCls = createClass(inputType.codecClassName) [
+            val name = typeSpec.generateTransformerName + "Key"
+            val ctCls = createClass(name) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
                 staticField(it, IDENTITYREF_CODEC, BindingCodec)
@@ -383,17 +414,32 @@ class TransformerGenerator {
         }
     }
 
+    private def String generateTransformerName(GeneratedType typeSpec) {
+        val String baseName = typeSpec.codecClassName
+        var String codecClassName = baseName
+        var ret = getGeneratedClass(codecClassName)
+
+        var int i = 1;
+        while (ret !== null) {
+            codecClassName = baseName + i;
+            ret = getGeneratedClass(codecClassName)
+            i = i + 1;
+        }
+
+        return codecClassName
+    }
+
     private def Class<? extends BindingCodec<Object, Object>> generateCaseCodec(Class<?> inputType, GeneratedType type,
         ChoiceCaseNode node) {
         try {
 
             //log.info("Generating DOM Codec for {} with {}, TCCL is: {}", inputType, inputType.classLoader,Thread.currentThread.contextClassLoader)
-            val ctCls = createClass(type.codecClassName) [
+            val ctCls = createClass(type.generateTransformerName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 implementsType(BINDING_CODEC)
                 staticQNameField(node.QName);
                 staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                staticField(it, AUGMENTATION_CODEC, BindingCodec)
+                staticField(it, AUGMENTATION_CODEC, AugmentableCodec)
                 staticField(it, IDENTITYREF_CODEC, BindingCodec)
                 method(Object, "toDomStatic", QName, Object) [
                     modifiers = PUBLIC + FINAL + STATIC
@@ -449,12 +495,12 @@ class TransformerGenerator {
         try {
 
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
-            val ctCls = createClass(typeSpec.codecClassName) [
+            val ctCls = createClass(typeSpec.generateTransformerName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 staticQNameField(node.QName);
                 staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
                 staticField(it, IDENTITYREF_CODEC, BindingCodec)
-                staticField(it, AUGMENTATION_CODEC, BindingCodec)
+                staticField(it, AUGMENTATION_CODEC, AugmentableCodec)
                 implementsType(BINDING_CODEC)
                 method(Object, "toDomStatic", QName, Object) [
                     modifiers = PUBLIC + FINAL + STATIC
@@ -505,11 +551,11 @@ class TransformerGenerator {
 
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
             val properties = type.allProperties
-            val ctCls = createClass(type.codecClassName) [
+            val ctCls = createClass(type.generateTransformerName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 staticQNameField(node.augmentationQName);
                 staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                staticField(it, AUGMENTATION_CODEC, BindingCodec)
+                staticField(it, AUGMENTATION_CODEC, AugmentableCodec)
                 staticField(it, IDENTITYREF_CODEC, BindingCodec)
                 implementsType(BINDING_CODEC)
                 method(Object, "toDomStatic", QName, Object) [
@@ -588,7 +634,7 @@ class TransformerGenerator {
         try {
 
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
-            val ctCls = createClass(typeSpec.codecClassName) [
+            val ctCls = createClass(typeSpec.generateTransformerName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 //staticQNameField(inputType);
                 staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
@@ -690,7 +736,7 @@ class TransformerGenerator {
             //System.out.println(_localQName + " " + _compositeNode);
             «type.builderName» _builder = new «type.builderName»();
             «deserializeDataNodeContainerBody(type, node)»
-            «deserializeAugmentations»
+            «deserializeAugmentations(node as SchemaNode)»
             return _builder.build();
         }
     '''
@@ -719,7 +765,7 @@ class TransformerGenerator {
             «type.builderName» _builder = new «type.builderName»();
             «deserializeKey(type, node)»
             «deserializeDataNodeContainerBody(type, node)»
-            «deserializeAugmentations»
+            «node.deserializeAugmentations»
             return _builder.build();
         }
     '''
@@ -755,9 +801,14 @@ class TransformerGenerator {
         return ret;
     }
 
-    def deserializeAugmentations() '''
-        java.util.Map _augmentation = (java.util.Map) «AUGMENTATION_CODEC».deserialize(_compositeNode);
-        if(_augmentation != null) {
+    def deserializeAugmentations(SchemaNode node) '''
+        «List.name» path = new «ArrayList.name»();
+        «FOR q : node.path.path»
+            path.add(«QName.name».create("«q.namespace.toString»", "«q.formattedRevision»", "«q.localName»"));
+        «ENDFOR»
+
+        java.util.Map _augmentation = (java.util.Map) «AUGMENTATION_CODEC».deserialize(_compositeNode, path);
+        if (_augmentation != null && !(_augmentation.isEmpty())) {
             «Iterator.name» _entries = _augmentation.entrySet().iterator();
             while(_entries.hasNext()) {
                 java.util.Map.Entry _entry = (java.util.Map.Entry) _entries.next();
