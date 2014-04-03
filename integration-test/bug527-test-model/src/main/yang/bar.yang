@@ -10,26 +10,48 @@ module bar {
     namespace "urn:yang:bar";
     prefix "bar";
 
+    import baz {
+        prefix "baz";
+    }
+
     revision "2014-03-21" {
     }
 
-    container alpha {
+    container factory {
+        container alpha {
+            uses baz:machine-def;
+        }
         container beta {
+            uses baz:machine-def;
         }
     }
-
-    grouping group-a {
-        container xcont {
-            choice xchoice {
+    
+    rpc create-factory {
+        input {
+            uses baz:machine-def;
+        }
+    }
+    
+    rpc create-nested-factory {
+        input {
+            container nested {
+                uses baz:machine-def;
             }
         }
     }
 
-    grouping group-b {
-        uses group-a {
-            augment "xcont/xchoice" {
-                case xcase {
-                    leaf idx {
+    grouping machine-types {
+        container types {
+            choice machine-type {
+            }
+        }
+    }
+
+    grouping machine-ext {
+        uses machine-types {
+            augment "types/machine-type" {
+                case type-a {
+                    leaf id {
                         type string;
                     }
                 }
@@ -38,3 +60,4 @@ module bar {
     }
 
 }
+
