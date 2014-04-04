@@ -7,34 +7,55 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 public class ImmutableMapNodeBuilder
         implements CollectionNodeBuilder<MapEntryNode, MapNode> {
 
-    private Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value = Maps.newLinkedHashMap();
+    private Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
     private InstanceIdentifier.NodeIdentifier nodeIdentifier;
     private boolean dirty = false;
+
+    protected ImmutableMapNodeBuilder() {
+        this.value = new LinkedHashMap<>();
+        this.dirty = false;
+    }
+
+    protected ImmutableMapNodeBuilder(final ImmutableMapNode node) {
+        this.value = node.children;
+        this.dirty = true;
+    }
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> create() {
         return new ImmutableMapNodeBuilder();
     }
 
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final MapNode node) {
+        if (!(node instanceof ImmutableMapNode)) {
+            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        }
+
+        return new ImmutableMapNodeBuilder((ImmutableMapNode) node);
+    }
+
     private void checkDirty() {
         if (dirty) {
-            value = Maps.newLinkedHashMap(value);
+            value = new LinkedHashMap<>(value);
             dirty = false;
         }
     }
@@ -43,6 +64,13 @@ public class ImmutableMapNodeBuilder
     public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
         checkDirty();
         this.value.put(child.getIdentifier(), child);
+        return this;
+    }
+
+    @Override
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withoutChild(final InstanceIdentifier.PathArgument key) {
+        checkDirty();
+        this.value.remove(key);
         return this;
     }
 
@@ -74,7 +102,14 @@ public class ImmutableMapNodeBuilder
         return withChild(child);
     }
 
-    static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements Immutable,MapNode {
+
+    @Override
+    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, MapEntryNode, MapNode> removeChild(
+            final PathArgument key) {
+        return withoutChild(key);
+    }
+
+    protected static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements Immutable,MapNode {
 
         private final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children;
 

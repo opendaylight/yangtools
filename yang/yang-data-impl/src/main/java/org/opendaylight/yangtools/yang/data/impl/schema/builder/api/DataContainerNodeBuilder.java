@@ -24,4 +24,5 @@ public interface DataContainerNodeBuilder<I extends InstanceIdentifier.PathArgum
     DataContainerNodeBuilder<I, R> withNodeIdentifier(I nodeIdentifier);
 
     DataContainerNodeBuilder<I, R> withChild(DataContainerChild<?, ?> child);
+    DataContainerNodeBuilder<I, R> withoutChild(PathArgument key);
 }

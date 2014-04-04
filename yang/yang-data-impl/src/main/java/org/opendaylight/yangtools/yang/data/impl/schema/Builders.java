@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
@@ -53,7 +54,7 @@ public final class Builders {
     }
 
     public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, T, LeafNode<T>> leafBuilder(
-            LeafSchemaNode schema) {
+            final LeafSchemaNode schema) {
         return ImmutableLeafNodeSchemaAwareBuilder.create(schema);
     }
 
@@ -62,7 +63,7 @@ public final class Builders {
     }
 
     public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
-            LeafListSchemaNode schema) {
+            final LeafListSchemaNode schema) {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
     }
 
@@ -70,17 +71,34 @@ public final class Builders {
         return ImmutableLeafSetNodeBuilder.create();
     }
 
+    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafSetNode<T> node) {
+        return ImmutableLeafSetNodeBuilder.create(node);
+    }
+
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema) {
         return ImmutableLeafSetNodeSchemaAwareBuilder.<T>create(schema);
+    }
+
+    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema, final LeafSetNode<T> node) {
+        return ImmutableLeafSetNodeSchemaAwareBuilder.<T>create(schema, node);
     }
 
     public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder() {
         return ImmutableContainerNodeBuilder.create();
     }
 
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder(final ContainerNode node) {
+        return ImmutableContainerNodeBuilder.create(node);
+    }
+
     public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder(
-            ContainerSchemaNode schema) {
+            final ContainerSchemaNode schema) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema);
+    }
+
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder(
+            final ContainerSchemaNode schema, final ContainerNode node) {
+        return ImmutableContainerNodeSchemaAwareBuilder.create(schema, node);
     }
 
     public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
@@ -88,7 +106,7 @@ public final class Builders {
     }
 
     public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
-            ListSchemaNode schema) {
+            final ListSchemaNode schema) {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
     }
 
@@ -96,8 +114,16 @@ public final class Builders {
         return ImmutableMapNodeBuilder.create();
     }
 
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final MapNode node) {
+        return ImmutableMapNodeBuilder.create(node);
+    }
+
     public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final ListSchemaNode schema) {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema);
+    }
+
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final ListSchemaNode schema, final MapNode node) {
+        return ImmutableMapNodeSchemaAwareBuilder.create(schema, node);
     }
 
     public static DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> augmentationBuilder() {

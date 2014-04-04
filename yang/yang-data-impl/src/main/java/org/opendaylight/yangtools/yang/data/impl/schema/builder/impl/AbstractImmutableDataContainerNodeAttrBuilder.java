@@ -16,31 +16,45 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
 abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends InstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
         extends AbstractImmutableDataContainerNodeBuilder<I, R>
         implements DataContainerNodeAttrBuilder<I, R> {
 
-    protected Map<QName, String> attributes = Collections.emptyMap();
+    private Map<QName, String> attributes;
+
+    protected AbstractImmutableDataContainerNodeAttrBuilder() {
+        this.attributes = Collections.emptyMap();
+    }
+
+    protected AbstractImmutableDataContainerNodeAttrBuilder(final AbstractImmutableDataContainerAttrNode<I> node) {
+        super(node);
+        this.attributes = node.getAttributes();
+    }
+
+    protected final Map<QName, String> getAttributes() {
+        return attributes;
+    }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withAttributes(Map<QName, String> attributes){
+    public DataContainerNodeAttrBuilder<I, R> withAttributes(final Map<QName, String> attributes){
         this.attributes = attributes;
         return this;
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withValue(List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
+    public DataContainerNodeAttrBuilder<I, R> withValue(final List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
         return (DataContainerNodeAttrBuilder<I, R>) super.withValue(value);
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withChild(DataContainerChild<?, ?> child) {
+    public DataContainerNodeAttrBuilder<I, R> withChild(final DataContainerChild<?, ?> child) {
         return (DataContainerNodeAttrBuilder<I, R>) super.withChild(child);
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withNodeIdentifier(I nodeIdentifier) {
+    public DataContainerNodeAttrBuilder<I, R> withNodeIdentifier(final I nodeIdentifier) {
         return (DataContainerNodeAttrBuilder<I, R>) super.withNodeIdentifier(nodeIdentifier);
     }
 }

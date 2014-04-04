@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -23,7 +24,6 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     protected final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children;
 
-
     public AbstractImmutableDataContainerNode(
             final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, final K nodeIdentifier) {
         super(nodeIdentifier, Iterables.unmodifiableIterable(children.values()));
@@ -38,6 +38,11 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     @Override
     protected int valueHashCode() {
         return children.hashCode();
+    }
+
+    public final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> getChildren() {
+        // Make sure we do not leak a mutable view
+        return Collections.unmodifiableMap(children);
     }
 
     @Override

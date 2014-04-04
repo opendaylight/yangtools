@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -36,11 +38,16 @@ public class ImmutableAugmentationNodeBuilder
     }
 
     @Override
+    public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withoutChild(final PathArgument key) {
+        return super.withoutChild(key);
+    }
+
+    @Override
     public AugmentationNode build() {
         return new ImmutableAugmentationNode(getNodeIdentifier(), buildValue());
     }
 
-    static final class ImmutableAugmentationNode
+    private static final class ImmutableAugmentationNode
             extends AbstractImmutableDataContainerNode<InstanceIdentifier.AugmentationIdentifier>
             implements AugmentationNode {
 
@@ -48,4 +55,5 @@ public class ImmutableAugmentationNodeBuilder
             super(children, nodeIdentifier);
         }
     }
+
 }

@@ -26,7 +26,7 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         return new ImmutableChoiceNode(getNodeIdentifier(), buildValue());
     }
 
-    static final class ImmutableChoiceNode
+    private static final class ImmutableChoiceNode
             extends AbstractImmutableDataContainerNode<InstanceIdentifier.NodeIdentifier>
             implements ChoiceNode {
 

@@ -19,16 +19,31 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 public class ImmutableContainerNodeBuilder extends
         AbstractImmutableDataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> {
 
+    protected ImmutableContainerNodeBuilder() {
+        super();
+    }
+
+    protected ImmutableContainerNodeBuilder(final ImmutableContainerNode node) {
+        super(node);
+    }
+
     public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> create() {
         return new ImmutableContainerNodeBuilder();
     }
 
-    @Override
-    public ContainerNode build() {
-        return new ImmutableContainerNode(getNodeIdentifier(), buildValue(), attributes);
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> create(final ContainerNode node) {
+        if (!(node instanceof ImmutableContainerNode)) {
+            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        }
+        return new ImmutableContainerNodeBuilder((ImmutableContainerNode) node);
     }
 
-    final class ImmutableContainerNode extends
+    @Override
+    public ContainerNode build() {
+        return new ImmutableContainerNode(getNodeIdentifier(), buildValue(), getAttributes());
+    }
+
+    protected static final class ImmutableContainerNode extends
             AbstractImmutableDataContainerAttrNode<InstanceIdentifier.NodeIdentifier> implements ContainerNode {
 
         ImmutableContainerNode(

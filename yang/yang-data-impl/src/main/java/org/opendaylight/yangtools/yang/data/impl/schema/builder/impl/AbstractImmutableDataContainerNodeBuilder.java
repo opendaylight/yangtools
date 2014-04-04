@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +16,8 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-
-import com.google.common.collect.Maps;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
         implements DataContainerNodeBuilder<I, R> {
@@ -33,7 +34,13 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
     private boolean dirty;
 
     protected AbstractImmutableDataContainerNodeBuilder() {
-        this.value = Maps.newHashMap();
+        this.value = new HashMap<>();
+        this.dirty = false;
+    }
+
+    protected AbstractImmutableDataContainerNodeBuilder(final AbstractImmutableDataContainerNode<I> node) {
+        this.value = node.getChildren();
+        this.dirty = true;
     }
 
     protected final I getNodeIdentifier() {
@@ -51,7 +58,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
 
     private void checkDirty() {
         if (dirty) {
-            value = Maps.newHashMap(value);
+            value = new HashMap<>(value);
             dirty = false;
         }
     }
@@ -73,6 +80,13 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
     }
 
     @Override
+    public DataContainerNodeBuilder<I, R> withoutChild(final PathArgument key) {
+        checkDirty();
+        this.value.remove(key);
+        return this;
+    }
+
+    @Override
     public DataContainerNodeBuilder<I, R> withNodeIdentifier(final I nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
@@ -82,5 +96,10 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
     public DataContainerNodeBuilder<I, R> addChild(
             final DataContainerChild<? extends PathArgument, ?> child) {
         return withChild(child);
+    }
+
+    @Override
+    public NormalizedNodeContainerBuilder<I, PathArgument, DataContainerChild<? extends PathArgument, ?>, R> removeChild(final PathArgument key) {
+        return withoutChild(key);
     }
 }

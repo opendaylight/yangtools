@@ -9,10 +9,11 @@ public interface NormalizedNodeContainerBuilder<K extends PathArgument,CK extend
 extends NormalizedNodeBuilder<K,List<CV>,P>{
 
     @Override
-    public NormalizedNodeContainerBuilder<K,CK,CV,P> withNodeIdentifier(K nodeIdentifier);
+    NormalizedNodeContainerBuilder<K,CK,CV,P> withNodeIdentifier(K nodeIdentifier);
 
     @Override
-    public NormalizedNodeContainerBuilder<K,CK,CV,P> withValue(List<CV> value);
+    NormalizedNodeContainerBuilder<K,CK,CV,P> withValue(List<CV> value);
 
-    public NormalizedNodeContainerBuilder<K,CK,CV,P> addChild(CV child);
+    NormalizedNodeContainerBuilder<K,CK,CV,P> addChild(CV child);
+    NormalizedNodeContainerBuilder<K,CK,CV,P> removeChild(CK key);
 }

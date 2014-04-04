@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
@@ -24,10 +23,10 @@ public class ImmutableLeafNodeBuilder<T> extends AbstractImmutableNormalizedNode
 
     @Override
     public LeafNode<T> build() {
-        return new ImmutableLeafNode<>(nodeIdentifier, value, attributes);
+        return new ImmutableLeafNode<>(getNodeIdentifier(), getValue(), getAttributes());
     }
 
-    static final class ImmutableLeafNode<T> extends AbstractImmutableNormalizedAttrNode<InstanceIdentifier.NodeIdentifier, T> implements LeafNode<T> {
+    private static final class ImmutableLeafNode<T> extends AbstractImmutableNormalizedAttrNode<InstanceIdentifier.NodeIdentifier, T> implements LeafNode<T> {
 
         ImmutableLeafNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier, final T value, final Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);

@@ -19,24 +19,38 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
 
     private final ListSchemaNode schema;
 
-    protected ImmutableMapNodeSchemaAwareBuilder(ListSchemaNode schema) {
+    protected ImmutableMapNodeSchemaAwareBuilder(final ListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
         super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(ListSchemaNode schema) {
+    protected ImmutableMapNodeSchemaAwareBuilder(final ListSchemaNode schema, final ImmutableMapNode node) {
+        super(node);
+        this.schema = Preconditions.checkNotNull(schema);
+        super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
+    }
+
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema) {
         return new ImmutableMapNodeSchemaAwareBuilder(schema);
     }
 
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema, final MapNode node) {
+        if (!(node instanceof ImmutableMapNode)) {
+            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        }
+
+        return new ImmutableMapNodeSchemaAwareBuilder(schema, (ImmutableMapNode) node);
+    }
+
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(MapEntryNode child) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
         Preconditions.checkArgument(schema.getQName().equals(child.getNodeType()),
                 "Incompatible node type, should be: %s, is: %s", schema.getQName(), child.getNodeType());
         return super.withChild(child);
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final InstanceIdentifier.NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }
