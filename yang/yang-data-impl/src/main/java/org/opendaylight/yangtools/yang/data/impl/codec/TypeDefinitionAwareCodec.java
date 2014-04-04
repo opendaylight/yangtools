@@ -89,8 +89,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 } else {
                     throw new NumberFormatException("Incorrect lexical representation of Integer value: " + integer
                             + "The Integer value can be defined as Integer Number, Hexadecimal Number or"
-                            + "Octal Number. The sign vlues are allowed. "
-                            + "Spaces between digits are NOT allowed!");
+                            + "Octal Number. The sign vlues are allowed. " + "Spaces between digits are NOT allowed!");
                 }
             }
         }
@@ -445,20 +444,20 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     };
 
-    public static class EmptyCodecStringImpl extends TypeDefinitionAwareCodec<Void, EmptyTypeDefinition> implements
+    public static class EmptyCodecStringImpl extends TypeDefinitionAwareCodec<Object, EmptyTypeDefinition> implements
             EmptyCodec<String> {
 
         protected EmptyCodecStringImpl(Optional<EmptyTypeDefinition> typeDef) {
-            super(typeDef, Void.class);
+            super(typeDef, Object.class);
         }
 
         @Override
-        public String serialize(Void data) {
+        public String serialize(Object data) {
             return "";
         }
 
         @Override
-        public Void deserialize(String stringRepresentation) {
+        public Object deserialize(String stringRepresentation) {
             return null;
         }
     };
