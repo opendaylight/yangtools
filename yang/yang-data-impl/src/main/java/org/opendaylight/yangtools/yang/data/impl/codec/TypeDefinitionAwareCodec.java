@@ -506,20 +506,20 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     };
 
-    public static class EnumCodecStringImpl extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements
+    public static class EnumCodecStringImpl extends TypeDefinitionAwareCodec<Object, EnumTypeDefinition> implements
             EnumCodec<String> {
 
         protected EnumCodecStringImpl(Optional<EnumTypeDefinition> typeDef) {
-            super(typeDef, String.class);
+            super(typeDef, Object.class);
         }
 
         @Override
-        public String deserialize(String stringRepresentation) {
+        public Object deserialize(String stringRepresentation) {
             return stringRepresentation;
         }
 
         @Override
-        public String serialize(String data) {
+        public String serialize(Object data) {
             return data == null ? "" : data.toString();
         }
     };

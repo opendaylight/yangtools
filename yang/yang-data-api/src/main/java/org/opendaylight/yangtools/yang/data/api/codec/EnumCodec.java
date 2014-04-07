@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 import org.opendaylight.yangtools.concepts.Codec;
 
 
-public interface EnumCodec<T> extends Codec<T,String> {
+public interface EnumCodec<T> extends Codec<T,Object> {
 
-    public T serialize(String data);
+    public T serialize(Object data);
 
-    public String deserialize(T data);
+    public Object deserialize(T data);
 }
