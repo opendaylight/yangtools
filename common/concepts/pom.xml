@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>concepts</artifactId>
     <name>${project.artifactId}</name>
-    <description>Java binding for YANG</description>
+    <description>Common concepts</description>
 
     <build>
         <plugins>
