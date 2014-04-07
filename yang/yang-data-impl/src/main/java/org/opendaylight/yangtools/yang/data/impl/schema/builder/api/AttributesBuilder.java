@@ -12,5 +12,12 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface AttributesBuilder<B> {
+    /**
+     * Attach a map of attributes. The map is expected to remain unchanged,
+     * otherwise undefined behavior may occur.
+     *
+     * @param attributes Attribute map
+     * @return Builder instance, such that fluent use is possible
+     */
     B withAttributes(Map<QName, String> attributes);
 }
