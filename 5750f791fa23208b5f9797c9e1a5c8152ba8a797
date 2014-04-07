@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_22268e69",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/TypeDefinitionAwareCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-04-07T10:55:51Z",
+      "side": 1,
+      "message": "I suspect this is wrong - deserialization should return enum\u0027s valueOf instead of string. Can you provide a test case?",
+      "revId": "5750f791fa23208b5f9797c9e1a5c8152ba8a797",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
