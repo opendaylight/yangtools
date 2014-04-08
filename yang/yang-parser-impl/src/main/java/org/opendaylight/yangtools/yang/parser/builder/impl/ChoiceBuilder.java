@@ -236,12 +236,12 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     @Override
-    public Boolean isConfiguration() {
+    public boolean isConfiguration() {
         return instance.configuration;
     }
 
     @Override
-    public void setConfiguration(Boolean configuration) {
+    public void setConfiguration(boolean configuration) {
         instance.configuration = configuration;
     }
 

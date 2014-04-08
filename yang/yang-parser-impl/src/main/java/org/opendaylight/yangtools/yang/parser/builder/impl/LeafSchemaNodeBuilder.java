@@ -154,12 +154,12 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     }
 
     @Override
-    public Boolean isConfiguration() {
+    public boolean isConfiguration() {
         return instance.configuration;
     }
 
     @Override
-    public void setConfiguration(final Boolean configuration) {
+    public void setConfiguration(final boolean configuration) {
         instance.configuration = configuration;
     }
 
