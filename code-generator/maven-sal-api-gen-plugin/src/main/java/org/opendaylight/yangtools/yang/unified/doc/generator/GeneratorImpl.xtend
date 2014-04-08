@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 import java.util.List
 import org.opendaylight.yangtools.yang.common.QName
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition
 import java.util.ArrayList
 import java.util.Map
@@ -54,6 +53,9 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifie
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNodeimport java.util.HashMap
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode
+import org.opendaylight.yangtools.yang.model.api.UsesNode
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 
 class GeneratorImpl {
 
@@ -62,7 +64,8 @@ class GeneratorImpl {
     static val Logger LOG = LoggerFactory.getLogger(GeneratorImpl)
     static val BuildContext CTX = new DefaultBuildContext();
     var Module currentModule;
-
+    val Map<String, String> imports = new HashMap();
+    var SchemaContext ctx;
 
     def generate(SchemaContext context, File targetPath, Set<Module> modulesToGen) throws IOException {
         path = targetPath;
@@ -76,6 +79,8 @@ class GeneratorImpl {
 
     def generateDocumentation(Module module, SchemaContext ctx) {
         val destination = new File(path, '''«module.name».html''')
+        this.ctx = ctx;
+        module.imports.forEach[importModule | this.imports.put(importModule.prefix, importModule.moduleName)]
         try {
             val fw = new OutputStreamWriter(CTX.newFileOutputStream(destination))
             val bw = new BufferedWriter(fw)
@@ -104,6 +109,16 @@ class GeneratorImpl {
     def body(Module module, SchemaContext ctx) '''
         «header(module)»
 
+        «typeDefinitionsSummary(module)»
+        «identitiesSummary(module)»
+        «groupingsSummary(module)»
+        «augmentationsSummary(module, ctx)»
+        «objectsSummary(module)»
+        «notificationsSummary(module)»
+        «rpcsSummary(module)»
+        «extensionsSummary(module)»
+        «featuresSummary(module)»
+
         «typeDefinitions(module)»
 
         «identities(module)»
@@ -127,6 +142,34 @@ class GeneratorImpl {
     '''
 
 
+    private def typeDefinitionsSummary(Module module) {
+        val Set<TypeDefinition<?>> typedefs = module.typeDefinitions
+        if (typedefs.empty) {
+            return '';
+        }
+        return '''
+        <div>
+            <h3>Type Definitions Summary</h3>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+                «FOR typedef : typedefs»
+                <tr>
+                    <td>
+                    «anchorLink(typedef.QName.localName, strong(typedef.QName.localName))»
+                    </td>
+                    <td>
+                    «typedef.description»
+                    </td>
+                </tr>
+                «ENDFOR»
+            </table>
+        </div>
+        '''
+    }
+
     def typeDefinitions(Module module) {
         val Set<TypeDefinition<?>> typedefs = module.typeDefinitions
         if (typedefs.empty) {
@@ -137,7 +180,7 @@ class GeneratorImpl {
             <ul>
             «FOR typedef : typedefs»
                 <li>
-                    «strong("typedef " + typedef.QName.localName)»
+                    <h3 id="«typedef.QName.localName»">«typedef.QName.localName»</h3>
                     <ul>
                     «typedef.descAndRefLi»
                     «typedef.restrictions»
@@ -157,16 +200,41 @@ class GeneratorImpl {
             <ul>
             «FOR identity : module.identities»
                 <li>
-                    «strong("identity " + identity.QName.localName)»
+                    <h3 id="«identity.QName.localName»">«identity.QName.localName»</h3>
                     <ul>
                     «identity.descAndRefLi»
-                    «IF identity.baseIdentity != null»
+                    «IF identity.baseIdentity !== null»
                         «listItem("base", identity.baseIdentity.QName.localName)»
                     «ENDIF»
                     </ul>
                 </li>
             «ENDFOR»
             </ul>
+        '''
+    }
+
+    private def identitiesSummary(Module module) {
+        if (module.identities.empty) {
+            return '';
+        }
+        return '''
+        <h3>Identities Summary</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            «FOR identity : module.identities»
+            <tr>
+                <td>
+                «anchorLink(identity.QName.localName, strong(identity.QName.localName))»
+                </td>
+                <td>
+                «identity.description»
+                </td>
+            </tr>
+            «ENDFOR»
+        </table>
         '''
     }
 
@@ -179,13 +247,41 @@ class GeneratorImpl {
             <ul>
             «FOR grouping : module.groupings»
                 <li>
-                    «strong("grouping " + grouping.QName.localName)»
+                    <h3 id="«grouping.QName.localName»">«grouping.QName.localName»</h3>
                     <ul>
                         «grouping.descAndRefLi»
+                        «FOR childNode : grouping.childNodes»
+                            «childNode.printSchemaNodeInfo»
+                        «ENDFOR»
                     </ul>
                 </li>
             «ENDFOR»
             </ul>
+        '''
+    }
+
+    private def groupingsSummary(Module module) {
+        if (module.groupings.empty) {
+            return '';
+        }
+        return '''
+        <h3>Groupings Summary</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            «FOR grouping : module.groupings»
+            <tr>
+                <td>
+                «anchorLink(grouping.QName.localName, strong(grouping.QName.localName))»
+                </td>
+                <td>
+                «grouping.description»
+                </td>
+            </tr>
+            «ENDFOR»
+        </table>
         '''
     }
 
@@ -209,7 +305,8 @@ class GeneratorImpl {
             <ul>
             «FOR augment : module.augmentations»
                 <li>
-                    <h3>Target [«schemaPathAsRestconfPath(module, augment.targetPath, context)»]</h3>
+                    <h3 id="«schemaPathToString(module, augment.targetPath, context, augment)»">
+                    Target [«typeAnchorLink(augment.targetPath,schemaPathToString(module, augment.targetPath, context, augment))»]</h3>
                     «augment.description»
                     «IF augment.reference !== null»
                         Reference «augment.reference»
@@ -217,10 +314,38 @@ class GeneratorImpl {
                     «IF augment.whenCondition !== null»
                         When «augment.whenCondition.toString»
                     «ENDIF»
-                    «augment.childNodes.printChildren(3,InstanceIdentifier.builder().toInstance())»
+                    «FOR childNode : augment.childNodes»
+                        «childNode.printSchemaNodeInfo»
+                    «ENDFOR»
                 </li>
             «ENDFOR»
             </ul>
+        '''
+    }
+
+    private def augmentationsSummary(Module module, SchemaContext context) {
+        if (module.augmentations.empty) {
+            return '';
+        }
+        return '''
+        <h3>Augmentations Summary</h3>
+        <table>
+            <tr>
+                <th>Target</th>
+                <th>Description</th>
+            </tr>
+            «FOR augment : module.augmentations»
+            <tr>
+                <td>
+                «anchorLink(schemaPathToString(module, augment.targetPath, context, augment),
+                strong(schemaPathToString(module, augment.targetPath, context, augment)))»
+                </td>
+                <td>
+                «augment.description»
+                </td>
+            </tr>
+            «ENDFOR»
+        </table>
         '''
     }
 
@@ -234,10 +359,37 @@ class GeneratorImpl {
             <h2>Notifications</h2>
             «FOR notificationdef : notificationdefs»
 
-                <h3>«notificationdef.nodeName»</h3>
+                <h3 id="«notificationdef.path.schemaPathToId»">«notificationdef.nodeName»</h3>
                     «notificationdef.descAndRef»
-                    «notificationdef.childNodes.printChildren(3,InstanceIdentifier.builder().toInstance())»
+                    «FOR childNode : notificationdef.childNodes»
+                        «childNode.printSchemaNodeInfo»
+                    «ENDFOR»
             «ENDFOR»
+        '''
+    }
+
+    private def notificationsSummary(Module module) {
+        if (module.notifications.empty) {
+            return '';
+        }
+        return '''
+        <h3>Notifications Summary</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            «FOR notification : module.notifications»
+            <tr>
+                <td>
+                «anchorLink(notification.path.schemaPathToId, strong(notification.QName.localName))»
+                </td>
+                <td>
+                «notification.description»
+                </td>
+            </tr>
+            «ENDFOR»
+        </table>
         '''
     }
 
@@ -249,10 +401,39 @@ class GeneratorImpl {
         return '''
             <h2>RPC Definitions</h2>
             «FOR rpc : module.rpcs»
-                <h3>«rpc.nodeName»</h3>
-                    «rpc.rpcInfo(InstanceIdentifier.builder().node(rpc.QName).toInstance())»
+                <h3 id="«rpc.QName.localName»">«rpc.nodeName»</h3>
+                    <ul>
+                        «rpc.descAndRefLi»
+                        «rpc.input.printSchemaNodeInfo»
+                        «rpc.output.printSchemaNodeInfo»
+                    </ul>
             «ENDFOR»
             </ul>
+        '''
+    }
+
+    private def rpcsSummary(Module module) {
+        if (module.rpcs.empty) {
+            return '';
+        }
+        return '''
+        <h3>RPCs Summary</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            «FOR rpc : module.rpcs»
+            <tr>
+                <td>
+                «anchorLink(rpc.QName.localName, strong(rpc.QName.localName))»
+                </td>
+                <td>
+                «rpc.description»
+                </td>
+            </tr>
+            «ENDFOR»
+        </table>
         '''
     }
 
@@ -264,10 +445,35 @@ class GeneratorImpl {
             <h2>Extensions</h2>
             «FOR ext : module.extensionSchemaNodes»
                 <li>
-                    <h3>«ext.nodeName»</h3>
+                    <h3 id="«ext.QName.localName»">«ext.nodeName»</h3>
                 </li>
                 «extensionInfo(ext)»
             «ENDFOR»
+        '''
+    }
+
+    private def extensionsSummary(Module module) {
+        if (module.extensionSchemaNodes.empty) {
+            return '';
+        }
+        return '''
+        <h3>Extensions Summary</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            «FOR ext : module.extensionSchemaNodes»
+            <tr>
+                <td>
+                «anchorLink(ext.QName.localName, strong(ext.QName.localName))»
+                </td>
+                <td>
+                «ext.description»
+                </td>
+            </tr>
+            «ENDFOR»
+        </table>
         '''
     }
 
@@ -281,7 +487,7 @@ class GeneratorImpl {
             <ul>
             «FOR feature : module.features»
                 <li>
-                    «strong("feature " + feature.QName.localName)»
+                    <h3 id="«feature.QName.localName»">«feature.QName.localName»</h3>
                     <ul>
                         «feature.descAndRefLi»
                     </ul>
@@ -291,23 +497,95 @@ class GeneratorImpl {
         '''
     }
 
-    def header(Module module) '''
+    private def featuresSummary(Module module) {
+        if (module.features.empty) {
+            return '';
+        }
+        return '''
+        <h3>Features Summary</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            «FOR feature : module.features»
+            <tr>
+                <td>
+                «anchorLink(feature.QName.localName, strong(feature.QName.localName))»
+                </td>
+                <td>
+                «feature.description»
+                </td>
+            </tr>
+            «ENDFOR»
+        </table>
+        '''
+    }
+
+    private def objectsSummary(Module module) {
+        if (module.childNodes.empty) {
+            return '';
+        }
+        return '''
+        <h3>Child Nodes Summary</h3>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            «FOR childNode : module.childNodes»
+            <tr>
+                <td>
+                «anchorLink(childNode.QName.localName, strong(childNode.QName.localName))»
+                </td>
+                <td>
+                «childNode.description»
+                </td>
+            </tr>
+            «ENDFOR»
+        </table>
+        '''
+    }
+
+    def header(Module module)
+    '''
         <h1>«module.name»</h1>
 
         <h2>Base Information</h2>
-        <dl>
-            <dt>Prefix</dt>
-            <dd>«pre(module.prefix)»</dd>
-            <dt>Namespace</dt>
-            <dd>«pre(module.namespace.toString)»</dd>
-            <dt>Revision</dt>
-            <dd>«pre(REVISION_FORMAT.format(module.revision))»</dd>
-
-            «FOR imp : module.imports BEFORE "<dt>Imports</dt>" »
-                <dd>«code(imp.prefix)» = «code(imp.moduleName)»</dd>
-            «ENDFOR»
-        </dl>
+        <table>
+            <tr>
+                <td>«strong("prefix")»</td>
+                <td>«module.prefix»</td>
+            </tr>
+            <tr>
+                <td>«strong("namespace")»</td>
+                <td>«module.namespace»</td>
+            </tr>
+            <tr>
+                <td>«strong("revision")»</td>
+                <td>«REVISION_FORMAT.format(module.revision)»</td>
+            </tr>
+            <tr>
+                <td>«strong("description")»</td>
+                <td>«module.description»</td>
+            </tr>
+            <tr>
+                <td>«strong("yang-version")»</td>
+                <td>«module.yangVersion»</td>
+            </tr>
+            <tr>
+                «FOR imp : module.imports BEFORE '''<td>«strong("imports")»</td><td>''' AFTER '''</td>'''»
+                    «imp.prefix»:«imp.moduleName»«IF imp.revision !== null» «REVISION_FORMAT.format(imp.revision)»«ENDIF»;
+                «ENDFOR»
+            </tr>
+        </table>
     '''
+
+    def CharSequence schemaPathToId(SchemaPath path) {
+        if(path !== null) {
+            return '''«FOR qName : path.path SEPARATOR "/"»«qName.localName»«ENDFOR»'''
+        }
+    }
 
     def code(String string) '''<code>«string»</code>'''
 
@@ -316,7 +594,7 @@ class GeneratorImpl {
     }
 
     def CharSequence tree(Module module) '''
-        «strong("module " + module.name)»
+        «strong(module.name)»
         «module.childNodes.treeSet(InstanceIdentifier.builder.toInstance())»
     '''
 
@@ -354,62 +632,211 @@ class GeneratorImpl {
 
     def CharSequence childNodes(Module module) '''
         «val childNodes = module.childNodes»
-        «IF childNodes !== null && !childNodes.empty»
+        «IF !childNodes.nullOrEmpty»
             <h2>Child nodes</h2>
 
             «childNodes.printChildren(3,InstanceIdentifier.builder().toInstance())»
         «ENDIF»
     '''
 
-    def CharSequence printChildren(Set<DataSchemaNode> nodes, int level, InstanceIdentifier path) {
-    val anyxmlNodes = nodes.filter(AnyXmlSchemaNode)
-    val leafNodes = nodes.filter(LeafSchemaNode)
-    val leafListNodes = nodes.filter(LeafListSchemaNode)
-    val choices = nodes.filter(ChoiceNode)
-    val cases = nodes.filter(ChoiceCaseNode)
-    val containers = nodes.filter(ContainerSchemaNode)
-    val lists = nodes.filter(ListSchemaNode)
-    return '''
-        «IF ((anyxmlNodes.size + leafNodes.size + leafListNodes.size + containers.size + lists.size) > 0)»
-        <h3>Direct children</h3>
-        <ul>
-        «FOR childNode : anyxmlNodes»
-            «childNode.printShortInfo(level,path)»
-        «ENDFOR»
-        «FOR childNode : leafNodes»
-            «childNode.printShortInfo(level,path)»
-        «ENDFOR»
-        «FOR childNode : leafListNodes»
-            «childNode.printShortInfo(level,path)»
-        «ENDFOR»
-        «FOR childNode : containers»
-            «childNode.printShortInfo(level,path)»
-        «ENDFOR»
-        «FOR childNode : lists»
-            «childNode.printShortInfo(level,path)»
-        «ENDFOR»
-        </ul>
-        «ENDIF»
+    def CharSequence printSchemaNodeInfo(DataSchemaNode node) {
+        return '''
+            <ul>
+            «node.printBaseInfo»
+            «IF node instanceof DataNodeContainer»
+                «val dataNode = node as DataNodeContainer»
+                <ul>
+                «FOR usesNode : dataNode.uses»
+                    «usesNode.printUses»
+                «ENDFOR»
+                </ul>
+                <ul>
+                «FOR typeDef : dataNode.typeDefinitions»
+                    «typeDef.restrictions»
+                «ENDFOR»
+                </ul>
+                <ul>
+                «FOR grouping : dataNode.groupings»
+                    «grouping.printGrouping»
+                «ENDFOR»
+                </ul>
+                <ul>
+                «FOR child : dataNode.childNodes»
+                    «child.printSchemaNodeInfo»
+                «ENDFOR»
+                </ul>
+            «ENDIF»
+            </ul>
+        '''
+    }
 
-        «IF !path.path.empty»
-        <h3>XML example</h3>
-        «nodes.xmlExample(path.path.last.nodeType,path)»
-        </h3>
-        «ENDIF»
-        «FOR childNode : containers»
-            «childNode.printInfo(level,path)»
-        «ENDFOR»
-        «FOR childNode : lists»
-            «childNode.printInfo(level,path)»
-        «ENDFOR»
-        «FOR childNode : choices»
-            «childNode.printInfo(level,path)»
-        «ENDFOR»
-        «FOR childNode : cases»
-            «childNode.printInfo(level,path)»
-        «ENDFOR»
-        
-    '''
+    def String typeAnchorLink(SchemaPath path, CharSequence text) {
+        if(path !== null) {
+            val prefix = path.path.last.prefix
+            if(prefix == this.currentModule.prefix) {
+                return '''<a href="#«path.schemaPathToId»">«text»</a>'''
+            } else if(!prefix.nullOrEmpty){
+                val String module = imports.get(prefix)
+                if(!module.nullOrEmpty) {
+                    return '''«prefix»:«text»'''
+                    //to enable external (import) links
+                    //return '''<a href="«module».html#«path.schemaPathToId»">«prefix»:«text»</a>'''
+                }
+            }
+            return text.toString
+        }
+    }
+
+    def CharSequence printBaseInfo(SchemaNode node) {
+        if(node instanceof LeafSchemaNode) {
+            val LeafSchemaNode leafNode = (node as LeafSchemaNode)
+            return '''
+                «printInfo(node, "leaf")»
+                «listItem("type", typeAnchorLink(leafNode.type?.path, leafNode.type.QName.localName))»
+                «listItem("units", leafNode.units)»
+                «listItem("default", leafNode.^default)»
+                </ul>
+            '''
+        } else if(node instanceof LeafListSchemaNode) {
+            val LeafListSchemaNode leafListNode = (node as LeafListSchemaNode)
+            return '''
+                «printInfo(node, "leaf-list")»
+                «listItem("type", leafListNode.type?.QName.localName)»
+                </ul>
+            '''
+        } else if(node instanceof ListSchemaNode) {
+            val ListSchemaNode listNode = (node as ListSchemaNode)
+            return '''
+                «printInfo(node, "list")»
+                «FOR keyDef : listNode.keyDefinition»
+                    «listItem("key definition", keyDef.localName)»
+                «ENDFOR»
+                </ul>
+            '''
+        } else if(node instanceof ChoiceNode) {
+            val ChoiceNode choiceNode = (node as ChoiceNode)
+            return '''
+                «printInfo(node, "choice")»
+                «listItem("default case", choiceNode.defaultCase)»
+                «FOR caseNode : choiceNode.cases»
+                    «caseNode.printSchemaNodeInfo»
+                «ENDFOR»
+                </ul>
+            '''
+        } else if(node instanceof ChoiceCaseNode) {
+            return '''
+                «printInfo(node, "case")»
+                </ul>
+            '''
+        } else if(node instanceof ContainerSchemaNode) {
+            return '''
+                «printInfo(node, "container")»
+                </ul>
+            '''
+        } else if(node instanceof AnyXmlSchemaNode) {
+            return '''
+                «printInfo(node, "anyxml")»
+                </ul>
+            '''
+        }
+    }
+
+    def CharSequence printInfo(SchemaNode node, String nodeType) {
+        return '''
+            «IF node instanceof AugmentationTarget»
+                «IF node !== null»
+                    <strong>
+                    <li id="«node.path.schemaPathToId»">
+                        «nodeType»: «node.QName.localName»
+                    </li>
+                    </strong>
+                «ENDIF»
+            «ELSE»
+                «strong(listItem(nodeType, node.QName.localName))»
+            «ENDIF»
+            <ul>
+            «listItem("description", node.description)»
+            «listItem("reference", node.reference)»
+            «IF node instanceof DataSchemaNode»
+                «listItem("when condition", (node as DataSchemaNode).constraints.whenCondition?.toString)»
+                «listItem("min elements", (node as DataSchemaNode).constraints.minElements?.toString)»
+                «listItem("max elements", (node as DataSchemaNode).constraints.maxElements?.toString)»
+            «ENDIF»
+        '''
+    }
+
+    def CharSequence printUses(UsesNode usesNode) {
+        return '''
+            «strong(listItem("uses", typeAnchorLink(usesNode.groupingPath, usesNode.groupingPath.path.last.localName)))»
+            <ul>
+            <li>refines:
+                <ul>
+                «FOR sp : usesNode.refines.keySet»
+                    «listItem("node name", usesNode.refines.get(sp).QName.localName)»
+                «ENDFOR»
+                </ul>
+            </li>
+            «FOR augment : usesNode.augmentations»
+                «typeAnchorLink(augment.targetPath,schemaPathToString(currentModule, augment.targetPath, ctx, augment))»
+            «ENDFOR»
+            </ul>
+        '''
+    }
+
+    def CharSequence printGrouping(GroupingDefinition grouping) {
+        return '''
+            «strong(listItem("grouping", grouping.QName.localName))»
+        '''
+    }
+
+    def CharSequence printChildren(Set<DataSchemaNode> nodes, int level, InstanceIdentifier path) {
+        val anyxmlNodes = nodes.filter(AnyXmlSchemaNode)
+        val leafNodes = nodes.filter(LeafSchemaNode)
+        val leafListNodes = nodes.filter(LeafListSchemaNode)
+        val choices = nodes.filter(ChoiceNode)
+        val cases = nodes.filter(ChoiceCaseNode)
+        val containers = nodes.filter(ContainerSchemaNode)
+        val lists = nodes.filter(ListSchemaNode)
+        return '''
+            «IF ((anyxmlNodes.size + leafNodes.size + leafListNodes.size + containers.size + lists.size) > 0)»
+            <h3>Direct children</h3>
+            <ul>
+            «FOR childNode : anyxmlNodes»
+                «childNode.printShortInfo(level,path)»
+            «ENDFOR»
+            «FOR childNode : leafNodes»
+                «childNode.printShortInfo(level,path)»
+            «ENDFOR»
+            «FOR childNode : leafListNodes»
+                «childNode.printShortInfo(level,path)»
+            «ENDFOR»
+            «FOR childNode : containers»
+                «childNode.printShortInfo(level,path)»
+            «ENDFOR»
+            «FOR childNode : lists»
+                «childNode.printShortInfo(level,path)»
+            «ENDFOR»
+            </ul>
+            «ENDIF»
+
+            «IF !path.path.empty»
+            <h3>XML example</h3>
+            «nodes.xmlExample(path.path.last.nodeType,path)»
+            </h3>
+            «ENDIF»
+            «FOR childNode : containers»
+                «childNode.printInfo(level,path)»
+            «ENDFOR»
+            «FOR childNode : lists»
+                «childNode.printInfo(level,path)»
+            «ENDFOR»
+            «FOR childNode : choices»
+                «childNode.printInfo(level,path)»
+            «ENDFOR»
+            «FOR childNode : cases»
+                «childNode.printInfo(level,path)»
+            «ENDFOR»
+        '''
     }
 
     def CharSequence xmlExample(Set<DataSchemaNode> nodes, QName name,InstanceIdentifier path) '''
@@ -540,6 +967,12 @@ class GeneratorImpl {
         '''
     }
 
+    def CharSequence anchorLink(CharSequence anchor, CharSequence text) {
+        return '''
+            <a href="#«anchor»">«text»</a>
+        '''
+    }
+
     def CharSequence localLink(InstanceIdentifier identifier, CharSequence text) '''
         <a href="#«FOR cmp : identifier.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">«text»</a>
     '''
@@ -554,7 +987,7 @@ class GeneratorImpl {
     private def dispatch InstanceIdentifier append(InstanceIdentifier identifier, ListSchemaNode node) {
         val pathArguments = new ArrayList(identifier.path)
         val keyValues = new LinkedHashMap<QName,Object>();
-        if(node.keyDefinition != null) {
+        if(node.keyDefinition !== null) {
             for(definition : node.keyDefinition) {
                 keyValues.put(definition,new Object);
             }
@@ -590,13 +1023,8 @@ class GeneratorImpl {
         return it.toString;
     }
 
-    private def String schemaPathAsRestconfPath(Module module, SchemaPath schemaPath, SchemaContext ctx) {
-        val Map<String, String> imports = new HashMap();
-        for (mImport : module.imports) {
-            imports.put(mImport.prefix, mImport.moduleName)
-        }
-
-        val List<QName> path = schemaPath.path
+    private def String schemaPathToString(Module module, SchemaPath schemaPath, SchemaContext ctx, DataNodeContainer dataNode) {
+            val List<QName> path = schemaPath.path
         val StringBuilder pathString = new StringBuilder()
         if (schemaPath.absolute) {
             pathString.append("/")
@@ -625,22 +1053,25 @@ class GeneratorImpl {
                     }
                 }
 
-                if (!(node instanceof ChoiceNode) && !(node instanceof ChoiceCaseNode)) {
-                    var String prefix = name.prefix
-                    var String moduleName
-                    if (prefix == null || "".equals(prefix) || prefix.equals(module.prefix)) {
-                        moduleName = module.name
-                    } else {
-                        moduleName = imports.get(prefix)
+                var String prefix = name.prefix
+                var String moduleName
+                if (prefix == null || "".equals(prefix) || prefix.equals(module.prefix)) {
+                    moduleName = module.name
+                } else {
+                    moduleName = imports.get(prefix)
+                }
+                pathString.append(moduleName)
+                pathString.append(":")
+                pathString.append(name.localName)
+                pathString.append("/")
+                if(node instanceof ChoiceNode && dataNode !== null) {
+                    val DataSchemaNode caseNode = dataNode.childNodes.findFirst[DataSchemaNode e | e instanceof ChoiceCaseNode];
+                    if(caseNode !== null) {
+                        pathString.append("(case)");
+                        pathString.append(caseNode.QName.localName);
                     }
-                    pathString.append(moduleName)
-                    pathString.append(":")
-                    pathString.append(name.localName)
-                    pathString.append("/")
                 }
                 parent = node
-            } else if (parent instanceof ChoiceNode) {
-                parent = (parent as ChoiceNode).getCaseNodeByName(qname.localName)
             }
         }
         return pathString.toString;
@@ -683,18 +1114,6 @@ class GeneratorImpl {
         [«FOR key : node.keyDefinition SEPARATOR " "»«key.localName»«ENDFOR»]
     '''
 
-    private def CharSequence rpcInfo(RpcDefinition rpc,InstanceIdentifier path) '''
-        <ul>
-            «rpc.descAndRefLi»
-            <li>
-                «rpc.input.tree(path)»
-            </li>
-            <li>
-                «rpc.output.tree(path)»
-            </li>
-        </ul>
-    '''
-
     private def CharSequence extensionInfo(ExtensionDefinition ext) '''
         <ul>
             «ext.descAndRefLi»
@@ -709,6 +1128,7 @@ class GeneratorImpl {
 
     /* #################### RESTRICTIONS #################### */
     private def restrictions(TypeDefinition<?> type) '''
+        «type.baseType.toBaseStmt»
         «type.toLength»
         «type.toRange»
     '''
@@ -749,7 +1169,7 @@ class GeneratorImpl {
 
     def toLengthStmt(Collection<LengthConstraint> lengths) '''
         «IF lengths != null && !lengths.empty»
-            «listItem("Length restrictions")»
+            «listItem("Length restrictions:")»
             <ul>
             «FOR length : lengths»
                 <li>
@@ -766,7 +1186,7 @@ class GeneratorImpl {
 
     def toRangeStmt(Collection<RangeConstraint> ranges) '''
         «IF ranges != null && !ranges.empty»
-            «listItem("Range restrictions")»
+            «listItem("Range restrictions:")»
             <ul>
             «FOR range : ranges»
                 <li>
@@ -781,15 +1201,20 @@ class GeneratorImpl {
         «ENDIF»
     '''
 
+    def toBaseStmt(TypeDefinition<?> baseType) '''
+        «IF baseType != null»
+        «listItem("Base type", typeAnchorLink(baseType?.path, baseType.QName.localName))»
+        «ENDIF»
+    '''
+
 
 
     /* #################### UTILITY #################### */
     private def String strong(CharSequence str) '''<strong>«str»</strong>'''
     private def italic(CharSequence str) '''<i>«str»</i>'''
-    private def pre(CharSequence str) '''<pre>«str»</pre>'''
 
     def CharSequence descAndRefLi(SchemaNode node) '''
-        «listItem(node.description)»
+        «listItem("Description", node.description)»
         «listItem("Reference", node.reference)»
     '''
 
@@ -887,7 +1312,7 @@ class GeneratorImpl {
             «node.QName.localName»«node.addedByInfo»
         «ENDIF»
     '''
-    
+
     private def dispatch nodeName(ContainerSchemaNode node) '''
         «IF node.isAddedBy»
             «strong(italic(node.QName.localName))»«node.addedByInfo»
