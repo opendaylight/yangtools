@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_257c5872",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/builder/api/NormalizedNodeContainerBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-04-08T07:45:17Z",
+      "side": 1,
+      "message": "addChild, removeChild are the same methods as withChild, withoutChild in extending interfaces. If they were renamed to with/without, all implementations could loose add/remove methods.\n\nSince new datastore probably depends on these (at least add method), it should be done in the new next version and a TODO added. Or it could be done now and datastore will be fixed after it is merged.",
+      "revId": "9bcc82d107075da35c8cd01422481eaea395ba29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
