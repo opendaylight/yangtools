@@ -1253,7 +1253,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *         <li>true - in other cases</li>
      *         </ul>
      */
-    private def boolean resolveLeafSchemaNodeAsMethod(GeneratedTypeBuilder typeBuilder, LeafSchemaNode leaf) {
+    private def Type resolveLeafSchemaNodeAsMethod(GeneratedTypeBuilder typeBuilder, LeafSchemaNode leaf) {
+        var Type returnType = null;
         if ((leaf !== null) && (typeBuilder !== null)) {
             val leafName = leaf.QName.localName;
             var String leafDesc = leaf.description;
@@ -1265,7 +1266,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
             if (leafName !== null && !leaf.isAddedByUses()) {
                 val TypeDefinition<?> typeDef = leaf.type;
 
-                var Type returnType = null;
                 var GeneratedTOBuilder genTOBuilder;
                 if (typeDef instanceof EnumTypeDefinition) {
                     returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
@@ -1293,11 +1293,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 if (returnType !== null) {
                     val MethodSignatureBuilder getter = constructGetter(typeBuilder, leafName, leafDesc, returnType);
                     processContextRefExtension(leaf, getter, parentModule);
-                    return true;
                 }
             }
         }
-        return false;
+        return returnType;
     }
 
     private def void processContextRefExtension(LeafSchemaNode leaf, MethodSignatureBuilder getter, Module module) {
@@ -1356,25 +1355,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
         return null;
     }
 
-    /**
-     * Converts <code>leaf</code> schema node to property of generated TO
-     * builder.
-     *
-     * @param toBuilder
-     *            generated TO builder to which is <code>leaf</code> added as
-     *            property
-     * @param leaf
-     *            leaf schema node which is added to <code>toBuilder</code> as
-     *            property
-     * @param isReadOnly
-     *            boolean value which says if leaf property is|isn't read only
-     * @return boolean value
-     *         <ul>
-     *         <li>false - if <code>leaf</code>, <code>toBuilder</code> or leaf
-     *         name equals null or if leaf is added by <i>uses</i>.</li>
-     *         <li>true - other cases</li>
-     *         </ul>
-     */
     private def boolean resolveLeafSchemaNodeAsProperty(GeneratedTOBuilder toBuilder, LeafSchemaNode leaf,
         boolean isReadOnly, Module module) {
         if ((leaf !== null) && (toBuilder !== null)) {
@@ -1401,20 +1381,47 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 } else {
                     returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, leaf);
                 }
-
-                if (returnType !== null) {
-                    val propBuilder = toBuilder.addProperty(parseToValidParamName(leafName));
-                    propBuilder.setReadOnly(isReadOnly);
-                    propBuilder.setReturnType(returnType);
-                    propBuilder.setComment(leafDesc);
-                    toBuilder.addEqualsIdentity(propBuilder);
-                    toBuilder.addHashIdentity(propBuilder);
-                    toBuilder.addToStringProperty(propBuilder);
-                    return true;
-                }
+                return resolveLeafSchemaNodeAsProperty(toBuilder, leaf, returnType, isReadOnly)
             }
         }
         return false;
+    }
+
+    /**
+     * Converts <code>leaf</code> schema node to property of generated TO
+     * builder.
+     *
+     * @param toBuilder
+     *            generated TO builder to which is <code>leaf</code> added as
+     *            property
+     * @param leaf
+     *            leaf schema node which is added to <code>toBuilder</code> as
+     *            property
+     * @param returnType property type
+     * @param isReadOnly
+     *            boolean value which says if leaf property is|isn't read only
+     * @return boolean value
+     *         <ul>
+     *         <li>false - if <code>leaf</code>, <code>toBuilder</code> or leaf
+     *         name equals null or if leaf is added by <i>uses</i>.</li>
+     *         <li>true - other cases</li>
+     *         </ul>
+     */
+    private def resolveLeafSchemaNodeAsProperty(GeneratedTOBuilder toBuilder, LeafSchemaNode leaf, Type returnType,
+        boolean isReadOnly) {
+        if (returnType == null) {
+            return false;
+        }
+        val leafName = leaf.QName.localName
+        val leafDesc = leaf.description
+        val propBuilder = toBuilder.addProperty(parseToValidParamName(leafName));
+        propBuilder.setReadOnly(isReadOnly);
+        propBuilder.setReturnType(returnType);
+        propBuilder.setComment(leafDesc);
+        toBuilder.addEqualsIdentity(propBuilder);
+        toBuilder.addHashIdentity(propBuilder);
+        toBuilder.addToStringProperty(propBuilder);
+        return true;
     }
 
     /**
@@ -1694,9 +1701,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
         if (schemaNode instanceof LeafSchemaNode) {
             val leaf = schemaNode as LeafSchemaNode;
             val leafName = leaf.QName.localName;
-            resolveLeafSchemaNodeAsMethod(typeBuilder, leaf);
+            val Type type = resolveLeafSchemaNodeAsMethod(typeBuilder, leaf);
             if (listKeys.contains(leafName)) {
-                resolveLeafSchemaNodeAsProperty(genTOBuilder, leaf, true, module)
+                if (type == null) {
+                    resolveLeafSchemaNodeAsProperty(genTOBuilder, leaf, true, module)
+                } else {
+                    resolveLeafSchemaNodeAsProperty(genTOBuilder, leaf, type, true)
+                }
             }
         } else if (!schemaNode.addedByUses) {
             if (schemaNode instanceof LeafListSchemaNode) {
