@@ -101,6 +101,14 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         return true;
     }
 
+    public InstanceIdentifier child(final QName name) {
+        return child(new NodeIdentifier(name));
+    }
+
+    public InstanceIdentifier child(final PathArgument arg) {
+        return new InstanceIdentifier(ImmutableList.<PathArgument>builder().addAll(path).add(arg).build());
+    }
+
     // Static factories & helpers
 
     public static InstanceIdentifier of(final QName name) {
