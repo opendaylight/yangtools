@@ -21,6 +21,8 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+
+
     <build>
         <plugins>
             <plugin>
@@ -36,6 +38,7 @@
                     </instructions>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 

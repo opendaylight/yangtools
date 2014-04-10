@@ -15,6 +15,7 @@
         <version>0.6.2-SNAPSHOT</version>
     </parent>
 
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>opendaylight-l2-types</artifactId>
     <version>2013.08.27.4-SNAPSHOT</version>
