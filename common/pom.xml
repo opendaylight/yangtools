@@ -9,14 +9,11 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools</artifactId>
-        <version>0.6.2-SNAPSHOT</version>
-    </parent>
 
+    <groupId>org.opendaylight.yangtools</groupId>
+    <version>0.6.2-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>common-parent</artifactId>
+    <artifactId>common-aggregator</artifactId>
     <packaging>pom</packaging>
 
     <modules>
@@ -27,24 +24,5 @@
         <module>object-cache-noop</module>
     </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>object-cache-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>object-cache-guava</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>object-cache-noop</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

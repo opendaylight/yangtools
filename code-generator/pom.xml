@@ -9,14 +9,10 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools</artifactId>
-        <version>0.6.2-SNAPSHOT</version>
-    </parent>
-
+    <groupId>org.opendaylight.yangtools</groupId>
+    <version>0.6.2-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>binding-generator</artifactId>
+    <artifactId>binding-generator-aggregator</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
@@ -32,153 +28,7 @@
         <module>maven-sal-api-gen-plugin</module>
     </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>${javassist.version}</version>
-            </dependency>
+   
 
-            <!-- Local Dependencies -->
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-model-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-generator-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-generator-spi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-generator-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-generator-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-java-api-generator</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>maven-sal-api-gen-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- YANG Utilities and Parser -->
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-data-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-data-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-data-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-model-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-model-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-binding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-parser-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-parser-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-maven-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-maven-plugin-spi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>${maven.bundle.version}</version>
-                    <extensions>true</extensions>
-                    <executions>
-                        <execution>
-                            <id>bundle-manifest</id>
-                            <phase>process-classes</phase>
-                            <goals>
-                                <goal>manifest</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.felix</groupId>
-                                        <artifactId>maven-bundle-plugin</artifactId>
-                                        <versionRange>[1.0,)</versionRange>
-                                        <goals>
-                                            <goal>manifest</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+    
 </project>

@@ -12,12 +12,13 @@
     <artifactId>restconf-client-api</artifactId>
     <packaging>bundle</packaging>
 
-    <parent>
+   <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>restconf-parent</artifactId>
+        <artifactId>yangtools-parent</artifactId>
         <version>0.6.2-SNAPSHOT</version>
-    </parent>
-    <dependencies>
+        <relativePath>../../parent/pom.xml</relativePath>
+    </parent> 
+   <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>concepts</artifactId>
