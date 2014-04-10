@@ -12,10 +12,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>restconf-parent</artifactId>
+        <artifactId>yangtools-parent</artifactId>
         <version>0.6.2-SNAPSHOT</version>
+        <relativePath>../../parent/pom.xml</relativePath>
     </parent>
-
     <artifactId>restconf-jaxrs-api</artifactId>
     <name>restconf-jaxrs-api</name>
 
