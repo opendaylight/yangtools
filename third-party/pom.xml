@@ -10,86 +10,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+   
+    <parent>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>yangtools-parent</artifactId>
+        <version>0.6.2-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
 
-    <version>0.1.2</version>
+
     <groupId>org.opendaylight.yangtools.thirdparty</groupId>
-    <artifactId>third-party-parent</artifactId>
+    <artifactId>third-party-aggregator</artifactId>
     <packaging>pom</packaging>
-
-    <properties>
-        <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
-    </properties>
-
-    <scm>
-        <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
-        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
-        <url>https://wiki.opendaylight.org/view/YANG_Tools:Third-Party</url>
-    </scm>
 
     <modules>
         <module>xtend-lib-osgi</module>
         <module>antlr4-runtime-osgi</module>
     </modules>
 
-    <repositories>
-        <!-- OpenDayLight Repo Mirror -->
-        <repository>
-            <id>opendaylight-mirror</id>
-            <name>opendaylight-mirror</name>
-            <url>${nexusproxy}/groups/public/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-        </repository>
-
-        <!-- OpenDayLight Snapshot artifact -->
-        <repository>
-            <id>opendaylight-snapshot</id>
-            <name>opendaylight-snapshot</name>
-            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <!-- OpenDayLight Released artifact -->
-        <repository>
-            <id>opendaylight-release</id>
-            <url>${nexusproxy}/repositories/opendaylight.release/</url>
-        </repository>
-        <!-- OpenDayLight Snapshot artifact -->
-        <snapshotRepository>
-            <id>opendaylight-snapshot</id>
-            <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
-        </snapshotRepository>
-        <site>
-            <id>${project.artifactId}-site</id>
-            <url>./</url>
-        </site>
-    </distributionManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>*</Export-Package>
-                        <Embed-Dependency>*;inline=true;scope=compile|runtime;inline=true</Embed-Dependency>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
