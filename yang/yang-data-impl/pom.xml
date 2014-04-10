@@ -11,8 +11,9 @@
 
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang</artifactId>
+        <artifactId>yangtools-parent</artifactId>
         <version>0.6.2-SNAPSHOT</version>
+        <relativePath>../../parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -20,9 +21,6 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
-    <properties>
-        <groovy.version>2.1.6</groovy.version>
-    </properties>
 
     <build>
         <plugins>
@@ -84,25 +82,21 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-xml</artifactId>
-            <version>${groovy.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <version>1.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -113,7 +107,6 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
         </dependency>
     </dependencies>
 </project>

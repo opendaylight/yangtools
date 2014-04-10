@@ -11,8 +11,9 @@
 
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yang</artifactId>
+        <artifactId>yangtools-parent</artifactId>
         <version>0.6.2-SNAPSHOT</version>
+        <relativePath>../../parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -22,7 +23,6 @@
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-verifier</artifactId>
-            <version>1.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
