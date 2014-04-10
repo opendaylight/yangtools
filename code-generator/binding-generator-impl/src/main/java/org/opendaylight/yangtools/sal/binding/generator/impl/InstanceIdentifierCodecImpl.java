@@ -7,24 +7,19 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import org.eclipse.xtext.xbase.lib.Functions.Function0;
+
 import org.opendaylight.yangtools.concepts.Identifiable;
-import org.opendaylight.yangtools.sal.binding.generator.impl.CodecTypeUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
@@ -44,6 +39,8 @@ import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     private static final Logger LOG = LoggerFactory.getLogger(InstanceIdentifierCodecImpl.class);
 
@@ -58,7 +55,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
 
     @Override
     public InstanceIdentifier<? extends Object> deserialize(
-            org.opendaylight.yangtools.yang.data.api.InstanceIdentifier input) {
+            final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier input) {
         Class<?> baType = null;
         List<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument> biArgs = input.getPath();
         List<QName> scannedPath = new ArrayList<>(biArgs.size());
@@ -113,7 +110,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         return CodecTypeUtils.newIdentifiableItem(type, value);
     }
 
-    public CompositeNode toCompositeNode(NodeIdentifierWithPredicates predicates) {
+    public CompositeNode toCompositeNode(final NodeIdentifierWithPredicates predicates) {
         Set<Map.Entry<QName, Object>> keyValues = predicates.getKeyValues().entrySet();
         List<Node<?>> values = new ArrayList<>(keyValues.size());
         for (Map.Entry<QName, Object> keyValue : keyValues) {
@@ -123,7 +120,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     }
 
     @Override
-    public org.opendaylight.yangtools.yang.data.api.InstanceIdentifier serialize(InstanceIdentifier<?> input) {
+    public org.opendaylight.yangtools.yang.data.api.InstanceIdentifier serialize(final InstanceIdentifier<?> input) {
         Class<?> previousAugmentation = null;
         List<InstanceIdentifier.PathArgument> pathArgs = input.getPath();
         QName previousQName = null;
@@ -154,15 +151,15 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         return ret;
     }
 
-    public Class<? extends Object> updateAugmentationInjection(Class<? extends DataObject> class1,
-            ImmutableList<QName> list, Class<?> augmentation) {
+    public Class<? extends Object> updateAugmentationInjection(final Class<? extends DataObject> class1,
+            final ImmutableList<QName> list, final Class<?> augmentation) {
         if (classToPreviousAugment.get(class1) == null) {
             classToPreviousAugment.put(class1, new ConcurrentHashMap<List<QName>, Class<?>>());
         }
         return classToPreviousAugment.get(class1).put(list, augmentation);
     }
 
-    private PathArgument _serializePathArgument(Item<?> argument, QName previousQname) {
+    private PathArgument _serializePathArgument(final Item<?> argument, final QName previousQname) {
         Class<?> type = argument.getType();
         QName qname = BindingReflections.findQName(type);
         if (previousQname == null || (BindingReflections.isAugmentationChild(argument.getType()))) {
@@ -171,7 +168,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         return new NodeIdentifier(QName.create(previousQname, qname.getLocalName()));
     }
 
-    private PathArgument _serializePathArgument(IdentifiableItem argument, QName previousQname) {
+    private PathArgument _serializePathArgument(final IdentifiableItem argument, final QName previousQname) {
         Map<QName, Object> predicates = new HashMap<>();
         Class type = argument.getType();
         IdentifierCodec<? extends Object> keyCodec = codecRegistry.getIdentifierCodecForIdentifiable(type);
