@@ -8,14 +8,11 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierForXmlCodec.INSTANCE_IDENTIFIER_FOR_XML_CODEC;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
 
 import javax.activation.UnsupportedDataTypeException;
@@ -27,11 +24,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.PrefixToNSMapper;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
@@ -46,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
@@ -65,6 +61,26 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 public class XmlDocumentUtils {
+    
+    private static class ElementWithSchemaContext {
+        Element element;
+        SchemaContext schemaContext;
+        
+        ElementWithSchemaContext(Element element,SchemaContext schemaContext) {
+            this.schemaContext = schemaContext;
+            this.element = element;
+        }
+        
+        Element getElement() {
+            return element;
+        }
+        
+        SchemaContext getSchemaContext() {
+            return schemaContext;
+        }
+        
+        
+    }
 
     private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
 
@@ -226,34 +242,7 @@ public class XmlDocumentUtils {
             }
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             if (nodeValue instanceof InstanceIdentifier) {
-                // Map< key = namespace, value = prefix>
-                Map<String, String> prefixes = new HashMap<>();
-                InstanceIdentifier instanceIdentifier = (InstanceIdentifier) nodeValue;
-                StringBuilder textContent = new StringBuilder();
-                for (PathArgument pathArgument : instanceIdentifier.getPath()) {
-                    textContent.append("/");
-                    writeIdentifierWithNamespacePrefix(element, textContent, pathArgument.getNodeType(), prefixes);
-                    if (pathArgument instanceof NodeIdentifierWithPredicates) {
-                        Map<QName, Object> predicates = ((NodeIdentifierWithPredicates) pathArgument).getKeyValues();
-
-                        for (QName keyValue : predicates.keySet()) {
-                            String predicateValue = String.valueOf(predicates.get(keyValue));
-                            textContent.append("[");
-                            writeIdentifierWithNamespacePrefix(element, textContent, keyValue, prefixes);
-                            textContent.append("='");
-                            textContent.append(predicateValue);
-                            textContent.append("'");
-                            textContent.append("]");
-                        }
-                    } else if (pathArgument instanceof NodeWithValue) {
-                        textContent.append("[.='");
-                        textContent.append(((NodeWithValue)pathArgument).getValue());
-                        textContent.append("'");
-                        textContent.append("]");
-                    }
-                }
-                element.setTextContent(textContent.toString());
-
+                INSTANCE_IDENTIFIER_FOR_XML_CODEC.serialize((InstanceIdentifier)nodeValue,element);
             } else {
                 Object value = nodeValue;
                 logger.debug("Value of {}:{} is not instance of InstanceIdentifier but is {}", baseType.getQName()
@@ -282,38 +271,6 @@ public class XmlDocumentUtils {
         }
     }
 
-    private static void writeIdentifierWithNamespacePrefix(Element element, StringBuilder textContent, QName qName,
-            Map<String, String> prefixes) {
-        String namespace = qName.getNamespace().toString();
-        String prefix = prefixes.get(namespace);
-        if (prefix == null) {
-            prefix = qName.getPrefix();
-            if (prefix == null || prefix.isEmpty() || prefixes.containsValue(prefix)) {
-                prefix = generateNewPrefix(prefixes.values());
-            }
-        }
-
-        element.setAttribute("xmlns:" + prefix, namespace.toString());
-        textContent.append(prefix);
-        prefixes.put(namespace, prefix);
-
-        textContent.append(":");
-        textContent.append(qName.getLocalName());
-    }
-
-    private static String generateNewPrefix(Collection<String> prefixes) {
-        StringBuilder result = null;
-        Random random = new Random();
-        do {
-            result = new StringBuilder();
-            for (int i = 0; i < 4; i++) {
-                int randomNumber = 0x61 + (Math.abs(random.nextInt()) % 26);
-                result.append(Character.toChars(randomNumber));
-            }
-        } while (prefixes.contains(result.toString()));
-
-        return result.toString();
-    }
 
     public final static TypeDefinition<?> resolveBaseTypeFrom(TypeDefinition<?> type) {
         TypeDefinition<?> superType = type;
@@ -362,28 +319,36 @@ public class XmlDocumentUtils {
         return QName.create(namespace != null ? URI.create(namespace) : null, null, localName);
     }
 
-    private static Node<?> toNodeWithSchema(Element xmlElement, DataSchemaNode schema, XmlCodecProvider codecProvider) {
+    private static Node<?> toNodeWithSchema(Element xmlElement, DataSchemaNode schema, XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
         checkQName(xmlElement, schema.getQName());
         if (schema instanceof DataNodeContainer) {
-            return toCompositeNodeWithSchema(xmlElement, schema.getQName(), (DataNodeContainer) schema, codecProvider);
+            return toCompositeNodeWithSchema(xmlElement, schema.getQName(), (DataNodeContainer) schema, codecProvider,schemaCtx);
         } else if (schema instanceof LeafSchemaNode) {
-            return toSimpleNodeWithType(xmlElement, (LeafSchemaNode) schema, codecProvider);
+            return toSimpleNodeWithType(xmlElement, (LeafSchemaNode) schema, codecProvider,schemaCtx);
         } else if (schema instanceof LeafListSchemaNode) {
-            return toSimpleNodeWithType(xmlElement, (LeafListSchemaNode) schema, codecProvider);
+            return toSimpleNodeWithType(xmlElement, (LeafListSchemaNode) schema, codecProvider,schemaCtx);
 
         }
         return null;
     }
+    
+    private static Node<?> toNodeWithSchema(Element xmlElement, DataSchemaNode schema, XmlCodecProvider codecProvider) {
+        return toNodeWithSchema(xmlElement, schema, codecProvider, null);
+    }
+    
 
     private static Node<?> toSimpleNodeWithType(Element xmlElement, LeafSchemaNode schema,
-            XmlCodecProvider codecProvider) {
-        TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
+            XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
+        TypeDefinitionAwareCodec<? extends Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
-        Object value;
+        Object value = null;
         if (codec != null) {
             value = codec.deserialize(text);
-
-        } else {
+        }
+        if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
+            value = INSTANCE_IDENTIFIER_FOR_XML_CODEC.deserialize(xmlElement,schemaCtx);               
+        }
+        if (value == null) {
             value = xmlElement.getTextContent();
         }
 
@@ -392,14 +357,17 @@ public class XmlDocumentUtils {
     }
 
     private static Node<?> toSimpleNodeWithType(Element xmlElement, LeafListSchemaNode schema,
-            XmlCodecProvider codecProvider) {
-        TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
+            XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
+        TypeDefinitionAwareCodec<? extends Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
-        Object value;
+        Object value = null;
         if (codec != null) {
             value = codec.deserialize(text);
-
-        } else {
+        }
+        if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
+            value = INSTANCE_IDENTIFIER_FOR_XML_CODEC.deserialize(xmlElement,schemaCtx);                
+        }
+        if (value == null) {
             value = xmlElement.getTextContent();
         }
 
@@ -408,8 +376,8 @@ public class XmlDocumentUtils {
     }
 
     private static Node<?> toCompositeNodeWithSchema(Element xmlElement, QName qName, DataNodeContainer schema,
-            XmlCodecProvider codecProvider) {
-        List<Node<?>> values = toDomNodes(xmlElement, Optional.fromNullable(schema.getChildNodes()));
+            XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
+        List<Node<?>> values = toDomNodes(xmlElement, Optional.fromNullable(schema.getChildNodes()),schemaCtx);
         Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
         return ImmutableCompositeNode.create(qName, values, modifyAction.orNull());
     }
@@ -480,24 +448,28 @@ public class XmlDocumentUtils {
         return ImmutableCompositeNode.create(qname, values.build());
     }
 
-    public static List<Node<?>> toDomNodes(final Element element, final Optional<Set<DataSchemaNode>> context) {
-        return forEachChild(element.getChildNodes(), new Function<Element, Optional<Node<?>>>() {
+    public static List<Node<?>> toDomNodes(final Element element, final Optional<Set<DataSchemaNode>> context,SchemaContext schemaCtx) {
+        return forEachChild(element.getChildNodes(),schemaCtx, new Function<ElementWithSchemaContext, Optional<Node<?>>>() {
 
             @Override
-            public Optional<Node<?>> apply(Element input) {
+            public Optional<Node<?>> apply(ElementWithSchemaContext input) {
                 if (context.isPresent()) {
-                    QName partialQName = qNameFromElement(input);
+                    QName partialQName = qNameFromElement(input.getElement());
                     Optional<DataSchemaNode> schemaNode = findFirstSchema(partialQName, context.get());
                     if (schemaNode.isPresent()) {
                         return Optional.<Node<?>> fromNullable(//
-                                toNodeWithSchema(input, schemaNode.get(), DEFAULT_XML_VALUE_CODEC_PROVIDER));
+                                toNodeWithSchema(input.getElement(), schemaNode.get(), DEFAULT_XML_VALUE_CODEC_PROVIDER,input.getSchemaContext()));
                     }
                 }
-                return Optional.<Node<?>> fromNullable(toDomNode(input));
+                return Optional.<Node<?>> fromNullable(toDomNode(input.getElement()));
             }
 
         });
 
+    }
+    
+    public static List<Node<?>> toDomNodes(final Element element, final Optional<Set<DataSchemaNode>> context) {
+        return toDomNodes(element,context,null);
     }
 
     /**
@@ -522,10 +494,9 @@ public class XmlDocumentUtils {
      *         Element with equal notification QName defined in XML Document.
      */
     public static CompositeNode notificationToDomNodes(final Document document,
-            final Optional<Set<NotificationDefinition>> notifications) {
+            final Optional<Set<NotificationDefinition>> notifications, SchemaContext schemaCtx) {
         if (notifications.isPresent() && (document != null) && (document.getDocumentElement() != null)) {
             final NodeList originChildNodes = document.getDocumentElement().getChildNodes();
-
             for (int i = 0; i < originChildNodes.getLength(); i++) {
                 org.w3c.dom.Node child = originChildNodes.item(i);
                 if (child instanceof Element) {
@@ -536,13 +507,18 @@ public class XmlDocumentUtils {
                     if (notificationDef.isPresent()) {
                         final Set<DataSchemaNode> dataNodes = notificationDef.get().getChildNodes();
                         final List<Node<?>> domNodes = toDomNodes(childElement,
-                                Optional.<Set<DataSchemaNode>> fromNullable(dataNodes));
+                                Optional.<Set<DataSchemaNode>> fromNullable(dataNodes),schemaCtx);
                         return ImmutableCompositeNode.create(notificationDef.get().getQName(), domNodes);
                     }
                 }
             }
         }
         return null;
+    }
+    
+    public static CompositeNode notificationToDomNodes(final Document document,
+            final Optional<Set<NotificationDefinition>> notifications) {
+        return notificationToDomNodes(document, notifications,null);
     }
 
     private static Optional<NotificationDefinition> findNotification(final QName notifName,
@@ -557,12 +533,12 @@ public class XmlDocumentUtils {
         return Optional.<NotificationDefinition>absent();
     }
 
-    private static final <T> List<T> forEachChild(NodeList nodes, Function<Element, Optional<T>> forBody) {
+    private static final <T> List<T> forEachChild(NodeList nodes, SchemaContext schemaContext, Function<ElementWithSchemaContext, Optional<T>> forBody) {
         ImmutableList.Builder<T> ret = ImmutableList.<T> builder();
         for (int i = 0; i < nodes.getLength(); i++) {
             org.w3c.dom.Node child = nodes.item(i);
             if (child instanceof Element) {
-                Optional<T> result = forBody.apply((Element) child);
+                Optional<T> result = forBody.apply(new ElementWithSchemaContext((Element) child,schemaContext));
                 if (result.isPresent()) {
                     ret.add(result.get());
                 }
@@ -574,5 +550,27 @@ public class XmlDocumentUtils {
     public static final XmlCodecProvider defaultValueCodecProvider() {
         return DEFAULT_XML_VALUE_CODEC_PROVIDER;
     }
+    
+    
+    public static class NodePrefixToNSMapper implements PrefixToNSMapper {
+        org.w3c.dom.Node element = null;
+
+        public NodePrefixToNSMapper(org.w3c.dom.Node deferredElement) {
+            this.element = deferredElement;
+        }
+
+        @Override
+        public String getNamespace(String prefix) {
+            return element.lookupNamespaceURI(prefix);
+        }
+    }
+    
+    private static PrefixToNSMapper createPrefixMapper(Element element) {
+        if (element instanceof org.w3c.dom.Node) {
+            return new NodePrefixToNSMapper((org.w3c.dom.Node) element);
+        }
+        return null;
+    }
+    
 
 }
