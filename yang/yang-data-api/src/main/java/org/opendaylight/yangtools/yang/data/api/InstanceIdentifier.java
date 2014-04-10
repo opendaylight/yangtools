@@ -93,6 +93,14 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         return true;
     }
 
+    public InstanceIdentifier node(final QName name) {
+        return node(new NodeIdentifier(name));
+    }
+
+    public InstanceIdentifier node(final PathArgument arg) {
+        return new InstanceIdentifier(ImmutableList.<PathArgument>builder().addAll(path).add(arg).build());
+    }
+
     // Static factories & helpers
 
     public static InstanceIdentifier of(final QName name) {
@@ -105,6 +113,10 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     static public InstanceIdentifierBuilder builder(final InstanceIdentifier origin) {
         return new BuilderImpl(origin.getPath());
+    }
+
+    public static InstanceIdentifierBuilder builder(final QName node) {
+        return builder().node(node);
     }
 
     public interface PathArgument extends Immutable, Serializable {
@@ -499,9 +511,5 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
         toStringCache = builder.toString();
         return toStringCache;
-    }
-
-    public static InstanceIdentifierBuilder builder(final QName node) {
-        return builder().node(node);
     }
 }
