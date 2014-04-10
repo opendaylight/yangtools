@@ -4,8 +4,9 @@
 
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>common-parent</artifactId>
+        <artifactId>yangtools-parent</artifactId>
         <version>0.6.2-SNAPSHOT</version>
+        <relativePath>/../../common/parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>features-file</artifactId>
