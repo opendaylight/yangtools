@@ -30,12 +30,12 @@ public final class NormalizedNodeUtils {
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final InstanceIdentifier rootPath, final NormalizedNode<?, ?> rootNode, final InstanceIdentifier childPath) {
-        if(rootPath.contains(childPath)) {
-            int common = rootPath.getPath().size();
-            InstanceIdentifier relativePath = new InstanceIdentifier(childPath.getPath().subList(common, childPath.getPath().size()));
-            return findNode(rootNode, relativePath);
+        final Optional<InstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
+        if (relativePath.isPresent()) {
+            return findNode(rootNode, relativePath.get());
+        } else {
+            return Optional.absent();
         }
-        return Optional.absent();
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree, final InstanceIdentifier path) {
@@ -43,7 +43,7 @@ public final class NormalizedNodeUtils {
         checkNotNull(path, "Path must not be null");
 
         Optional<NormalizedNode<?, ?>> currentNode = Optional.<NormalizedNode<?, ?>> of(tree);
-        Iterator<PathArgument> pathIterator = path.getPath().iterator();
+        final Iterator<PathArgument> pathIterator = path.getPath().iterator();
         while (currentNode.isPresent() && pathIterator.hasNext()) {
             currentNode = getDirectChild(currentNode.get(), pathIterator.next());
         }

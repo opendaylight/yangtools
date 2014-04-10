@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -107,6 +108,23 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     public InstanceIdentifier child(final PathArgument arg) {
         return new InstanceIdentifier(ImmutableList.<PathArgument>builder().addAll(path).add(arg).build());
+    }
+
+    /**
+     * Get the relative path from an ancestor. This method attempts to perform the reverse
+     * of concatenating a base (ancestor) and a path.
+     *
+     * @param ancestor Ancestor against which the relative path should be calculated
+     * @return This object's relative path from parent, or Optional.absent() if the
+     *         specified parent is not in fact an ancestor of this object.
+     */
+    public Optional<InstanceIdentifier> relativeTo(final InstanceIdentifier ancestor) {
+        if (ancestor.contains(this)) {
+            final int common = ancestor.path.size();
+            return Optional.of(new InstanceIdentifier(path.subList(common, path.size())));
+        } else {
+            return Optional.absent();
+        }
     }
 
     // Static factories & helpers
