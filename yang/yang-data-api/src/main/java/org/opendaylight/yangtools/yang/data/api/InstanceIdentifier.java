@@ -34,7 +34,15 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     private transient String toStringCache = null;
     private transient Integer hashCodeCache = null;
 
+    /**
+     * @deprecated Use {@link #getPathArguments()} instead.
+     */
+    @Deprecated
     public List<PathArgument> getPath() {
+        return path;
+    }
+
+    public Iterable<PathArgument> getPathArguments() {
         return path;
     }
 
@@ -104,13 +112,13 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     static public InstanceIdentifierBuilder builder(final InstanceIdentifier origin) {
-        return new BuilderImpl(origin.getPath());
+        return new BuilderImpl(origin.path);
     }
 
     public interface PathArgument extends Immutable, Serializable {
 
         /**
-         * If applicable returns uniqee QName of data node as defined in YANG
+         * If applicable returns unique QName of data node as defined in YANG
          * Schema.
          *
          * This method may return null, if the corresponding schema node, does
