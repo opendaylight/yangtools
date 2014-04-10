@@ -44,6 +44,15 @@
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
             </plugin>
+<!--      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin> -->
         </plugins>
     </build>
 
