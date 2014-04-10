@@ -43,7 +43,7 @@ public final class NormalizedNodeUtils {
         checkNotNull(path, "Path must not be null");
 
         Optional<NormalizedNode<?, ?>> currentNode = Optional.<NormalizedNode<?, ?>> of(tree);
-        final Iterator<PathArgument> pathIterator = path.getPath().iterator();
+        final Iterator<PathArgument> pathIterator = path.getPathArguments().iterator();
         while (currentNode.isPresent() && pathIterator.hasNext()) {
             currentNode = getDirectChild(currentNode.get(), pathIterator.next());
         }

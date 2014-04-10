@@ -7,11 +7,6 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.collect.HashMultimap;
-import com.google.common.util.concurrent.SettableFuture;
-
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,12 +28,6 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
-import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
-import org.opendaylight.yangtools.sal.binding.generator.impl.GeneratedClassLoadingStrategy;
-import org.opendaylight.yangtools.sal.binding.generator.impl.LazyGeneratedCodecRegistry;
-import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleContext;
-import org.opendaylight.yangtools.sal.binding.generator.impl.SchemaLock;
-import org.opendaylight.yangtools.sal.binding.generator.impl.TransformerGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -73,6 +62,12 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.SettableFuture;
+
 public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaContextListener,
         SchemaLock, AutoCloseable, SchemaContextHolder {
 
@@ -98,7 +93,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         this(GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
     }
 
-    public RuntimeGeneratedMappingServiceImpl(ClassLoadingStrategy strat) {
+    public RuntimeGeneratedMappingServiceImpl(final ClassLoadingStrategy strat) {
         classLoadingStrategy = strat;
     }
 
@@ -159,7 +154,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         _registry.onGlobalContextUpdated(arg0);
     }
 
-    private void recreateBindingContext(SchemaContext schemaContext) {
+    private void recreateBindingContext(final SchemaContext schemaContext) {
         BindingGeneratorImpl newBinding = new BindingGeneratorImpl();
         newBinding.generateTypes(schemaContext);
 
@@ -207,6 +202,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         }
     }
 
+    @Override
     public CompositeNode toDataDom(final DataObject data) {
         return toCompositeNodeImpl(data);
     }
@@ -231,16 +227,16 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         }
     }
 
-    private CompositeNode toCompositeNodeImpl(DataObject object) {
+    private CompositeNode toCompositeNodeImpl(final DataObject object) {
         Class<? extends DataContainer> cls = object.getImplementedInterface();
         waitForSchema(cls);
         DataContainerCodec<DataObject> codec = (DataContainerCodec<DataObject>) registry.getCodecForDataObject(cls);
         return codec.serialize(new ValueWithQName<DataObject>(null, object));
     }
 
-    private CompositeNode toCompositeNodeImpl(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,
-            DataObject object) {
-        PathArgument last = identifier.getPath().get(identifier.getPath().size() - 1);
+    private CompositeNode toCompositeNodeImpl(final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,
+            final DataObject object) {
+        PathArgument last = Iterables.getLast(identifier.getPathArguments());
         Class<? extends DataContainer> cls = object.getImplementedInterface();
         waitForSchema(cls);
         DataContainerCodec<DataObject> codec = (DataContainerCodec<DataObject>) registry.getCodecForDataObject(cls);
@@ -248,12 +244,11 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     private CompositeNode toCompositeNodeImplAugument(
-            org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier, DataObject object) {
+            final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier, final DataObject object) {
 
         // val cls = object.implementedInterface;
         // waitForSchema(cls);
-        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument last = identifier.getPath().get(
-                identifier.getPath().size() - 1);
+        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument last = Iterables.getLast(identifier.getPathArguments());
         AugmentationCodec codec = registry.getCodecForAugmentation((Class) object.getImplementedInterface());
         CompositeNode ret = codec.serialize(new ValueWithQName<DataObject>(last.getNodeType(), object));
         if (last instanceof NodeIdentifierWithPredicates) {
@@ -269,7 +264,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     @Override
-    public void waitForSchema(Class class1) {
+    public void waitForSchema(final Class class1) {
         if (registry.isCodecAvailable(class1)) {
             return;
         }
@@ -277,9 +272,10 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         getSchemaWithRetry(ref);
     }
 
+    @Override
     public InstanceIdentifier toDataDom(
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> path) {
-        for (final org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument arg : path.getPath()) {
+        for (final org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument arg : path.getPathArguments()) {
             this.waitForSchema(arg.getType());
         }
         return registry.getInstanceIdentifierCodec().serialize(path);
@@ -312,7 +308,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         return this.getRegistry();
     }
 
-    private static <T> T tryDeserialization(Callable<T> deserializationBlock) throws DeserializationException {
+    private static <T> T tryDeserialization(final Callable<T> deserializationBlock) throws DeserializationException {
         try {
             return deserializationBlock.call();
         } catch (Exception e) {
@@ -321,7 +317,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         }
     }
 
-    private void updateBindingFor(Map<SchemaPath, GeneratedTypeBuilder> map, SchemaContext module) {
+    private void updateBindingFor(final Map<SchemaPath, GeneratedTypeBuilder> map, final SchemaContext module) {
         for (Map.Entry<SchemaPath, GeneratedTypeBuilder> entry : map.entrySet()) {
             SchemaNode schemaNode = SchemaContextUtil.findDataSchemaNode(module, entry.getKey());
 
@@ -353,7 +349,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     @Override
-    public Set<QName> getRpcQNamesFor(Class<? extends RpcService> service) {
+    public Set<QName> getRpcQNamesFor(final Class<? extends RpcService> service) {
         Set<QName> serviceRef = serviceTypeToRpc.get(new ReferencedTypeImpl(service.getPackage().getName(), service
                 .getSimpleName()));
         if (serviceRef == null) {
@@ -362,7 +358,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         return serviceRef;
     }
 
-    private void getSchemaWithRetry(Type type) {
+    private void getSchemaWithRetry(final Type type) {
         try {
             if (typeToDefinition.containsKey(type)) {
                 return;
@@ -381,7 +377,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         return future;
     }
 
-    private void updatePromisedSchemas(Type builder) {
+    private void updatePromisedSchemas(final Type builder) {
         Type ref = new ReferencedTypeImpl(builder.getPackageName(), builder.getName());
         Set<SettableFuture<Type>> futures = promisedTypes.get(ref);
         if (futures == null || futures.isEmpty()) {
@@ -423,7 +419,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     @Override
-    public Optional<Class<? extends RpcService>> getRpcServiceClassFor(String namespace, String revision) {
+    public Optional<Class<? extends RpcService>> getRpcServiceClassFor(final String namespace, final String revision) {
         Module module = null;
         if (schemaContext != null) {
             module = schemaContext.findModuleByName(namespace, QName.parseRevision(revision));
@@ -444,7 +440,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         return Optional.absent();
     }
 
-    public Optional<Type> getRpcServiceType(Module module) {
+    public Optional<Type> getRpcServiceType(final Module module) {
         String namespace = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
         if (module.getRpcs().isEmpty()) {
             return Optional.<Type> absent();
