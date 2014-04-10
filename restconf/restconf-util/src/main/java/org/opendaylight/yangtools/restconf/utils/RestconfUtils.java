@@ -61,17 +61,17 @@ public class RestconfUtils {
 
     private static final BiMap<URI,String> uriToModuleName = HashBiMap.<URI, String>create();
 
-    public static Entry<String,DataSchemaNode> toRestconfIdentifier(org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> bindingIdentifier, BindingIndependentMappingService mappingService, SchemaContext schemaContext) {
+    public static Entry<String,DataSchemaNode> toRestconfIdentifier(final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> bindingIdentifier, final BindingIndependentMappingService mappingService, final SchemaContext schemaContext) {
         InstanceIdentifier domIdentifier = mappingService.toDataDom(bindingIdentifier);
         return toRestconfIdentifier(domIdentifier, schemaContext);
 
     }
 
     public static Entry<String,DataSchemaNode> toRestconfIdentifier(
-            InstanceIdentifier xmlInstanceIdentifier,
-            SchemaContext schemaContext) {
+            final InstanceIdentifier xmlInstanceIdentifier,
+            final SchemaContext schemaContext) {
 
-        final List<InstanceIdentifier.PathArgument> elements = xmlInstanceIdentifier.getPath();
+        final Iterable<InstanceIdentifier.PathArgument> elements = xmlInstanceIdentifier.getPathArguments();
         final StringBuilder ret = new StringBuilder();
         final QName startQName = elements.iterator().next().getNodeType();
         URI _namespace = startQName.getNamespace();
@@ -93,11 +93,11 @@ public class RestconfUtils {
         return new SimpleEntry<>(ret.toString(),schemaNode);
     }
 
-    private static CharSequence convertContainerToRestconfIdentifier(final InstanceIdentifier.NodeIdentifier argument, final ContainerSchemaNode node, SchemaContext schemaContext) {
+    private static CharSequence convertContainerToRestconfIdentifier(final InstanceIdentifier.NodeIdentifier argument, final ContainerSchemaNode node, final SchemaContext schemaContext) {
         return "/" + toRestconfIdentifier(argument.getNodeType(), schemaContext);
     }
 
-    private static CharSequence convertListToRestconfIdentifier(final InstanceIdentifier.NodeIdentifierWithPredicates argument, final ListSchemaNode node,SchemaContext schemaContext) {
+    private static CharSequence convertListToRestconfIdentifier(final InstanceIdentifier.NodeIdentifierWithPredicates argument, final ListSchemaNode node,final SchemaContext schemaContext) {
         QName _nodeType = argument.getNodeType();
         final CharSequence nodeIdentifier = toRestconfIdentifier(_nodeType,schemaContext);
         final Map<QName,Object> keyValues = argument.getKeyValues();
@@ -129,7 +129,7 @@ public class RestconfUtils {
         return URLEncoder.encode(_string);
     }
 
-    public static CharSequence toRestconfIdentifier(final QName qname,SchemaContext schemaContext) {
+    public static CharSequence toRestconfIdentifier(final QName qname,final SchemaContext schemaContext) {
         URI _namespace = qname.getNamespace();
         String module = uriToModuleName.get(_namespace);
         boolean _tripleEquals = (module == null);
@@ -150,7 +150,7 @@ public class RestconfUtils {
 
         return module + ':' + qname.getLocalName();
     }
-    private static CharSequence convertToRestconfIdentifier(final InstanceIdentifier.PathArgument argument, final DataNodeContainer node, SchemaContext schemaContext) {
+    private static CharSequence convertToRestconfIdentifier(final InstanceIdentifier.PathArgument argument, final DataNodeContainer node, final SchemaContext schemaContext) {
         if (argument instanceof InstanceIdentifier.NodeIdentifier
                 && node instanceof ContainerSchemaNode) {
             return convertContainerToRestconfIdentifier((NodeIdentifier)argument, (ContainerSchemaNode) node,schemaContext);
@@ -172,7 +172,7 @@ public class RestconfUtils {
         return _or;
     }
 
-    public static Module findModuleByNamespace(final URI namespace,SchemaContext schemaContext) {
+    public static Module findModuleByNamespace(final URI namespace,final SchemaContext schemaContext) {
         boolean _tripleNotEquals = (namespace != null);
         Preconditions.checkArgument(_tripleNotEquals);
         final Set<Module> moduleSchemas = schemaContext.findModuleByNamespace(namespace);
@@ -196,7 +196,7 @@ public class RestconfUtils {
         return latestModule;
     }
 
-    public String findModuleNameByNamespace(final URI namespace,SchemaContext schemaContext) {
+    public String findModuleNameByNamespace(final URI namespace,final SchemaContext schemaContext) {
         String moduleName = uriToModuleName.get(namespace);
         boolean _tripleEquals = (moduleName == null);
         if (_tripleEquals) {
@@ -224,7 +224,7 @@ public class RestconfUtils {
      *            parsed yang data context
      * @return Set of classes representing rpc services parsed from input stream
      */
-    public static Set<Class<? extends RpcService>> rpcServicesFromInputStream(InputStream inputStream, BindingIndependentMappingService mappingService,SchemaContext schemaContext){
+    public static Set<Class<? extends RpcService>> rpcServicesFromInputStream(final InputStream inputStream, final BindingIndependentMappingService mappingService,final SchemaContext schemaContext){
         try {
             DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
             documentBuilder.setNamespaceAware(true);
@@ -285,7 +285,7 @@ public class RestconfUtils {
      *            yang data schema node representation of resulting data object
      * @return DataObject instance parsed from input stream
      */
-    public static DataObject dataObjectFromInputStream(org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> path, InputStream inputStream, SchemaContext schemaContext, BindingIndependentMappingService mappingService, DataSchemaNode dataSchema) {
+    public static DataObject dataObjectFromInputStream(final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> path, final InputStream inputStream, final SchemaContext schemaContext, final BindingIndependentMappingService mappingService, final DataSchemaNode dataSchema) {
         // Parse stream into w3c Document
         try {
             DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
