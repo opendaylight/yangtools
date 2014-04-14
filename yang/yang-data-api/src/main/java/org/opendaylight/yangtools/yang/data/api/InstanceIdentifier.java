@@ -466,11 +466,18 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         if (toStringCache != null) {
             return toStringCache;
         }
-        StringBuilder builder = new StringBuilder();
+
+        final StringBuilder builder = new StringBuilder('/');
+        boolean first = true;
         for (PathArgument argument : path) {
-            builder.append("/");
+            if (first) {
+                first = false;
+            } else {
+                builder.append('/');
+            }
             builder.append(argument.toString());
         }
+
         toStringCache = builder.toString();
         return toStringCache;
     }
