@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ec2bb492",
+        "filename": "model/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-04-15T14:25:21Z",
+      "side": 1,
+      "message": "Should this build-helper-maven-plugin be removed? OR at least use variables for the source directory here?",
+      "revId": "4117f18e5c7baae4e87669b2253b0edc87d55a85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ac1dac75",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-04-15T14:25:21Z",
+      "side": 1,
+      "message": "What does basedir get set too? Should we just hardcode this path like we did in the Controller?",
+      "revId": "4117f18e5c7baae4e87669b2253b0edc87d55a85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
