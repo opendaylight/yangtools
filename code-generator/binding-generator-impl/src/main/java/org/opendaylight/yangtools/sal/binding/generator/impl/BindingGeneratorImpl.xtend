@@ -252,6 +252,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         val packageName = packageNameForGeneratedType(basePackageName, node.path)
         val genType = addDefaultInterfaceDefinition(packageName, node, childOf)
+        genType.addComment(node.getDescription());
         if (node instanceof DataNodeContainer) {
             genCtx.get(module).addChildNodeType(node.path, genType)
             groupingsToGenTypes(module, (node as DataNodeContainer).groupings)
@@ -396,6 +397,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val moduleDataTypeBuilder = moduleTypeBuilder(module, "Data");
         addImplementedInterfaceFromUses(module, moduleDataTypeBuilder);
         moduleDataTypeBuilder.addImplementsType(DATA_ROOT);
+        moduleDataTypeBuilder.addComment(module.getDescription());
         return moduleDataTypeBuilder;
     }
 
@@ -433,7 +435,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
             if (rpc !== null) {
                 val rpcName = BindingMapping.getClassName(rpc.QName);
                 val rpcMethodName = parseToValidParamName(rpcName);
+                val rpcComment = rpc.getDescription();
                 val method = interfaceBuilder.addMethod(rpcMethodName);
+
                 val input = rpc.input;
                 val output = rpc.output;
 
@@ -460,7 +464,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 }
 
                 val rpcRes = Types.parameterizedTypeFor(Types.typeForClass(RpcResult), outTypeInstance);
+                method.setComment(rpcComment);
                 method.setReturnType(Types.parameterizedTypeFor(FUTURE, rpcRes));
+
             }
         }
 
@@ -513,7 +519,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
                 listenerInterface.addMethod("on" + notificationInterface.name) //
                 .setAccessModifier(AccessModifier.PUBLIC).addParameter(notificationInterface, "notification").
-                    setReturnType(Types.VOID);
+                    setComment(notification.getDescription()).setReturnType(Types.VOID);
             }
         }
 
@@ -580,6 +586,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             newType.setExtendsType(gto);
         }
         newType.setAbstract(true);
+        newType.addComment(identity.getDescription());
         val qname = identity.QName;
         
         newType.qnameConstant(BindingMapping.QNAME_STATIC_FIELD_NAME,qname);
@@ -1608,6 +1615,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         //FIXME: Validation of name conflict
         val newType = new GeneratedTypeBuilderImpl(packageName, genTypeName);
+        newType.addComment(schemaNode.getDescription());
         if (!genTypeBuilders.containsKey(packageName)) {
             val Map<String, GeneratedTypeBuilder> builders = new HashMap();
             builders.put(genTypeName, newType);
@@ -1865,6 +1873,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         "Grouping " + usesNode.groupingPath + "is not resolved for " + builder.name);
                 }
                 builder.addImplementsType(genType);
+                builder.addComment(genType.getComment());
             }
         }
         return builder;

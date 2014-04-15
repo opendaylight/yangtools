@@ -31,9 +31,9 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
         builder.append(", name=");
         builder.append(getName());
         builder.append(", comment=");
+        builder.append(getComment());
         builder.append(", annotations=");
         builder.append(getAnnotations());
-        builder.append(getComment());
         builder.append(", implements=");
         builder.append(getImplementsTypes());
         builder.append(", enclosedTypes=");
