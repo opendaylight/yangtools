@@ -12,7 +12,7 @@ import static extension org.opendaylight.yangtools.binding.generator.util.Types.
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.*;
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.*;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.*;
-
+import org.w3c.dom.Document;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -1029,6 +1030,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     listToGenType(module, basePackageName, typeBuilder, childOf, node as ListSchemaNode)
                 case node instanceof ChoiceNode:
                     choiceToGeneratedType(module, basePackageName, typeBuilder, node as ChoiceNode)
+                case node instanceof AnyXmlSchemaNode:
+                    resolveAnyXmlSchemaNodeAsMethod(typeBuilder, node as AnyXmlSchemaNode)
             }
         }
     }
@@ -1297,6 +1300,34 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
         }
         return returnType;
+    }
+
+    /**
+     * Converts <code>anyXml</code> to the getter method which is added to
+     * <code>typeBuilder</code>.
+     *
+     * @param typeBuilder
+     *            generated type builder to which is added getter method as
+     *            <code>anyXml</code> mapping
+     * @param anyXml
+     *            anyXml schema node which is mapped as getter method which is
+     *            added to <code>typeBuilder</code>
+     */
+    private def void resolveAnyXmlSchemaNodeAsMethod(GeneratedTypeBuilder typeBuilder, AnyXmlSchemaNode anyXml) {
+        var Type returnType = null;
+        if ((anyXml !== null) && (typeBuilder !== null)) {
+            val anyXmlName = anyXml.QName.localName;
+            var String anyXmlDesc = anyXml.description;
+            if (anyXmlDesc === null) {
+                anyXmlDesc = "";
+            }
+
+            val parentModule = findParentModule(schemaContext, anyXml);
+            if (anyXmlName !== null && !anyXml.isAddedByUses()) {
+                returnType = Types.typeForClass(Document);
+                val MethodSignatureBuilder getter = constructGetter(typeBuilder, anyXmlName, anyXmlDesc, returnType);
+            }
+        }
     }
 
     private def void processContextRefExtension(LeafSchemaNode leaf, MethodSignatureBuilder getter, Module module) {
