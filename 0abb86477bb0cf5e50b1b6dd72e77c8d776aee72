@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_3d6f8894",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifier.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-04-17T12:51:53Z",
+      "side": 1,
+      "message": "If arg is not an instance of IdentifiableItem (for example when arg represents wildcarded Identifiable) then key stay null. This leads to creating and returning new KeyedInstanceIdentifier with null key value. Calling builder() method on such object causes NullPointerException to be thrown, because it is trying to create new IdentifiableItem with null key.",
+      "revId": "0abb86477bb0cf5e50b1b6dd72e77c8d776aee72",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
