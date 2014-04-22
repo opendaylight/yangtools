@@ -16,6 +16,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -37,6 +40,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -69,6 +76,10 @@ public final class Builders {
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder() {
         return ImmutableLeafSetNodeBuilder.create();
+    }
+
+    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>>  orderedLeafSetBuilder() {
+        return ImmutableOrderedLeafSetNodeBuilder.create();
     }
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafSetNode<T> node) {
@@ -114,6 +125,14 @@ public final class Builders {
         return ImmutableMapNodeBuilder.create();
     }
 
+    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapBuilder() {
+        return ImmutableOrderedMapNodeBuilder.create();
+    }
+
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> unkeyedListBuilder() {
+        return ImmutableUnkeyedListNodeBuilder.create();
+    }
+
     public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final MapNode node) {
         return ImmutableMapNodeBuilder.create(node);
     }
@@ -140,6 +159,10 @@ public final class Builders {
 
     public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> choiceBuilder(final org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
         return ImmutableChoiceNodeSchemaAwareBuilder.create(schema);
+    }
+
+    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {
+        return ImmutableUnkeyedListEntryNodeBuilder.create();
     }
 
 }
