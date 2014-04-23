@@ -261,10 +261,30 @@ public class BindingGeneratorImpl implements BindingGenerator {
         return genType
     }
 
+    private def void addToComment(GeneratedTypeBuilder genTypeBuilder) {
+        val cValue = genTypeBuilder.getComment();
+        val newline = System.getProperty("line.separator");
+        val genTypeName = genTypeBuilder.getName();
+        val comment = new StringBuilder();
+        comment.append("To build an instance of" + " ");
+        comment.append(genTypeName + "," + " " + "you need" + " " + genTypeName+ "Builder").append(newline);
+        comment.append("<code>").append(newline).append("\t");
+        comment.append(genTypeName + "Builder" + " " + "bObj" + " = " + "new" + " " + genTypeName+"Builder();");
+        comment.append(newline).append("\t");
+        comment.append(genTypeName + " " + "new" + genTypeName + "Obj" + " = " + "bObj.build();");
+        comment.append(newline).append("</code>");
+        if ((cValue == null) || (cValue.isEmpty())) {
+            genTypeBuilder.addComment(comment.toString());
+        } else {
+            genTypeBuilder.addComment(cValue + newline + comment.toString());
+        }
+    }
+
     private def void containerToGenType(Module module, String basePackageName, GeneratedTypeBuilder parent,
         GeneratedTypeBuilder childOf, ContainerSchemaNode node) {
         val genType = processDataSchemaNode(module, basePackageName, parent, childOf, node)
         if (genType != null) {
+            addToComment(genType)
             constructGetter(parent, node.QName.localName, node.description, genType)
             resolveDataSchemaNodes(module, basePackageName, genType, genType, node.childNodes)
         }
@@ -1615,7 +1635,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         //FIXME: Validation of name conflict
         val newType = new GeneratedTypeBuilderImpl(packageName, genTypeName);
-        newType.addComment(schemaNode.getDescription());
+        addToComment(newType)
+
         if (!genTypeBuilders.containsKey(packageName)) {
             val Map<String, GeneratedTypeBuilder> builders = new HashMap();
             builders.put(genTypeName, newType);

@@ -41,7 +41,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         super(packageName, name);
     }
 
-    protected String getComment() {
+    public String getComment() {
         return comment;
     }
 

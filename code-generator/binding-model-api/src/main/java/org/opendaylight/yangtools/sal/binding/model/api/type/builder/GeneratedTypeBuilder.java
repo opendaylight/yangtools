@@ -24,4 +24,5 @@ public interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<Generated
      */
     GeneratedType toInstance();
 
+    String getComment();
 }
