@@ -11,6 +11,7 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,6 +67,12 @@ public final class ModuleDependencySort {
                 return (ModuleBuilder) ((ModuleNodeImpl) input).getReference();
             }
         });
+    }
+
+    public static List<ModuleBuilder> sort(Collection<ModuleBuilder> builders) {
+        ModuleBuilder[] array = new ModuleBuilder[builders.size()];
+        builders.toArray(array);
+        return sort(array);
     }
 
     public static List<ModuleBuilder> sortWithContext(SchemaContext context, ModuleBuilder... builders) {
