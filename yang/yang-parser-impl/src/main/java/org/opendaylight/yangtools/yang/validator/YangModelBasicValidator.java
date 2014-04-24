@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.validator;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 /**
  * Exposed basic yang validation.
- * 
+ *
  * Every file is validated using {@link YangModelBasicValidationListener}.
  */
 public final class YangModelBasicValidator {
@@ -30,11 +30,11 @@ public final class YangModelBasicValidator {
         this.walker = new ParseTreeWalker();
     }
 
-    public void validate(List<ParseTree> trees) {
-        for (int i = 0; i < trees.size(); i++) {
+    public void validate(Collection<ParseTree> trees) {
+        for (ParseTree tree : trees) {
             try {
                 final YangModelBasicValidationListener yangModelParser = new YangModelBasicValidationListener();
-                walker.walk(yangModelParser, trees.get(i));
+                walker.walk(yangModelParser, tree);
             } catch (YangValidationException e) {
                 // wrap exception to add information about which file failed
                 throw new YangValidationException("Yang validation failed for file" + e);

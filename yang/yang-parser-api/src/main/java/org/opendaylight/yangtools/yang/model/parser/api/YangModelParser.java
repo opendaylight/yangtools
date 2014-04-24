@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +21,7 @@ import java.util.Set;
 /**
  * Yang Model Parser interface is designed for parsing yang models and convert
  * the information to Data Schema Tree.
- * 
+ *
  */
 // refactor methods returning input streams, after introducing
 public interface YangModelParser {
@@ -33,7 +34,9 @@ public interface YangModelParser {
      * @param directory
      *            directory which contains additional yang files
      * @return Set of Yang Modules
+     * @deprecated Use {@link YangContextParser#parse(File, File)} instead
      */
+    @Deprecated
     Set<Module> parseYangModels(final File yangFile, final File directory);
 
     /**
@@ -41,11 +44,13 @@ public interface YangModelParser {
      * modules defined in *.yang files; <br>
      * This method SHOULD be used if user need to parse multiple yang models
      * that are referenced either through import or include statements.
-     * 
+     *
      * @param yangFiles
      *            yang files to parse
      * @return Set of Yang Modules
+     * @deprecated Use {@link YangContextParser#parseFiles(Collection)} instead
      */
+    @Deprecated
     Set<Module> parseYangModels(final List<File> yangFiles);
 
     /**
@@ -54,35 +59,39 @@ public interface YangModelParser {
      * This method SHOULD be used if user has already parsed context and need to
      * parse additinal yang models which can have dependencies on models in this
      * context.
-     * 
+     *
      * @param yangFiles
      *            yang files to parse
      * @param context
      *            SchemaContext containing already parsed yang models
      * @return Set of Yang Modules
+     * @deprecated Use {@link YangContextParser#parseFiles(Collection, SchemaContext)} instead
      */
+    @Deprecated
     Set<Module> parseYangModels(final List<File> yangFiles, final SchemaContext context);
 
     /**
      * Equivalent to {@link #parseYangModels(List)} that returns parsed modules
      * mapped to Files from which they were parsed.
-     * 
+     *
      * @param yangFiles
      *            yang files to parse
      * @return Map of Yang Modules
      */
-    Map<File, Module> parseYangModelsMapped(final List<File> yangFiles);
+    Map<File, Module> parseYangModelsMapped(final Collection<File> yangFiles);
 
     /**
      * Parse one or more Yang model streams and return the definitions of Yang
      * modules defined in *.yang files; <br>
      * This method SHOULD be used if user need to parse multiple yang models
      * that are referenced either through import or include statements.
-     * 
+     *
      * @param yangModelStreams
      *            yang streams to parse
      * @return Set of Yang Modules
+     * @deprecated Use {@link YangContextParser#parseStreams(Collection)} instead
      */
+    @Deprecated
     Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams);
 
     /**
@@ -91,26 +100,28 @@ public interface YangModelParser {
      * This method SHOULD be used if user has already parsed context and need to
      * parse additinal yang models which can have dependencies on models in this
      * context.
-     * 
+     *
      * @param yangModelStreams
      *            yang streams to parse
      * @param context
      *            SchemaContext containing already parsed yang models
      * @return Set of Yang Modules
+     * @deprecated Use {@link YangContextParser#parseStreams(Collection, SchemaContext)} instead
      */
+    @Deprecated
     Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, final SchemaContext context);
 
     /**
      * Equivalent to {@link #parseYangModels(List)} that returns parsed modules
      * mapped to IputStreams from which they were parsed.
-     * 
+     *
      * @param yangModelStreams
      *            yang streams to parse
      * @return Map of Yang Modules
      */
     //TODO: when working with input streams do not swallow IOException, it should be propagated without having to wrap it in a runtime exception
     //FIXME: it is not defined in which state are the returning streams.
-    Map<InputStream, Module> parseYangModelsFromStreamsMapped(final List<InputStream> yangModelStreams);
+    Map<InputStream, Module> parseYangModelsFromStreamsMapped(final Collection<InputStream> yangModelStreams);
 
     /**
      * Creates {@link SchemaContext} from specified Modules. The modules SHOULD
@@ -119,7 +130,7 @@ public interface YangModelParser {
      * should not contain ANY Schema Nodes that contains
      * {@link UnknownTypeDefinition} and all dependencies although via import or
      * include definitions are resolved.
-     * 
+     *
      * @param modules
      *            Set of Yang Modules
      * @return Schema Context instance constructed from whole Set of Modules.
