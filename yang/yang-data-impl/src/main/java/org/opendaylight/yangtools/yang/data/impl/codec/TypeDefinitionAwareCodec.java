@@ -87,10 +87,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 if (octMatcher.matches()) {
                     return 8;
                 } else {
-                    throw new NumberFormatException("Incorrect lexical representation of Integer value: " + integer
-                            + "The Integer value can be defined as Integer Number, Hexadecimal Number or"
-                            + "Octal Number. The sign vlues are allowed. "
-                            + "Spaces between digits are NOT allowed!");
+                    String formatedMessage = String.format("Incorrect lexical representation of Integer value: %s" 
+                            + "%nThe Integer value can be defined as "
+                            + "%n- Integer Number,"
+                            + "%n- Hexadecimal Number (prefix 0x),"
+                            + "%n- Octal Number (prefix 0)."
+                            + "%nThe sign vlues are allowed. Spaces between digits are NOT allowed!", integer);
+                    throw new NumberFormatException(formatedMessage);
                 }
             }
         }
