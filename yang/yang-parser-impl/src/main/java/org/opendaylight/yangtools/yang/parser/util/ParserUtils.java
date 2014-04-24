@@ -9,12 +9,15 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -39,6 +42,11 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 import java.util.HashSet;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -68,6 +76,63 @@ import com.google.common.base.Preconditions;
 public final class ParserUtils {
 
     private ParserUtils() {
+    }
+
+    /**
+     * Create InputStream->File map from given collection of files.
+     *
+     * @param files
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static Map<InputStream, File> filesToStreams(Collection<File> files) throws FileNotFoundException {
+        final Map<InputStream, File> streams = new HashMap<>();
+        for (File file : files) {
+            try {
+                streams.put(new FileInputStream(file), file);
+            } catch (FileNotFoundException e) {
+                throw new YangParseException("Exception while reading yang file: " + file.getName(), e);
+            }
+        }
+        return streams;
+    }
+
+    /**
+     * Create copy of each InputStream from collection.
+     *
+     * @param streams
+     *            collection of streams to copy
+     * @return map, where key is copy of stream and value is original
+     *         InputStream
+     */
+    public static Map<InputStream, InputStream> arrayBackedCopy(Collection<InputStream> streams) throws IOException {
+        Map<InputStream/*array backed copy*/, InputStream/*original for returning*/> map = new HashMap<>();
+        for (final InputStream originalIS : streams) {
+            InputStream arrayBackedIs = NamedByteArrayInputStream.create(originalIS);
+            map.put(arrayBackedIs, originalIS);
+        }
+        return map;
+    }
+
+    public static void setSourceToBuilder(Map<InputStream, ModuleBuilder> streamToBuilder) {
+        for (Map.Entry<InputStream, ModuleBuilder> entry : streamToBuilder.entrySet()) {
+            ModuleBuilder builder = entry.getValue();
+            InputStream is = entry.getKey();
+            try {
+                is.reset();
+            } catch (IOException e) {
+                // this cannot happen because it is ByteArrayInputStream
+                throw new IllegalStateException("Possible error in code", e);
+            }
+            String content;
+            try {
+                content = IOUtils.toString(is);
+            } catch (IOException e) {
+                // this cannot happen because it is ByteArrayInputStream
+                throw new IllegalStateException("Possible error in code", e);
+            }
+            builder.setSource(content);
+        }
     }
 
     /**
