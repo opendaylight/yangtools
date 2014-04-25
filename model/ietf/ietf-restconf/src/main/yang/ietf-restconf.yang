@@ -1,6 +1,5 @@
-module ietf-restconf {
-     // RFC Ed.: replace XXXX with 'ietf' and remove this note
-     namespace "urn:XXXX:params:xml:ns:yang:ietf-restconf";
+ module ietf-restconf {
+     namespace "urn:ietf:params:xml:ns:yang:ietf-restconf";
      prefix "restconf";
 
      import ietf-yang-types { prefix yang; }
@@ -26,13 +25,13 @@ module ietf-restconf {
        "This module contains conceptual YANG specifications
         for the YANG Patch and error content that is used in
         RESTCONF protocol messages. A conceptual container
-        representing the RESTCONF API nodes (type vnd.yang.api).
+        representing the RESTCONF API nodes (media type
+        application/yang.api).
 
         Note that the YANG definitions within this module do not
         represent configuration data of any kind.
         The YANG grouping statements provide a normative syntax
         for XML and JSON message encoding purposes.
-
         Copyright (c) 2013 IETF Trust and the persons identified as
         authors of the code.  All rights reserved.
 
@@ -50,11 +49,11 @@ module ietf-restconf {
      // note.
 
      // RFC Ed.: remove this note
-     // Note: extracted from draft-bierman-netconf-restconf-00.txt
+     // Note: extracted from draft-bierman-netconf-restconf-02.txt
 
      // RFC Ed.: update the date below with the date of RFC publication
      // and remove this note.
-     revision 2013-09-04 {
+     revision 2013-10-19 {
        description
          "Initial revision.";
        reference
@@ -67,7 +66,12 @@ module ietf-restconf {
        }
        description
          "Contains a Data Resource Identifier formatted string
-          to identify a specific data node.";
+          to identify a specific data node. The data node that
+          uses this data type SHOULD define the document root
+          for data resource identifiers.  The default document
+          root is the target datastore conceptual root node.
+          Data resource identifiers are defined relative to
+          this document root.";
        reference
          "RFC XXXX: [sec. 5.3.1.1 ABNF For Data Resource Identifiers]";
      }
@@ -87,7 +91,7 @@ module ietf-restconf {
                "Identifies the NETCONF running datastore.";
              reference
                "RFC 6241, section 5.1";
-               }
+           }
            enum startup {
              description
                "Identifies the NETCONF startup datastore.";
@@ -103,6 +107,15 @@ module ietf-restconf {
           reserved for standard datastore names.";
      }
 
+     typedef revision-identifier {
+       type string {
+         pattern '\d{4}-\d{2}-\d{2}';
+       }
+       description
+         "Represents a specific date in YYYY-MM-DD format.
+          TBD: make pattern more precise to exclude leading zeros.";
+     }
+
      grouping yang-patch {
 
        description
@@ -114,40 +127,23 @@ module ietf-restconf {
          description
            "Represents a conceptual sequence of datastore edits,
             called a patch. Each patch is given a client-assigned
-            patch identifier. A patch is applied with client-specified
-            error handling to control how the ordered list of edits
-            is applied if an error is encountered.
+            patch identifier. Each edit MUST be applied
+            in ascending order, and all edits MUST be applied.
+            If any errors occur, then the target datastore MUST NOT
+            be changed by the patch operation.
 
             A patch MUST be validated by the server to be a
             well-formed message before any of the patch edits
             are validated or attempted.
 
-            The validation model for patches closely follows
-            the constraint enforcement model in YANG, except it
-            is conceptually enforced on an ordered list of edits.
-
-            The server MUST conceptually perform field validation
-            for each edit in ascending order, as defined in RFC 6020,
-            section 8.3.1 and 8.3.2.  This is most relevant if the edit
-            error-action is 'stop-on-error', since the identification
-            of the first error determines where edit processing is
-            terminated.
-
-            If YANG datastore validation (defined in RFC 6020, section 
-            8.3.3) is required, then it performed after all edits have
-            been individually validated.
+            YANG datastore validation (defined in RFC 6020, section 
+            8.3.3) is performed after all edits have been
+            individually validated.
 
             It is possible for a datastore constraint violation to occur
             due to any node in the datastore, including nodes not
-            included in the edit list. Any validation errors SHOULD
-            be reported in the reply message.
-
-            If datastore validation is required and fails, the server
-            SHOULD NOT allow the datastore to remain invalid. It is an
-            implementation-specific matter how the server fixes the
-            invalid datastore.  For example, the server might prune
-            invalid nodes causing the datastore validation error,
-            or undo the entire patch.";
+            included in the edit list. Any validation errors MUST
+            be reported in the reply message.";
 
          reference
            "RFC 6020, section 8.3.";
@@ -162,51 +158,31 @@ module ietf-restconf {
               to this patch will be identified by this patch-id value.";
          }
 
-         leaf error-action {
-           type enumeration {
-             enum all-or-none {
-               description
-                 "The server will apply all edits in the patch only
-                  if no errors occur.  If any errors occur then
-                  none of the edits will be applied and the
-                  contents of the target datastore MUST be unchanged.";
-             }
-             enum stop-on-error {
-               description
-                 "The server will apply edits in the specified order
-                  and will stop processing edits if any error occurs.
-                  Any previous edits which were successfully applied
-                  will remain applied.  No further edits will be
-                  attempted after the first error is encountered.";
-             }
-             enum continue-on-error {
-               description
-                 "The server will apply edits in the specified order
-                  and will continue processing edits if any error
-                          occurs.";
-             }
+         leaf comment {
+           type string {
+             length "0 .. 1024";
            }
-           default all-or-none;
            description
-             "The error handling behavior for the ordered list of
-              edits.";
+             "An arbitrary string provided by the client to describe
+              the entire patch.  This value SHOULD be present in any
+              audit logging records generated by the server for the
+              patch.";
          }
 
          list edit {
            key edit-id;
+           ordered-by user;
 
            description
              "Represents one edit within the YANG Patch
               request message.";
-
            leaf edit-id {
-             type uint32;
+             type string;
              description
-               "Arbitrary integer index for the edit.
-                The server MUST process edits in ascending order.
+               "Arbitrary string index for the edit.
                 Error messages returned by the server pertaining
                 to a specific edit will be identified by this
-                identifier value.";
+                value.";
            }
 
            leaf operation {
@@ -231,7 +207,7 @@ module ietf-restconf {
                enum merge {
                  description
                    "The supplied value is merged with the target data
-                           node.";
+                    node.";
                }
                enum move {
                  description
@@ -279,7 +255,7 @@ module ietf-restconf {
            }
 
            leaf where {
-            when "../operation = 'insert' or ../operation = 'move'" {
+             when "../operation = 'insert' or ../operation = 'move'" {
                description
                  "Where leaf only applies for insert or move
                   operations.";
@@ -327,7 +303,7 @@ module ietf-restconf {
              description
                "Value used for this edit operation.";
            }
-              }
+         }
        }
 
      } // grouping yang-patch
@@ -352,11 +328,25 @@ module ietf-restconf {
              "The patch-id value used in the request";
          }
 
-         container global-errors {
-           uses errors;
+         choice global-status {
            description
-             "This container will be present if global
-              errors unrelated to a specific edit occurred.";
+             "Report global errors or complete success.
+              If there is no case selected then errors
+              are reported in the edit-status container.";
+
+           case global-errors {
+             uses errors;
+             description
+               "This container will be present if global
+                errors unrelated to a specific edit occurred.";
+           }
+           leaf ok {
+             type empty;
+             description
+               "This leaf will be present if the request succeeded
+                and there are no errors reported in the edit-status
+                container.";
+           }
          }
 
          container edit-status {
@@ -370,19 +360,21 @@ module ietf-restconf {
              description
                "Represents a list of status responses,
                 corresponding to edits in the YANG Patch
-                request message.";
+                request message.  If an edit entry was
+                skipped or not reached by the server,
+                then this list will not contain a corresponding
+                entry for that edit.";
 
              leaf edit-id {
-               type uint32;
+               type string;
                 description
-                      "Response status is for the edit list entry
+                    "Response status is for the edit list entry
                    with this edit-id value.";
              }
              choice edit-status-choice {
                description
                  "A choice between different types of status
                   responses for each edit entry.";
-
                leaf ok {
                  type empty;
                  description
@@ -400,12 +392,6 @@ module ietf-restconf {
                     was created, then this field will be returned
                     instead of 'ok'.";
                }
-               leaf skipped {
-                 type empty;
-                 description
-                   "This edit entry was skipped or not reached
-                    by the server.";
-               }
                case errors {
                  uses errors;
                  description
@@ -418,18 +404,19 @@ module ietf-restconf {
        }
      }  // grouping yang-patch-status
 
+
      grouping errors {
 
        description
          "A grouping that contains a YANG container
           representing the syntax and semantics of a
-            YANG Patch errors report within a response message.";
+          YANG Patch errors report within a response message.";
 
        container errors {
          config false;  // needed so list error does not need a key
          description
            "Represents an error report returned by the server if
-            a request results in an error.";
+           a request results in an error.";
 
          list error {
            description
@@ -470,13 +457,13 @@ module ietf-restconf {
              description
                "The application-specific error tag.";
            }
+
            leaf error-path {
              type data-resource-identifier;
              description
                "The target data resource identifier associated
                 with the error, if any.";
            }
-
            leaf error-message {
              type string;
              description
@@ -503,18 +490,31 @@ module ietf-restconf {
 
        container restconf {
          description
-           "Conceptual container representing the vnd.yang.api
-            resource type.";
+           "Conceptual container representing the
+            application/yang.api resource type.";
 
-         container datastore {
+         container config {
            description
-             "Container representing the vnd.yang.datastore resource
-              type. Represents the conceptual root of the unified
-              datastore containing YANG data nodes.  The child nodes
-              of this container can be data resources (vnd.yang.data)
+             "Container representing the application/yang.datastore
+              resource type. Represents the conceptual root of the
+              unified configuration datastore containing YANG data
+              nodes. The child nodes of this container are
+              configuration data resources (application/yang.data)
               defined as top-level YANG data nodes from the modules
               advertised by the server in /restconf/modules.";
          }
+
+         container operational {
+           description
+             "Container representing the application/yang.datastore
+              resource type. Represents the conceptual root of the
+              operational data supported by the server.  The child
+              nodes of this container are operational data resources
+              (application/yang.data) defined as top-level
+              YANG data nodes from the modules advertised by
+              the server in /restconf/modules.";
+         }
+
          container modules {
            description
              "Contains a list of module description entries.
@@ -527,12 +527,12 @@ module ietf-restconf {
                 supported by the server.";
 
              leaf name {
-               type string;
+               type yang:yang-identifier;
                description "The YANG module name.";
              }
              leaf revision {
                type union {
-                 type yang:date-and-time;
+                 type revision-identifier;
                  type string { length 0; }
                }
                description
@@ -547,13 +547,13 @@ module ietf-restconf {
                  "The XML namespace identifier for this module.";
              }
              leaf-list feature {
-               type string;
+               type yang:yang-identifier;
                description
                  "List of YANG feature names from this module that are
                   supported by the server.";
              }
              leaf-list deviation {
-               type string;
+               type yang:yang-identifier;
                description
                  "List of YANG deviation module names used by this
                   server to modify the conformance of the module
@@ -561,11 +561,13 @@ module ietf-restconf {
              }
            }
          }
+
          container operations {
            description
              "Container for all operation resources
-              (vnd.yang.operation),
-                   Each resource is represented as an empty leaf with the
+              (application/yang.operation),
+
+              Each resource is represented as an empty leaf with the
               name of the RPC operation from the YANG rpc statement.
 
               E.g.;
@@ -577,6 +579,60 @@ module ietf-restconf {
                  }
              ";
          }
+
+         container streams {
+           description
+             "Container representing the notification event streams
+              supported by the server.";
+            reference
+              "RFC 5277, Section 3.4, <streams> element.";
+
+           list stream {
+             key name;
+             description
+               "Each entry describes an event stream supported by
+                the server.";
+
+             leaf name {
+               type string;
+               description "The stream name";
+               reference "RFC 5277, Section 3.4, <name> element.";
+             }
+
+             leaf description {
+               type string;
+               description "Description of stream content";
+               reference
+                 "RFC 5277, Section 3.4, <description> element.";
+             }
+
+             leaf replay-support {
+               type boolean;
+                description
+                 "Indicates if replay buffer supported for this stream";
+               reference
+                 "RFC 5277, Section 3.4, <replaySupport> element.";
+             }
+
+             leaf replay-log-creation-time {
+               type yang:date-and-time;
+               description
+                 "Indicates the time the replay log for this stream
+                  was created.";
+               reference
+                 "RFC 5277, Section 3.4, <replayLogCreationTime>
+                  element.";
+             }
+
+             leaf events {
+               type empty;
+               description
+                 "Represents the entry point for establishing
+                  notification delivery via server sent events.";
+             }
+           }
+         }
+
          leaf version {
            type enumeration {
              enum "1.0" {
@@ -590,5 +646,40 @@ module ietf-restconf {
          }
        }
      }  // grouping restconf
+
+
+     grouping notification {
+       description
+         "Contains the notification message wrapper definition.";
+
+       container notification {
+         description
+           "RESTCONF notification message wrapper.";
+           leaf event-time {
+           type yang:date-and-time;
+           mandatory true;
+           description
+             "The time the event was generated by the
+              event source.";
+           reference
+             "RFC 5277, section 4, <eventTime> element.";
+         }
+
+         /* The YANG-specific notification container is encoded
+          * after the 'event-time' element.  The format
+          * corresponds to the notificationContent element
+          * in RFC 5277, section 4. For example:
+          *
+          *  module example-one {
+          *     ...
+          *     notification event1 { ... }
+          *
+          *  }
+          *
+          *  Encoded as element 'event1' in the namespace
+          *  for module 'example-one'.
+          */
+       }
+     }  // grouping notification
 
    }
