@@ -212,7 +212,7 @@ public class XmlDocumentUtils {
                         final String text = codec.serialize(node.getValue());
                         element.setTextContent(text);
                     } catch (ClassCastException e) {
-                        logger.error("Provided node did not have type required by mapping. Using stream instead.", e);
+                        logger.error("Provided node {} did not have type {} required by mapping. Using stream instead.", node, baseType, e);
                         element.setTextContent(String.valueOf(node.getValue()));
                     }
                 } else {
