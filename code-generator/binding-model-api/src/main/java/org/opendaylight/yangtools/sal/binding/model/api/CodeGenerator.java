@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.binding.model.api;
 
+import java.util.Set;
+
 /**
  * Transformates virtual data to the concrete code in programming language.
  * 
@@ -22,6 +24,18 @@ public interface CodeGenerator {
      * @throws IOException
      */
     String generate(Type type);
+
+    /**
+     * Generates code for <code>type</code>.
+     *
+     * @param type
+     *            Input type to be processed
+     * @param elementsNameInSamePackage
+     *            names of classes and interfaces in the same package
+     * @return generated JAVA code
+     * @throws IOException
+     */
+    String generate(Type type, Set<String> elementsNameInSamePackage);
 
     /**
      * Checks if the concrete instance of <code>type</code> fit to concrete

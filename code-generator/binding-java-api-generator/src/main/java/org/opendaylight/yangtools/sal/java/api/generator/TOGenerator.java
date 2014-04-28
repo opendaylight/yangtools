@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -26,21 +29,29 @@ public final class TOGenerator implements CodeGenerator {
      * written in XTEND language.
      */
     @Override
-    public String generate(Type type) {
+    public String generate(Type type, Set<String> namesInSamePackage) {
         if (type instanceof GeneratedTransferObject) {
             final GeneratedTransferObject genTO = (GeneratedTransferObject) type;
             if(genTO.isUnionType()) {
                 final UnionTemplate template = new UnionTemplate(genTO);
+                template.setNamesInSamePackage(namesInSamePackage);
                 return template.generate();
             } else if (genTO.isUnionTypeBuilder()) {
                 final UnionBuilderTemplate template = new UnionBuilderTemplate(genTO);
+                template.setNamesInSamePackage(namesInSamePackage);
                 return template.generate();
             } else {
                 final ClassTemplate template = new ClassTemplate(genTO);
+                template.setNamesInSamePackage(namesInSamePackage);
                 return template.generate();
             }
         }
         return "";
+    }
+
+    @Override
+    public String generate(Type type) {
+        return generate(type, Collections.<String> emptySet());
     }
 
     @Override
