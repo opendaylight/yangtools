@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import java.util.Collection
 import java.util.Arrays
+import java.util.HashMap
 
 abstract class BaseTemplate {
 
@@ -34,7 +35,7 @@ abstract class BaseTemplate {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
         }
         this.type = _type;
-        this.importMap = GeneratorUtil.createImports(type)
+        this.importMap = new HashMap<String,String>()
     }
 
     def packageDefinition() '''package «type.packageName»;'''
@@ -259,8 +260,8 @@ abstract class BaseTemplate {
     def protected generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
             @Override
-            public String toString() {
-                StringBuilder builder = new StringBuilder("«type.name» [");
+            public «String.importedName» toString() {
+                «StringBuilder.importedName» builder = new «StringBuilder.importedName»("«type.name» [");
                 boolean first = true;
 
                 «FOR property : properties»
