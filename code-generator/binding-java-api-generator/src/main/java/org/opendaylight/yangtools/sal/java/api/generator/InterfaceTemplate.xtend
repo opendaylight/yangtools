@@ -87,7 +87,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateAnnotations(List<AnnotationType> annotations) '''
         «IF annotations != null && !annotations.empty»
             «FOR annotation : annotations»
-                @«annotation.name»
+                @«annotation.importedName»
                 «IF annotation.parameters != null && !annotation.parameters.empty»
                 (
                 «FOR param : annotation.parameters SEPARATOR ","»
