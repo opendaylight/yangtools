@@ -22,19 +22,23 @@ import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import java.util.Collection
 import java.util.Arrays
+import java.util.HashMap
+import java.util.Set
+import java.util.Collections
 
 abstract class BaseTemplate {
 
     protected val GeneratedType type;
     protected val Map<String, String> importMap;
     static val paragraphSplitter = Splitter.on("\n\n").omitEmptyStrings();
+    var Set<String> namesInSamePackage = Collections.<String>emptySet
 
     new(GeneratedType _type) {
         if (_type == null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
         }
         this.type = _type;
-        this.importMap = GeneratorUtil.createImports(type)
+        this.importMap = new HashMap<String,String>() // GeneratorUtil.createImports(type)
     }
 
     def packageDefinition() '''package «type.packageName»;'''
@@ -117,7 +121,7 @@ abstract class BaseTemplate {
     '''
 
     final protected def importedName(Type intype) {
-        GeneratorUtil.putTypeIntoImports(type, intype, importMap);
+        GeneratorUtil.putTypeIntoImports(type, intype, importMap,namesInSamePackage);
         GeneratorUtil.getExplicitType(type, intype, importMap)
     }
 
@@ -259,8 +263,8 @@ abstract class BaseTemplate {
     def protected generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
             @Override
-            public String toString() {
-                StringBuilder builder = new StringBuilder("«type.name» [");
+            public «importedName(String)» toString() {
+                «importedName(StringBuilder)» builder = new «importedName(StringBuilder)»("«type.name» [");
                 boolean first = true;
 
                 «FOR property : properties»
@@ -340,5 +344,9 @@ abstract class BaseTemplate {
             ENDFOR»«
         ENDIF
     »'''
+
+    def public setNamesInSamePackage(Set<String> namesInSamePackage) {
+        this.namesInSamePackage = namesInSamePackage
+    }
 
 }
