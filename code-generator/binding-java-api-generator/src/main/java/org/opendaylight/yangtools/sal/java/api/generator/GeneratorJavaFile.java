@@ -16,6 +16,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
@@ -49,6 +52,12 @@ public final class GeneratorJavaFile {
      * BuildContext used for instantiating files
      */
     private final BuildContext buildContext;
+
+    /**
+     * Mapping of package name to collection of names of classes and interfaces
+     * which belong to package.
+     */
+    private Map<String, Set<String>> packageNameToSetOfIncludingTypes = Collections.<String, Set<String>> emptyMap();
 
     /**
      * Creates instance of this class with the set of <code>types</code> for
@@ -103,6 +112,9 @@ public final class GeneratorJavaFile {
         final List<File> result = new ArrayList<>();
         for (Type type : types) {
             if (type != null) {
+                Set<String> classAndIntfNamesInConcretePackage = packageNameToSetOfIncludingTypes.get(type
+                        .getPackageName());
+
                 for (CodeGenerator generator : generators) {
                     File generatedJavaFile = null;
                     if (type instanceof GeneratedTransferObject
@@ -110,10 +122,12 @@ public final class GeneratorJavaFile {
                         File packageDir = packageToDirectory(persistenSourcesDirectory, type.getPackageName());
                         File file = new File(packageDir, generator.getUnitName(type) + ".java");
                         if (!file.exists()) {
-                            generatedJavaFile = generateTypeToJavaFile(persistenSourcesDirectory, type, generator);
+                            generatedJavaFile = generateTypeToJavaFile(persistenSourcesDirectory, type, generator,
+                                    classAndIntfNamesInConcretePackage);
                         }
                     } else {
-                        generatedJavaFile = generateTypeToJavaFile(generatedSourcesDirectory, type, generator);
+                        generatedJavaFile = generateTypeToJavaFile(generatedSourcesDirectory, type, generator,
+                                classAndIntfNamesInConcretePackage);
                     }
                     if (generatedJavaFile != null) {
                         result.add(generatedJavaFile);
@@ -138,6 +152,9 @@ public final class GeneratorJavaFile {
      *            generated
      * @param generator
      *            code generator which is used for generating of the source code
+     * @param namesInSamePackage
+     *            collection of names of classes and interfaces which have equal
+     *            package name
      * @return file which contains JAVA source code
      * @throws IOException
      *             if the error during writing to the file occurs
@@ -146,8 +163,8 @@ public final class GeneratorJavaFile {
      * @throws IllegalStateException
      *             if string with generated code is empty
      */
-    private File generateTypeToJavaFile(final File parentDir, final Type type, final CodeGenerator generator)
-            throws IOException {
+    private File generateTypeToJavaFile(final File parentDir, final Type type, final CodeGenerator generator,
+            Set<String> namesInSamePackage) throws IOException {
         if (parentDir == null) {
             LOG.warn("Parent Directory not specified, files will be generated "
                     + "accordingly to generated Type package path.");
@@ -167,7 +184,7 @@ public final class GeneratorJavaFile {
         }
 
         if (generator.isAcceptable(type)) {
-            final String generatedCode = generator.generate(type);
+            final String generatedCode = generator.generate(type, namesInSamePackage);
             if (generatedCode.isEmpty()) {
                 throw new IllegalStateException("Generated code should not be empty!");
             }
@@ -222,5 +239,9 @@ public final class GeneratorJavaFile {
             dirPathBuilder.append(subDirNames[i]);
         }
         return new File(parentDirectory, dirPathBuilder.toString());
+    }
+
+    public void setMappingOfPackageNameToSetOfIncludingTypes(Map<String, Set<String>> packageNameToSetOfIncludingTypes) {
+        this.packageNameToSetOfIncludingTypes = packageNameToSetOfIncludingTypes;
     }
 }

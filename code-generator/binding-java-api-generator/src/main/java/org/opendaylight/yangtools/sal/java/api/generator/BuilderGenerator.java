@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
@@ -59,9 +62,15 @@ public final class BuilderGenerator implements CodeGenerator {
      */
     @Override
     public String generate(Type type) {
+        return generate(type,Collections.<String> emptySet());
+    }
+    
+    @Override
+    public String generate(Type type, Set<String> namesInSamePackage) {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
             final GeneratedType genType = (GeneratedType) type;
             final BuilderTemplate template = new BuilderTemplate(genType);
+            template.setNamesInSamePackage(namesInSamePackage);
             return template.generate();
         }
         return "";

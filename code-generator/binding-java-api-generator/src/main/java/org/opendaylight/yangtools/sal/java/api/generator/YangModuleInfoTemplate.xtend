@@ -39,6 +39,7 @@ class YangModuleInfoTemplate {
     val Module module
     val SchemaContext ctx
     val Map<String, String> importMap = new LinkedHashMap()
+    var Set<String> namesInSamePackage = Collections.<String>emptySet
 
     @Property
     val String packageName;
@@ -197,7 +198,10 @@ class YangModuleInfoTemplate {
     final def void putTypeIntoImports(Type type) {
         val String typeName = type.getName();
         val String typePackageName = type.getPackageName();
-        if (typePackageName.startsWith("java.lang") || typePackageName.isEmpty()) {
+        if (typePackageName.isEmpty()) {
+            return;
+        }
+        if (namesInSamePackage != null && !namesInSamePackage.contains(typeName) && typePackageName.startsWith("java.lang")) {
             return;
         }
         if (!importMap.containsKey(typeName)) {
@@ -284,6 +288,10 @@ class YangModuleInfoTemplate {
             }
         }
         return builder.toString();
+    }
+    
+    def setNamesInSamePackage(Set<String> namesInSamePackage) {
+        this.namesInSamePackage = namesInSamePackage 
     }
 
 }

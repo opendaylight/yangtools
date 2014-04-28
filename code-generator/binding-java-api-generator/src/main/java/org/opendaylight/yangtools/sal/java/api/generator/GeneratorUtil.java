@@ -14,15 +14,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
 import org.opendaylight.yangtools.binding.generator.util.Types;
-import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.WildcardType;
@@ -33,69 +31,6 @@ public final class GeneratorUtil {
      * It doesn't have the sense to create the instances of this class.
      */
     private GeneratorUtil() {
-    }
-
-    /**
-     * Returns the map of imports. The map maps the type name to the package
-     * name. To the map are added packages for <code>genType</code> and for all
-     * enclosed types, constants, methods (parameter types, return values),
-     * implemented types.
-     *
-     * @param genType
-     *            generated type for which the map of the imports is created
-     * @return map of the necessary imports
-     * @throws IllegalArgumentException
-     *             if <code>genType</code> equals <code>null</code>
-     */
-    public static Map<String, String> createImports(GeneratedType genType) {
-        if (genType == null) {
-            throw new IllegalArgumentException("Generated Type cannot be NULL!");
-        }
-        final Map<String, String> imports = new LinkedHashMap<>();
-
-        List<GeneratedType> childGeneratedTypes = genType.getEnclosedTypes();
-        if (!childGeneratedTypes.isEmpty()) {
-            for (GeneratedType genTypeChild : childGeneratedTypes) {
-                imports.putAll(createImports(genTypeChild));
-            }
-        }
-
-        // REGULAR EXPRESSION
-        if (genType instanceof GeneratedTransferObject
-                && isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, (GeneratedTransferObject) genType)) {
-            putTypeIntoImports(genType, Types.typeForClass(java.util.regex.Pattern.class), imports);
-            putTypeIntoImports(genType, Types.typeForClass(java.util.Arrays.class), imports);
-            putTypeIntoImports(genType, Types.typeForClass(java.util.ArrayList.class), imports);
-        }
-
-        final List<MethodSignature> methods = genType.getMethodDefinitions();
-        // METHODS
-        if (methods != null) {
-            for (final MethodSignature method : methods) {
-                final Type methodReturnType = method.getReturnType();
-                putTypeIntoImports(genType, methodReturnType, imports);
-                for (final MethodSignature.Parameter methodParam : method.getParameters()) {
-                    putTypeIntoImports(genType, methodParam.getType(), imports);
-                }
-                for (final AnnotationType at : method.getAnnotations()) {
-                    putTypeIntoImports(genType, at, imports);
-                }
-            }
-        }
-
-        // PROPERTIES
-        if (genType instanceof GeneratedTransferObject) {
-            final GeneratedTransferObject genTO = (GeneratedTransferObject) genType;
-            final List<GeneratedProperty> properties = genTO.getProperties();
-            if (properties != null) {
-                for (GeneratedProperty property : properties) {
-                    final Type propertyType = property.getReturnType();
-                    putTypeIntoImports(genType, propertyType, imports);
-                }
-            }
-        }
-
-        return imports;
     }
 
     /**
@@ -127,7 +62,7 @@ public final class GeneratorUtil {
      *             </ul>
      */
     public static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
-            final Map<String, String> imports) {
+            final Map<String, String> imports, Set<String> namesInSamePackage) {
         checkArgument(parentGenType != null,
                 "Parent Generated Type parameter MUST be specified and cannot be " + "NULL!");
         checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
@@ -141,9 +76,11 @@ public final class GeneratorUtil {
         final String typeName = type.getName();
         final String typePackageName = type.getPackageName();
         final String parentTypeName = parentGenType.getName();
-        final String parentTypePackageName = parentGenType.getPackageName();
-        if (typeName.equals(parentTypeName) || typePackageName.startsWith("java.lang")
-                 || typePackageName.isEmpty()) {
+        if (typeName.equals(parentTypeName) || typeName.equals(parentTypeName+BuilderTemplate.BUILDER) || 
+                typePackageName.isEmpty()) {
+            return;
+        }
+        if (namesInSamePackage !=null && !namesInSamePackage.contains(typeName) && typePackageName.startsWith("java.lang")) {
             return;
         }
         if (!imports.containsKey(typeName)) {
@@ -154,7 +91,7 @@ public final class GeneratorUtil {
             final Type[] params = paramType.getActualTypeArguments();
             if (params != null) {
                 for (Type param : params) {
-                    putTypeIntoImports(parentGenType, param, imports);
+                    putTypeIntoImports(parentGenType, param, imports, namesInSamePackage);
                 }
             }
         }
@@ -261,7 +198,12 @@ public final class GeneratorUtil {
         } else {
             builder = new StringBuilder();
             if (typePackageName.startsWith("java.lang")) {
-                builder.append(type.getName());
+                if (typeName.equals(parentGenType.getName())
+                        || typeName.equals(parentGenType.getName() + BuilderTemplate.BUILDER)) {
+                    builder.append(typePackageName + Constants.DOT + type.getName());
+                } else {
+                    builder.append(type.getName());
+                }
             } else {
                 if (!typePackageName.isEmpty()) {
                     builder.append(typePackageName + Constants.DOT + type.getName());

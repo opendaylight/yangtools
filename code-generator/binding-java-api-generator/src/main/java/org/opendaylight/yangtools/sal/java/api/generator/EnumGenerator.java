@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.opendaylight.yangtools.sal.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -31,14 +34,20 @@ public class EnumGenerator implements CodeGenerator {
      * written in XTEND language.
      */
     @Override
-    public String generate(Type type) {
+    public String generate(Type type, Set<String> elementsNameInSamePackage) {
         if (type instanceof Enumeration) {
             final Enumeration enums = (Enumeration) type;
             final EnumTemplate enumTemplate = new EnumTemplate(enums);
+            enumTemplate.setNamesInSamePackage(elementsNameInSamePackage);
             return enumTemplate.generate();
         }
         return "";
     }
+
+    @Override
+    public String generate(Type type) {        
+        return generate(type,Collections.<String>emptySet());
+    }    
 
     @Override
     public String getUnitName(Type type) {
