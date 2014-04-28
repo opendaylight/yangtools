@@ -62,6 +62,11 @@ class BuilderTemplate extends BaseTemplate {
     val Set<GeneratedProperty> properties
 
     /**
+     * Value of fully qualified name for Class class
+     */
+    val static FULLY_QUALIFIED_CLASS = "java.lang.Class" 
+
+    /**
      * Constructs new instance of this class.
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
@@ -399,7 +404,7 @@ class BuilderTemplate extends BaseTemplate {
             «ENDFOR»
         «ENDIF»
         «IF augmentField != null»
-            private «Map.importedName»<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = new «HashMap.importedName»<>();
+            private «Map.importedName»<«FULLY_QUALIFIED_CLASS»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = new «HashMap.importedName»<>();
         «ENDIF»
     '''
 
@@ -419,7 +424,7 @@ class BuilderTemplate extends BaseTemplate {
         «ENDFOR»
         «IF augmentField != null»
 
-            public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(Class<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
+            public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(«FULLY_QUALIFIED_CLASS»<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
                 this.«augmentField.name».put(augmentationType, augmentation);
                 return this;
             }
@@ -518,7 +523,7 @@ class BuilderTemplate extends BaseTemplate {
 
             @SuppressWarnings("unchecked")
             «IF addOverride»@Override«ENDIF»
-            public <E extends «augmentField.returnType.importedName»> E get«augmentField.name.toFirstUpper»(Class<E> augmentationType) {
+            public <E extends «augmentField.returnType.importedName»> E get«augmentField.name.toFirstUpper»(«FULLY_QUALIFIED_CLASS»<E> augmentationType) {
                 if (augmentationType == null) {
                     throw new IllegalArgumentException("Augmentation Type reference cannot be NULL!");
                 }
@@ -642,7 +647,7 @@ class BuilderTemplate extends BaseTemplate {
     }
 
     def implementedInterfaceGetter() '''
-    public «Class.importedName»<«type.importedName»> getImplementedInterface() {
+    public «FULLY_QUALIFIED_CLASS»<«type.importedName»> getImplementedInterface() {
         return «type.importedName».class;
     }
     '''
