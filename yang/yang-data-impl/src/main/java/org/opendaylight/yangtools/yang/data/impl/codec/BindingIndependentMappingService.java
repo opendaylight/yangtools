@@ -32,6 +32,12 @@ public interface BindingIndependentMappingService {
 
     InstanceIdentifier<?> fromDataDom(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier entry)  throws DeserializationException;
 
+    /**
+     * Returns the list of currently-known QNames for instances of a service.
+     *
+     * @param service RPC service
+     * @return List of QNames. The user may not modify this list.
+     */
     Set<QName> getRpcQNamesFor(Class<? extends RpcService> service);
 
     DataContainer dataObjectFromDataDom(Class<? extends DataContainer> inputClass, CompositeNode domInput);

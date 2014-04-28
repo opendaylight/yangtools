@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext
 import org.opendaylight.yangtools.yang.model.api.SchemaServiceListener
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl
 import java.util.Map
+import java.util.Collections
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder
 import org.opendaylight.yangtools.yang.model.api.SchemaNode
@@ -106,8 +107,8 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
             val namespace = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
 
             if(!module.rpcs.empty) {
-            val rpcs = FluentIterable.from(module.rpcs).transform[QName].toSet
-            val serviceClass = new ReferencedTypeImpl(namespace,BindingGeneratorUtil.parseToClassName(module.name)+"Service");
+                val rpcs = FluentIterable.from(module.rpcs).transform[QName].toSet
+                val serviceClass = new ReferencedTypeImpl(namespace,BindingGeneratorUtil.parseToClassName(module.name)+"Service");
                 serviceTypeToRpc.put(serviceClass,rpcs);
             }
 
@@ -268,7 +269,11 @@ class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingSer
     }
 
     override getRpcQNamesFor(Class<? extends RpcService> service) {
-        return serviceTypeToRpc.get(new ReferencedTypeImpl(service.package.name,service.simpleName));
+        var serviceRef = serviceTypeToRpc.get(new ReferencedTypeImpl(service.package.name, service.simpleName))
+        if (serviceRef == null) {
+            serviceRef = Collections.emptySet()
+        }
+        return serviceRef
     }
 
     private def void getSchemaWithRetry(Type type) {
