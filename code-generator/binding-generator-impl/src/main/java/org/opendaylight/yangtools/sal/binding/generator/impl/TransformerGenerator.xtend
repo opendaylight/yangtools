@@ -71,6 +71,7 @@ import java.util.Collections
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit
 import java.util.Set
 import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 
 class TransformerGenerator {
 
@@ -674,6 +675,21 @@ class TransformerGenerator {
             ''';
         }
     }
+    
+    private def String deserializeBodyWithAugmentations(GeneratedType type, DataNodeContainer node) '''
+        {
+            «QName.name» _localQName = «QName.name».create($1,QNAME.getLocalName());
+            if($2 == null) {
+                return null;
+            }
+            java.util.Map _compositeNode = (java.util.Map) $2;
+            //System.out.println(_localQName + " " + _compositeNode);
+            «type.builderName» _builder = new «type.builderName»();
+            «deserializeDataNodeContainerBody(type, node)»
+            «deserializeAugmentations»
+            return _builder.build();
+        }
+    '''
 
     private def dispatch String deserializeBodyImpl(GeneratedType type, SchemaNode node) '''
         {
@@ -704,36 +720,17 @@ class TransformerGenerator {
         }
     '''
 
-    private def dispatch String deserializeBodyImpl(GeneratedType type, ContainerSchemaNode node) '''
-        {
-            «QName.name» _localQName = «QName.name».create($1,QNAME.getLocalName());
-            if($2 == null) {
-                return null;
-            }
-            java.util.Map _compositeNode = (java.util.Map) $2;
-            //System.out.println(_localQName + " " + _compositeNode);
-            «type.builderName» _builder = new «type.builderName»();
-            «deserializeDataNodeContainerBody(type, node)»
-            «deserializeAugmentations»
-            return _builder.build();
-        }
-    '''
+    private def dispatch String deserializeBodyImpl(GeneratedType type, ContainerSchemaNode node) {
+        return deserializeBodyWithAugmentations(type,node);
+    }
+    
+    private def dispatch String deserializeBodyImpl(GeneratedType type, NotificationDefinition node) {
+        return deserializeBodyWithAugmentations(type,node);
+    }
 
-    private def dispatch String deserializeBodyImpl(GeneratedType type, ChoiceCaseNode node) '''
-        {
-            «QName.name» _localQName = «QName.name».create($1,QNAME.getLocalName());
-
-            if($2 == null) {
-                return null;
-            }
-            java.util.Map _compositeNode = (java.util.Map) $2;
-            //System.out.println(_localQName + " " + _compositeNode);
-            «type.builderName» _builder = new «type.builderName»();
-            «deserializeDataNodeContainerBody(type, node)»
-            «deserializeAugmentations»
-            return _builder.build();
-        }
-    '''
+    private def dispatch String deserializeBodyImpl(GeneratedType type, ChoiceCaseNode node)  {
+        return deserializeBodyWithAugmentations(type,node);
+    }
 
     private def deserializeDataNodeContainerBody(GeneratedType type, DataNodeContainer node) {
         deserializeNodeContainerBodyImpl(type, type.allProperties, node);
@@ -1309,38 +1306,32 @@ class TransformerGenerator {
             '''«QName.asCtClass.name».create("«node.namespace»","«node.formattedRevision»","«node.localName»")''')
     }
 
-    private def dispatch String serializeBody(GeneratedType type, ListSchemaNode node) '''
+    private def String serializeBodyImpl(GeneratedType type, DataNodeContainer nodeContainer) '''
         {
             «QName.name» _resultName = «QName.name».create($1,QNAME.getLocalName());
             java.util.List _childNodes = new java.util.ArrayList();
             «type.resolvedName» value = («type.resolvedName») $2;
-            «transformDataContainerBody(type, type.allProperties, node)»
+            «transformDataContainerBody(type, type.allProperties, nodeContainer)»
             «serializeAugmentations»
             return ($r) java.util.Collections.singletonMap(_resultName,_childNodes);
         }
     '''
 
-    private def dispatch String serializeBody(GeneratedType type, ContainerSchemaNode node) '''
-        {
-            «QName.name» _resultName = «QName.name».create($1,QNAME.getLocalName());
-            java.util.List _childNodes = new java.util.ArrayList();
-            «type.resolvedName» value = («type.resolvedName») $2;
-            «transformDataContainerBody(type, type.allProperties, node)»
-            «serializeAugmentations»
-            return ($r) java.util.Collections.singletonMap(_resultName,_childNodes);
-        }
-    '''
+    private def dispatch String serializeBody(GeneratedType type, ListSchemaNode node) {
+        return serializeBodyImpl(type,node);
+    }
 
-    private def dispatch String serializeBody(GeneratedType type, ChoiceCaseNode node) '''
-        {
-        «QName.name» _resultName = «QName.name».create($1,QNAME.getLocalName());
-            java.util.List _childNodes = new java.util.ArrayList();
-            «type.resolvedName» value = («type.resolvedName») $2;
-            «transformDataContainerBody(type, type.allProperties, node)»
-            «serializeAugmentations»
-            return ($r) java.util.Collections.singletonMap(_resultName,_childNodes);
-        }
-    '''
+    private def dispatch String serializeBody(GeneratedType type, NotificationDefinition node) {
+        return serializeBodyImpl(type,node);
+    }
+
+    private def dispatch String serializeBody(GeneratedType type, ContainerSchemaNode node) {
+        return serializeBodyImpl(type,node);
+    }
+
+    private def dispatch String serializeBody(GeneratedType type, ChoiceCaseNode node){
+        return serializeBodyImpl(type,node);
+    }
 
     private def dispatch String serializeBody(GeneratedType type, SchemaNode node) '''
         {
