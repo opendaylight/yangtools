@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
@@ -500,6 +501,18 @@ public class CompilationTest extends BaseCompilationTest {
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    @Test
+    public void classNamesColisionTest() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "class-name-collision");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "class-name-collision");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        generateTestSources("/compilation/class-name-collision", sourcesOutputDir);
+        testCompilation(sourcesOutputDir, compiledOutputDir);
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
