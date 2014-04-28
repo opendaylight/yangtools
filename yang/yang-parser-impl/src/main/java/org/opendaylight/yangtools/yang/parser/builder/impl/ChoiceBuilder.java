@@ -309,7 +309,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         return "choice " + qname.getLocalName();
     }
 
-    public final class ChoiceNodeImpl implements ChoiceNode {
+    private static final class ChoiceNodeImpl implements ChoiceNode {
         private final QName qname;
         private SchemaPath path;
         private String description;

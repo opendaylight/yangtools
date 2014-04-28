@@ -181,7 +181,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         return "notification " + getQName().getLocalName();
     }
 
-    public final class NotificationDefinitionImpl implements NotificationDefinition {
+    private static final class NotificationDefinitionImpl implements NotificationDefinition {
         private final QName qname;
         private final SchemaPath path;
         private String description;
