@@ -21,20 +21,21 @@ import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import java.util.Collection
-import java.util.Arrays
+import java.util.Arraysimport java.util.HashMap
 
 abstract class BaseTemplate {
 
     protected val GeneratedType type;
     protected val Map<String, String> importMap;
     static val paragraphSplitter = Splitter.on("\n\n").omitEmptyStrings();
+    protected val static FULLY_QUALIFIED_PREFIX = "java.lang."
 
     new(GeneratedType _type) {
         if (_type == null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
         }
         this.type = _type;
-        this.importMap = GeneratorUtil.createImports(type)
+        this.importMap = new HashMap<String,String>() // GeneratorUtil.createImports(type)
     }
 
     def packageDefinition() '''package «type.packageName»;'''
@@ -259,8 +260,8 @@ abstract class BaseTemplate {
     def protected generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
             @Override
-            public String toString() {
-                StringBuilder builder = new StringBuilder("«type.name» [");
+            public «FULLY_QUALIFIED_PREFIX»String toString() {
+                «FULLY_QUALIFIED_PREFIX»StringBuilder builder = new «FULLY_QUALIFIED_PREFIX»StringBuilder("«type.name» [");
                 boolean first = true;
 
                 «FOR property : properties»
