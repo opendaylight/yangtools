@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -83,7 +84,7 @@ public class ClassCodeGeneratorTest {
                     final String outputStr = clsGen.generate(genTO);
 
                     assertNotNull(outputStr);
-                    assertTrue(outputStr.contains("public CompositeKeyListKey(Byte _key1, String _key2)"));
+                    assertTrue(outputStr.contains("public CompositeKeyListKey(java.lang.Byte _key1, java.lang.String _key2)"));
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;

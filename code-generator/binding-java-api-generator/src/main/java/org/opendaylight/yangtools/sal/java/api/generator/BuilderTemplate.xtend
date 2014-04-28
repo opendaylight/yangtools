@@ -406,7 +406,7 @@ class BuilderTemplate extends BaseTemplate {
 
     def private generateAugmentField(boolean init) '''
         «IF augmentField != null»
-            private final «Map.importedName»<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name»«IF init» = new «HashMap.importedName»<>()«ENDIF»;
+            private «Map.importedName»<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = new «HashMap.importedName»<>();
         «ENDIF»
     '''
 
@@ -426,7 +426,7 @@ class BuilderTemplate extends BaseTemplate {
         «ENDFOR»
         «IF augmentField != null»
 
-            public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(Class<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
+            public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
                 this.«augmentField.name».put(augmentationType, augmentation);
                 return this;
             }
@@ -479,8 +479,8 @@ class BuilderTemplate extends BaseTemplate {
                     this.«augmentField.name» = «Collections.importedName».emptyMap();
                     break;
                 case 1:
-                    final «Map.importedName».Entry<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = builder.«augmentField.name».entrySet().iterator().next();
-                    this.«augmentField.name» = «Collections.importedName».<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
+                    final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = builder.«augmentField.name».entrySet().iterator().next();
+                    this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
                     break;
                 default :
                     this.«augmentField.name» = new «HashMap.importedName»<>(builder.«augmentField.name»);
@@ -535,7 +535,7 @@ class BuilderTemplate extends BaseTemplate {
 
             @SuppressWarnings("unchecked")
             «IF addOverride»@Override«ENDIF»
-            public <E extends «augmentField.returnType.importedName»> E get«augmentField.name.toFirstUpper»(Class<E> augmentationType) {
+            public <E extends «augmentField.returnType.importedName»> E get«augmentField.name.toFirstUpper»(«Class.importedName»<E> augmentationType) {
                 if (augmentationType == null) {
                     throw new IllegalArgumentException("Augmentation Type reference cannot be NULL!");
                 }
@@ -578,7 +578,7 @@ class BuilderTemplate extends BaseTemplate {
     def protected generateEquals() '''
         «IF !properties.empty || augmentField != null»
             @Override
-            public boolean equals(java.lang.Object obj) {
+            public boolean equals(«Object.importedName» obj) {
                 if (this == obj) {
                     return true;
                 }
@@ -621,8 +621,8 @@ class BuilderTemplate extends BaseTemplate {
     def override generateToString(Collection<GeneratedProperty> properties) '''
         «IF !(properties === null)»
             @Override
-            public String toString() {
-                StringBuilder builder = new StringBuilder("«type.name» [");
+            public «String.importedName» toString() {
+                «StringBuilder.importedName» builder = new «StringBuilder.importedName» ("«type.name» [");
                 boolean first = true;
 
                 «FOR property : properties»
