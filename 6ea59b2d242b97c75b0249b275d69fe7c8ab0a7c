@@ -1,0 +1,7 @@
+Verified+1: jenkins-yangtools <jenkins-lispflowmapping@opendaylight.org>
+Code-Review+2: Robert Varga <rovarga@cisco.com>
+Submitted-by: Robert Varga <rovarga@cisco.com>
+Submitted-at: Mon, 28 Apr 2014 11:46:32 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/6488
+Project: yangtools
+Branch: refs/heads/stable/hydrogen
