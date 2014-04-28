@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.sal.java.api.generator.BuilderTemplate;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.sal.java.api.generator.YangModuleInfoTemplate;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
@@ -36,6 +37,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +52,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
     private static final Logger logger = LoggerFactory.getLogger(CodeGeneratorImpl.class);
     private MavenProject mavenProject;
     private File resourceBaseDir;
+    private Map<String, Set<String>> packageNameToNamesInSamePackage;
 
     @Override
     public Collection<File> generateSources(final SchemaContext context, final File outputDir,
@@ -71,7 +75,8 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         if (persistentSourcesDir == null) {
             persistentSourcesDir = new File(projectBaseDir, "src" + FS + "main" + FS + "java");
         }
-
+        packageNameToNamesInSamePackage = createMapOfTypeNamesDividedByPackageName(types);
+        generator.setMappingOfPackageNameToSetOfIncludingTypes(packageNameToNamesInSamePackage);
         List<File> result = generator.generateToFile(outputBaseDir, persistentSourcesDir);
 
         result.addAll(generateModuleInfos(outputBaseDir, yangModules, context));
@@ -152,15 +157,18 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
             Builder<String> providerSourceSet) {
         Builder<File> generatedFiles = ImmutableSet.<File> builder();
 
+        final File packageDir = GeneratorJavaFile.packageToDirectory(outputBaseDir,
+                BindingGeneratorUtil.moduleNamespaceToPackageName(module));
+
+
         final YangModuleInfoTemplate template = new YangModuleInfoTemplate(module, ctx);
+        template.setNamesInSamePackage(packageNameToNamesInSamePackage.get(packageDir));
         String moduleInfoSource = template.generate();
         if (moduleInfoSource.isEmpty()) {
             throw new IllegalStateException("Generated code should not be empty!");
         }
         String providerSource = template.generateModelProvider();
 
-        final File packageDir = GeneratorJavaFile.packageToDirectory(outputBaseDir,
-                BindingGeneratorUtil.moduleNamespaceToPackageName(module));
 
         generatedFiles.add(writeJavaSource(packageDir, BindingMapping.MODULE_INFO_CLASS_NAME, moduleInfoSource));
         generatedFiles
@@ -193,6 +201,20 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
             logger.error("Could not create file: {}",file,e);
         }
         return file;
+    }
+
+    private Map<String, Set<String>> createMapOfTypeNamesDividedByPackageName(Collection<? extends Type> types) {
+        Map<String, Set<String>> packageNameToNamesInSamePackage = new HashMap<>();
+        for (Type type : types) {
+            Set<String> namesInSamePackage = packageNameToNamesInSamePackage.get(type.getPackageName());
+            if (namesInSamePackage == null) {
+                namesInSamePackage = new HashSet<String>();
+                packageNameToNamesInSamePackage.put(type.getPackageName(), namesInSamePackage);
+            }
+            namesInSamePackage.add(type.getName());
+            namesInSamePackage.add(type.getName()+BuilderTemplate.BUILDER);
+        }
+        return packageNameToNamesInSamePackage;
     }
 
 }
