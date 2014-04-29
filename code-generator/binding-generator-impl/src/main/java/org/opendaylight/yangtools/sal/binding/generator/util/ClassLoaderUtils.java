@@ -59,15 +59,14 @@ public final class ClassLoaderUtils {
         return constructor.newInstance(initargs);
     }
 
-    
-    public static Class<?> loadClass(ClassLoader cls, String name) throws ClassNotFoundException {
+    public static Class<?> loadClassWithTCCL(String name) throws ClassNotFoundException {
         if ("byte[]".equals(name)) {
             return byte[].class;
         } else if("char[]".equals(name)) {
             return char[].class;
         }
         try {
-            return cls.loadClass(name);
+            return Thread.currentThread().getContextClassLoader().loadClass(name);
         } catch (ClassNotFoundException e) {
             String[] components = name.split("\\.");
             String potentialOuter;
@@ -76,15 +75,11 @@ public final class ClassLoaderUtils {
 
                     String outerName = Joiner.on(".").join(Arrays.asList(components).subList(0, length - 1));
                     String innerName = outerName + "$" + components[length-1];
-                    return cls.loadClass(innerName);
+                    return Thread.currentThread().getContextClassLoader().loadClass(innerName);
             } else {
                 throw e;
             }
         }
-    }
-    
-    public static Class<?> loadClassWithTCCL(String name) throws ClassNotFoundException {
-        return loadClass(Thread.currentThread().getContextClassLoader(), name);
     }
 
     public static Class<?> tryToLoadClassWithTCCL(String fullyQualifiedName) {
