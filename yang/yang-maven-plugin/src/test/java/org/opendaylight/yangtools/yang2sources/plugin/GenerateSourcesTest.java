@@ -16,12 +16,9 @@ import static org.mockito.Mockito.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
@@ -43,8 +40,6 @@ public class GenerateSourcesTest {
     private File outDir;
     @Mock
     private MavenProject project;
-    @Mock
-    private Plugin plugin;
 
     @Before
     public void setUp() throws Exception {
@@ -61,8 +56,6 @@ public class GenerateSourcesTest {
                 mock);
         mojo = new YangToSourcesMojo(processor);
         doReturn(new File("")).when(project).getBasedir();
-        doReturn(Collections.emptyList()).when(plugin).getDependencies();
-        doReturn(plugin).when(project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         mojo.setProject(project);
     }
 
