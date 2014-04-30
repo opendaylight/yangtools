@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -43,7 +42,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         this.path = ImmutableList.copyOf(path);
     }
 
-    private InstanceIdentifier(NodeIdentifier nodeIdentifier) {
+    private InstanceIdentifier(final NodeIdentifier nodeIdentifier) {
         this.path = ImmutableList.<PathArgument> of(nodeIdentifier);
     }
 
@@ -70,7 +69,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -96,7 +95,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     // Static factories & helpers
 
-    public static InstanceIdentifier of(QName name) {
+    public static InstanceIdentifier of(final QName name) {
         return new InstanceIdentifier(new NodeIdentifier(name));
     }
 
@@ -104,7 +103,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         return new BuilderImpl();
     }
 
-    static public InstanceIdentifierBuilder builder(InstanceIdentifier origin) {
+    static public InstanceIdentifierBuilder builder(final InstanceIdentifier origin) {
         return new BuilderImpl(origin.getPath());
     }
 
@@ -150,7 +149,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
         private final QName nodeType;
 
-        public NodeIdentifier(QName node) {
+        public NodeIdentifier(final QName node) {
             this.nodeType = node;
         }
 
@@ -168,19 +167,24 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+				return true;
+			}
+            if (obj == null) {
+				return false;
+			}
+            if (getClass() != obj.getClass()) {
+				return false;
+			}
             NodeIdentifier other = (NodeIdentifier) obj;
             if (nodeType == null) {
-                if (other.nodeType != null)
-                    return false;
-            } else if (!nodeType.equals(other.nodeType))
-                return false;
+                if (other.nodeType != null) {
+					return false;
+				}
+            } else if (!nodeType.equals(other.nodeType)) {
+				return false;
+			}
             return true;
         }
 
@@ -206,12 +210,12 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         private final QName nodeType;
         private final Map<QName, Object> keyValues;
 
-        public NodeIdentifierWithPredicates(QName node, Map<QName, Object> keyValues) {
+        public NodeIdentifierWithPredicates(final QName node, final Map<QName, Object> keyValues) {
             this.nodeType = node;
             this.keyValues = ImmutableMap.copyOf(keyValues);
         }
 
-        public NodeIdentifierWithPredicates(QName node, QName key, Object value) {
+        public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
             this.nodeType = node;
             this.keyValues = ImmutableMap.of(key, value);
         }
@@ -235,24 +239,31 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+				return true;
+			}
+            if (obj == null) {
+				return false;
+			}
+            if (getClass() != obj.getClass()) {
+				return false;
+			}
             NodeIdentifierWithPredicates other = (NodeIdentifierWithPredicates) obj;
             if (keyValues == null) {
-                if (other.keyValues != null)
-                    return false;
-            } else if (!keyValues.equals(other.keyValues))
-                return false;
+                if (other.keyValues != null) {
+					return false;
+				}
+            } else if (!keyValues.equals(other.keyValues)) {
+				return false;
+			}
             if (nodeType == null) {
-                if (other.nodeType != null)
-                    return false;
-            } else if (!nodeType.equals(other.nodeType))
-                return false;
+                if (other.nodeType != null) {
+					return false;
+				}
+            } else if (!nodeType.equals(other.nodeType)) {
+				return false;
+			}
             return true;
         }
 
@@ -280,7 +291,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         private final QName nodeType;
         private final Object value;
 
-        public NodeWithValue(QName node, Object value) {
+        public NodeWithValue(final QName node, final Object value) {
             this.nodeType = node;
             this.value = value;
         }
@@ -304,24 +315,31 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+				return true;
+			}
+            if (obj == null) {
+				return false;
+			}
+            if (getClass() != obj.getClass()) {
+				return false;
+			}
             NodeWithValue other = (NodeWithValue) obj;
             if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
+                if (other.value != null) {
+					return false;
+				}
+            } else if (!value.equals(other.value)) {
+				return false;
+			}
             if (nodeType == null) {
-                if (other.nodeType != null)
-                    return false;
-            } else if (!nodeType.equals(other.nodeType))
-                return false;
+                if (other.nodeType != null) {
+					return false;
+				}
+            } else if (!nodeType.equals(other.nodeType)) {
+				return false;
+			}
             return true;
         }
 
@@ -344,7 +362,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             throw new UnsupportedOperationException("Augmentation node has no QName");
         }
 
-        public AugmentationIdentifier(Set<QName> childNames) {
+        public AugmentationIdentifier(final Set<QName> childNames) {
             this.childNames = ImmutableSet.copyOf(childNames);
         }
 
@@ -352,7 +370,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
          * Augmentation node has no QName
          */
         @Deprecated
-        public AugmentationIdentifier(QName nodeType, Set<QName> childNames) {
+        public AugmentationIdentifier(final QName nodeType, final Set<QName> childNames) {
             this(childNames);
         }
 
@@ -369,13 +387,19 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof AugmentationIdentifier)) return false;
+        public boolean equals(final Object o) {
+            if (this == o) {
+				return true;
+			}
+            if (!(o instanceof AugmentationIdentifier)) {
+				return false;
+			}
 
             AugmentationIdentifier that = (AugmentationIdentifier) o;
 
-            if (!childNames.equals(that.childNames)) return false;
+            if (!childNames.equals(that.childNames)) {
+				return false;
+			}
 
             return true;
         }
@@ -394,25 +418,25 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             path = ImmutableList.<PathArgument> builder();
         }
 
-        public BuilderImpl(List<? extends PathArgument> prefix) {
+        public BuilderImpl(final List<? extends PathArgument> prefix) {
             path = ImmutableList.<PathArgument> builder();
             path.addAll(prefix);
         }
 
         @Override
-        public InstanceIdentifierBuilder node(QName nodeType) {
+        public InstanceIdentifierBuilder node(final QName nodeType) {
             path.add(new NodeIdentifier(nodeType));
             return this;
         }
 
         @Override
-        public InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value) {
+        public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final QName key, final Object value) {
             path.add(new NodeIdentifierWithPredicates(nodeType, key, value));
             return this;
         }
 
         @Override
-        public InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues) {
+        public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final Map<QName, Object> keyValues) {
             path.add(new NodeIdentifierWithPredicates(nodeType, keyValues));
             return this;
         }
@@ -478,7 +502,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         return toStringCache;
     }
 
-    public static InstanceIdentifierBuilder builder(QName node) {
+    public static InstanceIdentifierBuilder builder(final QName node) {
         return builder().node(node);
     }
 }
