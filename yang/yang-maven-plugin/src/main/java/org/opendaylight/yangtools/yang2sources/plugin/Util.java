@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,12 +26,18 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import org.apache.maven.repository.RepositorySystem;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -144,6 +151,105 @@ final class Util {
             }
         }
         return dependencies;
+    }
+
+    /**
+     * Read current project dependencies and check if it don't grab incorrect
+     * artifacts versions which could be in conflict with plugin dependencies.
+     *
+     * @param project
+     *            current project
+     * @param log
+     *            logger
+     * @param repoSystem
+     *            repository system
+     * @param localRepo
+     *            local repository
+     * @param remoteRepos
+     *            remote repositories
+     */
+    static void checkClasspath(MavenProject project, Log log, RepositorySystem repoSystem,
+            ArtifactRepository localRepo, List<ArtifactRepository> remoteRepos) {
+        Plugin plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
+        if (plugin == null) {
+            log.warn(message("%s not found, dependencies version check skipped", YangToSourcesProcessor.LOG_PREFIX,
+                    YangToSourcesMojo.PLUGIN_NAME));
+        } else {
+            Map<Artifact, Collection<Artifact>> pluginDependencies = new HashMap<>();
+            getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, localRepo, remoteRepos, log);
+
+            Set<Artifact> projectDependencies = project.getDependencyArtifacts();
+            // Set<Artifact> projectDependencies = project.getArtifacts();
+            for (Map.Entry<Artifact, Collection<Artifact>> entry : pluginDependencies.entrySet()) {
+                checkArtifact(entry.getKey(), projectDependencies, log);
+                for (Artifact dependency : entry.getValue()) {
+                    checkArtifact(dependency, projectDependencies, log);
+                }
+            }
+        }
+    }
+
+    /**
+     * Read transitive dependencies of given plugin and store them in map.
+     *
+     * @param plugin
+     *            plugin to read
+     * @param map
+     *            map, where founded transitive dependencies will be stored
+     * @param repoSystem
+     *            repository system
+     * @param localRepository
+     *            local repository
+     * @param remoteRepos
+     *            list of remote repositories
+     * @param log
+     *            logger
+     */
+    private static void getPluginTransitiveDependencies(Plugin plugin, Map<Artifact, Collection<Artifact>> map,
+            RepositorySystem repoSystem, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepos,
+            Log log) {
+
+        List<Dependency> pluginDependencies = plugin.getDependencies();
+
+        for (Dependency dep : pluginDependencies) {
+            Artifact artifact = repoSystem.createDependencyArtifact(dep);
+
+            ArtifactResolutionRequest request = new ArtifactResolutionRequest();
+            request.setArtifact(artifact);
+            request.setResolveTransitively(true);
+            request.setLocalRepository(localRepository);
+            request.setRemoteRepositories(remoteRepos);
+
+            ArtifactResolutionResult result = repoSystem.resolve(request);
+            Set<Artifact> pluginDependencyDependencies = result.getArtifacts();
+            map.put(artifact, pluginDependencyDependencies);
+        }
+    }
+
+    /**
+     * Check artifact against collection of dependencies. If collection contains
+     * artifact with same groupId and artifactId, but different version, logs a
+     * warning.
+     *
+     * @param artifact
+     *            artifact to check
+     * @param dependencies
+     *            collection of dependencies
+     * @param log
+     *            logger
+     */
+    private static void checkArtifact(Artifact artifact, Collection<Artifact> dependencies, Log log) {
+        for (org.apache.maven.artifact.Artifact d : dependencies) {
+            if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())) {
+                if (!(artifact.getVersion().equals(d.getVersion()))) {
+                    log.warn(message("Dependency resolution conflict:", YangToSourcesProcessor.LOG_PREFIX));
+                    log.warn(message("'%s' dependency [%s] has different version than one "
+                            + "declared in current project [%s]. It is recommended to fix this problem "
+                            + "because it may cause compilation errors.", YangToSourcesProcessor.LOG_PREFIX,
+                            YangToSourcesMojo.PLUGIN_NAME, artifact, d));
+                }
+            }
+        }
     }
 
     private static final String JAR_SUFFIX = ".jar";
