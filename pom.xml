@@ -60,6 +60,7 @@
         <module>restconf</module>
         <module>integration-test</module>
         <module>mockito-configuration</module>
+        <module>websocket</module>
         <!-- module>third-party</module -->
     </modules>
 
