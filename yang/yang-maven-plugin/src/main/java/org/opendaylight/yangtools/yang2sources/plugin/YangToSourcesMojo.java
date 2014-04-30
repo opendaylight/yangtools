@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -22,6 +23,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
@@ -46,6 +48,7 @@ import com.google.common.annotations.VisibleForTesting;
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true)
 public final class YangToSourcesMojo extends AbstractMojo {
+    public static final String PLUGIN_NAME = "org.opendaylight.yangtools:yang-maven-plugin";
 
     /**
      * Classes implementing {@link CodeGenerator} interface. An instance will be
@@ -78,8 +81,17 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     private YangToSourcesProcessor yangToSourcesProcessor;
 
-    public YangToSourcesMojo() {
+    @Component
+    private RepositorySystem repoSystem;
 
+    @Parameter( readonly = true, defaultValue = "${localRepository}" )
+    private ArtifactRepository localRepository;
+
+    @Parameter( readonly = true, defaultValue = "${project.remoteArtifactRepositories}" )
+    private List<ArtifactRepository> remoteRepos;
+
+
+    public YangToSourcesMojo() {
     }
 
     public void setProject(MavenProject project) {
@@ -94,6 +106,9 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         StaticLoggerBinder.getSingleton().setMavenLog(this.getLog());
+
+        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos, getLog());
+
         if (yangToSourcesProcessor == null) {
             List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);
 
@@ -101,8 +116,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
             File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
             File[] excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
-            yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, getLog(), yangFilesRootFile, excludedFiles,
-                    codeGeneratorArgs, project, inspectDependencies);
+            yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, getLog(), yangFilesRootFile,
+                    excludedFiles, codeGeneratorArgs, project, inspectDependencies);
         }
         yangToSourcesProcessor.execute();
     }

@@ -110,6 +110,13 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
+    public void testInvalidVersion() throws Exception {
+        Verifier v = setUp("InvalidVersion/", false);
+        v.verifyErrorFreeLog();
+        v.verifyTextInLog("[WARNING] yang-to-sources: Dependency resolution conflict:");
+    }
+
+    @Test
     public void testUnknownGenerator() throws Exception {
         Verifier v = setUp("UnknownGenerator/", true);
         v.verifyTextInLog("[ERROR] yang-to-sources: Unable to generate sources with unknown generator");
