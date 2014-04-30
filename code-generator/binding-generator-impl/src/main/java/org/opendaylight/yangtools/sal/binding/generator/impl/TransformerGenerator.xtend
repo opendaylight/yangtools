@@ -547,7 +547,7 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             «QName.name» _localQName = QNAME;
-                        
+
                             if($2 == null) {
                             return null;
                             }
@@ -698,7 +698,7 @@ class TransformerGenerator {
     private def dispatch String deserializeBodyImpl(GeneratedType type, SchemaNode node) '''
         {
             «QName.name» _localQName = «QName.name».create($1,QNAME.getLocalName());
-        
+
             if($2 == null) {
             return null;
             }
@@ -791,7 +791,7 @@ class TransformerGenerator {
                 _hasNext = _iterator.hasNext();
             }
         }
-        
+
         ////System.out.println(" list" + «propertyName»);
     '''
 
@@ -882,7 +882,7 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
-                        
+
                             if($1 == null) {
                             return null;
                             }
@@ -907,7 +907,7 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
-                        
+
                             if($1 == null) {
                             return null;
                             }
@@ -955,7 +955,7 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
-                        
+
                             if($1 == null) {
                             return null;
                             }
@@ -970,7 +970,7 @@ class TransformerGenerator {
                                 }
                             «ENDIF»
                             «ENDFOR»
-                        
+
                             return null;
                         }
                     '''
@@ -987,7 +987,7 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
-                        
+
                             if($1 == null) {
                             return null;
                             }
@@ -1035,14 +1035,14 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
-                        
+
                             if($1 == null) {
                             return null;
                             }
                             «typeSpec.resolvedName» _encapsulatedValue = («typeSpec.resolvedName») $1;
                             «HashSet.resolvedName» _value = new «HashSet.resolvedName»();
                             //System.out.println("«inputType.simpleName»#toDomValue:Enc: "+_encapsulatedValue);
-                        
+
                             «FOR bit : typeDef.bits»
                             «val getter = bit.getterName()»
                             if(Boolean.TRUE.equals(_encapsulatedValue.«getter»())) {
@@ -1051,7 +1051,7 @@ class TransformerGenerator {
                             «ENDFOR»
                             «Set.resolvedName» _domValue =  «Collections.resolvedName».unmodifiableSet(_value);
                             //System.out.println("«inputType.simpleName»#toDomValue:DeEnc: "+_domValue);
-                        
+
                             return _domValue;
                         }
                     '''
@@ -1069,7 +1069,7 @@ class TransformerGenerator {
                     bodyChecked = '''
                         {
                             //System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
-                        
+
                             if($1 == null) {
                             return null;
                             }
@@ -1077,7 +1077,7 @@ class TransformerGenerator {
                             «FOR bit : sortedBits»
                             Boolean «bit.propertyName» = Boolean.valueOf(_domValue.contains("«bit.name»"));
                             «ENDFOR»
-                        
+
                             return new «inputType.resolvedName»(«FOR bit : sortedBits SEPARATOR ","»«bit.propertyName»«ENDFOR»);
                         }
                     '''
@@ -1263,6 +1263,12 @@ class TransformerGenerator {
             return '''(«InstanceIdentifier.name») «INSTANCE_IDENTIFIER_CODEC».deserialize(«domParameter»)'''
         } else if (CLASS_TYPE.equals(type)) {
             return '''(«Class.name») «IDENTITYREF_CODEC».deserialize(«domParameter»)'''
+        } else if (typeDef!=null && typeDef instanceof EmptyTypeDefinition) {
+            if(domParameter == null) {
+                return ''' Boolean.FALSE '''
+            } else {
+                return ''' Boolean.TRUE '''
+            }
         }
         return '''(«type.resolvedName») «domParameter»'''
 
@@ -1407,7 +1413,7 @@ class TransformerGenerator {
 
     private def dispatch CharSequence serializeProperty(LeafSchemaNode schema, Type type, String propertyName) '''
         «type.resolvedName» «propertyName» = value.«propertyName»();
-        
+
         if(«propertyName» != null) {
             «QName.name» _qname = «QName.name».create(_resultName,"«schema.QName.localName»");
             Object _propValue = «serializeValue(type, propertyName, schema.type)»;
@@ -1425,19 +1431,19 @@ class TransformerGenerator {
     private def dispatch serializeValue(Enumeration type, String parameter, TypeDefinition<?> typeDefinition) {
         '''«type.valueSerializer(typeDefinition).resolvedName».toDomValue(«parameter»)'''
     }
-    
+
     private def dispatch serializeValue(Type type, String parameter, EmptyTypeDefinition typeDefinition) {
         '''(«parameter».booleanValue() ? "" : null)'''
     }
-    
+
     private def dispatch serializeValue(Type signature, String property, TypeDefinition<?> typeDefinition) {
         serializeValue(signature,property)
     }
-    
+
     private def dispatch serializeValue(Type signature, String property, Void typeDefinition) {
         serializeValue(signature,property)
     }
-    
+
     private def dispatch serializeValue(Type signature, String property) {
         if (INSTANCE_IDENTIFIER == signature) {
             return '''«INSTANCE_IDENTIFIER_CODEC».serialize(«property»)'''
