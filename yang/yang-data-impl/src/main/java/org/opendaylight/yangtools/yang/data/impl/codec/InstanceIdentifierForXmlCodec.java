@@ -132,7 +132,7 @@ public class InstanceIdentifierForXmlCodec {
 
     }
 
-    private QName toIdentity(String xPathArgument, Element element, SchemaContext schemaContext) {
+    public QName toIdentity(String xPathArgument, Element element, SchemaContext schemaContext) {
         String xPathPart = getIdAndPrefixAsStr(xPathArgument);
         String xPathPartTrimmed = xPathPart.trim();
         if (xPathPartTrimmed.isEmpty()) {
@@ -154,9 +154,9 @@ public class InstanceIdentifierForXmlCodec {
             namespaceStr = element.lookupNamespaceURI(prefix);
             namespace = new URI(namespaceStr);
         } catch (URISyntaxException e) {
-            new Exception("It wasn't possible to convert " + namespaceStr + " to URI object.");
+            throw new IllegalArgumentException("It wasn't possible to convert " + namespaceStr + " to URI object.");
         } catch (NullPointerException e) {
-            new Exception("I wasn't possible to get namespace for prefix " + prefix);
+            throw new IllegalArgumentException("I wasn't possible to get namespace for prefix " + prefix);
         }
         Module youngestModule = findYoungestModuleByNamespace(schemaContext, namespace);
 
