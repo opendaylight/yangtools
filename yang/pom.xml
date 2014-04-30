@@ -34,6 +34,9 @@
         <module>yang-parser-impl</module>
     </modules>
 
+    <properties>
+        <bundle.plugin.version>2.3.7</bundle.plugin.version>
+    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
