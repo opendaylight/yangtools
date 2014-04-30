@@ -332,7 +332,7 @@ public class XmlDocumentUtils {
         return toNodeWithSchema(xmlElement, schema, codecProvider, null);
     }
 
-    private static Node<?> toSimpleNodeWithType(Element xmlElement, LeafSchemaNode schema,
+    protected static Node<?> toSimpleNodeWithType(Element xmlElement, LeafSchemaNode schema,
             XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
         TypeDefinitionAwareCodec<? extends Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
@@ -340,9 +340,13 @@ public class XmlDocumentUtils {
         if (codec != null) {
             value = codec.deserialize(text);
         }
+
         if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
             value = INSTANCE_IDENTIFIER_FOR_XML_CODEC.deserialize(xmlElement,schemaCtx);
+        } else if(schema.getType() instanceof IdentityrefTypeDefinition){
+            value = INSTANCE_IDENTIFIER_FOR_XML_CODEC.toIdentity(xmlElement.getTextContent(), xmlElement, schemaCtx);
         }
+
         if (value == null) {
             value = xmlElement.getTextContent();
         }
