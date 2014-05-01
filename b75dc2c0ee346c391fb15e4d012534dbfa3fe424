@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_083d848f",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/InstanceIdentifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 795
+      },
+      "writtenOn": "2014-05-01T12:11:35Z",
+      "side": 1,
+      "message": "Are you using tabs? This formatting looks worse than before.",
+      "revId": "b75dc2c0ee346c391fb15e4d012534dbfa3fe424",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
