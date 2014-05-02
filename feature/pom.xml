@@ -1,0 +1,104 @@
+<project>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>yangtools</artifactId>
+        <version>0.6.2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>features-file</artifactId>
+    <packaging>pom</packaging>
+    <name>OpenDaylight YangTools :: Karaf Feature Descriptor</name>
+    <description>Features POM</description>
+
+    <properties>
+        <features.file>features.xml</features.file>
+    </properties>
+
+    <!-- Add dependencies here  -->
+    <dependencies>
+            
+         	<dependency>
+            	<groupId>org.opendaylight.yangtools</groupId>
+            	<artifactId>concepts</artifactId>
+                <version>${project.version}</version>
+          	</dependency>
+          	<dependency>
+            	<groupId>org.opendaylight.yangtools</groupId>
+            	<artifactId>yang-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+         	 <dependency>
+            	<groupId>com.google.guava</groupId>
+            	<artifactId>guava</artifactId>
+                 <version>${project.version}</version>
+             </dependency>
+
+            <!-- Outside of this component -->
+            <dependency>
+                <groupId>org.opendaylight.bgpcep</groupId>
+                <artifactId>rsvp-api</artifactId>
+                <version>0.3.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.bgpcep</groupId>
+                <artifactId>topology-api</artifactId>
+                <version>0.3.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.bgpcep</groupId>
+                <artifactId>topology-api-config</artifactId>
+                <version>0.3.1-SNAPSHOT</version>
+            </dependency>
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filter</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/classes/${features.file}</file>
+                                    <type>xml</type>
+                                    <classifier>features</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

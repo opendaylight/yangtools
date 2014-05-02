@@ -61,6 +61,7 @@
         <module>restconf</module>
         <module>websocket</module>
         <module>yang</module>
+        <module>feature</module>
         <!-- module>third-party</module -->
     </modules>
 
