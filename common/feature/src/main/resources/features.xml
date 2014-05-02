@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<features>
+
+    <feature name='yangtools-all' version='${project.version}'>
+        <feature version='${project.version}'>yangtools-models</feature>
+        <feature version='${project.version}'>yangtools-binding</feature>
+        <feature version='${project.version}'>yangtools-concepts</feature>
+        <feature version='${project.version}'>yangtools-binding-generator</feature>
+    </feature>
+
+    <feature name='yangtools-models' version='${project.version}'>
+        <bundle>mvn:org.opendaylight.yangtools.model/ietf-inet-types/2010.09.24.4-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/ietf-yang-types/2010.09.24.4-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/yang-ext/2013.09.07.4-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/opendaylight-l2-types/2013.08.27.4-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology/2013.10.21.2-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/opendaylight-l2-types/2013.08.27.4-SNAPSHOT</bundle>
+    </feature>
+
+    <feature name='yangtools-binding' version='${project.version}'>
+        <feature version='${project.version}'>yangtools-concepts</feature>
+        <bundle>mvn:org.opendaylight.yangtools.thirdparty/antlr4-runtime-osgi-nohead/4.0</bundle>
+        <bundle>mvn:commons-io/commons-io/2.4</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-binding/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-api/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-impl/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-api/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-util/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/${project.version}</bundle>
+    </feature>
+
+    <feature name='yangtools-concepts' version='${project.version}'>
+        <bundle>mvn:org.opendaylight.yangtools/concepts/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-common/${project.version}</bundle>
+        <bundle>wrap:mvn:com.google.guava/guava/${guava.version}</bundle>
+        <bundle>wrap:mvn:org.eclipse.xtend/org.eclipse.xtend.lib/${xtend.version}</bundle>
+        <bundle>wrap:mvn:org.eclipse.xtext/org.eclipse.xtext.xbase.lib/${xtend.version}</bundle>
+    </feature>
+
+    <feature name='yangtools-binding-generator' version='${project.version}'>
+        <feature version='${project.version}'>yangtools-binding</feature>
+        <bundle>mvn:org.javassist/javassist/${javassist.version}</bundle>
+        <bundle>mvn:org.apache.commons/commons-lang3/${commons.lang.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-generator-api/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-generator-impl/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-generator-spi/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-generator-util/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-model-api/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-type-provider/${project.version}</bundle>
+
+    </feature>
+
+</features>

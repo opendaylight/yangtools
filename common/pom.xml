@@ -21,6 +21,7 @@
 
     <modules>
         <module>concepts</module>
+        <module>feature</module>
         <module>mockito-configuration</module>
         <module>object-cache-api</module>
         <module>object-cache-guava</module>
