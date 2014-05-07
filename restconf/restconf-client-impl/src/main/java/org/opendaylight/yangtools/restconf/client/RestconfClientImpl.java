@@ -7,25 +7,15 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+
 import javax.ws.rs.core.MediaType;
+
 import org.opendaylight.yangtools.restconf.client.api.RestconfClientContext;
 import org.opendaylight.yangtools.restconf.client.api.auth.AuthenticationHolder;
 import org.opendaylight.yangtools.restconf.client.api.data.ConfigurationDatastore;
@@ -45,6 +35,19 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
+
 public class RestconfClientImpl implements RestconfClientContext, SchemaContextListener {
 
     private final URI defaultUri;
@@ -62,8 +65,8 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     private OperationalDataStoreImpl operationalDatastoreAccessor;
     private ConfigurationDataStoreImpl configurationDatastoreAccessor;
 
-    public RestconfClientImpl(URL url,BindingIndependentMappingService mappingService,
-                              SchemaContextHolder schemaContextHolder){
+    public RestconfClientImpl(final URL url,final BindingIndependentMappingService mappingService,
+                              final SchemaContextHolder schemaContextHolder){
         Preconditions.checkArgument(url != null,"Restconf endpoint URL must be supplied.");
         Preconditions.checkArgument(mappingService != null, "Mapping service must not be null.");
         Preconditions.checkNotNull(schemaContextHolder, "Schema Context Holder must not be null.");
@@ -100,7 +103,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     public ListenableFuture<Set<Class<? extends RpcService>>> getRpcServices() {
         return get(ResourceUri.MODULES.getPath(), MediaType.APPLICATION_XML,new Function<ClientResponse, Set<Class<? extends RpcService>>>() {
             @Override
-            public Set<Class<? extends RpcService>> apply(ClientResponse clientResponse) {
+            public Set<Class<? extends RpcService>> apply(final ClientResponse clientResponse) {
                 if (clientResponse.getStatus() != 200) {
                     throw new RuntimeException("Failed : HTTP error code : "
                             + clientResponse.getStatus());
@@ -111,16 +114,15 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     }
 
     @Override
-    public <T extends RpcService> RpcServiceContext<T> getRpcServiceContext(Class<T> rpcService) {
-        RestRpcServiceContext restRpcServiceContext = new RestRpcServiceContext(rpcService,this.mappingService,this,schemaContextHolder.getSchemaContext());
-        return restRpcServiceContext;
+    public <T extends RpcService> RpcServiceContext<T> getRpcServiceContext(final Class<T> rpcService) {
+        return new RestRpcServiceContext<T>(rpcService,this.mappingService,this,schemaContextHolder.getSchemaContext());
     }
 
     @Override
     public ListenableFuture<Set<EventStreamInfo>> getAvailableEventStreams() {
         return get(ResourceUri.STREAM.getPath(), MediaType.APPLICATION_XML, new Function<ClientResponse, Set<EventStreamInfo>>() {
             @Override
-            public Set<EventStreamInfo> apply(ClientResponse clientResponse) {
+            public Set<EventStreamInfo> apply(final ClientResponse clientResponse) {
                 if (clientResponse.getStatus() != 200) {
                     throw new RuntimeException("Failed : HTTP error code : "
                             + clientResponse.getStatus());
@@ -136,26 +138,27 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     }
 
     @Override
-    public ListenableEventStreamContext getEventStreamContext(EventStreamInfo info) {
-        RestListenableEventStreamContext listenableEventStream = new RestListenableEventStreamContext(info,this);
-        return listenableEventStream;
+    public ListenableEventStreamContext getEventStreamContext(final EventStreamInfo info) {
+        return new RestListenableEventStreamContext(info, this);
     }
 
     @Override
     public ConfigurationDatastore getConfigurationDatastore() {
-        if (configurationDatastoreAccessor == null)
+        if (configurationDatastoreAccessor == null) {
             configurationDatastoreAccessor = new ConfigurationDataStoreImpl(this);
+        }
         return configurationDatastoreAccessor;
     }
 
     @Override
     public OperationalDatastore getOperationalDatastore() {
-        if(operationalDatastoreAccessor == null)
+        if(operationalDatastoreAccessor == null) {
             operationalDatastoreAccessor =  new OperationalDataStoreImpl(this);
+        }
         return operationalDatastoreAccessor;
     }
 
-    public void setAuthenticationHolder(AuthenticationHolder authenticationHolder) {
+    public void setAuthenticationHolder(final AuthenticationHolder authenticationHolder) {
         if(authenticationHolder.authenticationRequired()){
             switch (authenticationHolder.getAuthType()){
                 case DIGEST: restClient.addFilter(new HTTPDigestAuthFilter(authenticationHolder.getUserName(), authenticationHolder.getPassword()));
@@ -173,7 +176,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
 
 
     @Override
-    public void onGlobalContextUpdated(SchemaContext context) {
+    public void onGlobalContextUpdated(final SchemaContext context) {
 
     }
 
@@ -189,19 +192,19 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
         return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),mediaType,RestOperation.GET,processingFunction));
     }
 
-    protected <T> ListenableFuture<T> post(final String path, String payload, final Function<ClientResponse, T> processingFunction) {
+    protected <T> ListenableFuture<T> post(final String path, final String payload, final Function<ClientResponse, T> processingFunction) {
         return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),payload,RestOperation.POST,processingFunction));
     }
 
-    protected <T> ListenableFuture<T> post(final String path,String payload,final String mediaType, final Function<ClientResponse, T> processingFunction) {
+    protected <T> ListenableFuture<T> post(final String path,final String payload,final String mediaType, final Function<ClientResponse, T> processingFunction) {
         return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),payload,RestOperation.POST,mediaType,processingFunction));
     }
 
-    protected <T> ListenableFuture<T> put(final String path, String payload, final Function<ClientResponse, T> processingFunction) {
+    protected <T> ListenableFuture<T> put(final String path, final String payload, final Function<ClientResponse, T> processingFunction) {
         return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),RestOperation.PUT,payload,processingFunction));
     }
 
-    protected <T> ListenableFuture<T> put(final String path,String payload,final String mediaType, final Function<ClientResponse, T> processingFunction) {
+    protected <T> ListenableFuture<T> put(final String path,final String payload,final String mediaType, final Function<ClientResponse, T> processingFunction) {
         return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),payload,RestOperation.PUT,mediaType,processingFunction));
     }
     protected <T> ListenableFuture<T> delete(final String path, final Function<ClientResponse, T> processingFunction) {
@@ -212,7 +215,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
         return pool.submit(new ExecuteOperationAndTransformTask<T>(constructPath(path),RestOperation.DELETE,mediaType,processingFunction));
     }
 
-    protected String constructPath(String path) {
+    protected String constructPath(final String path) {
         return getDefaultUri().toString() + path;
     }
 
@@ -227,7 +230,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
         private final String payload;
         private final RestOperation restOperation;
 
-        public ExecuteOperationAndTransformTask(String path, String payload, RestOperation operation, Function<ClientResponse, T> processingFunction) {
+        public ExecuteOperationAndTransformTask(final String path, final String payload, final RestOperation operation, final Function<ClientResponse, T> processingFunction) {
             this.path = path;
             this.transformation = processingFunction;
             this.acceptType = MediaType.APPLICATION_XML; //ResourceMediaTypes.XML.getMediaType();
@@ -235,21 +238,21 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
             this.restOperation = operation;
         }
 
-        public ExecuteOperationAndTransformTask(String path,String payload, RestOperation operation,String mediaType, Function<ClientResponse, T> processingFunction) {
+        public ExecuteOperationAndTransformTask(final String path,final String payload, final RestOperation operation,final String mediaType, final Function<ClientResponse, T> processingFunction) {
             this.path = path;
             this.transformation = processingFunction;
             this.acceptType = mediaType;
             this.payload = payload;
             this.restOperation = operation;
         }
-        public ExecuteOperationAndTransformTask(String path, RestOperation operation,String mediaType, Function<ClientResponse, T> processingFunction) {
+        public ExecuteOperationAndTransformTask(final String path, final RestOperation operation,final String mediaType, final Function<ClientResponse, T> processingFunction) {
             this.path = path;
             this.transformation = processingFunction;
             this.acceptType = mediaType;
             this.payload = null;
             this.restOperation = operation;
         }
-        public ExecuteOperationAndTransformTask(String path, RestOperation operation, Function<ClientResponse, T> processingFunction) {
+        public ExecuteOperationAndTransformTask(final String path, final RestOperation operation, final Function<ClientResponse, T> processingFunction) {
             this.path = path;
             this.transformation = processingFunction;
             this.acceptType =  MediaType.APPLICATION_XML;

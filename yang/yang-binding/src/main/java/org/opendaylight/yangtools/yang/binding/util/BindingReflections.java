@@ -185,8 +185,7 @@ public class BindingReflections {
                 BindingMapping.PACKAGE_PREFIX, name);
         Matcher match = ROOT_PACKAGE_PATTERN.matcher(name);
         checkArgument(match.find(),"Package name '%s' does not match required pattern '%s'",name,ROOT_PACKAGE_PATTERN_STRING);
-        String rootPackage = match.group(0);
-        return rootPackage;
+        return match.group(0);
     }
 
     public static YangModuleInfo getModuleInfo(final Class<?> cls) throws Exception {
