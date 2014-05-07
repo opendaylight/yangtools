@@ -7,15 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.*;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.impl.util.AbstractCompositeNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -27,6 +18,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
+import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.ModifyAction;
+import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
+import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.impl.util.AbstractCompositeNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> implements //
         Immutable, //
@@ -48,7 +53,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
      *            use null to create top composite node (without parent)
      * @param value
      */
-    private ImmutableCompositeNode(QName qname, Map<QName,String> attributes,List<Node<?>> value) {
+    private ImmutableCompositeNode(final QName qname, final Map<QName,String> attributes,final List<Node<?>> value) {
         super(qname, null, ImmutableList.copyOf(value));
         if(attributes == null) {
             this.attributes = ImmutableMap.<QName, String>of();
@@ -63,21 +68,9 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
      * @param parent
      *            use null to create top composite node (without parent)
      * @param value
-     */
-    private ImmutableCompositeNode(QName qname, List<Node<?>> value, QName a1, String av) {
-        super(qname, null, value);
-        attributes = ImmutableMap.of(a1, av);
-        init();
-    }
-
-    /**
-     * @param qname
-     * @param parent
-     *            use null to create top composite node (without parent)
-     * @param value
      * @param modifyAction
      */
-    public ImmutableCompositeNode(QName qname, List<Node<?>> value, ModifyAction modifyAction) {
+    public ImmutableCompositeNode(final QName qname, final List<Node<?>> value, final ModifyAction modifyAction) {
         super(qname, null, value, modifyAction);
         attributes = ImmutableMap.of();
         init();
@@ -99,7 +92,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     }
 
     @Override
-    public SimpleNode<?> getFirstSimpleByName(QName leafQName) {
+    public SimpleNode<?> getFirstSimpleByName(final QName leafQName) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leafQName);
         if (list.isEmpty()) {
             return null;
@@ -108,7 +101,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     }
 
     @Override
-    public List<CompositeNode> getCompositesByName(QName children) {
+    public List<CompositeNode> getCompositesByName(final QName children) {
         List<Node<?>> toFilter = getNodeMap().get(children);
         if (toFilter == null) {
             return Collections.emptyList();
@@ -123,7 +116,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     }
 
     @Override
-    public List<SimpleNode<?>> getSimpleNodesByName(QName children) {
+    public List<SimpleNode<?>> getSimpleNodesByName(final QName children) {
         List<Node<?>> toFilter = getNodeMap().get(children);
         if (toFilter == null) {
             return Collections.emptyList();
@@ -139,7 +132,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     }
 
     @Override
-    public CompositeNode getFirstCompositeByName(QName container) {
+    public CompositeNode getFirstCompositeByName(final QName container) {
         List<CompositeNode> list = getCompositesByName(container);
         if (list.isEmpty()) {
             return null;
@@ -153,7 +146,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     }
 
     @Override
-    public String getAttributeValue(QName key) {
+    public String getAttributeValue(final QName key) {
         return attributes.get(key);
     }
 
@@ -161,7 +154,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
      * @param leaf
      * @return TODO:: do we need this method?
      */
-    public SimpleNode<?> getFirstLeafByName(QName leaf) {
+    public SimpleNode<?> getFirstLeafByName(final QName leaf) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leaf);
         if (list.isEmpty()) {
             return null;
@@ -170,12 +163,12 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     }
 
     @Override
-    public List<CompositeNode> getCompositesByName(String children) {
+    public List<CompositeNode> getCompositesByName(final String children) {
         return getCompositesByName(new QName(getNodeType(), children));
     }
 
     @Override
-    public List<SimpleNode<?>> getSimpleNodesByName(String children) {
+    public List<SimpleNode<?>> getSimpleNodesByName(final String children) {
         return getSimpleNodesByName(new QName(getNodeType(), children));
     }
 
@@ -195,23 +188,18 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return nodeMap.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         return nodeMap.containsValue(value);
     }
 
     @Override
     public Set<java.util.Map.Entry<QName, List<Node<?>>>> entrySet() {
         return nodeMap.entrySet();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
     }
 
     @Override
@@ -225,22 +213,22 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     }
 
     @Override
-    public List<Node<?>> get(Object key) {
+    public List<Node<?>> get(final Object key) {
         return nodeMap.get(key);
     }
 
     @Override
-    public List<Node<?>> put(QName key, List<Node<?>> value) {
+    public List<Node<?>> put(final QName key, final List<Node<?>> value) {
         return nodeMap.put(key, value);
     }
 
     @Override
-    public List<Node<?>> remove(Object key) {
+    public List<Node<?>> remove(final Object key) {
         return nodeMap.remove(key);
     }
 
     @Override
-    public void putAll(Map<? extends QName, ? extends List<Node<?>>> m) {
+    public void putAll(final Map<? extends QName, ? extends List<Node<?>>> m) {
         nodeMap.putAll(m);
     }
 
@@ -256,17 +244,18 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
 
     // Serialization related
 
-    private void readObject(ObjectInputStream aStream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream aStream) throws IOException, ClassNotFoundException {
         aStream.defaultReadObject();
         QName qName = (QName) aStream.readObject();
         CompositeNode parent = (CompositeNode) aStream.readObject();
+        @SuppressWarnings("unchecked")
         List<Node<?>> value = (List<Node<?>>) aStream.readObject();
         ModifyAction modifyAction = (ModifyAction) aStream.readObject();
 
         init(qName, parent, value, modifyAction);
     }
 
-    private void writeObject(ObjectOutputStream aStream) throws IOException {
+    private void writeObject(final ObjectOutputStream aStream) throws IOException {
         aStream.defaultWriteObject();
         // manually serialize superclass
         aStream.writeObject(getQName());
@@ -282,7 +271,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
     private static class ImmutableCompositeNodeBuilder extends AbstractCompositeNodeBuilder<ImmutableCompositeNode> {
 
         @Override
-        public AbstractCompositeNodeBuilder<ImmutableCompositeNode> addLeaf(QName leafName, Object leafValue) {
+        public AbstractCompositeNodeBuilder<ImmutableCompositeNode> addLeaf(final QName leafName, final Object leafValue) {
             add(new SimpleNodeTOImpl<Object>(leafName, null, leafValue));
             return this;
         }
@@ -294,15 +283,15 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
 
     }
 
-    public static ImmutableCompositeNode create(QName qName, List<Node<?>> childNodes) {
+    public static ImmutableCompositeNode create(final QName qName, final List<Node<?>> childNodes) {
         return new ImmutableCompositeNode(qName, ImmutableMap.<QName, String>of(),childNodes);
     }
 
-    public static ImmutableCompositeNode create(QName qName, Map<QName, String> attributes, List<Node<?>> childNodes) {
+    public static ImmutableCompositeNode create(final QName qName, final Map<QName, String> attributes, final List<Node<?>> childNodes) {
         return new ImmutableCompositeNode(qName, attributes,childNodes);
     }
 
-    public static ImmutableCompositeNode create(QName qName, List<Node<?>> childNodes, ModifyAction modifyAction) {
+    public static ImmutableCompositeNode create(final QName qName, final List<Node<?>> childNodes, final ModifyAction modifyAction) {
         return new ImmutableCompositeNode(qName, childNodes, modifyAction);
     }
 }

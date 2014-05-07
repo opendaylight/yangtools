@@ -7,13 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -26,9 +19,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.ModifyAction;
+import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
+import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+
 /**
  * @author michal.rehak
- * 
+ *
  */
 public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implements MutableCompositeNode, Serializable {
 
@@ -37,7 +37,7 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
     private Map<QName, List<Node<?>>> nodeMap = new HashMap<>();
     private CompositeNode original;
 
-    public MutableCompositeNodeTOImpl(QName qname, CompositeNode parent, List<Node<?>> value, ModifyAction modifyAction) {
+    public MutableCompositeNodeTOImpl(final QName qname, final CompositeNode parent, final List<Node<?>> value, final ModifyAction modifyAction) {
         super(qname, parent, value, modifyAction);
         init();
     }
@@ -58,14 +58,14 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
     }
 
     @Override
-    public List<Node<?>> setValue(List<Node<?>> value) {
+    public List<Node<?>> setValue(final List<Node<?>> value) {
         List<Node<?>> oldVal = super.setValue(value);
         init();
         return oldVal;
     }
 
     @Override
-    public void setModifyAction(ModifyAction action) {
+    public void setModifyAction(final ModifyAction action) {
         super.setModificationAction(action);
     }
 
@@ -87,12 +87,12 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
      * @param original
      *            the original to set
      */
-    public void setOriginal(CompositeNode original) {
+    public void setOriginal(final CompositeNode original) {
         this.original = original;
     }
 
     @Override
-    public SimpleNode<?> getFirstSimpleByName(QName leafQName) {
+    public SimpleNode<?> getFirstSimpleByName(final QName leafQName) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leafQName);
         if (list.isEmpty()) {
             return null;
@@ -101,7 +101,7 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
     }
 
     @Override
-    public List<CompositeNode> getCompositesByName(QName children) {
+    public List<CompositeNode> getCompositesByName(final QName children) {
         List<Node<?>> toFilter = getNodeMap().get(children);
         if (toFilter == null) {
             return Collections.emptyList();
@@ -116,7 +116,7 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
     }
 
     @Override
-    public List<SimpleNode<?>> getSimpleNodesByName(QName children) {
+    public List<SimpleNode<?>> getSimpleNodesByName(final QName children) {
         List<Node<?>> toFilter = getNodeMap().get(children);
         if (toFilter == null) {
             return Collections.emptyList();
@@ -132,7 +132,7 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
     }
 
     @Override
-    public CompositeNode getFirstCompositeByName(QName container) {
+    public CompositeNode getFirstCompositeByName(final QName container) {
         List<CompositeNode> list = getCompositesByName(container);
         if (list.isEmpty()) {
             return null;
@@ -144,7 +144,7 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
      * @param leaf
      * @return TODO:: do we need this method?
      */
-    public SimpleNode<?> getFirstLeafByName(QName leaf) {
+    public SimpleNode<?> getFirstLeafByName(final QName leaf) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leaf);
         if (list.isEmpty()) {
             return null;
@@ -153,12 +153,12 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
     }
 
     @Override
-    public List<CompositeNode> getCompositesByName(String children) {
+    public List<CompositeNode> getCompositesByName(final String children) {
         return getCompositesByName(new QName(getNodeType(), children));
     }
 
     @Override
-    public List<SimpleNode<?>> getSimpleNodesByName(String children) {
+    public List<SimpleNode<?>> getSimpleNodesByName(final String children) {
         return getSimpleNodesByName(new QName(getNodeType(), children));
     }
 
@@ -173,23 +173,18 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return nodeMap.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         return nodeMap.containsValue(value);
     }
 
     @Override
     public Set<java.util.Map.Entry<QName, List<Node<?>>>> entrySet() {
         return nodeMap.entrySet();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
     }
 
     @Override
@@ -203,22 +198,22 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
     }
 
     @Override
-    public List<Node<?>> get(Object key) {
+    public List<Node<?>> get(final Object key) {
         return nodeMap.get(key);
     }
 
     @Override
-    public List<Node<?>> put(QName key, List<Node<?>> value) {
+    public List<Node<?>> put(final QName key, final List<Node<?>> value) {
         return nodeMap.put(key, value);
     }
 
     @Override
-    public List<Node<?>> remove(Object key) {
+    public List<Node<?>> remove(final Object key) {
         return nodeMap.remove(key);
     }
 
     @Override
-    public void putAll(Map<? extends QName, ? extends List<Node<?>>> m) {
+    public void putAll(final Map<? extends QName, ? extends List<Node<?>>> m) {
         nodeMap.putAll(m);
     }
 
@@ -234,17 +229,18 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
 
   // Serialization related
 
-    private void readObject(ObjectInputStream aStream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream aStream) throws IOException, ClassNotFoundException {
         aStream.defaultReadObject();
         QName qName = (QName)aStream.readObject();
         CompositeNode parent = (CompositeNode) aStream.readObject();
+        @SuppressWarnings("unchecked")
         List<Node<?>> value = (List<Node<?>>) aStream.readObject();
         ModifyAction modifyAction = (ModifyAction) aStream.readObject();
 
         init(qName, parent, value, modifyAction);
     }
 
-    private void writeObject(ObjectOutputStream aStream) throws IOException {
+    private void writeObject(final ObjectOutputStream aStream) throws IOException {
         aStream.defaultWriteObject();
         //manually serialize superclass
         aStream.writeObject(getQName());
