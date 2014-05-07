@@ -12,6 +12,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -20,7 +21,6 @@ import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
@@ -28,32 +28,29 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import java.net.URI;
 
 import org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Implementation of web socket client that supports WS and HTTP protocols.
  */
 public class WebSocketIClient {
-
-    private final URI uri;
-    private Bootstrap bootstrap = new Bootstrap();;
-    private final WebSocketClientHandler clientHandler;
-    private static final Logger logger = LoggerFactory
-            .getLogger(WebSocketIClient.class);
-    private Channel clientChannel;
     private final EventLoopGroup group = new NioEventLoopGroup();
+    private final Bootstrap bootstrap = new Bootstrap();;
+    private final WebSocketClientHandler clientHandler;
+    private final URI uri;
+    private Channel clientChannel;
 
     /**
      * Creates new web socket client
-     * 
+     *
      * @param uri
      *            URI
      * @param clientMessageCallback
      *            ClientMessageCallback
      */
-    public WebSocketIClient(URI uri, ClientMessageCallback clientMessageCallback) {
-        this.uri = uri;
+    public WebSocketIClient(final URI uri, final ClientMessageCallback clientMessageCallback) {
+        this.uri = Preconditions.checkNotNull(uri);
         clientHandler = new WebSocketClientHandler(
                 WebSocketClientHandshakerFactory.newHandshaker(uri,
                         WebSocketVersion.V13, null, false, null),
@@ -77,7 +74,7 @@ public class WebSocketIClient {
         bootstrap.group(group).channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
+                    public void initChannel(final SocketChannel ch) {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("http-codec", new HttpClientCodec());
                         pipeline.addLast("aggregator",
@@ -101,11 +98,11 @@ public class WebSocketIClient {
      * Writes a String message via {@link ChannelOutboundInvoker} through the
      * {@link ChannelPipeline} and request to actual {@link #flush()} to flush
      * all pending data to the actual transport.
-     * 
+     *
      * @param message
      *            a message to write
      */
-    public void writeAndFlush(String message) {
+    public void writeAndFlush(final String message) {
         clientChannel.writeAndFlush(new TextWebSocketFrame(message));
     }
 
@@ -113,11 +110,11 @@ public class WebSocketIClient {
      * Writes a Object message via {@link ChannelOutboundInvoker} through the
      * {@link ChannelPipeline} and request to actual {@link #flush()} to flush
      * all pending data to the actual transport.
-     * 
+     *
      * @param message
      *            a message to write
      */
-    public void writeAndFlush(Object message) {
+    public void writeAndFlush(final Object message) {
         clientChannel.writeAndFlush(message);
     }
 
