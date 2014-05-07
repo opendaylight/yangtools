@@ -7,14 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.*;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * @author michal.rehak

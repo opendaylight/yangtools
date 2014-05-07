@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-import com.google.common.base.Preconditions;
-
 public class ImmutableAugmentationNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> {
 
