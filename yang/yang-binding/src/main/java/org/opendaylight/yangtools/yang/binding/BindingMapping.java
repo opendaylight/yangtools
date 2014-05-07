@@ -77,7 +77,19 @@ public final class BindingMapping {
         for (String comp : components) {
             builder.append(toFirstUpper(comp));
         }
-        return builder.toString();
+        return checkNumericPrefix(builder.toString());
+    }
+
+    private static final String checkNumericPrefix(final String rawString) {
+        if (rawString == null || rawString.isEmpty()) {
+            return rawString;
+        }
+        char firstChar = rawString.charAt(0);
+        if (firstChar >= '0' && firstChar <= '9') {
+            return "_" + rawString;
+        } else {
+            return rawString;
+        }
     }
 
     /**
