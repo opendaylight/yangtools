@@ -56,8 +56,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
+    private static final Logger logger = LoggerFactory.getLogger(TypeDefinitionAwareCodec.class);
 
     private static final Pattern intPattern = Pattern.compile("[+-]?[1-9][0-9]*$");
     private static final Pattern hexPattern = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
@@ -216,8 +219,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
             }
         } else if (superType instanceof StringTypeDefinition) {
             codec = STRING_DEFAULT_CODEC;
+
         } else if (superType instanceof UnionTypeDefinition) {
-            codec = UNION_DEFAULT_CODEC;
+            // need to create a new union codec as serialization logic depends on the type definition
+            codec = new UnionCodecStringImpl(Optional.of(UnionTypeDefinition.class.cast(superType)));
+
         } else if (superType instanceof UnsignedIntegerTypeDefinition) {
             if (UINT8_QNAME.equals(superType.getQName())) {
                 codec = UINT8_DEFAULT_CODEC;
@@ -545,20 +551,34 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     };
 
-    public static class UnionCodecStringImpl extends TypeDefinitionAwareCodec<String, UnionTypeDefinition> implements
+    public static class UnionCodecStringImpl extends TypeDefinitionAwareCodec<Object, UnionTypeDefinition> implements
             UnionCodec<String> {
 
         protected UnionCodecStringImpl(Optional<UnionTypeDefinition> typeDef) {
-            super(typeDef, String.class);
+            super(typeDef, Object.class);
         }
 
         @Override
-        public String serialize(String data) {
-            return data == null ? "" : data;
+        public String serialize(Object data) {
+            try {
+                for (TypeDefinition type : super.getTypeDefinition().get().getTypes()) {
+                    //for each type of the union, call a get<type> and if the value is not null, return value
+                    String typeName = type.getQName().getLocalName();
+                    String methodName = "get" + (Character.toUpperCase(typeName.charAt(0)) + typeName.substring(1));
+                    Object val = data.getClass().getMethod(methodName).invoke(data, null);
+                    if (val != null) {
+                        return val.toString();
+                    }
+                }
+            } catch(Exception e) {
+                logger.error("Error in acquiring value from Union object, returning a toString value ", e);
+                return data.toString();
+            }
+            return "";
         }
 
         @Override
-        public String deserialize(String stringRepresentation) {
+        public Object deserialize(String stringRepresentation) {
             return stringRepresentation;
         }
     };
