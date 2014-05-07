@@ -63,18 +63,6 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
      * @param parent
      *            use null to create top composite node (without parent)
      * @param value
-     */
-    private ImmutableCompositeNode(QName qname, List<Node<?>> value, QName a1, String av) {
-        super(qname, null, value);
-        attributes = ImmutableMap.of(a1, av);
-        init();
-    }
-
-    /**
-     * @param qname
-     * @param parent
-     *            use null to create top composite node (without parent)
-     * @param value
      * @param modifyAction
      */
     public ImmutableCompositeNode(QName qname, List<Node<?>> value, ModifyAction modifyAction) {
