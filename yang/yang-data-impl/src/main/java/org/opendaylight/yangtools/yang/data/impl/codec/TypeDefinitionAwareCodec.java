@@ -216,8 +216,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
             }
         } else if (superType instanceof StringTypeDefinition) {
             codec = STRING_DEFAULT_CODEC;
+
         } else if (superType instanceof UnionTypeDefinition) {
-            codec = UNION_DEFAULT_CODEC;
+            // need to create a new union codec as serialization logic depends on the type definition
+            codec = new UnionCodecStringImpl(Optional.of(UnionTypeDefinition.class.cast(superType)));
+
         } else if (superType instanceof UnsignedIntegerTypeDefinition) {
             if (UINT8_QNAME.equals(superType.getQName())) {
                 codec = UINT8_DEFAULT_CODEC;
@@ -545,20 +548,34 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     };
 
-    public static class UnionCodecStringImpl extends TypeDefinitionAwareCodec<String, UnionTypeDefinition> implements
+    public static class UnionCodecStringImpl extends TypeDefinitionAwareCodec<Object, UnionTypeDefinition> implements
             UnionCodec<String> {
 
         protected UnionCodecStringImpl(Optional<UnionTypeDefinition> typeDef) {
-            super(typeDef, String.class);
+            super(typeDef, Object.class);
         }
 
         @Override
-        public String serialize(String data) {
-            return data == null ? "" : data;
+        public String serialize(Object data) {
+            try {
+                for (TypeDefinition type : super.getTypeDefinition().get().getTypes()) {
+                    //for each type of the union, call a get### and if the value is not null, return
+                    String typeName = type.getQName().getLocalName();
+                    String methodName = "get" + (Character.toUpperCase(typeName.charAt(0)) + typeName.substring(1));
+                    Object val = data.getClass().getMethod(methodName).invoke(data, null);
+                    if (val != null) {
+                        return val.toString();
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+                return data.toString();
+            }
+            return "";
         }
 
         @Override
-        public String deserialize(String stringRepresentation) {
+        public Object deserialize(String stringRepresentation) {
             return stringRepresentation;
         }
     };
