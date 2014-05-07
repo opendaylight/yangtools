@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import com.google.common.base.Preconditions;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,13 +18,18 @@ import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 
-@SuppressWarnings("unchecked")
+import com.google.common.base.Preconditions;
+
 public class IntermediateMapping {
+    private IntermediateMapping() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
 
     public static Node<? extends Object> toNode(final Map<? extends Object, ? extends Object> map) {
         if ((map instanceof Node<?>)) {
             return ((Node<?>) map);
         }
+        @SuppressWarnings("unchecked")
         final Map<QName, Object> nodeMap = ((Map<QName, Object>) map);
         Preconditions.checkArgument(map.size() == 1);
         final Entry<QName, Object> elem = nodeMap.entrySet().iterator().next();
@@ -58,6 +61,7 @@ public class IntermediateMapping {
         return new SimpleNodeTOImpl<Object>(name, null, object);
     }
 
+    @SuppressWarnings("unchecked")
     public static Node<? extends Object> toNodeImpl(final QName name, final Object objects) {
         if (objects instanceof List) {
             return _toNodeImpl(name, (List<?>) objects);
