@@ -1226,7 +1226,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             }
                             «typeSpec.resolvedName» _value = («typeSpec.resolvedName») $1;
                             «FOR en : enumSchema.values»
-                            if(«typeSpec.resolvedName».«BindingGeneratorUtil.parseToClassName(en.name)».equals(_value)) {
+                            if(«typeSpec.resolvedName».«BindingMapping.getClassName(en.name)».equals(_value)) {
                                 return "«en.name»";
                             }
                             «ENDFOR»
@@ -1249,7 +1249,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             String _value = (String) $1;
                             «FOR en : enumSchema.values»
                                 if("«en.name»".equals(_value)) {
-                                    return «typeSpec.resolvedName».«BindingGeneratorUtil.parseToClassName(en.name)»;
+                                    return «typeSpec.resolvedName».«BindingMapping.getClassName(en.name)»;
                                 }
                             «ENDFOR»
                             return null;

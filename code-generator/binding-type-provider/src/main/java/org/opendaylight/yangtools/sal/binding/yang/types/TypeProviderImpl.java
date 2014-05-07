@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.moduleNamespaceToPackageName;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.packageNameForGeneratedType;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToClassName;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToValidParamName;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
@@ -275,7 +274,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
         final String basePackageName = moduleNamespaceToPackageName(module);
         final String packageName = packageNameForGeneratedType(basePackageName, identity.getPath());
-        final String genTypeName = parseToClassName(identity.getQName().getLocalName());
+        final String genTypeName = BindingMapping.getClassName(identity.getQName());
 
         Type baseType = Types.typeForClass(Class.class);
         Type paramType = Types.wildcardTypeFor(packageName, genTypeName);
@@ -481,7 +480,7 @@ public final class TypeProviderImpl implements TypeProvider {
         Preconditions.checkArgument(enumTypeDef.getQName().getLocalName() != null,
                 "Local Name in EnumTypeDefinition QName cannot be NULL!");
 
-        final String enumerationName = parseToClassName(enumName);
+        final String enumerationName = BindingMapping.getClassName(enumName);
 
         Module module = findParentModule(schemaContext, parentNode);
         final String basePackageName = moduleNamespaceToPackageName(module);
@@ -524,7 +523,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 "Local Name in EnumTypeDefinition QName cannot be NULL!");
         Preconditions.checkArgument(typeBuilder != null, "Generated Type Builder reference cannot be NULL!");
 
-        final String enumerationName = parseToClassName(enumName);
+        final String enumerationName = BindingMapping.getClassName(enumName);
 
         final EnumBuilder enumBuilder = typeBuilder.addEnumeration(enumerationName);
         enumBuilder.updateEnumPairsFromEnumTypeDef(enumTypeDef);
@@ -590,7 +589,6 @@ public final class TypeProviderImpl implements TypeProvider {
             if (module == null) {
                 continue;
             }
-            final String moduleName = module.getName();
             final String basePackageName = moduleNamespaceToPackageName(module);
 
             final DataNodeIterator it = new DataNodeIterator(module);
@@ -784,7 +782,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
         final GeneratedTOBuilder unionGenTOBuilder;
         if (typeDefName != null && !typeDefName.isEmpty()) {
-            final String typeName = parseToClassName(typeDefName);
+            final String typeName = BindingMapping.getClassName(typeDefName);
             unionGenTOBuilder = new GeneratedTOBuilderImpl(basePackageName, typeName);
         } else {
             unionGenTOBuilder = typedefToTransferObject(basePackageName, typedef);
@@ -984,7 +982,7 @@ public final class TypeProviderImpl implements TypeProvider {
         final String typeDefTOName = typedef.getQName().getLocalName();
 
         if ((packageName != null) && (typedef != null) && (typeDefTOName != null)) {
-            final String genTOName = parseToClassName(typeDefTOName);
+            final String genTOName = BindingMapping.getClassName(typeDefTOName);
             final GeneratedTOBuilder newType = new GeneratedTOBuilderImpl(packageName, genTOName);
             newType.addComment(typedef.getDescription());
             return newType;
@@ -1021,7 +1019,7 @@ public final class TypeProviderImpl implements TypeProvider {
         if (typeDef instanceof BitsTypeDefinition) {
             BitsTypeDefinition bitsTypeDefinition = (BitsTypeDefinition) typeDef;
 
-            final String typeName = parseToClassName(typeDefName);
+            final String typeName = BindingMapping.getClassName(typeDefName);
             final GeneratedTOBuilder genTOBuilder = new GeneratedTOBuilderImpl(basePackageName, typeName);
 
             final List<Bit> bitList = bitsTypeDefinition.getBits();
@@ -1132,7 +1130,7 @@ public final class TypeProviderImpl implements TypeProvider {
         Preconditions.checkArgument(basePackageName != null, "String with base package name cannot be NULL!");
 
         final String typedefName = typedef.getQName().getLocalName();
-        final String classTypedefName = parseToClassName(typedefName);
+        final String classTypedefName = BindingMapping.getClassName(typedefName);
         final String innerTypeDef = innerExtendedType.getQName().getLocalName();
         final GeneratedTOBuilder genTOBuilder = new GeneratedTOBuilderImpl(basePackageName, classTypedefName);
         genTOBuilder.setTypedef(true);
