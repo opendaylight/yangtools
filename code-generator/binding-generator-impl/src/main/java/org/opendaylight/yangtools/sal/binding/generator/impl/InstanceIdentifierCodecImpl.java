@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,16 +14,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.sal.binding.generator.impl.CodecTypeUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
@@ -80,7 +76,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
             }
             baArgs.add(baArg);
         }
-        InstanceIdentifier ret = InstanceIdentifier.create(baArgs);
+        InstanceIdentifier<?> ret = InstanceIdentifier.create(baArgs);
         LOG.debug("DOM Instance Identifier {} deserialized to {}", input, ret);
         return ret;
     }
@@ -125,10 +121,10 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     @Override
     public org.opendaylight.yangtools.yang.data.api.InstanceIdentifier serialize(InstanceIdentifier<?> input) {
         Class<?> previousAugmentation = null;
-        List<InstanceIdentifier.PathArgument> pathArgs = input.getPath();
+        Iterable<InstanceIdentifier.PathArgument> pathArgs = input.getPathArguments();
         QName previousQName = null;
-        List<PathArgument> components = new ArrayList<>(pathArgs.size());
-        List<QName> qnamePath = new ArrayList<>(pathArgs.size());
+        List<PathArgument> components = new ArrayList<>();
+        List<QName> qnamePath = new ArrayList<>();
         for (InstanceIdentifier.PathArgument baArg : pathArgs) {
 
             if (!Augmentation.class.isAssignableFrom(baArg.getType())) {

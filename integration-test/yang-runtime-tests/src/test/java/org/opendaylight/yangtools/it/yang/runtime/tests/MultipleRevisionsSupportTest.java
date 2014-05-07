@@ -128,9 +128,7 @@ public class MultipleRevisionsSupportTest {
     }
 
     private void verifyBindingDifference(SchemaContext schemaContext, YangModuleInfo oldModule, YangModuleInfo newModule) {
-
-        Map<Module, ModuleContext> generatedTypes = generatedTypesVerified(schemaContext, oldModule, newModule);
-
+        generatedTypesVerified(schemaContext, oldModule, newModule);
     }
 
     private Map<Module, ModuleContext> generatedTypesVerified(SchemaContext schemaContext, YangModuleInfo oldModule,
