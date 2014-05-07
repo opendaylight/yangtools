@@ -7,55 +7,53 @@
  */
 package org.opendaylight.yangtools.yang.unified.doc.generator
 
-import org.opendaylight.yangtools.yang.model.api.SchemaContext
-import java.io.File
-import java.util.Set
-import org.opendaylight.yangtools.yang.model.api.Module
-import java.io.IOException
-import java.util.HashSet
 import java.io.BufferedWriter
-import java.io.OutputStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition
-import org.opendaylight.yangtools.yang.model.api.SchemaNode
-import org.opendaylight.yangtools.yang.model.util.ExtendedType
-import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition
+import java.io.File
+import java.io.IOException
+import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
-import java.util.Collection
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint
-import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition
-import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
-import java.util.List
-import org.opendaylight.yangtools.yang.common.QName
-import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition
 import java.util.ArrayList
+import java.util.Collection
+import java.util.HashMap
+import java.util.HashSet
+import java.util.LinkedHashMap
+import java.util.List
 import java.util.Map
-import org.opendaylight.yangtools.yang.model.api.SchemaPath
-
-import org.sonatype.plexus.build.incremental.BuildContext;
-import org.sonatype.plexus.build.incremental.DefaultBuildContext;
-
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
+import java.util.Set
+import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates
-import java.util.LinkedHashMap
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNodeimport java.util.HashMap
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode
-import org.opendaylight.yangtools.yang.model.api.UsesNode
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
+import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
+import org.opendaylight.yangtools.yang.model.api.Module
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
+import org.opendaylight.yangtools.yang.model.api.SchemaContext
+import org.opendaylight.yangtools.yang.model.api.SchemaNode
+import org.opendaylight.yangtools.yang.model.api.SchemaPath
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition
+import org.opendaylight.yangtools.yang.model.api.UsesNode
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition
+import org.opendaylight.yangtools.yang.model.util.ExtendedType
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.sonatype.plexus.build.incremental.BuildContext
+import org.sonatype.plexus.build.incremental.DefaultBuildContext
 
 class GeneratorImpl {
 
@@ -979,21 +977,18 @@ class GeneratorImpl {
 
 
     private def dispatch InstanceIdentifier append(InstanceIdentifier identifier, ContainerSchemaNode node) {
-        val pathArguments = new ArrayList(identifier.path)
-        pathArguments.add(new NodeIdentifier(node.QName));
-        return new InstanceIdentifier(pathArguments);
+        return identifier.node(node.QName);
     }
 
     private def dispatch InstanceIdentifier append(InstanceIdentifier identifier, ListSchemaNode node) {
-        val pathArguments = new ArrayList(identifier.path)
         val keyValues = new LinkedHashMap<QName,Object>();
         if(node.keyDefinition !== null) {
             for(definition : node.keyDefinition) {
                 keyValues.put(definition,new Object);
             }
         }
-        pathArguments.add(new NodeIdentifierWithPredicates(node.QName,keyValues));
-        return new InstanceIdentifier(pathArguments);
+
+        return identifier.node(new NodeIdentifierWithPredicates(node.QName, keyValues));
     }
 
 
@@ -1257,7 +1252,7 @@ class GeneratorImpl {
             var i = 0;
             for (pathElement : path) {
                 actual.add(pathElement)
-                val DataSchemaNode nodeByPath = childNodes.get(new SchemaPath(actual, absolute)) 
+                val DataSchemaNode nodeByPath = childNodes.get(new SchemaPath(actual, absolute))
                 if (!(nodeByPath instanceof ChoiceNode) && !(nodeByPath instanceof ChoiceCaseNode)) {
                     result.append(pathElement.localName)
                     if (i != path.size - 1) {
