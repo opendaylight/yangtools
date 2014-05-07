@@ -7,40 +7,49 @@
  */
 package org.opendaylight.yangtools.restconf.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
+
 import org.opendaylight.yangtools.restconf.client.api.dto.RestEventStreamInfo;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestRpcService;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.yang.binding.RpcService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import com.google.common.base.Preconditions;
 
 public class XmlTools {
-
-    private static final Logger logger = LoggerFactory.getLogger(XmlTools.class.toString());
-    static final String JAXP_SCHEMA_LOCATION =
+    private static final String JAXP_SCHEMA_LOCATION =
             "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
-    public static Object unmarshallXml(Class<?> clazz,InputStream xmlStream,String namespace) throws Exception{
-        if (null == xmlStream){
-            throw new Exception("XML input stream can't be null");
-        }
+    private XmlTools() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
+
+    public static Object unmarshallXml(final Class<?> clazz,final InputStream xmlStream,final String namespace) throws JAXBException {
+        Preconditions.checkNotNull(xmlStream);
+
         JAXBContext jc = JAXBContext.newInstance(clazz);
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -49,7 +58,7 @@ public class XmlTools {
         return obj;
     }
 
-    public static Document fromXml(InputStream is) throws Exception {
+    public static Document fromXml(final InputStream is) throws IOException, ParserConfigurationException, SAXException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -58,13 +67,14 @@ public class XmlTools {
         doc.getDocumentElement().normalize();
         return doc;
     }
-    public static Set<RpcService> fromInputStream(InputStream is) throws Exception {
+
+    public static Set<RpcService> fromInputStream(final InputStream is) throws IOException, ParserConfigurationException, SAXException {
         Document doc = fromXml(is);
 
         return fromNodeList(doc.getElementsByTagName("play"));
-
     }
-    public static Set<RpcService> fromNodeList(NodeList nodeList) throws Exception {
+
+    public static Set<RpcService> fromNodeList(final NodeList nodeList) {
         Set<RpcService> rpcServices = new HashSet<RpcService>();
         for (int i =0; i < nodeList.getLength(); i++){
             org.w3c.dom.Node nNode = nodeList.item(i);
@@ -73,15 +83,16 @@ public class XmlTools {
             }
         }
         return rpcServices;
-
     }
-    public static RestRpcService fromNode(org.w3c.dom.Node node){
+
+    public static RestRpcService fromNode(final org.w3c.dom.Node node) {
         Element eElement = (Element) node;
         RestRpcService rpcService = new RestRpcService(eElement.getAttribute("xmlns"));
 
         return rpcService;
     }
-    private static EventStreamInfo restEventStreamInfoFromNode(org.w3c.dom.Node node) throws Exception {
+
+    private static EventStreamInfo restEventStreamInfoFromNode(final org.w3c.dom.Node node) throws DOMException, DatatypeConfigurationException {
         Element eElement = (Element) node;
         RestEventStreamInfo eventStreamInfo = new RestEventStreamInfo();
         eventStreamInfo.setDescription(eElement.getElementsByTagName("description").item(0).getTextContent());
@@ -102,11 +113,12 @@ public class XmlTools {
         return eventStreamInfo;
     }
 
-    public static Set<EventStreamInfo> evenStreamsFromInputStream(InputStream is) throws Exception {
+    public static Set<EventStreamInfo> evenStreamsFromInputStream(final InputStream is) throws DOMException, DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException {
         Document doc = fromXml(is);
         return streamInfoFromNodeList(doc.getElementsByTagName("stream"));
     }
-    private static Set<EventStreamInfo> streamInfoFromNodeList(NodeList nodeList) throws Exception {
+
+    private static Set<EventStreamInfo> streamInfoFromNodeList(final NodeList nodeList) throws DOMException, DatatypeConfigurationException {
         Set<EventStreamInfo> rpcServices = new HashSet<EventStreamInfo>();
         for (int i =0; i < nodeList.getLength(); i++){
             org.w3c.dom.Node nNode = nodeList.item(i);
@@ -117,11 +129,12 @@ public class XmlTools {
         return rpcServices;
     }
 
-    public static List<RestModule> getModulesFromInputStream(InputStream is) throws Exception {
+    public static List<RestModule> getModulesFromInputStream(final InputStream is) throws IOException, ParserConfigurationException, SAXException {
         Document doc = fromXml(is);
         return restModulesFromNodeList(doc.getElementsByTagName("module"));
     }
-    private static List<RestModule> restModulesFromNodeList(NodeList nodeList) throws Exception {
+
+    private static List<RestModule> restModulesFromNodeList(final NodeList nodeList) {
         List<RestModule> modules = new ArrayList<RestModule>();
         for (int i =0; i < nodeList.getLength(); i++){
             Node nNode = nodeList.item(i);
@@ -131,7 +144,8 @@ public class XmlTools {
         }
         return modules;
     }
-    private static RestModule restModulefromNode(Node node){
+
+    private static RestModule restModulefromNode(final Node node) {
         Element eElement = (Element) node;
         RestModule restModule = new RestModule();
         try {
@@ -143,5 +157,4 @@ public class XmlTools {
         }
         return restModule;
     }
-
 }
