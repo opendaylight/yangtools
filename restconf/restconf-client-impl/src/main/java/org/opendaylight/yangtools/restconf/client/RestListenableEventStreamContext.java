@@ -56,12 +56,13 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
     private final RestconfClientImpl restconfClient;
     private final EventStreamInfo streamInfo;
 
-    public RestListenableEventStreamContext(EventStreamInfo streamInfo,RestconfClientImpl restconfClient){
+    public RestListenableEventStreamContext(final EventStreamInfo streamInfo,final RestconfClientImpl restconfClient){
         this.restconfClient = restconfClient;
         this.streamInfo = streamInfo;
     }
+
     @Override
-    public <L extends NotificationListener> ListenerRegistration<L> registerNotificationListener(L listener) {
+    public <T extends NotificationListener> ListenerRegistration<T> registerNotificationListener(final T listener) {
 
         for (Method m:listener.getClass().getDeclaredMethods()){
             if (BindingReflections.isNotificationCallback(m)){
@@ -69,7 +70,7 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
                 break;
             }
         }
-        return new AbstractListenerRegistration<L>(listener) {
+        return new AbstractListenerRegistration<T>(listener) {
             @Override
             protected void removeRegistration() {
                 stopListening();
@@ -104,7 +105,7 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
 
         ListenableFuture<RpcResult<Void>> future = pool.submit(new Callable<RpcResult<Void>>() {
             @Override
-            public RpcResult<Void> call() throws Exception {
+            public RpcResult<Void> call() {
                 return rpcResult;
             }
         });
@@ -113,7 +114,7 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
     }
 
     @Override
-    public ListenableFuture<RpcResult<Void>> startListeningWithReplay(Optional<Date> startTime, Optional<Date> endTime) {
+    public ListenableFuture<RpcResult<Void>> startListeningWithReplay(final Optional<Date> startTime, final Optional<Date> endTime) {
         //TODO RESTCONF doesn't provide this functionality
         return null;
     }
@@ -124,7 +125,7 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
     }
 
     @Override
-    public ListenableFuture<Optional<EventStreamReplay>> getReplay(Optional<Date> startTime, Optional<Date> endTime) {
+    public ListenableFuture<Optional<EventStreamReplay>> getReplay(final Optional<Date> startTime, final Optional<Date> endTime) {
         //TODO RESTCONF doesn't provide this functionality
         return null;
     }
@@ -134,28 +135,26 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
         this.stopListening();
     }
 
-    private ClientResponse extractWebSocketUriFromRpc(String methodName) throws ExecutionException, InterruptedException, UnsupportedEncodingException {
+    private ClientResponse extractWebSocketUriFromRpc(final String methodName) throws ExecutionException, InterruptedException, UnsupportedEncodingException {
         ListenableFuture<ClientResponse> clientFuture = restconfClient.get(ResourceUri.STREAM.getPath()+"/"+encodeUri(this.streamInfo.getIdentifier()),MediaType.APPLICATION_XML,new Function<ClientResponse, ClientResponse>(){
 
             @Override
-            public ClientResponse apply(ClientResponse clientResponse) {
+            public ClientResponse apply(final ClientResponse clientResponse) {
                 return clientResponse;
             }
         });
-        while (!clientFuture.isDone()){
-            //noop
-        }
+
         return clientFuture.get();
     }
-    private void createWebsocketClient(URI websocketServerUri){
+    private void createWebsocketClient(final URI websocketServerUri){
         this.wsClient = new WebSocketIClient(websocketServerUri,this);
     }
-    private String encodeUri(String encodedPart) throws UnsupportedEncodingException {
+    private String encodeUri(final String encodedPart) throws UnsupportedEncodingException {
         return URI.create(URLEncoder.encode(encodedPart, Charsets.US_ASCII.name()).toString()).toASCIIString();
     }
 
     @Override
-    public void onMessageReceived(Object message) {
+    public void onMessageReceived(final Object message) {
         if (null == this.listenerCallbackMethod){
             throw new IllegalStateException("No listener method to invoke.");
         }
