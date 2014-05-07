@@ -7,10 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
@@ -18,7 +27,10 @@ import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class GroupingSort {
+public final class GroupingSort {
+    private GroupingSort() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
 
     /**
      * Sorts set <code>groupingDefinitions</code> according to the mutual
@@ -42,7 +54,7 @@ public class GroupingSort {
      * @param groupingDefinitions
      *            set of grouping definition which should be sorted according to
      *            mutual dependencies
-     * @return list of grouping definitiond which are sorted by mutual
+     * @return list of grouping definitions which are sorted by mutual
      *         dependencies
      * @throws IllegalArgumentException
      *             if <code>groupingDefinitions</code>
@@ -120,7 +132,7 @@ public class GroupingSort {
      *            data node container which can contain some uses of grouping
      * @return set of uses nodes which were find in <code>container</code>.
      */
-    public static Set<UsesNodeBuilder> getAllUsesNodes(DataNodeContainerBuilder container) {
+    public static Set<UsesNodeBuilder> getAllUsesNodes(final DataNodeContainerBuilder container) {
         Set<UsesNodeBuilder> ret = new HashSet<>();
         Set<UsesNodeBuilder> usesNodes = container.getUsesNodeBuilders();
         ret.addAll(usesNodes);
