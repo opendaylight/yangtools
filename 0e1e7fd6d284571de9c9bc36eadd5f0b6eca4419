@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ccf9e9c9",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingMapping.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-07T12:42:21Z",
+      "side": 1,
+      "message": "char firstChar \u003d rawString.charAt(0);\nif (firstChar \u003e\u003d \u00270\u0027 \u0026\u0026 firstChar \u003c\u003d \u00270\u0027) {",
+      "revId": "0e1e7fd6d284571de9c9bc36eadd5f0b6eca4419",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
