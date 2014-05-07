@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -149,9 +150,9 @@ public class BindingGeneratorUtilTest {
     public void testParsingMethods() {
         // parseToClassName method testing
         assertEquals("Class name has incorrect format", "SomeTestingClassName",
-                BindingGeneratorUtil.parseToClassName("  some-testing_class name   "));
+                BindingMapping.getClassName("  some-testing_class name   "));
         assertEquals("Class name has incorrect format", "_0SomeTestingClassName",
-                BindingGeneratorUtil.parseToClassName("  0 some-testing_class name   "));
+                BindingMapping.getClassName("  0 some-testing_class name   "));
 
         // parseToValidParamName
         assertEquals("Parameter name has incorrect format", "someTestingParameterName",

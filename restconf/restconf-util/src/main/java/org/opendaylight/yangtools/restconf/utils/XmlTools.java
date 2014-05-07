@@ -24,8 +24,6 @@ import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestRpcService;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.yang.binding.RpcService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,9 +31,7 @@ import org.w3c.dom.NodeList;
 
 public class XmlTools {
 
-    private static final Logger logger = LoggerFactory.getLogger(XmlTools.class.toString());
-    static final String JAXP_SCHEMA_LOCATION =
-            "http://java.sun.com/xml/jaxp/properties/schemaSource";
+    static final String JAXP_SCHEMA_LOCATION = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
     public static Object unmarshallXml(Class<?> clazz,InputStream xmlStream,String namespace) throws Exception{
         if (null == xmlStream){

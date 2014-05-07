@@ -81,9 +81,6 @@ public class YangSchemaUtils {
             return null;
         }
         checkArgument(arguments.size() == 1);
-        for (QName qName : arguments) {
-            //previous.getDataChildByName(qName);
-        }
         for(TypeDefinition<?> typedef : previous.getTypeDefinitions()) {
             if(typedef.getQName().equals(typeQName)) {
                 return typedef;
