@@ -3,7 +3,6 @@ module uses-grouping {
     namespace "urn:opendaylight:params:xml:ns:yang:uses-grouping";
     prefix "ug";
 
-    import ietf-inet-types { prefix inet; revision-date 2010-09-24; }
     import grouping-definitions { prefix gd; revision-date 2013-09-04; }
 
     organization "opendaylight";
@@ -27,13 +26,13 @@ module uses-grouping {
         choice address-family {
             case ipv4 {
                 leaf source-ipv4-address {
-                    type inet:ipv4-address;
+                    type string;
                     mandatory true;
                 }
             }
             case ipv6 {
                 leaf source-ipv6-address {
-                    type inet:ipv6-address;
+                    type string;
                     mandatory true;
                 }
             }
