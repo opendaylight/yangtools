@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToClassName;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +21,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
@@ -62,7 +61,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -76,7 +75,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -110,7 +109,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -133,7 +132,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
             int listIndex = 0;
             for (final EnumPair enumPair : enums) {
                 if (enumPair != null) {
-                    final String enumPairName = parseToClassName(enumPair.getName());
+                    final String enumPairName = BindingMapping.getClassName(enumPair.getName());
                     Integer enumPairValue = enumPair.getValue();
 
                     if (enumPairValue == null) {
@@ -170,7 +169,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#hashCode()
          */
         @Override
@@ -184,7 +183,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
@@ -218,7 +217,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#toString()
          */
         @Override
@@ -314,7 +313,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#hashCode()
          */
         @Override
@@ -330,7 +329,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
@@ -371,7 +370,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#toString()
          */
         @Override
@@ -430,7 +429,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
             // TODO Auto-generated method stub
             return Collections.emptyList();
         }
-        
+
         @Override
         public List<GeneratedProperty> getProperties() {
             return Collections.emptyList();

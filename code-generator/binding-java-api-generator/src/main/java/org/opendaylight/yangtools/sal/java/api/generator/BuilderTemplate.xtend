@@ -256,7 +256,7 @@ class BuilderTemplate extends BaseTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    def private generateConstructorFromIfc(Type impl) '''
+    def private Object generateConstructorFromIfc(Type impl) '''
         «IF (impl instanceof GeneratedType)»
             «val implType = impl as GeneratedType»
 
@@ -271,7 +271,7 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def private printConstructorPropertySetter(Type implementedIfc) '''
+    def private Object printConstructorPropertySetter(Type implementedIfc) '''
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
             «val ifc = implementedIfc as GeneratedType»
             «FOR getter : ifc.methodDefinitions»

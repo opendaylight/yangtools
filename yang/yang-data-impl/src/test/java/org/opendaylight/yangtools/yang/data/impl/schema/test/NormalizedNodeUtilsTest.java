@@ -49,7 +49,6 @@ public class NormalizedNodeUtilsTest {
             "root");
     private static final QName LIST_A_QNAME = QName.create(ROOT_QNAME, "list-a");
     private static final QName LIST_B_QNAME = QName.create(ROOT_QNAME, "list-b");
-    private static final QName CHOICE_A_QNAME = QName.create(ROOT_QNAME, "choice-a");
     private static final QName LEAF_A_QNAME = QName.create(ROOT_QNAME, "leaf-a");
     private static final QName LEAF_B_QNAME = QName.create(ROOT_QNAME, "leaf-b");
     private static final String FOO = "foo";

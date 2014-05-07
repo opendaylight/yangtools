@@ -77,7 +77,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
             }
             baArgs.add(baArg);
         }
-        InstanceIdentifier ret = InstanceIdentifier.create(baArgs);
+        InstanceIdentifier<?> ret = InstanceIdentifier.create(baArgs);
         LOG.debug("DOM Instance Identifier {} deserialized to {}", input, ret);
         return ret;
     }
@@ -122,10 +122,10 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     @Override
     public org.opendaylight.yangtools.yang.data.api.InstanceIdentifier serialize(final InstanceIdentifier<?> input) {
         Class<?> previousAugmentation = null;
-        List<InstanceIdentifier.PathArgument> pathArgs = input.getPath();
+        Iterable<InstanceIdentifier.PathArgument> pathArgs = input.getPathArguments();
         QName previousQName = null;
-        List<PathArgument> components = new ArrayList<>(pathArgs.size());
-        List<QName> qnamePath = new ArrayList<>(pathArgs.size());
+        List<PathArgument> components = new ArrayList<>();
+        List<QName> qnamePath = new ArrayList<>();
         for (InstanceIdentifier.PathArgument baArg : pathArgs) {
 
             if (!Augmentation.class.isAssignableFrom(baArg.getType())) {
