@@ -21,10 +21,10 @@ public interface NormalizedNodeContainer<I extends PathArgument, K extends PathA
         extends NormalizedNode<I, Iterable<V>> {
 
     @Override
-    public I getIdentifier();
+    I getIdentifier();
 
     @Override
-    public Iterable<V> getValue();
+    Iterable<V> getValue();
 
     /**
      *

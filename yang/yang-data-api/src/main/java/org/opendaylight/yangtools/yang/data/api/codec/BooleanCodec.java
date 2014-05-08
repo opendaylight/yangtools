@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
-
 public interface BooleanCodec<T> extends Codec<T,Boolean> {
+    @Override
+    T serialize(Boolean data);
 
-    public T serialize(Boolean data);
-
-    public Boolean deserialize(T data);
+    @Override
+    Boolean deserialize(T data);
 }

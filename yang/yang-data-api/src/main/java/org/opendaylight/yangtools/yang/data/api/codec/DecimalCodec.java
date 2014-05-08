@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
-
 public interface DecimalCodec<T>  extends Codec<T,BigDecimal> {
+    @Override
+    T serialize(BigDecimal data);
 
-    public T serialize(BigDecimal data);
-
-    public BigDecimal deserialize(T data);
+    @Override
+    BigDecimal deserialize(T data);
 }

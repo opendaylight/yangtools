@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
-
 public interface Int32Codec<T> extends Codec<T,Integer> {
+    @Override
+    T serialize(Integer data);
 
-    public T serialize(Integer data);
-
-    public Integer deserialize(T data);
+    @Override
+    Integer deserialize(T data);
 }

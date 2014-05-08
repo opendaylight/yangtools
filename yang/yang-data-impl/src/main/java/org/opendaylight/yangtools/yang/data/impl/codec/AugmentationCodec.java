@@ -14,15 +14,13 @@ import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 
 public interface AugmentationCodec<A extends Augmentation<?>> extends DomCodec<A> {
-
+    @Override
+    CompositeNode serialize(ValueWithQName<A> input);
 
     @Override
-    public CompositeNode serialize(ValueWithQName<A> input);
+    ValueWithQName<A> deserialize(Node<?> input);
 
-    @Override
-    public ValueWithQName<A> deserialize(Node<?> input);
-
-    public QName getAugmentationQName();
+    QName getAugmentationQName();
 
     /**
      * Check if this codec was created for augmentation with given target node
@@ -34,5 +32,4 @@ public interface AugmentationCodec<A extends Augmentation<?>> extends DomCodec<A
      *         with given path, false otherwise
      */
     boolean isAcceptable(InstanceIdentifier<?> path);
-
 }

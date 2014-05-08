@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 
 import com.google.common.base.Optional;
 
-
 /**
  *
  * Node representing Augmentation.
@@ -27,12 +26,11 @@ public interface AugmentationNode extends //
     DataContainerChild<InstanceIdentifier.AugmentationIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
 
     @Override
-    public Iterable<DataContainerChild<? extends PathArgument, ?>> getValue();
-
-
-    @Override
-    public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
+    Iterable<DataContainerChild<? extends PathArgument, ?>> getValue();
 
     @Override
-    public AugmentationIdentifier getIdentifier();
+    Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
+
+    @Override
+    AugmentationIdentifier getIdentifier();
 }
