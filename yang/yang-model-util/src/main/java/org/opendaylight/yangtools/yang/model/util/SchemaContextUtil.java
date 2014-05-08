@@ -297,6 +297,14 @@ public class SchemaContextUtil {
             return parent;
         QName current = path.get(0);
         ChoiceCaseNode node = parent.getCaseNodeByName(current);
+        if (node == null) {
+            // When adding a new case to a choice (through augmentation),
+            // the namespaces of the parent and child may mismatch.
+            ChoiceCaseNode potential = parent.getCaseNodeByName(current.getLocalName());
+            if (potential.isAugmenting()) {
+               node = potential;
+            }
+        }
         if (node != null)
             return findNodeInCase(node, nextLevel(path));
         return null;

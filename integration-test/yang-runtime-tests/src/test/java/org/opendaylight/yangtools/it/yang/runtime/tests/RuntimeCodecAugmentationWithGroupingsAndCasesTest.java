@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.extension.yang.ext.rev130709.RpcContextRef;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.test.regression.augmentation.base.rev140424.Choices;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.test.regression.augmentation.base.rev140424.ChoicesBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.test.regression.augmentation.base.rev140424.grouping.GroupingDataBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.test.regression.augmentation.ext.rev140424.choices.augmentable.choice.ext.with.grouping.augmentations.ExtWithGroupingAugmentations;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.test.regression.augmentation.ext.rev140424.choices.augmentable.choice.ext.with.grouping.augmentations.ExtWithGroupingAugmentationsBuilder;
@@ -31,6 +32,8 @@ public class RuntimeCodecAugmentationWithGroupingsAndCasesTest {
 
     private static final InstanceIdentifier<ExtWithGroupingAugmentations> GROUPING_AUGMENTATIONS_PATH = InstanceIdentifier
             .builder(Choices.class).child(ExtWithGroupingAugmentations.class).build();
+    private static final InstanceIdentifier<Choices> CHOICES_PATH = InstanceIdentifier
+            .builder(Choices.class).build();
 
     private ModuleInfoBackedContext moduleInfoContext;
 
@@ -75,5 +78,32 @@ public class RuntimeCodecAugmentationWithGroupingsAndCasesTest {
         Entry<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier, CompositeNode> result = mappingService
                 .toDataDom(new SimpleEntry(GROUPING_AUGMENTATIONS_PATH, caseData));
         assertNotNull(result);
+
+        // Deserialization successful for the INNER object
+        ExtWithGroupingAugmentations deserialized = (ExtWithGroupingAugmentations)mappingService.dataObjectFromDataDom(GROUPING_AUGMENTATIONS_PATH, result.getValue());
+        assertNotNull(deserialized.getGroupingData());
     }
+
+  @Test
+  public void testSerializationOuter() {
+    Choices choiceData = new ChoicesBuilder() //
+      .setAugmentableChoice(new org.opendaylight.yang.gen.v1.urn.opendaylight.yang.test.regression.augmentation.ext.rev140424.choices.augmentable.choice.ExtWithGroupingAugmentationsBuilder()
+        .setExtWithGroupingAugmentations(new ExtWithGroupingAugmentationsBuilder().setGroupingData(new GroupingDataBuilder() //
+          .addAugmentation(InUsesAugment.class, new InUsesAugmentBuilder() //
+            .setExtAumentation("InUses") //
+            .build()) //
+          .build()) //
+          .build())
+        .build())
+      .build();
+
+    // Serialization successful for the OUTER object
+    Entry<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier, CompositeNode> result = mappingService
+      .toDataDom(new SimpleEntry(CHOICES_PATH, choiceData));
+    assertNotNull(result);
+
+    // Deserialization fails for the OUTER object
+    Choices deserialized = (Choices)mappingService.dataObjectFromDataDom(CHOICES_PATH, result.getValue());
+    assertNotNull(deserialized.getAugmentableChoice());
+  }
 }
