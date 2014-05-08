@@ -22,9 +22,5 @@ public interface MapNode extends //
         NormalizedNodeContainer<NodeIdentifier, NodeIdentifierWithPredicates, MapEntryNode> {
 
     @Override
-    public NodeIdentifier getIdentifier();
-
-
-
-
+    NodeIdentifier getIdentifier();
 }

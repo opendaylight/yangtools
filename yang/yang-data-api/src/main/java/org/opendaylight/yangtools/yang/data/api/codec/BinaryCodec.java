@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
-
 public interface BinaryCodec<T> extends Codec<T, byte[]>{
+    @Override
+    T serialize(byte[] data);
 
-    public T serialize(byte[] data);
-
-    public byte[] deserialize(T data);
+    @Override
+    byte[] deserialize(T data);
 }

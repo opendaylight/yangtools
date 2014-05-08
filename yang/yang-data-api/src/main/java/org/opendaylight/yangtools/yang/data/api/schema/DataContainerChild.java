@@ -28,8 +28,6 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
  * @param <V>
  */
 public interface DataContainerChild<K extends PathArgument,V> extends NormalizedNode<K, V> {
-
     @Override
-    public K getIdentifier();
-
+    K getIdentifier();
 }

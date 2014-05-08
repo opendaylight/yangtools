@@ -26,7 +26,7 @@ public interface NormalizedNode<K extends InstanceIdentifier.PathArgument,V> ext
      *
      */
     @Override
-    public QName getNodeType();
+    QName getNodeType();
 
     /**
      *
@@ -34,7 +34,7 @@ public interface NormalizedNode<K extends InstanceIdentifier.PathArgument,V> ext
      *
      */
     @Override
-    public K getIdentifier();
+    K getIdentifier();
 
     /**
      *
@@ -42,6 +42,5 @@ public interface NormalizedNode<K extends InstanceIdentifier.PathArgument,V> ext
      *
      */
     @Override
-    public V getValue();
-
+    V getValue();
 }

@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.common.QName;
 
-
 public interface CodecRegistry {
 
     InstanceIdentifierCodec getInstanceIdentifierCodec();
@@ -42,5 +41,5 @@ public interface CodecRegistry {
 
     void putPathToClass(List<QName> names, Class<?> cls);
 
-    public abstract QName getQNameForAugmentation(Class<?> cls);
+    QName getQNameForAugmentation(Class<?> cls);
 }
