@@ -35,6 +35,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     protected ImmutableUnkeyedListNodeBuilder(final ImmutableUnkeyedListNode node) {
+        this.nodeIdentifier = node.getIdentifier();
         this.value = new LinkedList<>();
         Iterables.addAll(value, node.getValue());
         this.dirty = true;

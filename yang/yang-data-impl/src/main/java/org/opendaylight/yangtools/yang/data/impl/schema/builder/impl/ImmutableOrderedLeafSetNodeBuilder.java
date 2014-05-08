@@ -39,8 +39,8 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
     }
 
     protected ImmutableOrderedLeafSetNodeBuilder(final ImmutableOrderedLeafSetNode<T> node) {
-        value = node.getChildren();
         nodeIdentifier = node.getIdentifier();
+        value = node.getChildren();
         dirty = true;
     }
 
