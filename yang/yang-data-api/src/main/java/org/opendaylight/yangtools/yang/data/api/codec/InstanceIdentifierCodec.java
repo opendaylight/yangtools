@@ -11,8 +11,9 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 
 public interface InstanceIdentifierCodec<T>  extends Codec<T,InstanceIdentifier> {
+    @Override
+    T serialize(InstanceIdentifier data);
 
-    public T serialize(InstanceIdentifier data);
-
-    public InstanceIdentifier deserialize(T data);
+    @Override
+    InstanceIdentifier deserialize(T data);
 }

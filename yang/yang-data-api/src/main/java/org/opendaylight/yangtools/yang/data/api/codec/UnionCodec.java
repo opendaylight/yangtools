@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 import org.opendaylight.yangtools.concepts.Codec;
 
 public interface UnionCodec<T> extends Codec<T,String> {
+    @Override
+    T serialize(String data);
 
-    public T serialize(String data);
-
-    public String deserialize(T data);
+    @Override
+    String deserialize(T data);
 }

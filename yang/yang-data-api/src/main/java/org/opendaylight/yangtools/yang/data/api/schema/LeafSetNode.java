@@ -18,13 +18,11 @@ public interface LeafSetNode<T> extends
     NormalizedNodeContainer<NodeIdentifier, NodeWithValue,LeafSetEntryNode<T>> {
 
     @Override
-    public NodeIdentifier getIdentifier();
+    NodeIdentifier getIdentifier();
 
     @Override
-    public Iterable<LeafSetEntryNode<T>> getValue();
-
+    Iterable<LeafSetEntryNode<T>> getValue();
 
     @Override
-    public Optional<LeafSetEntryNode<T>> getChild(NodeWithValue child);
-
+    Optional<LeafSetEntryNode<T>> getChild(NodeWithValue child);
 }

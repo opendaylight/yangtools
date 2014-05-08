@@ -13,14 +13,12 @@ import com.google.common.base.Optional;
 
 public interface DataContainerNode<K extends PathArgument> extends //
         NormalizedNodeContainer<K, PathArgument, DataContainerChild<? extends PathArgument, ?>> {
+    @Override
+    K getIdentifier();
 
     @Override
-    public K getIdentifier();
+    Iterable<DataContainerChild<? extends PathArgument, ?>> getValue();
 
     @Override
-    public Iterable<DataContainerChild<? extends PathArgument, ?>> getValue();
-
-    @Override
-    public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
-
+    Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
 }
