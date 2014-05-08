@@ -39,6 +39,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
     }
 
     protected AbstractImmutableDataContainerNodeBuilder(final AbstractImmutableDataContainerNode<I> node) {
+        this.nodeIdentifier = node.getIdentifier();
         this.value = node.getChildren();
         this.dirty = true;
     }
