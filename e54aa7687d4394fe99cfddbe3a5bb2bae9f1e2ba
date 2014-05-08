@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_b2171eed",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/TypeDefinitionAwareCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 571,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-08T15:48:42Z",
+      "side": 1,
+      "message": "Please define and use a logger, e.printStackTrace() should not be used.",
+      "revId": "e54aa7687d4394fe99cfddbe3a5bb2bae9f1e2ba",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
