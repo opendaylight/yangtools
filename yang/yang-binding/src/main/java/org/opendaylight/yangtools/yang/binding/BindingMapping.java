@@ -41,6 +41,10 @@ public final class BindingMapping {
     public static final String RPC_INPUT_SUFFIX = "Input";
     public static final String RPC_OUTPUT_SUFFIX = "Output";
 
+    private BindingMapping() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
+
     public static final String getMethodName(final QName name) {
         checkArgument(name != null, "Name should not be null.");
         return getMethodName(name.getLocalName());
@@ -105,12 +109,15 @@ public final class BindingMapping {
      *         <code>null</code>.
      */
     private static String toFirstUpper(final String s) {
-        if (s == null || s.length() == 0)
+        if (s == null || s.length() == 0) {
             return s;
-        if (Character.isUpperCase(s.charAt(0)))
+        }
+        if (Character.isUpperCase(s.charAt(0))) {
             return s;
-        if (s.length() == 1)
+        }
+        if (s.length() == 1) {
             return s.toUpperCase();
+        }
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
@@ -127,12 +134,15 @@ public final class BindingMapping {
      *         <code>null</code>.
      */
     private static String toFirstLower(final String s) {
-        if (s == null || s.length() == 0)
+        if (s == null || s.length() == 0) {
             return s;
-        if (Character.isLowerCase(s.charAt(0)))
+        }
+        if (Character.isLowerCase(s.charAt(0))) {
             return s;
-        if (s.length() == 1)
+        }
+        if (s.length() == 1) {
             return s.toLowerCase();
+        }
         return s.substring(0, 1).toLowerCase() + s.substring(1);
     }
 }
