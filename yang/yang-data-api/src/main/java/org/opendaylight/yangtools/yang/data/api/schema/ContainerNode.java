@@ -19,9 +19,8 @@ public interface ContainerNode extends //
         DataContainerChild<NodeIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
 
     @Override
-    public NodeIdentifier getIdentifier();
+    NodeIdentifier getIdentifier();
 
     @Override
-    public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
-
+    Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
 }

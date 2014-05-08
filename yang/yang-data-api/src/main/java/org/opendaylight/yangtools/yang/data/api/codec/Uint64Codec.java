@@ -15,14 +15,15 @@ import com.google.common.primitives.UnsignedLong;
 
 /**
  * FIXME: Should be changed to {@link UnsignedLong}
- * 
+ *
  * @author ttkacik
  *
  * @param <T>
  */
 public interface Uint64Codec<T> extends Codec<T,BigInteger> {
+    @Override
+    T serialize(BigInteger data);
 
-    public T serialize(BigInteger data);
-
-    public BigInteger deserialize(T data);
+    @Override
+    BigInteger deserialize(T data);
 }

@@ -15,5 +15,5 @@ public interface MapEntryNode extends
         DataContainerNode<NodeIdentifierWithPredicates> {
 
     @Override
-    public NodeIdentifierWithPredicates getIdentifier();
+    NodeIdentifierWithPredicates getIdentifier();
 }
