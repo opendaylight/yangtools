@@ -278,6 +278,11 @@ public final class ParserUtils {
     private static void fillAugmentTarget(AugmentationSchemaBuilder augment, ChoiceBuilder target) {
         for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
             DataSchemaNodeBuilder childCopy = CopyUtils.copy(builder, target, false);
+            // Augmentations can add a new "case" to an existing "choice"
+            // These child nodes should adopt their new parent's namespace (to stay consistent with codec serialization)
+            if (builder instanceof ChoiceCaseBuilder) {
+                childCopy = CopyUtils.copy(builder, target, true);
+            }
             if (augment.getParent() instanceof UsesNodeBuilder) {
                 setNodeAddedByUses(childCopy);
             }
