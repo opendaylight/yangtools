@@ -396,7 +396,7 @@ public class AugmentTest {
         qnames[2] = argumentsQName;
 
         // case attach
-        qnames[3] = new QName(NS_FOO, revision, "f", "attach");
+        qnames[3] = new QName(NS_BAR, revision, "f", "attach");
         assertEquals(qnames[3], attach.getQName());
         expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, attach.getPath());
@@ -404,7 +404,7 @@ public class AugmentTest {
         assertEquals(1, attachChildren.size());
 
         // case create
-        qnames[3] = new QName(NS_FOO, revision, "f", "create");
+        qnames[3] = new QName(NS_BAR, revision, "f", "create");
         assertEquals(qnames[3], create.getQName());
         expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, create.getPath());
@@ -412,7 +412,7 @@ public class AugmentTest {
         assertEquals(1, createChildren.size());
 
         // case attach
-        qnames[3] = new QName(NS_FOO, revision, "f", "destroy");
+        qnames[3] = new QName(NS_BAR, revision, "f", "destroy");
         assertEquals(qnames[3], destroy.getQName());
         expectedPath = new SchemaPath(Arrays.asList(qnames), true);
         assertEquals(expectedPath, destroy.getPath());
