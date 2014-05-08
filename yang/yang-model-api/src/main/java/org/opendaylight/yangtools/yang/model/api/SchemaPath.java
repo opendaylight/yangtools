@@ -14,14 +14,11 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- * 
+ *
  * Represents unique path to the every node inside the module.
- * 
+ *
  */
 public class SchemaPath {
-    private final int hashBooleanTrue = 1231;
-    private final int hashBooleanFalse = 1237;
-
     /**
      * List of QName instances which represents complete path to the node.
      */
@@ -31,11 +28,11 @@ public class SchemaPath {
      * Boolean value which represents type of schema path (relative or
      * absolute).
      */
-    private final boolean absolute;
+    private final Boolean absolute;
 
     /**
      * Constructs new instance of this class with the concrete path.
-     * 
+     *
      * @param path
      *            list of QName instances which specifies exact path to the
      *            module node
@@ -43,14 +40,14 @@ public class SchemaPath {
      *            boolean value which specifies if the path is absolute or
      *            relative
      */
-    public SchemaPath(final List<QName> path, boolean absolute) {
+    public SchemaPath(final List<QName> path, final boolean absolute) {
         this.path = Collections.unmodifiableList(new ArrayList<QName>(path));
         this.absolute = absolute;
     }
 
     /**
      * Returns the complete path to schema node.
-     * 
+     *
      * @return list of <code>QName</code> instances which represents complete
      *         path to schema node
      */
@@ -60,7 +57,7 @@ public class SchemaPath {
 
     /**
      * Describes whether schema path is|isn't absolute.
-     * 
+     *
      * @return boolean value which is <code>true</code> if schema path is
      *         absolute.
      */
@@ -72,13 +69,13 @@ public class SchemaPath {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (absolute ? hashBooleanTrue : hashBooleanFalse);
+        result = prime * result + absolute.hashCode();
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
