@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -20,7 +18,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -43,16 +43,19 @@ import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRev
  *
  */
 public final class QName implements Immutable, Serializable, Comparable<QName> {
-
     private static final long serialVersionUID = 5398411242927766414L;
-
-    protected static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
     static final String QNAME_REVISION_DELIMITER = "?revision=";
     static final String QNAME_LEFT_PARENTHESIS = "(";
     static final String QNAME_RIGHT_PARENTHESIS = ")";
 
+    private static final Pattern QNAME_PATTERN_FULL = Pattern.compile(
+            "^\\((.+)\\" + QNAME_REVISION_DELIMITER + "(.+)\\)(.+)$");
+    private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(
+           "^\\((.+)\\)(.+)$");
+    private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile(
+            "^(.+)$");
 
     //Nullable
     private final URI namespace;
@@ -77,7 +80,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @param localName
      *            YANG schema identifier
      */
-    public QName(URI namespace, Date revision, String prefix, String localName) {
+    public QName(final URI namespace, final Date revision, final String prefix, final String localName) {
         this.localName = checkLocalName(localName);
         this.namespace = namespace;
         this.revision = revision;
@@ -97,11 +100,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @param localName
      *            YANG schema identifier
      */
-    public QName(URI namespace, String localName) {
+    public QName(final URI namespace, final String localName) {
         this(namespace, null, "", localName);
     }
 
-    private static String checkLocalName(String localName) {
+    private static String checkLocalName(final String localName) {
         if (localName == null) {
             throw new IllegalArgumentException("Parameter 'localName' may not be null.");
         }
@@ -129,11 +132,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @param localName
      *            YANG schema identifier
      */
-    public QName(URI namespace, Date revision, String localName) {
+    public QName(final URI namespace, final Date revision, final String localName) {
         this(namespace, revision, null, localName);
     }
 
-    public QName(QName base, String localName) {
+    public QName(final QName base, final String localName) {
         this(base.getNamespace(), base.getRevision(), base.getPrefix(), localName);
     }
 
@@ -142,7 +145,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * This implementation is broken.
      */
     @Deprecated
-    public QName(String input) throws ParseException {
+    public QName(final String input) throws ParseException {
         Date revision = null;
         String nsAndRev = input.substring(input.indexOf("(") + 1, input.indexOf(")"));
         if (nsAndRev.contains("?")) {
@@ -163,15 +166,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         }
     }
 
-
-    private static Pattern QNAME_PATTERN_FULL = Pattern.compile(
-            "^\\((.+)\\" + QNAME_REVISION_DELIMITER + "(.+)\\)(.+)$");
-    private static Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(
-           "^\\((.+)\\)(.+)$" );
-    private static Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile(
-            "^(.+)$" );
-
-    public static QName create(String input) {
+    public static QName create(final String input) {
         Matcher matcher = QNAME_PATTERN_FULL.matcher(input);
         if (matcher.matches()) {
             String namespace = matcher.group(1);
@@ -244,7 +239,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -280,16 +275,16 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
 
-    public static QName create(QName base, String localName){
+    public static QName create(final QName base, final String localName){
         return new QName(base, localName);
     }
 
-    public static QName create(URI namespace, Date revision, String localName){
+    public static QName create(final URI namespace, final Date revision, final String localName){
         return new QName(namespace, revision, localName);
     }
 
 
-    public static QName create(String namespace, String revision, String localName) throws IllegalArgumentException{
+    public static QName create(final String namespace, final String revision, final String localName) throws IllegalArgumentException{
         try {
             URI namespaceUri = new URI(namespace);
             Date revisionDate = parseRevision(revision);
@@ -354,7 +349,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return QName.create(namespace, null, localName);
     }
 
-    public static Date parseRevision(String formatedDate) {
+    public static Date parseRevision(final String formatedDate) {
         try {
             return getRevisionFormat().parse(formatedDate);
         } catch (ParseException| RuntimeException e) {
@@ -362,19 +357,19 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         }
     }
 
-    public static String formattedRevision(Date revision) {
+    public static String formattedRevision(final Date revision) {
         if(revision == null) {
             return null;
         }
         return getRevisionFormat().format(revision);
     }
 
-    public boolean isEqualWithoutRevision(QName other) {
+    public boolean isEqualWithoutRevision(final QName other) {
         return localName.equals(other.getLocalName()) && Objects.equals(namespace, other.getNamespace());
     }
 
     @Override
-    public int compareTo(QName other) {
+    public int compareTo(final QName other) {
         // compare mandatory localName parameter
         int result = localName.compareTo(other.localName);
         if (result != 0) {
