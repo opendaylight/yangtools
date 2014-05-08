@@ -86,8 +86,8 @@ public class LazyGeneratedCodecRegistry implements //
         SchemaContextListener, //
         GeneratorListener {
 
-    private final static Logger LOG = LoggerFactory.getLogger(LazyGeneratedCodecRegistry.class);
-    private final static LateMixinCodec NOT_READY_CODEC = new LateMixinCodec();
+    private static final Logger LOG = LoggerFactory.getLogger(LazyGeneratedCodecRegistry.class);
+    private static final LateMixinCodec NOT_READY_CODEC = new LateMixinCodec();
 
     private final InstanceIdentifierCodec instanceIdentifierCodec = new InstanceIdentifierCodecImpl(this);
     private final IdentityCompositeCodec identityRefCodec = new IdentityCompositeCodec();
@@ -167,7 +167,7 @@ public class LazyGeneratedCodecRegistry implements //
         AugmentationCodecWrapper potentialCodec = augmentationCodecs.get(object);
         if (potentialCodec != null) {
             codec = potentialCodec;
-        } else
+        } else {
             try {
                 lock.waitForSchema(object);
                 Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentRawCodec = generator
@@ -183,6 +183,7 @@ public class LazyGeneratedCodecRegistry implements //
                         "Run-time consistency issue: constructor {} is not available. This indicates either a code generation bug or a misconfiguration of JVM.",
                         object.getSimpleName(), e);
             }
+        }
         Class<? extends Augmentable<?>> objectSupertype = getAugmentableArgumentFrom(object);
         if (objectSupertype != null) {
             getAugmentableCodec(objectSupertype).addImplementation(codec);
@@ -247,6 +248,7 @@ public class LazyGeneratedCodecRegistry implements //
 
     public InstanceIdentifier<?> putPathToBindingIdentifier(final SchemaPath path,
             final InstanceIdentifier<?> bindingIdentifier, final Class<?> childClass) {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         InstanceIdentifier<?> newId = bindingIdentifier.builder().child((Class) childClass).build();
         pathToBindingIdentifier.put(path, newId);
         return newId;
@@ -720,11 +722,11 @@ public class LazyGeneratedCodecRegistry implements //
             }
         }
 
-        abstract protected T tryToLoadImplementation(Class<? extends DataContainer> inputType);
+        protected abstract T tryToLoadImplementation(Class<? extends DataContainer> inputType);
 
-        abstract protected void tryToLoadImplementations();
+        protected abstract void tryToLoadImplementations();
 
-        abstract protected void adaptForPathImpl(InstanceIdentifier<?> path, DataNodeContainer ctx);
+        protected abstract void adaptForPathImpl(InstanceIdentifier<?> path, DataNodeContainer ctx);
     }
 
     @SuppressWarnings("rawtypes")
@@ -968,7 +970,7 @@ public class LazyGeneratedCodecRegistry implements //
      *            Key type
      */
     @SuppressWarnings("rawtypes")
-    private static abstract class MapFacadeBase<T> implements Map<T, BindingCodec<?, ?>> {
+    private abstract static class MapFacadeBase<T> implements Map<T, BindingCodec<?, ?>> {
 
         @Override
         public boolean containsKey(final Object key) {

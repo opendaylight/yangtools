@@ -25,7 +25,7 @@ public class DataModificationException extends Exception {
     private static final long serialVersionUID = 1L;
     private final QName node;
 
-    public DataModificationException(String message, QName node) {
+    public DataModificationException(final String message, final QName node) {
         super(message);
         this.node = node;
     }
@@ -37,30 +37,30 @@ public class DataModificationException extends Exception {
     public static final class DataMissingException extends DataModificationException {
         private static final long serialVersionUID = 1L;
 
-        public DataMissingException(QName nodeType) {
+        public DataMissingException(final QName nodeType) {
             super(String.format("Data missing for node: %s", nodeType), nodeType);
         }
 
-        public DataMissingException(QName nodeType, Node<?> modificationNode) {
+        public DataMissingException(final QName nodeType, final Node<?> modificationNode) {
             super(String.format("Data missing for node: %s, %s", nodeType, modificationNode), nodeType);
         }
 
-        static void check(QName nodeQName, Optional<? extends NormalizedNode<?, ?>> actualNode) throws DataMissingException {
-            if (actualNode.isPresent() == false) {
+        static void check(final QName nodeQName, final Optional<? extends NormalizedNode<?, ?>> actualNode) throws DataMissingException {
+            if (!actualNode.isPresent()) {
                 throw new DataMissingException(nodeQName);
             }
         }
 
-        static void check(QName nodeQName, Optional<LeafSetNode<?>> actualNodes, LeafSetEntryNode<?> modificationNode)
+        static void check(final QName nodeQName, final Optional<LeafSetNode<?>> actualNodes, final LeafSetEntryNode<?> modificationNode)
                 throws DataMissingException {
-            if (actualNodes.isPresent()==false || actualNodes.get().getChild(modificationNode.getIdentifier()).isPresent() == false) {
+            if (!actualNodes.isPresent() || !actualNodes.get().getChild(modificationNode.getIdentifier()).isPresent()) {
                 throw new DataMissingException(nodeQName, modificationNode);
             }
         }
 
-        static void check(QName nodeQName, Optional<MapNode> actualNodes, MapEntryNode modificationNode)
+        static void check(final QName nodeQName, final Optional<MapNode> actualNodes, final MapEntryNode modificationNode)
                 throws DataModificationException {
-            if (actualNodes.isPresent()==false || actualNodes.get().getChild(modificationNode.getIdentifier()).isPresent() == false) {
+            if (!actualNodes.isPresent() || !actualNodes.get().getChild(modificationNode.getIdentifier()).isPresent()) {
                 throw new DataMissingException(nodeQName, modificationNode);
             }
         }
@@ -69,26 +69,26 @@ public class DataModificationException extends Exception {
     public static final class DataExistsException extends DataModificationException {
         private static final long serialVersionUID = 1L;
 
-        public DataExistsException(QName nodeType, NormalizedNode<?, ?> actualNode, NormalizedNode<?, ?> modificationNode) {
+        public DataExistsException(final QName nodeType, final NormalizedNode<?, ?> actualNode, final NormalizedNode<?, ?> modificationNode) {
             super(String
                     .format("Data already exists for node: %s, current value: %s. modification value: %s", nodeType, actualNode, modificationNode),
                     nodeType);
         }
 
-        static void check(QName nodeQName, Optional<? extends NormalizedNode<?, ?>> actualNode, NormalizedNode<?, ?> modificationNode) throws DataExistsException {
+        static void check(final QName nodeQName, final Optional<? extends NormalizedNode<?, ?>> actualNode, final NormalizedNode<?, ?> modificationNode) throws DataExistsException {
             if (actualNode.isPresent()) {
                 throw new DataExistsException(nodeQName, actualNode.get(), modificationNode);
             }
         }
 
-        static void check(QName nodeQName, Optional<LeafSetNode<?>> actualNodes, LeafSetEntryNode<?> modificationNode)
+        static void check(final QName nodeQName, final Optional<LeafSetNode<?>> actualNodes, final LeafSetEntryNode<?> modificationNode)
                 throws DataExistsException {
             if (actualNodes.isPresent() && actualNodes.get().getChild(modificationNode.getIdentifier()).isPresent()) {
                 throw new DataExistsException(nodeQName, actualNodes.get(), modificationNode);
             }
         }
 
-        public static void check(QName qName, Optional<MapNode> actualNodes, MapEntryNode listModification)
+        public static void check(final QName qName, final Optional<MapNode> actualNodes, final MapEntryNode listModification)
                 throws DataModificationException {
             if (actualNodes.isPresent() && actualNodes.get().getChild(listModification.getIdentifier()).isPresent()) {
                 throw new DataExistsException(qName, actualNodes.get(), listModification);
@@ -99,18 +99,18 @@ public class DataModificationException extends Exception {
     public static final class IllegalChoiceValuesException extends DataModificationException {
         private static final long serialVersionUID = 1L;
 
-        public IllegalChoiceValuesException(String message, QName node) {
+        public IllegalChoiceValuesException(final String message, final QName node) {
             super(message, node);
         }
 
-        public static void throwMultipleCasesReferenced(QName choiceQName, ChoiceNode modification,
-                QName case1QName, QName case2QName) throws IllegalChoiceValuesException {
+        public static void throwMultipleCasesReferenced(final QName choiceQName, final ChoiceNode modification,
+                final QName case1QName, final QName case2QName) throws IllegalChoiceValuesException {
             throw new IllegalChoiceValuesException(String.format(
                     "Child nodes from multiple cases present in modification: %s, choice: %s, case1: %s, case2: %s",
                     modification, choiceQName, case1QName, case2QName), choiceQName);
         }
 
-        public static void throwUnknownChild(QName choiceQName, QName nodeQName) throws IllegalChoiceValuesException {
+        public static void throwUnknownChild(final QName choiceQName, final QName nodeQName) throws IllegalChoiceValuesException {
             throw new IllegalChoiceValuesException(String.format(
                     "Unknown child node detected, choice: %s, child node: %s",
                     choiceQName, nodeQName), choiceQName);
