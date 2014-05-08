@@ -13,8 +13,6 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue
 public interface LeafSetEntryNode<T> extends
         AttributesContainer,
         NormalizedNode<NodeWithValue, T> {
-
     @Override
-    public NodeWithValue getIdentifier();
-
+    NodeWithValue getIdentifier();
 }

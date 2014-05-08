@@ -13,8 +13,6 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifie
 public interface LeafNode<T> extends //
         AttributesContainer,
         DataContainerChild<NodeIdentifier, T> {
-
     @Override
-    public NodeIdentifier getIdentifier();
-
+    NodeIdentifier getIdentifier();
 }
