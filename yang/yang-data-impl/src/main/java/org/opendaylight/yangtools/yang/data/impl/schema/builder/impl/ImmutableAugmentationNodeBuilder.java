@@ -18,13 +18,27 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-import com.google.common.base.Preconditions;
-
 public class ImmutableAugmentationNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> {
 
+    protected ImmutableAugmentationNodeBuilder() {
+        super();
+    }
+
+    public ImmutableAugmentationNodeBuilder(ImmutableAugmentationNode node) {
+        super(node);
+    }
+
     public static DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> create() {
         return new ImmutableAugmentationNodeBuilder();
+    }
+
+    public static DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(AugmentationNode node) {
+        if (!(node instanceof ImmutableAugmentationNode)) {
+            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        }
+
+        return new ImmutableAugmentationNodeBuilder((ImmutableAugmentationNode)node);
     }
 
     @Override
