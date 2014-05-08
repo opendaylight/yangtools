@@ -23,14 +23,14 @@ import com.google.common.base.Preconditions;
 
 public class ContainerNodeCnSnSerializer extends ContainerNodeBaseSerializer<Node<?>> {
 
-    private NodeSerializerDispatcher<Node<?>> dispatcher;
+    private final NodeSerializerDispatcher<Node<?>> dispatcher;
 
     ContainerNodeCnSnSerializer(final NodeSerializerDispatcher<Node<?>> dispatcher) {
-        this.dispatcher = Preconditions.checkNotNull(dispatcher);;
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
     @Override
-    public List<Node<?>> serialize(ContainerSchemaNode schema, ContainerNode containerNode) {
+    public List<Node<?>> serialize(final ContainerSchemaNode schema, final ContainerNode containerNode) {
 
         MutableCompositeNode mutCompNode = NodeFactory.createMutableCompositeNode(containerNode.getNodeType(), null,
                 null, null, null);
