@@ -22,27 +22,27 @@ public final class BaseTypes {
     }
 
     public static final URI BASE_TYPES_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:1");
-    public static QName BINARY_QNAME = constructQName("binary");
-    public static QName BITS_QNAME = constructQName("bits");
-    public static QName BOOLEAN_QNAME = constructQName("boolean");
-    public static QName DECIMAL64_QNAME = constructQName("decimal64");
-    public static QName EMPTY_QNAME = constructQName("empty");
-    public static QName ENUMERATION_QNAME = constructQName("enumeration");
-    public static QName INT8_QNAME = constructQName("int8");
-    public static QName INT16_QNAME = constructQName("int16");
-    public static QName INT32_QNAME = constructQName("int32");
-    public static QName INT64_QNAME = constructQName("int64");
-    public static QName LEAFREF_QNAME = constructQName("leafref");
-    public static QName STRING_QNAME = constructQName("string");
-    public static QName UINT8_QNAME = constructQName("uint8");
-    public static QName UINT16_QNAME = constructQName("uint16");
-    public static QName UINT32_QNAME = constructQName("uint32");
-    public static QName UINT64_QNAME = constructQName("uint64");
+    public static final QName BINARY_QNAME = constructQName("binary");
+    public static final QName BITS_QNAME = constructQName("bits");
+    public static final QName BOOLEAN_QNAME = constructQName("boolean");
+    public static final QName DECIMAL64_QNAME = constructQName("decimal64");
+    public static final QName EMPTY_QNAME = constructQName("empty");
+    public static final QName ENUMERATION_QNAME = constructQName("enumeration");
+    public static final QName INT8_QNAME = constructQName("int8");
+    public static final QName INT16_QNAME = constructQName("int16");
+    public static final QName INT32_QNAME = constructQName("int32");
+    public static final QName INT64_QNAME = constructQName("int64");
+    public static final QName LEAFREF_QNAME = constructQName("leafref");
+    public static final QName STRING_QNAME = constructQName("string");
+    public static final QName UINT8_QNAME = constructQName("uint8");
+    public static final QName UINT16_QNAME = constructQName("uint16");
+    public static final QName UINT32_QNAME = constructQName("uint32");
+    public static final QName UINT64_QNAME = constructQName("uint64");
 
     /**
      * Construct QName for Built-in base Yang type. The namespace for built-in
      * base yang types is defined as: urn:ietf:params:xml:ns:yang:1
-     * 
+     *
      * @param typeName
      *            yang type name
      * @return built-in base yang type QName.
@@ -53,7 +53,7 @@ public final class BaseTypes {
 
     /**
      * Creates Schema Path from Qname.
-     * 
+     *
      * @param typeName
      *            yang type QName
      * @return Schema Path from Qname.
@@ -66,7 +66,7 @@ public final class BaseTypes {
     /**
      * Creates Schema Path from List of partial paths defined as Strings, module
      * Namespace and module latest Revision Date.
-     * 
+     *
      * @param actualPath
      *            List of partial paths
      * @param namespace
