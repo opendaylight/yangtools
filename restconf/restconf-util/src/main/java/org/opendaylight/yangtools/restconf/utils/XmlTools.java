@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 
 import com.google.common.base.Preconditions;
 
-public class XmlTools {
+public final class XmlTools {
     private static final String JAXP_SCHEMA_LOCATION =
             "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
