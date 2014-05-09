@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>websocket-parent</artifactId>
-        <version>0.6.2-SNAPSHOT</version>
+        <version>0.6.1-1-SNAPSHOT</version>
     </parent>
 
     <artifactId>websocket-client</artifactId>

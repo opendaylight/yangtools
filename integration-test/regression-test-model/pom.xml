@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools.model</groupId>
         <artifactId>model-parent</artifactId>
-        <version>0.6.2-SNAPSHOT</version>
+        <version>0.6.1-1-SNAPSHOT</version>
         <relativePath>../../model/pom.xml</relativePath>
     </parent>
 
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.opendaylight.yangtools.model</groupId>
             <artifactId>yang-ext</artifactId>
-            <version>2013.09.07.4-SNAPSHOT</version>
+            <version>2013.09.07.3-1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
