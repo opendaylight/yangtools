@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -23,6 +28,7 @@ import javassist.CtMethod;
 import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
+import javassist.bytecode.Descriptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,12 +155,23 @@ public final class JavassistUtils {
     }
 
     public CtField staticField(final CtClass it, final String name, final Class<? extends Object> returnValue) throws CannotCompileException {
+        return staticField(it, name, returnValue, null);
+    }
+
+    public CtField staticField(final CtClass it, final String name,
+                               final Class<? extends Object> returnValue,
+                               SourceCodeGenerator sourceGenerator) throws CannotCompileException {
         final CtField field = new CtField(asCtClass(returnValue), name, it);
         field.setModifiers(Modifier.PUBLIC + Modifier.STATIC);
         it.addField(field);
+
+        if (sourceGenerator != null) {
+            sourceGenerator.appendField(field, null);
+        }
+
         return field;
     }
-
+    
     public CtClass get(final ClassPool pool, final Class<? extends Object> cls) {
         try {
             return pool.get(cls.getName());
