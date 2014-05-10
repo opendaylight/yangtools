@@ -25,42 +25,50 @@ public final class ClassLoaderUtils {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static <V> V withClassLoader(ClassLoader cls, Callable<V> function) throws Exception {
-        return withClassLoaderAndLock(cls, Optional.<Lock> absent(), function);
-    }
-
-    public static <V> V withClassLoaderAndLock(ClassLoader cls, Lock lock, Callable<V> function) throws Exception {
-        checkNotNull(lock, "Lock should not be null");
-        return withClassLoaderAndLock(cls, Optional.of(lock), function);
-    }
-
-    public static <V> V withClassLoaderAndLock(ClassLoader cls, Optional<Lock> lock, Callable<V> function)
-            throws Exception {
+    public static <V> V withClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
         checkNotNull(cls, "Classloader should not be null");
         checkNotNull(function, "Function should not be null");
-        if (lock.isPresent()) {
-            lock.get().lock();
-        }
-        ClassLoader oldCls = Thread.currentThread().getContextClassLoader();
+
+        final ClassLoader oldCls = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(cls);
             return function.call();
         } finally {
             Thread.currentThread().setContextClassLoader(oldCls);
-            if (lock.isPresent()) {
-                lock.get().unlock();
-            }
         }
     }
 
-    public static Object construct(Constructor<? extends Object> constructor, List<Object> objects)
+    public static <V> V withClassLoaderAndLock(final ClassLoader cls, final Lock lock, final Callable<V> function) throws Exception {
+        checkNotNull(lock, "Lock should not be null");
+
+        lock.lock();
+        try {
+            return withClassLoader(cls, function);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * @deprecated Use one of the other utility methods.
+     */
+    @Deprecated
+    public static <V> V withClassLoaderAndLock(final ClassLoader cls, final Optional<Lock> lock, final Callable<V> function) throws Exception {
+        if (lock.isPresent()) {
+            return withClassLoaderAndLock(cls, lock.get(), function);
+        } else {
+            return withClassLoader(cls, function);
+        }
+    }
+
+    public static Object construct(final Constructor<? extends Object> constructor, final List<Object> objects)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Object[] initargs = objects.toArray(new Object[] {});
         return constructor.newInstance(initargs);
     }
 
-    
-    public static Class<?> loadClass(ClassLoader cls, String name) throws ClassNotFoundException {
+
+    public static Class<?> loadClass(final ClassLoader cls, final String name) throws ClassNotFoundException {
         if ("byte[]".equals(name)) {
             return byte[].class;
         } else if("char[]".equals(name)) {
@@ -82,12 +90,12 @@ public final class ClassLoaderUtils {
             }
         }
     }
-    
-    public static Class<?> loadClassWithTCCL(String name) throws ClassNotFoundException {
+
+    public static Class<?> loadClassWithTCCL(final String name) throws ClassNotFoundException {
         return loadClass(Thread.currentThread().getContextClassLoader(), name);
     }
 
-    public static Class<?> tryToLoadClassWithTCCL(String fullyQualifiedName) {
+    public static Class<?> tryToLoadClassWithTCCL(final String fullyQualifiedName) {
         try {
             return loadClassWithTCCL(fullyQualifiedName);
         } catch (ClassNotFoundException e) {
