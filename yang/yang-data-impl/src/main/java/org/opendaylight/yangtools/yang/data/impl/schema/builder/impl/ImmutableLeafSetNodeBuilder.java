@@ -38,8 +38,8 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     }
 
     protected ImmutableLeafSetNodeBuilder(final ImmutableLeafSetNode<T> node) {
-        value = node.getChildren();
         nodeIdentifier = node.getIdentifier();
+        value = node.getChildren();
         dirty = true;
     }
 

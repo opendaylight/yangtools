@@ -37,6 +37,7 @@ public class ImmutableMapNodeBuilder
     }
 
     protected ImmutableMapNodeBuilder(final ImmutableMapNode node) {
+        this.nodeIdentifier = node.getIdentifier();
         this.value = node.children;
         this.dirty = true;
     }

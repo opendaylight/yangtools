@@ -17,8 +17,24 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 
 public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> {
 
+    protected ImmutableChoiceNodeBuilder() {
+        super();
+    }
+
+    protected ImmutableChoiceNodeBuilder(final ImmutableChoiceNode node) {
+        super(node);
+    }
+
     public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> create() {
         return new ImmutableChoiceNodeBuilder();
+    }
+
+    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> create(final ChoiceNode node) {
+        if (!(node instanceof ImmutableChoiceNode)) {
+            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        }
+
+        return new ImmutableChoiceNodeBuilder((ImmutableChoiceNode)node);
     }
 
     @Override
