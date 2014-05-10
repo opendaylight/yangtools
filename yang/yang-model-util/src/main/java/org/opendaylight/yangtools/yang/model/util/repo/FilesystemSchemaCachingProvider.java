@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util.repo;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,7 +16,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringBufferInputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -37,15 +38,15 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
     private final File storageDirectory;
     private final Function<I, String> transformationFunction;
 
-    public FilesystemSchemaCachingProvider(AdvancedSchemaSourceProvider<I> delegate, File directory,
-            Function<I, String> transformationFunction) {
+    public FilesystemSchemaCachingProvider(final AdvancedSchemaSourceProvider<I> delegate, final File directory,
+            final Function<I, String> transformationFunction) {
         super(delegate);
         this.storageDirectory = directory;
         this.transformationFunction = transformationFunction;
     }
 
     @Override
-    protected synchronized Optional<InputStream> cacheSchemaSource(SourceIdentifier identifier, Optional<I> source) {
+    protected synchronized Optional<InputStream> cacheSchemaSource(final SourceIdentifier identifier, final Optional<I> source) {
         File schemaFile = toFile(identifier);
         try {
             if (source.isPresent() && schemaFile.createNewFile()) {
@@ -63,20 +64,20 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
         return transformToStream(source);
     }
 
-    @SuppressWarnings("deprecation")
-    private Optional<InputStream> transformToStream(Optional<I> source) {
+    private Optional<InputStream> transformToStream(final Optional<I> source) {
         if (source.isPresent()) {
-            return Optional.<InputStream> of(new StringBufferInputStream(transformToString(source.get())));
+            return Optional.<InputStream> of(
+                    new ByteArrayInputStream(transformToString(source.get()).getBytes(Charsets.UTF_8)));
         }
         return Optional.absent();
     }
 
-    private String transformToString(I input) {
+    private String transformToString(final I input) {
         return transformationFunction.apply(input);
     }
 
     @Override
-    protected Optional<InputStream> getCachedSchemaSource(SourceIdentifier identifier) {
+    protected Optional<InputStream> getCachedSchemaSource(final SourceIdentifier identifier) {
         File inputFile = toFile(identifier);
         try {
             if (inputFile.exists() && inputFile.canRead()) {
@@ -89,7 +90,7 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
         return Optional.absent();
     }
 
-    private File toFile(SourceIdentifier identifier) {
+    private File toFile(final SourceIdentifier identifier) {
         File file = null;
         String rev = identifier.getRevision();
         if (rev == null || rev.isEmpty()) {
@@ -104,7 +105,7 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
         File[] files = storageDirectory.listFiles(new FilenameFilter() {
             final String regex = identifier.getName() + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)";
             @Override
-            public boolean accept(File dir, String name) {
+            public boolean accept(final File dir, final String name) {
                 if (name.matches(regex)) {
                     return true;
                 } else {
@@ -148,13 +149,13 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
 
     private static final Function<String, String> NOOP_TRANSFORMATION = new Function<String, String>() {
         @Override
-        public String apply(String input) {
+        public String apply(final String input) {
             return input;
         }
     };
 
     public static FilesystemSchemaCachingProvider<String> createFromStringSourceProvider(
-            SchemaSourceProvider<String> liveProvider, File directory) {
+            final SchemaSourceProvider<String> liveProvider, final File directory) {
         Preconditions.checkNotNull(liveProvider);
         Preconditions.checkNotNull(directory);
         directory.mkdirs();
