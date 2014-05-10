@@ -71,6 +71,7 @@ import static javassist.Modifier.*
 import static org.opendaylight.yangtools.sal.binding.generator.impl.CodecMapping.*
 
 import static extension org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils.*
+import org.opendaylight.yangtools.sal.binding.generator.util.SourceCodeGenerator
 
 class TransformerGenerator extends AbstractTransformerGenerator {
     private static val LOG = LoggerFactory.getLogger(TransformerGenerator)
@@ -327,17 +328,19 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     private def generateKeyTransformerFor(Class<? extends Object> inputType, GeneratedType typeSpec, ListSchemaNode node) {
         try {
 
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
             val properties = typeSpec.allProperties;
             val ctCls = createClass(inputType.codecClassName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
-                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                staticField(it, IDENTITYREF_CODEC, BindingCodec)
-                staticQNameField(node.QName);
+                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
+                staticQNameField(node.QName, sourceGenerator);
                 implementsType(BINDING_CODEC)
                 method(Object, "toDomStatic", #[QName, Object]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             «QName.name» _resultName;
                             if($1 != null) {
@@ -356,10 +359,11 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return ($r) java.util.Collections.singletonMap(_resultName,_childNodes);
                         }
                     '''
+                    setBodyChecked(body, sourceGenerator)
                 ]
                 method(Object, "fromDomStatic", #[QName, Object]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             if($2 == null){
                                 return  null;
@@ -378,9 +382,10 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return _value;
                         }
                     '''
+                    setBodyChecked(body, sourceGenerator)
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             java.util.Map.Entry _input =  (java.util.Map.Entry) $1;
                             «QName.name» _localQName = («QName.name») _input.getKey();
@@ -388,9 +393,10 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return toDomStatic(_localQName,_keyValue);
                         }
                     '''
+                    setBodyChecked(body, sourceGenerator)
                 ]
                 method(Object, "deserialize", Object) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             «QName.name» _qname = QNAME;
                             if($1 instanceof java.util.Map.Entry) {
@@ -399,9 +405,11 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return fromDomStatic(_qname,$1);
                         }
                     '''
+                    setBodyChecked(body, sourceGenerator)
                 ]
             ]
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
+            sourceGenerator.outputGeneratedSource( ctCls )
             LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret as Class<? extends BindingCodec<Map<QName,Object>, ?>>;
         } catch (Exception e) {
@@ -413,17 +421,19 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     private def Class<? extends BindingCodec<Object, Object>> generateCaseCodec(Class<?> inputType, GeneratedType type,
         ChoiceCaseNode node) {
         try {
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+            
             //log.info("Generating DOM Codec for {} with {}, TCCL is: {}", inputType, inputType.classLoader,Thread.currentThread.contextClassLoader)
             val ctCls = createClass(type.codecClassName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 implementsType(BINDING_CODEC)
-                staticQNameField(node.QName);
-                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                staticField(it, AUGMENTATION_CODEC, BindingCodec)
-                staticField(it, IDENTITYREF_CODEC, BindingCodec)
+                staticQNameField(node.QName, sourceGenerator);
+                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, AUGMENTATION_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                 method(Object, "toDomStatic", #[QName, Object]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             «QName.name» _resultName = «QName.name».create($1,QNAME.getLocalName());
                             java.util.List _childNodes = new java.util.ArrayList();
@@ -432,9 +442,10 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return ($r) _childNodes;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator)
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             java.util.Map.Entry _input = (java.util.Map.Entry) $1;
                             «QName.name» _localName = QNAME;
@@ -444,23 +455,27 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return toDomStatic(_localName,_input.getValue());
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator)
                 ]
                 method(Object, "fromDomStatic", #[QName, Object, InstanceIdentifier]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = deserializeBody(type, node, getBindingIdentifierByPath(node.path))
+                    setBodyChecked( deserializeBody(type, node, getBindingIdentifierByPath(node.path)), 
+                                    sourceGenerator )
                 ]
                 method(Object, "deserialize", #[Object, InstanceIdentifier]) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             //System.out.println("«type.name»#deserialize: " +$1);
                             java.util.Map.Entry _input = (java.util.Map.Entry) $1;
                             return fromDomStatic((«QName.name»)_input.getKey(),_input.getValue(),$2);
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator)
                 ]
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)  as Class<? extends BindingCodec<Object, Object>>
+            sourceGenerator.outputGeneratedSource( ctCls )
             listener?.onDataContainerCodecCreated(inputType, ret);
             LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret;
@@ -474,21 +489,24 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         Class<?> inputType, GeneratedType typeSpec, SchemaNode node) {
         try {
 
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+            
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
             val ctCls = createClass(typeSpec.codecClassName) [
+                
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
-                staticQNameField(node.QName);
-                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                staticField(it, IDENTITYREF_CODEC, BindingCodec)
-                staticField(it, AUGMENTATION_CODEC, BindingCodec)
+                staticQNameField(node.QName, sourceGenerator);
+                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, AUGMENTATION_CODEC, BindingCodec, sourceGenerator)
                 implementsType(BINDING_CODEC)
 
                 method(Object, "toDomStatic", #[QName, Object]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = serializeBodyFacade(typeSpec, node)
+                    setBodyChecked( serializeBodyFacade(typeSpec, node), sourceGenerator )
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             java.util.Map.Entry _input = (java.util.Map.Entry) $1;
                             «QName.name» _localName = QNAME;
@@ -498,15 +516,17 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return toDomStatic(_localName,_input.getValue());
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
 
                 method(Object, "fromDomStatic", #[QName, Object, InstanceIdentifier]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = deserializeBody(typeSpec, node, getBindingIdentifierByPath(node.path))
+                    setBodyChecked( deserializeBody(typeSpec, node, getBindingIdentifierByPath(node.path)), 
+                                    sourceGenerator )
                 ]
 
                 method(Object, "deserialize", #[Object, InstanceIdentifier]) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             «QName.name» _qname = QNAME;
                             if($1 instanceof java.util.Map.Entry) {
@@ -515,10 +535,14 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return fromDomStatic(_qname,$1,$2);
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain) as Class<? extends BindingCodec<Map<QName,Object>, Object>>
+            
+            sourceGenerator.outputGeneratedSource( ctCls )
+            
             listener?.onDataContainerCodecCreated(inputType, ret);
             LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret;
@@ -532,19 +556,21 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         Class<?> inputType, GeneratedType type, AugmentationSchema node) {
         try {
 
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
             val properties = type.allProperties
             val ctCls = createClass(type.codecClassName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
-                staticQNameField(node.augmentationQName);
-                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                staticField(it, AUGMENTATION_CODEC, BindingCodec)
-                staticField(it, IDENTITYREF_CODEC, BindingCodec)
+                staticQNameField(node.augmentationQName, sourceGenerator);
+                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, AUGMENTATION_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                 implementsType(BINDING_CODEC)
 
                 method(Object, "toDomStatic", #[QName, Object]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             ////System.out.println("Qname " + $1);
                             ////System.out.println("Value " + $2);
@@ -559,23 +585,25 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return ($r) _childNodes;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
+                    val body = '''
                         {
-                        java.util.Map.Entry _input = (java.util.Map.Entry) $1;
-                        «QName.name» _localName = QNAME;
-                        if(_input.getKey() != null) {
-                            _localName = («QName.name») _input.getKey();
-                        }
-                        return toDomStatic(_localName,_input.getValue());
+                            java.util.Map.Entry _input = (java.util.Map.Entry) $1;
+                            «QName.name» _localName = QNAME;
+                            if(_input.getKey() != null) {
+                                _localName = («QName.name») _input.getKey();
+                            }
+                            return toDomStatic(_localName,_input.getValue());
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
 
                 method(Object, "fromDomStatic", #[QName, Object, InstanceIdentifier]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             «QName.name» _localQName = QNAME;
 
@@ -597,16 +625,21 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return _builder.build();
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
 
                 method(Object, "deserialize", #[Object, InstanceIdentifier]) [
-                    bodyChecked = '''
-                        return fromDomStatic(QNAME,$1,$2);
+                    val body = '''
+                        {
+                            return fromDomStatic(QNAME,$1,$2);
+                        }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain) as Class<? extends BindingCodec<Map<QName,Object>, Object>>
+            sourceGenerator.outputGeneratedSource( ctCls )
             listener?.onDataContainerCodecCreated(inputType, ret);
             return ret;
         } catch (Exception e) {
@@ -619,19 +652,21 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         Class<?> inputType, GeneratedType typeSpec, ChoiceNode node) {
         try {
 
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+            
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
             val ctCls = createClass(typeSpec.codecClassName) [
-                //staticField(Map,"AUGMENTATION_SERIALIZERS");
-                //staticQNameField(inputType);
-                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                staticField(it, IDENTITYREF_CODEC, BindingCodec)
-                staticField(it, CLASS_TO_CASE_MAP, Map)
-                staticField(it, COMPOSITE_TO_CASE, Map)
-                //staticField(it,QNAME_TO_CASE_MAP,BindingCodec)
+                //staticField(Map,"AUGMENTATION_SERIALIZERS", sourceGenerator);
+                //staticQNameField(inputType, sourceGenerator);
+                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, CLASS_TO_CASE_MAP, Map, sourceGenerator)
+                staticField(it, COMPOSITE_TO_CASE, Map, sourceGenerator)
+                //staticField(it,QNAME_TO_CASE_MAP,BindingCodec, sourceGenerator)
                 implementsType(BINDING_CODEC)
                 method(List, "toDomStatic", #[QName, Object]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             if($2 == null) {
                                 return null;
@@ -648,15 +683,19 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return («List.name») _ret;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
-                        throw new «UnsupportedOperationException.name»("Direct invocation not supported.");
+                    val body = '''
+                        {
+                            throw new «UnsupportedOperationException.name»("Direct invocation not supported.");
+                        }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "fromDomStatic", #[QName, Map, InstanceIdentifier]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             «BINDING_CODEC.name» _codec = («BINDING_CODEC.name») «COMPOSITE_TO_CASE».get($2);
                             if(_codec != null) {
@@ -665,15 +704,20 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return null;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "deserialize", #[Object, InstanceIdentifier]) [
-                    bodyChecked = '''
-                        throw new «UnsupportedOperationException.name»("Direct invocation not supported.");
+                    val body = '''
+                        {
+                            throw new «UnsupportedOperationException.name»("Direct invocation not supported.");
+                        }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
             ]
 
             val rawRet = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
+            sourceGenerator.outputGeneratedSource( ctCls )
             val ret = rawRet as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
             listener?.onChoiceCodecCreated(inputType, ret, node);
             LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
@@ -912,10 +956,13 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         Class<?> inputType, GeneratedTransferObject typeSpec, TypeDefinition<?> typeDef) {
         try {
 
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+            
             val returnType = typeSpec.valueReturnType;
             if (returnType == null) {
-                val ctCls = createDummyImplementation(inputType, typeSpec);
+                val ctCls = createDummyImplementation(inputType, typeSpec, sourceGenerator);
                 val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
+                sourceGenerator.outputGeneratedSource( ctCls )
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
             }
 
@@ -923,14 +970,14 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 if (inputType.isYangBindingAvailable) {
                     implementsType(BINDING_CODEC)
-                    staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                    staticField(it, IDENTITYREF_CODEC, BindingCodec)
+                    staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                    staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                     implementsType(BindingDeserializer.asCtClass)
                 }
                 method(Object, "toDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val ctSpec = typeSpec.asCtClass;
-                    bodyChecked = '''
+                    val body = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
 
@@ -945,17 +992,19 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return _domValue;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             return toDomValue($1);
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "fromDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             ////System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
 
@@ -967,16 +1016,20 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return _value;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "deserialize", Object) [
-                    bodyChecked = '''{
+                    val body = '''
+                        {
                             return fromDomValue($1);
-                    }
+                        }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
+            sourceGenerator.outputGeneratedSource( ctCls )
             LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         } catch (Exception e) {
@@ -990,20 +1043,22 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     private def dispatch Class<? extends BindingCodec<Map<QName, Object>, Object>> generateValueTransformer(
         Class<?> inputType, GeneratedTransferObject typeSpec, UnionTypeDefinition typeDef) {
         try {
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+            
             val ctCls = createClass(typeSpec.codecClassName) [
                 val properties = typeSpec.allProperties;
                 val getterToTypeDefinition = XtendHelper.getTypes(typeDef).toMap[type|type.QName.getterName];
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 if (inputType.isYangBindingAvailable) {
                     implementsType(BINDING_CODEC)
-                    staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                    staticField(it, IDENTITYREF_CODEC, BindingCodec)
+                    staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                    staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                     implementsType(BindingDeserializer.asCtClass)
                 }
                 method(Object, "toDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val ctSpec = inputType.asCtClass;
-                    bodyChecked = '''
+                    val body = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
 
@@ -1025,17 +1080,19 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return null;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             return toDomValue($1);
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "fromDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             ////System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
 
@@ -1049,16 +1106,20 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return null;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "deserialize", Object) [
-                    bodyChecked = '''{
+                    val body = '''
+                        {
                             return fromDomValue($1);
-                    }
+                        }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
+            sourceGenerator.outputGeneratedSource( ctCls )
             LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         } catch (Exception e) {
@@ -1072,18 +1133,20 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     private def dispatch Class<? extends BindingCodec<Map<QName, Object>, Object>> generateValueTransformer(
         Class<?> inputType, GeneratedTransferObject typeSpec, BitsTypeDefinition typeDef) {
         try {
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+            
             val ctCls = createClass(typeSpec.codecClassName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 if (inputType.isYangBindingAvailable) {
                     implementsType(BINDING_CODEC)
-                    staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                    staticField(it, IDENTITYREF_CODEC, BindingCodec)
+                    staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                    staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                     implementsType(BindingDeserializer.asCtClass)
                 }
                 method(Object, "toDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val ctSpec = typeSpec.asCtClass;
-                    bodyChecked = '''
+                    val body = '''
                         {
                             ////System.out.println("«inputType.simpleName»#toDomValue: "+$1);
 
@@ -1106,18 +1169,20 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return _domValue;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
+                    val body = '''
                         {
                             return toDomValue($1);
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "fromDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val sortedBits = typeDef.bits.sort[o1, o2|o1.propertyName.compareTo(o2.propertyName)]
-                    bodyChecked = '''
+                    val body = '''
                         {
                             //System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
 
@@ -1132,16 +1197,20 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return new «inputType.resolvedName»(«FOR bit : sortedBits SEPARATOR ","»«bit.propertyName»«ENDFOR»);
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "deserialize", Object) [
-                    bodyChecked = '''{
+                    val body = '''
+                        {
                             return fromDomValue($1);
-                    }
+                        }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
+            sourceGenerator.outputGeneratedSource( ctCls )
             LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         } catch (Exception e) {
@@ -1171,42 +1240,48 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         }
     }
 
-    private def createDummyImplementation(Class<?> object, GeneratedTransferObject typeSpec) {
+    private def createDummyImplementation(Class<?> object, GeneratedTransferObject typeSpec, 
+                                          SourceCodeGenerator sourceGenerator ) {
         LOG.trace("Generating Dummy DOM Codec for {} with {}", object, object.classLoader)
         return createClass(typeSpec.codecClassName) [
             if (object.isYangBindingAvailable) {
                 implementsType(BINDING_CODEC)
-                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
-                staticField(it, IDENTITYREF_CODEC, BindingCodec)
+                staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec, sourceGenerator)
+                staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                 implementsType(BindingDeserializer.asCtClass)
             }
             //implementsType(BindingDeserializer.asCtClass)
             method(Object, "toDomValue", Object) [
                 modifiers = PUBLIC + FINAL + STATIC
-                bodyChecked = '''{
-                    if($1 == null) {
-                        return null;
-                    }
-                    return $1.toString();
-
+                val body = '''
+                    {
+                        if($1 == null) {
+                            return null;
+                        }
+                        return $1.toString();
                     }'''
+                setBodyChecked( body, sourceGenerator )
             ]
             method(Object, "serialize", Object) [
-                bodyChecked = '''
+                val body = '''
                     {
                         return toDomValue($1);
                     }
                 '''
+                setBodyChecked( body, sourceGenerator )
             ]
             method(Object, "fromDomValue", Object) [
                 modifiers = PUBLIC + FINAL + STATIC
-                bodyChecked = '''return null;'''
+                val body = '''return null;'''
+                setBodyChecked( body, sourceGenerator )
             ]
             method(Object, "deserialize", Object) [
-                bodyChecked = '''{
+                val body = '''
+                    {
                         return fromDomValue($1);
                     }
                     '''
+                setBodyChecked( body, sourceGenerator )
             ]
         ]
     }
@@ -1234,13 +1309,16 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         }
         val enumSchema = enumSchemaType;
         try {
+            val SourceCodeGenerator sourceGenerator = new SourceCodeGenerator();
+
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
             val ctCls = createClass(typeSpec.codecClassName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 //implementsType(BINDING_CODEC)
                 method(Object, "toDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''{
+                    val body = '''
+                        {
                             if($1 == null) {
                                 return null;
                             }
@@ -1253,15 +1331,19 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return null;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "serialize", Object) [
-                    bodyChecked = '''
-                        return toDomValue($1);
+                    val body = '''
+                        {
+                            return toDomValue($1);
+                        }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "fromDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = '''
+                    val body = '''
                         {
                             if($1 == null) {
                                 return null;
@@ -1275,15 +1357,20 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             return null;
                         }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
                 method(Object, "deserialize", Object) [
-                    bodyChecked = '''
-                        return fromDomValue($1);
+                    val body = '''
+                        {
+                            return fromDomValue($1);
+                        }
                     '''
+                    setBodyChecked( body, sourceGenerator )
                 ]
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
+            sourceGenerator.outputGeneratedSource( ctCls )
             LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret;
         } catch (CodeGenerationException e) {
@@ -1348,11 +1435,15 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     */
     private def getBuilderName(GeneratedType type) '''«type.resolvedName»Builder'''
 
-    private def staticQNameField(CtClass it, QName node) {
+    private def staticQNameField(CtClass it, QName node, SourceCodeGenerator sourceGenerator) {
         val field = new CtField(ctQName, "QNAME", it);
         field.modifiers = PUBLIC + FINAL + STATIC;
-        addField(field,
-            '''«QName.asCtClass.name».create("«node.namespace»","«node.formattedRevision»","«node.localName»")''')
+        val code = '''«QName.asCtClass.name».create("«node.namespace»","«node.formattedRevision»","«node.localName»")'''
+        addField(field, code )
+        
+        if( sourceGenerator != null ) {
+            sourceGenerator.appendField( field, code );
+        }
     }
 
     private def String serializeBodyImpl(GeneratedType type, DataNodeContainer nodeContainer) '''
@@ -1606,9 +1697,14 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         throw exception;
     }
 
-    private def setBodyChecked(CtMethod method, String body) {
+    private def setBodyChecked(CtMethod method, String body, SourceCodeGenerator sourceGenerator ) {
         try {
             method.setBody(body);
+            
+            if( sourceGenerator != null ) {
+                sourceGenerator.appendMethod( method, body );
+            }
+            
         } catch (CannotCompileException e) {
             LOG.error("Cannot compile method: {}#{} {}, Reason: {} Body: {}", method.declaringClass, method.name,
                 method.signature, e.message, body)
