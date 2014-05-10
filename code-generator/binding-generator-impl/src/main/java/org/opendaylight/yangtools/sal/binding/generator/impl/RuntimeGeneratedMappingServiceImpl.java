@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -52,6 +51,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMapping
 import org.opendaylight.yangtools.yang.data.impl.codec.CodecRegistry;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataContainerCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException;
+import org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -65,7 +65,6 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
@@ -292,60 +291,55 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         for (final org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument arg : path.getPathArguments()) {
             this.waitForSchema(arg.getType());
         }
-        return registry.getInstanceIdentifierCodec().serialize(path);
+
+        final InstanceIdentifierCodec c = getRegistry().getInstanceIdentifierCodec();
+        Preconditions.checkState(c != null, "InstanceIdentifierCodec not present");
+        return c.serialize(path);
     }
 
     @Override
     public DataObject dataObjectFromDataDom(
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> path,
-            final CompositeNode node) throws DeserializationException {
+            final CompositeNode domData) throws DeserializationException {
+        if (domData == null) {
+            return null;
+        }
 
-        final Class<? extends DataContainer> container = path.getTargetType();
-        final CompositeNode domData = node;
+        try {
+            final Class<? extends DataContainer> container = path.getTargetType();
+            // FIXME: deprecate use without iid
+            final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> wildcardedPath = createWildcarded(path);
 
-        return tryDeserialization(new Callable<DataObject>() {
-            @Override
-            public DataObject call() {
-                if (Objects.equal(domData, null)) {
-                    return null;
-                }
-                final DataContainerCodec<? extends DataContainer> transformer = getRegistry()
-                        .getCodecForDataObject(container);
-                // TODO: deprecate use without iid
-                org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> wildcardedPath = createWildcarded(path);
-                ValueWithQName<? extends DataContainer> deserialize = transformer.deserialize(domData, wildcardedPath);
-                DataContainer value = null;
-                if (deserialize != null) {
-                    value = deserialize.getValue();
-                }
-                return ((DataObject) value);
+            final DataContainerCodec<? extends DataContainer> transformer = getRegistry().getCodecForDataObject(container);
+            Preconditions.checkState(transformer != null, "Failed to find codec for type %s", container);
+
+            final ValueWithQName<? extends DataContainer> deserialize = transformer.deserialize(domData, wildcardedPath);
+            if (deserialize == null) {
+                return null;
             }
-        });
-    }
 
+            return (DataObject) deserialize.getValue();
+        } catch (Exception e) {
+            LOG.warn("Failed to deserialize path {} data {}", path, domData);
+            throw new DeserializationException("Data deserialization failed", e);
+        }
+    }
 
     @Override
     public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> fromDataDom(final InstanceIdentifier entry) throws DeserializationException {
-        return tryDeserialization(new Callable<org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object>>() {
-            @Override
-            public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> call() {
-                return getRegistry().getInstanceIdentifierCodec().deserialize(entry);
-            }
-        });
+        try {
+            final InstanceIdentifierCodec c = getRegistry().getInstanceIdentifierCodec();
+            Preconditions.checkState(c != null, "InstanceIdentifierCodec not present");
+            return c.deserialize(entry);
+        } catch (Exception e) {
+            LOG.warn("Failed to deserialize entry {}", entry);
+            throw new DeserializationException("Entry deserialization failed", e);
+        }
     }
 
     @Override
     public CodecRegistry getCodecRegistry() {
         return this.getRegistry();
-    }
-
-    private static <T> T tryDeserialization(final Callable<T> deserializationBlock) throws DeserializationException {
-        try {
-            return deserializationBlock.call();
-        } catch (Exception e) {
-            // FIXME: Make this block providing more information.
-            throw new DeserializationException("Failed to run deserialization", e);
-        }
     }
 
     private void updateBindingFor(final Map<SchemaPath, GeneratedTypeBuilder> map, final SchemaContext module) {
@@ -482,5 +476,4 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         }
         return org.opendaylight.yangtools.yang.binding.InstanceIdentifier.create(wildcardedArgs);
     }
-
 }
