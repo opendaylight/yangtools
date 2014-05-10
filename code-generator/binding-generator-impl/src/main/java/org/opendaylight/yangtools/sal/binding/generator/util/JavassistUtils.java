@@ -16,6 +16,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javassist.CannotCompileException;
 import javassist.ClassClassPath;
 import javassist.ClassPath;
 import javassist.ClassPool;
@@ -27,7 +28,6 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 
 import org.eclipse.xtext.xbase.lib.Conversions;
-import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,60 +49,45 @@ public class JavassistUtils {
     }
 
     public void method(final CtClass it, final Class<? extends Object> returnType, final String name,
-            final Class<? extends Object> parameter, final MethodGenerator function1) {
-        try {
-            List<CtClass> _asList = Arrays.<CtClass> asList(asCtClass(parameter));
-            CtMethod _ctMethod = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(
-                    _asList, CtClass.class)), it);
-            final CtMethod method = _ctMethod;
-            function1.process(method);
-            it.addMethod(method);
-        } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
-        }
+            final Class<? extends Object> parameter, final MethodGenerator function1) throws CannotCompileException {
+        List<CtClass> _asList = Arrays.<CtClass> asList(asCtClass(parameter));
+        CtMethod _ctMethod = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(
+                _asList, CtClass.class)), it);
+
+        final CtMethod method = _ctMethod;
+        function1.process(method);
+        it.addMethod(method);
     }
 
     public void method(final CtClass it, final Class<? extends Object> returnType, final String name,
-            final Collection<? extends Class<?>> parameters, final MethodGenerator function1) {
-        try {
-            List<CtClass> _asList = new ArrayList<>();
-            for (Class<? extends Object> parameter : parameters) {
-                _asList.add(asCtClass(parameter));
-            }
-            CtMethod method = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(_asList,
-                    CtClass.class)), it);
-            function1.process(method);
-            it.addMethod(method);
-        } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
+            final Collection<? extends Class<?>> parameters, final MethodGenerator function1) throws CannotCompileException {
+        List<CtClass> _asList = new ArrayList<>();
+        for (Class<? extends Object> parameter : parameters) {
+            _asList.add(asCtClass(parameter));
         }
+        CtMethod method = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(_asList,
+                CtClass.class)), it);
+        function1.process(method);
+        it.addMethod(method);
     }
 
     public void staticMethod(final CtClass it, final Class<? extends Object> returnType, final String name,
-            final Class<? extends Object> parameter, final MethodGenerator function1) {
-        try {
-            List<CtClass> _asList = Arrays.<CtClass> asList(asCtClass(parameter));
-            CtMethod _ctMethod = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(
-                    _asList, CtClass.class)), it);
-            final CtMethod method = _ctMethod;
-            function1.process(method);
-            it.addMethod(method);
-        } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
-        }
+            final Class<? extends Object> parameter, final MethodGenerator function1) throws CannotCompileException {
+        List<CtClass> _asList = Arrays.<CtClass> asList(asCtClass(parameter));
+        CtMethod _ctMethod = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(
+                _asList, CtClass.class)), it);
+        final CtMethod method = _ctMethod;
+        function1.process(method);
+        it.addMethod(method);
     }
 
-    public void implementMethodsFrom(final CtClass target, final CtClass source, final MethodGenerator function1) {
-        try {
-            for (CtMethod method : source.getMethods()) {
-                if (method.getDeclaringClass() == source) {
-                    CtMethod redeclaredMethod = new CtMethod(method, target, null);
-                    function1.process(redeclaredMethod);
-                    target.addMethod(redeclaredMethod);
-                }
+    public void implementMethodsFrom(final CtClass target, final CtClass source, final MethodGenerator function1) throws CannotCompileException {
+        for (CtMethod method : source.getMethods()) {
+            if (method.getDeclaringClass() == source) {
+                CtMethod redeclaredMethod = new CtMethod(method, target, null);
+                function1.process(redeclaredMethod);
+                target.addMethod(redeclaredMethod);
             }
-        } catch (Throwable t) {
-            Exceptions.sneakyThrow(t);
         }
     }
 
@@ -128,26 +113,18 @@ public class JavassistUtils {
         return get(this.classPool, class1);
     }
 
-    public CtField field(final CtClass it, final String name, final Class<? extends Object> returnValue) {
-        try {
-            final CtField field = new CtField(asCtClass(returnValue), name, it);
-            field.setModifiers(Modifier.PUBLIC);
-            it.addField(field);
-            return field;
-        } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
-        }
+    public CtField field(final CtClass it, final String name, final Class<? extends Object> returnValue) throws CannotCompileException {
+        final CtField field = new CtField(asCtClass(returnValue), name, it);
+        field.setModifiers(Modifier.PUBLIC);
+        it.addField(field);
+        return field;
     }
 
-    public CtField staticField(final CtClass it, final String name, final Class<? extends Object> returnValue) {
-        try {
-            final CtField field = new CtField(asCtClass(returnValue), name, it);
-            field.setModifiers(Modifier.PUBLIC + Modifier.STATIC);
-            it.addField(field);
-            return field;
-        } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
-        }
+    public CtField staticField(final CtClass it, final String name, final Class<? extends Object> returnValue) throws CannotCompileException {
+        final CtField field = new CtField(asCtClass(returnValue), name, it);
+        field.setModifiers(Modifier.PUBLIC + Modifier.STATIC);
+        it.addField(field);
+        return field;
     }
 
     public CtClass get(final ClassPool pool, final Class<? extends Object> cls) {
@@ -158,20 +135,15 @@ public class JavassistUtils {
             try {
                 return pool.get(cls.getName());
             } catch (final NotFoundException nfe2) {
-                LOG.warn("Appending ClassClassPath for {}", cls);
+                LOG.warn("Appending ClassClassPath for {}", cls, nfe2);
                 pool.appendClassPath(new ClassClassPath(cls));
                 try {
                     return pool.get(cls.getName());
-                } catch (Throwable t) {
-                    throw Exceptions.sneakyThrow(t);
+                } catch (NotFoundException e) {
+                    LOG.warn("Failed to load class {} from pool {}", cls, pool, e);
+                    throw new IllegalStateException("Failed to load class", e);
                 }
-            } catch (Throwable t1) {
-                Exceptions.sneakyThrow(t1);
-                return null;
             }
-        } catch (Throwable t) {
-            Exceptions.sneakyThrow(t);
-            return null;
         }
     }
 
