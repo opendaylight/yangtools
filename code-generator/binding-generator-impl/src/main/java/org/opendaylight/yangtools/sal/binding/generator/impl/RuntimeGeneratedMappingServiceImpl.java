@@ -19,11 +19,11 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javassist.ClassPool;
 
-import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -67,6 +67,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -75,20 +76,25 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
     private static final Logger LOG = LoggerFactory.getLogger(RuntimeGeneratedMappingServiceImpl.class);
 
-    private ClassPool pool;
-
-    @Extension
-    private TransformerGenerator binding;
-
-    @Extension
-    private LazyGeneratedCodecRegistry registry;
-
     private final ConcurrentMap<Type, Type> typeDefinitions = new ConcurrentHashMap<>();
     private final ConcurrentMap<Type, GeneratedTypeBuilder> typeToDefinition = new ConcurrentHashMap<>();
     private final ConcurrentMap<Type, SchemaNode> typeToSchemaNode = new ConcurrentHashMap<>();
     private final ConcurrentMap<Type, Set<QName>> serviceTypeToRpc = new ConcurrentHashMap<>();
     private final HashMultimap<Type, SettableFuture<Type>> promisedTypes = HashMultimap.create();
     private final ClassLoadingStrategy classLoadingStrategy;
+
+    // FIXME: how is this thread-safe?
+    private ClassPool pool;
+
+    // FIXME: how is this thread-safe?
+    @Extension
+    private TransformerGenerator binding;
+
+    // FIXME: how is this thread-safe?
+    @Extension
+    private LazyGeneratedCodecRegistry registry;
+
+    // FIXME: how is this thread-safe?
     private SchemaContext schemaContext;
 
     public RuntimeGeneratedMappingServiceImpl() {
@@ -272,7 +278,12 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             return;
         }
         Type ref = Types.typeForClass(class1);
-        getSchemaWithRetry(ref);
+        try {
+            getSchemaWithRetry(ref);
+        } catch (InterruptedException | ExecutionException e) {
+            LOG.warn("Waiting for schema for class {} failed", class1, e);
+            throw new IllegalStateException(String.format("Failed to get schema for {}", class1), e);
+        }
     }
 
     @Override
@@ -287,52 +298,40 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     @Override
     public DataObject dataObjectFromDataDom(
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> path,
-            final CompositeNode node) {
+            final CompositeNode node) throws DeserializationException {
 
         final Class<? extends DataContainer> container = path.getTargetType();
         final CompositeNode domData = node;
 
-        try {
-            return tryDeserialization(new Callable<DataObject>() {
-                @Override
-                public DataObject call() throws Exception {
-                    if (Objects.equal(domData, null)) {
-                        return null;
-                    }
-                    final DataContainerCodec<? extends DataContainer> transformer = getRegistry()
-                            .getCodecForDataObject(container);
-                    // TODO: deprecate use without iid
-                    org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> wildcardedPath = createWildcarded(path);
-                    ValueWithQName<? extends DataContainer> deserialize = transformer.deserialize(domData, wildcardedPath);
-                    DataContainer value = null;
-                    if (deserialize != null) {
-                        value = deserialize.getValue();
-                    }
-                    return ((DataObject) value);
+        return tryDeserialization(new Callable<DataObject>() {
+            @Override
+            public DataObject call() {
+                if (Objects.equal(domData, null)) {
+                    return null;
                 }
-
-
-            });
-        } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
-        }
-
+                final DataContainerCodec<? extends DataContainer> transformer = getRegistry()
+                        .getCodecForDataObject(container);
+                // TODO: deprecate use without iid
+                org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> wildcardedPath = createWildcarded(path);
+                ValueWithQName<? extends DataContainer> deserialize = transformer.deserialize(domData, wildcardedPath);
+                DataContainer value = null;
+                if (deserialize != null) {
+                    value = deserialize.getValue();
+                }
+                return ((DataObject) value);
+            }
+        });
     }
 
 
     @Override
-    public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> fromDataDom(
-            final InstanceIdentifier entry) {
-        try {
-            return tryDeserialization(new Callable<org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object>>() {
-                @Override
-                public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> call() {
-                    return getRegistry().getInstanceIdentifierCodec().deserialize(entry);
-                }
-            });
-        } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
-        }
+    public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> fromDataDom(final InstanceIdentifier entry) throws DeserializationException {
+        return tryDeserialization(new Callable<org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object>>() {
+            @Override
+            public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> call() {
+                return getRegistry().getInstanceIdentifierCodec().deserialize(entry);
+            }
+        });
     }
 
     @Override
@@ -345,7 +344,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             return deserializationBlock.call();
         } catch (Exception e) {
             // FIXME: Make this block providing more information.
-            throw new DeserializationException(e);
+            throw new DeserializationException("Failed to run deserialization", e);
         }
     }
 
@@ -390,16 +389,11 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         return serviceRef;
     }
 
-    private void getSchemaWithRetry(final Type type) {
-        try {
-            if (typeToDefinition.containsKey(type)) {
-                return;
-            }
+    private void getSchemaWithRetry(final Type type) throws InterruptedException, ExecutionException {
+        if (!typeToDefinition.containsKey(type)) {
             LOG.info("Thread blocked waiting for schema for: {}", type.getFullyQualifiedName());
             waitForTypeDefinition(type).get();
             LOG.info("Schema for {} became available, thread unblocked", type.getFullyQualifiedName());
-        } catch (Throwable t) {
-            Exceptions.sneakyThrow(t);
         }
     }
 
@@ -422,7 +416,8 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
+        // Nothing to do
     }
 
     @Override
@@ -433,8 +428,14 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
         org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataContainer> id = org.opendaylight.yangtools.yang.binding.InstanceIdentifier
                 .create((Class) container);
+        Preconditions.checkNotNull(id, "Failed to create path for type %s", container);
 
-        return dataObjectFromDataDom(id, domData);
+        try {
+            return dataObjectFromDataDom(id, domData);
+        } catch (DeserializationException e) {
+            LOG.warn("Conversion of class {} path {} data {} failed", container, id, domData, e);
+            throw new IllegalStateException("Failed to create data object", e);
+        }
     }
 
     @Override
