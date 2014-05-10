@@ -88,7 +88,6 @@ class TransformerGenerator {
     //public static val DECIMAL = Types.typeForClass(Decimal);
     public static val LONG = Types.typeForClass(Long);
 
-    val ClassPool classPool
     val extension JavassistUtils utils;
 
     CtClass BINDING_CODEC
@@ -122,8 +121,7 @@ class TransformerGenerator {
     public static val CLASS_TYPE = Types.typeForClass(Class);
 
     public new(ClassPool pool) {
-        classPool = pool;
-        utils = new JavassistUtils(pool)
+        utils = JavassistUtils.forClassPool(pool)
 
         BINDING_CODEC = BindingCodec.asCtClass;
         ctQName = QName.asCtClass
