@@ -289,7 +289,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     @Override
     public InstanceIdentifier toDataDom(
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> path) {
-        for (final org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument arg : path.getPath()) {
+        for (final org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument arg : path.getPathArguments()) {
             this.waitForSchema(arg.getType());
         }
         return registry.getInstanceIdentifierCodec().serialize(path);
