@@ -7,21 +7,24 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.ClassPool;
-
+import java.util.ArrayList;
 import java.util.Arrays;
-
-import javassist.ClassPath;
-import javassist.CtField;
-import javassist.Modifier;
-import javassist.NotFoundException;
-import javassist.LoaderClassPath;
-import javassist.ClassClassPath;
-
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import javassist.ClassClassPath;
+import javassist.ClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.Modifier;
+import javassist.NotFoundException;
 
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -30,24 +33,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.Collections;
-
 public class JavassistUtils {
-
     private static final Logger LOG = LoggerFactory.getLogger(JavassistUtils.class);
 
-    private final Map<ClassLoader, LoaderClassPath> loaderClassPaths = Collections
-            .synchronizedMap(new WeakHashMap<ClassLoader, LoaderClassPath>());
-    private ClassPool classPool;
+    private final Map<ClassLoader, ClassPath> loaderClassPaths = new WeakHashMap<>();
     private final Lock lock = new ReentrantLock();
+    private final ClassPool classPool;
 
-    public JavassistUtils(ClassPool pool) {
-        classPool = pool;
+    public JavassistUtils(final ClassPool pool) {
+        classPool = Preconditions.checkNotNull(pool);
     }
 
     public Lock getLock() {
@@ -98,7 +92,7 @@ public class JavassistUtils {
         }
     }
 
-    public void implementMethodsFrom(CtClass target, CtClass source, MethodGenerator function1) {
+    public void implementMethodsFrom(final CtClass target, final CtClass source, final MethodGenerator function1) {
         try {
             for (CtMethod method : source.getMethods()) {
                 if (method.getDeclaringClass() == source) {
@@ -112,13 +106,13 @@ public class JavassistUtils {
         }
     }
 
-    public CtClass createClass(String fqn, ClassGenerator cls) {
+    public CtClass createClass(final String fqn, final ClassGenerator cls) {
         CtClass target = classPool.makeClass(fqn);
         cls.process(target);
         return target;
     }
 
-    public CtClass createClass(String fqn, CtClass superInterface, ClassGenerator cls) {
+    public CtClass createClass(final String fqn, final CtClass superInterface, final ClassGenerator cls) {
         CtClass target = classPool.makeClass(fqn);
         implementsType(target, superInterface);
         cls.process(target);
@@ -181,15 +175,18 @@ public class JavassistUtils {
         }
     }
 
-    public void appendClassLoaderIfMissing(ClassLoader loader) {
-        if (loaderClassPaths.containsKey(loader)) {
-            return;
+    public synchronized void appendClassLoaderIfMissing(final ClassLoader loader) {
+        // FIXME: this works as long as the ClassPool is not shared between instances of this class
+        //        How is synchronization across multiple instances done? The ClassPool itself just
+        //        keeps on adding the loaders and does not check for duplicates!
+        if (!loaderClassPaths.containsKey(loader)) {
+            final ClassPath ctLoader = new LoaderClassPath(loader);
+            classPool.appendClassPath(ctLoader);
+            loaderClassPaths.put(loader, ctLoader);
         }
-        ClassPath ctLoader = new LoaderClassPath(loader);
-        classPool.appendClassPath(ctLoader);
     }
 
-    public void ensureClassLoader(Class<?> child) {
+    public void ensureClassLoader(final Class<?> child) {
         appendClassLoaderIfMissing(child.getClassLoader());
     }
 }
