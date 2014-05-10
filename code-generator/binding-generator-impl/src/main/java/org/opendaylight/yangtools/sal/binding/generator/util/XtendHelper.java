@@ -12,10 +12,13 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-public class XtendHelper {
+public final class XtendHelper {
+    private XtendHelper() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
 
     @SuppressWarnings({"rawtypes","unchecked"})
-    public static Iterable<TypeDefinition> getTypes(UnionTypeDefinition definition) {
-        return (Iterable<TypeDefinition>) (List) definition.getTypes();
+    public static Iterable<TypeDefinition> getTypes(final UnionTypeDefinition definition) {
+        return (List) definition.getTypes();
     }
 }
