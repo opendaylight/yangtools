@@ -23,7 +23,6 @@ import javassist.CtMethod;
 import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -149,9 +148,20 @@ public final class JavassistUtils {
     }
 
     public CtField staticField(final CtClass it, final String name, final Class<? extends Object> returnValue) throws CannotCompileException {
+        return staticField(it, name, returnValue, null);
+    }
+
+    public CtField staticField(final CtClass it, final String name,
+                               final Class<? extends Object> returnValue,
+                               SourceCodeGenerator sourceGenerator) throws CannotCompileException {
         final CtField field = new CtField(asCtClass(returnValue), name, it);
         field.setModifiers(Modifier.PUBLIC + Modifier.STATIC);
         it.addField(field);
+
+        if (sourceGenerator != null) {
+            sourceGenerator.appendField(field, null);
+        }
+
         return field;
     }
 
