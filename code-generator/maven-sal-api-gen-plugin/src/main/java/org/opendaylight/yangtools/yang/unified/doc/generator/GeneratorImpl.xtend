@@ -649,7 +649,8 @@ class GeneratorImpl {
                 «ENDFOR»
                 </ul>
                 <ul>
-                «FOR typeDef : dataNode.typeDefinitions»
+                «val Set<TypeDefinition<?>> typedefs = dataNode.typeDefinitions»
+                «FOR typeDef : typedefs»
                     «typeDef.restrictions»
                 «ENDFOR»
                 </ul>
