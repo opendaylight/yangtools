@@ -23,7 +23,6 @@ import java.util.concurrent.Future;
 
 import javassist.ClassPool;
 
-import org.eclipse.xtext.xbase.lib.Extension;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -82,83 +81,67 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     private final HashMultimap<Type, SettableFuture<Type>> promisedTypes = HashMultimap.create();
     private final ClassLoadingStrategy classLoadingStrategy;
 
-    // FIXME: how is this thread-safe?
+    // FIXME: will become final
     private ClassPool pool;
-
-    // FIXME: how is this thread-safe?
-    @Extension
     private TransformerGenerator binding;
-
-    // FIXME: how is this thread-safe?
-    @Extension
     private LazyGeneratedCodecRegistry registry;
 
-    // FIXME: how is this thread-safe?
     private SchemaContext schemaContext;
 
+    @Deprecated
     public RuntimeGeneratedMappingServiceImpl() {
         this(GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
     }
 
+    @Deprecated
     public RuntimeGeneratedMappingServiceImpl(final ClassLoadingStrategy strat) {
         classLoadingStrategy = strat;
     }
 
-    public ClassPool getPool() {
-        return this.pool;
+    public RuntimeGeneratedMappingServiceImpl(final ClassPool pool) {
+        this(pool, GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
     }
 
+    public RuntimeGeneratedMappingServiceImpl(final ClassPool pool, final ClassLoadingStrategy strat) {
+        this.pool = Preconditions.checkNotNull(pool);
+        this.classLoadingStrategy = Preconditions.checkNotNull(strat);
+
+        // FIXME: merge into constructor once legacy init() is removed
+        doInit();
+    }
+
+    private void doInit() {
+        binding = new TransformerGenerator(pool);
+        registry = new LazyGeneratedCodecRegistry(this, classLoadingStrategy);
+
+        registry.setGenerator(binding);
+        // binding.staticFieldsInitializer = registry
+        binding.setListener(registry);
+        binding.setTypeToDefinition(typeToDefinition);
+        binding.setTypeToSchemaNode(typeToSchemaNode);
+        binding.setTypeDefinitions(typeDefinitions);
+
+        // if (ctx !== null) {
+        // listenerRegistration = ctx.registerService(SchemaServiceListener,
+        // this, new Hashtable<String, String>());
+        // }
+    }
+
+    @Deprecated
     public void setPool(final ClassPool pool) {
         this.pool = pool;
     }
 
     @Override
-    public SchemaContext getSchemaContext() {
+    public synchronized SchemaContext getSchemaContext() {
         return schemaContext;
     }
 
-    public void setSchemaContext(final SchemaContext schemaContext) {
-        this.schemaContext = schemaContext;
-    }
-
-    public TransformerGenerator getBinding() {
-        return this.binding;
-    }
-
-    public void setBinding(final TransformerGenerator binding) {
-        this.binding = binding;
-    }
-
-    public LazyGeneratedCodecRegistry getRegistry() {
-        return registry;
-    }
-
-    public void setRegistry(final LazyGeneratedCodecRegistry registry) {
-        this.registry = registry;
-    }
-
-    public ConcurrentMap<Type, GeneratedTypeBuilder> getTypeToDefinition() {
-        return typeToDefinition;
-    }
-
-    public ConcurrentMap<Type, Type> getTypeDefinitions() {
-        return typeDefinitions;
-    }
-
-    public ConcurrentMap<Type, SchemaNode> getTypeToSchemaNode() {
-        return typeToSchemaNode;
-    }
-
-    public ConcurrentMap<Type, Set<QName>> getServiceTypeToRpc() {
-        return serviceTypeToRpc;
-    }
-
     @Override
-    public void onGlobalContextUpdated(final SchemaContext arg0) {
-        this.setSchemaContext(arg0);
-        this.recreateBindingContext(arg0);
-        LazyGeneratedCodecRegistry _registry = this.getRegistry();
-        _registry.onGlobalContextUpdated(arg0);
+    public synchronized void onGlobalContextUpdated(final SchemaContext context) {
+        this.schemaContext = context;
+        this.recreateBindingContext(context);
+        this.registry.onGlobalContextUpdated(context);
     }
 
     private void recreateBindingContext(final SchemaContext schemaContext) {
@@ -292,7 +275,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             this.waitForSchema(arg.getType());
         }
 
-        final InstanceIdentifierCodec c = getRegistry().getInstanceIdentifierCodec();
+        final InstanceIdentifierCodec c = registry.getInstanceIdentifierCodec();
         Preconditions.checkState(c != null, "InstanceIdentifierCodec not present");
         return c.serialize(path);
     }
@@ -310,7 +293,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             // FIXME: deprecate use without iid
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> wildcardedPath = createWildcarded(path);
 
-            final DataContainerCodec<? extends DataContainer> transformer = getRegistry().getCodecForDataObject(container);
+            final DataContainerCodec<? extends DataContainer> transformer = registry.getCodecForDataObject(container);
             Preconditions.checkState(transformer != null, "Failed to find codec for type %s", container);
 
             final ValueWithQName<? extends DataContainer> deserialize = transformer.deserialize(domData, wildcardedPath);
@@ -328,7 +311,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     @Override
     public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> fromDataDom(final InstanceIdentifier entry) throws DeserializationException {
         try {
-            final InstanceIdentifierCodec c = getRegistry().getInstanceIdentifierCodec();
+            final InstanceIdentifierCodec c = registry.getInstanceIdentifierCodec();
             Preconditions.checkState(c != null, "InstanceIdentifierCodec not present");
             return c.deserialize(entry);
         } catch (Exception e) {
@@ -339,7 +322,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
     @Override
     public CodecRegistry getCodecRegistry() {
-        return this.getRegistry();
+        return this.registry;
     }
 
     private void updateBindingFor(final Map<SchemaPath, GeneratedTypeBuilder> map, final SchemaContext module) {
@@ -356,21 +339,9 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         }
     }
 
+    @Deprecated
     public void init() {
-        binding = new TransformerGenerator(pool);
-        registry = new LazyGeneratedCodecRegistry(this, classLoadingStrategy);
-
-        registry.setGenerator(binding);
-        // binding.staticFieldsInitializer = registry
-        binding.setListener(registry);
-        binding.setTypeToDefinition(typeToDefinition);
-        binding.setTypeToSchemaNode(typeToSchemaNode);
-        binding.setTypeDefinitions(typeDefinitions);
-
-        // if (ctx !== null) {
-        // listenerRegistration = ctx.registerService(SchemaServiceListener,
-        // this, new Hashtable<String, String>());
-        // }
+        doInit();
     }
 
     @Override
@@ -433,7 +404,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     @Override
-    public Optional<Class<? extends RpcService>> getRpcServiceClassFor(final String namespace, final String revision) {
+    public synchronized Optional<Class<? extends RpcService>> getRpcServiceClassFor(final String namespace, final String revision) {
         Module module = null;
         if (schemaContext != null) {
             module = schemaContext.findModuleByName(namespace, QName.parseRevision(revision));
