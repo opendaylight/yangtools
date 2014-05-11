@@ -96,7 +96,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         ctQName = QName.asCtClass
     }
 
-    override Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class inputType) {
+    override transformerForImpl(Class inputType) {
         return runOnClassLoader(inputType.classLoader) [ |
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
@@ -137,7 +137,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         ]
     }
 
-    override Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentationTransformerFor(Class inputType) {
+    override augmentationTransformerForImpl(Class inputType) {
         return runOnClassLoader(inputType.classLoader) [ |
 
             val ret = getGeneratedClass(inputType)
@@ -155,7 +155,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         ]
     }
 
-    override Class<? extends BindingCodec<Object, Object>> caseCodecFor(Class inputType, ChoiceCaseNode node) {
+    override caseCodecForImpl(Class inputType, ChoiceCaseNode node) {
         return runOnClassLoader(inputType.classLoader) [ |
             createMapping(inputType, node, null)
             val ret = getGeneratedClass(inputType)
@@ -170,7 +170,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         ]
     }
 
-    override Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiable(Class parentType) {
+    override keyTransformerForIdentifiableImpl(Class parentType) {
         return runOnClassLoader(parentType.classLoader) [ |
             val inputName = parentType.name + "Key";
             val inputType = loadClass(inputName);
@@ -249,7 +249,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         return keyMethod.returnType as GeneratedTransferObject
     }
 
-    override Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifier(Class inputType) {
+    override keyTransformerForIdentifierImpl(Class inputType) {
         return runOnClassLoader(inputType.classLoader) [ |
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
