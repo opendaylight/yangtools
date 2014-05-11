@@ -73,25 +73,21 @@ import static org.opendaylight.yangtools.sal.binding.generator.impl.CodecMapping
 import static extension org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils.*
 
 class TransformerGenerator extends AbstractTransformerGenerator {
-
-    private static val log = LoggerFactory.getLogger(TransformerGenerator)
+    private static val LOG = LoggerFactory.getLogger(TransformerGenerator)
 
     public static val STRING = Types.typeForClass(String);
     public static val BOOLEAN = Types.typeForClass(Boolean);
     public static val INTEGER = Types.typeForClass(Integer);
     public static val INSTANCE_IDENTIFIER = Types.typeForClass(InstanceIdentifier);
-
     //public static val DECIMAL = Types.typeForClass(Decimal);
     public static val LONG = Types.typeForClass(Long);
-
-    CtClass BINDING_CODEC
-
-    CtClass ctQName
+    public static val CLASS_TYPE = Types.typeForClass(Class);
 
     @Property
     var File classFileCapturePath;
 
-    public static val CLASS_TYPE = Types.typeForClass(Class);
+    val CtClass BINDING_CODEC
+    val CtClass ctQName
 
     public new(TypeResolver typeResolver, ClassPool pool) {
         super(typeResolver, pool)
@@ -406,7 +402,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 ]
             ]
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
-            log.debug("DOM Codec for {} was generated {}", inputType, ret)
+            LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret as Class<? extends BindingCodec<Map<QName,Object>, ?>>;
         } catch (Exception e) {
             processException(inputType, e);
@@ -466,7 +462,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)  as Class<? extends BindingCodec<Object, Object>>
             listener?.onDataContainerCodecCreated(inputType, ret);
-            log.debug("DOM Codec for {} was generated {}", inputType, ret)
+            LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret;
         } catch (Exception e) {
             processException(inputType, e);
@@ -524,7 +520,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain) as Class<? extends BindingCodec<Map<QName,Object>, Object>>
             listener?.onDataContainerCodecCreated(inputType, ret);
-            log.debug("DOM Codec for {} was generated {}", inputType, ret)
+            LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret;
         } catch (Exception e) {
             processException(inputType, e);
@@ -680,7 +676,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             val rawRet = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
             val ret = rawRet as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
             listener?.onChoiceCodecCreated(inputType, ret, node);
-            log.debug("DOM Codec for {} was generated {}", inputType, ret)
+            LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret;
         } catch (Exception e) {
             processException(inputType, e);
@@ -966,10 +962,10 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
-            log.debug("DOM Codec for {} was generated {}", inputType, ret)
+            LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         } catch (Exception e) {
-            log.error("Cannot compile DOM Codec for {}", inputType, e);
+            LOG.error("Cannot compile DOM Codec for {}", inputType, e);
             val exception = new CodeGenerationException("Cannot compile Transformator for " + inputType);
             exception.addSuppressed(e);
             throw exception;
@@ -1048,10 +1044,10 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
-            log.debug("DOM Codec for {} was generated {}", inputType, ret)
+            LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         } catch (Exception e) {
-            log.error("Cannot compile DOM Codec for {}", inputType, e);
+            LOG.error("Cannot compile DOM Codec for {}", inputType, e);
             val exception = new CodeGenerationException("Cannot compile Transformator for " + inputType);
             exception.addSuppressed(e);
             throw exception;
@@ -1131,10 +1127,10 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
-            log.debug("DOM Codec for {} was generated {}", inputType, ret)
+            LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         } catch (Exception e) {
-            log.error("Cannot compile DOM Codec for {}", inputType, e);
+            LOG.error("Cannot compile DOM Codec for {}", inputType, e);
             val exception = new CodeGenerationException("Cannot compile Transformator for " + inputType);
             exception.addSuppressed(e);
             throw exception;
@@ -1161,7 +1157,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     }
 
     private def createDummyImplementation(Class<?> object, GeneratedTransferObject typeSpec) {
-        log.trace("Generating Dummy DOM Codec for {} with {}", object, object.classLoader)
+        LOG.trace("Generating Dummy DOM Codec for {} with {}", object, object.classLoader)
         return createClass(typeSpec.codecClassName) [
             if (object.isYangBindingAvailable) {
                 implementsType(BINDING_CODEC)
@@ -1268,12 +1264,12 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             ]
 
             val ret = ctCls.toClassImpl(inputType.classLoader, inputType.protectionDomain)
-            log.debug("DOM Codec for {} was generated {}", inputType, ret)
+            LOG.debug("DOM Codec for {} was generated {}", inputType, ret)
             return ret;
         } catch (CodeGenerationException e) {
             throw new CodeGenerationException("Cannot compile Transformator for " + inputType, e);
         } catch (Exception e) {
-            log.error("Cannot compile DOM Codec for {}", inputType, e);
+            LOG.error("Cannot compile DOM Codec for {}", inputType, e);
             val exception = new CodeGenerationException("Cannot compile Transformator for " + inputType);
             exception.addSuppressed(e);
             throw exception;
@@ -1327,7 +1323,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         _deserializeProperty(container, type.toInstance, propertyName)
     }
 
-    public static def toSetter(String it) {
+    static def toSetter(String it) {
 
         if (startsWith("is")) {
             return "set" + substring(2);
@@ -1404,14 +1400,14 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         return ret;
     }
 
-    private def serializeAugmentations() '''
+    private static def serializeAugmentations() '''
         java.util.List _augmentations = (java.util.List) «AUGMENTATION_CODEC».serialize(value);
         if(_augmentations != null) {
             _childNodes.addAll(_augmentations);
         }
     '''
 
-    def Entry<String, Type> getFor(Map<String, Type> map, DataSchemaNode node) {
+    private static def Entry<String, Type> getFor(Map<String, Type> map, DataSchemaNode node) {
         var sig = map.get(node.getterName);
         if (sig != null) {
             return new SimpleEntry(node.getterName, sig);
@@ -1596,12 +1592,12 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     }
 
     private def dispatch processException(Class<?> inputType, CodeGenerationException e) {
-        log.error("Cannot compile DOM Codec for {}. One of it's prerequisites was not generated.", inputType);
+        LOG.error("Cannot compile DOM Codec for {}. One of it's prerequisites was not generated.", inputType);
         throw e;
     }
 
     private def dispatch processException(Class<?> inputType, Exception e) {
-        log.error("Cannot compile DOM Codec for {}", inputType, e);
+        LOG.error("Cannot compile DOM Codec for {}", inputType, e);
         val exception = new CodeGenerationException("Cannot compile Transformator for " + inputType, e);
         throw exception;
     }
@@ -1610,13 +1606,11 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         try {
             method.setBody(body);
         } catch (CannotCompileException e) {
-            log.error("Cannot compile method: {}#{} {}, Reason: {} Body: {}", method.declaringClass, method.name,
+            LOG.error("Cannot compile method: {}#{} {}, Reason: {} Body: {}", method.declaringClass, method.name,
                 method.signature, e.message, body)
             throw e;
         }
     }
-
-
 }
 
 @Data
