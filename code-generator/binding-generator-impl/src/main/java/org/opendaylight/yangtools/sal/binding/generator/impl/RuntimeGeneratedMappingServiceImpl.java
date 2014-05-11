@@ -54,6 +54,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.DataContainerCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException;
 import org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -73,13 +74,10 @@ import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.SettableFuture;
 
 public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaContextListener,
-        SchemaLock, AutoCloseable, SchemaContextHolder {
+        SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(RuntimeGeneratedMappingServiceImpl.class);
 
-    private final ConcurrentMap<Type, Type> typeDefinitions = new ConcurrentHashMap<>();
-    private final ConcurrentMap<Type, GeneratedTypeBuilder> typeToDefinition = new ConcurrentHashMap<>();
-    private final ConcurrentMap<Type, SchemaNode> typeToSchemaNode = new ConcurrentHashMap<>();
     private final ConcurrentMap<Type, Set<QName>> serviceTypeToRpc = new ConcurrentHashMap<>();
 
     /**
@@ -92,9 +90,19 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
     // FIXME: will become final
     private ClassPool pool;
-    private TransformerGenerator binding;
+    private AbstractTransformerGenerator binding;
     private LazyGeneratedCodecRegistry registry;
 
+    /*
+     * FIXME: updated here, access from AbstractTransformer
+     */
+    private final Map<Type, AugmentationSchema> typeToAugmentation = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Type, GeneratedTypeBuilder> typeToDefinition = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Type, SchemaNode> typeToSchemaNode = new ConcurrentHashMap<>();
+    private final Map<SchemaPath, GeneratedTypeBuilder> pathToType = new ConcurrentHashMap<>();
+
+    // FIXME: need to figure these out
+    private final ConcurrentMap<Type, Type> typeDefinitions = new ConcurrentHashMap<>();
     private SchemaContext schemaContext;
 
     @Deprecated
@@ -120,15 +128,9 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     private void doInit() {
-        binding = new TransformerGenerator(pool);
-        registry = new LazyGeneratedCodecRegistry(this, classLoadingStrategy);
-
-        registry.setGenerator(binding);
-        // binding.staticFieldsInitializer = registry
+        binding = new TransformerGenerator(this, pool);
+        registry = new LazyGeneratedCodecRegistry(this, binding, classLoadingStrategy);
         binding.setListener(registry);
-        binding.setTypeToDefinition(typeToDefinition);
-        binding.setTypeToSchemaNode(typeToSchemaNode);
-        binding.setTypeDefinitions(typeDefinitions);
 
         // if (ctx !== null) {
         // listenerRegistration = ctx.registerService(SchemaServiceListener,
@@ -161,7 +163,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         for (Map.Entry<Module, ModuleContext> entry : newBinding.getModuleContexts().entrySet()) {
 
             registry.onModuleContextAdded(schemaContext, entry.getKey(), entry.getValue());
-            binding.getPathToType().putAll(entry.getValue().getChildNodes());
+            pathToType.putAll(entry.getValue().getChildNodes());
             Module module = entry.getKey();
             ModuleContext context = entry.getValue();
             updateBindingFor(context.getChildNodes(), schemaContext);
@@ -182,20 +184,20 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             for (Map.Entry<SchemaPath, Type> typedef : typedefs.entrySet()) {
                 Type value = typedef.getValue();
                 Type typeRef = new ReferencedTypeImpl(value.getPackageName(), value.getName());
-                binding.getTypeDefinitions().put(typeRef, value);
+                typeDefinitions.put(typeRef, value);
                 TypeDefinition<?> schemaNode = YangSchemaUtils.findTypeDefinition(schemaContext, typedef.getKey());
                 if (schemaNode != null) {
 
-                    binding.getTypeToSchemaNode().put(typeRef, schemaNode);
+                    typeToSchemaNode.put(typeRef, schemaNode);
                 } else {
                     LOG.error("Type definition for {} is not available", value);
                 }
             }
             List<GeneratedTypeBuilder> augmentations = context.getAugmentations();
             for (GeneratedTypeBuilder augmentation : augmentations) {
-                binding.getTypeToDefinition().put(augmentation, augmentation);
+                typeToDefinition.put(augmentation, augmentation);
             }
-            binding.getTypeToAugmentation().putAll(context.getTypeToAugmentation());
+            typeToAugmentation.putAll(context.getTypeToAugmentation());
             for (GeneratedTypeBuilder augmentation : augmentations) {
                 updatePromisedSchemas(augmentation);
             }
@@ -428,8 +430,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         try {
             Optional<Type> rpcTypeName = getRpcServiceType(module);
             if (rpcTypeName.isPresent()) {
-                Class<?> rpcClass = binding.getClassLoadingStrategy().loadClass(
-                        rpcTypeName.get().getFullyQualifiedName());
+                Class<?> rpcClass = classLoadingStrategy.loadClass(rpcTypeName.get().getFullyQualifiedName());
                 return Optional.<Class<? extends RpcService>> of((Class<? extends RpcService>) rpcClass);
             }
         } catch (Exception e) {
@@ -459,5 +460,25 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             wildcardedArgs.add(pathArg);
         }
         return org.opendaylight.yangtools.yang.binding.InstanceIdentifier.create(wildcardedArgs);
+    }
+
+    @Override
+    public final AugmentationSchema getAugmentation(final Type type) {
+        return typeToAugmentation.get(type);
+    }
+
+    @Override
+    public final GeneratedTypeBuilder getDefinition(final Type type) {
+        return typeToDefinition.get(type);
+    }
+
+    @Override
+    public final SchemaNode getSchemaNode(final Type type) {
+        return typeToSchemaNode.get(type);
+    }
+
+    @Override
+    public final GeneratedTypeBuilder getTypeBuilder(final SchemaPath path) {
+        return pathToType.get(path);
     }
 }

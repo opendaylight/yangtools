@@ -7,88 +7,82 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl
 
-import javassist.ClassPool
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import org.opendaylight.yangtools.yang.model.api.SchemaNode
-import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils
-import javassist.CtClass
+import com.google.common.base.Joiner
+import java.io.File
+import java.security.ProtectionDomain
+import java.util.AbstractMap.SimpleEntry
+import java.util.Collection
+import java.util.Collections
+import java.util.HashMap
+import java.util.HashSet
+import java.util.Iterator
+import java.util.List
 import java.util.Map
-import org.opendaylight.yangtools.yang.common.QName
+import java.util.Map.Entry
+import java.util.Set
+import java.util.TreeSet
+import javassist.CannotCompileException
+import javassist.ClassPool
+import javassist.CtClass
 import javassist.CtField
-import static javassist.Modifier.*
-import static org.opendaylight.yangtools.sal.binding.generator.impl.CodecMapping.*
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer
+import javassist.CtMethod
+import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
+import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
+import org.opendaylight.yangtools.binding.generator.util.Types
+import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils
+import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationException
+import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
+import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder
-import org.opendaylight.yangtools.binding.generator.util.Types
-import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType
-import java.util.HashMap
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
-import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode
-import java.util.List
-import java.util.TreeSet
-import com.google.common.base.Joiner
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
-import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
-import static org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils.*;
-import org.opendaylight.yangtools.yang.binding.BindingDeserializer
-import org.opendaylight.yangtools.yang.binding.BindingCodec
-import org.slf4j.LoggerFactory
-import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationException
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode
-import java.security.ProtectionDomain
-import java.io.File
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
-import java.util.Map.Entry
-import java.util.AbstractMap.SimpleEntry
-import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Augmentation
-import java.util.Iterator
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema
-import java.util.concurrent.ConcurrentHashMap
-import static extension org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils.*;
-import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
-import org.opendaylight.yangtools.yang.model.util.ExtendedType
-import org.opendaylight.yangtools.yang.model.util.EnumerationType
-import static com.google.common.base.Preconditions.*
-import org.opendaylight.yangtools.yang.model.api.SchemaPath
-import javassist.CtMethod
-import javassist.CannotCompileException
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.Callable
-import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition
-import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
-import java.util.HashSet
-import java.util.Collections
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit
-import java.util.Set
-import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
+import org.opendaylight.yangtools.yang.binding.BindingCodec
+import org.opendaylight.yangtools.yang.binding.BindingDeserializer
 import org.opendaylight.yangtools.yang.binding.BindingMapping
+import org.opendaylight.yangtools.yang.binding.DataObject
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
+import org.opendaylight.yangtools.yang.model.api.SchemaNode
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition
-import java.util.Collection
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition
+import org.opendaylight.yangtools.yang.model.util.EnumerationType
+import org.opendaylight.yangtools.yang.model.util.ExtendedType
+import org.slf4j.LoggerFactory
 
-class TransformerGenerator {
+import static com.google.common.base.Preconditions.*
+import static javassist.Modifier.*
+import static org.opendaylight.yangtools.sal.binding.generator.impl.CodecMapping.*
+
+import static extension org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils.*
+
+class TransformerGenerator extends AbstractTransformerGenerator {
 
     private static val log = LoggerFactory.getLogger(TransformerGenerator)
 
     public static val STRING = Types.typeForClass(String);
     public static val BOOLEAN = Types.typeForClass(Boolean);
     public static val INTEGER = Types.typeForClass(Integer);
-    public static val INSTANCE_IDENTIFIER = Types.typeForClass(InstanceIdentifier)
+    public static val INSTANCE_IDENTIFIER = Types.typeForClass(InstanceIdentifier);
 
     //public static val DECIMAL = Types.typeForClass(Decimal);
     public static val LONG = Types.typeForClass(Long);
-
-    val extension JavassistUtils utils;
 
     CtClass BINDING_CODEC
 
@@ -97,49 +91,26 @@ class TransformerGenerator {
     @Property
     var File classFileCapturePath;
 
-    @Property
-    var Map<Type, Type> typeDefinitions = new ConcurrentHashMap();
-
-    @Property
-    var Map<Type, GeneratedTypeBuilder> typeToDefinition = new ConcurrentHashMap();
-
-    @Property
-    var Map<SchemaPath, GeneratedTypeBuilder> pathToType = new ConcurrentHashMap();
-
-    @Property
-    var Map<Type, SchemaNode> typeToSchemaNode = new ConcurrentHashMap();
-
-    @Property
-    var Map<Type, AugmentationSchema> typeToAugmentation = new ConcurrentHashMap();
-
-    @Property
-    var LazyGeneratedCodecRegistry listener;
-
-    @Property
-    var extension GeneratedClassLoadingStrategy classLoadingStrategy
-
     public static val CLASS_TYPE = Types.typeForClass(Class);
 
-    public new(ClassPool pool) {
-        utils = JavassistUtils.forClassPool(pool)
+    public new(TypeResolver typeResolver, ClassPool pool) {
+        super(typeResolver, pool)
 
         BINDING_CODEC = BindingCodec.asCtClass;
         ctQName = QName.asCtClass
-
-        this.classLoadingStrategy = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
     }
 
-    def Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class<?> inputType) {
-        return withClassLoaderAndLock(inputType.classLoader, lock) [ |
+    override Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class inputType) {
+        return runOnClassLoader(inputType.classLoader) [ |
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
                 listener.onClassProcessed(inputType);
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
             }
             val ref = Types.typeForClass(inputType)
-            val node = typeToSchemaNode.get(ref)
+            val node = getSchemaNode(ref)
             createMapping(inputType, node, null)
-            val typeSpecBuilder = typeToDefinition.get(ref)
+            val typeSpecBuilder = getDefinition(ref)
             checkState(typeSpecBuilder !== null, "Could not find typedefinition for %s", inputType.name);
             val typeSpec = typeSpecBuilder.toInstance();
             val newret = generateTransformerFor(inputType, typeSpec, node);
@@ -149,7 +120,7 @@ class TransformerGenerator {
     }
 
     def Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class<?> inputType, DataSchemaNode node) {
-        return withClassLoaderAndLock(inputType.classLoader, lock) [ |
+        return runOnClassLoader(inputType.classLoader) [ |
             createMapping(inputType, node, null)
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
@@ -157,9 +128,9 @@ class TransformerGenerator {
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
             }
             val ref = Types.typeForClass(inputType)
-            var typeSpecBuilder = typeToDefinition.get(ref)
+            var typeSpecBuilder = getDefinition(ref)
             if (typeSpecBuilder == null) {
-                typeSpecBuilder = pathToType.get(node.path);
+                typeSpecBuilder = getTypeBuilder(node.path);
             }
 
             checkState(typeSpecBuilder !== null, "Could not find TypeDefinition for %s, $s", inputType.name, node);
@@ -170,16 +141,16 @@ class TransformerGenerator {
         ]
     }
 
-    def Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentationTransformerFor(Class<?> inputType) {
-        return withClassLoaderAndLock(inputType.classLoader, lock) [ |
+    override Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentationTransformerFor(Class inputType) {
+        return runOnClassLoader(inputType.classLoader) [ |
 
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
             }
             val ref = Types.typeForClass(inputType)
-            val node = typeToAugmentation.get(ref)
-            val typeSpecBuilder = typeToDefinition.get(ref)
+            val node = getAugmentation(ref)
+            val typeSpecBuilder = getDefinition(ref)
             val typeSpec = typeSpecBuilder.toInstance();
             //mappingForNodes(node.childNodes, typeSpec.allProperties, bindingId)
             val newret = generateAugmentationTransformerFor(inputType, typeSpec, node);
@@ -188,23 +159,23 @@ class TransformerGenerator {
         ]
     }
 
-    def Class<? extends BindingCodec<Object, Object>> caseCodecFor(Class<?> inputType, ChoiceCaseNode node) {
-        return withClassLoaderAndLock(inputType.classLoader, lock) [ |
+    override Class<? extends BindingCodec<Object, Object>> caseCodecFor(Class inputType, ChoiceCaseNode node) {
+        return runOnClassLoader(inputType.classLoader) [ |
             createMapping(inputType, node, null)
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
                 return ret as Class<? extends BindingCodec<Object, Object>>;
             }
             val ref = Types.typeForClass(inputType)
-            val typeSpecBuilder = typeToDefinition.get(ref)
+            val typeSpecBuilder = getDefinition(ref)
             val typeSpec = typeSpecBuilder.toInstance();
             val newret = generateCaseCodec(inputType, typeSpec, node);
             return newret as Class<? extends BindingCodec<Object, Object>>;
         ]
     }
 
-    def Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiable(Class<?> parentType) {
-        return withClassLoaderAndLock(parentType.classLoader, lock) [ |
+    override Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiable(Class parentType) {
+        return runOnClassLoader(parentType.classLoader) [ |
             val inputName = parentType.name + "Key";
             val inputType = loadClass(inputName);
             val ret = getGeneratedClass(inputType)
@@ -212,8 +183,8 @@ class TransformerGenerator {
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
             }
             val ref = Types.typeForClass(parentType)
-            val node = typeToSchemaNode.get(ref) as ListSchemaNode
-            val typeSpecBuilder = typeToDefinition.get(ref)
+            val node = getSchemaNode(ref) as ListSchemaNode
+            val typeSpecBuilder = getDefinition(ref)
             val typeSpec = typeSpecBuilder.identifierDefinition;
             val newret = generateKeyTransformerFor(inputType, typeSpec, node);
             return newret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
@@ -225,29 +196,29 @@ class TransformerGenerator {
         if (cl === null) {
             cl = Thread.currentThread.contextClassLoader
         }
-        withClassLoader(cl,
+        ClassLoaderUtils.withClassLoader(cl,
             [ |
                 if (!(node instanceof DataNodeContainer)) {
                     return null
                 }
-                var InstanceIdentifier<?> bindingId = listener.getBindingIdentifierByPath(node.path)
+                var InstanceIdentifier<?> bindingId = getBindingIdentifierByPath(node.path)
                 if (bindingId != null) {
                     return null
                 }
                 val ref = Types.typeForClass(inputType)
-                var typeSpecBuilder = typeToDefinition.get(ref)
+                var typeSpecBuilder = getDefinition(ref)
                 if (typeSpecBuilder == null) {
-                    typeSpecBuilder = pathToType.get(node.path);
+                    typeSpecBuilder = getTypeBuilder(node.path);
                 }
-                checkState(typeSpecBuilder !== null, "Could not find typedefinition for %s, $s", inputType.name, node);
+                checkState(typeSpecBuilder !== null, "Could not find type definition for %s, $s", inputType.name, node);
                 val typeSpec = typeSpecBuilder.toInstance();
                 var InstanceIdentifier<?> parent
                 if (parentId == null) {
                     bindingId = InstanceIdentifier.create(inputType as Class)
                     parent = bindingId
-                    listener.putPathToBindingIdentifier(node.path, bindingId)
+                    putPathToBindingIdentifier(node.path, bindingId)
                 } else {
-                    parent = listener.putPathToBindingIdentifier(node.path, parentId, inputType)
+                    parent = putPathToBindingIdentifier(node.path, parentId, inputType)
                 }
                 val Map<String, Type> properties = typeSpec.allProperties
                 if (node instanceof DataNodeContainer) {
@@ -282,15 +253,15 @@ class TransformerGenerator {
         return keyMethod.returnType as GeneratedTransferObject
     }
 
-    def Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifier(Class<?> inputType) {
-        return withClassLoaderAndLock(inputType.classLoader, lock) [ |
+    override Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifier(Class inputType) {
+        return runOnClassLoader(inputType.classLoader) [ |
             val ret = getGeneratedClass(inputType)
             if (ret !== null) {
                 return ret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
             }
             val ref = Types.typeForClass(inputType)
-            val node = typeToSchemaNode.get(ref) as ListSchemaNode
-            val typeSpecBuilder = typeToDefinition.get(ref)
+            val node = getSchemaNode(ref) as ListSchemaNode
+            val typeSpecBuilder = getDefinition(ref)
             val typeSpec = typeSpecBuilder.toInstance();
             val newret = generateKeyTransformerFor(inputType, typeSpec, node);
             return newret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
@@ -298,7 +269,7 @@ class TransformerGenerator {
     }
 
     private def Class<?> keyTransformerFor(Class<?> inputType, GeneratedType type, ListSchemaNode schema) {
-        return withClassLoaderAndLock(inputType.classLoader, lock) [ |
+        return runOnClassLoader(inputType.classLoader) [ |
             val transformer = getGeneratedClass(inputType)
             if (transformer != null) {
                 return transformer;
@@ -338,7 +309,7 @@ class TransformerGenerator {
             baseType = baseType.baseType;
         }
         val finalType = baseType;
-        return withClassLoaderAndLock(cls.classLoader, lock) [ |
+        return runOnClassLoader(cls.classLoader) [ |
             val valueTransformer = generateValueTransformer(cls, type, finalType);
             return valueTransformer;
         ]
@@ -351,7 +322,7 @@ class TransformerGenerator {
             return transformer;
         }
 
-        return withClassLoaderAndLock(cls.classLoader, lock) [ |
+        return runOnClassLoader(cls.classLoader) [ |
             val valueTransformer = generateValueTransformer(cls, type);
             return valueTransformer;
         ]
@@ -480,7 +451,7 @@ class TransformerGenerator {
                 ]
                 method(Object, "fromDomStatic", #[QName, Object, InstanceIdentifier]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = deserializeBody(type, node, listener.getBindingIdentifierByPath(node.path))
+                    bodyChecked = deserializeBody(type, node, getBindingIdentifierByPath(node.path))
                 ]
                 method(Object, "deserialize", #[Object, InstanceIdentifier]) [
                     bodyChecked = '''
@@ -535,7 +506,7 @@ class TransformerGenerator {
 
                 method(Object, "fromDomStatic", #[QName, Object, InstanceIdentifier]) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    bodyChecked = deserializeBody(typeSpec, node, listener.getBindingIdentifierByPath(node.path))
+                    bodyChecked = deserializeBody(typeSpec, node, getBindingIdentifierByPath(node.path))
                 ]
 
                 method(Object, "deserialize", #[Object, InstanceIdentifier]) [
@@ -1244,7 +1215,7 @@ class TransformerGenerator {
     private def Class<?> generateValueTransformer(Class<?> inputType, Enumeration typeSpec) {
         try {
             val typeRef = new ReferencedTypeImpl(typeSpec.packageName, typeSpec.name);
-            val schema = typeToSchemaNode.get(typeRef) as ExtendedType;
+            val schema = getSchemaNode(typeRef) as ExtendedType;
             val enumSchema = schema.baseType as EnumerationType;
 
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
@@ -1645,10 +1616,6 @@ class TransformerGenerator {
         }
     }
 
-    private def <V> V withClassLoaderAndLock(ClassLoader cls, Lock lock, Callable<V> function) throws Exception {
-        appendClassLoaderIfMissing(cls);
-        ClassLoaderUtils.withClassLoaderAndLock(cls, lock, function);
-    }
 
 }
 
