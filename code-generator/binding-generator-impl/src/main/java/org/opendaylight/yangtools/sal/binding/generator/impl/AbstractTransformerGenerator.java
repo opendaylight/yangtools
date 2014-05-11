@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -15,13 +17,17 @@ import java.util.concurrent.locks.Lock;
 import javassist.ClassPool;
 
 import org.eclipse.xtext.xbase.lib.Extension;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.BindingCodec;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 import com.google.common.base.Preconditions;
@@ -97,6 +103,34 @@ abstract class AbstractTransformerGenerator {
         InstanceIdentifier<?> newId = bindingIdentifier.builder().child((Class) childClass).build();
         pathToBindingIdentifier.put(path, newId);
         return newId;
+    }
+
+
+    private static final String getBooleanGetterName(final DataSchemaNode node) {
+        return "is" + StringExtensions.toFirstUpper(BindingMapping.getPropertyName(node.getQName().getLocalName()));
+    }
+
+    private static final String getGetterName(final DataSchemaNode node) {
+        return "get" + StringExtensions.toFirstUpper(BindingMapping.getPropertyName(node.getQName().getLocalName()));
+    }
+
+    protected static final String getGetterName(final QName node) {
+        return "get" + StringExtensions.toFirstUpper(BindingMapping.getPropertyName(node.getLocalName()));
+    }
+
+    protected static final Entry<String, Type> getFor(final Map<String, Type> map, final DataSchemaNode node) {
+        String gn = getGetterName(node);
+        Type sig = map.get(gn);
+        if (sig != null) {
+            return new SimpleEntry<String, Type>(gn, sig);
+        }
+
+        gn = getBooleanGetterName(node);
+        sig = map.get(gn);
+        if (sig != null) {
+            return new SimpleEntry<String, Type>(gn, sig);
+        }
+        return null;
     }
 
     // Called from LazyGeneratedCodecRegistry

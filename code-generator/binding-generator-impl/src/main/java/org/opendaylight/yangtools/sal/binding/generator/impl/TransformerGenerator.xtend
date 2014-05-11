@@ -18,7 +18,6 @@ import java.util.HashSet
 import java.util.Iterator
 import java.util.List
 import java.util.Map
-import java.util.Map.Entry
 import java.util.Set
 import java.util.TreeSet
 import javassist.CannotCompileException
@@ -43,7 +42,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import org.opendaylight.yangtools.yang.binding.Augmentation
 import org.opendaylight.yangtools.yang.binding.BindingCodec
 import org.opendaylight.yangtools.yang.binding.BindingDeserializer
-import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.common.QName
@@ -1407,30 +1405,6 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             _childNodes.addAll(_augmentations);
         }
     '''
-
-    private static def Entry<String, Type> getFor(Map<String, Type> map, DataSchemaNode node) {
-        var sig = map.get(node.getterName);
-        if (sig != null) {
-            return new SimpleEntry(node.getterName, sig);
-        }
-        sig = map.get(node.booleanGetterName);
-        if (sig != null) {
-            return new SimpleEntry(node.booleanGetterName, map.get(node.booleanGetterName));
-        }
-        return null;
-    }
-
-    private static def String getBooleanGetterName(DataSchemaNode node) {
-        return "is" + BindingMapping.getPropertyName(node.QName.localName).toFirstUpper;
-    }
-
-    private static def String getGetterName(DataSchemaNode node) {
-        return "get" + BindingMapping.getPropertyName(node.QName.localName).toFirstUpper;
-    }
-
-    private static def String getGetterName(QName node) {
-        return "get" + BindingMapping.getPropertyName(node.localName).toFirstUpper;
-    }
 
     private def dispatch CharSequence serializeProperty(ListSchemaNode schema, ParameterizedType type,
         String propertyName) '''
