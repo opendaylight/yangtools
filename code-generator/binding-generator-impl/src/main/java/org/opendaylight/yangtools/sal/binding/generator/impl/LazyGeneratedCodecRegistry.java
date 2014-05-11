@@ -214,27 +214,29 @@ public class LazyGeneratedCodecRegistry implements //
 
     @Override
     public Class<?> getClassForPath(final List<QName> names) {
-        DataSchemaNode node = getSchemaNode(names);
-        SchemaPath path = node.getPath();
-        Type type = pathToType.get(path);
-        if (type != null) {
-            type = new ReferencedTypeImpl(type.getPackageName(), type.getName());
+        final DataSchemaNode node = getSchemaNode(names);
+        final SchemaPath path = node.getPath();
+        final Type t = pathToType.get(path);
+
+        final Type type;
+        if (t != null) {
+            type = new ReferencedTypeImpl(t.getPackageName(), t.getName());
         } else {
             type = pathToInstantiatedType.get(names);
-        }
-        @SuppressWarnings("rawtypes")
-        WeakReference<Class> weakRef = typeToClass.get(type);
-        if (weakRef == null) {
-            LOG.error("Could not find loaded class for path: {} and type: {}", path, type.getFullyQualifiedName());
+            Preconditions.checkState(type != null, "Failed to lookup instantiated type for path %s", path);
         }
 
+        @SuppressWarnings("rawtypes")
+        final WeakReference<Class> weakRef = typeToClass.get(type);
+        Preconditions.checkState(weakRef != null, "Could not find loaded class for path: %s and type: %s", path, type.getFullyQualifiedName());
         return weakRef.get();
     }
 
     @Override
     public void putPathToClass(final List<QName> names, final Class<?> cls) {
-        Type reference = Types.typeForClass(cls);
+        final Type reference = Types.typeForClass(cls);
         pathToInstantiatedType.put(names, reference);
+        LOG.trace("Path {} attached to class {} reference {}", names, cls, reference);
         bindingClassEncountered(cls);
     }
 
