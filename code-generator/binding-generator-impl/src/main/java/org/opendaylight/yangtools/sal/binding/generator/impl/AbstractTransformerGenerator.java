@@ -85,28 +85,66 @@ abstract class AbstractTransformerGenerator {
         }
     }
 
-    private static final Map<SchemaPath, InstanceIdentifier<?>> pathToBindingIdentifier = new ConcurrentHashMap<>();
-
     protected final InstanceIdentifier<?> getBindingIdentifierByPath(final SchemaPath path) {
-        return pathToBindingIdentifier.get(path);
+        return PATH_TO_BINDING_IDENTIFIER.get(path);
     }
 
     protected final void putPathToBindingIdentifier(final SchemaPath path, final InstanceIdentifier<?> bindingIdentifier) {
-        pathToBindingIdentifier.put(path, bindingIdentifier);
+        PATH_TO_BINDING_IDENTIFIER.put(path, bindingIdentifier);
     }
 
     protected final InstanceIdentifier<?> putPathToBindingIdentifier(final SchemaPath path,
             final InstanceIdentifier<?> bindingIdentifier, final Class<?> childClass) {
         @SuppressWarnings({ "unchecked", "rawtypes" })
         InstanceIdentifier<?> newId = bindingIdentifier.builder().child((Class) childClass).build();
-        pathToBindingIdentifier.put(path, newId);
+        PATH_TO_BINDING_IDENTIFIER.put(path, newId);
         return newId;
     }
 
+    protected abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentationTransformerForImpl(Class<?> inputType);
+    protected abstract Class<? extends BindingCodec<Object, Object>> caseCodecForImpl(Class<?> inputType, ChoiceCaseNode node);
+    protected abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiableImpl(Class<?> parentType);
+    protected abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifierImpl(Class<?> inputType);
+    protected abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerForImpl(Class<?> inputType);
+
     // Called from LazyGeneratedCodecRegistry
-    abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentationTransformerFor(Class<?> inputType);
-    abstract Class<? extends BindingCodec<Object, Object>> caseCodecFor(Class<?> inputType, ChoiceCaseNode node);
-    abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiable(Class<?> parentType);
-    abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifier(Class<?> inputType);
-    abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(Class<?> inputType);
+    final Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentationTransformerFor(final Class<?> inputType) throws TransformerGeneratorException {
+        try {
+            return augmentationTransformerForImpl(inputType);
+        } catch (Exception e) {
+            throw TransformerGeneratorException.wrap(inputType, e);
+        }
+    }
+
+    final Class<? extends BindingCodec<Object, Object>> caseCodecFor(final Class<?> inputType, final ChoiceCaseNode node) throws TransformerGeneratorException {
+        try {
+            return caseCodecForImpl(inputType, node);
+        } catch (Exception e) {
+            throw TransformerGeneratorException.wrap(inputType, e);
+        }
+    }
+
+    final Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifiable(final Class<?> parentType) throws TransformerGeneratorException {
+        try {
+            return keyTransformerForIdentifiableImpl(parentType);
+        } catch (Exception e) {
+            throw TransformerGeneratorException.wrap(parentType, e);
+        }
+    }
+
+    final Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifier(final Class<?> inputType) throws TransformerGeneratorException {
+        try {
+            return keyTransformerForIdentifierImpl(inputType);
+        } catch (Exception e) {
+            throw TransformerGeneratorException.wrap(inputType, e);
+        }
+    }
+
+    final Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerFor(final Class<?> inputType) throws TransformerGeneratorException {
+        try {
+            return transformerForImpl(inputType);
+        } catch (Exception e) {
+            throw TransformerGeneratorException.wrap(inputType, e);
+        }
+    }
 }
