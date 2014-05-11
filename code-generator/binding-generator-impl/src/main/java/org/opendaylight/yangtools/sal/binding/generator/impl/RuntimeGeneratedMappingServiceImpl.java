@@ -71,6 +71,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 
 public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaContextListener,
@@ -268,14 +269,15 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
     @Override
     public void waitForSchema(final Class<?> cls) {
-        if (!registry.isCodecAvailable(cls)) {
-            final Type ref = Types.typeForClass(cls);
+        final ListenableFuture<Type> f = getSchemaDefinition(cls);
+        if (f != null) {
             try {
-                getSchemaWithRetry(ref);
+                f.get();
             } catch (InterruptedException | ExecutionException e) {
                 LOG.warn("Waiting for schema for class {} failed", cls, e);
                 throw new IllegalStateException(String.format("Failed to get schema for %s", cls), e);
             }
+            LOG.info("Schema for {} became available, thread unblocked", cls);
         }
     }
 
@@ -365,21 +367,18 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         return serviceRef;
     }
 
-    private void getSchemaWithRetry(final Type type) throws InterruptedException, ExecutionException {
-        final SettableFuture<Type> f;
-
+    private ListenableFuture<Type> getSchemaDefinition(final Class<?> cls) {
+        final Type type = Types.typeForClass(cls);
         synchronized (this) {
             if (typeToDefinition.containsKey(type)) {
-                return;
+                return null;
             }
 
-            LOG.info("Thread blocked waiting for schema for: {}", type.getFullyQualifiedName());
-            f = SettableFuture.create();
+            LOG.info("Thread is going to wait for schema for: {}", type.getFullyQualifiedName());
+            final SettableFuture<Type> f = SettableFuture.create();
             promisedTypes.put(type, f);
+            return f;
         }
-
-        f.get();
-        LOG.info("Schema for {} became available, thread unblocked", type.getFullyQualifiedName());
     }
 
     @GuardedBy("this")
