@@ -1374,32 +1374,7 @@ class LazyGeneratedCodecRegistry implements //
 
     }
 
-    public boolean isCodecAvailable(final Class<?> cls) {
-        // FIXME: enforce type?
-        // Preconditions.checkArgument(DataContainer.class.isAssignableFrom(cls));
-
-        if (containerCodecs.containsKey(cls)) {
-            return true;
-        }
-        if (identifierCodecs.containsKey(cls)) {
-            return true;
-        }
-        if (choiceCodecs.containsKey(cls)) {
-            return true;
-        }
-        if (caseCodecs.containsKey(cls)) {
-            return true;
-        }
-        if (augmentableCodecs.containsKey(cls)) {
-            return true;
-        }
-        if (augmentationCodecs.containsKey(cls)) {
-            return true;
-        }
-        return false;
-    }
-
-    public static final Type referencedType(final Class<?> augmentableType) {
+    private static final Type referencedType(final Class<?> augmentableType) {
         return new ReferencedTypeImpl(augmentableType.getPackage().getName(), augmentableType.getSimpleName());
     }
 }
