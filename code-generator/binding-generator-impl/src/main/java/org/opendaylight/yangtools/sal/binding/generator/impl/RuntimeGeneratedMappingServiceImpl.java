@@ -89,10 +89,9 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
     private final ClassLoadingStrategy classLoadingStrategy;
 
-    // FIXME: will become final
-    private ClassPool pool;
-    private AbstractTransformerGenerator binding;
-    private LazyGeneratedCodecRegistry registry;
+    private final AbstractTransformerGenerator binding;
+    private final LazyGeneratedCodecRegistry registry;
+    private final ClassPool pool;
 
     /*
      * FIXME: updated here, access from AbstractTransformer
@@ -106,16 +105,6 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     private final ConcurrentMap<Type, Type> typeDefinitions = new ConcurrentHashMap<>();
     private SchemaContext schemaContext;
 
-    @Deprecated
-    public RuntimeGeneratedMappingServiceImpl() {
-        this(GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
-    }
-
-    @Deprecated
-    public RuntimeGeneratedMappingServiceImpl(final ClassLoadingStrategy strat) {
-        classLoadingStrategy = strat;
-    }
-
     public RuntimeGeneratedMappingServiceImpl(final ClassPool pool) {
         this(pool, GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
     }
@@ -124,11 +113,6 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         this.pool = Preconditions.checkNotNull(pool);
         this.classLoadingStrategy = Preconditions.checkNotNull(strat);
 
-        // FIXME: merge into constructor once legacy init() is removed
-        doInit();
-    }
-
-    private void doInit() {
         binding = new TransformerGenerator(this, pool);
         registry = new LazyGeneratedCodecRegistry(this, binding, classLoadingStrategy);
         binding.setListener(registry);
@@ -137,11 +121,6 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         // listenerRegistration = ctx.registerService(SchemaServiceListener,
         // this, new Hashtable<String, String>());
         // }
-    }
-
-    @Deprecated
-    public void setPool(final ClassPool pool) {
-        this.pool = pool;
     }
 
     @Override
@@ -352,10 +331,6 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         }
     }
 
-    @Deprecated
-    public void init() {
-        doInit();
-    }
 
     @Override
     public Set<QName> getRpcQNamesFor(final Class<? extends RpcService> service) {
