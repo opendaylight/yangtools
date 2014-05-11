@@ -54,9 +54,7 @@ public class RuntimeCodecAugmentationWithGroupingsAndCasesTest {
         assertNotNull(schemaContext);
         assertTrue(schemaContext.isPresent());
 
-        mappingService = new RuntimeGeneratedMappingServiceImpl(moduleInfoContext);
-        mappingService.setPool(ClassPool.getDefault());
-        mappingService.init();
+        mappingService = new RuntimeGeneratedMappingServiceImpl(ClassPool.getDefault(), moduleInfoContext);
         mappingService.onGlobalContextUpdated(schemaContext.get());
 
     }
