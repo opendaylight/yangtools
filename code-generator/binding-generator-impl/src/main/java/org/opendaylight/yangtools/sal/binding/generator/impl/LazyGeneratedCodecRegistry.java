@@ -714,10 +714,35 @@ public class LazyGeneratedCodecRegistry implements //
             if (adaptedForPaths.contains(path)) {
                 return;
             }
+            /**
+             * We search in schema context if the use of this location aware codec (augmentable codec, case codec)
+             * makes sense on provided location (path)
+             *
+             */
             Optional<DataNodeContainer> contextNode = BindingSchemaContextUtils.findDataNodeContainer(currentSchema, path);
+            /**
+             * If context node is present, this codec makes sense on provided location.
+             *
+             */
             if (contextNode.isPresent()) {
                 synchronized (this) {
+                    /**
+                     *
+                     * We adapt (turn on / off) possible implementations of child codecs (augmentations, cases)
+                     * based on this location.
+                     *
+                     *
+                     */
                     adaptForPathImpl(path, contextNode.get());
+                    try  {
+                        /**
+                         * We trigger serialization of instance identifier, to make sure instance identifier
+                         * codec is aware of combination of this path / augmentation / case
+                         */
+                        instanceIdentifierCodec.serialize(path);
+                    } catch (Exception e) {
+                        LOG.warn("Exception during preparation of instance identifier codec for  path {}.",path,e);
+                    }
                     adaptedForPaths.add(path);
                 }
             } else {
