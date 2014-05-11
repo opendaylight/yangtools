@@ -43,9 +43,7 @@ public class RestconfClientImplTest {
 
     @Before
     public void setupRestconfClientContext() throws MalformedURLException, UnsupportedProtocolException {
-        mappingService = new RuntimeGeneratedMappingServiceImpl();
-        mappingService.setPool(new ClassPool());
-        mappingService.init();
+        mappingService = new RuntimeGeneratedMappingServiceImpl(new ClassPool());
 
         final ModuleInfoBackedContext moduleInfo = ModuleInfoBackedContext.create();
         moduleInfo.addModuleInfos(BindingReflections.loadModuleInfos());
