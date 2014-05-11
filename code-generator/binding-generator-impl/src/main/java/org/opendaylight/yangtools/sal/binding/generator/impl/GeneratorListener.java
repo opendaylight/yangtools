@@ -14,9 +14,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 
 public interface GeneratorListener {
-
-
-
     void onClassProcessed(Class<?> cl);
 
     void onCodecCreated(Class<?> codec);
