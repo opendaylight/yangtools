@@ -81,22 +81,11 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     private final HashMultimap<Type, SettableFuture<Type>> promisedTypes = HashMultimap.create();
     private final ClassLoadingStrategy classLoadingStrategy;
 
-    // FIXME: will become final
-    private ClassPool pool;
-    private TransformerGenerator binding;
-    private LazyGeneratedCodecRegistry registry;
+    private final LazyGeneratedCodecRegistry registry;
+    private final TransformerGenerator binding;
+    private final ClassPool pool;
 
     private SchemaContext schemaContext;
-
-    @Deprecated
-    public RuntimeGeneratedMappingServiceImpl() {
-        this(GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
-    }
-
-    @Deprecated
-    public RuntimeGeneratedMappingServiceImpl(final ClassLoadingStrategy strat) {
-        classLoadingStrategy = strat;
-    }
 
     public RuntimeGeneratedMappingServiceImpl(final ClassPool pool) {
         this(pool, GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy());
@@ -106,11 +95,6 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         this.pool = Preconditions.checkNotNull(pool);
         this.classLoadingStrategy = Preconditions.checkNotNull(strat);
 
-        // FIXME: merge into constructor once legacy init() is removed
-        doInit();
-    }
-
-    private void doInit() {
         binding = new TransformerGenerator(pool);
         registry = new LazyGeneratedCodecRegistry(this, classLoadingStrategy);
 
@@ -125,11 +109,6 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         // listenerRegistration = ctx.registerService(SchemaServiceListener,
         // this, new Hashtable<String, String>());
         // }
-    }
-
-    @Deprecated
-    public void setPool(final ClassPool pool) {
-        this.pool = pool;
     }
 
     @Override
@@ -329,10 +308,6 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         }
     }
 
-    @Deprecated
-    public void init() {
-        doInit();
-    }
 
     @Override
     public Set<QName> getRpcQNamesFor(final Class<? extends RpcService> service) {
