@@ -11,8 +11,6 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javassist.ClassPool;
 
@@ -20,19 +18,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.isis.topology.rev131021.IgpNodeAttributes1;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
-import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.TopologyId;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.Topology;
-import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.TopologyKey;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.nt.l3.unicast.igp.topology.rev131021.Node1;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import com.google.common.collect.Lists;
 
 public class RestconfUtilsTest {
 
@@ -40,9 +33,7 @@ public class RestconfUtilsTest {
 
     @Before
     public void setup() {
-        this.mappingService = new RuntimeGeneratedMappingServiceImpl();
-        this.mappingService.setPool(new ClassPool());
-        this.mappingService.init();
+        this.mappingService = new RuntimeGeneratedMappingServiceImpl(new ClassPool());
 
         final ModuleInfoBackedContext moduleInfo = ModuleInfoBackedContext.create();
         moduleInfo.addModuleInfos(BindingReflections.loadModuleInfos());
