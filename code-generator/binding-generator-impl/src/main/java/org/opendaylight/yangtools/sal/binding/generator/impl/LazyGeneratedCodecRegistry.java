@@ -81,18 +81,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-public class LazyGeneratedCodecRegistry implements //
+class LazyGeneratedCodecRegistry implements //
         CodecRegistry, //
         SchemaContextListener, //
         GeneratorListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(LazyGeneratedCodecRegistry.class);
     private static final LateMixinCodec NOT_READY_CODEC = new LateMixinCodec();
-
-    private final InstanceIdentifierCodec instanceIdentifierCodec = new InstanceIdentifierCodecImpl(this);
-    private final IdentityCompositeCodec identityRefCodec = new IdentityCompositeCodec();
-
-    private TransformerGenerator generator;
 
     // Concrete class to codecs
     private static final Map<Class<?>, DataContainerCodec<?>> containerCodecs = Collections
@@ -117,9 +112,6 @@ public class LazyGeneratedCodecRegistry implements //
     @SuppressWarnings("rawtypes")
     private static final ConcurrentMap<Type, ChoiceCaseCodecImpl> typeToCaseCodecs = new ConcurrentHashMap<>();
 
-    private final CaseClassMapFacade classToCaseRawCodec = new CaseClassMapFacade();
-
-    private static final Map<SchemaPath, InstanceIdentifier<?>> pathToBindingIdentifier = new ConcurrentHashMap<>();
     private static final Map<SchemaPath, GeneratedTypeBuilder> pathToType = new ConcurrentHashMap<>();
     private static final Map<List<QName>, Type> pathToInstantiatedType = new ConcurrentHashMap<>();
     private static final Map<Type, QName> typeToQname = new ConcurrentHashMap<>();
@@ -131,28 +123,25 @@ public class LazyGeneratedCodecRegistry implements //
     private static final Multimap<Type, Type> choiceToCases = Multimaps.synchronizedMultimap(HashMultimap
             .<Type, Type> create());
 
+    private final InstanceIdentifierCodec instanceIdentifierCodec = new InstanceIdentifierCodecImpl(this);
+    private final CaseClassMapFacade classToCaseRawCodec = new CaseClassMapFacade();
+    private final IdentityCompositeCodec identityRefCodec = new IdentityCompositeCodec();
+    private final ClassLoadingStrategy classLoadingStrategy;
+    private final AbstractTransformerGenerator generator;
     private final SchemaLock lock;
 
     // FIXME: how is this protected?
     private SchemaContext currentSchema;
 
-    private final ClassLoadingStrategy classLoadingStrategy;
-
-    LazyGeneratedCodecRegistry(final SchemaLock lock, final ClassLoadingStrategy identityClassLoadingStrategy) {
+    LazyGeneratedCodecRegistry(final SchemaLock lock, final AbstractTransformerGenerator generator,
+            final ClassLoadingStrategy classLoadingStrategy) {
         this.lock = Preconditions.checkNotNull(lock);
-        this.classLoadingStrategy = identityClassLoadingStrategy;
+        this.classLoadingStrategy = Preconditions.checkNotNull(classLoadingStrategy);
+        this.generator = Preconditions.checkNotNull(generator);
     }
 
     public SchemaLock getLock() {
         return lock;
-    }
-
-    public TransformerGenerator getGenerator() {
-        return generator;
-    }
-
-    public void setGenerator(final TransformerGenerator generator) {
-        this.generator = generator;
     }
 
     @Override
@@ -239,22 +228,6 @@ public class LazyGeneratedCodecRegistry implements //
         pathToInstantiatedType.put(names, reference);
         LOG.trace("Path {} attached to class {} reference {}", names, cls, reference);
         bindingClassEncountered(cls);
-    }
-
-    public InstanceIdentifier<?> getBindingIdentifierByPath(final SchemaPath path) {
-        return pathToBindingIdentifier.get(path);
-    }
-
-    public void putPathToBindingIdentifier(final SchemaPath path, final InstanceIdentifier<?> bindingIdentifier) {
-        pathToBindingIdentifier.put(path, bindingIdentifier);
-    }
-
-    public InstanceIdentifier<?> putPathToBindingIdentifier(final SchemaPath path,
-            final InstanceIdentifier<?> bindingIdentifier, final Class<?> childClass) {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        InstanceIdentifier<?> newId = bindingIdentifier.builder().child((Class) childClass).build();
-        pathToBindingIdentifier.put(path, newId);
-        return newId;
     }
 
     @Override
@@ -429,7 +402,6 @@ public class LazyGeneratedCodecRegistry implements //
                 caseClass.getName());
         Preconditions.checkState(caseCodec.getSchema() != null, "Case schema is not available for %s",
                 caseClass.getName());
-        @SuppressWarnings("unchecked")
         Class<? extends BindingCodec> newCodec = generator.caseCodecFor(caseClass, caseCodec.getSchema());
         BindingCodec newInstance = newInstanceOf(newCodec);
         caseCodec.setDelegate(newInstance);
