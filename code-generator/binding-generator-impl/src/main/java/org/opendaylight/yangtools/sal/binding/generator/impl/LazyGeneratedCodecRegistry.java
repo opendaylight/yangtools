@@ -158,21 +158,13 @@ class LazyGeneratedCodecRegistry implements //
         if (potentialCodec != null) {
             codec = potentialCodec;
         } else {
-            try {
-                lock.waitForSchema(object);
-                Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentRawCodec = generator
-                        .augmentationTransformerFor(object);
-                BindingCodec<Map<QName, Object>, Object> rawCodec = augmentRawCodec.newInstance();
+            lock.waitForSchema(object);
+            Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentRawCodec = generator
+                    .augmentationTransformerFor(object);
 
-                codec = new AugmentationCodecWrapper<T>(rawCodec, null, object);
-                augmentationCodecs.put(object, codec);
-            } catch (InstantiationException e) {
-                LOG.error("Can not instantiate raw augmentation codec {}", object.getSimpleName(), e);
-            } catch (IllegalAccessException e) {
-                LOG.debug(
-                        "Run-time consistency issue: constructor {} is not available. This indicates either a code generation bug or a misconfiguration of JVM.",
-                        object.getSimpleName(), e);
-            }
+            BindingCodec<Map<QName, Object>, Object> rawCodec = newInstanceOf(augmentRawCodec);
+            codec = new AugmentationCodecWrapper<T>(rawCodec, null, object);
+            augmentationCodecs.put(object, codec);
         }
         Class<? extends Augmentable<?>> objectSupertype = getAugmentableArgumentFrom(object);
         if (objectSupertype != null) {
@@ -328,15 +320,18 @@ class LazyGeneratedCodecRegistry implements //
         return null;
     }
 
-    private <T> T newInstanceOf(final Class<?> newType) {
+    private static <T> T newInstanceOf(final Class<?> cls) {
         try {
             @SuppressWarnings("unchecked")
-            T ret = (T) newType.newInstance();
+            T ret = (T) cls.newInstance();
             return ret;
         } catch (InstantiationException e) {
-            throw new IllegalStateException(e);
+            LOG.error("Failed to instantiate codec {}", cls.getSimpleName(), e);
+            throw new IllegalStateException(String.format("Failed to instantiate codec %s", cls), e);
         } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
+            LOG.debug("Run-time consistency issue: constructor for {} is not available. This indicates either a code generation bug or a misconfiguration of JVM.",
+                    cls.getSimpleName(), e);
+            throw new IllegalStateException(String.format("Cannot access contructor of %s", cls), e);
         }
     }
 
