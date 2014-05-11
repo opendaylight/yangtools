@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -19,9 +20,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javassist.ClassPool;
+
+import javax.annotation.concurrent.GuardedBy;
 
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -67,6 +69,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.SettableFuture;
 
 public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaContextListener,
@@ -78,7 +81,13 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     private final ConcurrentMap<Type, GeneratedTypeBuilder> typeToDefinition = new ConcurrentHashMap<>();
     private final ConcurrentMap<Type, SchemaNode> typeToSchemaNode = new ConcurrentHashMap<>();
     private final ConcurrentMap<Type, Set<QName>> serviceTypeToRpc = new ConcurrentHashMap<>();
-    private final HashMultimap<Type, SettableFuture<Type>> promisedTypes = HashMultimap.create();
+
+    /**
+     * This is map of types which users are waiting for.
+     */
+    @GuardedBy("this")
+    private final Multimap<Type, SettableFuture<Type>> promisedTypes = HashMultimap.create();
+
     private final ClassLoadingStrategy classLoadingStrategy;
 
     // FIXME: will become final
@@ -139,11 +148,12 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
     @Override
     public synchronized void onGlobalContextUpdated(final SchemaContext context) {
-        this.schemaContext = context;
+        this.schemaContext = Preconditions.checkNotNull(context);
         this.recreateBindingContext(context);
         this.registry.onGlobalContextUpdated(context);
     }
 
+    @GuardedBy("this")
     private void recreateBindingContext(final SchemaContext schemaContext) {
         BindingGeneratorImpl newBinding = new BindingGeneratorImpl();
         newBinding.generateTypes(schemaContext);
@@ -255,16 +265,15 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     @Override
-    public void waitForSchema(final Class class1) {
-        if (registry.isCodecAvailable(class1)) {
-            return;
-        }
-        Type ref = Types.typeForClass(class1);
-        try {
-            getSchemaWithRetry(ref);
-        } catch (InterruptedException | ExecutionException e) {
-            LOG.warn("Waiting for schema for class {} failed", class1, e);
-            throw new IllegalStateException(String.format("Failed to get schema for {}", class1), e);
+    public void waitForSchema(final Class<?> cls) {
+        if (!registry.isCodecAvailable(cls)) {
+            final Type ref = Types.typeForClass(cls);
+            try {
+                getSchemaWithRetry(ref);
+            } catch (InterruptedException | ExecutionException e) {
+                LOG.warn("Waiting for schema for class {} failed", cls, e);
+                throw new IllegalStateException(String.format("Failed to get schema for %s", cls), e);
+            }
         }
     }
 
@@ -355,29 +364,33 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     }
 
     private void getSchemaWithRetry(final Type type) throws InterruptedException, ExecutionException {
-        if (!typeToDefinition.containsKey(type)) {
+        final SettableFuture<Type> f;
+
+        synchronized (this) {
+            if (typeToDefinition.containsKey(type)) {
+                return;
+            }
+
             LOG.info("Thread blocked waiting for schema for: {}", type.getFullyQualifiedName());
-            waitForTypeDefinition(type).get();
-            LOG.info("Schema for {} became available, thread unblocked", type.getFullyQualifiedName());
+            f = SettableFuture.create();
+            promisedTypes.put(type, f);
         }
+
+        f.get();
+        LOG.info("Schema for {} became available, thread unblocked", type.getFullyQualifiedName());
     }
 
-    private Future<Type> waitForTypeDefinition(final Type type) {
-        final SettableFuture<Type> future = SettableFuture.<Type> create();
-        promisedTypes.put(type, future);
-        return future;
-    }
-
+    @GuardedBy("this")
     private void updatePromisedSchemas(final Type builder) {
-        Type ref = new ReferencedTypeImpl(builder.getPackageName(), builder.getName());
-        Set<SettableFuture<Type>> futures = promisedTypes.get(ref);
-        if (futures == null || futures.isEmpty()) {
-            return;
+        final Type ref = new ReferencedTypeImpl(builder.getPackageName(), builder.getName());
+        final Collection<SettableFuture<Type>> futures = promisedTypes.get(ref);
+
+        if (futures != null) {
+            for (SettableFuture<Type> future : futures) {
+                future.set(builder);
+            }
+            promisedTypes.removeAll(builder);
         }
-        for (SettableFuture<Type> future : futures) {
-            future.set(builder);
-        }
-        promisedTypes.removeAll(builder);
     }
 
     @Override

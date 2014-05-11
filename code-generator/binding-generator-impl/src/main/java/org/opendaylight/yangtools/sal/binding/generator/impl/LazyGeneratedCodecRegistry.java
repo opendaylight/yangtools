@@ -133,6 +133,7 @@ public class LazyGeneratedCodecRegistry implements //
 
     private final SchemaLock lock;
 
+    // FIXME: how is this protected?
     private SchemaContext currentSchema;
 
     private final ClassLoadingStrategy classLoadingStrategy;
@@ -1381,7 +1382,10 @@ public class LazyGeneratedCodecRegistry implements //
 
     }
 
-    public boolean isCodecAvailable(final Class<? extends DataContainer> cls) {
+    public boolean isCodecAvailable(final Class<?> cls) {
+        // FIXME: enforce type?
+        // Preconditions.checkArgument(DataContainer.class.isAssignableFrom(cls));
+
         if (containerCodecs.containsKey(cls)) {
             return true;
         }
