@@ -718,6 +718,11 @@ public class LazyGeneratedCodecRegistry implements //
             if (contextNode.isPresent()) {
                 synchronized (this) {
                     adaptForPathImpl(path, contextNode.get());
+                    try  {
+                    instanceIdentifierCodec.serialize(path);
+                    } catch (Exception e) {
+                        LOG.error("Exception during preparation of instance identifier codec for {}.",path,e);
+                    }
                     adaptedForPaths.add(path);
                 }
             } else {
