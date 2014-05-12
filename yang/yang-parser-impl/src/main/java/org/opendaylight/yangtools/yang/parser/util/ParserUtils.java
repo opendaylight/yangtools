@@ -17,7 +17,6 @@ import java.util.TreeMap;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -465,36 +464,8 @@ public final class ParserUtils {
         return result;
     }
 
-    public static IdentitySchemaNode findBaseIdentityFromContext(Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            ModuleBuilder module, String baseString, int line, SchemaContext context) {
-        IdentitySchemaNode result = null;
-
-        String[] splittedBase = baseString.split(":");
-        if (splittedBase.length > 2) {
-            throw new YangParseException(module.getName(), line, "Failed to parse identityref base: " + baseString);
-        }
-        String prefix = splittedBase[0];
-        String name = splittedBase[1];
-        Module dependentModule = findModuleFromContext(context, module, prefix, line);
-        result = findIdentityNode(dependentModule.getIdentities(), name);
-
-        if (result == null) {
-            throw new YangParseException(module.getName(), line, "Failed to find base identity");
-        }
-        return result;
-    }
-
-    private static IdentitySchemaNodeBuilder findIdentity(Set<IdentitySchemaNodeBuilder> identities, String name) {
+    public static IdentitySchemaNodeBuilder findIdentity(Set<IdentitySchemaNodeBuilder> identities, String name) {
         for (IdentitySchemaNodeBuilder identity : identities) {
-            if (identity.getQName().getLocalName().equals(name)) {
-                return identity;
-            }
-        }
-        return null;
-    }
-
-    private static IdentitySchemaNode findIdentityNode(Set<IdentitySchemaNode> identities, String name) {
-        for (IdentitySchemaNode identity : identities) {
             if (identity.getQName().getLocalName().equals(name)) {
                 return identity;
             }
