@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private boolean isBuilt;
@@ -29,21 +28,20 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         instance = new IdentitySchemaNodeImpl(qname, path, derivedIdentities);
     }
 
+    IdentitySchemaNodeBuilder(final String moduleName, IdentitySchemaNode base) {
+        super(moduleName, 0, base.getQName());
+        schemaPath = base.getPath();
+        derivedIdentities.addAll(base.getDerivedIdentities());
+        unknownNodes.addAll(base.getUnknownSchemaNodes());
+        instance = new IdentitySchemaNodeImpl(qname, schemaPath, derivedIdentities);
+    }
+
     @Override
     public IdentitySchemaNode build() {
         if (!isBuilt) {
-            if (!(parentBuilder instanceof ModuleBuilder)) {
-                throw new YangParseException(moduleName, line, "Identity can be defined only under module (was" + parentBuilder + ")");
-            }
-            if (baseIdentity == null) {
-                if(baseIdentityBuilder != null) {
-                    baseIdentityBuilder.addDerivedIdentity(instance);
-                    baseIdentity = baseIdentityBuilder.build();
-                }
-            } else {
-                if(baseIdentity instanceof IdentitySchemaNodeImpl) {
-                    ((IdentitySchemaNodeImpl)baseIdentity).toBuilder().addDerivedIdentity(instance);
-                }
+            if(baseIdentityBuilder != null) {
+                baseIdentityBuilder.addDerivedIdentity(instance);
+                baseIdentity = baseIdentityBuilder.build();
             }
             instance.setBaseIdentity(baseIdentity);
 
@@ -109,10 +107,6 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         this.baseIdentityBuilder = baseType;
     }
 
-    public void setBaseIdentity(final IdentitySchemaNode baseType) {
-        this.baseIdentity = baseType;
-    }
-
     public void addDerivedIdentity(IdentitySchemaNode derivedIdentity) {
         if (derivedIdentity != null) {
             derivedIdentities.add(derivedIdentity);
@@ -124,7 +118,7 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         return "identity " + qname.getLocalName();
     }
 
-    private final class IdentitySchemaNodeImpl implements IdentitySchemaNode {
+    private static final class IdentitySchemaNodeImpl implements IdentitySchemaNode {
         private final QName qname;
         private final SchemaPath path;
         private IdentitySchemaNode baseIdentity;
@@ -188,10 +182,6 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             if (unknownSchemaNodes != null) {
                 this.unknownNodes.addAll(unknownSchemaNodes);
             }
-        }
-
-        public IdentitySchemaNodeBuilder toBuilder() {
-            return IdentitySchemaNodeBuilder.this;
         }
 
         @Override

@@ -134,6 +134,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
         submodule = false;
         instance = new ModuleImpl(base.getName(), base.getModuleSourcePath());
+        instance.setYangVersion(base.getYangVersion());
         actualPath.push(this);
         namespace = base.getNamespace();
         prefix = base.getPrefix();
@@ -149,7 +150,11 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         augments.addAll(base.getAugmentations());
         rpcs.addAll(base.getRpcs());
         notifications.addAll(base.getNotifications());
-        identities.addAll(base.getIdentities());
+
+        for (IdentitySchemaNode identityNode : base.getIdentities()) {
+            addedIdentities.add(new IdentitySchemaNodeBuilder(name, identityNode));
+        }
+
         features.addAll(base.getFeatures());
         deviations.addAll(base.getDeviations());
         extensions.addAll(base.getExtensionSchemaNodes());
@@ -1188,7 +1193,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return source;
         }
 
-        // FIXME: prefix should not be taken into consideration, perhaps namespace too
+        // FIXME: perhaps namespace should not be taken into consideration
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -1196,7 +1201,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
             result = prime * result + ((name == null) ? 0 : name.hashCode());
             result = prime * result + ((revision == null) ? 0 : revision.hashCode());
-            result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
             result = prime * result + ((yangVersion == null) ? 0 : yangVersion.hashCode());
             return result;
         }
@@ -1232,13 +1236,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                     return false;
                 }
             } else if (!revision.equals(other.revision)) {
-                return false;
-            }
-            if (prefix == null) {
-                if (other.prefix != null) {
-                    return false;
-                }
-            } else if (!prefix.equals(other.prefix)) {
                 return false;
             }
             if (yangVersion == null) {
