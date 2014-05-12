@@ -19,13 +19,20 @@ import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import com.google.common.collect.ImmutableSet;
 
 public final class ConstraintsBuilder {
-    private static final int HASH_IF_BOOL_TRUE = 1231;
-    private static final int HASH_IF_BOOL_FALSE = 1237;
+    private static final ConstraintDefinitionImpl EMPTY_CONSTRAINT = new ConstraintDefinitionImpl();
+    private static final ConstraintDefinitionImpl EMPTY_MANDATORY_CONSTRAINT;
+
+    static {
+        ConstraintDefinitionImpl c = new ConstraintDefinitionImpl();
+        c.setMandatory(true);
+
+        EMPTY_MANDATORY_CONSTRAINT = c;
+    }
 
     private final String moduleName;
     private final int line;
-    private final ConstraintDefinitionImpl instance;
     private final Set<MustDefinition> mustDefinitions;
+    private ConstraintDefinitionImpl instance;
     private RevisionAwareXPath whenStmt;
     private String whenCondition;
     private boolean mandatory;
@@ -35,14 +42,12 @@ public final class ConstraintsBuilder {
     public ConstraintsBuilder(final String moduleName, final int line) {
         this.moduleName = moduleName;
         this.line = line;
-        instance = new ConstraintDefinitionImpl();
         mustDefinitions = new HashSet<MustDefinition>();
     }
 
     ConstraintsBuilder(final ConstraintsBuilder b) {
         this.moduleName = b.getModuleName();
         this.line = b.getLine();
-        instance = new ConstraintDefinitionImpl();
         mustDefinitions = new HashSet<MustDefinition>(b.getMustDefinitions());
         whenCondition = b.getWhenCondition();
         mandatory = b.isMandatory();
@@ -53,7 +58,6 @@ public final class ConstraintsBuilder {
     ConstraintsBuilder(final String moduleName, final int line, final ConstraintDefinition base) {
         this.moduleName = moduleName;
         this.line = line;
-        instance = new ConstraintDefinitionImpl();
         whenStmt = base.getWhenCondition();
         mustDefinitions = new HashSet<MustDefinition>(base.getMustConstraints());
         mandatory = base.isMandatory();
@@ -62,6 +66,10 @@ public final class ConstraintsBuilder {
     }
 
     public ConstraintDefinition build() {
+        if (instance != null) {
+            return instance;
+        }
+
         if (whenStmt == null) {
             if (whenCondition == null) {
                 whenStmt = null;
@@ -69,11 +77,23 @@ public final class ConstraintsBuilder {
                 whenStmt = new RevisionAwareXPathImpl(whenCondition, false);
             }
         }
-        instance.setWhenCondition(whenStmt);
-        instance.setMustConstraints(mustDefinitions);
-        instance.setMandatory(mandatory);
-        instance.setMinElements(min);
-        instance.setMaxElements(max);
+
+        ConstraintDefinitionImpl newInstance = new ConstraintDefinitionImpl();
+        newInstance.setWhenCondition(whenStmt);
+        newInstance.setMandatory(mandatory);
+        newInstance.setMinElements(min);
+        newInstance.setMaxElements(max);
+
+        if (!mustDefinitions.isEmpty()) {
+            newInstance.setMustConstraints(mustDefinitions);
+        }
+        if (EMPTY_CONSTRAINT.equals(newInstance)) {
+            newInstance = EMPTY_CONSTRAINT;
+        } else if (EMPTY_MANDATORY_CONSTRAINT.equals(newInstance)) {
+            newInstance = EMPTY_MANDATORY_CONSTRAINT;
+        }
+
+        instance = newInstance;
         return instance;
     }
 
@@ -128,7 +148,7 @@ public final class ConstraintsBuilder {
     private static final class ConstraintDefinitionImpl implements ConstraintDefinition {
         private RevisionAwareXPath whenCondition;
         private Set<MustDefinition> mustConstraints = Collections.emptySet();
-        private boolean mandatory;
+        private Boolean mandatory = false;
         private Integer minElements;
         private Integer maxElements;
 
@@ -187,7 +207,7 @@ public final class ConstraintsBuilder {
             result = prime * result + ((mustConstraints == null) ? 0 : mustConstraints.hashCode());
             result = prime * result + ((minElements == null) ? 0 : minElements.hashCode());
             result = prime * result + ((maxElements == null) ? 0 : maxElements.hashCode());
-            result = prime * result + (mandatory ? HASH_IF_BOOL_TRUE : HASH_IF_BOOL_FALSE);
+            result = prime * result + mandatory.hashCode();
             return result;
         }
 
