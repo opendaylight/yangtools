@@ -17,7 +17,16 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
@@ -33,10 +42,9 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     private boolean isBuilt;
     private final ChoiceCaseNodeImpl instance;
     // SchemaNode args
-    private SchemaPath schemaPath;
+    private final SchemaPath schemaPath;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
-    private final List<AugmentationSchema> augmentations = new ArrayList<>();
     private final List<AugmentationSchemaBuilder> augmentationBuilders = new ArrayList<>();
 
     public ChoiceCaseBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
@@ -95,10 +103,11 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
             instance.addUnknownSchemaNodes(unknownNodes);
 
             // AUGMENTATIONS
+            final Set<AugmentationSchema> augmentations = new HashSet<>();
             for (AugmentationSchemaBuilder builder : augmentationBuilders) {
                 augmentations.add(builder.build());
             }
-            instance.addAvailableAugmentations(new HashSet<>(augmentations));
+            instance.addAvailableAugmentations(augmentations);
 
             isBuilt = true;
         }
@@ -113,10 +122,11 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     @Override
-    public void setPath(SchemaPath path) {
+    public void setPath(final SchemaPath path) {
         instance.path = path;
     }
 
+    @Override
     public String getDescription() {
         return instance.description;
     }
@@ -126,21 +136,23 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         instance.description = description;
     }
 
+    @Override
     public String getReference() {
         return instance.reference;
     }
 
     @Override
-    public void setReference(String reference) {
+    public void setReference(final String reference) {
         instance.reference = reference;
     }
 
+    @Override
     public Status getStatus() {
         return instance.status;
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         if (status != null) {
             instance.status = status;
         }
@@ -152,7 +164,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     @Override
-    public void setAugmenting(boolean augmenting) {
+    public void setAugmenting(final boolean augmenting) {
         instance.augmenting = augmenting;
     }
 
@@ -162,7 +174,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     @Override
-    public void setAddedByUses(boolean addedByUses) {
+    public void setAddedByUses(final boolean addedByUses) {
         instance.addedByUses = addedByUses;
     }
 
@@ -172,7 +184,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     @Override
-    public void addTypedef(TypeDefinitionBuilder typedefBuilder) {
+    public void addTypedef(final TypeDefinitionBuilder typedefBuilder) {
         throw new YangParseException(moduleName, line, "Can not add type definition to choice case.");
     }
 
@@ -192,7 +204,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     @Override
-    public void addAugmentation(AugmentationSchemaBuilder augment) {
+    public void addAugmentation(final AugmentationSchemaBuilder augment) {
         augmentationBuilders.add(augment);
     }
 
@@ -205,7 +217,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -252,7 +264,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         private final Set<UsesNode> uses = new HashSet<>();
         private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
 
-        private ChoiceCaseNodeImpl(QName qname, SchemaPath path) {
+        private ChoiceCaseNodeImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
             this.path = path;
         }
@@ -292,7 +304,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
             return constraints;
         }
 
-        private void setConstraints(ConstraintDefinition constraints) {
+        private void setConstraints(final ConstraintDefinition constraints) {
             this.constraints = constraints;
         }
 
@@ -311,7 +323,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
             return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
+        private void addUnknownSchemaNodes(final List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
                 this.unknownNodes.addAll(unknownNodes);
             }
@@ -331,7 +343,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
             return Collections.unmodifiableSet(childNodes);
         }
 
-        private void addChildNodes(Set<DataSchemaNode> childNodes) {
+        private void addChildNodes(final Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
                 this.childNodes.addAll(childNodes);
             }
@@ -343,12 +355,12 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             return getChildNode(childNodes, name);
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(String name) {
+        public DataSchemaNode getDataChildByName(final String name) {
             return getChildNode(childNodes, name);
         }
 
@@ -357,7 +369,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
             return Collections.unmodifiableSet(uses);
         }
 
-        private void addUses(Set<UsesNode> uses) {
+        private void addUses(final Set<UsesNode> uses) {
             if (uses != null) {
                 this.uses.addAll(uses);
             }
@@ -368,7 +380,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
             return Collections.unmodifiableSet(augmentations);
         }
 
-        private void addAvailableAugmentations(Set<AugmentationSchema> augmentations) {
+        private void addAvailableAugmentations(final Set<AugmentationSchema> augmentations) {
             if (augmentations != null) {
                 this.augmentations.addAll(augmentations);
             }
@@ -384,7 +396,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }

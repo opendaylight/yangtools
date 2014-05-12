@@ -42,8 +42,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         AugmentationTargetBuilder {
     private boolean isBuilt;
     private final NotificationDefinitionImpl instance;
-    private SchemaPath schemaPath;
-    private final List<AugmentationSchema> augmentations = new ArrayList<>();
+    private final SchemaPath schemaPath;
     private final List<AugmentationSchemaBuilder> augmentationBuilders = new ArrayList<>();
 
     NotificationBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
@@ -52,7 +51,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         instance = new NotificationDefinitionImpl(qname, path);
     }
 
-    NotificationBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, NotificationDefinition base) {
+    NotificationBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final NotificationDefinition base) {
         super(moduleName, line, qname);
         this.schemaPath = path;
         instance = new NotificationDefinitionImpl(qname, path);
@@ -105,10 +104,11 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
             instance.setUses(usesNodes);
 
             // AUGMENTATIONS
+            final Set<AugmentationSchema> augmentations = new HashSet<>();
             for (AugmentationSchemaBuilder builder : augmentationBuilders) {
                 augmentations.add(builder.build());
             }
-            instance.setAvailableAugmentations(new HashSet<>(augmentations));
+            instance.setAvailableAugmentations(augmentations);
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
@@ -165,14 +165,14 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         if (status != null) {
             instance.status = status;
         }
     }
 
     @Override
-    public void addAugmentation(AugmentationSchemaBuilder augment) {
+    public void addAugmentation(final AugmentationSchemaBuilder augment) {
         augmentationBuilders.add(augment);
     }
 
@@ -229,7 +229,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
             return Collections.unmodifiableSet(childNodes);
         }
 
-        private void setChildNodes(Set<DataSchemaNode> childNodes) {
+        private void setChildNodes(final Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
                 this.childNodes.addAll(childNodes);
             }
@@ -240,7 +240,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
             return Collections.unmodifiableSet(groupings);
         }
 
-        private void setGroupings(Set<GroupingDefinition> groupings) {
+        private void setGroupings(final Set<GroupingDefinition> groupings) {
             if (groupings != null) {
                 this.groupings.addAll(groupings);
             }
@@ -251,7 +251,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
             return Collections.unmodifiableSet(uses);
         }
 
-        private void setUses(Set<UsesNode> uses) {
+        private void setUses(final Set<UsesNode> uses) {
             if (uses != null) {
                 this.uses.addAll(uses);
             }
@@ -273,7 +273,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
             return Collections.unmodifiableSet(augmentations);
         }
 
-        private void setAvailableAugmentations(Set<AugmentationSchema> augmentations) {
+        private void setAvailableAugmentations(final Set<AugmentationSchema> augmentations) {
             if (augmentations != null) {
                 this.augmentations.addAll(augmentations);
             }
@@ -291,12 +291,12 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             return getChildNode(childNodes, name);
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(String name) {
+        public DataSchemaNode getDataChildByName(final String name) {
             return getChildNode(childNodes, name);
         }
 
@@ -310,7 +310,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
