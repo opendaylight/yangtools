@@ -176,7 +176,7 @@ public class XmlDocumentUtils {
         } else { // CompositeNode
             for (Node<?> child : ((CompositeNode) data).getChildren()) {
                 DataSchemaNode childSchema = null;
-                if (schema != null) {
+                if (schema instanceof DataNodeContainer) {
                     childSchema = findFirstSchemaForNode(child, ((DataNodeContainer) schema).getChildNodes());
                     if (logger.isDebugEnabled()) {
                         if (childSchema == null) {
