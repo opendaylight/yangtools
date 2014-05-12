@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 
+import com.google.common.collect.ImmutableSet;
+
 public final class ConstraintsBuilder {
     private static final int HASH_IF_BOOL_TRUE = 1231;
     private static final int HASH_IF_BOOL_FALSE = 1237;
@@ -125,7 +127,7 @@ public final class ConstraintsBuilder {
 
     private static final class ConstraintDefinitionImpl implements ConstraintDefinition {
         private RevisionAwareXPath whenCondition;
-        private Set<MustDefinition> mustConstraints;
+        private Set<MustDefinition> mustConstraints = Collections.emptySet();
         private boolean mandatory;
         private Integer minElements;
         private Integer maxElements;
@@ -141,16 +143,12 @@ public final class ConstraintsBuilder {
 
         @Override
         public Set<MustDefinition> getMustConstraints() {
-            if (mustConstraints == null) {
-                return Collections.emptySet();
-            } else {
-                return mustConstraints;
-            }
+            return mustConstraints;
         }
 
         private void setMustConstraints(final Set<MustDefinition> mustConstraints) {
             if (mustConstraints != null) {
-                this.mustConstraints = mustConstraints;
+                this.mustConstraints = ImmutableSet.copyOf(mustConstraints);
             }
         }
 
