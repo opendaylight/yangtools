@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 
 public final class ConstraintsBuilder {
@@ -83,7 +87,7 @@ public final class ConstraintsBuilder {
         return min;
     }
 
-    public void setMinElements(Integer minElements) {
+    public void setMinElements(final Integer minElements) {
         this.min = minElements;
     }
 
@@ -91,7 +95,7 @@ public final class ConstraintsBuilder {
         return max;
     }
 
-    public void setMaxElements(Integer maxElements) {
+    public void setMaxElements(final Integer maxElements) {
         this.max = maxElements;
     }
 
@@ -99,7 +103,7 @@ public final class ConstraintsBuilder {
         return mustDefinitions;
     }
 
-    public void addMustDefinition(MustDefinition must) {
+    public void addMustDefinition(final MustDefinition must) {
         mustDefinitions.add(must);
     }
 
@@ -107,7 +111,7 @@ public final class ConstraintsBuilder {
         return whenCondition;
     }
 
-    public void addWhenCondition(String whenCondition) {
+    public void addWhenCondition(final String whenCondition) {
         this.whenCondition = whenCondition;
     }
 
@@ -115,11 +119,11 @@ public final class ConstraintsBuilder {
         return mandatory;
     }
 
-    public void setMandatory(boolean mandatory) {
+    public void setMandatory(final boolean mandatory) {
         this.mandatory = mandatory;
     }
 
-    private final class ConstraintDefinitionImpl implements ConstraintDefinition {
+    private static final class ConstraintDefinitionImpl implements ConstraintDefinition {
         private RevisionAwareXPath whenCondition;
         private Set<MustDefinition> mustConstraints;
         private boolean mandatory;
@@ -131,7 +135,7 @@ public final class ConstraintsBuilder {
             return whenCondition;
         }
 
-        private void setWhenCondition(RevisionAwareXPath whenCondition) {
+        private void setWhenCondition(final RevisionAwareXPath whenCondition) {
             this.whenCondition = whenCondition;
         }
 
@@ -144,7 +148,7 @@ public final class ConstraintsBuilder {
             }
         }
 
-        private void setMustConstraints(Set<MustDefinition> mustConstraints) {
+        private void setMustConstraints(final Set<MustDefinition> mustConstraints) {
             if (mustConstraints != null) {
                 this.mustConstraints = mustConstraints;
             }
@@ -155,7 +159,7 @@ public final class ConstraintsBuilder {
             return mandatory;
         }
 
-        private void setMandatory(boolean mandatory) {
+        private void setMandatory(final boolean mandatory) {
             this.mandatory = mandatory;
         }
 
@@ -164,7 +168,7 @@ public final class ConstraintsBuilder {
             return minElements;
         }
 
-        private void setMinElements(Integer minElements) {
+        private void setMinElements(final Integer minElements) {
             this.minElements = minElements;
         }
 
@@ -173,7 +177,7 @@ public final class ConstraintsBuilder {
             return maxElements;
         }
 
-        private void setMaxElements(Integer maxElements) {
+        private void setMaxElements(final Integer maxElements) {
             this.maxElements = maxElements;
         }
 
@@ -190,7 +194,7 @@ public final class ConstraintsBuilder {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
