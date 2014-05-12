@@ -16,26 +16,27 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
+import com.google.common.collect.ImmutableList;
+
 /**
- * The <code>default</code> implementation of Enumertaion Type Definition
+ * The <code>default</code> implementation of Enumeration Type Definition
  * interface.
  *
  * @see EnumTypeDefinition
  */
 public final class EnumerationType implements EnumTypeDefinition {
-    private final QName name = BaseTypes.constructQName("enumeration");
-    private final SchemaPath path;
     private static final String DESCRIPTION = "The enumeration built-in type represents values from a set of assigned names.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.6";
+    private static final String UNITS = "";
 
+    private final SchemaPath path;
     private final EnumPair defaultEnum;
     private final List<EnumPair> enums;
-    private static final String UNITS = "";
 
     public EnumerationType(final SchemaPath path, final List<EnumPair> enums) {
         super();
         this.path = path;
-        this.enums = Collections.unmodifiableList(enums);
+        this.enums = ImmutableList.copyOf(enums);
         this.defaultEnum = null;
     }
 
@@ -43,7 +44,7 @@ public final class EnumerationType implements EnumTypeDefinition {
         super();
         this.path = path;
         this.defaultEnum = defaultEnum;
-        this.enums = Collections.unmodifiableList(enums);
+        this.enums = ImmutableList.copyOf(enums);
     }
 
     /*
@@ -86,7 +87,7 @@ public final class EnumerationType implements EnumTypeDefinition {
      */
     @Override
     public QName getQName() {
-        return name;
+        return BaseTypes.ENUMERATION_QNAME;
     }
 
     /*
@@ -153,13 +154,13 @@ public final class EnumerationType implements EnumTypeDefinition {
         int result = 1;
         result = prime * result + ((defaultEnum == null) ? 0 : defaultEnum.hashCode());
         result = prime * result + ((enums == null) ? 0 : enums.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + BaseTypes.ENUMERATION_QNAME.hashCode();
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -184,13 +185,6 @@ public final class EnumerationType implements EnumTypeDefinition {
         } else if (!enums.equals(other.enums)) {
             return false;
         }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
         if (path == null) {
             if (other.path != null) {
                 return false;
@@ -205,7 +199,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("EnumerationType [name=");
-        builder.append(name);
+        builder.append(BaseTypes.ENUMERATION_QNAME);
         builder.append(", path=");
         builder.append(path);
         builder.append(", description=");
