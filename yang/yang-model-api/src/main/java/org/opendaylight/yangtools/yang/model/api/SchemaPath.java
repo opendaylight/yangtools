@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  *
@@ -41,7 +41,7 @@ public class SchemaPath {
      *            relative
      */
     public SchemaPath(final List<QName> path, final boolean absolute) {
-        this.path = Collections.unmodifiableList(new ArrayList<QName>(path));
+        this.path = ImmutableList.copyOf(path);
         this.absolute = absolute;
     }
 
