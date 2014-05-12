@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.base.Preconditions;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -21,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -83,7 +83,6 @@ import java.util.TreeMap;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.fillAugmentTarget;
 import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentity;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentityFromContext;
 import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
 import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
 import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNode;
@@ -615,6 +614,7 @@ public final class YangParserImpl implements YangModelParser {
         resolveUsesForGroupings(modules, null);
         resolveUsesForNodes(modules, null);
         resolveAugments(modules, null);
+        resolveIdentities(modules);
         resolveDeviations(modules);
 
         // build
@@ -660,6 +660,7 @@ public final class YangParserImpl implements YangModelParser {
         resolveUsesForGroupings(modules, context);
         resolveUsesForNodes(modules, context);
         resolveAugments(modules, context);
+        resolveIdentitiesWithContext(modules, context);
         resolveDeviationsWithContext(modules, context);
 
         // build
@@ -685,7 +686,6 @@ public final class YangParserImpl implements YangModelParser {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder module = childEntry.getValue();
                 resolveUnknownNodes(modules, module);
-                resolveIdentities(modules, module);
                 resolveDirtyNodes(modules, module);
             }
         }
@@ -705,7 +705,6 @@ public final class YangParserImpl implements YangModelParser {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder module = childEntry.getValue();
                 resolveUnknownNodesWithContext(modules, module, context);
-                resolveIdentitiesWithContext(modules, module, context);
                 resolveDirtyNodesWithContext(modules, module, context);
             }
         }
@@ -1065,6 +1064,29 @@ public final class YangParserImpl implements YangModelParser {
         return targetModule;
     }
 
+    private ModuleBuilder findTargetModule(final String prefix, final ModuleBuilder module,
+            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context, final int line) {
+        ModuleBuilder targetModule = null;
+
+        if (prefix == null || prefix.equals("")) {
+            targetModule = module;
+        } else {
+            targetModule = findModuleFromBuilders(modules, module, prefix, line);
+        }
+
+        if (targetModule == null && context != null) {
+            Module m = findModuleFromContext(context, module, prefix, line);
+            if (m != null) {
+                targetModule = new ModuleBuilder(m);
+                TreeMap<Date, ModuleBuilder> map = new TreeMap<>();
+                map.put(targetModule.getRevision(), targetModule);
+                modules.put(targetModule.getModuleName(), map);
+            }
+        }
+
+        return targetModule;
+    }
+
     /**
      * Go through identity statements defined in current module and resolve
      * their 'base' statement if present.
@@ -1074,18 +1096,24 @@ public final class YangParserImpl implements YangModelParser {
      * @param module
      *            module being resolved
      */
-    private void resolveIdentities(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
-        final Set<IdentitySchemaNodeBuilder> identities = module.getAddedIdentities();
-        for (IdentitySchemaNodeBuilder identity : identities) {
-            final String baseIdentityName = identity.getBaseIdentityName();
-            final int line = identity.getLine();
-            if (baseIdentityName != null) {
-                IdentitySchemaNodeBuilder baseIdentity = findBaseIdentity(modules, module, baseIdentityName, line);
-                if (baseIdentity == null) {
-                    throw new YangParseException(module.getName(), identity.getLine(), "Failed to find base identity");
-                } else {
-                    identity.setBaseIdentity(baseIdentity);
+    private void resolveIdentities(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
+                ModuleBuilder module = inner.getValue();
+                final Set<IdentitySchemaNodeBuilder> identities = module.getAddedIdentities();
+                for (IdentitySchemaNodeBuilder identity : identities) {
+                    final String baseIdentityName = identity.getBaseIdentityName();
+                    final int line = identity.getLine();
+                    if (baseIdentityName != null) {
+                        IdentitySchemaNodeBuilder baseIdentity = findBaseIdentity(modules, module, baseIdentityName, line);
+                        if (baseIdentity == null) {
+                            throw new YangParseException(module.getName(), identity.getLine(), "Failed to find base identity");
+                        } else {
+                            identity.setBaseIdentity(baseIdentity);
+                        }
+                    }
                 }
+
             }
         }
     }
@@ -1103,19 +1131,34 @@ public final class YangParserImpl implements YangModelParser {
      *            SchemaContext containing already resolved modules
      */
     private void resolveIdentitiesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder module, final SchemaContext context) {
-        final Set<IdentitySchemaNodeBuilder> identities = module.getAddedIdentities();
-        for (IdentitySchemaNodeBuilder identity : identities) {
-            final String baseIdentityName = identity.getBaseIdentityName();
-            final int line = identity.getLine();
-            if (baseIdentityName != null) {
-                IdentitySchemaNodeBuilder baseIdentity = findBaseIdentity(modules, module, baseIdentityName, line);
-                if (baseIdentity == null) {
-                    IdentitySchemaNode baseId = findBaseIdentityFromContext(modules, module, baseIdentityName, line,
-                            context);
-                    identity.setBaseIdentity(baseId);
-                } else {
-                    identity.setBaseIdentity(baseIdentity);
+            final SchemaContext context) {
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
+                ModuleBuilder module = inner.getValue();
+                final Set<IdentitySchemaNodeBuilder> identities = module.getAddedIdentities();
+                for (IdentitySchemaNodeBuilder identity : identities) {
+                    final String baseIdentityName = identity.getBaseIdentityName();
+                    final int line = identity.getLine();
+                    if (baseIdentityName != null) {
+
+                        IdentitySchemaNodeBuilder result = null;
+                        if (baseIdentityName.contains(":")) {
+                            String[] splittedBase = baseIdentityName.split(":");
+                            if (splittedBase.length > 2) {
+                                throw new YangParseException(module.getName(), line,
+                                        "Failed to parse identityref base: " + baseIdentityName);
+                            }
+                            String prefix = splittedBase[0];
+                            String name = splittedBase[1];
+                            ModuleBuilder dependentModule = findTargetModule(prefix, module, modules, context, line);
+                            if (dependentModule != null) {
+                                result = ParserUtils.findIdentity(dependentModule.getAddedIdentities(), name);
+                            }
+                        } else {
+                            result = ParserUtils.findIdentity(module.getAddedIdentities(), baseIdentityName);
+                        }
+                        identity.setBaseIdentity(result);
+                    }
                 }
             }
         }
