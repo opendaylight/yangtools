@@ -35,6 +35,9 @@ import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -47,6 +50,7 @@ public class BindingReflections {
     private static final long EXPIRATION_TIME = 60;
     private static final String ROOT_PACKAGE_PATTERN_STRING = "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*\\.rev[0-9][0-9][0-1][0-9][0-3][0-9])";
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
+    private static final Logger LOG = LoggerFactory.getLogger(BindingReflections.class);
 
     private static final LoadingCache<Class<?>, Optional<QName>> classToQName = CacheBuilder.newBuilder() //
             .weakKeys() //
@@ -167,8 +171,14 @@ public class BindingReflections {
         // FIXME: Current resolver could be still confused when
         // child node was added by grouping
         checkArgument(clazz != null);
+
         @SuppressWarnings({ "rawtypes", "unchecked" })
         Class<?> parent = findHierarchicalParent((Class) clazz);
+        if (parent == null) {
+            LOG.debug("Did not find a parent for class {}", clazz);
+            return false;
+        }
+
         String clazzModelPackage = getModelRootPackageName(clazz.getPackage());
         String parentModelPackage = getModelRootPackageName(parent.getPackage());
 
