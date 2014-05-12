@@ -32,9 +32,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     private final RpcDefinitionImpl instance;
     private ContainerSchemaNodeBuilder inputBuilder;
     private ContainerSchemaNodeBuilder outputBuilder;
-    private final Set<TypeDefinition<?>> typedefs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
     private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<>();
-    private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
     private final Set<GroupingBuilder> addedGroupings = new HashSet<>();
 
     public ContainerSchemaNodeBuilder getInput() {
@@ -60,12 +58,14 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             instance.setOutput(output);
 
             // TYPEDEFS
+            final Set<TypeDefinition<?>> typedefs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
             for (TypeDefinitionBuilder entry : addedTypedefs) {
                 typedefs.add(entry.build());
             }
             instance.setTypeDefinitions(typedefs);
 
             // GROUPINGS
+            final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
             for (GroupingBuilder entry : addedGroupings) {
                 groupings.add(entry.build());
             }
@@ -114,7 +114,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         if (status != null) {
             instance.status = status;
         }
@@ -140,7 +140,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
         return addedGroupings;
     }
 
-    public void addGrouping(GroupingBuilder grouping) {
+    public void addGrouping(final GroupingBuilder grouping) {
         addedGroupings.add(grouping);
     }
 
@@ -154,7 +154,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -231,7 +231,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             return input;
         }
 
-        private void setInput(ContainerSchemaNode input) {
+        private void setInput(final ContainerSchemaNode input) {
             this.input = input;
         }
 
@@ -240,7 +240,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             return output;
         }
 
-        private void setOutput(ContainerSchemaNode output) {
+        private void setOutput(final ContainerSchemaNode output) {
             this.output = output;
         }
 
@@ -249,7 +249,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             return Collections.unmodifiableSet(typeDefinitions);
         }
 
-        private void setTypeDefinitions(Set<TypeDefinition<?>> typeDefinitions) {
+        private void setTypeDefinitions(final Set<TypeDefinition<?>> typeDefinitions) {
             this.typeDefinitions.addAll(typeDefinitions);
         }
 
@@ -258,7 +258,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             return Collections.unmodifiableSet(groupings);
         }
 
-        private void setGroupings(Set<GroupingDefinition> groupings) {
+        private void setGroupings(final Set<GroupingDefinition> groupings) {
             this.groupings.addAll(groupings);
         }
 
@@ -267,7 +267,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
             return Collections.unmodifiableList(unknownNodes);
         }
 
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
+        private void setUnknownSchemaNodes(final List<UnknownSchemaNode> unknownNodes) {
             if (unknownNodes != null) {
                 this.unknownNodes.addAll(unknownNodes);
             }
@@ -283,7 +283,7 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
