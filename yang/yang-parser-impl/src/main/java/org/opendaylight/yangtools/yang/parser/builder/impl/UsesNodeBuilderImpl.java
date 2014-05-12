@@ -44,7 +44,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private boolean addedByUses;
     private boolean augmenting;
     private boolean resolved;
-    private final Set<AugmentationSchema> augments = new HashSet<>();
     private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<>();
     private final List<RefineHolder> refines = new ArrayList<>();
@@ -62,6 +61,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             instance.setAddedByUses(addedByUses);
 
             // AUGMENTATIONS
+            final Set<AugmentationSchema> augments = new HashSet<>();
             for (AugmentationSchemaBuilder builder : addedAugments) {
                 augments.add(builder.build());
             }
@@ -94,7 +94,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void setParent(Builder parent) {
+    public void setParent(final Builder parent) {
         if (!(parent instanceof DataNodeContainerBuilder)) {
             throw new YangParseException(moduleName, line,
                     "Parent of 'uses' has to be instance of DataNodeContainerBuilder, but was: '" + parent + "'.");
@@ -113,7 +113,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void setGroupingDefinition(GroupingDefinition groupingDefinition) {
+    public void setGroupingDefinition(final GroupingDefinition groupingDefinition) {
         this.groupingDefinition = groupingDefinition;
         if (groupingDefinition != null) {
             this.groupingPath = groupingDefinition.getPath();
@@ -126,7 +126,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void setGrouping(GroupingBuilder grouping) {
+    public void setGrouping(final GroupingBuilder grouping) {
         this.groupingBuilder = grouping;
         if (groupingBuilder != null) {
             this.groupingPath = groupingBuilder.getPath();
@@ -163,7 +163,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void setAugmenting(boolean augmenting) {
+    public void setAugmenting(final boolean augmenting) {
         this.augmenting = augmenting;
     }
 
@@ -173,7 +173,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void setResolved(boolean resolved) {
+    public void setResolved(final boolean resolved) {
         this.resolved = resolved;
     }
 
@@ -183,7 +183,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void addRefineNode(DataSchemaNodeBuilder refineNode) {
+    public void addRefineNode(final DataSchemaNodeBuilder refineNode) {
         refineBuilders.add(refineNode);
     }
 
@@ -193,7 +193,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public void addRefine(RefineHolder refine) {
+    public void addRefine(final RefineHolder refine) {
         refines.add(refine);
     }
 
@@ -207,7 +207,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -286,13 +286,13 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             return refines;
         }
 
-        private void setRefines(Map<SchemaPath, SchemaNode> refines) {
+        private void setRefines(final Map<SchemaPath, SchemaNode> refines) {
             if (refines != null) {
                 this.refines = refines;
             }
         }
 
-        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
+        private void addUnknownSchemaNodes(final List<UnknownSchemaNode> unknownSchemaNodes) {
             if (unknownSchemaNodes != null) {
                 this.unknownNodes.addAll(unknownSchemaNodes);
             }
@@ -308,7 +308,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
