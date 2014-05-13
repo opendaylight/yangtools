@@ -300,8 +300,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         if (namespace != null) {
             sb.append(QNAME_LEFT_PARENTHESIS + namespace);
 
-            if (revision != null) {
-                sb.append(QNAME_REVISION_DELIMITER + getRevisionFormat().format(revision));
+            if (formattedRevision != null) {
+                sb.append(QNAME_REVISION_DELIMITER + formattedRevision);
             }
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }
