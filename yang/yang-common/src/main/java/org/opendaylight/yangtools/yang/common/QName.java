@@ -57,6 +57,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile(
             "^(.+)$");
 
+    private static final char[] ILLEGAL_CHARACTERS = new char[] {'?', '(', ')', '&'};
+
     //Nullable
     private final URI namespace;
     //Mandatory
@@ -111,12 +113,12 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         if (localName.length() == 0) {
             throw new IllegalArgumentException("Parameter 'localName' must be a non-empty string.");
         }
-        String [] illegalSubstrings = new String[] {"?", "(", ")", "&"};
-        for(String illegalSubstring: illegalSubstrings) {
-            if (localName.contains(illegalSubstring)) {
+
+        for (char c: ILLEGAL_CHARACTERS) {
+            if (localName.indexOf(c) != -1) {
                 throw new IllegalArgumentException(String.format(
-                        "Parameter 'localName':'%s' contains illegal sequence '%s'",
-                        localName, illegalSubstring));
+                        "Parameter 'localName':'%s' contains illegal character '%s'",
+                        localName, c));
             }
         }
         return localName;
