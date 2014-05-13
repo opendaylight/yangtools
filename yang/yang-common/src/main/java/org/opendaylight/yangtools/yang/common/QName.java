@@ -19,8 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -44,7 +42,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static final long serialVersionUID = 5398411242927766414L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
 
     static final String QNAME_REVISION_DELIMITER = "?revision=";
     static final String QNAME_LEFT_PARENTHESIS = "(";
@@ -59,16 +56,12 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
 
     private static final char[] ILLEGAL_CHARACTERS = new char[] {'?', '(', ')', '&'};
 
-    //Nullable
-    private final URI namespace;
+    //Mandatory
+    private final QNameModule module;
     //Mandatory
     private final String localName;
     //Nullable
     private final String prefix;
-    //Nullable
-    private final String formattedRevision;
-    //Nullable
-    private final Date revision;
 
     /**
      * QName Constructor.
@@ -84,14 +77,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public QName(final URI namespace, final Date revision, final String prefix, final String localName) {
         this.localName = checkLocalName(localName);
-        this.namespace = namespace;
-        this.revision = revision;
         this.prefix = prefix;
-        if(revision != null) {
-            this.formattedRevision = getRevisionFormat().format(revision);
-        } else {
-            this.formattedRevision = null;
-        }
+        this.module = QNameModule.create(namespace, revision);
     }
 
     /**
@@ -148,24 +135,21 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     @Deprecated
     public QName(final String input) throws ParseException {
-        Date revision = null;
-        String nsAndRev = input.substring(input.indexOf("(") + 1, input.indexOf(")"));
+        final String nsAndRev = input.substring(input.indexOf("(") + 1, input.indexOf(")"));
+        final Date revision;
+        final URI namespace;
         if (nsAndRev.contains("?")) {
             String[] splitted = nsAndRev.split("\\?");
-            this.namespace = URI.create(splitted[0]);
+            namespace = URI.create(splitted[0]);
             revision = getRevisionFormat().parse(splitted[1]);
         } else {
-            this.namespace = URI.create(nsAndRev);
+            namespace = URI.create(nsAndRev);
+            revision = null;
         }
 
         this.localName = checkLocalName(input.substring(input.indexOf(")") + 1));
-        this.revision = revision;
         this.prefix = null;
-        if (revision != null) {
-            this.formattedRevision = getRevisionFormat().format(revision);
-        } else {
-            this.formattedRevision = null;
-        }
+        this.module = QNameModule.create(namespace, revision);
     }
 
     public static QName create(final String input) {
@@ -196,7 +180,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return XMLNamespace assigned to the YANG module.
      */
     public URI getNamespace() {
-        return namespace;
+        return module.getNamespace();
     }
 
     /**
@@ -218,7 +202,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *         otherwise returns <code>null</code>
      */
     public Date getRevision() {
-        return revision;
+        return module.getRevision();
     }
 
     /**
@@ -235,8 +219,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((localName == null) ? 0 : localName.hashCode());
-        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((formattedRevision == null) ? 0 : formattedRevision.hashCode());
+        result = prime * result + ((getNamespace() == null) ? 0 : getNamespace().hashCode());
+        result = prime * result + ((getFormattedRevision() == null) ? 0 : getFormattedRevision().hashCode());
         return result;
     }
 
@@ -245,13 +229,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!(obj instanceof QName)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        QName other = (QName) obj;
+        final QName other = (QName) obj;
         if (localName == null) {
             if (other.localName != null) {
                 return false;
@@ -259,23 +240,22 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         } else if (!localName.equals(other.localName)) {
             return false;
         }
-        if (namespace == null) {
-            if (other.namespace != null) {
+        if (getNamespace() == null) {
+            if (other.getNamespace() != null) {
                 return false;
             }
-        } else if (!namespace.equals(other.namespace)) {
+        } else if (!getNamespace().equals(other.getNamespace())) {
             return false;
         }
-        if (formattedRevision == null) {
-            if (other.formattedRevision != null) {
+        if (getFormattedRevision() == null) {
+            if (other.getFormattedRevision() != null) {
                 return false;
             }
-        } else if (!revision.equals(other.revision)) {
+        } else if (!getRevision().equals(other.getRevision())) {
             return false;
         }
         return true;
     }
-
 
     public static QName create(final QName base, final String localName){
         return new QName(base, localName);
@@ -287,23 +267,25 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
 
 
     public static QName create(final String namespace, final String revision, final String localName) throws IllegalArgumentException{
+        final URI namespaceUri;
         try {
-            URI namespaceUri = new URI(namespace);
-            Date revisionDate = parseRevision(revision);
-            return create(namespaceUri, revisionDate, localName);
+            namespaceUri = new URI(namespace);
         }  catch (URISyntaxException ue) {
-            throw new IllegalArgumentException("Namespace is is not valid URI", ue);
+            throw new IllegalArgumentException(String.format("Namespace '%s' is not a valid URI", namespace), ue);
         }
+
+        Date revisionDate = parseRevision(revision);
+        return create(namespaceUri, revisionDate, localName);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (namespace != null) {
-            sb.append(QNAME_LEFT_PARENTHESIS + namespace);
+        if (getNamespace() != null) {
+            sb.append(QNAME_LEFT_PARENTHESIS + getNamespace());
 
-            if (formattedRevision != null) {
-                sb.append(QNAME_REVISION_DELIMITER + formattedRevision);
+            if (getFormattedRevision() != null) {
+                sb.append(QNAME_REVISION_DELIMITER + getFormattedRevision());
             }
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }
@@ -311,51 +293,19 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return sb.toString();
     }
 
-    /**
-     * Returns a namespace in form defined by section 5.6.4. of {@link https
-     * ://tools.ietf.org/html/rfc6020}, if namespace is not correctly defined,
-     * the method will return <code>null</code> <br>
-     * example "http://example.acme.com/system?revision=2008-04-01"
-     *
-     * @return namespace in form defined by section 5.6.4. of {@link https
-     *         ://tools.ietf.org/html/rfc6020}, if namespace is not correctly
-     *         defined, the method will return <code>null</code>
-     *
-     */
-    URI getRevisionNamespace() {
-
-        if (namespace == null) {
-            return null;
-        }
-
-        String query = "";
-        if (revision != null) {
-            query = "revision=" + formattedRevision;
-        }
-
-        URI compositeURI = null;
-        try {
-            compositeURI = new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(),
-                    namespace.getPort(), namespace.getPath(), query, namespace.getFragment());
-        } catch (URISyntaxException e) {
-            LOGGER.error("", e);
-        }
-        return compositeURI;
-    }
-
     public String getFormattedRevision() {
-        return formattedRevision;
+        return module.getFormattedRevision();
     }
 
     public QName withoutRevision() {
-        return QName.create(namespace, null, localName);
+        return QName.create(getNamespace(), null, localName);
     }
 
     public static Date parseRevision(final String formatedDate) {
         try {
             return getRevisionFormat().parse(formatedDate);
         } catch (ParseException| RuntimeException e) {
-            throw new IllegalArgumentException("Revision is not in supported format:" + formatedDate,e);
+            throw new IllegalArgumentException(String.format("Revision '%s'is not in a supported format", formatedDate), e);
         }
     }
 
@@ -367,7 +317,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     public boolean isEqualWithoutRevision(final QName other) {
-        return localName.equals(other.getLocalName()) && Objects.equals(namespace, other.getNamespace());
+        return localName.equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
     }
 
     @Override
@@ -379,30 +329,30 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         }
 
         // compare nullable namespace parameter
-        if (namespace == null) {
-            if (other.namespace != null) {
+        if (getNamespace() == null) {
+            if (other.getNamespace() != null) {
                 return -1;
             }
         } else {
-            if (other.namespace == null) {
+            if (other.getNamespace() == null) {
                 return 1;
             }
-            result = namespace.compareTo(other.namespace);
+            result = getNamespace().compareTo(other.getNamespace());
             if (result != 0) {
                 return result;
             }
         }
 
         // compare nullable revision parameter
-        if (revision == null) {
-            if (other.revision != null) {
+        if (getRevision() == null) {
+            if (other.getRevision() != null) {
                 return -1;
             }
         } else {
-            if (other.revision == null) {
+            if (other.getRevision() == null) {
                 return 1;
             }
-            result = revision.compareTo(other.revision);
+            result = getRevision().compareTo(other.getRevision());
             if (result != 0) {
                 return result;
             }
