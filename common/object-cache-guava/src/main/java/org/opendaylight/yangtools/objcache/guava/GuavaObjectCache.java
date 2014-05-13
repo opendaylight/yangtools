@@ -9,12 +9,15 @@ package org.opendaylight.yangtools.objcache.guava;
 
 import org.opendaylight.yangtools.objcache.spi.AbstractObjectCache;
 
-import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 
 final class GuavaObjectCache extends AbstractObjectCache {
-	public GuavaObjectCache(final FinalizableReferenceQueue queue, final CacheBuilderSpec spec) {
-		super(CacheBuilder.from(spec).softValues().build(), queue);
-	}
+    public GuavaObjectCache() {
+        super(CacheBuilder.newBuilder().softValues().build());
+    }
+
+    public GuavaObjectCache(final CacheBuilderSpec spec) {
+        super(CacheBuilder.from(spec).build());
+    }
 }
