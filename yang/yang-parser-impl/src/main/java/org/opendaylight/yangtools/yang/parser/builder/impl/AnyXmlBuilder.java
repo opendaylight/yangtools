@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,17 +17,21 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
+
+import com.google.common.collect.ImmutableList;
 
 public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder {
-    private boolean built;
-    private final AnyXmlSchemaNodeImpl instance;
+    private AnyXmlSchemaNodeImpl instance;
+
+    private boolean augmenting;
+    private boolean addedByUses;
+    private boolean configuration;
+
     private final ConstraintsBuilder constraints;
 
     public AnyXmlBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        instance = new AnyXmlSchemaNodeImpl(qname, schemaPath);
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
@@ -37,44 +39,41 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
             final AnyXmlSchemaNode base) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        this.instance = new AnyXmlSchemaNodeImpl(qname, schemaPath);
         constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
 
-        instance.description = base.getDescription();
-        instance.reference = base.getReference();
-        instance.status = base.getStatus();
-        instance.augmenting = base.isAugmenting();
-        instance.addedByUses = base.isAddedByUses();
-        instance.configuration = base.isConfiguration();
-        instance.constraintsDef = base.getConstraints();
-        instance.unknownNodes.addAll(base.getUnknownSchemaNodes());
+        description = base.getDescription();
+        reference = base.getReference();
+        status = base.getStatus();
+        augmenting = base.isAugmenting();
+        addedByUses = base.isAddedByUses();
+        configuration = base.isConfiguration();
+        unknownNodes.addAll(base.getUnknownSchemaNodes());
     }
 
     @Override
     public AnyXmlSchemaNode build() {
-        if (!built) {
-            instance.setConstraints(constraints.build());
-
-            // UNKNOWN NODES
-            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
-            }
-            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
-
-            built = true;
+        if (instance != null) {
+            return instance;
         }
+
+        instance = new AnyXmlSchemaNodeImpl(qname, schemaPath);
+
+        instance.description = description;
+        instance.reference = reference;
+        instance.status = status;
+        instance.augmenting = augmenting;
+        instance.addedByUses = addedByUses;
+        instance.configuration = configuration;
+
+        instance.constraintsDef = constraints.build();
+
+        // UNKNOWN NODES
+        for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+            unknownNodes.add(b.build());
+        }
+        instance.unknownNodes = ImmutableList.copyOf(unknownNodes);
+
         return instance;
-    }
-
-    @Override
-    public SchemaPath getPath() {
-        return instance.path;
-    }
-
-    @Override
-    public void setPath(SchemaPath path) {
-        instance.path = path;
     }
 
     @Override
@@ -83,69 +82,33 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     }
 
     @Override
-    public String getDescription() {
-        return instance.description;
-    }
-
-    @Override
-    public void setDescription(final String description) {
-        instance.description = description;
-    }
-
-    @Override
-    public String getReference() {
-        return instance.reference;
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        instance.reference = reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return instance.status;
-    }
-
-    @Override
-    public void setStatus(Status status) {
-        if (status != null) {
-            instance.status = status;
-        }
-    }
-
-    public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
-        return addedUnknownNodes;
-    }
-
-    @Override
     public boolean isAugmenting() {
-        return instance.augmenting;
+        return augmenting;
     }
 
     @Override
     public void setAugmenting(final boolean augmenting) {
-        instance.augmenting = augmenting;
+        this.augmenting = augmenting;
     }
 
     @Override
     public boolean isAddedByUses() {
-        return instance.addedByUses;
+        return addedByUses;
     }
 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
-        instance.addedByUses = addedByUses;
+        this.addedByUses = addedByUses;
     }
 
     @Override
     public boolean isConfiguration() {
-        return instance.configuration;
+        return configuration;
     }
 
     @Override
     public void setConfiguration(final boolean configuration) {
-        instance.configuration = configuration;
+        this.configuration = configuration;
     }
 
     @Override
@@ -192,15 +155,15 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
 
     private static final class AnyXmlSchemaNodeImpl implements AnyXmlSchemaNode {
         private final QName qname;
-        private SchemaPath path;
+        private final SchemaPath path;
         private String description;
         private String reference;
-        private Status status = Status.CURRENT;
+        private Status status;
         private boolean configuration;
         private ConstraintDefinition constraintsDef;
         private boolean augmenting;
         private boolean addedByUses;
-        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+        private ImmutableList<UnknownSchemaNode> unknownNodes;
 
         private AnyXmlSchemaNodeImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
@@ -252,19 +215,9 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
             return constraintsDef;
         }
 
-        private void setConstraints(ConstraintDefinition constraintsDef) {
-            this.constraintsDef = constraintsDef;
-        }
-
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return Collections.unmodifiableList(unknownNodes);
-        }
-
-        private void setUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
-            if (unknownNodes != null) {
-                this.unknownNodes.addAll(unknownNodes);
-            }
+            return unknownNodes;
         }
 
         @Override

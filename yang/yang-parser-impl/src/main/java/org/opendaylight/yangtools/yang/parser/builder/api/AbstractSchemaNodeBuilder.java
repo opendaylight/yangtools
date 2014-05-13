@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Status;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Basic implementation of SchemaNodeBuilder.
@@ -19,10 +19,58 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implements SchemaNodeBuilder {
     protected final QName qname;
     protected SchemaPath schemaPath;
+    protected String description;
+    protected String reference;
+    protected Status status = Status.CURRENT;
 
     protected AbstractSchemaNodeBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line);
         this.qname = qname;
+    }
+
+    @Override
+    public QName getQName() {
+        return qname;
+    }
+
+    @Override
+    public SchemaPath getPath() {
+        return schemaPath;
+    }
+
+    @Override
+    public void setPath(final SchemaPath path) {
+        this.schemaPath = path;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getReference() {
+        return reference;
+    }
+
+    @Override
+    public void setReference(final String reference) {
+        this.reference = reference;
+    }
+
+    @Override
+    public Status getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(Status status) {
+        this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
     @Override
@@ -64,15 +112,6 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
             return false;
         }
         return true;
-    }
-
-    @Override
-    public QName getQName() {
-        return qname;
-    }
-
-    public void setUnknownNodes(List<UnknownSchemaNode> unknownNodes) {
-        this.unknownNodes.addAll(unknownNodes);
     }
 
 }

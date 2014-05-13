@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,9 +25,11 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.util.Comparators;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
-    private boolean isBuilt;
-    private final RpcDefinitionImpl instance;
+    private RpcDefinitionImpl instance;
     private ContainerSchemaNodeBuilder inputBuilder;
     private ContainerSchemaNodeBuilder outputBuilder;
     private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<>();
@@ -46,78 +46,46 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     RpcDefinitionBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        this.instance = new RpcDefinitionImpl(qname, path);
     }
 
     @Override
     public RpcDefinition build() {
-        if (!isBuilt) {
-            final ContainerSchemaNode input = inputBuilder == null ? null : inputBuilder.build();
-            final ContainerSchemaNode output = outputBuilder == null ? null : outputBuilder.build();
-            instance.setInput(input);
-            instance.setOutput(output);
-
-            // TYPEDEFS
-            final Set<TypeDefinition<?>> typedefs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-            for (TypeDefinitionBuilder entry : addedTypedefs) {
-                typedefs.add(entry.build());
-            }
-            instance.setTypeDefinitions(typedefs);
-
-            // GROUPINGS
-            final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-            for (GroupingBuilder entry : addedGroupings) {
-                groupings.add(entry.build());
-            }
-            instance.setGroupings(groupings);
-
-            // UNKNOWN NODES
-            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
-            }
-            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.setUnknownSchemaNodes(unknownNodes);
-
-            isBuilt = true;
+        if (instance != null) {
+            return instance;
         }
-        return instance;
-    }
 
-    @Override
-    public SchemaPath getPath() {
-        return instance.path;
-    }
+        instance = new RpcDefinitionImpl(qname, schemaPath);
 
-    @Override
-    public String getDescription() {
-        return instance.description;
-    }
+        final ContainerSchemaNode input = inputBuilder == null ? null : inputBuilder.build();
+        final ContainerSchemaNode output = outputBuilder == null ? null : outputBuilder.build();
+        instance.setInput(input);
+        instance.setOutput(output);
 
-    @Override
-    public void setDescription(final String description) {
         instance.description = description;
-    }
-
-    @Override
-    public String getReference() {
-        return instance.reference;
-    }
-
-    @Override
-    public void setReference(final String reference) {
         instance.reference = reference;
-    }
+        instance.status = status;
 
-    @Override
-    public Status getStatus() {
-        return instance.status;
-    }
-
-    @Override
-    public void setStatus(final Status status) {
-        if (status != null) {
-            instance.status = status;
+        // TYPEDEFS
+        final Set<TypeDefinition<?>> typedefs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+        for (TypeDefinitionBuilder entry : addedTypedefs) {
+            typedefs.add(entry.build());
         }
+        instance.typeDefinitions = ImmutableSet.copyOf(typedefs);
+
+        // GROUPINGS
+        final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+        for (GroupingBuilder builder : addedGroupings) {
+            groupings.add(builder.build());
+        }
+        instance.groupings = ImmutableSet.copyOf(groupings);
+
+        // UNKNOWN NODES
+        for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+            unknownNodes.add(b.build());
+        }
+        instance.unknownNodes = ImmutableList.copyOf(unknownNodes);
+
+        return instance;
     }
 
     void setInput(final ContainerSchemaNodeBuilder inputBuilder) {
@@ -192,9 +160,9 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
         private Status status;
         private ContainerSchemaNode input;
         private ContainerSchemaNode output;
-        private final Set<TypeDefinition<?>> typeDefinitions = new HashSet<>();
-        private final Set<GroupingDefinition> groupings = new HashSet<>();
-        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+        private ImmutableSet<TypeDefinition<?>> typeDefinitions;
+        private ImmutableSet<GroupingDefinition> groupings;
+        private ImmutableList<UnknownSchemaNode> unknownNodes;
 
         private RpcDefinitionImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
@@ -246,31 +214,17 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
 
         @Override
         public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return Collections.unmodifiableSet(typeDefinitions);
-        }
-
-        private void setTypeDefinitions(final Set<TypeDefinition<?>> typeDefinitions) {
-            this.typeDefinitions.addAll(typeDefinitions);
+            return typeDefinitions;
         }
 
         @Override
         public Set<GroupingDefinition> getGroupings() {
-            return Collections.unmodifiableSet(groupings);
-        }
-
-        private void setGroupings(final Set<GroupingDefinition> groupings) {
-            this.groupings.addAll(groupings);
+            return groupings;
         }
 
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return Collections.unmodifiableList(unknownNodes);
-        }
-
-        private void setUnknownSchemaNodes(final List<UnknownSchemaNode> unknownNodes) {
-            if (unknownNodes != null) {
-                this.unknownNodes.addAll(unknownNodes);
-            }
+            return unknownNodes;
         }
 
         @Override

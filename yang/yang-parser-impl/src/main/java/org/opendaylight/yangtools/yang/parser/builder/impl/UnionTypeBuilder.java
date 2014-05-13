@@ -120,6 +120,11 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
+    public void setPath(SchemaPath path) {
+        throw new YangParseException(moduleName, line, "Can not set path to " + NAME);
+    }
+
+    @Override
     public String getDescription() {
         return null;
     }
