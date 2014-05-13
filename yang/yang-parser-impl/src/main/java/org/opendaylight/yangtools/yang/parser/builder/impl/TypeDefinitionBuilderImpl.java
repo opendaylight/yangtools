@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
-    private final SchemaPath schemaPath;
+    private SchemaPath schemaPath;
     private List<RangeConstraint> ranges = Collections.emptyList();
     private List<LengthConstraint> lengths = Collections.emptyList();
     private List<PatternConstraint> patterns = Collections.emptyList();
@@ -98,6 +98,11 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     @Override
     public SchemaPath getPath() {
         return schemaPath;
+    }
+
+    @Override
+    public void setPath(SchemaPath path) {
+        this.schemaPath = path;
     }
 
     @Override

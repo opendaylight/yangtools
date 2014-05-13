@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * Basic implementation of DataNodeContainerBuilder.
  */
 public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder implements DataNodeContainerBuilder {
-    protected QName qname;
+    protected final QName qname;
 
-    protected final Set<DataSchemaNode> childNodes = new HashSet<>();
+    protected final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
     protected final Set<DataSchemaNodeBuilder> addedChildNodes = new HashSet<>();
 
     protected final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
@@ -105,6 +105,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         return groupings;
     }
 
+    @Override
     public Set<GroupingBuilder> getGroupingBuilders() {
         return addedGroupings;
     }
