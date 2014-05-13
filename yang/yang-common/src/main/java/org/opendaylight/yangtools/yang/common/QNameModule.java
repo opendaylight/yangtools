@@ -13,10 +13,13 @@ import java.net.URISyntaxException;
 import java.util.Date;
 
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.objcache.ObjectCache;
+import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QNameModule implements Immutable, Serializable {
+    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QNameModule.class);
     private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
     private static final QNameModule NULL_INSTANCE = new QNameModule(null, null);
     private static final long serialVersionUID = 1L;
@@ -35,6 +38,23 @@ public final class QNameModule implements Immutable, Serializable {
         this.revision = revision;
     }
 
+    /**
+     * Look up specified module in the global cache and return a shared reference.
+     *
+     * @param module Module instance
+     * @return Cached instance, according to {@link ObjectCache} policy.
+     */
+    public static QNameModule cachedReference(final QNameModule module) {
+        return CACHE.getReference(module);
+    }
+
+    /**
+     * Create a new QName module instance with specified namespace/revision.
+     *
+     * @param namespace Module namespace
+     * @param revision Module revision
+     * @return A new, potentially shared, QNameModule instance
+     */
     public static QNameModule create(final URI namespace, final Date revision) {
         if (namespace == null && revision == null) {
             return NULL_INSTANCE;

@@ -49,6 +49,7 @@ public class BundleStartTest {
 
         options.add(mavenBundle(GROUP, "concepts").versionAsInProject());
         options.add(mavenBundle(GROUP, "util").versionAsInProject());
+        options.add(mavenBundle(GROUP, "object-cache-api").versionAsInProject());
         options.add(mavenBundle(GROUP, "yang-binding").versionAsInProject());
         options.add(mavenBundle(GROUP, "yang-common").versionAsInProject());
         options.add(mavenBundle(GROUP, "yang-data-api").versionAsInProject());

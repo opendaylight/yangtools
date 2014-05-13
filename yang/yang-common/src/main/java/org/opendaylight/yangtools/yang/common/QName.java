@@ -19,6 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.objcache.ObjectCache;
+import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -45,6 +47,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  *
  */
 public final class QName implements Immutable, Serializable, Comparable<QName> {
+    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QName.class);
     private static final long serialVersionUID = 5398411242927766414L;
 
     static final String QNAME_REVISION_DELIMITER = "?revision=";
@@ -55,7 +58,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             + "(.+)\\)(.+)$");
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile("^\\((.+)\\)(.+)$");
     private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile("^(.+)$");
-
     private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&' };
 
     // Mandatory
@@ -69,6 +71,16 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         this.localName = checkLocalName(localName);
         this.prefix = prefix;
         this.module = module;
+    }
+
+    /**
+     * Look up specified QName in the global cache and return a shared reference.
+     *
+     * @param module QName instance
+     * @return Cached instance, according to {@link ObjectCache} policy.
+     */
+    public static QName cachedReference(final QName qname) {
+        return CACHE.getReference(qname);
     }
 
     /**
@@ -228,7 +240,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     public static QName create(final QName base, final String localName) {
-        return new QName(base.getModule(), base.getPrefix(), localName);
+        return create(base.getModule(), base.getPrefix(), localName);
     }
 
     /**
@@ -259,7 +271,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
-        return new QName(qnameModule, null, localName);
+        return create(qnameModule, null, localName);
     }
 
     /**
@@ -274,7 +286,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final URI namespace, final Date revision, final String localName) {
-        return new QName(QNameModule.create(namespace, revision), null, localName);
+        return create(QNameModule.create(namespace, revision), null, localName);
     }
 
     /**
@@ -345,7 +357,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return copy of this QName with revision and prefix unset.
      */
     public QName withoutRevision() {
-        return QName.create(getNamespace(), null, localName);
+        return create(getNamespace(), null, localName);
     }
 
     public static Date parseRevision(final String formatedDate) {
