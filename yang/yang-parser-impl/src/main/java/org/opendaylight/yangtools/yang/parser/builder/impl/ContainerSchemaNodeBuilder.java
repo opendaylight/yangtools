@@ -9,12 +9,9 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.*;
@@ -25,16 +22,16 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerBuilder implements
         AugmentationTargetBuilder, DataSchemaNodeBuilder {
     private boolean isBuilt;
     private final ContainerSchemaNodeImpl instance;
-
-    private final SchemaPath path;
     // DataSchemaNode args
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
@@ -42,7 +39,6 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
 
     public ContainerSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        this.path = path;
         this.instance = new ContainerSchemaNodeImpl(qname, path);
         this.constraints = new ConstraintsBuilder(moduleName, line);
     }
@@ -51,7 +47,6 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     public ContainerSchemaNodeBuilder(final String moduleName, final int line, final QName qname,
             final SchemaPath path, final ContainerSchemaNode base) {
         super(moduleName, line, qname);
-        this.path = path;
         instance = new ContainerSchemaNodeImpl(qname, path);
         constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
 
@@ -62,7 +57,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         instance.addedByUses = base.isAddedByUses();
         instance.configuration = base.isConfiguration();
         instance.constraints = base.getConstraints();
-        instance.augmentations.addAll(base.getAvailableAugmentations());
+        instance.augmentations = ImmutableSet.copyOf(base.getAvailableAugmentations());
 
         URI ns = qname.getNamespace();
         Date rev = qname.getRevision();
@@ -73,9 +68,8 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         addedUnknownNodes.addAll(ParserUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
                 rev, pref));
 
-        instance.uses.addAll(base.getUses());
+        instance.uses = ImmutableSet.copyOf(base.getUses());
         instance.presence = base.isPresenceContainer();
-        instance.configuration = base.isConfiguration();
         instance.configuration = base.isConfiguration();
     }
 
@@ -86,42 +80,41 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
             for (UsesNodeBuilder builder : addedUsesNodes) {
                 usesNodes.add(builder.build());
             }
-            instance.addUses(usesNodes);
+            instance.uses = ImmutableSet.copyOf(usesNodes);
 
             // CHILD NODES
             for (DataSchemaNodeBuilder node : addedChildNodes) {
                 childNodes.add(node.build());
             }
-            instance.addChildNodes(childNodes);
+            instance.childNodes = ImmutableSet.copyOf(childNodes);
 
             // GROUPINGS
             for (GroupingBuilder builder : addedGroupings) {
                 groupings.add(builder.build());
             }
-            instance.addGroupings(groupings);
+            instance.groupings = ImmutableSet.copyOf(groupings);
 
             // TYPEDEFS
             for (TypeDefinitionBuilder entry : addedTypedefs) {
                 typedefs.add(entry.build());
             }
-            instance.addTypeDefinitions(typedefs);
+            instance.typeDefinitions = ImmutableSet.copyOf(typedefs);
 
             // AUGMENTATIONS
             final List<AugmentationSchema> augmentations = new ArrayList<>();
             for (AugmentationSchemaBuilder builder : augmentationBuilders) {
                 augmentations.add(builder.build());
             }
-            instance.addAvailableAugmentations(new HashSet<>(augmentations));
+            instance.augmentations = ImmutableSet.copyOf(augmentations);
 
             // UNKNOWN NODES
             for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
                 unknownNodes.add(b.build());
             }
-            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.addUnknownSchemaNodes(unknownNodes);
+            instance.unknownNodes = ImmutableList.copyOf(unknownNodes);
 
             if (constraints != null) {
-                instance.setConstraints(constraints.build());
+                instance.constraints = constraints.build();
             }
 
             isBuilt = true;
@@ -244,7 +237,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + ((instance.path == null) ? 0 : instance.path.hashCode());
         return result;
     }
 
@@ -260,11 +253,11 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
             return false;
         }
         ContainerSchemaNodeBuilder other = (ContainerSchemaNodeBuilder) obj;
-        if (path == null) {
-            if (other.path != null) {
+        if (instance.path == null) {
+            if (other.instance.path != null) {
                 return false;
             }
-        } else if (!path.equals(other.path)) {
+        } else if (!instance.path.equals(other.instance.path)) {
             return false;
         }
         if (parentBuilder == null) {
@@ -292,12 +285,14 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         private boolean addedByUses;
         private boolean configuration;
         private ConstraintDefinition constraints;
-        private final Set<AugmentationSchema> augmentations = new HashSet<>();
-        private final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-        private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-        private final Set<TypeDefinition<?>> typeDefinitions = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-        private final Set<UsesNode> uses = new HashSet<>();
-        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+
+        private ImmutableSet<AugmentationSchema> augmentations;
+        private ImmutableSet<DataSchemaNode> childNodes;
+        private ImmutableSet<GroupingDefinition> groupings;
+        private ImmutableSet<TypeDefinition<?>> typeDefinitions;
+        private ImmutableSet<UsesNode> uses;
+        private ImmutableList<UnknownSchemaNode> unknownNodes;
+
         private boolean presence;
 
         private ContainerSchemaNodeImpl(QName qname, SchemaPath path) {
@@ -350,41 +345,19 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
             return constraints;
         }
 
-        private void setConstraints(ConstraintDefinition constraints) {
-            this.constraints = constraints;
-        }
-
         @Override
         public Set<AugmentationSchema> getAvailableAugmentations() {
-            return Collections.unmodifiableSet(augmentations);
-        }
-
-        private void addAvailableAugmentations(Set<AugmentationSchema> augmentations) {
-            if (augmentations != null) {
-                this.augmentations.addAll(augmentations);
-            }
+            return augmentations;
         }
 
         @Override
         public Set<DataSchemaNode> getChildNodes() {
-            return Collections.unmodifiableSet(childNodes);
-        }
-
-        private void addChildNodes(Set<DataSchemaNode> childNodes) {
-            if (childNodes != null) {
-                this.childNodes.addAll(childNodes);
-            }
+            return childNodes;
         }
 
         @Override
         public Set<GroupingDefinition> getGroupings() {
-            return Collections.unmodifiableSet(groupings);
-        }
-
-        private void addGroupings(Set<GroupingDefinition> groupings) {
-            if (groupings != null) {
-                this.groupings.addAll(groupings);
-            }
+            return groupings;
         }
 
         @Override
@@ -399,13 +372,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
 
         @Override
         public Set<UsesNode> getUses() {
-            return Collections.unmodifiableSet(uses);
-        }
-
-        private void addUses(Set<UsesNode> uses) {
-            if (uses != null) {
-                this.uses.addAll(uses);
-            }
+            return uses;
         }
 
         @Override
@@ -415,24 +382,12 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
 
         @Override
         public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return Collections.unmodifiableSet(typeDefinitions);
-        }
-
-        private void addTypeDefinitions(Set<TypeDefinition<?>> typeDefinitions) {
-            if (typeDefinitions != null) {
-                this.typeDefinitions.addAll(typeDefinitions);
-            }
+            return typeDefinitions;
         }
 
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return Collections.unmodifiableList(unknownNodes);
-        }
-
-        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
-            if (unknownSchemaNodes != null) {
-                this.unknownNodes.addAll(unknownSchemaNodes);
-            }
+            return unknownNodes;
         }
 
         @Override
