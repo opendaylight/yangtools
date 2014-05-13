@@ -1162,7 +1162,7 @@ class LazyGeneratedCodecRegistry implements //
                         potentialImpl.get().addApplicableFor(path,aug);
                     }
                 } else {
-                    LOG.warn("Could not find generated type for augmentation {} with childs {}.",aug,aug.getChildNodes());
+                    LOG.warn("Could not find generated type for augmentation {} with children {}",aug,aug.getChildNodes());
                 }
             }
             availableAugmentations.toString();

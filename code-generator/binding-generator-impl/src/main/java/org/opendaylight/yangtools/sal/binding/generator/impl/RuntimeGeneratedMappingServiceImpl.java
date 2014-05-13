@@ -316,7 +316,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
             return (DataObject) deserialize.getValue();
         } catch (Exception e) {
-            LOG.warn("Failed to deserialize path {} data {}", path, domData);
+            LOG.warn("Failed to deserialize path {} data {}", path, domData, e);
             throw new DeserializationException("Data deserialization failed", e);
         }
     }
@@ -328,7 +328,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             Preconditions.checkState(c != null, "InstanceIdentifierCodec not present");
             return c.deserialize(entry);
         } catch (Exception e) {
-            LOG.warn("Failed to deserialize entry {}", entry);
+            LOG.warn("Failed to deserialize entry {}", entry, e);
             throw new DeserializationException("Entry deserialization failed", e);
         }
     }
