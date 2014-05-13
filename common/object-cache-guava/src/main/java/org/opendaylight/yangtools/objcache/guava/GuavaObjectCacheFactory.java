@@ -13,30 +13,30 @@ import org.opendaylight.yangtools.objcache.spi.IObjectCacheFactory;
 import com.google.common.base.FinalizableReferenceQueue;
 
 public final class GuavaObjectCacheFactory implements IObjectCacheFactory {
-	private static final GuavaObjectCacheFactory INSTANCE = new GuavaObjectCacheFactory();
-	private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
-	private final ObjectCache cache;
+    private static final GuavaObjectCacheFactory INSTANCE = new GuavaObjectCacheFactory();
+    private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
+    private final ObjectCache cache;
 
-	private GuavaObjectCacheFactory() {
-		// FIXME: make this more dynamic
-		this.cache = new GuavaObjectCache(queue, null);
-	}
+    private GuavaObjectCacheFactory() {
+        // FIXME: make this more dynamic using a spec
+        this.cache = new GuavaObjectCache(queue);
+    }
 
-	@Override
-	public void finalize() throws Throwable {
-		try {
-			queue.close();
-		} finally {
-			super.finalize();
-		}
-	}
+    @Override
+    public void finalize() throws Throwable {
+        try {
+            queue.close();
+        } finally {
+            super.finalize();
+        }
+    }
 
-	@Override
-	public ObjectCache getObjectCache(final Class<?> objClass) {
-		return cache;
-	}
+    @Override
+    public ObjectCache getObjectCache(final Class<?> objClass) {
+        return cache;
+    }
 
-	public static GuavaObjectCacheFactory getInstance() {
-		return INSTANCE;
-	}
+    public static GuavaObjectCacheFactory getInstance() {
+        return INSTANCE;
+    }
 }
