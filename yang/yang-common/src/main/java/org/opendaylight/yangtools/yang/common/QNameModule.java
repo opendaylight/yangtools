@@ -13,11 +13,14 @@ import java.net.URISyntaxException;
 import java.util.Date;
 
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.objcache.ObjectCache;
+import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable {
+    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QNameModule.class);
     private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
     private static final long serialVersionUID = 1L;
 
@@ -36,8 +39,7 @@ final class QNameModule implements Comparable<QNameModule>, Immutable, Serializa
     }
 
     public static QNameModule create(final URI namespace, final Date revision) {
-        // FIXME: use cache here
-        return new QNameModule(namespace, revision);
+        return CACHE.getReference(new QNameModule(namespace, revision));
     }
 
     public URI getNamespace() {
