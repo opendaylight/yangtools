@@ -194,11 +194,20 @@
                 <version>2.4</version>
             </dependency>
 
-
             <!-- Our artifacts -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>concepts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>object-cache-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>object-cache-noop</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
