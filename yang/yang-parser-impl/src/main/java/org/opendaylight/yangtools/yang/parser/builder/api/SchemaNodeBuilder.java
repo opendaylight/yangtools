@@ -32,6 +32,13 @@ public interface SchemaNodeBuilder extends Builder {
     SchemaPath getPath();
 
     /**
+     * Set path to this node.
+     *
+     * @param path
+     */
+    void setPath(SchemaPath path);
+
+    /**
      * Get description of this node.
      *
      * @return description statement

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,12 +28,14 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
 public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNodeBuilder {
-    private boolean isBuilt;
     private UsesNodeImpl instance;
     private DataNodeContainerBuilder parentBuilder;
     private final String groupingPathString;
@@ -44,10 +45,9 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private boolean addedByUses;
     private boolean augmenting;
     private boolean resolved;
-    private final Set<AugmentationSchemaBuilder> addedAugments = new HashSet<>();
+    private final Set<AugmentationSchemaBuilder> augmentationBuilders = new HashSet<>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<>();
     private final List<RefineHolder> refines = new ArrayList<>();
-
 
     public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
         super(moduleName, line);
@@ -56,34 +56,33 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     @Override
     public UsesNode build() {
-        if (!isBuilt) {
-            instance = new UsesNodeImpl(groupingPath);
-            instance.setAddedByUses(addedByUses);
-
-            // AUGMENTATIONS
-            final Set<AugmentationSchema> augments = new HashSet<>();
-            for (AugmentationSchemaBuilder builder : addedAugments) {
-                augments.add(builder.build());
-            }
-            instance.setAugmentations(augments);
-
-            // REFINES
-            final Map<SchemaPath, SchemaNode> refineNodes = new HashMap<>();
-            for (SchemaNodeBuilder refineBuilder : refineBuilders) {
-                SchemaNode refineNode = refineBuilder.build();
-                refineNodes.put(refineNode.getPath(), refineNode);
-            }
-            instance.setRefines(refineNodes);
-
-            // UNKNOWN NODES
-            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
-            }
-            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.addUnknownSchemaNodes(unknownNodes);
-
-            isBuilt = true;
+        if (instance != null) {
+            return instance;
         }
+
+        instance = new UsesNodeImpl(groupingPath);
+        instance.setAddedByUses(addedByUses);
+
+        // AUGMENTATIONS
+        final Set<AugmentationSchema> augments = new HashSet<>();
+        for (AugmentationSchemaBuilder builder : augmentationBuilders) {
+            augments.add(builder.build());
+        }
+        instance.augmentations = ImmutableSet.copyOf(augments);
+
+        // REFINES
+        final Map<SchemaPath, SchemaNode> refineNodes = new HashMap<>();
+        for (SchemaNodeBuilder refineBuilder : refineBuilders) {
+            SchemaNode refineNode = refineBuilder.build();
+            refineNodes.put(refineNode.getPath(), refineNode);
+        }
+        instance.refines = ImmutableMap.copyOf(refineNodes);
+
+        // UNKNOWN NODES
+        for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+            unknownNodes.add(b.build());
+        }
+        instance.unknownNodes = ImmutableList.copyOf(unknownNodes);
 
         return instance;
     }
@@ -140,18 +139,19 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     @Override
     public Set<AugmentationSchemaBuilder> getAugmentations() {
-        return addedAugments;
+        return augmentationBuilders;
     }
 
     @Override
     public void addAugment(final AugmentationSchemaBuilder augmentBuilder) {
-        addedAugments.add(augmentBuilder);
+        augmentationBuilders.add(augmentBuilder);
     }
 
     @Override
     public boolean isAddedByUses() {
         return addedByUses;
     }
+
     @Override
     public void setAddedByUses(final boolean addedByUses) {
         this.addedByUses = addedByUses;
@@ -242,10 +242,10 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     private static final class UsesNodeImpl implements UsesNode {
         private final SchemaPath groupingPath;
-        private Set<AugmentationSchema> augmentations = Collections.emptySet();
+        private ImmutableSet<AugmentationSchema> augmentations;
         private boolean addedByUses;
-        private Map<SchemaPath, SchemaNode> refines = Collections.emptyMap();
-        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+        private ImmutableMap<SchemaPath, SchemaNode> refines;
+        private ImmutableList<UnknownSchemaNode> unknownNodes;
 
         private UsesNodeImpl(final SchemaPath groupingPath) {
             this.groupingPath = groupingPath;
@@ -259,12 +259,6 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         @Override
         public Set<AugmentationSchema> getAugmentations() {
             return augmentations;
-        }
-
-        private void setAugmentations(final Set<AugmentationSchema> augmentations) {
-            if (augmentations != null) {
-                this.augmentations = augmentations;
-            }
         }
 
         @Override
@@ -286,16 +280,9 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             return refines;
         }
 
-        private void setRefines(final Map<SchemaPath, SchemaNode> refines) {
-            if (refines != null) {
-                this.refines = refines;
-            }
-        }
-
-        private void addUnknownSchemaNodes(final List<UnknownSchemaNode> unknownSchemaNodes) {
-            if (unknownSchemaNodes != null) {
-                this.unknownNodes.addAll(unknownSchemaNodes);
-            }
+        @SuppressWarnings("unused")
+        public List<UnknownSchemaNode> getUnknownSchemaNodes() {
+            return unknownNodes;
         }
 
         @Override
