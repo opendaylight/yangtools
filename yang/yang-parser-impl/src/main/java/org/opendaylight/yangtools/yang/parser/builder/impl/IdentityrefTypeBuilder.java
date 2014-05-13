@@ -26,7 +26,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     private static final String NAME = "identityref";
 
     private final String baseString;
-    private final SchemaPath schemaPath;
+    private SchemaPath schemaPath;
     private IdentitySchemaNodeBuilder baseIdentity;
 
     public IdentityrefTypeBuilder(final String moduleName, final int line, final String baseString,
@@ -112,6 +112,11 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     @Override
     public SchemaPath getPath() {
         return schemaPath;
+    }
+
+    @Override
+    public void setPath(SchemaPath path) {
+        this.schemaPath = path;
     }
 
     @Override

@@ -14,11 +14,14 @@ import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.*;
 
+import com.google.common.collect.ImmutableList;
+
 public final class DeviationBuilder extends AbstractBuilder {
-    private boolean isBuilt;
-    private final DeviationImpl instance;
+    private DeviationImpl instance;
     private final String targetPathStr;
     private SchemaPath targetPath;
+    private Deviate deviate;
+    private String reference;
 
     DeviationBuilder(final String moduleName, final int line, final String targetPathStr) {
         super(moduleName, line);
@@ -28,7 +31,6 @@ public final class DeviationBuilder extends AbstractBuilder {
         }
         this.targetPathStr = targetPathStr;
         this.targetPath = ParserUtils.parseXPathString(targetPathStr);
-        instance = new DeviationImpl();
     }
 
     @Override
@@ -37,18 +39,20 @@ public final class DeviationBuilder extends AbstractBuilder {
             throw new YangParseException(moduleName, line, "Unresolved deviation target");
         }
 
-        if (!isBuilt) {
-            instance.setTargetPath(targetPath);
-
-            // UNKNOWN NODES
-            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
-            }
-            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.addUnknownSchemaNodes(unknownNodes);
-
-            isBuilt = true;
+        if (instance != null) {
+            return instance;
         }
+
+        instance = new DeviationImpl();
+        instance.targetPath = targetPath;
+        instance.deviate = deviate;
+        instance.reference = reference;
+
+        // UNKNOWN NODES
+        for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+            unknownNodes.add(b.build());
+        }
+        instance.unknownNodes = ImmutableList.copyOf(unknownNodes);
 
         return instance;
     }
@@ -63,20 +67,20 @@ public final class DeviationBuilder extends AbstractBuilder {
 
     public void setDeviate(final String deviate) {
         if ("not-supported".equals(deviate)) {
-            instance.setDeviate(Deviate.NOT_SUPPORTED);
+            this.deviate = Deviate.NOT_SUPPORTED;
         } else if ("add".equals(deviate)) {
-            instance.setDeviate(Deviate.ADD);
+            this.deviate = Deviate.ADD;
         } else if ("replace".equals(deviate)) {
-            instance.setDeviate(Deviate.REPLACE);
+            this.deviate = Deviate.REPLACE;
         } else if ("delete".equals(deviate)) {
-            instance.setDeviate(Deviate.DELETE);
+            this.deviate = Deviate.DELETE;
         } else {
             throw new YangParseException(moduleName, line, "Unsupported type of 'deviate' statement: " + deviate);
         }
     }
 
     public void setReference(final String reference) {
-        instance.reference = reference;
+        this.reference = reference;
     }
 
     @Override
@@ -88,7 +92,7 @@ public final class DeviationBuilder extends AbstractBuilder {
         private SchemaPath targetPath;
         private Deviate deviate;
         private String reference;
-        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+        private ImmutableList<UnknownSchemaNode> unknownNodes;
 
         private DeviationImpl() {
         }
@@ -98,17 +102,9 @@ public final class DeviationBuilder extends AbstractBuilder {
             return targetPath;
         }
 
-        private void setTargetPath(final SchemaPath targetPath) {
-            this.targetPath = targetPath;
-        }
-
         @Override
         public Deviate getDeviate() {
             return deviate;
-        }
-
-        private void setDeviate(final Deviate deviate) {
-            this.deviate = deviate;
         }
 
         @Override
@@ -118,13 +114,7 @@ public final class DeviationBuilder extends AbstractBuilder {
 
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return Collections.unmodifiableList(unknownNodes);
-        }
-
-        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
-            if (unknownSchemaNodes != null) {
-                this.unknownNodes.addAll(unknownSchemaNodes);
-            }
+            return unknownNodes;
         }
 
         @Override
