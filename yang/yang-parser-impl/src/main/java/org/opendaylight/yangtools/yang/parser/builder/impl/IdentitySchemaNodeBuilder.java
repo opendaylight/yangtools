@@ -12,11 +12,11 @@ import java.util.*;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
+
+import com.google.common.collect.ImmutableList;
 
 public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
-    private boolean isBuilt;
-    private final IdentitySchemaNodeImpl instance;
+    private IdentitySchemaNodeImpl instance;
     private IdentitySchemaNode baseIdentity;
     private IdentitySchemaNodeBuilder baseIdentityBuilder;
     private final Set<IdentitySchemaNode> derivedIdentities = new HashSet<>();
@@ -25,7 +25,6 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     IdentitySchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        instance = new IdentitySchemaNodeImpl(qname, path, derivedIdentities);
     }
 
     IdentitySchemaNodeBuilder(final String moduleName, IdentitySchemaNode base) {
@@ -33,66 +32,29 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         schemaPath = base.getPath();
         derivedIdentities.addAll(base.getDerivedIdentities());
         unknownNodes.addAll(base.getUnknownSchemaNodes());
-        instance = new IdentitySchemaNodeImpl(qname, schemaPath, derivedIdentities);
     }
 
     @Override
     public IdentitySchemaNode build() {
-        if (!isBuilt) {
-            if(baseIdentityBuilder != null) {
-                baseIdentityBuilder.addDerivedIdentity(instance);
-                baseIdentity = baseIdentityBuilder.build();
-            }
-            instance.setBaseIdentity(baseIdentity);
-
-            // UNKNOWN NODES
-            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
-            }
-            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.addUnknownSchemaNodes(unknownNodes);
-
-            isBuilt = true;
+        if (instance != null) {
+            return instance;
         }
+
+        instance = new IdentitySchemaNodeImpl(qname, schemaPath, derivedIdentities);
+
+        if (baseIdentityBuilder != null) {
+            baseIdentityBuilder.addDerivedIdentity(instance);
+            baseIdentity = baseIdentityBuilder.build();
+        }
+        instance.baseIdentity = baseIdentity;
+
+        // UNKNOWN NODES
+        for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+            unknownNodes.add(b.build());
+        }
+        instance.unknownNodes = ImmutableList.copyOf(unknownNodes);
 
         return instance;
-    }
-
-    @Override
-    public SchemaPath getPath() {
-        return instance.path;
-    }
-
-    @Override
-    public String getDescription() {
-        return instance.description;
-    }
-
-    @Override
-    public void setDescription(final String description) {
-        instance.description = description;
-    }
-
-    @Override
-    public String getReference() {
-        return instance.reference;
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        instance.reference = reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return instance.status;
-    }
-
-    @Override
-    public void setStatus(Status status) {
-        if (status != null) {
-            instance.status = status;
-        }
     }
 
     public String getBaseIdentityName() {
@@ -125,10 +87,11 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         private final Set<IdentitySchemaNode> derivedIdentities;
         private String description;
         private String reference;
-        private Status status = Status.CURRENT;
-        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+        private Status status;
+        private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-        private IdentitySchemaNodeImpl(final QName qname, final SchemaPath path, final Set<IdentitySchemaNode> derivedIdentities) {
+        private IdentitySchemaNodeImpl(final QName qname, final SchemaPath path,
+                final Set<IdentitySchemaNode> derivedIdentities) {
             this.qname = qname;
             this.path = path;
             this.derivedIdentities = derivedIdentities;
@@ -144,13 +107,9 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
             return baseIdentity;
         }
 
-        private void setBaseIdentity(final IdentitySchemaNode baseIdentity) {
-            this.baseIdentity = baseIdentity;
-        }
-
         @Override
         public Set<IdentitySchemaNode> getDerivedIdentities() {
-            return Collections.unmodifiableSet(derivedIdentities);
+            return derivedIdentities;
         }
 
         @Override
@@ -175,13 +134,7 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
 
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return Collections.unmodifiableList(unknownNodes);
-        }
-
-        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownSchemaNodes) {
-            if (unknownSchemaNodes != null) {
-                this.unknownNodes.addAll(unknownSchemaNodes);
-            }
+            return unknownNodes;
         }
 
         @Override
