@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,71 +18,87 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
 public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder {
-    private boolean isBuilt;
-    private final LeafSchemaNodeImpl instance;
+    private LeafSchemaNodeImpl instance;
+    private String defaultStr;
+    private String unitsStr;
     // SchemaNode args
     private SchemaPath schemaPath;
+    private String description;
+    private String reference;
+    private Status status = Status.CURRENT;
     // DataSchemaNode args
+    private boolean augmenting;
+    private boolean addedByUses;
+    private boolean configuration;
     private final ConstraintsBuilder constraints;
 
     public LeafSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath schemaPath) {
         super(moduleName, line, qname);
         this.schemaPath = schemaPath;
-        instance = new LeafSchemaNodeImpl(qname, schemaPath);
         constraints = new ConstraintsBuilder(moduleName, line);
     }
 
     public LeafSchemaNodeBuilder(String moduleName, int line, QName qname, SchemaPath path, LeafSchemaNode base) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        instance = new LeafSchemaNodeImpl(qname, path);
         constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
 
-        instance.description = base.getDescription();
-        instance.reference = base.getReference();
-        instance.status = base.getStatus();
-        instance.augmenting = base.isAugmenting();
-        instance.addedByUses = base.isAddedByUses();
-        instance.configuration = base.isConfiguration();
-        instance.constraintsDef = base.getConstraints();
+        description = base.getDescription();
+        reference = base.getReference();
+        status = base.getStatus();
+        augmenting = base.isAugmenting();
+        addedByUses = base.isAddedByUses();
+        configuration = base.isConfiguration();
         this.type = base.getType();
-        instance.unknownNodes.addAll(base.getUnknownSchemaNodes());
-        instance.defaultStr = base.getDefault();
-        instance.unitsStr = base.getUnits();
+        unknownNodes.addAll(base.getUnknownSchemaNodes());
+
+        defaultStr = base.getDefault();
+        unitsStr = base.getUnits();
     }
 
     @Override
     public LeafSchemaNode build() {
-        if (!isBuilt) {
-            instance.setConstraints(constraints.build());
-
-            if (type == null && typedef == null) {
-                throw new YangParseException(moduleName, line, "Failed to resolve leaf type.");
-            }
-
-            // TYPE
-            if (type == null) {
-                instance.setType(typedef.build());
-            } else {
-                instance.setType(type);
-            }
-
-            // UNKNOWN NODES
-            for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
-                unknownNodes.add(b.build());
-            }
-            Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-            instance.addUnknownSchemaNodes(unknownNodes);
-
-            isBuilt = true;
+        if (instance != null) {
+            return instance;
         }
+
+        instance = new LeafSchemaNodeImpl(qname, schemaPath);
+
+        instance.description = description;
+        instance.reference = reference;
+        instance.status = status;
+        instance.augmenting = augmenting;
+        instance.addedByUses = addedByUses;
+        instance.configuration = configuration;
+        instance.constraintsDef = constraints.build();
+        instance.defaultStr = defaultStr;
+        instance.unitsStr = unitsStr;
+
+        if (type == null && typedef == null) {
+            throw new YangParseException(moduleName, line, "Failed to resolve leaf type.");
+        }
+
+        // TYPE
+        if (type == null) {
+            instance.type = typedef.build();
+        } else {
+            instance.type = type;
+        }
+
+        // UNKNOWN NODES
+        for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
+            unknownNodes.add(b.build());
+        }
+        instance.unknownNodes = ImmutableList.copyOf(unknownNodes);
+
         return instance;
     }
-
 
     @Override
     public SchemaPath getPath() {
@@ -93,7 +107,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
 
     @Override
     public void setPath(SchemaPath path) {
-        instance.path = path;
+        this.schemaPath = path;
     }
 
     @Override
@@ -103,80 +117,78 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
 
     @Override
     public String getDescription() {
-        return instance.description;
+        return description;
     }
 
     @Override
     public void setDescription(final String description) {
-        instance.description = description;
+        this.description = description;
     }
 
     @Override
     public String getReference() {
-        return instance.reference;
+        return reference;
     }
 
     @Override
     public void setReference(final String reference) {
-        instance.reference = reference;
+        this.reference = reference;
     }
 
     @Override
     public Status getStatus() {
-        return instance.status;
+        return status;
     }
 
     @Override
     public void setStatus(Status status) {
-        if (status != null) {
-            instance.status = status;
-        }
+        this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
     @Override
     public boolean isAugmenting() {
-        return instance.augmenting;
+        return augmenting;
     }
 
     @Override
     public void setAugmenting(final boolean augmenting) {
-        instance.augmenting = augmenting;
+        this.augmenting = augmenting;
     }
 
     @Override
     public boolean isAddedByUses() {
-        return instance.addedByUses;
+        return addedByUses;
     }
 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
-        instance.addedByUses = addedByUses;
+        this.addedByUses = addedByUses;
     }
 
     @Override
     public boolean isConfiguration() {
-        return instance.configuration;
+        return configuration;
     }
 
     @Override
     public void setConfiguration(final boolean configuration) {
-        instance.configuration = configuration;
+        this.configuration = configuration;
     }
 
     public String getDefaultStr() {
-        return instance.defaultStr;
+        return defaultStr;
     }
 
     public void setDefaultStr(String defaultStr) {
-        instance.defaultStr = defaultStr;
+        this.defaultStr = defaultStr;
     }
 
     public String getUnits() {
-        return instance.unitsStr;
+        return unitsStr;
     }
 
     public void setUnits(String unitsStr) {
-        instance.unitsStr = unitsStr;
+        this.unitsStr = unitsStr;
     }
 
     @Override
@@ -223,16 +235,16 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
 
     private static final class LeafSchemaNodeImpl implements LeafSchemaNode {
         private final QName qname;
-        private SchemaPath path;
+        private final SchemaPath path;
         private String description;
         private String reference;
-        private Status status = Status.CURRENT;
+        private Status status;
         private boolean augmenting;
         private boolean addedByUses;
         private boolean configuration;
         private ConstraintDefinition constraintsDef;
         private TypeDefinition<?> type;
-        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+        private ImmutableList<UnknownSchemaNode> unknownNodes;
         private String defaultStr;
         private String unitsStr;
 
@@ -286,28 +298,14 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
             return constraintsDef;
         }
 
-        private void setConstraints(ConstraintDefinition constraintsDef) {
-            this.constraintsDef = constraintsDef;
-        }
-
         @Override
         public TypeDefinition<?> getType() {
             return type;
         }
 
-        private void setType(TypeDefinition<? extends TypeDefinition<?>> type) {
-            this.type = type;
-        }
-
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return Collections.unmodifiableList(unknownNodes);
-        }
-
-        private void addUnknownSchemaNodes(List<UnknownSchemaNode> unknownNodes) {
-            if (unknownNodes != null) {
-                this.unknownNodes.addAll(unknownNodes);
-            }
+            return unknownNodes;
         }
 
         @Override
