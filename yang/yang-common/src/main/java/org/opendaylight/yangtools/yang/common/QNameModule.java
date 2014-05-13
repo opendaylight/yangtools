@@ -13,12 +13,15 @@ import java.net.URISyntaxException;
 import java.util.Date;
 
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.objcache.ObjectCache;
+import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QNameModule implements Immutable, Serializable {
-	private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
-	private static final long serialVersionUID = 1L;
+    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QNameModule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
+    private static final long serialVersionUID = 1L;
 
     //Nullable
     private final URI namespace;
@@ -39,21 +42,21 @@ public final class QNameModule implements Immutable, Serializable {
         }
     }
 
-	public static QNameModule create(final URI namespace, final Date revision) {
-		return new QNameModule(namespace, revision);
-	}
+    public static QNameModule create(final URI namespace, final Date revision) {
+        return CACHE.getReference(new QNameModule(namespace, revision));
+    }
 
-	public String getFormattedRevision() {
-		return formattedRevision;
-	}
+    public String getFormattedRevision() {
+        return formattedRevision;
+    }
 
-	public URI getNamespace() {
-		return namespace;
-	}
+    public URI getNamespace() {
+        return namespace;
+    }
 
-	public Date getRevision() {
-		return revision;
-	}
+    public Date getRevision() {
+        return revision;
+    }
 
     @Override
     public int hashCode() {
