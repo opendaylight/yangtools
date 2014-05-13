@@ -7,20 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
-
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -43,8 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class QName implements Immutable, Serializable, Comparable<QName> {
-    private static final long serialVersionUID = 5398411242927766414L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(QName.class);
+    private static final long serialVersionUID = 1L;
 
     static final String QNAME_REVISION_DELIMITER = "?revision=";
     static final String QNAME_LEFT_PARENTHESIS = "(";
@@ -59,16 +53,12 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
 
     private static final char[] ILLEGAL_CHARACTERS = new char[] {'?', '(', ')', '&'};
 
-    //Nullable
-    private final URI namespace;
-    //Mandatory
+    // Mandatory
+    private final QNameModule module;
+    // Mandatory
     private final String localName;
-    //Nullable
+    // Nullable
     private final String prefix;
-    //Nullable
-    private final String formattedRevision;
-    //Nullable
-    private final Date revision;
 
     /**
      * QName Constructor.
@@ -83,15 +73,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            YANG schema identifier
      */
     public QName(final URI namespace, final Date revision, final String prefix, final String localName) {
+        this.module = QNameModule.create(namespace, revision);
         this.localName = checkLocalName(localName);
-        this.namespace = namespace;
-        this.revision = revision;
         this.prefix = prefix;
-        if(revision != null) {
-            this.formattedRevision = getRevisionFormat().format(revision);
-        } else {
-            this.formattedRevision = null;
-        }
     }
 
     /**
@@ -150,22 +134,114 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     public QName(final String input) throws ParseException {
         Date revision = null;
         String nsAndRev = input.substring(input.indexOf("(") + 1, input.indexOf(")"));
+        URI namespace;
         if (nsAndRev.contains("?")) {
             String[] splitted = nsAndRev.split("\\?");
-            this.namespace = URI.create(splitted[0]);
-            revision = getRevisionFormat().parse(splitted[1]);
+            namespace = URI.create(splitted[0]);
+            revision = SimpleDateFormatUtil.getRevisionFormat().parse(splitted[1]);
         } else {
-            this.namespace = URI.create(nsAndRev);
+            namespace = URI.create(nsAndRev);
         }
 
+        this.module = QNameModule.create(namespace, revision);
         this.localName = checkLocalName(input.substring(input.indexOf(")") + 1));
-        this.revision = revision;
         this.prefix = null;
-        if (revision != null) {
-            this.formattedRevision = getRevisionFormat().format(revision);
-        } else {
-            this.formattedRevision = null;
+    }
+
+    /**
+     * Returns XMLNamespace assigned to the YANG module.
+     *
+     * @return XMLNamespace assigned to the YANG module.
+     */
+    public URI getNamespace() {
+        return module.getNamespace();
+    }
+
+    /**
+     * Returns YANG schema identifier which were defined for this node in the
+     * YANG module
+     *
+     * @return YANG schema identifier which were defined for this node in the
+     *         YANG module
+     */
+    public String getLocalName() {
+        return localName;
+    }
+
+    /**
+     * Returns revision of the YANG module if the module has defined revision,
+     * otherwise returns <code>null</code>
+     *
+     * @return revision of the YANG module if the module has defined revision,
+     *         otherwise returns <code>null</code>
+     */
+    public Date getRevision() {
+        return module.getRevision();
+    }
+
+    /**
+     * Returns locally defined prefix assigned to local name
+     *
+     * @return locally defined prefix assigned to local name
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + module.hashCode();
+        result = prime * result + ((localName == null) ? 0 : localName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
         }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        QName other = (QName) obj;
+        if (!module.equals(other.module)) {
+            return false;
+        }
+        if (localName == null) {
+            if (other.localName != null) {
+                return false;
+            }
+        } else if (!localName.equals(other.localName)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static QName create(final QName base, final String localName){
+        return new QName(base, localName);
+    }
+
+    public static QName create(final URI namespace, final Date revision, final String localName){
+        return new QName(namespace, revision, localName);
+    }
+
+    public static QName create(final String namespace, final String revision, final String localName) throws IllegalArgumentException {
+        final URI namespaceUri;
+
+        try {
+            namespaceUri = new URI(namespace);
+        }  catch (URISyntaxException ue) {
+            throw new IllegalArgumentException(String.format("Namespace '%s' is is not a valid URI", namespace), ue);
+        }
+
+        Date revisionDate = parseRevision(revision);
+        return create(namespaceUri, revisionDate, localName);
     }
 
     public static QName create(final String input) {
@@ -190,120 +266,18 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         throw new IllegalArgumentException("Invalid input:" + input);
     }
 
-    /**
-     * Returns XMLNamespace assigned to the YANG module.
-     *
-     * @return XMLNamespace assigned to the YANG module.
-     */
-    public URI getNamespace() {
-        return namespace;
-    }
-
-    /**
-     * Returns YANG schema identifier which were defined for this node in the
-     * YANG module
-     *
-     * @return YANG schema identifier which were defined for this node in the
-     *         YANG module
-     */
-    public String getLocalName() {
-        return localName;
-    }
-
-    /**
-     * Returns revision of the YANG module if the module has defined revision,
-     * otherwise returns <code>null</code>
-     *
-     * @return revision of the YANG module if the module has defined revision,
-     *         otherwise returns <code>null</code>
-     */
-    public Date getRevision() {
-        return revision;
-    }
-
-    /**
-     * Returns locally defined prefix assigned to local name
-     *
-     * @return locally defined prefix assigned to local name
-     */
-    public String getPrefix() {
-        return prefix;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((localName == null) ? 0 : localName.hashCode());
-        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((formattedRevision == null) ? 0 : formattedRevision.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        QName other = (QName) obj;
-        if (localName == null) {
-            if (other.localName != null) {
-                return false;
-            }
-        } else if (!localName.equals(other.localName)) {
-            return false;
-        }
-        if (namespace == null) {
-            if (other.namespace != null) {
-                return false;
-            }
-        } else if (!namespace.equals(other.namespace)) {
-            return false;
-        }
-        if (formattedRevision == null) {
-            if (other.formattedRevision != null) {
-                return false;
-            }
-        } else if (!revision.equals(other.revision)) {
-            return false;
-        }
-        return true;
-    }
-
-
-    public static QName create(final QName base, final String localName){
-        return new QName(base, localName);
-    }
-
-    public static QName create(final URI namespace, final Date revision, final String localName){
-        return new QName(namespace, revision, localName);
-    }
-
-
-    public static QName create(final String namespace, final String revision, final String localName) throws IllegalArgumentException{
-        try {
-            URI namespaceUri = new URI(namespace);
-            Date revisionDate = parseRevision(revision);
-            return create(namespaceUri, revisionDate, localName);
-        }  catch (URISyntaxException ue) {
-            throw new IllegalArgumentException("Namespace is is not valid URI", ue);
-        }
-    }
-
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
+        final URI namespace = module.getNamespace();
         if (namespace != null) {
-            sb.append(QNAME_LEFT_PARENTHESIS + namespace);
+            sb.append(QNAME_LEFT_PARENTHESIS);
+            sb.append(namespace);
 
-            if (formattedRevision != null) {
-                sb.append(QNAME_REVISION_DELIMITER + formattedRevision);
+            final String revision = module.getFormattedRevision();
+            if (revision != null) {
+                sb.append(QNAME_REVISION_DELIMITER);
+                sb.append(revision);
             }
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }
@@ -311,51 +285,19 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return sb.toString();
     }
 
-    /**
-     * Returns a namespace in form defined by section 5.6.4. of {@link https
-     * ://tools.ietf.org/html/rfc6020}, if namespace is not correctly defined,
-     * the method will return <code>null</code> <br>
-     * example "http://example.acme.com/system?revision=2008-04-01"
-     *
-     * @return namespace in form defined by section 5.6.4. of {@link https
-     *         ://tools.ietf.org/html/rfc6020}, if namespace is not correctly
-     *         defined, the method will return <code>null</code>
-     *
-     */
-    URI getRevisionNamespace() {
-
-        if (namespace == null) {
-            return null;
-        }
-
-        String query = "";
-        if (revision != null) {
-            query = "revision=" + formattedRevision;
-        }
-
-        URI compositeURI = null;
-        try {
-            compositeURI = new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(),
-                    namespace.getPort(), namespace.getPath(), query, namespace.getFragment());
-        } catch (URISyntaxException e) {
-            LOGGER.error("", e);
-        }
-        return compositeURI;
-    }
-
     public String getFormattedRevision() {
-        return formattedRevision;
+        return module.getFormattedRevision();
     }
 
     public QName withoutRevision() {
-        return QName.create(namespace, null, localName);
+        return QName.create(getNamespace(), null, localName);
     }
 
     public static Date parseRevision(final String formatedDate) {
         try {
-            return getRevisionFormat().parse(formatedDate);
+            return SimpleDateFormatUtil.getRevisionFormat().parse(formatedDate);
         } catch (ParseException| RuntimeException e) {
-            throw new IllegalArgumentException("Revision is not in supported format:" + formatedDate,e);
+            throw new IllegalArgumentException(String.format("Revision '%s 'is not in a supported format", formatedDate), e);
         }
     }
 
@@ -363,52 +305,23 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         if(revision == null) {
             return null;
         }
-        return getRevisionFormat().format(revision);
+        return SimpleDateFormatUtil.getRevisionFormat().format(revision);
     }
 
     public boolean isEqualWithoutRevision(final QName other) {
-        return localName.equals(other.getLocalName()) && Objects.equals(namespace, other.getNamespace());
+        return localName.equals(other.getLocalName()) && module.isEqualWithoutRevision(other.module);
     }
 
     @Override
     public int compareTo(final QName other) {
-        // compare mandatory localName parameter
-        int result = localName.compareTo(other.localName);
+        // compare modules first
+        int result = module.compareTo(other.module);
         if (result != 0) {
             return result;
         }
 
-        // compare nullable namespace parameter
-        if (namespace == null) {
-            if (other.namespace != null) {
-                return -1;
-            }
-        } else {
-            if (other.namespace == null) {
-                return 1;
-            }
-            result = namespace.compareTo(other.namespace);
-            if (result != 0) {
-                return result;
-            }
-        }
-
-        // compare nullable revision parameter
-        if (revision == null) {
-            if (other.revision != null) {
-                return -1;
-            }
-        } else {
-            if (other.revision == null) {
-                return 1;
-            }
-            result = revision.compareTo(other.revision);
-            if (result != 0) {
-                return result;
-            }
-        }
-
-        return result;
+        // compare mandatory localName parameter
+        return localName.compareTo(other.localName);
     }
 
 }
