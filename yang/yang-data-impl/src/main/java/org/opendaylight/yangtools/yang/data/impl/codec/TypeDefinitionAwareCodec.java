@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -55,6 +56,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
@@ -87,7 +89,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 if (octMatcher.matches()) {
                     return 8;
                 } else {
-                    String formatedMessage = String.format("Incorrect lexical representation of Integer value: %s" 
+                    String formatedMessage = String.format("Incorrect lexical representation of Integer value: %s"
                             + "%nThe Integer value can be defined as "
                             + "%n- Integer Number,"
                             + "%n- Hexadecimal Number (prefix 0x),"
@@ -118,9 +120,6 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static final BinaryCodecStringImpl BINARY_DEFAULT_CODEC = new BinaryCodecStringImpl(
             Optional.<BinaryTypeDefinition> absent());
 
-    public static final BitsCodecStringImpl BITS_DEFAULT_CODEC = new BitsCodecStringImpl(
-            Optional.<BitsTypeDefinition> absent());
-
     public static final BooleanCodecStringImpl BOOLEAN_DEFAULT_CODEC = new BooleanCodecStringImpl(
             Optional.<BooleanTypeDefinition> absent());
 
@@ -129,9 +128,6 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
     public static final EmptyCodecStringImpl EMPTY_DEFAULT_CODEC = new EmptyCodecStringImpl(
             Optional.<EmptyTypeDefinition> absent());
-
-    public static final EnumCodecStringImpl ENUMERATION_DEFAULT_CODEC = new EnumCodecStringImpl(
-            Optional.<EnumTypeDefinition> absent());
 
     public static final Int8CodecStringImpl INT8_DEFAULT_CODEC = new Int8CodecStringImpl(
             Optional.<IntegerTypeDefinition> absent());
@@ -160,9 +156,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static final Uint64CodecStringImpl UINT64_DEFAULT_CODEC = new Uint64CodecStringImpl(
             Optional.<UnsignedIntegerTypeDefinition> absent());
 
-    public static final UnionCodecStringImpl UNION_DEFAULT_CODEC = new UnionCodecStringImpl(
-            Optional.<UnionTypeDefinition> absent());
-
+    @Override
     public Class<J> getInputClass() {
         return inputClass;
     }
@@ -179,10 +173,10 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> from(TypeDefinition typeDefinition) {
-        final TypeDefinitionAwareCodec codec = fromType(typeDefinition);
-        return (TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>>) codec;
+        return fromType(typeDefinition);
     }
 
+    @SuppressWarnings("unchecked")
     public static final <T extends TypeDefinition<T>> TypeDefinitionAwareCodec<?, T> fromType(T typeDefinition) {
         T superType = typeDefinition;
         while (superType.getBaseType() != null) {
@@ -195,7 +189,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         if (superType instanceof BinaryTypeDefinition) {
             codec = BINARY_DEFAULT_CODEC;
         } else if (superType instanceof BitsTypeDefinition) {
-            codec = BITS_DEFAULT_CODEC;
+            codec = new BitsCodecStringImpl( Optional.of( (BitsTypeDefinition)superType ) );
         } else if (superType instanceof BooleanTypeDefinition) {
             codec = BOOLEAN_DEFAULT_CODEC;
         } else if (superType instanceof DecimalTypeDefinition) {
@@ -203,7 +197,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         } else if (superType instanceof EmptyTypeDefinition) {
             codec = EMPTY_DEFAULT_CODEC;
         } else if (superType instanceof EnumTypeDefinition) {
-            codec = ENUMERATION_DEFAULT_CODEC;
+            codec = new EnumCodecStringImpl( Optional.of( (EnumTypeDefinition)superType ) );
         } else if (superType instanceof IntegerTypeDefinition) {
             if (INT8_QNAME.equals(superType.getQName())) {
                 codec = INT8_DEFAULT_CODEC;
@@ -217,7 +211,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         } else if (superType instanceof StringTypeDefinition) {
             codec = STRING_DEFAULT_CODEC;
         } else if (superType instanceof UnionTypeDefinition) {
-            codec = UNION_DEFAULT_CODEC;
+            codec = new UnionCodecStringImpl( Optional.of( (UnionTypeDefinition)superType ) );
         } else if (superType instanceof UnsignedIntegerTypeDefinition) {
             if (UINT8_QNAME.equals(superType.getQName())) {
                 codec = UINT8_DEFAULT_CODEC;
@@ -232,9 +226,8 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 codec = UINT64_DEFAULT_CODEC;
             }
         }
-        @SuppressWarnings("unchecked")
-        TypeDefinitionAwareCodec<?, T> ret = (TypeDefinitionAwareCodec<?, T>) codec;
-        return ret;
+
+        return codec;
     }
 
     public static class BooleanCodecStringImpl extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
@@ -491,7 +484,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public static final Splitter SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
         @SuppressWarnings("unchecked")
-        protected BitsCodecStringImpl(Optional<BitsTypeDefinition> typeDef) {
+        public BitsCodecStringImpl(Optional<BitsTypeDefinition> typeDef) {
             super(typeDef, (Class<Set<String>>) ((Class<?>) Set.class));
         }
 
@@ -502,9 +495,27 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public Set<String> deserialize(String stringRepresentation) {
-            if (stringRepresentation == null)
+            if (stringRepresentation == null) {
                 return ImmutableSet.of();
+            }
+
             Iterable<String> strings = SPLITTER.split(stringRepresentation);
+
+            if( getTypeDefinition().isPresent() ) {
+                Set<String> allowedNames = Sets.newHashSet();
+                for( BitsTypeDefinition.Bit bit: getTypeDefinition().get().getBits() ) {
+                    allowedNames.add( bit.getName() );
+                }
+
+                for( String bit: strings ) {
+                    if( !allowedNames.contains( bit ) ) {
+                        throw new IllegalArgumentException(
+                            "Invalid value \"" + bit + "\" for bits type. Allowed values are: " +
+                            allowedNames );
+                    }
+                }
+            }
+
             return ImmutableSet.copyOf(strings);
         }
     };
@@ -512,18 +523,31 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class EnumCodecStringImpl extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements
             EnumCodec<String> {
 
-        protected EnumCodecStringImpl(Optional<EnumTypeDefinition> typeDef) {
+        public EnumCodecStringImpl(Optional<EnumTypeDefinition> typeDef) {
             super(typeDef, String.class);
         }
 
         @Override
         public String deserialize(String stringRepresentation) {
+            if( getTypeDefinition().isPresent() ) {
+                Set<String> allowedNames = Sets.newHashSet();
+                for( EnumPair pair: getTypeDefinition().get().getValues() ) {
+                    allowedNames.add( pair.getName() );
+                }
+
+                if( !allowedNames.contains( stringRepresentation ) ) {
+                    throw new IllegalArgumentException(
+                        "Invalid value \"" + stringRepresentation + "\" for enum type. Allowed values are: " +
+                        allowedNames );
+                }
+            }
+
             return stringRepresentation;
         }
 
         @Override
         public String serialize(String data) {
-            return data == null ? "" : data.toString();
+            return data == null ? "" : data;
         }
     };
 
@@ -559,6 +583,31 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String deserialize(String stringRepresentation) {
+            if( getTypeDefinition().isPresent() ) {
+                boolean valid = false;
+                for( TypeDefinition<?> type: getTypeDefinition().get().getTypes() ) {
+                    TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> typeAwareCodec = from( type );
+                    if( typeAwareCodec == null ) {
+                        valid = true;
+                        break;
+                    }
+
+                    try {
+                        typeAwareCodec.deserialize( stringRepresentation );
+                        valid = true;
+                        break;
+                    }
+                    catch( Exception e ) {
+                        // invalid - try the next union type.
+                    }
+                }
+
+                if( !valid ) {
+                    throw new IllegalArgumentException(
+                                        "Invalid value \"" + stringRepresentation + "\" for union type." );
+                }
+            }
+
             return stringRepresentation;
         }
     };
