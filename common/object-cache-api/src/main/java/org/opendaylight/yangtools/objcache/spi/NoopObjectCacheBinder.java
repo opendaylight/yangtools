@@ -5,26 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.objcache.impl;
+package org.opendaylight.yangtools.objcache.spi;
 
 import org.opendaylight.yangtools.objcache.ObjectCache;
-import org.opendaylight.yangtools.objcache.spi.AbstractObjectCacheBinder;
-import org.opendaylight.yangtools.objcache.spi.IObjectCacheFactory;
-import org.opendaylight.yangtools.objcache.spi.NoopObjectCache;
 
-public final class StaticObjectCacheBinder extends AbstractObjectCacheBinder {
-    private static final StaticObjectCacheBinder INSTANCE = new StaticObjectCacheBinder();
+public final class NoopObjectCacheBinder extends AbstractObjectCacheBinder {
+    public static final NoopObjectCacheBinder INSTANCE = new NoopObjectCacheBinder();
 
-    private StaticObjectCacheBinder() {
+    private  NoopObjectCacheBinder() {
         super(new IObjectCacheFactory() {
             @Override
             public ObjectCache getObjectCache(final Class<?> objClass) {
                 return NoopObjectCache.getInstance();
             }
         });
-    }
-
-    public static StaticObjectCacheBinder getInstance() {
-        return INSTANCE;
     }
 }
