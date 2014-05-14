@@ -29,11 +29,11 @@ abstract class AbstractTypeMember implements TypeMember {
 
     public AbstractTypeMember(final Type definingType, final String name,  final List<AnnotationType> annotations,
                               final String comment, final AccessModifier accessModifier, final Type returnType,
-                              boolean isFinal, boolean isStatic) {
+                              final boolean isFinal, final boolean isStatic) {
         super();
         this.definingType = definingType;
         this.name = name;
-        this.annotations = Collections.unmodifiableList(annotations);
+        this.annotations = annotations.isEmpty() ? Collections.<AnnotationType>emptyList() : Collections.unmodifiableList(annotations);
         this.comment = comment;
         this.accessModifier = accessModifier;
         this.returnType = returnType;
@@ -92,7 +92,7 @@ abstract class AbstractTypeMember implements TypeMember {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
