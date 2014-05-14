@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_c99310a2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-05-14T07:54:35Z",
+      "side": 1,
+      "message": "from first glance this seems wrong - you cannot really use this map when you only have files - if you want to get is for given file you would have to iterate over the whole map. Instead keys should match input parameters",
+      "revId": "5a8f43c165032bc9722d25399dafe4fed726be21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_6990c495",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-05-14T07:54:35Z",
+      "side": 1,
+      "message": "again, keys should match input",
+      "revId": "5a8f43c165032bc9722d25399dafe4fed726be21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
