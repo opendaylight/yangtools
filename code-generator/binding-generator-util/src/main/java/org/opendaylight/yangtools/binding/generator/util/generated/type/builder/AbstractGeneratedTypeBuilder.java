@@ -80,7 +80,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     protected abstract T thisInstance();
 
     @Override
-    public GeneratedTOBuilder addEnclosingTransferObject(String name) {
+    public GeneratedTOBuilder addEnclosingTransferObject(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("Name for Enclosing Generated Transfer Object cannot be null!");
         }
@@ -99,7 +99,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public T addComment(String comment) {
+    public T addComment(final String comment) {
         this.comment = comment;
         return thisInstance();
     }
@@ -119,13 +119,13 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public T setAbstract(boolean isAbstract) {
+    public T setAbstract(final boolean isAbstract) {
         this.isAbstract = isAbstract;
         return thisInstance();
     }
 
     @Override
-    public T addImplementsType(Type genType) {
+    public T addImplementsType(final Type genType) {
         if (genType == null) {
             throw new IllegalArgumentException("Type cannot be null");
         }
@@ -134,7 +134,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public Constant addConstant(Type type, String name, Object value) {
+    public Constant addConstant(final Type type, final String name, final Object value) {
         if (type == null) {
             throw new IllegalArgumentException("Returning Type for Constant cannot be null!");
         }
@@ -148,7 +148,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public EnumBuilder addEnumeration(String name) {
+    public EnumBuilder addEnumeration(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("Name of enumeration cannot be null!");
         }
@@ -158,7 +158,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public MethodSignatureBuilder addMethod(String name) {
+    public MethodSignatureBuilder addMethod(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("Name of method cannot be null!");
         }
@@ -170,7 +170,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public boolean containsMethod(String name) {
+    public boolean containsMethod(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter name can't be null");
         }
@@ -183,7 +183,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public GeneratedPropertyBuilder addProperty(String name) {
+    public GeneratedPropertyBuilder addProperty(final String name) {
         final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);
         builder.setAccessModifier(AccessModifier.PUBLIC);
         properties.add(builder);
@@ -191,7 +191,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public boolean containsProperty(String name) {
+    public boolean containsProperty(final String name) {
         if (name == null) {
             throw new IllegalArgumentException("Parameter name can't be null");
         }
@@ -213,7 +213,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -223,7 +223,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         if (getClass() != obj.getClass()) {
             return false;
         }
-        AbstractGeneratedTypeBuilder<T> other = (AbstractGeneratedTypeBuilder<T>) obj;
+        AbstractGeneratedTypeBuilder<?> other = (AbstractGeneratedTypeBuilder<?>) obj;
         if (getName() == null) {
             if (other.getName() != null) {
                 return false;
