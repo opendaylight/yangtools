@@ -17,9 +17,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
-import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
@@ -199,15 +197,13 @@ public class GenEnumResolvingTest {
 
         assertNotNull("Expected Referenced Enum LinkUpDownTrapEnable, but was NULL!",
                 linkUpDownTrapEnable);
-        assertTrue("Expected LinkUpDownTrapEnable of type ReferencedTypeImpl",
-                linkUpDownTrapEnable instanceof ReferencedTypeImpl);
+        assertTrue("Expected LinkUpDownTrapEnable of type Enumeration", linkUpDownTrapEnable instanceof Enumeration);
         assertEquals(linkUpDownTrapEnable.getPackageName(),
                 "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface");
 
         assertNotNull("Expected Referenced Enum OperStatus, but was NULL!",
                 operStatus);
-        assertTrue("Expected OperStatus of type ReferencedTypeImpl",
-                operStatus instanceof  ReferencedTypeImpl);
+        assertTrue("Expected OperStatus of type Enumeration", operStatus instanceof Enumeration);
         assertEquals(operStatus.getPackageName(),
                 "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface");
     }
