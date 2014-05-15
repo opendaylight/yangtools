@@ -1281,7 +1281,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     val enumBuilder = resolveInnerEnumFromTypeDefinition(enumTypeDef, leaf.QName, typeBuilder);
 
                     if (enumBuilder !== null) {
-                        returnType = new ReferencedTypeImpl(enumBuilder.packageName, enumBuilder.name);
+                        returnType = enumBuilder.toInstance(typeBuilder)
                     }
                     (typeProvider as TypeProviderImpl).putReferencedType(leaf.path, returnType);
                 } else if (typeDef instanceof UnionType) {
