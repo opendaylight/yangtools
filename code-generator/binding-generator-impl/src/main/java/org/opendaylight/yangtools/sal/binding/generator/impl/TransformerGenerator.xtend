@@ -319,7 +319,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         }
 
         return runOnClassLoader(cls.classLoader) [ |
-            val valueTransformer = generateValueTransformer(cls, type);
+            val valueTransformer = generateValueTransformer(cls, type, typeDefinition);
             return valueTransformer;
         ]
     }
@@ -893,6 +893,21 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         («type.resolvedName») «type.valueSerializer(typeDefinition).resolvedName».fromDomValue(«domParameter»)
     '''
 
+    private def dispatch String deserializeValue(Type type, String domParameter, TypeDefinition<?> typeDef) {
+        if (INSTANCE_IDENTIFIER.equals(type)) {
+            return '''(«InstanceIdentifier.name») «INSTANCE_IDENTIFIER_CODEC».deserialize(«domParameter»)'''
+        } else if (CLASS_TYPE.equals(type)) {
+            return '''(«Class.name») «IDENTITYREF_CODEC».deserialize(«domParameter»)'''
+        } else if (typeDef!=null && typeDef instanceof EmptyTypeDefinition) {
+            if(domParameter == null) {
+                return ''' Boolean.FALSE '''
+            } else {
+                return ''' Boolean.TRUE '''
+            }
+        }
+        return '''(«type.resolvedName») «domParameter»'''
+    }
+
     private def dispatch Class<? extends BindingCodec<Map<QName, Object>, Object>> generateValueTransformer(
         Class<?> inputType, GeneratedTransferObject typeSpec, TypeDefinition<?> typeDef) {
         try {
@@ -1208,12 +1223,17 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         return null;
     }
 
-    private def Class<?> generateValueTransformer(Class<?> inputType, Enumeration typeSpec) {
-        try {
+    private def Class<?> generateValueTransformer(Class<?> inputType, Enumeration typeSpec, TypeDefinition<?> type) {
+        var EnumerationType enumSchemaType
+        if (type instanceof EnumerationType) {
+            enumSchemaType = type as EnumerationType
+        } else {
             val typeRef = new ReferencedTypeImpl(typeSpec.packageName, typeSpec.name);
             val schema = getSchemaNode(typeRef) as ExtendedType;
-            val enumSchema = schema.baseType as EnumerationType;
-
+            enumSchemaType = schema.baseType as EnumerationType;
+        }
+        val enumSchema = enumSchemaType;
+        try {
             //log.info("Generating DOM Codec for {} with {}", inputType, inputType.classLoader)
             val ctCls = createClass(typeSpec.codecClassName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
@@ -1291,22 +1311,6 @@ class TransformerGenerator extends AbstractTransformerGenerator {
 
         val captureFile = new File(classFileCapturePath, path);
         captureFile.createNewFile
-
-    }
-
-    private def dispatch String deserializeValue(Type type, String domParameter, TypeDefinition<?> typeDef) {
-        if (INSTANCE_IDENTIFIER.equals(type)) {
-            return '''(«InstanceIdentifier.name») «INSTANCE_IDENTIFIER_CODEC».deserialize(«domParameter»)'''
-        } else if (CLASS_TYPE.equals(type)) {
-            return '''(«Class.name») «IDENTITYREF_CODEC».deserialize(«domParameter»)'''
-        } else if (typeDef!=null && typeDef instanceof EmptyTypeDefinition) {
-            if(domParameter == null) {
-                return ''' Boolean.FALSE '''
-            } else {
-                return ''' Boolean.TRUE '''
-            }
-        }
-        return '''(«type.resolvedName») «domParameter»'''
 
     }
 
