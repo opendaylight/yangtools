@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -167,20 +168,14 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     /**
      * Simple path argument identifying a {@link ContainerNode} or {@link LeafNode} leaf
-     * overal data tree.
-     *
+     * overall data tree.
      */
-    public static final class NodeIdentifier implements PathArgument {
-
-        /**
-         *
-         */
+    public static final class NodeIdentifier implements PathArgument, Comparable<NodeIdentifier> {
         private static final long serialVersionUID = -2255888212390871347L;
-
         private final QName nodeType;
 
         public NodeIdentifier(final QName node) {
-            this.nodeType = node;
+            this.nodeType = Preconditions.checkNotNull(node);
         }
 
         @Override
@@ -190,58 +185,44 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
-            return result;
+            return 31 + nodeType.hashCode();
         }
 
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
-				return true;
-			}
-            if (obj == null) {
-				return false;
-			}
-            if (getClass() != obj.getClass()) {
-				return false;
-			}
-            NodeIdentifier other = (NodeIdentifier) obj;
-            if (nodeType == null) {
-                if (other.nodeType != null) {
-					return false;
-				}
-            } else if (!nodeType.equals(other.nodeType)) {
-				return false;
-			}
-            return true;
+                return true;
+            }
+            if (!(obj instanceof NodeIdentifier)) {
+                return false;
+            }
+            final NodeIdentifier other = (NodeIdentifier) obj;
+            return nodeType.equals(other.nodeType);
         }
 
         @Override
         public String toString() {
             return nodeType.toString();
         }
+
+        @Override
+        public int compareTo(final NodeIdentifier o) {
+            return nodeType.compareTo(o.nodeType);
+        }
     }
 
     /**
-     *
      * Composite path argument identifying a {@link MapEntryNode} leaf
-     * overal data tree.
-     *
+     * overall data tree.
      */
     public static final class NodeIdentifierWithPredicates implements PathArgument {
-
-        /**
-         *
-         */
         private static final long serialVersionUID = -4787195606494761540L;
 
         private final QName nodeType;
         private final Map<QName, Object> keyValues;
 
         public NodeIdentifierWithPredicates(final QName node, final Map<QName, Object> keyValues) {
-            this.nodeType = node;
+            this.nodeType = Preconditions.checkNotNull(node);
             this.keyValues = ImmutableMap.copyOf(keyValues);
         }
 
@@ -271,29 +252,29 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
-				return true;
-			}
+                return true;
+            }
             if (obj == null) {
-				return false;
-			}
+                return false;
+            }
             if (getClass() != obj.getClass()) {
-				return false;
-			}
+                return false;
+            }
             NodeIdentifierWithPredicates other = (NodeIdentifierWithPredicates) obj;
             if (keyValues == null) {
                 if (other.keyValues != null) {
-					return false;
-				}
+                    return false;
+                }
             } else if (!keyValues.equals(other.keyValues)) {
-				return false;
-			}
+                return false;
+            }
             if (nodeType == null) {
                 if (other.nodeType != null) {
-					return false;
-				}
+                    return false;
+                }
             } else if (!nodeType.equals(other.nodeType)) {
-				return false;
-			}
+                return false;
+            }
             return true;
         }
 
@@ -305,24 +286,16 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     /**
      * Simple path argument identifying a {@link LeafSetEntryNode} leaf
-     * overal data tree.
-     *
+     * overall data tree.
      */
     public static final class NodeWithValue implements PathArgument {
-
-       /**
-        *
-        * Composite path argument identifying a {@link AugmentationNode} leaf
-        * overal data tree.
-        *
-        */
         private static final long serialVersionUID = -3637456085341738431L;
 
         private final QName nodeType;
         private final Object value;
 
         public NodeWithValue(final QName node, final Object value) {
-            this.nodeType = node;
+            this.nodeType = Preconditions.checkNotNull(node);
             this.value = value;
         }
 
@@ -347,29 +320,29 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
-				return true;
-			}
+                return true;
+            }
             if (obj == null) {
-				return false;
-			}
+                return false;
+            }
             if (getClass() != obj.getClass()) {
-				return false;
-			}
+                return false;
+            }
             NodeWithValue other = (NodeWithValue) obj;
             if (value == null) {
                 if (other.value != null) {
-					return false;
-				}
+                    return false;
+                }
             } else if (!value.equals(other.value)) {
-				return false;
-			}
+                return false;
+            }
             if (nodeType == null) {
                 if (other.nodeType != null) {
-					return false;
-				}
+                    return false;
+                }
             } else if (!nodeType.equals(other.nodeType)) {
-				return false;
-			}
+                return false;
+            }
             return true;
         }
 
@@ -380,9 +353,11 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     }
 
-
+    /**
+     * Composite path argument identifying a {@link AugmentationNode} leaf
+     * overall data tree.
+     */
     public static final class AugmentationIdentifier implements PathArgument {
-
         private static final long serialVersionUID = -8122335594681936939L;
         private final ImmutableSet<QName> childNames;
 
@@ -419,17 +394,17 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         @Override
         public boolean equals(final Object o) {
             if (this == o) {
-				return true;
-			}
+                return true;
+            }
             if (!(o instanceof AugmentationIdentifier)) {
-				return false;
-			}
+                return false;
+            }
 
             AugmentationIdentifier that = (AugmentationIdentifier) o;
 
             if (!childNames.equals(that.childNames)) {
-				return false;
-			}
+                return false;
+            }
 
             return true;
         }
