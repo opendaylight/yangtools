@@ -207,6 +207,8 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateFields(false)»
 
+            «generateAugmentField(true)»
+
             «generateConstructorsFromIfcs(type)»
 
             «generateMethodFieldsFrom(type)»
@@ -224,6 +226,8 @@ class BuilderTemplate extends BaseTemplate {
                 «implementedInterfaceGetter»
 
                 «generateFields(true)»
+
+                «generateAugmentField(false)»
 
                 «generateConstructor»
 
@@ -256,7 +260,7 @@ class BuilderTemplate extends BaseTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    def private generateConstructorFromIfc(Type impl) '''
+    def private Object generateConstructorFromIfc(Type impl) '''
         «IF (impl instanceof GeneratedType)»
             «val implType = impl as GeneratedType»
 
@@ -271,7 +275,7 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def private printConstructorPropertySetter(Type implementedIfc) '''
+    def private Object printConstructorPropertySetter(Type implementedIfc) '''
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
             «val ifc = implementedIfc as GeneratedType»
             «FOR getter : ifc.methodDefinitions»
@@ -398,8 +402,11 @@ class BuilderTemplate extends BaseTemplate {
                 private«IF _final» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
+    '''
+
+    def private generateAugmentField(boolean init) '''
         «IF augmentField != null»
-            private «Map.importedName»<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = new «HashMap.importedName»<>();
+            private final «Map.importedName»<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name»«IF init» = new «HashMap.importedName»<>()«ENDIF»;
         «ENDIF»
     '''
 
@@ -467,7 +474,17 @@ class BuilderTemplate extends BaseTemplate {
                 this.«field.fieldName» = builder.«field.getterMethodName»();
             «ENDFOR»
             «IF augmentField != null»
-                this.«augmentField.name».putAll(builder.«augmentField.name»);
+               switch (builder.«augmentField.name».size()) {
+                case 0:
+                    this.«augmentField.name» = «Collections.importedName».emptyMap();
+                    break;
+                case 1:
+                    final «Map.importedName».Entry<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = builder.«augmentField.name».entrySet().iterator().next();
+                    this.«augmentField.name» = «Collections.importedName».<Class<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
+                    break;
+                default :
+                    this.«augmentField.name» = new «HashMap.importedName»<>(builder.«augmentField.name»);
+                }
             «ENDIF»
         }
     '''
