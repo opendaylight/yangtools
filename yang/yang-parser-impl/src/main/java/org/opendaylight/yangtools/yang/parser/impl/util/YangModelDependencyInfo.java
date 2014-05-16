@@ -39,8 +39,8 @@ public abstract class YangModelDependencyInfo {
     private final ImmutableSet<ModuleImport> moduleImports;
     private final ImmutableSet<ModuleImport> dependencies;
 
-    public YangModelDependencyInfo(String name, String formattedRevision, ImmutableSet<ModuleImport> imports,
-            ImmutableSet<ModuleImport> includes) {
+    public YangModelDependencyInfo(final String name, final String formattedRevision, final ImmutableSet<ModuleImport> imports,
+            final ImmutableSet<ModuleImport> includes) {
         this.name = name;
         this.formattedRevision = formattedRevision;
         this.revision = QName.parseRevision(formattedRevision);
@@ -78,28 +78,35 @@ public abstract class YangModelDependencyInfo {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (!(obj instanceof YangModelDependencyInfo))
+        }
+        if (!(obj instanceof YangModelDependencyInfo)) {
             return false;
+        }
         YangModelDependencyInfo other = (YangModelDependencyInfo) obj;
         if (formattedRevision == null) {
-            if (other.formattedRevision != null)
+            if (other.formattedRevision != null) {
                 return false;
-        } else if (!formattedRevision.equals(other.formattedRevision))
+            }
+        } else if (!formattedRevision.equals(other.formattedRevision)) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         return true;
     }
 
-    public static YangModelDependencyInfo fromInputStream(InputStream yangStream) {
+    public static YangModelDependencyInfo fromInputStream(final InputStream yangStream) {
         YangContext yangContext = YangParserImpl.parseStreamWithoutErrorListeners(yangStream);
 
         Optional<Module_stmtContext> moduleCtx = getFirstContext(yangContext, Module_stmtContext.class);
@@ -113,7 +120,7 @@ public abstract class YangModelDependencyInfo {
         throw new IllegalArgumentException("Supplied stream is not valid yang file.");
     }
 
-    private static YangModelDependencyInfo fromModuleContext(Module_stmtContext module) {
+    private static YangModelDependencyInfo fromModuleContext(final Module_stmtContext module) {
         String name = getArgumentString(module);
         // String prefix =
         // getArgumentString(module.module_header_stmts().prefix_stmt(0));
@@ -125,7 +132,7 @@ public abstract class YangModelDependencyInfo {
         return new ModuleDependencyInfo(name, latestRevision, namespace, imports, includes);
     }
 
-    private static ImmutableSet<ModuleImport> getImports(List<Import_stmtContext> importStatements) {
+    private static ImmutableSet<ModuleImport> getImports(final List<Import_stmtContext> importStatements) {
         ImmutableSet.Builder<ModuleImport> builder = ImmutableSet.builder();
         for (Import_stmtContext importStmt : importStatements) {
             String moduleName = getArgumentString(importStmt);
@@ -135,7 +142,7 @@ public abstract class YangModelDependencyInfo {
         return builder.build();
     }
 
-    private static String getLatestRevision(Revision_stmtsContext revision_stmts) {
+    private static String getLatestRevision(final Revision_stmtsContext revision_stmts) {
         List<Revision_stmtContext> revisions = revision_stmts.getRuleContexts(Revision_stmtContext.class);
         String latestRevision = null;
         for (Revision_stmtContext revisionStmt : revisions) {
@@ -147,7 +154,7 @@ public abstract class YangModelDependencyInfo {
         return latestRevision;
     }
 
-    private static YangModelDependencyInfo fromSubmoduleContext(Submodule_stmtContext submodule) {
+    private static YangModelDependencyInfo fromSubmoduleContext(final Submodule_stmtContext submodule) {
         String name = getArgumentString(submodule);
         Belongs_to_stmtContext belongsToStmt = submodule.submodule_header_stmts().belongs_to_stmt(0);
         String belongsTo = getArgumentString(belongsToStmt);
@@ -159,7 +166,7 @@ public abstract class YangModelDependencyInfo {
         return new SubmoduleDependencyInfo(name, latestRevision, belongsTo, imports, includes);
     }
 
-    private static ImmutableSet<ModuleImport> getIncludes(List<Include_stmtContext> importStatements) {
+    private static ImmutableSet<ModuleImport> getIncludes(final List<Include_stmtContext> importStatements) {
         ImmutableSet.Builder<ModuleImport> builder = ImmutableSet.builder();
         for (Include_stmtContext importStmt : importStatements) {
             String moduleName = getArgumentString(importStmt);
@@ -169,7 +176,7 @@ public abstract class YangModelDependencyInfo {
         return builder.build();
     }
 
-    private static Date getRevision(Revision_date_stmtContext revision_date_stmt) {
+    private static Date getRevision(final Revision_date_stmtContext revision_date_stmt) {
         if (revision_date_stmt == null) {
             return null;
         }
@@ -179,8 +186,8 @@ public abstract class YangModelDependencyInfo {
 
     public static final class ModuleDependencyInfo extends YangModelDependencyInfo {
 
-        private ModuleDependencyInfo(String name, String latestRevision, String namespace,
-                ImmutableSet<ModuleImport> imports, ImmutableSet<ModuleImport> includes) {
+        private ModuleDependencyInfo(final String name, final String latestRevision, final String namespace,
+                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
             super(name, latestRevision, imports, includes);
         }
 
@@ -189,7 +196,6 @@ public abstract class YangModelDependencyInfo {
             return "Module [name=" + getName() + ", revision=" + getRevision()
                     + ", dependencies=" + getDependencies() + "]";
         }
-
     }
 
     public static final class SubmoduleDependencyInfo extends YangModelDependencyInfo {
@@ -200,8 +206,8 @@ public abstract class YangModelDependencyInfo {
             return belongsTo;
         }
 
-        private SubmoduleDependencyInfo(String name, String latestRevision, String belongsTo,
-                ImmutableSet<ModuleImport> imports, ImmutableSet<ModuleImport> includes) {
+        private SubmoduleDependencyInfo(final String name, final String latestRevision, final String belongsTo,
+                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
             super(name, latestRevision, imports, includes);
             this.belongsTo = belongsTo;
         }
@@ -211,15 +217,14 @@ public abstract class YangModelDependencyInfo {
             return "Submodule [name=" + getName() + ", revision=" + getRevision()
                     + ", dependencies=" + getDependencies() + "]";
         }
-
     }
 
     private static final class ModuleImportImpl implements ModuleImport {
 
-        private Date revision;
-        private String name;
+        private final Date revision;
+        private final String name;
 
-        public ModuleImportImpl(String moduleName, Date revision) {
+        public ModuleImportImpl(final String moduleName, final Date revision) {
             this.name = moduleName;
             this.revision = revision;
         }
@@ -249,24 +254,31 @@ public abstract class YangModelDependencyInfo {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
+        public boolean equals(final Object obj) {
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             ModuleImportImpl other = (ModuleImportImpl) obj;
             if (name == null) {
-                if (other.name != null)
+                if (other.name != null) {
                     return false;
-            } else if (!name.equals(other.name))
+                }
+            } else if (!name.equals(other.name)) {
                 return false;
+            }
             if (revision == null) {
-                if (other.revision != null)
+                if (other.revision != null) {
                     return false;
-            } else if (!revision.equals(other.revision))
+                }
+            } else if (!revision.equals(other.revision)) {
                 return false;
+            }
             return true;
         }
 
@@ -274,7 +286,5 @@ public abstract class YangModelDependencyInfo {
         public String toString() {
             return "ModuleImportImpl [name=" + name + ", revision=" + QName.formattedRevision(revision) + "]";
         }
-
-
     }
 }
