@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
@@ -27,7 +24,6 @@ import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
-import org.eclipse.xtext.xbase.lib.Conversions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,9 +77,8 @@ public final class JavassistUtils {
 
     public void method(final CtClass it, final Class<? extends Object> returnType, final String name,
             final Class<? extends Object> parameter, final MethodGenerator function1) throws CannotCompileException {
-        List<CtClass> _asList = Arrays.<CtClass> asList(asCtClass(parameter));
-        CtMethod _ctMethod = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(
-                _asList, CtClass.class)), it);
+        final CtClass[] pa = new CtClass[] { asCtClass(parameter) };
+        final CtMethod _ctMethod = new CtMethod(asCtClass(returnType), name, pa, it);
 
         final CtMethod method = _ctMethod;
         function1.process(method);
@@ -92,21 +87,23 @@ public final class JavassistUtils {
 
     public void method(final CtClass it, final Class<? extends Object> returnType, final String name,
             final Collection<? extends Class<?>> parameters, final MethodGenerator function1) throws CannotCompileException {
-        List<CtClass> _asList = new ArrayList<>();
+        final CtClass[] pa = new CtClass[parameters.size()];
+
+        int i = 0;
         for (Class<? extends Object> parameter : parameters) {
-            _asList.add(asCtClass(parameter));
+            pa[i] = asCtClass(parameter);
+            ++i;
         }
-        CtMethod method = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(_asList,
-                CtClass.class)), it);
+
+        final CtMethod method = new CtMethod(asCtClass(returnType), name, pa, it);
         function1.process(method);
         it.addMethod(method);
     }
 
     public void staticMethod(final CtClass it, final Class<? extends Object> returnType, final String name,
             final Class<? extends Object> parameter, final MethodGenerator function1) throws CannotCompileException {
-        List<CtClass> _asList = Arrays.<CtClass> asList(asCtClass(parameter));
-        CtMethod _ctMethod = new CtMethod(asCtClass(returnType), name, ((CtClass[]) Conversions.unwrapArray(
-                _asList, CtClass.class)), it);
+        final CtClass[] pa = new CtClass[] { asCtClass(parameter) };
+        final CtMethod _ctMethod = new CtMethod(asCtClass(returnType), name, pa, it);
         final CtMethod method = _ctMethod;
         function1.process(method);
         it.addMethod(method);
