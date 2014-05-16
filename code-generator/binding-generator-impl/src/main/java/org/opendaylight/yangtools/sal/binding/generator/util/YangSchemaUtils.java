@@ -25,17 +25,14 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public class YangSchemaUtils {
-
+public final class YangSchemaUtils {
     public static final String AUGMENT_IDENTIFIER = "augment-identifier";
 
-
-    public YangSchemaUtils() {
+    private YangSchemaUtils() {
         throw new UnsupportedOperationException("Helper class. Instantiation is prohibited");
     }
 
-
-    public static QName getAugmentationQName(AugmentationSchema augmentation) {
+    public static QName getAugmentationQName(final AugmentationSchema augmentation) {
         checkNotNull(augmentation, "Augmentation must not be null.");
         QName identifier = getAugmentationIdentifier(augmentation);
         if(identifier != null) {
@@ -47,13 +44,14 @@ public class YangSchemaUtils {
             namespace = ((NamespaceRevisionAware) augmentation).getNamespace();
             revision = ((NamespaceRevisionAware) augmentation).getRevision();
         }
-        if(namespace == null || revision == null)
-        for(DataSchemaNode child : augmentation.getChildNodes()) {
-            // Derive QName from child nodes
-            if(!child.isAugmenting()) {
-                namespace = child.getQName().getNamespace();
-                revision = child.getQName().getRevision();
-                break;
+        if(namespace == null || revision == null) {
+            for(DataSchemaNode child : augmentation.getChildNodes()) {
+                // Derive QName from child nodes
+                if(!child.isAugmenting()) {
+                    namespace = child.getQName().getNamespace();
+                    revision = child.getQName().getRevision();
+                    break;
+                }
             }
         }
         checkState(namespace != null, "Augmentation namespace must not be null");
@@ -62,7 +60,7 @@ public class YangSchemaUtils {
         return QName.create(namespace,revision, "foo_augment");
     }
 
-    public static QName getAugmentationIdentifier(AugmentationSchema augmentation) {
+    public static QName getAugmentationIdentifier(final AugmentationSchema augmentation) {
         for(UnknownSchemaNode extension : augmentation.getUnknownSchemaNodes()) {
             if(AUGMENT_IDENTIFIER.equals(extension.getNodeType().getLocalName())) {
                 return extension.getQName();
@@ -71,8 +69,7 @@ public class YangSchemaUtils {
         return null;
     }
 
-
-    public static TypeDefinition<?> findTypeDefinition(SchemaContext context, SchemaPath path) {
+    public static TypeDefinition<?> findTypeDefinition(final SchemaContext context, final SchemaPath path) {
         List<QName> arguments = path.getPath();
         QName first = arguments.get(0);
         QName typeQName = arguments.get(arguments.size() -1);
