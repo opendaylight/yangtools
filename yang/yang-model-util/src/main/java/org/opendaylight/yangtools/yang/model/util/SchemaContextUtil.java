@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Preconditions;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +17,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -38,8 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 /**
  * The Schema Context Util contains support methods for searching through Schema
@@ -491,69 +489,91 @@ public final class SchemaContextUtil {
         return result;
     }
 
+    private static DataSchemaNode findCorrectImmediateTargetFromGrouping(final DataSchemaNode node, final SchemaContext ctx) {
+        // uses is under module statement
+        final Module m = findParentModule(ctx, node);
+        Preconditions.checkArgument(m != null, "Failed to find module for node {} in context {}", node, ctx);
+
+        for (final UsesNode u : m.getUses()) {
+            final SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPath());
+            Preconditions.checkArgument(targetGrouping instanceof GroupingDefinition,
+                    "Failed to generate code for augment in %s", u);
+
+            LOG.trace("Checking grouping {} for node {}", targetGrouping, node);
+            final GroupingDefinition gr = (GroupingDefinition) targetGrouping;
+            final DataSchemaNode result = gr.getDataChildByName(node.getQName().getLocalName());
+            if (result != null) {
+                return result;
+            }
+
+            LOG.debug("Skipped grouping {}, no matching node found", gr);
+        }
+
+        throw new IllegalArgumentException(
+                String.format("Failed to find uses node matching {} in context {}", node, ctx));
+    }
+
     private static DataSchemaNode findCorrectTargetFromGrouping(final DataSchemaNode node, final SchemaContext ctx) {
-        if (node.getPath().getPath().size() == 1) {
-            // uses is under module statement
-            Module m = findParentModule(ctx, node);
-            DataSchemaNode result = null;
-            for (UsesNode u : m.getUses()) {
-                SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPath());
-                if (!(targetGrouping instanceof GroupingDefinition)) {
-                    throw new IllegalArgumentException(String.format("Failed to generate code for augment in %s", u));
-                }
-                GroupingDefinition gr = (GroupingDefinition) targetGrouping;
-                result = gr.getDataChildByName(node.getQName().getLocalName());
-            }
-            if (result == null) {
-                throw new IllegalArgumentException("Failed to generate code for augment");
-            }
-            return result;
-        } else {
-            DataSchemaNode result = null;
+        if (node.getPath().getPath().size() != 1) {
             QName currentName = node.getQName();
+            // tmpPath is used to track level of nesting
             List<QName> tmpPath = new ArrayList<>();
             Object parent = null;
 
+            // create schema path of parent node
             SchemaPath sp = node.getPath();
-            List<QName> names = sp.getPath();
-            List<QName> newNames = new ArrayList<>(names);
+            List<QName> newNames = new ArrayList<>(sp.getPath());
+            // parentPath = nodePath - lastQName
             newNames.remove(newNames.size() - 1);
             SchemaPath newSp = SchemaPath.create(newNames, sp.isAbsolute());
+            // find parent node by its schema path
             parent = findDataSchemaNode(ctx, newSp);
 
             do {
                 tmpPath.add(currentName);
+
+                DataSchemaNode result = null;
+                // search parent node's used groupings for presence of wanted
+                // node
                 if (parent instanceof DataNodeContainer) {
                     DataNodeContainer dataNodeParent = (DataNodeContainer) parent;
                     for (UsesNode u : dataNodeParent.getUses()) {
-                        if (result == null) {
-                            result = getResultFromUses(u, currentName.getLocalName(), ctx);
+                        result = getResultFromUses(u, currentName.getLocalName(), ctx);
+                        if (result != null) {
+                            break;
                         }
                     }
                 }
-                if (result == null) {
-                    currentName = ((SchemaNode) parent).getQName();
-                    if (parent instanceof SchemaNode) {
-                        SchemaPath nodeSp = ((SchemaNode) parent).getPath();
-                        List<QName> nodeNames = nodeSp.getPath();
-                        List<QName> nodeNewNames = new ArrayList<>(nodeNames);
-                        nodeNewNames.remove(nodeNewNames.size() - 1);
-                        if (nodeNewNames.isEmpty()) {
-                            parent = getParentModule((SchemaNode) parent, ctx);
-                        } else {
-                            SchemaPath nodeNewSp = SchemaPath.create(nodeNewNames, nodeSp.isAbsolute());
-                            parent = findDataSchemaNode(ctx, nodeNewSp);
-                        }
-                    } else {
-                        throw new IllegalArgumentException("Failed to generate code for augment");
-                    }
-                }
-            } while (result == null && !(parent instanceof Module));
 
-            if (result != null) {
-                result = getTargetNode(tmpPath, result, ctx);
-            }
-            return result;
+                // if node is not found in any of current parent's used
+                // groupings => parent is added by grouping too, so repeat same
+                // process for parent
+                if (result == null) {
+                    // set current name to name of parent node
+                    currentName = ((SchemaNode) parent).getQName();
+                    Preconditions.checkArgument(parent instanceof SchemaNode,
+                            "Failed to generate code for augmend node {} at parent {}", node, parent);
+                    // create schema path for parent of current parent
+                    SchemaPath nodeSp = ((SchemaNode) parent).getPath();
+                    List<QName> nodeNewNames = new ArrayList<>(nodeSp.getPath());
+                    nodeNewNames.remove(nodeNewNames.size() - 1);
+                    // set new parent based on path
+                    if (nodeNewNames.isEmpty()) {
+                        parent = getParentModule((SchemaNode) parent, ctx);
+                    } else {
+                        SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.isAbsolute());
+                        parent = findDataSchemaNode(ctx, nodeNewSp);
+                    }
+                } else {
+                    // if wanted node was found in grouping, traverse this node
+                    // based on level of nesting
+                    return getTargetNode(tmpPath, result, ctx);
+                }
+            } while (!(parent instanceof Module));
+
+            return null;
+        } else {
+            return findCorrectImmediateTargetFromGrouping(node, ctx);
         }
     }
 
