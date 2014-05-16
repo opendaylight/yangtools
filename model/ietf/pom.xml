@@ -27,6 +27,7 @@
     <modules>
         <module>ietf-inet-types</module>
         <module>ietf-yang-types</module>
+        <module>ietf-yang-types-20130715</module>
         <module>ietf-ted</module>
         <module>ietf-topology</module>
         <module>ietf-topology-isis</module>
