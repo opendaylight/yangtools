@@ -33,15 +33,46 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-public class JavassistUtils {
+public final class JavassistUtils {
     private static final Logger LOG = LoggerFactory.getLogger(JavassistUtils.class);
 
+    private static final Map<ClassPool, JavassistUtils> INSTANCES = new WeakHashMap<>();
     private final Map<ClassLoader, ClassPath> loaderClassPaths = new WeakHashMap<>();
     private final Lock lock = new ReentrantLock();
     private final ClassPool classPool;
 
+    /**
+     * @deprecated Use {@link #forClassPool(ClassPool)} instead.
+     *
+     * This class provides auto-loading into the classpool. Unfortunately reusing
+     * the same class pool with multiple instances can lead the same classpath
+     * being added multiple times, which lowers performance and leaks memory.
+     */
+    @Deprecated
     public JavassistUtils(final ClassPool pool) {
+        this(pool, null);
+    }
+
+    private JavassistUtils(final ClassPool pool, final Object dummy) {
+        // FIXME: Remove 'dummy' once deprecated constructor is removed
         classPool = Preconditions.checkNotNull(pool);
+    }
+
+    /**
+     * Get a utility instance for a particular class pool. A new instance is
+     * created if this is a new pool. If an instance already exists, is is
+     * returned.
+     *
+     * @param pool
+     * @return
+     */
+    public static synchronized JavassistUtils forClassPool(final ClassPool pool) {
+        JavassistUtils ret = INSTANCES.get(pool);
+        if (ret == null) {
+            ret = new JavassistUtils(pool, null);
+            INSTANCES.put(pool, ret);
+        }
+        return ret;
     }
 
     public Lock getLock() {
@@ -148,9 +179,6 @@ public class JavassistUtils {
     }
 
     public synchronized void appendClassLoaderIfMissing(final ClassLoader loader) {
-        // FIXME: this works as long as the ClassPool is not shared between instances of this class
-        //        How is synchronization across multiple instances done? The ClassPool itself just
-        //        keeps on adding the loaders and does not check for duplicates!
         if (!loaderClassPaths.containsKey(loader)) {
             final ClassPath ctLoader = new LoaderClassPath(loader);
             classPool.appendClassPath(ctLoader);
