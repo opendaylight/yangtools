@@ -37,6 +37,7 @@ public class ImmutableOrderedMapNodeBuilder
     }
 
     protected ImmutableOrderedMapNodeBuilder(final ImmutableOrderedMapNode node) {
+        this.nodeIdentifier = node.getIdentifier();
         this.value = node.children;
         this.dirty = true;
     }
