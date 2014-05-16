@@ -41,6 +41,9 @@ public class BindingSchemaContextUtils {
             currentContainer = findNotification(ctx, currentQName);
         } else if (BindingReflections.isRpcType(currentArg.getType())) {
             currentContainer = findFirstDataNodeContainerInRpc(ctx, currentArg.getType());
+            if(currentQName == null && currentContainer.isPresent()) {
+                currentQName = ((DataSchemaNode) currentContainer.get()).getQName();
+            }
         } else {
             currentContainer = findDataNodeContainer(ctx, currentQName);
         }
