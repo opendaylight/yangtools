@@ -26,6 +26,7 @@
         <module>object-cache-api</module>
         <module>object-cache-guava</module>
         <module>object-cache-noop</module>
+        <module>checkstyle-logging</module>
     </modules>
 
     <dependencyManagement>

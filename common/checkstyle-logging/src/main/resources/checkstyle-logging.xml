@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+
+    <module name="RegexpMultiline">
+        <property name="format" value="System\.(out)|(err)\.print(ln)?\("/>
+        <property name="message" value="Line contains console output."/>
+    </module>
+
+    <module name="RegexpMultiline">
+        <property name="format" value="\.printStackTrace?\("/>
+        <property name="message" value="Line contains printStacktrace()."/>
+    </module>
+
+    <module name="TreeWalker">
+        <module name="org.opendaylight.yangtools.checkstyle.LoggerVariableNameCheck" />
+    </module>
+
+    <module name="TreeWalker">
+      <module name="org.opendaylight.yangtools.checkstyle.LoggerVariableModifiersCheck" />
+    </module>
+
+    <module name="TreeWalker">
+      <module name="org.opendaylight.yangtools.checkstyle.LoggerMustBeSlf4jCheck" />
+    </module>
+
+    <module name="TreeWalker">
+      <module name="org.opendaylight.yangtools.checkstyle.LoggerFactoryClassParameterCheck" />
+    </module>
+
+    <module name="TreeWalker">
+      <module name="org.opendaylight.yangtools.checkstyle.LogMessageConcatenationCheck" />
+    </module>
+
+    <module name="TreeWalker">
+      <module name="org.opendaylight.yangtools.checkstyle.LogMessagePlaceholderCountCheck" />
+    </module>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="(\.|\b)Logger "/>
+        <property name="message" value="Logger might be declared only once."/>
+        <property name="minimum" value="0"/>
+        <property name="maximum" value="1"/>
+    </module>
+</module>
