@@ -15,13 +15,31 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-
-import java.util.Set;
 
 /**
  * The Schema Context Util contains support methods for searching through Schema
@@ -30,7 +48,8 @@ import java.util.Set;
  * instantiable.
  *
  */
-public class SchemaContextUtil {
+public final class SchemaContextUtil {
+    private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
 
     private SchemaContextUtil() {
     }
@@ -53,14 +72,18 @@ public class SchemaContextUtil {
      * @return SchemaNode from the end of the Schema Path or <code>null</code>
      *         if the Node is not present.
      */
-    public static SchemaNode findDataSchemaNode(SchemaContext context, SchemaPath schemaPath) {
+    public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(schemaPath != null, "Schema Path reference cannot be NULL");
-        List<QName> prefixedPath = (schemaPath.getPath());
-        if (prefixedPath != null) {
-            return findNodeInSchemaContext(context, prefixedPath);
+
+        final List<QName> prefixedPath = (schemaPath.getPath());
+        if (prefixedPath == null) {
+            LOG.debug("Schema path {} has null path", schemaPath);
+            return null;
         }
-        return null;
+
+        LOG.trace("Looking for path {} in context {}", schemaPath, context);
+        return findNodeInSchemaContext(context, prefixedPath);
     }
 
     /**
@@ -93,16 +116,14 @@ public class SchemaContextUtil {
      *         Non-conditional Revision Aware XPath, or <code>null</code> if the
      *         DataSchemaNode is not present in Schema Context.
      */
-    public static SchemaNode findDataSchemaNode(SchemaContext context, Module module, RevisionAwareXPath nonCondXPath) {
+    public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module, final RevisionAwareXPath nonCondXPath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(nonCondXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
 
         String strXPath = nonCondXPath.toString();
         if (strXPath != null) {
-            if (strXPath.contains("[")) {
-                throw new IllegalArgumentException("Revision Aware XPath cannot contains condition");
-            }
+            Preconditions.checkArgument(strXPath.indexOf('[') == -1, "Revision Aware XPath may not contain a condition");
             if (nonCondXPath.isAbsolute()) {
                 List<QName> qnamedPath = xpathToQNamePath(context, module, strXPath);
                 if (qnamedPath != null) {
@@ -152,8 +173,8 @@ public class SchemaContextUtil {
      *         given relative Revision Aware XPath, otherwise will return
      *         <code>null</code>.
      */
-    public static SchemaNode findDataSchemaNodeForRelativeXPath(SchemaContext context, Module module,
-            SchemaNode actualSchemaNode, RevisionAwareXPath relativeXPath) {
+    public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
+            final SchemaNode actualSchemaNode, final RevisionAwareXPath relativeXPath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(actualSchemaNode != null, "Actual Schema Node reference cannot be NULL");
@@ -190,7 +211,7 @@ public class SchemaContextUtil {
      *         Schema Node is NOT present, the method will returns
      *         <code>null</code>
      */
-    public static Module findParentModule(SchemaContext context, SchemaNode schemaNode) {
+    public static Module findParentModule(final SchemaContext context, final SchemaNode schemaNode) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL!");
         Preconditions.checkArgument(schemaNode != null, "Schema Node cannot be NULL!");
         Preconditions.checkState(schemaNode.getPath() != null, "Schema Path for Schema Node is not "
@@ -206,15 +227,20 @@ public class SchemaContextUtil {
         return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
     }
 
-    public static SchemaNode findNodeInSchemaContext(SchemaContext context, List<QName> path) {
-        QName current = path.get(0);
-        Module module = context.findModuleByNamespaceAndRevision(current.getNamespace(), current.getRevision());
-        if (module == null)
+    public static SchemaNode findNodeInSchemaContext(final SchemaContext context, final List<QName> path) {
+        final QName current = path.get(0);
+
+        LOG.trace("Looking up module {} in context {}", current, path);
+        final Module module = context.findModuleByNamespaceAndRevision(current.getNamespace(), current.getRevision());
+        if (module == null) {
+            LOG.debug("Module {} not found", current);
             return null;
+        }
+
         return findNodeInModule(module, path);
     }
 
-    public static GroupingDefinition findGrouping(SchemaContext context, Module module, List<QName> path) {
+    public static GroupingDefinition findGrouping(final SchemaContext context, final Module module, final List<QName> path) {
         QName first = path.get(0);
         Module m = context.findModuleByNamespace(first.getNamespace()).iterator().next();
         DataNodeContainer currentParent = m;
@@ -233,124 +259,189 @@ public class SchemaContextUtil {
                 found = true;
                 currentParent = node;
             }
-            if (!found) {
-                throw new IllegalArgumentException("Failed to find referenced grouping: " + path + "("
-                        + qname.getLocalName() + ")");
-            }
+
+            Preconditions.checkArgument(found, "Failed to find referenced grouping: %s(%s)", path, qname.getLocalName());
         }
 
         return (GroupingDefinition) currentParent;
     }
 
-    private static SchemaNode findNodeInModule(Module module, List<QName> path) {
-        QName current = path.get(0);
-        SchemaNode node = module.getDataChildByName(current);
-        if (node != null)
-            return findNode((DataSchemaNode) node, nextLevel(path));
-        node = getRpcByName(module, current);
-        if (node != null)
-            return findNodeInRpc((RpcDefinition) node, nextLevel(path));
-        node = getNotificationByName(module, current);
-        if (node != null)
-            return findNodeInNotification((NotificationDefinition) node, nextLevel(path));
-        node = getGroupingByName(module, current);
-        if (node != null)
-            return findNodeInGrouping((GroupingDefinition) node, nextLevel(path));
-        return node;
-    }
+    private static SchemaNode findNodeInModule(final Module module, final List<QName> path) {
+        final QName current = path.get(0);
 
-    private static SchemaNode findNodeInGrouping(GroupingDefinition grouping, List<QName> path) {
-        if (path.isEmpty())
-            return grouping;
-        QName current = path.get(0);
-        DataSchemaNode node = grouping.getDataChildByName(current);
-        if (node != null)
-            return findNode(node, nextLevel(path));
+        LOG.trace("Looking for data container {} in module {}", current, module);
+        SchemaNode parent = module.getDataChildByName(current);
+        if (parent != null) {
+            final SchemaNode ret = findNode((DataSchemaNode) parent, nextLevel(path));
+            if (ret != null) {
+                return ret;
+            }
+        }
+
+        LOG.trace("Looking for RPC {} in module {}", current, module);
+        parent = getRpcByName(module, current);
+        if (parent != null) {
+            final SchemaNode ret = findNodeInRpc((RpcDefinition) parent, nextLevel(path));
+            if (ret != null) {
+                return ret;
+            }
+        }
+
+        LOG.trace("Looking for notification {} in module {}", current, module);
+        parent = getNotificationByName(module, current);
+        if (parent != null) {
+            final SchemaNode ret = findNodeInNotification((NotificationDefinition) parent, nextLevel(path));
+            if (ret != null) {
+                return ret;
+            }
+        }
+
+        LOG.trace("Looking for grouping {} in module {}", current, module);
+        parent = getGroupingByName(module, current);
+        if (parent != null) {
+            final SchemaNode ret = findNodeInGrouping((GroupingDefinition) parent, nextLevel(path));
+            if (ret != null) {
+                return ret;
+            }
+        }
+
+        LOG.debug("No node matching {} found in module {}", path, module);
         return null;
     }
 
-    private static SchemaNode findNodeInRpc(RpcDefinition rpc, List<QName> path) {
-        if (path.isEmpty())
+    private static SchemaNode findNodeInGrouping(final GroupingDefinition grouping, final List<QName> path) {
+        if (path.isEmpty()) {
+            LOG.debug("Found grouping {}", grouping);
+            return grouping;
+        }
+
+        LOG.trace("Looking for path {} in grouping {}", path, grouping);
+        final QName current = path.get(0);
+        final DataSchemaNode node = grouping.getDataChildByName(current);
+        if (node == null) {
+            LOG.debug("No node matching {} found in grouping {}", current, grouping);
+            return null;
+        }
+
+        return findNode(node, nextLevel(path));
+    }
+
+    private static SchemaNode findNodeInRpc(final RpcDefinition rpc, final List<QName> path) {
+        if (path.isEmpty()) {
+            LOG.debug("Found RPC {}", rpc);
             return rpc;
-        QName current = path.get(0);
+        }
+
+        LOG.trace("Looking for path {} in rpc {}", path, rpc);
+        final QName current = path.get(0);
         switch (current.getLocalName()) {
         case "input":
             return findNode(rpc.getInput(), nextLevel(path));
         case "output":
             return findNode(rpc.getOutput(), nextLevel(path));
+        default:
+            LOG.debug("Invalid component {} of path {} in RPC {}", current, path, rpc);
+            return null;
         }
-        return null;
     }
 
-    private static SchemaNode findNodeInNotification(NotificationDefinition rpc, List<QName> path) {
-        if (path.isEmpty())
-            return rpc;
-        QName current = path.get(0);
-        DataSchemaNode node = rpc.getDataChildByName(current);
-        if (node != null)
-            return findNode(node, nextLevel(path));
-        return null;
+    private static SchemaNode findNodeInNotification(final NotificationDefinition ntf, final List<QName> path) {
+        if (path.isEmpty()) {
+            LOG.debug("Found notification {}", ntf);
+            return ntf;
+        }
+
+        LOG.trace("Looking for path {} in notification {}", path, ntf);
+        final QName current = path.get(0);
+        DataSchemaNode node = ntf.getDataChildByName(current);
+        if (node == null) {
+            LOG.debug("No node matching {} found in notification {}", current, ntf);
+            return null;
+        }
+
+        return findNode(node, nextLevel(path));
     }
 
-    private static SchemaNode findNode(ChoiceNode parent, List<QName> path) {
-        if (path.isEmpty())
+    private static SchemaNode findNode(final ChoiceNode parent, final List<QName> path) {
+        if (path.isEmpty()) {
             return parent;
+        }
         QName current = path.get(0);
         ChoiceCaseNode node = parent.getCaseNodeByName(current);
-        if (node != null)
+        if (node != null) {
             return findNodeInCase(node, nextLevel(path));
-        return null;
-    }
-
-    private static SchemaNode findNode(ContainerSchemaNode parent, List<QName> path) {
-        if (path.isEmpty())
-            return parent;
-        QName current = path.get(0);
-        DataSchemaNode node = parent.getDataChildByName(current);
-        if (node != null)
-            return findNode(node, nextLevel(path));
-        return null;
-    }
-
-    private static SchemaNode findNode(ListSchemaNode parent, List<QName> path) {
-        if (path.isEmpty())
-            return parent;
-        QName current = path.get(0);
-        DataSchemaNode node = parent.getDataChildByName(current);
-        if (node != null)
-            return findNode(node, nextLevel(path));
-        return null;
-    }
-
-    private static SchemaNode findNode(DataSchemaNode parent, List<QName> path) {
-        SchemaNode result = null;
-        if (path.isEmpty()) {
-            result = parent;
-        } else {
-            if (parent instanceof ContainerSchemaNode) {
-                result = findNode((ContainerSchemaNode) parent, path);
-            } else if (parent instanceof ListSchemaNode) {
-                result = findNode((ListSchemaNode) parent, path);
-            } else if (parent instanceof ChoiceNode) {
-                result = findNode((ChoiceNode) parent, path);
-            } else {
-                throw new IllegalArgumentException("Path nesting violation");
-            }
         }
-        return result;
-    }
-
-    public static SchemaNode findNodeInCase(ChoiceCaseNode parent, List<QName> path) {
-        if (path.isEmpty())
-            return parent;
-        QName current = path.get(0);
-        DataSchemaNode node = parent.getDataChildByName(current);
-        if (node != null)
-            return findNode(node, nextLevel(path));
         return null;
     }
 
-    public static RpcDefinition getRpcByName(Module module, QName name) {
+    private static SchemaNode findNode(final ContainerSchemaNode parent, final List<QName> path) {
+        if (path.isEmpty()) {
+            return parent;
+        }
+
+        final QName current = path.get(0);
+        final DataSchemaNode node = parent.getDataChildByName(current);
+        if (node == null) {
+            LOG.debug("Failed to find {} in parent {}", path, parent);
+            return null;
+        }
+
+        return findNode(node, nextLevel(path));
+    }
+
+    private static SchemaNode findNode(final ListSchemaNode parent, final List<QName> path) {
+        if (path.isEmpty()) {
+            return parent;
+        }
+
+        QName current = path.get(0);
+        DataSchemaNode node = parent.getDataChildByName(current);
+        if (node == null) {
+            LOG.debug("Failed to find {} in parent {}", path, parent);
+            return null;
+        }
+        return findNode(node, nextLevel(path));
+    }
+
+    private static SchemaNode findNode(final DataSchemaNode parent, final List<QName> path) {
+        final SchemaNode node;
+        if (!path.isEmpty()) {
+            if (parent instanceof ContainerSchemaNode) {
+                node = findNode((ContainerSchemaNode) parent, path);
+            } else if (parent instanceof ListSchemaNode) {
+                node = findNode((ListSchemaNode) parent, path);
+            } else if (parent instanceof ChoiceNode) {
+                node = findNode((ChoiceNode) parent, path);
+            } else {
+                throw new IllegalArgumentException(
+                        String.format("Path nesting violation in parent %s path %s", parent, path));
+            }
+        } else {
+            node = parent;
+        }
+
+        if (node == null) {
+            LOG.debug("Failed to find {} in parent {}", path, parent);
+            return null;
+        }
+        return node;
+    }
+
+    public static SchemaNode findNodeInCase(final ChoiceCaseNode parent, final List<QName> path) {
+        if (path.isEmpty()) {
+            return parent;
+        }
+
+        QName current = path.get(0);
+        DataSchemaNode node = parent.getDataChildByName(current);
+        if (node == null) {
+            LOG.debug("Failed to find {} in parent {}", path, parent);
+            return null;
+        }
+        return findNode(node, nextLevel(path));
+    }
+
+    public static RpcDefinition getRpcByName(final Module module, final QName name) {
         for (RpcDefinition rpc : module.getRpcs()) {
             if (rpc.getQName().equals(name)) {
                 return rpc;
@@ -359,11 +450,11 @@ public class SchemaContextUtil {
         return null;
     }
 
-    private static List<QName> nextLevel(List<QName> path) {
+    private static List<QName> nextLevel(final List<QName> path) {
         return path.subList(1, path.size());
     }
 
-    public static NotificationDefinition getNotificationByName(Module module, QName name) {
+    public static NotificationDefinition getNotificationByName(final Module module, final QName name) {
         for (NotificationDefinition notification : module.getNotifications()) {
             if (notification.getQName().equals(name)) {
                 return notification;
@@ -372,7 +463,7 @@ public class SchemaContextUtil {
         return null;
     }
 
-    public static GroupingDefinition getGroupingByName(Module module, QName name) {
+    public static GroupingDefinition getGroupingByName(final Module module, final QName name) {
         for (GroupingDefinition grouping : module.getGroupings()) {
             if (grouping.getQName().equals(name)) {
                 return grouping;
@@ -387,7 +478,7 @@ public class SchemaContextUtil {
      * @param node
      * @return
      */
-    public static DataSchemaNode findOriginal(DataSchemaNode node, SchemaContext ctx) {
+    public static DataSchemaNode findOriginal(final DataSchemaNode node, final SchemaContext ctx) {
         DataSchemaNode result = findCorrectTargetFromGrouping(node, ctx);
         if (result == null) {
             result = findCorrectTargetFromAugment(node, ctx);
@@ -400,7 +491,7 @@ public class SchemaContextUtil {
         return result;
     }
 
-    private static DataSchemaNode findCorrectTargetFromGrouping(DataSchemaNode node, SchemaContext ctx) {
+    private static DataSchemaNode findCorrectTargetFromGrouping(final DataSchemaNode node, final SchemaContext ctx) {
         if (node.getPath().getPath().size() == 1) {
             // uses is under module statement
             Module m = findParentModule(ctx, node);
@@ -408,7 +499,7 @@ public class SchemaContextUtil {
             for (UsesNode u : m.getUses()) {
                 SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPath());
                 if (!(targetGrouping instanceof GroupingDefinition)) {
-                    throw new IllegalArgumentException("Failed to generate code for augment in " + u);
+                    throw new IllegalArgumentException(String.format("Failed to generate code for augment in %s", u));
                 }
                 GroupingDefinition gr = (GroupingDefinition) targetGrouping;
                 result = gr.getDataChildByName(node.getQName().getLocalName());
@@ -466,7 +557,7 @@ public class SchemaContextUtil {
         }
     }
 
-    private static DataSchemaNode findCorrectTargetFromAugment(DataSchemaNode node, SchemaContext ctx) {
+    private static DataSchemaNode findCorrectTargetFromAugment(final DataSchemaNode node, final SchemaContext ctx) {
         if (!node.isAugmenting()) {
             return null;
         }
@@ -523,23 +614,23 @@ public class SchemaContextUtil {
         }
     }
 
-    private static DataSchemaNode getResultFromUses(UsesNode u, String currentName, SchemaContext ctx) {
+    private static DataSchemaNode getResultFromUses(final UsesNode u, final String currentName, final SchemaContext ctx) {
         SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPath());
-        if (!(targetGrouping instanceof GroupingDefinition)) {
-            throw new IllegalArgumentException("Failed to generate code for augment in " + u);
-        }
+
+        Preconditions.checkArgument(targetGrouping instanceof GroupingDefinition,
+                "Failed to generate code for augment in %s", u);
         GroupingDefinition gr = (GroupingDefinition) targetGrouping;
         return gr.getDataChildByName(currentName);
     }
 
-    private static Module getParentModule(SchemaNode node, SchemaContext ctx) {
+    private static Module getParentModule(final SchemaNode node, final SchemaContext ctx) {
         QName qname = node.getPath().getPath().get(0);
         URI namespace = qname.getNamespace();
         Date revision = qname.getRevision();
         return ctx.findModuleByNamespaceAndRevision(namespace, revision);
     }
 
-    private static DataSchemaNode getTargetNode(List<QName> tmpPath, DataSchemaNode node, SchemaContext ctx) {
+    private static DataSchemaNode getTargetNode(final List<QName> tmpPath, final DataSchemaNode node, final SchemaContext ctx) {
         DataSchemaNode result = node;
         if (tmpPath.size() == 1) {
             if (result != null && result.isAddedByUses()) {
@@ -570,7 +661,7 @@ public class SchemaContextUtil {
         }
     }
 
-    private static AugmentationSchema findNodeInAugment(Collection<AugmentationSchema> augments, QName name) {
+    private static AugmentationSchema findNodeInAugment(final Collection<AugmentationSchema> augments, final QName name) {
         for (AugmentationSchema augment : augments) {
             DataSchemaNode node = augment.getDataChildByName(name);
             if (node != null) {
@@ -580,8 +671,8 @@ public class SchemaContextUtil {
         return null;
     }
 
-    private static DataSchemaNode findCorrectTargetFromAugmentGrouping(DataSchemaNode node,
-            AugmentationSchema parentNode, List<SchemaNode> dataTree, SchemaContext ctx) {
+    private static DataSchemaNode findCorrectTargetFromAugmentGrouping(final DataSchemaNode node,
+            final AugmentationSchema parentNode, final List<SchemaNode> dataTree, final SchemaContext ctx) {
 
         DataSchemaNode result = null;
         QName currentName = node.getQName();
@@ -636,7 +727,7 @@ public class SchemaContextUtil {
      *            XPath String
      * @return return a list of QName
      */
-    private static List<QName> xpathToQNamePath(SchemaContext context, Module parentModule, String xpath) {
+    private static List<QName> xpathToQNamePath(final SchemaContext context, final Module parentModule, final String xpath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
@@ -672,7 +763,7 @@ public class SchemaContextUtil {
      *            Prefixed Path Part string
      * @return QName from prefixed Path Part String.
      */
-    private static QName stringPathPartToQName(SchemaContext context, Module parentModule, String prefixedPathPart) {
+    private static QName stringPathPartToQName(final SchemaContext context, final Module parentModule, final String prefixedPathPart) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(prefixedPathPart != null, "Prefixed Path Part cannot be NULL!");
@@ -680,12 +771,9 @@ public class SchemaContextUtil {
         if (prefixedPathPart.contains(":")) {
             String[] prefixedName = prefixedPathPart.split(":");
             Module module = resolveModuleForPrefix(context, parentModule, prefixedName[0]);
-            if (module == null) {
-                throw new IllegalArgumentException("Failed to resolve xpath: no module found for prefix "
-                        + prefixedName[0] + " in module " + parentModule.getName());
-            } else {
-                return new QName(module.getNamespace(), module.getRevision(), prefixedName[1]);
-            }
+            Preconditions.checkArgument(module != null, "Failed to resolve xpath: no module found for prefix %s in module %s",
+                    prefixedName[0], parentModule.getName());
+            return new QName(module.getNamespace(), module.getRevision(), prefixedName[1]);
         } else {
             return new QName(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
         }
@@ -715,7 +803,7 @@ public class SchemaContextUtil {
      * @return Module for given prefix in specified Schema Context if is
      *         present, otherwise returns <code>null</code>
      */
-    private static Module resolveModuleForPrefix(SchemaContext context, Module module, String prefix) {
+    private static Module resolveModuleForPrefix(final SchemaContext context, final Module module, final String prefix) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(prefix != null, "Prefix string cannot be NULL");
@@ -746,8 +834,8 @@ public class SchemaContextUtil {
      *            Schema Path for Leafref
      * @return list of QName
      */
-    private static List<QName> resolveRelativeXPath(SchemaContext context, Module module,
-            RevisionAwareXPath relativeXPath, SchemaNode leafrefParentNode) {
+    private static List<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
+            final RevisionAwareXPath relativeXPath, final SchemaNode leafrefParentNode) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
