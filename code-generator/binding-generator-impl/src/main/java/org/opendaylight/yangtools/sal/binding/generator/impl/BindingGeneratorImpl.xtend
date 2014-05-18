@@ -1631,9 +1631,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
     }
 
     /**
-     * Creates the name of the getter method from <code>methodName</code>.
+     * Creates the name of the getter method name from <code>localName</code>.
      *
-     * @param methodName
+     * @param localName
      *            string with the name of the getter method
      * @param returnType return type
      * @return string with the name of the getter method for
