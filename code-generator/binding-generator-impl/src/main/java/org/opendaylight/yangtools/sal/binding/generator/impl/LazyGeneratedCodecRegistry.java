@@ -276,8 +276,9 @@ class LazyGeneratedCodecRegistry implements //
 
     private DataSchemaNode getSchemaNode(final List<QName> path) {
         QName firstNode = path.get(0);
-        DataNodeContainer previous = currentSchema.findModuleByNamespaceAndRevision(firstNode.getNamespace(),
-                firstNode.getRevision());
+        DataNodeContainer previous = currentSchema.findModuleByNamespaceAndRevision(firstNode.getNamespace(), firstNode.getRevision());
+        Preconditions.checkArgument(previous != null, "Failed to find module %s for path %s", firstNode, path);
+
         Iterator<QName> iterator = path.iterator();
         while (iterator.hasNext()) {
             QName arg = iterator.next();
@@ -1110,7 +1111,7 @@ class LazyGeneratedCodecRegistry implements //
                         .loadClass(potential);
                 return Optional.of(tryToLoadImplementation(clazz));
             } catch (ClassNotFoundException e) {
-                LOG.warn("Failed to find class for augmentation of {}, reason: {}", potential, e.toString());
+                LOG.warn("Failed to find class for augmentation of {}", potential, e);
             }
             return Optional.absent();
         }
@@ -1120,7 +1121,6 @@ class LazyGeneratedCodecRegistry implements //
             AugmentationCodecWrapper<? extends Augmentation<?>> potentialImpl = getCodecForAugmentation(inputType);
             addImplementation(potentialImpl);
             return potentialImpl;
-
         }
 
         @Override
@@ -1134,10 +1134,9 @@ class LazyGeneratedCodecRegistry implements //
                 try {
                     tryToLoadImplementation(potential);
                 } catch (CodeGenerationException e) {
-                    LOG.warn("Failed to proactively generate augment coded for {}, reason: {}", type, e.toString());
+                    LOG.warn("Failed to proactively generate augment code for {}", type, e);
                 }
             }
-
         }
 
         @Override
@@ -1148,7 +1147,6 @@ class LazyGeneratedCodecRegistry implements //
                 if (!availableAugmentations.isEmpty()) {
                     updateAugmentationMapping(path,availableAugmentations);
                 }
-
             }
         }
 
@@ -1162,7 +1160,7 @@ class LazyGeneratedCodecRegistry implements //
                         potentialImpl.get().addApplicableFor(path,aug);
                     }
                 } else {
-                    LOG.warn("Could not find generated type for augmentation {} with childs {}.",aug,aug.getChildNodes());
+                    LOG.warn("Could not find generated type for augmentation {} with children {}", aug, aug.getChildNodes());
                 }
             }
             availableAugmentations.toString();
