@@ -115,20 +115,23 @@ public class BindingSchemaContextUtils {
 
     private static Optional<DataNodeContainer> findFirstDataNodeContainerInRpc(final SchemaContext ctx,
             final Class<? extends DataObject> targetType) {
+        final YangModuleInfo moduleInfo;
         try {
-            YangModuleInfo moduleInfo = BindingReflections.getModuleInfo(targetType);
-            for(RpcDefinition rpc : ctx.getOperations()) {
-                String rpcNamespace = rpc.getQName().getNamespace().toString();
-                String rpcRevision = rpc.getQName().getFormattedRevision();
-                if(moduleInfo.getNamespace().equals(rpcNamespace) && moduleInfo.getRevision().equals(rpcRevision)) {
-                    Optional<DataNodeContainer> potential = findInputOutput(rpc,targetType.getSimpleName());
-                    if(potential.isPresent()) {
-                        return potential;
-                    }
+            moduleInfo = BindingReflections.getModuleInfo(targetType);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Failed to load module information for class %s", targetType), e);
+        }
+
+        for(RpcDefinition rpc : ctx.getOperations()) {
+            String rpcNamespace = rpc.getQName().getNamespace().toString();
+            String rpcRevision = rpc.getQName().getFormattedRevision();
+            if(moduleInfo.getNamespace().equals(rpcNamespace) && moduleInfo.getRevision().equals(rpcRevision)) {
+                Optional<DataNodeContainer> potential = findInputOutput(rpc,targetType.getSimpleName());
+                if(potential.isPresent()) {
+                    return potential;
                 }
             }
-        } catch (Exception e) {
-            // FIXME: Add logging
         }
         return Optional.absent();
     }
