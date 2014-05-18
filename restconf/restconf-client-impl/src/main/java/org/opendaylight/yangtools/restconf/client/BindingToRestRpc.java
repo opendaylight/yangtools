@@ -48,7 +48,7 @@ public class BindingToRestRpc implements InvocationHandler {
     private final SchemaContext schcemaContext;
     private final Module module;
 
-    public BindingToRestRpc(Class<?> proxiedInterface,BindingIndependentMappingService mappingService,RestconfClientImpl client,SchemaContext schemaContext) throws Exception {
+    public BindingToRestRpc(final Class<?> proxiedInterface,final BindingIndependentMappingService mappingService,final RestconfClientImpl client,final SchemaContext schemaContext) throws Exception {
         this.mappingService = mappingService;
         this.client  = client;
         this.schcemaContext = schemaContext;
@@ -57,7 +57,7 @@ public class BindingToRestRpc implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object o,final Method method, Object[] objects) throws Throwable {
+    public Object invoke(final Object o,final Method method, final Object[] objects) throws Exception {
         for (RpcDefinition rpcDef:module.getRpcs()){
             if (method.getName().equals(BindingMapping.getMethodName(rpcDef.getQName()))){
 
@@ -77,7 +77,7 @@ public class BindingToRestRpc implements InvocationHandler {
                 final DataSchemaNode rpcOutputSchema = rpcDef.getOutput();
                 return client.post(ResourceUri.OPERATIONS.getPath() + "/" + moduleName + ":" + rpcMethodName,payloadString,new Function<ClientResponse, Object>() {
                     @Override
-                    public Object apply(ClientResponse clientResponse) {
+                    public Object apply(final ClientResponse clientResponse) {
                         if (clientResponse.getStatus() != 200) {
                             throw new IllegalStateException("Can't get data from restconf. "+clientResponse.getClientResponseStatus());
                         }
@@ -101,10 +101,10 @@ public class BindingToRestRpc implements InvocationHandler {
         throw new IllegalStateException("Unexpected state of proxy method.");
     }
 
-    public static<T> T getProxy(Class<T> proxiedInterface,
-                                BindingIndependentMappingService mappingService,
-                                RestconfClientImpl restconfClient,
-                                SchemaContext schemaContext) {
+    public static<T> T getProxy(final Class<T> proxiedInterface,
+                                final BindingIndependentMappingService mappingService,
+                                final RestconfClientImpl restconfClient,
+                                final SchemaContext schemaContext) {
         T proxiedType = null;
         try {
             proxiedType = (T) Proxy.newProxyInstance
