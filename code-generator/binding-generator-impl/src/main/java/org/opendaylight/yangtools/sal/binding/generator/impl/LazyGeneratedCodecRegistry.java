@@ -276,8 +276,9 @@ class LazyGeneratedCodecRegistry implements //
 
     private DataSchemaNode getSchemaNode(final List<QName> path) {
         QName firstNode = path.get(0);
-        DataNodeContainer previous = currentSchema.findModuleByNamespaceAndRevision(firstNode.getNamespace(),
-                firstNode.getRevision());
+        DataNodeContainer previous = currentSchema.findModuleByNamespaceAndRevision(firstNode.getNamespace(), firstNode.getRevision());
+        Preconditions.checkArgument(previous != null, "Failed to find module %s for path %s", firstNode, path);
+
         Iterator<QName> iterator = path.iterator();
         while (iterator.hasNext()) {
             QName arg = iterator.next();
