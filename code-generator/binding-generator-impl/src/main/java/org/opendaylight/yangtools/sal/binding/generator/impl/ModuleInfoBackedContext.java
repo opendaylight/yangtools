@@ -114,7 +114,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         try {
             return resolveModuleInfo(BindingReflections.getModuleInfo(cls));
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException(String.format("Failed to resolve module information for class %s", cls), e);
         }
     }
 
