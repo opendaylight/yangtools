@@ -7,16 +7,20 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.api.ModuleInfoRegistry;
-import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
+import org.opendaylight.yangtools.yang.binding.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
@@ -26,18 +30,15 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         implements //
         AdvancedSchemaSourceProvider<InputStream>, ModuleInfoRegistry, SchemaContextProvider {
 
-    private ModuleInfoBackedContext(ClassLoadingStrategy loadingStrategy) {
+    private ModuleInfoBackedContext(final ClassLoadingStrategy loadingStrategy) {
         this.backingLoadingStrategy = loadingStrategy;
     }
 
@@ -45,7 +46,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         return new ModuleInfoBackedContext(getTCCLClassLoadingStrategy());
     }
 
-    public static ModuleInfoBackedContext create(ClassLoadingStrategy loadingStrategy) {
+    public static ModuleInfoBackedContext create(final ClassLoadingStrategy loadingStrategy) {
         return new ModuleInfoBackedContext(loadingStrategy);
     }
 
@@ -57,7 +58,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
     private final ClassLoadingStrategy backingLoadingStrategy;
 
     @Override
-    public Class<?> loadClass(String fullyQualifiedName) throws ClassNotFoundException {
+    public Class<?> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
         String modulePackageName = BindingReflections.getModelRootPackageName(fullyQualifiedName);
 
         WeakReference<ClassLoader> classLoaderRef = packageNameToClassLoader.get(modulePackageName);
@@ -110,7 +111,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         return sourceStreams.build();
     }
 
-    private boolean resolveModuleInfo(Class<?> cls) {
+    private boolean resolveModuleInfo(final Class<?> cls) {
         try {
             return resolveModuleInfo(BindingReflections.getModuleInfo(cls));
         } catch (Exception e) {
@@ -118,7 +119,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         }
     }
 
-    private boolean resolveModuleInfo(YangModuleInfo moduleInfo) {
+    private boolean resolveModuleInfo(final YangModuleInfo moduleInfo) {
 
         SourceIdentifier identifier = sourceIdentifierFrom(moduleInfo);
         YangModuleInfo previous = sourceIdentifierToModuleInfo.putIfAbsent(identifier, moduleInfo);
@@ -136,18 +137,18 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         return true;
     }
 
-    private SourceIdentifier sourceIdentifierFrom(YangModuleInfo moduleInfo) {
+    private SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
         return SourceIdentifier.create(moduleInfo.getName(), Optional.of(moduleInfo.getRevision()));
     }
 
-    public void addModuleInfos(Iterable<? extends YangModuleInfo> moduleInfos) {
+    public void addModuleInfos(final Iterable<? extends YangModuleInfo> moduleInfos) {
         for (YangModuleInfo yangModuleInfo : moduleInfos) {
             registerModuleInfo(yangModuleInfo);
         }
     }
 
     @Override
-    public ObjectRegistration<YangModuleInfo> registerModuleInfo(YangModuleInfo yangModuleInfo) {
+    public ObjectRegistration<YangModuleInfo> registerModuleInfo(final YangModuleInfo yangModuleInfo) {
         YangModuleInfoRegistration registration = new YangModuleInfoRegistration(yangModuleInfo, this);
 
         resolveModuleInfo(yangModuleInfo);
@@ -156,7 +157,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
     }
 
     @Override
-    public Optional<InputStream> getSchemaSource(SourceIdentifier sourceIdentifier) {
+    public Optional<InputStream> getSchemaSource(final SourceIdentifier sourceIdentifier) {
         YangModuleInfo info = sourceIdentifierToModuleInfo.get(sourceIdentifier);
         if (info == null) {
             return Optional.absent();
@@ -169,7 +170,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
     }
 
     @Override
-    public Optional<InputStream> getSchemaSource(String moduleName, Optional<String> revision) {
+    public Optional<InputStream> getSchemaSource(final String moduleName, final Optional<String> revision) {
         return getSchemaSource(SourceIdentifier.create(moduleName, revision));
     }
 
@@ -177,7 +178,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
 
         private final ModuleInfoBackedContext context;
 
-        public YangModuleInfoRegistration(YangModuleInfo instance, ModuleInfoBackedContext context) {
+        public YangModuleInfoRegistration(final YangModuleInfo instance, final ModuleInfoBackedContext context) {
             super(instance);
             this.context = context;
         }
@@ -189,7 +190,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
 
     }
 
-    private void remove(YangModuleInfoRegistration registration) {
+    private void remove(final YangModuleInfoRegistration registration) {
         // FIXME implement
     }
 
