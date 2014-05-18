@@ -59,11 +59,11 @@ public final class JavassistUtils {
      * created if this is a new pool. If an instance already exists, is is
      * returned.
      *
-     * @param pool
-     * @return
+     * @param pool Backing class pool
+     * @return shared utility instance for specified pool
      */
     public static synchronized JavassistUtils forClassPool(final ClassPool pool) {
-        JavassistUtils ret = INSTANCES.get(pool);
+        JavassistUtils ret = INSTANCES.get(Preconditions.checkNotNull(pool));
         if (ret == null) {
             ret = new JavassistUtils(pool, null);
             INSTANCES.put(pool, ret);
