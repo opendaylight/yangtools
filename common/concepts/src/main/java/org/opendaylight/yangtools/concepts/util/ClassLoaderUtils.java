@@ -12,18 +12,21 @@ import java.lang.reflect.Type;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 
-
+/**
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.binding.util.ClassLoaderUtils} instead.
+ */
+@Deprecated
 public final class ClassLoaderUtils {
 
     private ClassLoaderUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static <V> V withClassLoader(ClassLoader cls, Callable<V> function) throws Exception {
+    public static <V> V withClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
         return withClassLoaderAndLock(cls, null, function);
     }
 
-    public static <V> V withClassLoaderAndLock(ClassLoader cls, Lock lock, Callable<V> function) throws Exception {
+    public static <V> V withClassLoaderAndLock(final ClassLoader cls, final Lock lock, final Callable<V> function) throws Exception {
         if (cls == null) {
             throw new IllegalArgumentException("Classloader should not be null");
         }
@@ -46,7 +49,7 @@ public final class ClassLoaderUtils {
         }
     }
 
-    public static ParameterizedType findParameterizedType(Class<?> subclass, Class<?> genericType) {
+    public static ParameterizedType findParameterizedType(final Class<?> subclass, final Class<?> genericType) {
         if(subclass == null || genericType == null) {
             throw new IllegalArgumentException("Class was not specified.");
         }
@@ -65,7 +68,7 @@ public final class ClassLoaderUtils {
             return null;
         }
     }
-    
+
     private static <S,G,P> Callable<Class<P>> findFirstGenericArgumentTask(final Class<S> scannedClass, final Class<G> genericType) {
         return new Callable<Class<P>>() {
             @Override
@@ -81,7 +84,7 @@ public final class ClassLoaderUtils {
         };
     }
 
-    public static Type getFirstGenericParameter(Type type) {
+    public static Type getFirstGenericParameter(final Type type) {
         if(type instanceof ParameterizedType) {
             return ((ParameterizedType) type).getActualTypeArguments()[0];
         }
