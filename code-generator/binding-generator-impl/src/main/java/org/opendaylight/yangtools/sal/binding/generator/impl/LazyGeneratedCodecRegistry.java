@@ -166,12 +166,21 @@ class LazyGeneratedCodecRegistry implements //
             codec = new AugmentationCodecWrapper<T>(rawCodec, null, object);
             augmentationCodecs.put(object, codec);
         }
-        Class<? extends Augmentable<?>> objectSupertype = getAugmentableArgumentFrom(object);
-        if (objectSupertype != null) {
-            getAugmentableCodec(objectSupertype).addImplementation(codec);
-        } else {
-            LOG.warn("Could not find augmentation target for augmentation {}", object);
+
+        final Class<? extends Augmentable<?>> objectSupertype;
+        try {
+            objectSupertype = BindingReflections.findAugmentationTarget(object);
+        } catch (Exception e) {
+            LOG.warn("Failed to find target for augmentation {}, ignoring it", object, e);
+            return codec;
         }
+
+        if (objectSupertype == null) {
+            LOG.warn("Augmentation target for {} not found, ignoring it", object);
+            return codec;
+        }
+
+        getAugmentableCodec(objectSupertype).addImplementation(codec);
         return codec;
     }
 
@@ -180,18 +189,6 @@ class LazyGeneratedCodecRegistry implements //
     public QName getQNameForAugmentation(final Class<?> cls) {
         Preconditions.checkArgument(Augmentation.class.isAssignableFrom(cls));
         return getCodecForAugmentation((Class<? extends Augmentation<?>>) cls).getAugmentationQName();
-    }
-
-    private static Class<? extends Augmentable<?>> getAugmentableArgumentFrom(
-            final Class<? extends Augmentation<?>> augmentation) {
-        try {
-            Class<? extends Augmentable<?>> ret = BindingReflections.findAugmentationTarget(augmentation);
-            return ret;
-
-        } catch (Exception e) {
-            LOG.debug("Could not find augmentable for {} using {}", augmentation, augmentation.getClassLoader(), e);
-            return null;
-        }
     }
 
     @Override
