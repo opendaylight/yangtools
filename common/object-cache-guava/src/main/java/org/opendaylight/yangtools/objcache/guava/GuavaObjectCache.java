@@ -14,7 +14,11 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 
 final class GuavaObjectCache extends AbstractObjectCache {
-	public GuavaObjectCache(final FinalizableReferenceQueue queue, final CacheBuilderSpec spec) {
-		super(CacheBuilder.from(spec).softValues().build(), queue);
-	}
+    public GuavaObjectCache(final FinalizableReferenceQueue  queue) {
+        super(CacheBuilder.newBuilder().softValues().<SoftKey<?>, Object>build(), queue);
+    }
+
+    public GuavaObjectCache(final FinalizableReferenceQueue  queue, final CacheBuilderSpec spec) {
+        super(CacheBuilder.from(spec).<SoftKey<?>, Object>build(), queue);
+    }
 }
