@@ -79,6 +79,8 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase
 
 import com.google.common.collect.Sets
+import java.util.TreeSet
+import org.opendaylight.yangtools.yang.parser.util.Comparators
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -367,12 +369,51 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val List<AugmentationSchema> sortedAugmentations = new ArrayList(augmentations);
         Collections.sort(sortedAugmentations,
             [ augSchema1, augSchema2 |
-                if (augSchema1.targetPath.path.size() > augSchema2.targetPath.path.size()) {
-                    return 1;
-                } else if (augSchema1.targetPath.path.size() < augSchema2.targetPath.path.size()) {
-                    return -1;
+                val List<QName> path1 = augSchema1.targetPath.path
+                val List<QName> path2 = augSchema2.targetPath.path
+                // compare path size
+                var int result = path1.size- path2.size
+                if (result != 0) {
+                    return result
                 }
-                return 0;
+                // compare path elements
+                var int i = 0
+                for (q1 : path1) {
+                    result = q1.compareTo(path2.get(i))
+                    if (result != 0) {
+                        return result
+                    }
+                    i = i + 1
+                }
+                // compare size of child nodes size
+                val Set<DataSchemaNode> aug1Nodes = augSchema1.childNodes
+                val Set<DataSchemaNode> aug2Nodes = augSchema2.childNodes
+                if (aug1Nodes == null) {
+                    if (aug2Nodes == null) {
+                        return 0
+                    } else {
+                        return -1
+                    }
+                } else if (aug2Nodes == null) {
+                    return 1
+                }
+                result = aug1Nodes.size - aug2Nodes.size
+                if (result != 0) {
+                    return result
+                }
+                // compare child nodes
+                val Set<DataSchemaNode> sorted1 = new TreeSet(Comparators.SCHEMA_NODE_COMP)
+                sorted1.addAll(aug1Nodes)
+                val Set<DataSchemaNode> sorted2 = new TreeSet(Comparators.SCHEMA_NODE_COMP)
+                sorted2.addAll(aug2Nodes)
+                val Iterator<DataSchemaNode> iterator2 = sorted2.iterator
+                for (s1 : sorted1) {
+                    result = s1.QName.compareTo(iterator2.next.QName);
+                    if (result != 0) {
+                        return result
+                    }
+                }
+                return 0
             ]);
         return sortedAugmentations;
     }
