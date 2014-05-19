@@ -32,6 +32,18 @@ public final class ClassLoaderUtils {
         throw new UnsupportedOperationException("Utility class");
     }
 
+    /**
+     *
+     * Runs {@link Supplier} with provided {@link ClassLoader}.
+     *
+     * Invokes supplies function and makes sure that original {@link ClassLoader}
+     * is context {@link ClassLoader} after execution.
+     *
+     * @param cls {@link ClassLoader} to be used.
+     * @param function Function to be executed.
+     * @return Result of supplier invocation.
+     *
+     */
     public static <V> V withClassLoader(final ClassLoader cls, final Supplier<V> function) {
         checkNotNull(cls, "Classloader should not be null");
         checkNotNull(function, "Function should not be null");
@@ -45,6 +57,18 @@ public final class ClassLoaderUtils {
         }
     }
 
+    /**
+    *
+    * Runs {@link Callable} with provided {@link ClassLoader}.
+    *
+    * Invokes supplies function and makes sure that original {@link ClassLoader}
+    * is context {@link ClassLoader} after execution.
+    *
+    * @param cls {@link ClassLoader} to be used.
+    * @param function Function to be executed.
+    * @return Result of callable invocation.
+    *
+    */
     public static <V> V withClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
         checkNotNull(cls, "Classloader should not be null");
         checkNotNull(function, "Function should not be null");
@@ -58,6 +82,20 @@ public final class ClassLoaderUtils {
         }
     }
 
+   /**
+    *
+    * Runs {@link Callable} with provided {@link ClassLoader} and Lock.
+    *
+    * Invokes supplies function after acquiring lock
+    * and makes sure that original {@link ClassLoader}
+    * is context {@link ClassLoader} and lock is unlocked
+    * after execution.
+    *
+    * @param cls {@link ClassLoader} to be used.
+    * @param function Function to be executed.
+    * @return Result of Callable invocation.
+    *
+    */
     public static <V> V withClassLoaderAndLock(final ClassLoader cls, final Lock lock, final Supplier<V> function) {
         checkNotNull(lock, "Lock should not be null");
 
@@ -75,6 +113,16 @@ public final class ClassLoaderUtils {
         return constructor.newInstance(initargs);
     }
 
+    /**
+     *
+     * Loads class using this supplied classloader.
+     *
+     *
+     * @param cls
+     * @param name String name of class.
+     * @return
+     * @throws ClassNotFoundException
+     */
     public static Class<?> loadClass(final ClassLoader cls, final String name) throws ClassNotFoundException {
         if ("byte[]".equals(name)) {
             return byte[].class;

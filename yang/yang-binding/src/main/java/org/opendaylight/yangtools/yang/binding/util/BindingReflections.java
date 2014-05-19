@@ -57,7 +57,17 @@ public class BindingReflections {
             .expireAfterAccess(EXPIRATION_TIME, TimeUnit.SECONDS) //
             .build(new ClassToQNameLoader());
 
+
+    private BindingReflections() {
+        throw new UnsupportedOperationException("Utility class.");
+    }
+
     /**
+     *
+     * Find augmentation target class from concrete Augmentation class
+     *
+     * This method uses first generic argument of
+     * implemented {@link Augmentation} interface.
      *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
@@ -71,6 +81,10 @@ public class BindingReflections {
     }
 
     /**
+     * Find data hierarchy parent from concrete Data class
+     *
+     * This method uses first generic argument of
+     * implemented {@link ChildOf} interface.
      *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
@@ -83,16 +97,20 @@ public class BindingReflections {
     }
 
     /**
+     * Find data hierarchy parent from concrete Data class
      *
-     * @param augmentation
+     * This method is shorthand which gets DataObject class by invoking
+     * {@link DataObject#getImplementedInterface()} and uses {@link #findHierarchicalParent(Class)}.
+     *
+     * @param childClass
      *            {@link Augmentation} subclass for which we want to determine
      *            augmentation target.
      * @return Augmentation target - class which augmentation provides
      *         additional extensions.
      */
-    public static Class<?> findHierarchicalParent(final DataObject childClass) {
-        if (childClass instanceof ChildOf) {
-            return ClassLoaderUtils.findFirstGenericArgument(childClass.getImplementedInterface(), ChildOf.class);
+    public static Class<?> findHierarchicalParent(final DataObject child) {
+        if (child instanceof ChildOf) {
+            return ClassLoaderUtils.findFirstGenericArgument(child.getImplementedInterface(), ChildOf.class);
         }
         return null;
     }
@@ -105,40 +123,35 @@ public class BindingReflections {
      *         Augmentation method does not return canonical QName, but QName
      *         with correct namespace revision, but virtual local name, since
      *         augmentations do not have name.
+     *
+     *         May return null if QName is not present.
      */
     public static final QName findQName(final Class<?> dataType) {
         return classToQName.getUnchecked(dataType).orNull();
     }
 
-    private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
-
-        @Override
-        public Optional<QName> load(final Class<?> key) throws Exception {
-            try {
-                Field field = key.getField(BindingMapping.QNAME_STATIC_FIELD_NAME);
-                Object obj = field.get(null);
-                if (obj instanceof QName) {
-                    return Optional.of((QName) obj);
-                }
-            } catch (NoSuchFieldException e) {
-                if (Augmentation.class.isAssignableFrom(key)) {
-                    YangModuleInfo moduleInfo = getModuleInfo(key);
-                    return Optional.of(QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(),
-                            moduleInfo.getName()));
-                }
-            } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-                // NOOP
-            }
-            return Optional.absent();
-        }
-    }
-
+    /**
+     * Checks if method is RPC invocation
+     *
+     *
+     *
+     * @param possibleMethod Method to check
+     * @return true if method is RPC invocation, false otherwise.
+     */
     public static boolean isRpcMethod(final Method possibleMethod) {
         return possibleMethod != null && RpcService.class.isAssignableFrom(possibleMethod.getDeclaringClass())
                 && Future.class.isAssignableFrom(possibleMethod.getReturnType())
                 && possibleMethod.getParameterTypes().length <= 1;
     }
 
+    /**
+     *
+     * Extracts Output class for RPC method
+     *
+     * @param targetMethod method to scan
+     * @return Optional.absent() if result type could not be get,
+     *         or return type is Void.
+     */
     @SuppressWarnings("rawtypes")
     public static Optional<Class<?>> resolveRpcOutputClass(final Method targetMethod) {
         checkState(isRpcMethod(targetMethod), "Supplied method is not Rpc invocation method");
@@ -151,6 +164,13 @@ public class BindingReflections {
         return Optional.absent();
     }
 
+    /**
+     *
+     * Extracts input class for RPC method
+     *
+     * @param targetMethod method to scan
+     * @return Optional.absent() if rpc has no input, Rpc input type otherwise.
+     */
     @SuppressWarnings("unchecked")
     public static Optional<Class<? extends DataContainer>> resolveRpcInputClass(final Method targetMethod) {
         @SuppressWarnings("rawtypes")
@@ -168,6 +188,14 @@ public class BindingReflections {
         return findQName(context);
     }
 
+    /**
+     *
+     * Checks if class is child of augmentation.
+     *
+     *
+     * @param clazz
+     * @return
+     */
     public static boolean isAugmentationChild(final Class<?> clazz) {
         // FIXME: Current resolver could be still confused when
         // child node was added by grouping
@@ -186,10 +214,22 @@ public class BindingReflections {
         return !clazzModelPackage.equals(parentModelPackage);
     }
 
+    /**
+     * Returns root package name for suplied package.
+     *
+     * @param pkg Package for which find model root package.
+     * @return Package of model root.
+     */
     public static String getModelRootPackageName(final Package pkg) {
         return getModelRootPackageName(pkg.getName());
     }
 
+    /**
+     * Returns root package name for suplied package name.
+     *
+     * @param pkg Package for which find model root package.
+     * @return Package of model root.
+     */
     public static String getModelRootPackageName(final String name) {
         checkArgument(name != null, "Package name should not be null.");
         checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
@@ -200,6 +240,14 @@ public class BindingReflections {
         return match.group(0);
     }
 
+    /**
+     *
+     * Returns instance of {@link YangModuleInfo} of declaring model for specific class.
+     *
+     * @param cls
+     * @return Instance of {@link YangModuleInfo} associated with model, from which this class was derived.
+     * @throws Exception
+     */
     public static YangModuleInfo getModuleInfo(final Class<?> cls) throws Exception {
         checkArgument(cls != null);
         String packageName = getModelRootPackageName(cls.getPackage());
@@ -218,6 +266,13 @@ public class BindingReflections {
         return packageName + "." + BindingMapping.MODULE_INFO_CLASS_NAME;
     }
 
+    /**
+     *
+     * Check if supplied class is derived from YANG model.
+     *
+     * @param cls Class to check
+     * @return true if class is derived from YANG model.
+     */
     public static boolean isBindingClass(final Class<?> cls) {
         if (DataContainer.class.isAssignableFrom(cls) || Augmentation.class.isAssignableFrom(cls)) {
             return true;
@@ -225,6 +280,13 @@ public class BindingReflections {
         return (cls.getName().startsWith(BindingMapping.PACKAGE_PREFIX));
     }
 
+    /**
+     *
+     * Checks if supplied method is callback for notifications.
+     *
+     * @param method
+     * @return true if method is notification callback.
+     */
     public static boolean isNotificationCallback(final Method method) {
         checkArgument(method != null);
         if (method.getName().startsWith("on") && method.getParameterTypes().length == 1) {
@@ -237,15 +299,47 @@ public class BindingReflections {
         return false;
     }
 
+    /**
+     *
+     * Checks is supplied class is Notification.
+     *
+     * @param potentialNotification
+     * @return
+     */
     public static boolean isNotification(final Class<?> potentialNotification) {
-        checkArgument(potentialNotification != null);
+        checkArgument(potentialNotification != null,"potentialNotification must not be null.");
         return Notification.class.isAssignableFrom(potentialNotification);
     }
 
+    /**
+     *
+     * Loads {@link YangModuleInfo} infos available on current classloader.
+     *
+     * This method is shorthand for {@link #loadModuleInfos(ClassLoader)} with
+     * {@link Thread#getContextClassLoader()} for current thread.
+     *
+     * @return Set of {@link YangModuleInfo} available for current classloader.
+     */
     public static ImmutableSet<YangModuleInfo> loadModuleInfos() {
         return loadModuleInfos(Thread.currentThread().getContextClassLoader());
     }
 
+    /**
+    *
+    * Loads {@link YangModuleInfo} infos available on supplied classloader.
+    *
+    * {@link YangModuleInfo} are discovered using {@link ServiceLoader}
+    * for {@link YangModelBindingProvider}. {@link YangModelBindingProvider}
+    * are simple classes which holds only pointers to actual instance
+    * {@link YangModuleInfo}.
+    *
+    * When {@link YangModuleInfo} is available, all dependencies are recursivelly collected
+    * into returning set by collecting results of {@link YangModuleInfo#getImportedModules()}.
+    *
+    *
+    * @param loader Classloader for which {@link YangModuleInfo} should be retrieved.
+    * @return Set of {@link YangModuleInfo} available for supplied classloader.
+    */
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
         Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo> builder();
         ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class,
@@ -266,6 +360,13 @@ public class BindingReflections {
         }
     }
 
+    /**
+     *
+     * Checks if supplied class represents RPC Input / RPC Output.
+     *
+     * @param targetType Class to be checked
+     * @return true if class represents RPC Input or RPC Output class.
+     */
     public static boolean isRpcType(final Class<? extends DataObject> targetType) {
         return DataContainer.class.isAssignableFrom(targetType) //
                 && !ChildOf.class.isAssignableFrom(targetType) //
@@ -323,10 +424,46 @@ public class BindingReflections {
 
                         });
             } catch (Exception e) {
+                /*
+                 *
+                 * It is safe to log this this exception on debug, since
+                 * this method should not fail. Only failures are possible if
+                 * the runtime / backing.
+                 *
+                 */
                 LOG.debug("Unable to find YANG modeled return type for {}", method, e);
             }
         }
         return Optional.absent();
     }
 
+    private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
+
+        @Override
+        public Optional<QName> load(final Class<?> key) throws Exception {
+            try {
+                Field field = key.getField(BindingMapping.QNAME_STATIC_FIELD_NAME);
+                Object obj = field.get(null);
+                if (obj instanceof QName) {
+                    return Optional.of((QName) obj);
+                }
+            } catch (NoSuchFieldException e) {
+                if (Augmentation.class.isAssignableFrom(key)) {
+                    YangModuleInfo moduleInfo = getModuleInfo(key);
+                    return Optional.of(QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(),
+                            moduleInfo.getName()));
+                }
+            } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+                /*
+                 *
+                 * It is safe to log this this exception on debug, since
+                 * this method should not fail. Only failures are possible if
+                 * the runtime / backing.
+                 *
+                 */
+                LOG.debug("Unexpected exception during extracting QName for {}",key,e);
+            }
+            return Optional.absent();
+        }
+    }
 }
