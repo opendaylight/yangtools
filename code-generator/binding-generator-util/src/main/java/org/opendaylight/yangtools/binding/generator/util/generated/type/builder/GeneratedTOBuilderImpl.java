@@ -23,16 +23,16 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         GeneratedTOBuilder {
 
     private GeneratedTransferObject extendsType;
-    private final List<GeneratedPropertyBuilder> equalsProperties = new ArrayList<>();
-    private final List<GeneratedPropertyBuilder> hashProperties = new ArrayList<>();
-    private final List<GeneratedPropertyBuilder> toStringProperties = new ArrayList<>();
+    private final ArrayList<GeneratedPropertyBuilder> equalsProperties = new ArrayList<>();
+    private final ArrayList<GeneratedPropertyBuilder> hashProperties = new ArrayList<>();
+    private final ArrayList<GeneratedPropertyBuilder> toStringProperties = new ArrayList<>();
     private boolean isTypedef = false;
     private boolean isUnionType = false;
     private boolean isUnionTypeBuilder = false;
     private Restrictions restrictions;
     private GeneratedPropertyBuilder SUID;
 
-    public GeneratedTOBuilderImpl(String packageName, String name) {
+    public GeneratedTOBuilderImpl(final String packageName, final String name) {
         super(packageName, name);
         setAbstract(false);
     }
@@ -61,26 +61,26 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
      * @return <code>new</code> instance of Method Signature Builder.
      */
     @Override
-    public MethodSignatureBuilder addMethod(String name) {
+    public MethodSignatureBuilder addMethod(final String name) {
         final MethodSignatureBuilder builder = super.addMethod(name);
         builder.setAbstract(false);
         return builder;
     }
 
     @Override
-    public GeneratedTOBuilder addEqualsIdentity(GeneratedPropertyBuilder property) {
+    public GeneratedTOBuilder addEqualsIdentity(final GeneratedPropertyBuilder property) {
         equalsProperties.add(property);
         return this;
     }
 
     @Override
-    public GeneratedTOBuilder addHashIdentity(GeneratedPropertyBuilder property) {
+    public GeneratedTOBuilder addHashIdentity(final GeneratedPropertyBuilder property) {
         hashProperties.add(property);
         return this;
     }
 
     @Override
-    public GeneratedTOBuilder addToStringProperty(GeneratedPropertyBuilder property) {
+    public GeneratedTOBuilder addToStringProperty(final GeneratedPropertyBuilder property) {
         toStringProperties.add(property);
         return this;
     }
@@ -91,17 +91,18 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     }
 
     @Override
-    public void setRestrictions(Restrictions restrictions) {
+    public void setRestrictions(final Restrictions restrictions) {
         this.restrictions = restrictions;
     }
 
     @Override
-    public void setSUID(GeneratedPropertyBuilder suid) {
+    public void setSUID(final GeneratedPropertyBuilder suid) {
         this.SUID = suid;
     }
 
     @Override
     public GeneratedTransferObject toInstance() {
+        // FIXME: can we compact the arrays now? It needs to be thread-safe, though
         return new GeneratedTransferObjectImpl(this);
     }
 
@@ -133,17 +134,17 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     }
 
     @Override
-    public void setTypedef(boolean isTypedef) {
+    public void setTypedef(final boolean isTypedef) {
         this.isTypedef = isTypedef;
     }
 
     @Override
-    public void setIsUnion(boolean isUnion) {
+    public void setIsUnion(final boolean isUnion) {
         this.isUnionType = isUnion;
     }
 
     @Override
-    public void setIsUnionBuilder(boolean isUnionTypeBuilder) {
+    public void setIsUnionBuilder(final boolean isUnionTypeBuilder) {
         this.isUnionTypeBuilder = isUnionTypeBuilder;
     }
 
@@ -160,7 +161,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         private final Restrictions restrictions;
         private final GeneratedProperty SUID;
 
-        public GeneratedTransferObjectImpl(GeneratedTOBuilderImpl builder) {
+        public GeneratedTransferObjectImpl(final GeneratedTOBuilderImpl builder) {
             super(builder);
             this.extendsType = builder.extendsType;
             this.equalsProperties = toUnmodifiableProperties(builder.equalsProperties);
@@ -260,7 +261,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             return builder.toString();
         }
 
-        public String serializeTypedef(Type type) {
+        public String serializeTypedef(final Type type) {
             if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
                 StringBuffer sb = new StringBuffer();
