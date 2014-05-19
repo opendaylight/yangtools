@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,8 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
 
     private final CodecRegistry codecRegistry;
 
+    private final Map<Class<?>,Set<List<QName>>> augmentationAdapted = new WeakHashMap<>();
+
     private final Map<Class<?>, Map<List<QName>, Class<?>>> classToPreviousAugment = Collections
             .synchronizedMap(new WeakHashMap<Class<?>, Map<List<QName>, Class<?>>>());
 
@@ -70,6 +73,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
             }
             Map<List<QName>, Class<?>> injectAugment = classToPreviousAugment.get(baType);
             if (injectAugment != null) {
+                @SuppressWarnings("unchecked")
                 Class<? extends DataObject> augment = (Class<? extends DataObject>) injectAugment.get(scannedPath);
                 if (augment != null) {
                     baArgs.add(new Item(augment));
@@ -77,7 +81,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
             }
             baArgs.add(baArg);
         }
-        InstanceIdentifier ret = InstanceIdentifier.create(baArgs);
+        InstanceIdentifier<?> ret = InstanceIdentifier.create(baArgs);
         LOG.debug("DOM Instance Identifier {} deserialized to {}", input, ret);
         return ret;
     }
@@ -85,23 +89,28 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     @Override
     public InstanceIdentifier<? extends Object> deserialize(
             final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier input,
-            InstanceIdentifier<?> bindingIdentifier) {
+            final InstanceIdentifier<?> bindingIdentifier) {
         return deserialize(input);
     }
 
-    private org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument _deserializePathArgument(
+    private InstanceIdentifier.PathArgument deserializeNodeIdentifier(
             final NodeIdentifier argument, final List<QName> processedPath) {
+        @SuppressWarnings("rawtypes")
         final Class cls = codecRegistry.getClassForPath(processedPath);
+        @SuppressWarnings("unchecked")
         Item<DataObject> item = new Item<>(cls);
         return item;
     }
 
-    private org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument _deserializePathArgument(
+    private InstanceIdentifier.PathArgument deserializeNodeIdentifierWithPrecicates(
             final NodeIdentifierWithPredicates argument, final List<QName> processedPath) {
+        @SuppressWarnings("rawtypes")
         final Class type = codecRegistry.getClassForPath(processedPath);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         final IdentifierCodec codec = codecRegistry
                 .<Identifiable<? extends Object>> getIdentifierCodecForIdentifiable(type);
         CompositeNode _compositeNode = this.toCompositeNode(argument);
+        @SuppressWarnings("unchecked")
         ValueWithQName<CompositeNode> deserialize = codec.deserialize(_compositeNode);
         Object value = null;
         if (deserialize != null) {
@@ -122,27 +131,21 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     @Override
     public org.opendaylight.yangtools.yang.data.api.InstanceIdentifier serialize(final InstanceIdentifier<?> input) {
         Class<?> previousAugmentation = null;
-        List<InstanceIdentifier.PathArgument> pathArgs = input.getPath();
+        Iterable<InstanceIdentifier.PathArgument> pathArgs = input.getPathArguments();
         QName previousQName = null;
-        List<PathArgument> components = new ArrayList<>(pathArgs.size());
-        List<QName> qnamePath = new ArrayList<>(pathArgs.size());
+        List<PathArgument> components = new ArrayList<>();
+        List<QName> qnamePath = new ArrayList<>();
         for (InstanceIdentifier.PathArgument baArg : pathArgs) {
-
             if (!Augmentation.class.isAssignableFrom(baArg.getType())) {
-                org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument biArg = serializePathArgument(
-                        baArg, previousQName);
-                previousQName = biArg.getNodeType();
+                PathArgument biArg = serializePathArgumentAndUpdateMapping(qnamePath, baArg, previousQName,previousAugmentation);
                 components.add(biArg);
                 qnamePath.add(biArg.getNodeType());
-                ImmutableList<QName> immutableList = ImmutableList.copyOf(qnamePath);
-                codecRegistry.putPathToClass(immutableList, baArg.getType());
-                if (previousAugmentation != null) {
-                    updateAugmentationInjection(baArg.getType(), immutableList, previousAugmentation);
-                }
+                previousQName = biArg.getNodeType();
                 previousAugmentation = null;
             } else {
                 previousQName = codecRegistry.getQNameForAugmentation(baArg.getType());
                 previousAugmentation = baArg.getType();
+                ensureAugmentation(qnamePath,previousQName,baArg.getType());
             }
         }
         org.opendaylight.yangtools.yang.data.api.InstanceIdentifier ret = new org.opendaylight.yangtools.yang.data.api.InstanceIdentifier(
@@ -151,15 +154,34 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         return ret;
     }
 
+    private synchronized void ensureAugmentation(final List<QName> augPath, final QName augQName, final Class<? extends DataObject> type) {
+        Set<List<QName>> augPotential = augmentationAdapted.get(type);
+        if(augPotential == null) {
+            augPotential = new HashSet<>();
+            augmentationAdapted.put(type, augPotential);
+        }
+        ImmutableList<QName> augTargetPath = ImmutableList.copyOf(augPath);
+        if(augPotential.contains(augPath)) {
+            return;
+        }
+
+        for(Class<? extends DataObject> child : BindingReflections.getChildrenClasses(type)) {
+            Item<? extends DataObject> baArg = new Item<>(child);
+            PathArgument biArg = serializePathArgumentAndUpdateMapping(augPath, baArg, augQName,type);
+        }
+        augPotential.add(augTargetPath);
+    }
+
+
     public Class<? extends Object> updateAugmentationInjection(final Class<? extends DataObject> class1,
-            final ImmutableList<QName> list, final Class<?> augmentation) {
+            final List<QName> list, final Class<?> augmentation) {
         if (classToPreviousAugment.get(class1) == null) {
             classToPreviousAugment.put(class1, new ConcurrentHashMap<List<QName>, Class<?>>());
         }
         return classToPreviousAugment.get(class1).put(list, augmentation);
     }
 
-    private PathArgument _serializePathArgument(final Item<?> argument, final QName previousQname) {
+    private PathArgument serializeItem(final Item<?> argument, final QName previousQname) {
         Class<?> type = argument.getType();
         QName qname = BindingReflections.findQName(type);
         if (previousQname == null || (BindingReflections.isAugmentationChild(argument.getType()))) {
@@ -168,15 +190,19 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         return new NodeIdentifier(QName.create(previousQname, qname.getLocalName()));
     }
 
-    private PathArgument _serializePathArgument(final IdentifiableItem argument, final QName previousQname) {
+    private PathArgument serializeIdentifiableItem(final IdentifiableItem<?,?> argument, final QName previousQname) {
         Map<QName, Object> predicates = new HashMap<>();
+        @SuppressWarnings("rawtypes")
         Class type = argument.getType();
+        @SuppressWarnings("unchecked")
         IdentifierCodec<? extends Object> keyCodec = codecRegistry.getIdentifierCodecForIdentifiable(type);
         QName qname = BindingReflections.findQName(type);
         if (previousQname != null && !(BindingReflections.isAugmentationChild(argument.getType()))) {
             qname = QName.create(previousQname, qname.getLocalName());
         }
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         ValueWithQName combinedInput = new ValueWithQName(previousQname, argument.getKey());
+        @SuppressWarnings("unchecked")
         CompositeNode compositeOutput = keyCodec.serialize(combinedInput);
         for (Node<?> outputValue : compositeOutput.getValue()) {
             predicates.put(outputValue.getNodeType(), outputValue.getValue());
@@ -190,26 +216,40 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     private org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument deserializePathArgument(
             final PathArgument argument, final List<QName> processedPath) {
         if (argument instanceof NodeIdentifier) {
-            return _deserializePathArgument((NodeIdentifier) argument, processedPath);
+            return deserializeNodeIdentifier((NodeIdentifier) argument, processedPath);
         } else if (argument instanceof NodeIdentifierWithPredicates) {
-            return _deserializePathArgument((NodeIdentifierWithPredicates) argument, processedPath);
+            return deserializeNodeIdentifierWithPrecicates((NodeIdentifierWithPredicates) argument, processedPath);
         } else {
             throw new IllegalArgumentException("Unhandled parameter types: "
                     + Arrays.<Object> asList(argument, processedPath).toString());
         }
     }
 
+    private PathArgument serializePathArgumentAndUpdateMapping(final List<QName> parentPath, final InstanceIdentifier.PathArgument baArg, final QName previousQName, final Class<?> previousAugmentation) {
+        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument biArg = serializePathArgument(baArg, previousQName);
+        List<QName> qnamePath = new ArrayList<>(parentPath);
+        qnamePath.add(biArg.getNodeType());
+        ImmutableList<QName> currentPath = ImmutableList.copyOf(qnamePath);
+        codecRegistry.putPathToClass(currentPath, baArg.getType());
+        if (previousAugmentation != null) {
+            updateAugmentationInjection(baArg.getType(), currentPath, previousAugmentation);
+        }
+        return biArg;
+    }
+
     private PathArgument serializePathArgument(
-            final org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument argument,
+            final InstanceIdentifier.PathArgument argument,
             final QName previousQname) {
         if (argument instanceof IdentifiableItem) {
-            return _serializePathArgument((IdentifiableItem) argument, previousQname);
+            return serializeIdentifiableItem((IdentifiableItem<?,?>) argument, previousQname);
         } else if (argument instanceof Item) {
-            return _serializePathArgument((Item<?>) argument, previousQname);
+            return serializeItem((Item<?>) argument, previousQname);
         } else {
             throw new IllegalArgumentException("Unhandled parameter types: "
                     + Arrays.<Object> asList(argument, previousQname).toString());
         }
     }
+
+
 
 }

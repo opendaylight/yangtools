@@ -11,8 +11,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -98,9 +101,10 @@ public class BindingReflections {
      * Returns a QName associated to supplied type
      *
      * @param dataType
-     * @return QName associated to supplied dataType. If dataType is Augmentation
-     *    method does not return canonical QName, but QName with correct namespace
-     *    revision, but virtual local name, since augmentations do not have name.
+     * @return QName associated to supplied dataType. If dataType is
+     *         Augmentation method does not return canonical QName, but QName
+     *         with correct namespace revision, but virtual local name, since
+     *         augmentations do not have name.
      */
     public static final QName findQName(final Class<?> dataType) {
         return classToQName.getUnchecked(dataType).orNull();
@@ -121,7 +125,6 @@ public class BindingReflections {
                     YangModuleInfo moduleInfo = getModuleInfo(key);
                     return Optional.of(QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(), moduleInfo.getName()));
                 }
-
             } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
                 // NOOP
             }
@@ -191,7 +194,8 @@ public class BindingReflections {
         checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
                 BindingMapping.PACKAGE_PREFIX, name);
         Matcher match = ROOT_PACKAGE_PATTERN.matcher(name);
-        checkArgument(match.find(),"Package name '%s' does not match required pattern '%s'",name,ROOT_PACKAGE_PATTERN_STRING);
+        checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", name,
+                ROOT_PACKAGE_PATTERN_STRING);
         return match.group(0);
     }
 
@@ -201,7 +205,8 @@ public class BindingReflections {
         final String potentialClassName = getModuleInfoClassName(packageName);
         return ClassLoaderUtils.withClassLoader(cls.getClassLoader(), new Callable<YangModuleInfo>() {
             @Override
-            public YangModuleInfo call() throws Exception {
+            public YangModuleInfo call() throws ClassNotFoundException, IllegalAccessException,
+                    IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
                 Class<?> moduleInfoClass = Thread.currentThread().getContextClassLoader().loadClass(potentialClassName);
                 return (YangModuleInfo) moduleInfoClass.getMethod("getInstance").invoke(null);
             }
@@ -241,25 +246,27 @@ public class BindingReflections {
     }
 
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
-        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
-        ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class, loader);
-        for(YangModelBindingProvider bindingProvider : serviceLoader) {
+        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo> builder();
+        ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class,
+                loader);
+        for (YangModelBindingProvider bindingProvider : serviceLoader) {
             YangModuleInfo moduleInfo = bindingProvider.getModuleInfo();
-            checkState(moduleInfo != null, "Module Info for %s is not available.",bindingProvider.getClass());
-            collectYangModuleInfo(bindingProvider.getModuleInfo(),moduleInfoSet);
+            checkState(moduleInfo != null, "Module Info for %s is not available.", bindingProvider.getClass());
+            collectYangModuleInfo(bindingProvider.getModuleInfo(), moduleInfoSet);
         }
-        return  moduleInfoSet.build();
+        return moduleInfoSet.build();
     }
 
-    private static void collectYangModuleInfo(final YangModuleInfo moduleInfo, final Builder<YangModuleInfo> moduleInfoSet) {
+    private static void collectYangModuleInfo(final YangModuleInfo moduleInfo,
+            final Builder<YangModuleInfo> moduleInfoSet) {
         moduleInfoSet.add(moduleInfo);
-        for(YangModuleInfo dependency : moduleInfo.getImportedModules()) {
+        for (YangModuleInfo dependency : moduleInfo.getImportedModules()) {
             collectYangModuleInfo(dependency, moduleInfoSet);
         }
     }
 
     public static boolean isRpcType(final Class<? extends DataObject> targetType) {
-        return  DataContainer.class.isAssignableFrom(targetType) //
+        return DataContainer.class.isAssignableFrom(targetType) //
                 && !ChildOf.class.isAssignableFrom(targetType) //
                 && !Notification.class.isAssignableFrom(targetType) //
                 && (targetType.getName().endsWith("Input") || targetType.getName().endsWith("Output"));
