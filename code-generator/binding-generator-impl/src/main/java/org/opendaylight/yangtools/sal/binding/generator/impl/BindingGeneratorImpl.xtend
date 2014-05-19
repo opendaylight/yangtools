@@ -367,12 +367,33 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val List<AugmentationSchema> sortedAugmentations = new ArrayList(augmentations);
         Collections.sort(sortedAugmentations,
             [ augSchema1, augSchema2 |
-                if (augSchema1.targetPath.path.size() > augSchema2.targetPath.path.size()) {
-                    return 1;
-                } else if (augSchema1.targetPath.path.size() < augSchema2.targetPath.path.size()) {
-                    return -1;
+                // compare path
+                var int result = augSchema1.targetPath.path.size() - augSchema2.targetPath.path.size();
+                if (result != 0) {
+                    return result;
                 }
-                return 0;
+                result = augSchema1.targetPath.hashCode - augSchema2.targetPath.hashCode;
+                if (result != 0) {
+                    return result;
+                }
+                // compare size of child nodes
+                val Set<DataSchemaNode> aug1Nodes = augSchema1.childNodes;
+                val Set<DataSchemaNode> aug2Nodes = augSchema2.childNodes;
+                if (aug1Nodes == null) {
+                    if (aug2Nodes == null) {
+                        return 0;
+                    } else {
+                        return -1;
+                    }
+                } else if (aug2Nodes == null) {
+                    return 1;
+                }
+                result = aug1Nodes.size - aug2Nodes.size;
+                if (result != 0) {
+                    return result;
+                }
+                // compare child nodes
+                return aug1Nodes.hashCode - aug2Nodes.hashCode;
             ]);
         return sortedAugmentations;
     }
