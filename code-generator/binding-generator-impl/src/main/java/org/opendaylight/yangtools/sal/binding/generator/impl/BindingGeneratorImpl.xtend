@@ -79,6 +79,7 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase
 
 import com.google.common.collect.Sets
+import java.util.TreeSet
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -364,17 +365,43 @@ public class BindingGeneratorImpl implements BindingGenerator {
         checkState(module.augmentations !== null, "Augmentations Set cannot be NULL.");
 
         val Set<AugmentationSchema> augmentations = module.augmentations;
-        val List<AugmentationSchema> sortedAugmentations = new ArrayList(augmentations);
+        var List<AugmentationSchema> sortedAugmentations = getSortedOrNull(augmentations)
+        if (sortedAugmentations != null) {
+            return sortedAugmentations
+        }
+        sortedAugmentations = new ArrayList(augmentations);
         Collections.sort(sortedAugmentations,
             [ augSchema1, augSchema2 |
-                if (augSchema1.targetPath.path.size() > augSchema2.targetPath.path.size()) {
-                    return 1;
-                } else if (augSchema1.targetPath.path.size() < augSchema2.targetPath.path.size()) {
-                    return -1;
+                val Iterator<QName> thisIt = augSchema1.targetPath.getPath().iterator();
+                val Iterator<QName> otherIt = augSchema2.getTargetPath().getPath().iterator();
+                while (thisIt.hasNext()) {
+                    if (otherIt.hasNext()) {
+                        val int comp = thisIt.next().compareTo(otherIt.next());
+                        if (comp != 0) {
+                            return comp
+                        }
+                    } else {
+                        return 1
+                    }
                 }
-                return 0;
+                if (otherIt.hasNext()) {
+                    return -1
+                }
+                return 0
             ]);
         return sortedAugmentations;
+    }
+
+    private def List<AugmentationSchema> getSortedOrNull(Collection<AugmentationSchema> collection) {
+        val TreeSet<AugmentationSchema> set = new TreeSet()
+        for (e : collection) {
+            if (e instanceof Comparable<?>) {
+                set.add(e)
+            } else {
+                return null
+            }
+        }
+        return new ArrayList(set.toArray)
     }
 
     /**
