@@ -14,6 +14,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -99,9 +101,10 @@ public class BindingReflections {
      * Returns a QName associated to supplied type
      *
      * @param dataType
-     * @return QName associated to supplied dataType. If dataType is Augmentation
-     *    method does not return canonical QName, but QName with correct namespace
-     *    revision, but virtual local name, since augmentations do not have name.
+     * @return QName associated to supplied dataType. If dataType is
+     *         Augmentation method does not return canonical QName, but QName
+     *         with correct namespace revision, but virtual local name, since
+     *         augmentations do not have name.
      */
     public static final QName findQName(final Class<?> dataType) {
         return classToQName.getUnchecked(dataType).orNull();
@@ -118,9 +121,10 @@ public class BindingReflections {
                     return Optional.of((QName) obj);
                 }
             } catch (NoSuchFieldException e) {
-                if(Augmentation.class.isAssignableFrom(key)) {
+                if (Augmentation.class.isAssignableFrom(key)) {
                     YangModuleInfo moduleInfo = getModuleInfo(key);
-                    return Optional.of(QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(), moduleInfo.getName()));
+                    return Optional.of(QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(),
+                            moduleInfo.getName()));
                 }
             } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
                 // NOOP
@@ -191,7 +195,8 @@ public class BindingReflections {
         checkArgument(name.startsWith(BindingMapping.PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
                 BindingMapping.PACKAGE_PREFIX, name);
         Matcher match = ROOT_PACKAGE_PATTERN.matcher(name);
-        checkArgument(match.find(),"Package name '%s' does not match required pattern '%s'",name,ROOT_PACKAGE_PATTERN_STRING);
+        checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", name,
+                ROOT_PACKAGE_PATTERN_STRING);
         return match.group(0);
     }
 
@@ -201,7 +206,8 @@ public class BindingReflections {
         final String potentialClassName = getModuleInfoClassName(packageName);
         return ClassLoaderUtils.withClassLoader(cls.getClassLoader(), new Callable<YangModuleInfo>() {
             @Override
-            public YangModuleInfo call() throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+            public YangModuleInfo call() throws ClassNotFoundException, IllegalAccessException,
+                    IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
                 Class<?> moduleInfoClass = Thread.currentThread().getContextClassLoader().loadClass(potentialClassName);
                 return (YangModuleInfo) moduleInfoClass.getMethod("getInstance").invoke(null);
             }
@@ -241,28 +247,86 @@ public class BindingReflections {
     }
 
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
-        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo>builder();
-        ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class, loader);
-        for(YangModelBindingProvider bindingProvider : serviceLoader) {
+        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo> builder();
+        ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class,
+                loader);
+        for (YangModelBindingProvider bindingProvider : serviceLoader) {
             YangModuleInfo moduleInfo = bindingProvider.getModuleInfo();
-            checkState(moduleInfo != null, "Module Info for %s is not available.",bindingProvider.getClass());
-            collectYangModuleInfo(bindingProvider.getModuleInfo(),moduleInfoSet);
+            checkState(moduleInfo != null, "Module Info for %s is not available.", bindingProvider.getClass());
+            collectYangModuleInfo(bindingProvider.getModuleInfo(), moduleInfoSet);
         }
-        return  moduleInfoSet.build();
+        return moduleInfoSet.build();
     }
 
-    private static void collectYangModuleInfo(final YangModuleInfo moduleInfo, final Builder<YangModuleInfo> moduleInfoSet) {
+    private static void collectYangModuleInfo(final YangModuleInfo moduleInfo,
+            final Builder<YangModuleInfo> moduleInfoSet) {
         moduleInfoSet.add(moduleInfo);
-        for(YangModuleInfo dependency : moduleInfo.getImportedModules()) {
+        for (YangModuleInfo dependency : moduleInfo.getImportedModules()) {
             collectYangModuleInfo(dependency, moduleInfoSet);
         }
     }
 
     public static boolean isRpcType(final Class<? extends DataObject> targetType) {
-        return  DataContainer.class.isAssignableFrom(targetType) //
+        return DataContainer.class.isAssignableFrom(targetType) //
                 && !ChildOf.class.isAssignableFrom(targetType) //
                 && !Notification.class.isAssignableFrom(targetType) //
                 && (targetType.getName().endsWith("Input") || targetType.getName().endsWith("Output"));
+    }
+
+    /**
+     *
+     * Scans supplied class and returns an iterable of all data children classes.
+     *
+     * @param type YANG Modeled Entity derived from DataContainer
+     * @return Iterable of all data children, which have YANG modeled entity
+     */
+    @SuppressWarnings("unchecked")
+    public static Iterable<Class<? extends DataObject>> getChildrenClasses(final Class<? extends DataContainer> type) {
+        checkArgument(type != null, "Target type must not be null");
+        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
+        List<Class<? extends DataObject>> ret = new LinkedList<>();
+        for (Method method : type.getMethods()) {
+            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method);
+            if (entity.isPresent()) {
+                ret.add((Class<? extends DataObject>) entity.get());
+            }
+        }
+        return ret;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method) {
+        if (method.getName().equals("getClass") || !method.getName().startsWith("get")
+                || method.getParameterTypes().length > 0) {
+            return Optional.absent();
+        }
+
+        @SuppressWarnings("rawtypes")
+        Class returnType = method.getReturnType();
+        if (DataContainer.class.isAssignableFrom(returnType)) {
+            return Optional.<Class<? extends DataContainer>> of(returnType);
+        } else if (List.class.isAssignableFrom(returnType)) {
+            try {
+                return ClassLoaderUtils.withClassLoader(method.getDeclaringClass().getClassLoader(),
+                        new Callable<Optional<Class<? extends DataContainer>>>() {
+                            @SuppressWarnings("rawtypes")
+                            @Override
+                            public Optional<Class<? extends DataContainer>> call() {
+                                Type listResult = ClassLoaderUtils.getFirstGenericParameter(method
+                                        .getGenericReturnType());
+                                if (listResult instanceof Class
+                                        && DataContainer.class.isAssignableFrom((Class) listResult)) {
+                                    return Optional.<Class<? extends DataContainer>> of((Class) listResult);
+                                }
+                                return Optional.absent();
+                            }
+
+                        });
+            } catch (Exception e) {
+                LOG.debug("Unable to find YANG modeled return type for {}", method, e);
+            }
+        }
+        return Optional.absent();
     }
 
 }
