@@ -42,6 +42,9 @@
                                     <codeGeneratorClass>
                                         org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl
                                     </codeGeneratorClass>
+                                    <outputBaseDir>       
+                                            target/correct                                
+                                    </outputBaseDir>
                                 </generator>
                             </codeGenerators>
                         </configuration>

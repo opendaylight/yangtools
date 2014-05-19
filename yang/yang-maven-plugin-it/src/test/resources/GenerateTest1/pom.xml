@@ -34,6 +34,9 @@
                                     <codeGeneratorClass>
                                         org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl
                                     </codeGeneratorClass>
+                                    <outputBaseDir>       
+                                            target/GenerateTest1                                
+                                    </outputBaseDir>
                                 </generator>
                             </codeGenerators>
                         </configuration>
