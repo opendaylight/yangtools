@@ -17,28 +17,10 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>ietf-restconf</artifactId>
-    <version>2013.09.04.1-SNAPSHOT</version>
+    <artifactId>ietf-yang-types-20130715</artifactId>
+    <version>2013.07.15.1-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.opendaylight.yangtools.model</groupId>
-            <artifactId>ietf-inet-types</artifactId>
-        </dependency>
-        <!--  TODO: We need a better way to handle versioning... -->
-        <dependency>
-            <groupId>org.opendaylight.yangtools.model</groupId>
-            <artifactId>ietf-yang-types-20130715</artifactId>
-            <version>2013.07.15.1-SNAPSHOT</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
