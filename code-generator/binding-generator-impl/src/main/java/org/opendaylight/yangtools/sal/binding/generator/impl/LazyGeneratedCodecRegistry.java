@@ -112,7 +112,7 @@ class LazyGeneratedCodecRegistry implements //
     @SuppressWarnings("rawtypes")
     private static final ConcurrentMap<Type, ChoiceCaseCodecImpl> typeToCaseCodecs = new ConcurrentHashMap<>();
 
-    private static final Map<SchemaPath, GeneratedTypeBuilder> pathToType = new ConcurrentHashMap<>();
+    private static final Map<SchemaPath, Type> pathToType = new ConcurrentHashMap<>();
     private static final Map<List<QName>, Type> pathToInstantiatedType = new ConcurrentHashMap<>();
     private static final Map<Type, QName> typeToQname = new ConcurrentHashMap<>();
     private static final BiMap<Type, AugmentationSchema> typeToAugment = HashBiMap
@@ -151,32 +151,32 @@ class LazyGeneratedCodecRegistry implements //
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Augmentation<?>> AugmentationCodecWrapper<T> getCodecForAugmentation(final Class<T> object) {
+    public <T extends Augmentation<?>> AugmentationCodecWrapper<T> getCodecForAugmentation(final Class<T> augClass) {
         AugmentationCodecWrapper<T> codec = null;
         @SuppressWarnings("rawtypes")
-        AugmentationCodecWrapper potentialCodec = augmentationCodecs.get(object);
+        AugmentationCodecWrapper potentialCodec = augmentationCodecs.get(augClass);
         if (potentialCodec != null) {
             codec = potentialCodec;
         } else {
-            lock.waitForSchema(object);
+            lock.waitForSchema(augClass);
             Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentRawCodec = generator
-                    .augmentationTransformerFor(object);
+                    .augmentationTransformerFor(augClass);
 
             BindingCodec<Map<QName, Object>, Object> rawCodec = newInstanceOf(augmentRawCodec);
-            codec = new AugmentationCodecWrapper<T>(rawCodec, null, object);
-            augmentationCodecs.put(object, codec);
+            codec = new AugmentationCodecWrapper<T>(rawCodec, augClass);
+            augmentationCodecs.put(augClass, codec);
         }
 
         final Class<? extends Augmentable<?>> objectSupertype;
         try {
-            objectSupertype = BindingReflections.findAugmentationTarget(object);
+            objectSupertype = BindingReflections.findAugmentationTarget(augClass);
         } catch (Exception e) {
-            LOG.warn("Failed to find target for augmentation {}, ignoring it", object, e);
+            LOG.warn("Failed to find target for augmentation {}, ignoring it", augClass, e);
             return codec;
         }
 
         if (objectSupertype == null) {
-            LOG.warn("Augmentation target for {} not found, ignoring it", object);
+            LOG.warn("Augmentation target for {} not found, ignoring it", augClass);
             return codec;
         }
 
@@ -207,7 +207,8 @@ class LazyGeneratedCodecRegistry implements //
 
         @SuppressWarnings("rawtypes")
         final WeakReference<Class> weakRef = typeToClass.get(type);
-        Preconditions.checkState(weakRef != null, "Could not find loaded class for path: %s and type: %s", path, type.getFullyQualifiedName());
+        Preconditions.checkState(weakRef != null, "Could not find loaded class for path: %s and type: %s", path,
+                type.getFullyQualifiedName());
         return weakRef.get();
     }
 
@@ -273,7 +274,8 @@ class LazyGeneratedCodecRegistry implements //
 
     private DataSchemaNode getSchemaNode(final List<QName> path) {
         QName firstNode = path.get(0);
-        DataNodeContainer previous = currentSchema.findModuleByNamespaceAndRevision(firstNode.getNamespace(), firstNode.getRevision());
+        DataNodeContainer previous = currentSchema.findModuleByNamespaceAndRevision(firstNode.getNamespace(),
+                firstNode.getRevision());
         Preconditions.checkArgument(previous != null, "Failed to find module %s for path %s", firstNode, path);
 
         Iterator<QName> iterator = path.iterator();
@@ -327,7 +329,8 @@ class LazyGeneratedCodecRegistry implements //
             LOG.error("Failed to instantiate codec {}", cls.getSimpleName(), e);
             throw new IllegalStateException(String.format("Failed to instantiate codec %s", cls), e);
         } catch (IllegalAccessException e) {
-            LOG.debug("Run-time consistency issue: constructor for {} is not available. This indicates either a code generation bug or a misconfiguration of JVM.",
+            LOG.debug(
+                    "Run-time consistency issue: constructor for {} is not available. This indicates either a code generation bug or a misconfiguration of JVM.",
                     cls.getSimpleName(), e);
             throw new IllegalStateException(String.format("Cannot access contructor of %s", cls), e);
         }
@@ -428,10 +431,10 @@ class LazyGeneratedCodecRegistry implements //
                     identity.getKey());
         }
 
-        synchronized(augmentableToAugmentations) {
+        synchronized (augmentableToAugmentations) {
             augmentableToAugmentations.putAll(context.getAugmentableToAugmentations());
         }
-        synchronized(choiceToCases)  {
+        synchronized (choiceToCases) {
             choiceToCases.putAll(context.getChoiceToCases());
         }
         captureCases(context.getCases(), schemaContext);
@@ -493,7 +496,7 @@ class LazyGeneratedCodecRegistry implements //
             }
             SchemaPath path = caseNode.getPath();
 
-            GeneratedTypeBuilder type;
+            Type type;
             if (path != null && (type = pathToType.get(path)) != null) {
                 ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
                 @SuppressWarnings("rawtypes")
@@ -530,7 +533,7 @@ class LazyGeneratedCodecRegistry implements //
         }
     }
 
-    public AugmentableDispatchCodec getAugmentableCodec(final Class<?> dataClass) {
+    public synchronized AugmentableDispatchCodec getAugmentableCodec(final Class<?> dataClass) {
         AugmentableDispatchCodec ret = augmentableCodecs.get(dataClass);
         if (ret != null) {
             return ret;
@@ -675,43 +678,49 @@ class LazyGeneratedCodecRegistry implements //
             return implementation;
         }
 
-        protected final void adaptForPath(final InstanceIdentifier<?> path) {
+        protected final synchronized void adaptForPath(final InstanceIdentifier<?> path) {
             if (adaptedForPaths.contains(path)) {
                 return;
             }
             /**
-             * We search in schema context if the use of this location aware codec (augmentable codec, case codec)
-             * makes sense on provided location (path)
+             * We search in schema context if the use of this location aware
+             * codec (augmentable codec, case codec) makes sense on provided
+             * location (path)
              *
              */
-            Optional<DataNodeContainer> contextNode = BindingSchemaContextUtils.findDataNodeContainer(currentSchema, path);
+            Optional<DataNodeContainer> contextNode = BindingSchemaContextUtils.findDataNodeContainer(currentSchema,
+                    path);
             /**
-             * If context node is present, this codec makes sense on provided location.
+             * If context node is present, this codec makes sense on provided
+             * location.
              *
              */
             if (contextNode.isPresent()) {
                 synchronized (this) {
                     /**
                      *
-                     * We adapt (turn on / off) possible implementations of child codecs (augmentations, cases)
-                     * based on this location.
+                     * We adapt (turn on / off) possible implementations of
+                     * child codecs (augmentations, cases) based on this
+                     * location.
                      *
                      *
                      */
+
                     adaptForPathImpl(path, contextNode.get());
-                    try  {
+                    try {
                         /**
-                         * We trigger serialization of instance identifier, to make sure instance identifier
-                         * codec is aware of combination of this path / augmentation / case
+                         * We trigger serialization of instance identifier, to
+                         * make sure instance identifier codec is aware of
+                         * combination of this path / augmentation / case
                          */
                         instanceIdentifierCodec.serialize(path);
                     } catch (Exception e) {
-                        LOG.warn("Exception during preparation of instance identifier codec for  path {}.",path,e);
+                        LOG.warn("Exception during preparation of instance identifier codec for  path {}.", path, e);
                     }
                     adaptedForPaths.add(path);
                 }
             } else {
-                LOG.debug("Context node (parent node) not found for {}",path);
+                LOG.debug("Context node (parent node) not found for {}", path);
             }
         }
 
@@ -835,7 +844,8 @@ class LazyGeneratedCodecRegistry implements //
         }
     }
 
-    private static class PublicChoiceCodecImpl<T> implements ChoiceCodec<T>, Delegator<BindingCodec<Map<QName, Object>, Object>> {
+    private static class PublicChoiceCodecImpl<T> implements ChoiceCodec<T>,
+            Delegator<BindingCodec<Map<QName, Object>, Object>> {
 
         private final BindingCodec<Map<QName, Object>, Object> delegate;
 
@@ -880,7 +890,8 @@ class LazyGeneratedCodecRegistry implements //
     private class DispatchChoiceCodecImpl extends LocationAwareDispatchCodec<ChoiceCaseCodecImpl<?>> {
 
         @Override
-        public Object deserialize(final Object input, @SuppressWarnings("rawtypes") final InstanceIdentifier bindingIdentifier) {
+        public Object deserialize(final Object input,
+                @SuppressWarnings("rawtypes") final InstanceIdentifier bindingIdentifier) {
             // TODO Auto-generated method stub
             return null;
         }
@@ -1036,7 +1047,7 @@ class LazyGeneratedCodecRegistry implements //
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private class AugmentableDispatchCodec extends LocationAwareDispatchCodec<AugmentationCodecWrapper> {
+    class AugmentableDispatchCodec extends LocationAwareDispatchCodec<AugmentationCodecWrapper> {
 
         private final Class augmentableType;
 
@@ -1124,7 +1135,7 @@ class LazyGeneratedCodecRegistry implements //
         protected void tryToLoadImplementations() {
             Type type = referencedType(augmentableType);
             Collection<Type> potentialAugmentations;
-            synchronized(augmentableToAugmentations) {
+            synchronized (augmentableToAugmentations) {
                 potentialAugmentations = new ArrayList(augmentableToAugmentations.get(type));
             }
             for (Type potential : potentialAugmentations) {
@@ -1137,37 +1148,74 @@ class LazyGeneratedCodecRegistry implements //
         }
 
         @Override
-        protected void adaptForPathImpl(final InstanceIdentifier<?> path, final DataNodeContainer ctxNode) {
+        protected void adaptForPathImpl(final InstanceIdentifier<?> augTarget, final DataNodeContainer ctxNode) {
             if (ctxNode instanceof AugmentationTarget) {
                 Set<AugmentationSchema> availableAugmentations = ((AugmentationTarget) ctxNode)
                         .getAvailableAugmentations();
                 if (!availableAugmentations.isEmpty()) {
-                    updateAugmentationMapping(path,availableAugmentations);
+                    updateAugmentationMapping(augTarget, availableAugmentations);
                 }
             }
         }
 
-        private void updateAugmentationMapping(final InstanceIdentifier<?> path, final Set<AugmentationSchema> availableAugmentations) {
+        /**
+         *
+         * Adapts augmentation codec for specific provider location (target)
+         *
+         * Since augmentation are not forward-referencing and may be discovered
+         * during runtime, we need to adapt {@link AugmentableDispatchCodec},
+         * {@link AugmentationCodecWrapper} and {@link InstanceIdentifierCodec}
+         * for this newly discovered location where augmentation may be used.
+         *
+         * Adaptation consists of:
+         * <ol>
+         * <li> scan of available (valid) augmentations for
+         * current location
+         * <li>lookup for Java classes derived from this augmentations
+         * <li>generation of missing codecs
+         * <li>updating Augmentation codecs to work with new location
+         * <li>updating Instance Identifier to work with new location
+         *
+         */
+        private void updateAugmentationMapping(final InstanceIdentifier<?> augTarget,
+                final Set<AugmentationSchema> availableAugmentations) {
             for (AugmentationSchema aug : availableAugmentations) {
 
                 Type potentialType = getTypeForAugmentation(aug);
                 if (potentialType != null) {
                     Optional<AugmentationCodecWrapper> potentialImpl = tryToLoadImplementation(potentialType);
                     if (potentialImpl.isPresent()) {
-                        potentialImpl.get().addApplicableFor(path,aug);
+                        potentialImpl.get().addApplicableFor(augTarget, aug);
+                        Class augType = potentialImpl.get().getDataType();
+                        InstanceIdentifier augPath = augTarget.augmentation(augType);
+                        try {
+
+                            org.opendaylight.yangtools.yang.data.api.InstanceIdentifier domPath = getInstanceIdentifierCodec().serialize(augPath);
+                            if(domPath == null) {
+                                LOG.error("Unable to serialize instance identifier for {}",augPath);
+                            }
+                        } catch (Exception e) {
+                            LOG.error("Unable to serialize instance identifiers for {}",augPath,e);
+                        }
+
                     }
                 } else {
-                    LOG.warn("Could not find generated type for augmentation {} with children {}", aug, aug.getChildNodes());
+                    // Omits warning for empty augmentations since they are not represented in data
+                    if(!aug.getChildNodes().isEmpty()) {
+                        LOG.warn("Could not find generated type for augmentation {} with children {}", aug,
+                            aug.getChildNodes());
+                    }
                 }
             }
-            availableAugmentations.toString();
         }
+
+
 
         private Type getTypeForAugmentation(final AugmentationSchema aug) {
             Optional<AugmentationSchema> currentAug = Optional.of(aug);
-            while(currentAug.isPresent()) {
+            while (currentAug.isPresent()) {
                 Type potentialType = typeToAugment.inverse().get(currentAug.get());
-                if(potentialType != null) {
+                if (potentialType != null) {
                     return potentialType;
                 }
                 currentAug = currentAug.get().getOriginalDefinition();
@@ -1212,20 +1260,20 @@ class LazyGeneratedCodecRegistry implements //
 
         private final BindingCodec delegate;
         private final QName augmentationQName;
-        private final Multimap<InstanceIdentifier<?>,QName> validAugmentationTargets;
+        private final Multimap<InstanceIdentifier<?>, QName> validAugmentationTargets;
         private final Class<?> augmentationType;
 
-        public AugmentationCodecWrapper(final BindingCodec<Map<QName, Object>, Object> rawCodec,
-                final InstanceIdentifier<?> targetId, final Class<?> dataType) {
+        public AugmentationCodecWrapper(final BindingCodec<Map<QName, Object>, Object> rawCodec, final Class<?> dataType) {
             this.delegate = rawCodec;
             this.augmentationType = dataType;
             this.augmentationQName = BindingReflections.findQName(rawCodec.getClass());
-            this.validAugmentationTargets = Multimaps.synchronizedSetMultimap(HashMultimap.<InstanceIdentifier<?>,QName>create());
+            this.validAugmentationTargets = Multimaps.synchronizedSetMultimap(HashMultimap
+                    .<InstanceIdentifier<?>, QName> create());
         }
 
         public void addApplicableFor(final InstanceIdentifier<?> path, final AugmentationSchema aug) {
-            for(DataSchemaNode child : aug.getChildNodes()) {
-                validAugmentationTargets.put(path,child.getQName());
+            for (DataSchemaNode child : aug.getChildNodes()) {
+                validAugmentationTargets.put(path, child.getQName());
             }
         }
 
@@ -1321,7 +1369,7 @@ class LazyGeneratedCodecRegistry implements //
         }
 
         @Override
-        public Object deserialize(final Object input,final InstanceIdentifier bindingIdentifier) {
+        public Object deserialize(final Object input, final InstanceIdentifier bindingIdentifier) {
             Type type = qnamesToIdentityMap.get(input);
             if (type == null) {
                 return null;
