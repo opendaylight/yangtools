@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
 
 /**
  * Interface for builders of 'augment' statement.
@@ -79,5 +81,7 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
      * @param resolved
      */
     void setResolved(boolean resolved);
+
+    int getOrder();
 
 }
