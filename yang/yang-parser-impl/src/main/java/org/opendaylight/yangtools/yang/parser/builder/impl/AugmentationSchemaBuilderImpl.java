@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -36,13 +40,9 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
 public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContainerBuilder implements
         AugmentationSchemaBuilder {
+    private final int order;
     private AugmentationSchemaImpl instance;
     private String whenCondition;
 
@@ -57,8 +57,9 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private boolean resolved;
     private AugmentationSchemaBuilder copyOf;
 
-    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr) {
+    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr, int order) {
         super(moduleName, line, null);
+        this.order = order;
         this.augmentTargetStr = augmentTargetStr;
         targetPath = ParserUtils.parseXPathString(augmentTargetStr);
     }
@@ -89,7 +90,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return instance;
         }
 
-        instance = new AugmentationSchemaImpl(targetPath);
+        instance = new AugmentationSchemaImpl(targetPath, order);
 
         instance.description = description;
         instance.reference = reference;
@@ -228,6 +229,11 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
+    public int getOrder() {
+        return order;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 17;
         int result = 1;
@@ -282,7 +288,9 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         copyOf = old;
     }
 
-    private static final class AugmentationSchemaImpl implements AugmentationSchema, NamespaceRevisionAware {
+    private static final class AugmentationSchemaImpl implements AugmentationSchema, NamespaceRevisionAware,
+            Comparable<AugmentationSchemaImpl> {
+        private final int order;
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
         private ImmutableSet<DataSchemaNode> childNodes;
@@ -296,8 +304,9 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         private ImmutableList<UnknownSchemaNode> unknownNodes;
         private AugmentationSchema copyOf;
 
-        private AugmentationSchemaImpl(final SchemaPath targetPath) {
+        public AugmentationSchemaImpl(final SchemaPath targetPath, final int order) {
             this.targetPath = targetPath;
+            this.order = order;
         }
 
         public void setCopyOf(final AugmentationSchema build) {
@@ -441,6 +450,26 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             sb.append(", when=" + whenCondition);
             sb.append("]");
             return sb.toString();
+        }
+
+        @Override
+        public int compareTo(AugmentationSchemaImpl o) {
+            Iterator<QName> thisIt = this.targetPath.getPath().iterator();
+            Iterator<QName> otherIt = o.getTargetPath().getPath().iterator();
+            while (thisIt.hasNext()) {
+                if (otherIt.hasNext()) {
+                    int comp = thisIt.next().compareTo(otherIt.next());
+                    if (comp != 0) {
+                        return comp;
+                    }
+                } else {
+                    return 1;
+                }
+            }
+            if (otherIt.hasNext()) {
+                return -1;
+            }
+            return this.order - o.order;
         }
     }
 

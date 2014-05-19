@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -404,7 +403,7 @@ public final class CopyUtils {
 
     private static AugmentationSchemaBuilder copyAugment(final AugmentationSchemaBuilder old, final Builder newParent) {
         AugmentationSchemaBuilderImpl copy = new AugmentationSchemaBuilderImpl(newParent.getModuleName(),
-                newParent.getLine(), old.getTargetPathAsString());
+                newParent.getLine(), old.getTargetPathAsString(), old.getOrder());
         copy.setParent(newParent);
         copy.setCopyOf(old);
         copy.setDescription(old.getDescription());
