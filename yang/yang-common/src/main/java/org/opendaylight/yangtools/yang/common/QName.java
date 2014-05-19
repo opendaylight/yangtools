@@ -246,8 +246,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((localName == null) ? 0 : localName.hashCode());
-        result = prime * result + ((getNamespace() == null) ? 0 : getNamespace().hashCode());
-        result = prime * result + ((getFormattedRevision() == null) ? 0 : getFormattedRevision().hashCode());
+        result = prime * result + module.hashCode();
         return result;
     }
 
@@ -278,21 +277,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         } else if (!localName.equals(other.localName)) {
             return false;
         }
-        if (getNamespace() == null) {
-            if (other.getNamespace() != null) {
-                return false;
-            }
-        } else if (!getNamespace().equals(other.getNamespace())) {
-            return false;
-        }
-        if (getFormattedRevision() == null) {
-            if (other.getFormattedRevision() != null) {
-                return false;
-            }
-        } else if (!getRevision().equals(other.getRevision())) {
-            return false;
-        }
-        return true;
+        return module.equals(other.module);
     }
 
     public static QName create(final QName base, final String localName) {
