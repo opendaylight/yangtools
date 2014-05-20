@@ -7,6 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -37,17 +47,6 @@ import org.opendaylight.yangtools.yang.parser.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ModuleImportImpl;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Builder of Module object. If this module is dependent on external
@@ -1193,7 +1192,6 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return source;
         }
 
-        // FIXME: perhaps namespace should not be taken into consideration
         @Override
         public int hashCode() {
             final int prime = 31;
