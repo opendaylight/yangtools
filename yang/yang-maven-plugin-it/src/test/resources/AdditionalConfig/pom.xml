@@ -47,6 +47,9 @@
                                         <nm2>abcd2=a.b.c.d.2</nm2>
                                     </additionalConfiguration>
                                     <resourceBaseDir>/target/resourcesGenerated</resourceBaseDir>
+                                    <outputBaseDir>       
+                                            target/AdditionalConfig                                
+                                    </outputBaseDir>
                                 </generator>
                                 <generator>
                                     <codeGeneratorClass>
@@ -55,6 +58,9 @@
                                     <additionalConfiguration>
                                         <c1>config</c1>
                                     </additionalConfiguration>
+                                    <outputBaseDir>       
+                                            target/AdditionalConfig                                
+                                    </outputBaseDir>
                                 </generator>
                             </codeGenerators>
                         </configuration>

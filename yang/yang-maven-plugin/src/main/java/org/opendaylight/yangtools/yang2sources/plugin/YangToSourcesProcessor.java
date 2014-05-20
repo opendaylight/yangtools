@@ -253,14 +253,16 @@ class YangToSourcesProcessor {
 
         File outputDir = codeGeneratorCfg.getOutputBaseDir(project);
 
+        if (outputDir != null) {
+          project.addCompileSourceRoot(outputDir.getAbsolutePath());
+        } else {
+          throw new NullPointerException("outputBaseDir is null. Please provide a valid outputBaseDir value in the pom.xml");
+        }
+
         log.info(Util.message("Sources will be generated to %s", LOG_PREFIX, outputDir));
         log.debug(Util.message("Project root dir is %s", LOG_PREFIX, project.getBasedir()));
         log.debug(Util.message("Additional configuration picked up for : %s: %s", LOG_PREFIX,
                 codeGeneratorCfg.getCodeGeneratorClass(), codeGeneratorCfg.getAdditionalConfiguration()));
-
-        if (outputDir != null) {
-            project.addCompileSourceRoot(outputDir.getAbsolutePath());
-        }
 
         if (g instanceof BuildContextAware) {
             ((BuildContextAware)g).setBuildContext(buildContext);
