@@ -128,8 +128,8 @@ public final class GeneratorUtil {
      */
     public static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
             final Map<String, String> imports) {
-        checkArgument(parentGenType != null,
-                "Parent Generated Type parameter MUST be specified and cannot be " + "NULL!");
+        checkArgument(parentGenType != null, "Parent Generated Type parameter MUST be specified and cannot be "
+                + "NULL!");
         checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
         checkArgument(parentGenType.getPackageName() != null,
                 "Parent Generated Type cannot have Package Name referenced as NULL!");
@@ -141,9 +141,7 @@ public final class GeneratorUtil {
         final String typeName = type.getName();
         final String typePackageName = type.getPackageName();
         final String parentTypeName = parentGenType.getName();
-        final String parentTypePackageName = parentGenType.getPackageName();
-        if (typeName.equals(parentTypeName) || typePackageName.startsWith("java.lang")
-                 || typePackageName.isEmpty()) {
+        if (typeName.equals(parentTypeName) || typePackageName.startsWith("java.lang") || typePackageName.isEmpty()) {
             return;
         }
         if (!imports.containsKey(typeName)) {

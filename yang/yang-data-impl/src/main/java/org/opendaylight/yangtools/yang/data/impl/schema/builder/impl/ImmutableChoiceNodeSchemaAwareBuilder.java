@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataV
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
 
 public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBuilder {
 
