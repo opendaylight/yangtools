@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  *
@@ -22,7 +25,7 @@ public class SchemaPath {
     /**
      * List of QName instances which represents complete path to the node.
      */
-    private final List<QName> path;
+    private final ImmutableList<QName> path;
 
     /**
      * Boolean value which represents type of schema path (relative or
@@ -39,10 +42,12 @@ public class SchemaPath {
      * @param absolute
      *            boolean value which specifies if the path is absolute or
      *            relative
+     *
+     * @deprecated Use {@link #create(Iterable, boolean)} instead.
      */
+    @Deprecated
     public SchemaPath(final List<QName> path, final boolean absolute) {
-        this.path = ImmutableList.copyOf(path);
-        this.absolute = absolute;
+        this(ImmutableList.copyOf(path), absolute, null);
     }
 
     /**
@@ -50,9 +55,92 @@ public class SchemaPath {
      *
      * @return list of <code>QName</code> instances which represents complete
      *         path to schema node
+     *
+     * @deprecated Use {@link #getPathFromRoot()} instead.
      */
+    @Deprected
     public List<QName> getPath() {
         return path;
+    }
+
+    private SchemaPath(final ImmutableList<QName> path, final boolean absolute, final Void dummy) {
+        this.path = Preconditions.checkNotNull(path);
+        this.absolute = absolute;
+    }
+
+    /**
+     * Constructs new instance of this class with the concrete path.
+     *
+     * @param path
+     *            list of QName instances which specifies exact path to the
+     *            module node
+     * @param absolute
+     *            boolean value which specifies if the path is absolute or
+     *            relative
+     *
+     * @return A SchemaPath instance.
+     */
+    public static SchemaPath create(final Iterable<QName> path, final boolean absolute) {
+        return new SchemaPath(ImmutableList.copyOf(path), absolute, null);
+    }
+
+    /**
+     * Create a child path based on concatenation of this path and a relative path.
+     *
+     * @param relative Relative path
+     * @return A new child path
+     */
+    public SchemaPath createChild(final Iterable<QName> relative) {
+        return create(Iterables.concat(path, relative), absolute);
+    }
+
+    /**
+     * Create a child path based on concatenation of this path and a relative path.
+     *
+     * @param relative Relative SchemaPath
+     * @return A new child path
+     */
+    public SchemaPath createChild(final SchemaPath relative) {
+        Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
+        return create(Iterables.concat(path, relative.path), absolute);
+    }
+
+    /**
+     * Create a child path based on concatenation of this path and additional
+     * path elements.
+     *
+     * @param elements Relative SchemaPath elements
+     * @return A new child path
+     */
+    public SchemaPath createChild(final QName... elements) {
+        if (elements.length != 0) {
+            return create(Iterables.concat(path, Arrays.asList(elements)), absolute);
+        } else {
+            return this;
+        }
+    }
+
+    /**
+     * Returns the list of nodes which need to be traversed to get from the
+     * starting point (root for absolute SchemaPaths) to the node represented
+     * by this object.
+     *
+     * @return list of <code>qname</code> instances which represents
+     *         path from the root to the schema node.
+     */
+    public Iterable<QName> getPathFromRoot() {
+        return path;
+    }
+
+    /**
+     * Returns the list of nodes which need to be traversed to get from this
+     * node to the starting point (root for absolute SchemaPaths).
+     *
+     * @return list of <code>qname</code> instances which represents
+     *         path from the schema node towards the root.
+     */
+    public Iterable<QName> getPathTowardsRoot() {
+        return path.reverse();
     }
 
     /**
