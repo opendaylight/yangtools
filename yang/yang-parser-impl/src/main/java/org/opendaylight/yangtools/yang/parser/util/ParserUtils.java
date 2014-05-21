@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.io.ByteSource;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -78,18 +79,12 @@ public final class ParserUtils {
     private ParserUtils() {
     }
 
-    public static Collection<ByteSource> streamsToByteSources(Collection<InputStream> streams) {
-        return Collections2.transform(streams, new Function<InputStream, ByteSource>() {
-            @Override
-            public ByteSource apply(final InputStream input) {
-                return new ByteSource() {
-                    @Override
-                    public InputStream openStream() throws IOException {
-                        return NamedByteArrayInputStream.create(input);
-                    }
-                };
-            }
-        });
+    public static Collection<ByteSource> streamsToByteSources(Collection<InputStream> streams) throws IOException {
+        Collection<ByteSource> result = new HashSet<>();
+        for (InputStream stream : streams) {
+            result.add(new ByteSourceImpl(stream));
+        }
+        return result;
     }
 
     public static ByteSource fileToByteSource(final File file) {
@@ -646,6 +641,21 @@ public final class ParserUtils {
             result.add(new UnknownSchemaNodeBuilder(moduleName, line, qname, schemaPath, node));
         }
         return result;
+    }
+
+    private static final class ByteSourceImpl extends ByteSource {
+        private final String toString;
+        private final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        private ByteSourceImpl(InputStream input) throws IOException {
+            toString = input.toString();
+            IOUtils.copy(input, output);
+        }
+
+        @Override
+        public InputStream openStream() throws IOException {
+            return new NamedByteArrayInputStream(output.toByteArray(), toString);
+        }
     }
 
 }

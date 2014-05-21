@@ -187,8 +187,8 @@ public final class YangParserImpl implements YangContextParser {
 
     @Override
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams) {
-        Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
         try {
+            Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
             return parseSources(sources).getModules();
         } catch (IOException e) {
             throw new YangParseException("Failed to parse yang data", e);
@@ -205,8 +205,8 @@ public final class YangParserImpl implements YangContextParser {
 
     @Override
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, SchemaContext context) {
-        Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
         try {
+            Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
             return parseSources(sources, context).getModules();
         } catch (IOException e) {
             throw new YangParseException("Failed to parse yang data", e);
@@ -369,6 +369,7 @@ public final class YangParserImpl implements YangContextParser {
             sourceToBuilder.put(source, moduleBuilder);
         }
 
+        ParserUtils.setSourceToBuilder(sourceToBuilder);
         return sourceToBuilder;
     }
 
@@ -458,8 +459,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuilders(
-            final Collection<ByteSource> yangFileStreams, final SchemaContext context) throws IOException {
-        Map<ByteSource, ModuleBuilder> parsedBuilders = resolveSources(yangFileStreams);
+            final Collection<ByteSource> sources, final SchemaContext context) throws IOException {
+        Map<ByteSource, ModuleBuilder> parsedBuilders = resolveSources(sources);
         ModuleBuilder[] builders = new ModuleBuilder[parsedBuilders.size()];
         parsedBuilders.values().toArray(builders);
 
