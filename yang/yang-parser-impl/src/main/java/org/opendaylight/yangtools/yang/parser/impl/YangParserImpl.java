@@ -369,6 +369,7 @@ public final class YangParserImpl implements YangContextParser {
             sourceToBuilder.put(source, moduleBuilder);
         }
 
+        ParserUtils.setSourceToBuilder(sourceToBuilder);
         return sourceToBuilder;
     }
 
