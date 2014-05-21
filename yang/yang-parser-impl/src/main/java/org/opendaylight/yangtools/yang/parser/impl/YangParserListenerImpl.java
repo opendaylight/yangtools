@@ -7,14 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.*;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.checkMissingBody;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.createActualSchemaPath;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.createListKey;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.getConfig;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.getIdentityrefBase;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseConstraints;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseDefault;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseRefine;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseSchemaNodeArgs;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseStatus;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseTypeWithBody;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUnits;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUnknownTypeWithBody;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUserOrdered;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseYinValue;
+import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.stringFromNode;
 
+import com.google.common.base.Strings;
 import java.net.URI;
-import java.text.*;
-import java.util.*;
-
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Stack;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.opendaylight.yangtools.antlrv4.code.gen.*;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Base_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Contact_stmtContext;
@@ -45,18 +64,36 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Type_body_stmtsCon
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Units_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.When_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParserBaseListener;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.YangTypesConverter;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
-import org.opendaylight.yangtools.yang.parser.builder.impl.*;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.FeatureBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
@@ -87,7 +124,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void enterModule_stmt(YangParser.Module_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
-        LOGGER.debug("entering module " + moduleName);
+        LOGGER.trace("entering module " + moduleName);
         enterLog("module", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
@@ -119,7 +156,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override public void enterSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
-        LOGGER.debug("entering submodule " + moduleName);
+        LOGGER.trace("entering submodule " + moduleName);
         enterLog("submodule", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
