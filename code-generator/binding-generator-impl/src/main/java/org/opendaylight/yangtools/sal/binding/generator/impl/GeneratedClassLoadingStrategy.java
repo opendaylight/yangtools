@@ -8,25 +8,26 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
-import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.binding.util.ClassLoaderUtils;
 
 public abstract class GeneratedClassLoadingStrategy implements ClassLoadingStrategy {
 
     private static final GeneratedClassLoadingStrategy TCCL_STRATEGY = new TCCLClassLoadingStrategy();
 
     private static final GeneratedClassLoadingStrategy ALWAYS_FAIL_STRATEGY = new GeneratedClassLoadingStrategy() {
-
         @Override
-        public Class<?> loadClass(String fullyQualifiedName) throws ClassNotFoundException {
+        public Class<?> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
             throw new ClassNotFoundException(fullyQualifiedName);
         }
     };
 
-    public Class<?> loadClass(Type type) throws ClassNotFoundException {
+    @Override
+    public Class<?> loadClass(final Type type) throws ClassNotFoundException {
         return loadClass(type.getFullyQualifiedName());
     }
 
+    @Override
     public abstract Class<?> loadClass(String fullyQualifiedName) throws ClassNotFoundException;
 
     public static final GeneratedClassLoadingStrategy getTCCLClassLoadingStrategy() {
@@ -38,9 +39,8 @@ public abstract class GeneratedClassLoadingStrategy implements ClassLoadingStrat
     }
 
     private static final class TCCLClassLoadingStrategy extends GeneratedClassLoadingStrategy {
-
         @Override
-        public Class<?> loadClass(String fullyQualifiedName) throws ClassNotFoundException {
+        public Class<?> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
             return ClassLoaderUtils.loadClassWithTCCL(fullyQualifiedName);
         }
     }
