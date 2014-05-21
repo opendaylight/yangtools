@@ -194,8 +194,8 @@ public final class YangParserImpl implements YangContextParser {
     @Override
     @Deprecated
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams) {
-        Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
         try {
+            Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
             return parseSources(sources).getModules();
         } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
@@ -213,8 +213,8 @@ public final class YangParserImpl implements YangContextParser {
     @Override
     @Deprecated
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, final SchemaContext context) {
-        Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
         try {
+            Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
             return parseSources(sources, context).getModules();
         } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
@@ -378,6 +378,7 @@ public final class YangParserImpl implements YangContextParser {
             sourceToBuilder.put(source, moduleBuilder);
         }
 
+        ParserUtils.setSourceToBuilder(sourceToBuilder);
         return sourceToBuilder;
     }
 
