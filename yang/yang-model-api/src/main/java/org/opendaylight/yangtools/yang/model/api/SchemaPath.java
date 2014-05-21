@@ -39,10 +39,33 @@ public class SchemaPath {
      * @param absolute
      *            boolean value which specifies if the path is absolute or
      *            relative
+     *
+     * @deprecated Use {@link #create(List, boolean)} instead.
      */
+    @Deprecated
     public SchemaPath(final List<QName> path, final boolean absolute) {
+        this(path, absolute, null);
+    }
+
+    private SchemaPath(final List<QName> path, final boolean absolute, final Void dummy) {
         this.path = ImmutableList.copyOf(path);
         this.absolute = absolute;
+    }
+
+    /**
+     * Constructs new instance of this class with the concrete path.
+     *
+     * @param path
+     *            list of QName instances which specifies exact path to the
+     *            module node
+     * @param absolute
+     *            boolean value which specifies if the path is absolute or
+     *            relative
+     *
+     * @return A SchemaPath instance.
+     */
+    public static SchemaPath create(final List<QName> path, final boolean absolute) {
+        return new SchemaPath(path, absolute, null);
     }
 
     /**
