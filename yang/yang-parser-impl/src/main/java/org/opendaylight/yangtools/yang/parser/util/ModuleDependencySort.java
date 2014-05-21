@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,12 +32,6 @@ import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Creates a module dependency graph from provided {@link ModuleBuilder}s and
@@ -233,7 +232,7 @@ public final class ModuleDependencySort {
             if (moduleGraph.get(toName) != null && !moduleGraph.get(toName).isEmpty()
                     && toRevision.equals(DEFAULT_REVISION)) {
                 to = moduleGraph.get(toName).values().iterator().next();
-                LOGGER.debug(String
+                LOGGER.trace(String
                         .format("Import:%s:%s by module:%s:%s does not specify revision, using:%s:%s for module dependency sort",
                                 toName, formatRevDate(toRevision), fromName, formatRevDate(fromRevision), to.getName(),
                                 formatRevDate(to.getRevision())));
