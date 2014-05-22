@@ -7,6 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,32 +70,6 @@ import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class YangParserTest {
     public static final String FS = File.separator;
@@ -693,7 +693,7 @@ public class YangParserTest {
         List<QName> path = new ArrayList<>();
         path.add(new QName(barNS, barRev, "br", "interfaces"));
         path.add(new QName(barNS, barRev, "br", "ifEntry"));
-        SchemaPath expectedPath = new SchemaPath(path, true);
+        SchemaPath expectedPath = SchemaPath.create(path, true);
 
         assertEquals(expectedPath, dev.getTargetPath());
         assertEquals(Deviate.ADD, dev.getDeviate());
@@ -913,7 +913,7 @@ public class YangParserTest {
         assertSetEquals(newModules, ctx.getModules());
     }
 
-    private void checkOrder(Collection<Module> modules) {
+    private void checkOrder(final Collection<Module> modules) {
         Iterator<Module> it = modules.iterator();
         Module m = it.next();
         assertEquals("m2", m.getName());
@@ -933,7 +933,7 @@ public class YangParserTest {
         assertEquals("m1", m.getName());
     }
 
-    private void assertSetEquals(Set<Module> s1, Set<Module> s2) {
+    private void assertSetEquals(final Set<Module> s1, final Set<Module> s2) {
         assertEquals(s1, s2);
         Iterator<Module> it = s1.iterator();
         for (Module m : s2) {

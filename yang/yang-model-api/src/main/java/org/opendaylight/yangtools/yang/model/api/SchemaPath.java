@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.opendaylight.yangtools.yang.common.QName;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.util.Arrays;
+import java.util.List;
+import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  *
@@ -26,12 +23,12 @@ public class SchemaPath {
     /**
      * Shared instance of the conceptual root schema node.
      */
-    public static final SchemaPath ROOT = SchemaPath.create(Collections.<QName>emptyList(), true);
+    public static final SchemaPath ROOT = new SchemaPath(ImmutableList.<QName> of(), true, null);
 
     /**
      * Shared instance of the "same" relative schema node.
      */
-    public static final SchemaPath SAME = SchemaPath.create(Collections.<QName>emptyList(), false);
+    public static final SchemaPath SAME = new SchemaPath(ImmutableList.<QName> of(), false, null);
 
     /**
      * List of QName instances which represents complete path to the node.

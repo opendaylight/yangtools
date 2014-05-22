@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.text.DateFormat;
@@ -21,7 +25,18 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public class YangParserSimpleTest {
     private final URI snNS = URI.create("urn:opendaylight:simple-nodes");
@@ -180,7 +195,7 @@ public class YangParserSimpleTest {
     private Date rev;
     private final String prefix = "sn";
 
-    private SchemaPath createPath(String... names) {
+    private SchemaPath createPath(final String... names) {
         try {
             rev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-30");
         } catch (ParseException e) {
@@ -191,7 +206,7 @@ public class YangParserSimpleTest {
         for (String name : names) {
             path.add(new QName(ns, rev, prefix, name));
         }
-        return new SchemaPath(path, true);
+        return SchemaPath.create(path, true);
     }
 
 }
