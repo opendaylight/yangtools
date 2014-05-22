@@ -491,7 +491,7 @@ public final class CopyUtils {
             }
         }
 
-        SchemaPath newSchemaPath = new SchemaPath(newPath, true);
+        SchemaPath newSchemaPath = SchemaPath.create(newPath, true);
         return new DataBean(newQName, newSchemaPath);
     }
 

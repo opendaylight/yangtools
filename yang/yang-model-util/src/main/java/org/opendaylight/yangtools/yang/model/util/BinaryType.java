@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 public final class BinaryType implements BinaryTypeDefinition {
     private static final BinaryType INSTANCE = new BinaryType();
     private final QName name = BaseTypes.constructQName("binary");
-    private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
+    private final SchemaPath path = SchemaPath.create(Collections.singletonList(name), true);
     private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";
     private final List<Byte> bytes;
@@ -157,7 +157,7 @@ public final class BinaryType implements BinaryTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

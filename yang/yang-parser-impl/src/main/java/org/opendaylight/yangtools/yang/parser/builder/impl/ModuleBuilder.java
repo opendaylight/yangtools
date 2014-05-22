@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -67,11 +68,12 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private String belongsTo;
     private ModuleBuilder parent;
 
-    public ModuleBuilder getParent() {
+    @Override
+	public ModuleBuilder getParent() {
         return parent;
     }
 
-    public void setParent(ModuleBuilder parent) {
+    public void setParent(final ModuleBuilder parent) {
         this.parent = parent;
     }
 
@@ -120,17 +122,17 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         super(name, 0, null);
         this.name = name;
         this.sourcePath = sourcePath;
-        schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
+        schemaPath = SchemaPath.create(Collections.<QName> emptyList(), true);
         this.submodule = submodule;
         instance = new ModuleImpl(name, sourcePath);
         actualPath.push(this);
     }
 
-    public ModuleBuilder(Module base) {
+    public ModuleBuilder(final Module base) {
         super(base.getName(), 0, null);
         this.name = base.getName();
         this.sourcePath = base.getModuleSourcePath();
-        schemaPath = new SchemaPath(Collections.<QName> emptyList(), true);
+        schemaPath = SchemaPath.create(Collections.<QName> emptyList(), true);
         submodule = false;
         instance = new ModuleImpl(base.getName(), base.getModuleSourcePath());
         instance.setYangVersion(base.getYangVersion());
@@ -254,7 +256,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     @Override
-    public void setParent(Builder parent) {
+    public void setParent(final Builder parent) {
         throw new YangParseException(name, 0, "Can not set parent to module");
     }
 
@@ -376,7 +378,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return belongsTo;
     }
 
-    public void setBelongsTo(String belongsTo) {
+    public void setBelongsTo(final String belongsTo) {
         this.belongsTo = belongsTo;
     }
 
@@ -555,7 +557,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     @Override
-    public void addUsesNode(UsesNodeBuilder usesBuilder) {
+    public void addUsesNode(final UsesNodeBuilder usesBuilder) {
         addedUsesNodes.add(usesBuilder);
         allUsesNodes.add(usesBuilder);
     }
@@ -648,7 +650,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return outputBuilder;
     }
 
-    public void addNotification(NotificationDefinition notification) {
+    public void addNotification(final NotificationDefinition notification) {
         notifications.add(notification);
     }
 
@@ -742,7 +744,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     @Override
-    public void addTypedef(TypeDefinitionBuilder typedefBuilder) {
+    public void addTypedef(final TypeDefinitionBuilder typedefBuilder) {
         String nodeName = typedefBuilder.getQName().getLocalName();
         for (TypeDefinitionBuilder tdb : addedTypedefs) {
             if (tdb.getQName().getLocalName().equals(nodeName)) {
@@ -913,7 +915,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return "module " + name;
     }
 
-    public void setSource(String source) {
+    public void setSource(final String source) {
         this.source = source;
     }
 
@@ -943,7 +945,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
         private String source;
 
-        private ModuleImpl(String name, String sourcePath) {
+        private ModuleImpl(final String name, final String sourcePath) {
             this.name = name;
             this.sourcePath = sourcePath;
         }
@@ -958,7 +960,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return namespace;
         }
 
-        private void setNamespace(URI namespace) {
+        private void setNamespace(final URI namespace) {
             this.namespace = namespace;
         }
 
@@ -972,7 +974,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return revision;
         }
 
-        private void setRevision(Date revision) {
+        private void setRevision(final Date revision) {
             this.revision = revision;
         }
 
@@ -981,7 +983,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return prefix;
         }
 
-        private void setPrefix(String prefix) {
+        private void setPrefix(final String prefix) {
             this.prefix = prefix;
         }
 
@@ -990,7 +992,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return yangVersion;
         }
 
-        private void setYangVersion(String yangVersion) {
+        private void setYangVersion(final String yangVersion) {
             this.yangVersion = yangVersion;
         }
 
@@ -999,7 +1001,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return description;
         }
 
-        private void setDescription(String description) {
+        private void setDescription(final String description) {
             this.description = description;
         }
 
@@ -1008,7 +1010,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return reference;
         }
 
-        private void setReference(String reference) {
+        private void setReference(final String reference) {
             this.reference = reference;
         }
 
@@ -1017,7 +1019,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return organization;
         }
 
-        private void setOrganization(String organization) {
+        private void setOrganization(final String organization) {
             this.organization = organization;
         }
 
@@ -1026,7 +1028,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return contact;
         }
 
-        private void setContact(String contact) {
+        private void setContact(final String contact) {
             this.contact = contact;
         }
 
@@ -1035,7 +1037,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return imports;
         }
 
-        private void setImports(Set<ModuleImport> imports) {
+        private void setImports(final Set<ModuleImport> imports) {
             if (imports != null) {
                 this.imports.addAll(imports);
             }
@@ -1046,7 +1048,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return features;
         }
 
-        private void setFeatures(Set<FeatureDefinition> features) {
+        private void setFeatures(final Set<FeatureDefinition> features) {
             if (features != null) {
                 this.features.addAll(features);
             }
@@ -1057,7 +1059,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return typeDefinitions;
         }
 
-        private void setTypeDefinitions(Set<TypeDefinition<?>> typeDefinitions) {
+        private void setTypeDefinitions(final Set<TypeDefinition<?>> typeDefinitions) {
             if (typeDefinitions != null) {
                 this.typeDefinitions.addAll(typeDefinitions);
             }
@@ -1068,7 +1070,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return notifications;
         }
 
-        private void setNotifications(Set<NotificationDefinition> notifications) {
+        private void setNotifications(final Set<NotificationDefinition> notifications) {
             if (notifications != null) {
                 this.notifications.addAll(notifications);
             }
@@ -1079,7 +1081,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return augmentations;
         }
 
-        private void setAugmentations(Set<AugmentationSchema> augmentations) {
+        private void setAugmentations(final Set<AugmentationSchema> augmentations) {
             if (augmentations != null) {
                 this.augmentations.addAll(augmentations);
             }
@@ -1090,7 +1092,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return rpcs;
         }
 
-        private void setRpcs(Set<RpcDefinition> rpcs) {
+        private void setRpcs(final Set<RpcDefinition> rpcs) {
             if (rpcs != null) {
                 this.rpcs.addAll(rpcs);
             }
@@ -1101,7 +1103,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return deviations;
         }
 
-        private void setDeviations(Set<Deviation> deviations) {
+        private void setDeviations(final Set<Deviation> deviations) {
             if (deviations != null) {
                 this.deviations.addAll(deviations);
             }
@@ -1112,7 +1114,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return Collections.unmodifiableSet(childNodes);
         }
 
-        private void addChildNodes(Set<DataSchemaNode> childNodes) {
+        private void addChildNodes(final Set<DataSchemaNode> childNodes) {
             if (childNodes != null) {
                 this.childNodes.addAll(childNodes);
             }
@@ -1123,7 +1125,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return groupings;
         }
 
-        private void setGroupings(Set<GroupingDefinition> groupings) {
+        private void setGroupings(final Set<GroupingDefinition> groupings) {
             if (groupings != null) {
                 this.groupings.addAll(groupings);
             }
@@ -1134,7 +1136,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return uses;
         }
 
-        private void setUses(Set<UsesNode> uses) {
+        private void setUses(final Set<UsesNode> uses) {
             if (uses != null) {
                 this.uses.addAll(uses);
             }
@@ -1175,16 +1177,16 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             return getChildNode(childNodes, name);
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(String name) {
+        public DataSchemaNode getDataChildByName(final String name) {
             return getChildNode(childNodes, name);
         }
 
-        void setSource(String source){
+        void setSource(final String source){
             this.source = source;
         }
 
@@ -1204,7 +1206,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -1393,7 +1395,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
