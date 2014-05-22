@@ -443,6 +443,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
                 if (input !== null) {
                     val inType = addRawInterfaceDefinition(basePackageName, input, rpcName);
+                    //qnameConstant(inType,BindingMapping.QNAME_STATIC_FIELD_NAME,input.QName);
                     addImplementedInterfaceFromUses(input, inType);
                     inType.addImplementsType(DATA_OBJECT);
                     inType.addImplementsType(augmentable(inType));
@@ -455,6 +456,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 var Type outTypeInstance = VOID;
                 if (output !== null) {
                     val outType = addRawInterfaceDefinition(basePackageName, output, rpcName);
+                    //qnameConstant(outType,BindingMapping.QNAME_STATIC_FIELD_NAME,output.QName);
                     addImplementedInterfaceFromUses(output, outType);
                     outType.addImplementsType(DATA_OBJECT);
                     outType.addImplementsType(augmentable(outType));
@@ -1544,7 +1546,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def GeneratedTypeBuilder addDefaultInterfaceDefinition(String packageName, SchemaNode schemaNode,
         Type parent) {
         val it = addRawInterfaceDefinition(packageName, schemaNode, "");
-        qnameConstant(BindingMapping.QNAME_STATIC_FIELD_NAME,schemaNode.QName);
         if (parent === null) {
             addImplementsType(DATA_OBJECT);
         } else {
@@ -1616,6 +1617,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         //FIXME: Validation of name conflict
         val newType = new GeneratedTypeBuilderImpl(packageName, genTypeName);
+        qnameConstant(newType,BindingMapping.QNAME_STATIC_FIELD_NAME,schemaNode.QName);
         newType.addComment(schemaNode.getDescription());
         if (!genTypeBuilders.containsKey(packageName)) {
             val Map<String, GeneratedTypeBuilder> builders = new HashMap();
