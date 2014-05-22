@@ -30,7 +30,7 @@ public final class BinaryType implements BinaryTypeDefinition {
     private static final BinaryType INSTANCE = new BinaryType();
 
     private final QName name = BaseTypes.BINARY_QNAME;
-    private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
+    private final SchemaPath path = SchemaPath.create(Collections.singletonList(name), true);
     private final List<Byte> bytes = Collections.emptyList();
     private final List<LengthConstraint> lengthConstraints;
 

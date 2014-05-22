@@ -52,7 +52,7 @@ abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition 
      */
     public AbstractUnsignedInteger(final QName name, final String description, final Number maxRange, final String units) {
         this.name = name;
-        this.path = new SchemaPath(Collections.singletonList(name), true);
+        this.path = SchemaPath.create(Collections.singletonList(name), true);
         this.description = description;
         this.units = units;
         this.rangeStatements = new ArrayList<RangeConstraint>();
@@ -119,7 +119,7 @@ abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition 
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

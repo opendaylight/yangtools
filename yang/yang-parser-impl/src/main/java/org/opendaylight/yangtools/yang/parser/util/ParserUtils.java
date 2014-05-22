@@ -158,11 +158,14 @@ public final class ParserUtils {
      * @param qname
      *            one or more qnames added to base path
      * @return new SchemaPath from given path and qname
+     *
+     * @deprecated Use {@link SchemaPath#createChild(QName...)} instead.
      */
+    @Deprecated
     public static SchemaPath createSchemaPath(final SchemaPath schemaPath, final QName... qname) {
         List<QName> path = new ArrayList<>(schemaPath.getPath());
         path.addAll(Arrays.asList(qname));
-        return new SchemaPath(path, schemaPath.isAbsolute());
+        return SchemaPath.create(path, schemaPath.isAbsolute());
     }
 
     /**
@@ -299,7 +302,7 @@ public final class ParserUtils {
                 path.add(name);
             }
         }
-        return new SchemaPath(path, absolute);
+        return SchemaPath.create(path, absolute);
     }
 
     /**
@@ -596,9 +599,8 @@ public final class ParserUtils {
 
     public static DataSchemaNodeBuilder wrapChildNode(final String moduleName, final int line, final DataSchemaNode node,
             final SchemaPath parentPath, final QName qname) {
-        List<QName> path = new ArrayList<>(parentPath.getPath());
-        path.add(qname);
-        SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute());
+
+        final SchemaPath schemaPath = parentPath.createChild(qname);
 
         if (node instanceof AnyXmlSchemaNode) {
             return new AnyXmlBuilder(moduleName, line, qname, schemaPath, ((AnyXmlSchemaNode) node));
@@ -625,9 +627,7 @@ public final class ParserUtils {
         Set<GroupingBuilder> result = new HashSet<>();
         for (GroupingDefinition node : nodes) {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
-            List<QName> path = new ArrayList<>(parentPath.getPath());
-            path.add(qname);
-            SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute());
+            SchemaPath schemaPath = parentPath.createChild(qname);
             result.add(new GroupingBuilderImpl(moduleName, line, qname, schemaPath, node));
         }
         return result;
@@ -641,7 +641,7 @@ public final class ParserUtils {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
             List<QName> path = new ArrayList<>(parentPath.getPath());
             path.add(qname);
-            SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute());
+            SchemaPath schemaPath = SchemaPath.create(path, parentPath.isAbsolute());
             result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, ((ExtendedType) node)));
         }
         return result;
@@ -654,7 +654,7 @@ public final class ParserUtils {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
             List<QName> path = new ArrayList<>(parentPath.getPath());
             path.add(qname);
-            SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute());
+            SchemaPath schemaPath = SchemaPath.create(path, parentPath.isAbsolute());
             result.add(new UnknownSchemaNodeBuilder(moduleName, line, qname, schemaPath, node));
         }
         return result;

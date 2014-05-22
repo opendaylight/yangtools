@@ -161,7 +161,7 @@ public class RefineHolderTest {
         rh1.setReference("reference");
     }
 
-    private URI getUri(String uri) {
+    private URI getUri(final String uri) {
         URI simpleUri = null;
         boolean instantionated = false;
         try {
@@ -188,7 +188,7 @@ public class RefineHolderTest {
         List<QName> qnamesB = new ArrayList<>();
         qnamesA.add(qnameA);
         qnamesB.add(qnameB);
-        SchemaPath schemaPathB = new SchemaPath(qnamesB, true);
+        SchemaPath schemaPathB = SchemaPath.create(qnamesB, true);
 
         UnknownSchemaNodeBuilder usnb = new UnknownSchemaNodeBuilder("usnb", 151, new QName(simpleUri, "tst"), schemaPathB);
         UnknownSchemaNodeBuilder usnb1 = new UnknownSchemaNodeBuilder("usnb", 151, new QName(simpleUri, "tst"), schemaPathB);

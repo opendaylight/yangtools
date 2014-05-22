@@ -866,7 +866,7 @@ public final class YangParserImpl implements YangContextParser {
                 newPath.add(new QName(ns, rev, localPrefix, qn.getLocalName()));
             }
         }
-        augment.setTargetNodeSchemaPath(new SchemaPath(newPath, true));
+        augment.setTargetNodeSchemaPath(SchemaPath.create(newPath, true));
 
         for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
             correctPathForAugmentNodes(childNode, augment.getTargetNodeSchemaPath());
@@ -883,7 +883,7 @@ public final class YangParserImpl implements YangContextParser {
      *            schema path of parent node
      */
     private void correctPathForAugmentNodes(final DataSchemaNodeBuilder node, final SchemaPath parentPath) {
-        SchemaPath newPath = ParserUtils.createSchemaPath(parentPath, node.getQName());
+        SchemaPath newPath = parentPath.createChild(node.getQName());
         node.setPath(newPath);
         if (node instanceof DataNodeContainerBuilder) {
             for (DataSchemaNodeBuilder child : ((DataNodeContainerBuilder) node).getChildNodeBuilders()) {
