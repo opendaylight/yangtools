@@ -1490,7 +1490,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     private def Type createReturnTypeForUnion(GeneratedTOBuilder genTOBuilder, TypeDefinition<?> typeDef,
         GeneratedTypeBuilder typeBuilder, Module parentModule) {
-        val Type returnType = new ReferencedTypeImpl(genTOBuilder.packageName, genTOBuilder.name);
+        val GeneratedTOBuilderImpl returnType = new GeneratedTOBuilderImpl(genTOBuilder.packageName, genTOBuilder.name)
         genTOBuilder.setTypedef(true);
         genTOBuilder.setIsUnion(true);
         (typeProvider as TypeProviderImpl).addUnitsToGenTO(genTOBuilder, typeDef.getUnits());
@@ -1512,7 +1512,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         } else {
             types.add(unionBuilder.toInstance)
         }
-        return returnType
+        return returnType.toInstance
     }
 
     private def GeneratedTypeBuilder addDefaultInterfaceDefinition(String packageName, SchemaNode schemaNode) {
