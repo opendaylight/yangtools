@@ -1223,7 +1223,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         return null;
     }
 
-    private def Class<?> generateValueTransformer(Class<?> inputType, Enumeration typeSpec, TypeDefinition<?> type) {
+    private def dispatch Class<?> generateValueTransformer(Class<?> inputType, Enumeration typeSpec, TypeDefinition<?> type) {
         var EnumerationType enumSchemaType
         if (type instanceof EnumerationType) {
             enumSchemaType = type as EnumerationType
