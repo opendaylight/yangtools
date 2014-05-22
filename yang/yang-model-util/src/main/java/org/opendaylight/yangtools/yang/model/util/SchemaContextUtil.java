@@ -518,7 +518,7 @@ public final class SchemaContextUtil {
             List<QName> names = sp.getPath();
             List<QName> newNames = new ArrayList<>(names);
             newNames.remove(newNames.size() - 1);
-            SchemaPath newSp = new SchemaPath(newNames, sp.isAbsolute());
+            SchemaPath newSp = SchemaPath.create(newNames, sp.isAbsolute());
             parent = findDataSchemaNode(ctx, newSp);
 
             do {
@@ -541,7 +541,7 @@ public final class SchemaContextUtil {
                         if (nodeNewNames.isEmpty()) {
                             parent = getParentModule((SchemaNode) parent, ctx);
                         } else {
-                            SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.isAbsolute());
+                            SchemaPath nodeNewSp = SchemaPath.create(nodeNewNames, nodeSp.isAbsolute());
                             parent = findDataSchemaNode(ctx, nodeNewSp);
                         }
                     } else {
@@ -574,7 +574,7 @@ public final class SchemaContextUtil {
             List<QName> names = sp.getPath();
             List<QName> newNames = new ArrayList<>(names);
             newNames.remove(newNames.size() - 1);
-            SchemaPath newSp = new SchemaPath(newNames, sp.isAbsolute());
+            SchemaPath newSp = SchemaPath.create(newNames, sp.isAbsolute());
             parent = findDataSchemaNode(ctx, newSp);
             if (parent instanceof AugmentationTarget) {
                 tmpPath.add(currentName);

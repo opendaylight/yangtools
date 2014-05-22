@@ -59,8 +59,7 @@ public final class BaseTypes {
      * @return Schema Path from Qname.
      */
     public static SchemaPath schemaPath(final QName typeName) {
-        List<QName> pathList = Collections.singletonList(typeName);
-        return new SchemaPath(pathList, true);
+        return SchemaPath.create(Collections.singletonList(typeName), true);
     }
 
     /**
@@ -86,6 +85,6 @@ public final class BaseTypes {
                 pathList.add(qname);
             }
         }
-        return new SchemaPath(pathList, true);
+        return SchemaPath.create(pathList, true);
     }
 }

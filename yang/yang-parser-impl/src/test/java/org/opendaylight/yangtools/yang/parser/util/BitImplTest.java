@@ -13,11 +13,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
@@ -55,7 +59,7 @@ public class BitImplTest {
         List<QName> qnamesA = new ArrayList<>();
         qnamesA.add(qnameA1);
         qnamesA.add(qnameA2);
-        SchemaPath schemaPathA = new SchemaPath(qnamesA, true);
+        SchemaPath schemaPathA = SchemaPath.create(qnamesA, true);
 
         QName qnameB = new QName(uriB, new Date(5000000), "some name");
 
@@ -64,7 +68,7 @@ public class BitImplTest {
         List<QName> qnamesB = new ArrayList<>();
         qnamesB.add(qnameB1);
         qnamesB.add(qnameB2);
-        SchemaPath schemaPathB = new SchemaPath(qnamesB, true);
+        SchemaPath schemaPathB = SchemaPath.create(qnamesB, true);
 
         BitImpl biB = null;
         BitImpl biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, null);
