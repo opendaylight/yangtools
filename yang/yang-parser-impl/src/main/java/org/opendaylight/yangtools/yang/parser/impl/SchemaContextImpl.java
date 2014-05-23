@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
@@ -56,8 +57,13 @@ final class SchemaContextImpl implements SchemaContext {
     private final Set<Module> modules;
 
     SchemaContextImpl(final Set<Module> modules, final Map<ModuleIdentifier, String> identifiersToSources) {
-        this.modules = modules;
         this.identifiersToSources = identifiersToSources;
+
+        /*
+         * Instead of doing this on each invocation of getModules(), pre-compute
+         * it once and keep it around -- better than the set we got in.
+         */
+        this.modules = ImmutableSet.copyOf(ModuleDependencySort.sort(modules.toArray(new Module[modules.size()])));
 
         /*
          * The most common lookup is from Namespace->Module. Invest some quality time in
@@ -83,9 +89,7 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Set<Module> getModules() {
-        // FIXME: can we pre-compute this in the constructor?
-        List<Module> sorted = ModuleDependencySort.sort(modules.toArray(new Module[modules.size()]));
-        return new LinkedHashSet<Module>(sorted);
+        return modules;
     }
 
     @Override
@@ -139,23 +143,28 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision) {
-        if (namespace != null) {
-            Set<Module> modules = findModuleByNamespace(namespace);
+        if (namespace == null) {
+            return null;
+        }
+        final Set<Module> modules = findModuleByNamespace(namespace);
+        if (modules.isEmpty()) {
+            return null;
+        }
 
-            if (revision == null) {
-                TreeMap<Date, Module> map = new TreeMap<Date, Module>();
-                for (Module module : modules) {
-                    map.put(module.getRevision(), module);
-                }
-                if (map.isEmpty()) {
-                    return null;
-                }
-                return map.lastEntry().getValue();
-            } else {
-                for (Module module : modules) {
-                    if (module.getRevision().equals(revision)) {
-                        return(module);
-                    }
+        if (revision == null) {
+            // FIXME: The ordering of modules in Multimap could just guarantee this...
+            TreeMap<Date, Module> map = new TreeMap<Date, Module>();
+            for (Module module : modules) {
+                map.put(module.getRevision(), module);
+            }
+            if (map.isEmpty()) {
+                return null;
+            }
+            return map.lastEntry().getValue();
+        } else {
+            for (Module module : modules) {
+                if (module.getRevision().equals(revision)) {
+                    return(module);
                 }
             }
         }
