@@ -7,7 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import com.google.common.base.Optional;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -26,24 +37,39 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
 
 final class SchemaContextImpl implements SchemaContext {
-    private final Set<Module> modules;
-    private final Map<ModuleIdentifier, String> identifiersToSources;
+    private static final Supplier<HashSet<Module>> URI_SET_SUPPLIER = new Supplier<HashSet<Module>>() {
+        @Override
+        public HashSet<Module> get() {
+            return new HashSet<>();
+        }
+    };
 
-    SchemaContextImpl(final Set<Module> modules, Map<ModuleIdentifier, String> identifiersToSources) {
+    private final Map<ModuleIdentifier, String> identifiersToSources;
+    private final SetMultimap<URI, Module> namespaceToModules;
+    private final Set<Module> modules;
+
+    SchemaContextImpl(final Set<Module> modules, final Map<ModuleIdentifier, String> identifiersToSources) {
         this.modules = modules;
         this.identifiersToSources = identifiersToSources;
+
+        /*
+         * The most common lookup is from Namespace->Module. Invest some quality time in
+         * building that up.
+         */
+        final SetMultimap<URI, Module> multimap = Multimaps.newSetMultimap(
+                new TreeMap<URI, Collection<Module>>(), URI_SET_SUPPLIER);
+        for (Module m : modules) {
+            multimap.put(m.getNamespace(), m);
+        }
+
+        namespaceToModules = ImmutableSetMultimap.copyOf(multimap);
     }
 
     @Override
@@ -57,6 +83,7 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Set<Module> getModules() {
+        // FIXME: can we pre-compute this in the constructor?
         List<Module> sorted = ModuleDependencySort.sort(modules.toArray(new Module[modules.size()]));
         return new LinkedHashSet<Module>(sorted);
     }
@@ -106,19 +133,12 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Set<Module> findModuleByNamespace(final URI namespace) {
-        final Set<Module> ret = new HashSet<Module>();
-        if (namespace != null) {
-            for (final Module module : modules) {
-                if (module.getNamespace().equals(namespace)) {
-                    ret.add(module);
-                }
-            }
-        }
-        return ret;
+        final Set<Module> ret = namespaceToModules.get(namespace);
+        return ret == null ? Collections.<Module>emptySet() : ret;
     }
 
     @Override
-    public Module findModuleByNamespaceAndRevision(URI namespace, Date revision) {
+    public Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision) {
         if (namespace != null) {
             Set<Module> modules = findModuleByNamespace(namespace);
 
@@ -224,7 +244,7 @@ final class SchemaContextImpl implements SchemaContext {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(QName name) {
+    public DataSchemaNode getDataChildByName(final QName name) {
         DataSchemaNode result = null;
         for (Module module : modules) {
             result = module.getDataChildByName(name);
@@ -236,7 +256,7 @@ final class SchemaContextImpl implements SchemaContext {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(String name) {
+    public DataSchemaNode getDataChildByName(final String name) {
         DataSchemaNode result = null;
         for (Module module : modules) {
             result = module.getDataChildByName(name);
@@ -269,7 +289,7 @@ final class SchemaContextImpl implements SchemaContext {
     }
 
     @Override
-    public Optional<String> getModuleSource(ModuleIdentifier moduleIdentifier) {
+    public Optional<String> getModuleSource(final ModuleIdentifier moduleIdentifier) {
         String maybeSource = identifiersToSources.get(moduleIdentifier);
         return Optional.fromNullable(maybeSource);
     }

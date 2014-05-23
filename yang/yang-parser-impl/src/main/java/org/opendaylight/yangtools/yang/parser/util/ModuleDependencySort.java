@@ -52,30 +52,34 @@ public final class ModuleDependencySort {
     }
 
     /**
+     * Extracts {@link ModuleBuilder} from a {@link ModuleNodeImpl}.
+     */
+    private static final Function<Node, ModuleBuilder> NODE_TO_MODULEBUILDER = new Function<Node, ModuleBuilder>() {
+        @Override
+        public ModuleBuilder apply(final Node input) {
+            // Cast to ModuleBuilder from Node and return
+            return (ModuleBuilder) ((ModuleNodeImpl) input).getReference();
+        }
+    };
+
+    /**
      * Topological sort of module builder dependency graph.
      *
      * @return Sorted list of Module builders. Modules can be further processed
      *         in returned order.
      */
-    public static List<ModuleBuilder> sort(ModuleBuilder... builders) {
+    public static List<ModuleBuilder> sort(final ModuleBuilder... builders) {
         List<Node> sorted = sortInternal(Arrays.asList(builders));
-        // Cast to ModuleBuilder from Node and return
-        return Lists.transform(sorted, new Function<Node, ModuleBuilder>() {
-
-            @Override
-            public ModuleBuilder apply(Node input) {
-                return (ModuleBuilder) ((ModuleNodeImpl) input).getReference();
-            }
-        });
+        return Lists.transform(sorted, NODE_TO_MODULEBUILDER);
     }
 
-    public static List<ModuleBuilder> sort(Collection<ModuleBuilder> builders) {
+    public static List<ModuleBuilder> sort(final Collection<ModuleBuilder> builders) {
         ModuleBuilder[] array = new ModuleBuilder[builders.size()];
         builders.toArray(array);
         return sort(array);
     }
 
-    public static List<ModuleBuilder> sortWithContext(SchemaContext context, ModuleBuilder... builders) {
+    public static List<ModuleBuilder> sortWithContext(final SchemaContext context, final ModuleBuilder... builders) {
         List<Object> modules = new ArrayList<Object>();
         Collections.addAll(modules, builders);
         modules.addAll(context.getModules());
@@ -85,7 +89,7 @@ public final class ModuleDependencySort {
         return Lists.transform(sorted, new Function<Node, ModuleBuilder>() {
 
             @Override
-            public ModuleBuilder apply(Node input) {
+            public ModuleBuilder apply(final Node input) {
                 if (((ModuleNodeImpl) input).getReference() instanceof ModuleBuilder) {
                     return (ModuleBuilder) ((ModuleNodeImpl) input).getReference();
                 } else {
@@ -101,19 +105,19 @@ public final class ModuleDependencySort {
      * @return Sorted list of Modules. Modules can be further processed in
      *         returned order.
      */
-    public static List<Module> sort(Module... modules) {
+    public static List<Module> sort(final Module... modules) {
         List<Node> sorted = sortInternal(Arrays.asList(modules));
         // Cast to Module from Node and return
         return Lists.transform(sorted, new Function<Node, Module>() {
 
             @Override
-            public Module apply(Node input) {
+            public Module apply(final Node input) {
                 return (Module) ((ModuleNodeImpl) input).getReference();
             }
         });
     }
 
-    private static List<Node> sortInternal(List<?> modules) {
+    private static List<Node> sortInternal(final List<?> modules) {
         Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = createModuleGraph(modules);
 
         Set<Node> nodes = Sets.newHashSet();
@@ -127,7 +131,7 @@ public final class ModuleDependencySort {
     }
 
     @VisibleForTesting
-    static Map<String, Map<Date, ModuleNodeImpl>> createModuleGraph(List<?> builders) {
+    static Map<String, Map<Date, ModuleNodeImpl>> createModuleGraph(final List<?> builders) {
         Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = Maps.newHashMap();
 
         processModules(moduleGraph, builders);
@@ -139,7 +143,7 @@ public final class ModuleDependencySort {
     /**
      * Extract module:revision from module builders
      */
-    private static void processDependencies(Map<String, Map<Date, ModuleNodeImpl>> moduleGraph, List<?> builders) {
+    private static void processDependencies(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph, final List<?> builders) {
         Map<URI, Object> allNS = new HashMap<>();
 
         // Create edges in graph
@@ -219,8 +223,8 @@ public final class ModuleDependencySort {
     /**
      * Get imported module by its name and revision from moduleGraph
      */
-    private static ModuleNodeImpl getModuleByNameAndRevision(Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
-            String fromName, Date fromRevision, String toName, Date toRevision) {
+    private static ModuleNodeImpl getModuleByNameAndRevision(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
+            final String fromName, final Date fromRevision, final String toName, final Date toRevision) {
         ModuleNodeImpl to = null;
 
         if (moduleGraph.get(toName) == null || !moduleGraph.get(toName).containsKey(toRevision)) {
@@ -246,7 +250,7 @@ public final class ModuleDependencySort {
         return to;
     }
 
-    private static void ex(String message) {
+    private static void ex(final String message) {
         throw new YangValidationException(message);
     }
 
@@ -254,7 +258,7 @@ public final class ModuleDependencySort {
      * Extract dependencies from module builders or modules to fill dependency
      * graph
      */
-    private static void processModules(Map<String, Map<Date, ModuleNodeImpl>> moduleGraph, List<?> builders) {
+    private static void processModules(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph, final List<?> builders) {
 
         // Process nodes
         for (Object mb : builders) {
@@ -290,7 +294,7 @@ public final class ModuleDependencySort {
         }
     }
 
-    private static String formatRevDate(Date rev) {
+    private static String formatRevDate(final Date rev) {
         return rev.equals(DEFAULT_REVISION) ? "default" : new SimpleDateFormat("yyyy-MM-dd").format(rev);
     }
 
@@ -300,7 +304,7 @@ public final class ModuleDependencySort {
         private final Date revision;
         private final Object originalObject;
 
-        public ModuleNodeImpl(String name, Date revision, Object builder) {
+        public ModuleNodeImpl(final String name, final Date revision, final Object builder) {
             this.name = name;
             this.revision = revision;
             this.originalObject = builder;
@@ -324,7 +328,7 @@ public final class ModuleDependencySort {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
