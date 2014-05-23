@@ -39,8 +39,9 @@ public interface CompositeNode extends //
      * Returns a list of children as seens in resulting XML serialization
      * defined by YANG specification.
      *
-     *
      * @return
+     *
+     * @deprecated Use {@link #getValue()} instead.
      */
     @Deprecated
     List<Node<?>> getChildren();
