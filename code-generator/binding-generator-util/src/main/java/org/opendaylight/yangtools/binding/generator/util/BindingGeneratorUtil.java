@@ -14,12 +14,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +40,8 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
+import com.google.common.base.Splitter;
+
 /**
  * Contains the methods for converting strings to valid JAVA language strings
  * (package names, class names, attribute names).
@@ -65,17 +64,6 @@ public final class BindingGeneratorUtil {
     };
 
     /**
-     * Array of strings values which represents JAVA reserved words.
-     */
-    @Deprecated
-    private static final String[] SET_VALUES = new String[] { "abstract", "assert", "boolean", "break", "byte", "case",
-            "catch", "char", "class", "const", "continue", "default", "double", "do", "else", "enum", "extends",
-            "false", "final", "finally", "float", "for", "goto", "if", "implements", "import", "instanceof", "int",
-            "interface", "long", "native", "new", "null", "package", "private", "protected", "public", "return",
-            "short", "static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws", "transient",
-            "true", "try", "void", "volatile", "while" };
-
-    /**
      * Impossible to instantiate this class. All of the methods or attributes
      * are static.
      */
@@ -83,16 +71,11 @@ public final class BindingGeneratorUtil {
     }
 
     /**
-     * Hash set of words which are reserved in JAVA language.
-     */
-    @Deprecated
-    private static final Set<String> JAVA_RESERVED_WORDS = new HashSet<String>(Arrays.asList(SET_VALUES));
-
-    /**
      * Pre-compiled replacement pattern.
      */
     private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
     private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
+    private static final Splitter DOT = Splitter.on('.');
 
     /**
      * Converts string <code>packageName</code> to valid JAVA package name.
@@ -105,26 +88,27 @@ public final class BindingGeneratorUtil {
      * @return package name which contains words separated by point.
      */
     private static String validateJavaPackage(final String packageName) {
-        if (packageName != null) {
-            final String[] packNameParts = packageName.toLowerCase().split("\\.");
-            if (packNameParts != null) {
-                final StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < packNameParts.length; ++i) {
-                    final String packNamePart = packNameParts[i];
-                    if (Character.isDigit(packNamePart.charAt(0))) {
-                        packNameParts[i] = "_" + packNamePart;
-                    } else if (JAVA_RESERVED_WORDS.contains(packNamePart)) {
-                        packNameParts[i] = "_" + packNamePart;
-                    }
-                    if (i > 0) {
-                        builder.append(".");
-                    }
-                    builder.append(packNameParts[i]);
-                }
-                return builder.toString();
-            }
+        if (packageName == null) {
+            return null;
         }
-        return packageName;
+
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+
+        for (String p : DOT.split(packageName.toLowerCase())) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append('.');
+            }
+
+            if (Character.isDigit(p.charAt(0)) || BindingMapping.JAVA_RESERVED_WORDS.contains(p)) {
+                builder.append('_');
+            }
+            builder.append(p);
+        }
+
+        return builder.toString();
     }
 
     /**
@@ -138,7 +122,7 @@ public final class BindingGeneratorUtil {
      * @return string with the admissible parameter name
      */
     public static String resolveJavaReservedWordEquivalency(final String parameterName) {
-        if (parameterName != null && JAVA_RESERVED_WORDS.contains(parameterName)) {
+        if (parameterName != null && BindingMapping.JAVA_RESERVED_WORDS.contains(parameterName)) {
             return "_" + parameterName;
         }
         return parameterName;
@@ -169,8 +153,7 @@ public final class BindingGeneratorUtil {
         if (module.getRevision() == null) {
             throw new IllegalArgumentException("Module " + module.getName() + " does not specify revision date!");
         }
-        packageNameBuilder.append("org.opendaylight.yang.gen.v");
-        packageNameBuilder.append(module.getYangVersion());
+        packageNameBuilder.append(BindingMapping.PACKAGE_PREFIX);
         packageNameBuilder.append('.');
 
         String namespace = module.getNamespace().toString();
