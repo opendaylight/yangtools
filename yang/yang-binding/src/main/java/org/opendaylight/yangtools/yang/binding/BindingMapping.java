@@ -33,7 +33,7 @@ public final class BindingMapping {
     public static final String QNAME_STATIC_FIELD_NAME = "QNAME";
     public static final String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
 
-    private static final Splitter SPACE_SPLITTER = Splitter.on(" ").omitEmptyStrings().trimResults();
+    private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
     public static final String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
     public static final String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
