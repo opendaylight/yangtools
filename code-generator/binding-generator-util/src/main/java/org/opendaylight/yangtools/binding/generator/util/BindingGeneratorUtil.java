@@ -338,19 +338,14 @@ public final class BindingGeneratorUtil {
         correctStr = replaceWithCamelCase(correctStr, '-');
         correctStr = replaceWithCamelCase(correctStr, '_');
 
-        String firstChar = correctStr.substring(0, 1);
-        if (uppercase) {
-            firstChar = firstChar.toUpperCase();
-        } else {
-            firstChar = firstChar.toLowerCase();
-        }
+        char firstChar = correctStr.charAt(0);
+        firstChar = uppercase ? Character.toUpperCase(firstChar) : Character.toLowerCase(firstChar);
 
-        if (firstChar.matches("[0-9]")) {
-            correctStr = "_" + correctStr;
+        if (firstChar >= '0' && firstChar <= '9') {
+            return correctStr = '_' + correctStr;
         } else {
-            correctStr = firstChar + correctStr.substring(1);
+            return correctStr = firstChar + correctStr.substring(1);
         }
-        return correctStr;
     }
 
     /**
