@@ -145,7 +145,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
             }
             currentSourceContext = context;
         } catch (Exception e) {
-            LOG.error("Could not create schema context for {} ",context.getValidSources());
+            LOG.error("Could not create schema context for {} ", context.getValidSources(), e);
         }
         return Optional.absent();
     }
