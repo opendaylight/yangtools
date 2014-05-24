@@ -20,6 +20,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
@@ -57,7 +59,7 @@ public final class BindingGeneratorUtil {
         }
 
         @Override
-        public void set(SimpleDateFormat value) {
+        public void set(final SimpleDateFormat value) {
             throw new UnsupportedOperationException();
         }
     };
@@ -85,6 +87,12 @@ public final class BindingGeneratorUtil {
      */
     @Deprecated
     private static final Set<String> JAVA_RESERVED_WORDS = new HashSet<String>(Arrays.asList(SET_VALUES));
+
+    /**
+     * Pre-compiled replacement pattern.
+     */
+    private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
+    private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
 
     /**
      * Converts string <code>packageName</code> to valid JAVA package name.
@@ -163,10 +171,12 @@ public final class BindingGeneratorUtil {
         }
         packageNameBuilder.append("org.opendaylight.yang.gen.v");
         packageNameBuilder.append(module.getYangVersion());
-        packageNameBuilder.append(".");
+        packageNameBuilder.append('.');
 
         String namespace = module.getNamespace().toString();
-        namespace = namespace.replace("://", ".");
+        namespace = COLON_SLASH_SLASH.matcher(namespace).replaceAll(QUOTED_DOT);
+
+        // FIXME: improve these
         namespace = namespace.replace("/", ".");
         namespace = namespace.replace(":", ".");
         namespace = namespace.replace("-", ".");
@@ -207,7 +217,7 @@ public final class BindingGeneratorUtil {
      * @return string with valid JAVA package name
      */
     public static String packageNameForGeneratedType(final String basePackageName, final SchemaPath schemaPath,
-            boolean isUsesAugment) {
+            final boolean isUsesAugment) {
         if (basePackageName == null) {
             throw new IllegalArgumentException("Base Package Name cannot be NULL!");
         }
@@ -277,7 +287,7 @@ public final class BindingGeneratorUtil {
      * @deprecated Use {@link BindingMapping#getClassName(QName)} instead.
      */
     @Deprecated
-    public static String parseToClassName(String token) {
+    public static String parseToClassName(final String token) {
         return parseToCamelCase(token, true);
     }
 
@@ -357,7 +367,7 @@ public final class BindingGeneratorUtil {
      * @throws IllegalArgumentException
      *             if the length of the returning string has length 0
      */
-    private static String replaceWithCamelCase(String text, char removalChar) {
+    private static String replaceWithCamelCase(final String text, final char removalChar) {
         StringBuilder sb = new StringBuilder(text);
         String toBeRemoved = String.valueOf(removalChar);
 
@@ -376,7 +386,7 @@ public final class BindingGeneratorUtil {
         return sb.toString();
     }
 
-    public static long computeDefaultSUID(GeneratedTOBuilderImpl to) {
+    public static long computeDefaultSUID(final GeneratedTOBuilderImpl to) {
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             DataOutputStream dout = new DataOutputStream(bout);
@@ -387,7 +397,7 @@ public final class BindingGeneratorUtil {
             List<Type> impl = to.getImplementsTypes();
             Collections.sort(impl, new Comparator<Type>() {
                 @Override
-                public int compare(Type o1, Type o2) {
+                public int compare(final Type o1, final Type o2) {
                     return o1.getFullyQualifiedName().compareTo(o2.getFullyQualifiedName());
                 }
             });
@@ -397,7 +407,7 @@ public final class BindingGeneratorUtil {
 
             Comparator<TypeMemberBuilder<?>> comparator = new Comparator<TypeMemberBuilder<?>>() {
                 @Override
-                public int compare(TypeMemberBuilder<?> o1, TypeMemberBuilder<?> o2) {
+                public int compare(final TypeMemberBuilder<?> o1, final TypeMemberBuilder<?> o2) {
                     return o1.getName().compareTo(o2.getName());
                 }
             };
@@ -433,7 +443,7 @@ public final class BindingGeneratorUtil {
         }
     }
 
-    public static Restrictions getRestrictions(TypeDefinition<?> type) {
+    public static Restrictions getRestrictions(final TypeDefinition<?> type) {
         final List<LengthConstraint> length = new ArrayList<>();
         final List<PatternConstraint> pattern = new ArrayList<>();
         final List<RangeConstraint> range = new ArrayList<>();
