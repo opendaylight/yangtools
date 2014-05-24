@@ -159,21 +159,26 @@ public final class BindingGeneratorUtil {
         String namespace = module.getNamespace().toString();
         namespace = COLON_SLASH_SLASH.matcher(namespace).replaceAll(QUOTED_DOT);
 
-        // FIXME: improve these
-        namespace = namespace.replace("/", ".");
-        namespace = namespace.replace(":", ".");
-        namespace = namespace.replace("-", ".");
-        namespace = namespace.replace("@", ".");
-        namespace = namespace.replace("$", ".");
-        namespace = namespace.replace("#", ".");
-        namespace = namespace.replace("'", ".");
-        namespace = namespace.replace("*", ".");
-        namespace = namespace.replace("+", ".");
-        namespace = namespace.replace(",", ".");
-        namespace = namespace.replace(";", ".");
-        namespace = namespace.replace("=", ".");
+        final char[] chars = namespace.toCharArray();
+        for (int i = 0; i < chars.length; ++i) {
+            switch (chars[i]) {
+            case '/':
+            case ':':
+            case '-':
+            case '@':
+            case '$':
+            case '#':
+            case '\'':
+            case '*':
+            case '+':
+            case ',':
+            case ';':
+            case '=':
+                chars[i] = '.';
+            }
+        }
 
-        packageNameBuilder.append(namespace);
+        packageNameBuilder.append(chars);
         packageNameBuilder.append(".rev");
         packageNameBuilder.append(DATE_FORMAT.get().format(module.getRevision()));
 
@@ -218,11 +223,11 @@ public final class BindingGeneratorUtil {
             traversalSteps = (pathToNode.size() - 1);
         }
         for (int i = 0; i < traversalSteps; ++i) {
-            builder.append(".");
+            builder.append('.');
             String nodeLocalName = pathToNode.get(i).getLocalName();
 
-            nodeLocalName = nodeLocalName.replace(":", ".");
-            nodeLocalName = nodeLocalName.replace("-", ".");
+            nodeLocalName = nodeLocalName.replace(':', '.');
+            nodeLocalName = nodeLocalName.replace('-', '.');
             builder.append(nodeLocalName);
         }
         return validateJavaPackage(builder.toString());
