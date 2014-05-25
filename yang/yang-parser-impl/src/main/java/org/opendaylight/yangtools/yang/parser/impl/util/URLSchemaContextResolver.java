@@ -18,11 +18,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
@@ -41,15 +40,20 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     private YangSourceContext currentSourceContext;
     private Optional<SchemaContext> currentSchemaContext = Optional.absent();
 
-    public ObjectRegistration<URL> registerSource(URL source) {
+    public ObjectRegistration<URL> registerSource(final URL source) throws IOException, YangSyntaxErrorException {
         checkArgument(source != null, "Supplied source must not be null");
         InputStream yangStream = getInputStream(source);
         YangModelDependencyInfo modelInfo = YangModelDependencyInfo.fromInputStream(yangStream);
         SourceIdentifier identifier = SourceIdentifier.create(modelInfo.getName(),
                 Optional.of(modelInfo.getFormattedRevision()));
-        SourceContext sourceContext = new SourceContext(source, identifier, modelInfo);
-        availableSources.putIfAbsent(identifier, sourceContext);
-        return sourceContext;
+
+        SourceContext sourceContext = SourceContext.create(this, source, identifier, modelInfo);
+        synchronized (this) {
+            if (availableSources.putIfAbsent(identifier, sourceContext) != null) {
+                LOG.warn("Duplicate source for the same module {}, ignoring it", identifier);
+            }
+            return sourceContext;
+        }
     }
 
     public Optional<SchemaContext> getSchemaContext() {
@@ -57,7 +61,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     }
 
     @Override
-    public Optional<InputStream> getSchemaSource(SourceIdentifier key) {
+    public Optional<InputStream> getSchemaSource(final SourceIdentifier key) {
         SourceContext ctx = availableSources.get(key);
         if (ctx != null) {
             InputStream stream = getInputStream(ctx.getInstance());
@@ -67,11 +71,11 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     }
 
     @Override
-    public Optional<InputStream> getSchemaSource(String name, Optional<String> version) {
+    public Optional<InputStream> getSchemaSource(final String name, final Optional<String> version) {
         return getSchemaSource(SourceIdentifier.create(name, version));
     }
 
-    private InputStream getInputStream(URL source) {
+    private InputStream getInputStream(final URL source) {
         InputStream stream;
         try {
             stream = source.openStream();
@@ -81,34 +85,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         return stream;
     }
 
-    private final class SourceContext extends AbstractObjectRegistration<URL> //
-            implements Identifiable<SourceIdentifier> {
-
-        final SourceIdentifier identifier;
-        final YangModelDependencyInfo dependencyInfo;
-
-        public SourceContext(URL instance, SourceIdentifier identifier, YangModelDependencyInfo modelInfo) {
-            super(instance);
-            this.identifier = identifier;
-            this.dependencyInfo = modelInfo;
-        }
-
-        @Override
-        public SourceIdentifier getIdentifier() {
-            return identifier;
-        }
-
-        @Override
-        protected void removeRegistration() {
-            removeSource(this);
-        }
-
-        public YangModelDependencyInfo getDependencyInfo() {
-            return dependencyInfo;
-        }
-    }
-
-    private void removeSource(SourceContext sourceContext) {
+    synchronized void removeSource(final SourceContext sourceContext) {
         boolean removed = availableSources.remove(sourceContext.getIdentifier(), sourceContext);
         if(removed) {
             tryToUpdateSchemaContext();
@@ -116,9 +93,12 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     }
 
     public synchronized Optional<SchemaContext> tryToUpdateSchemaContext() {
-        if(availableSources.isEmpty()) {
+        // Fast path: empty sources mean no context
+        if (availableSources.isEmpty()) {
             return Optional.absent();
         }
+
+
         ImmutableMap<SourceIdentifier, SourceContext> actualSources = ImmutableMap.copyOf(availableSources);
         Builder<SourceIdentifier, YangModelDependencyInfo> builder = ImmutableMap.<SourceIdentifier, YangModelDependencyInfo> builder();
         for(Entry<SourceIdentifier, SourceContext> entry : actualSources.entrySet()) {

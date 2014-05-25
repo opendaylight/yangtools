@@ -567,8 +567,8 @@ public final class YangParserImpl implements YangContextParser {
         return trees;
     }
 
-    private YangContext parseYangSource(final ByteSource source) throws IOException, YangSyntaxErrorException {
-    	try (InputStream stream = source.openStream()) {
+    public static YangContext parseYangSource(final ByteSource source) throws IOException, YangSyntaxErrorException {
+        try (InputStream stream = source.openStream()) {
             final ANTLRInputStream input = new ANTLRInputStream(stream);
             final YangLexer lexer = new YangLexer(input);
             final CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -582,7 +582,7 @@ public final class YangParserImpl implements YangContextParser {
             errorListener.validate();
 
             return result;
-    	}
+        }
     }
 
     public static YangContext parseStreamWithoutErrorListeners(final InputStream yangStream) {
