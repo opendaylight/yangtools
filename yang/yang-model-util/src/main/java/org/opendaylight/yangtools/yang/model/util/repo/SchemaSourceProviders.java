@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util.repo;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 
 import org.opendaylight.yangtools.concepts.Delegator;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 
 public class SchemaSourceProviders {
@@ -20,12 +21,12 @@ public class SchemaSourceProviders {
     private static final SchemaSourceProvider NOOP_PROVIDER = new AdvancedSchemaSourceProvider() {
 
         @Override
-        public Optional getSchemaSource(String moduleName, Optional revision) {
+        public Optional getSchemaSource(final String moduleName, final Optional revision) {
             return Optional.absent();
         }
 
         @Override
-        public Optional getSchemaSource(SourceIdentifier sourceIdentifier) {
+        public Optional getSchemaSource(final SourceIdentifier sourceIdentifier) {
             return Optional.absent();
         }
 
@@ -33,15 +34,15 @@ public class SchemaSourceProviders {
 
     @SuppressWarnings("unchecked")
     public static <T> SchemaSourceProvider<T> noopProvider() {
-        return (SchemaSourceProvider<T>) NOOP_PROVIDER;
+        return NOOP_PROVIDER;
     }
 
     public static SchemaSourceProvider<InputStream> inputStreamProviderfromStringProvider(
-            AdvancedSchemaSourceProvider<String> delegate) {
+            final AdvancedSchemaSourceProvider<String> delegate) {
         return new StringToInputStreamSchemaSourceProvider(delegate);
     }
 
-    public static <O> AdvancedSchemaSourceProvider<O> toAdvancedSchemaSourceProvider(SchemaSourceProvider<O> schemaSourceProvider) {
+    public static <O> AdvancedSchemaSourceProvider<O> toAdvancedSchemaSourceProvider(final SchemaSourceProvider<O> schemaSourceProvider) {
         if (schemaSourceProvider instanceof AdvancedSchemaSourceProvider<?>) {
             return (AdvancedSchemaSourceProvider<O>) schemaSourceProvider;
         }
@@ -51,9 +52,9 @@ public class SchemaSourceProviders {
     private final static class StringToInputStreamSchemaSourceProvider implements //
             AdvancedSchemaSourceProvider<InputStream>, Delegator<AdvancedSchemaSourceProvider<String>> {
 
-        private AdvancedSchemaSourceProvider<String> delegate;
+        private final AdvancedSchemaSourceProvider<String> delegate;
 
-        public StringToInputStreamSchemaSourceProvider(AdvancedSchemaSourceProvider<String> delegate) {
+        public StringToInputStreamSchemaSourceProvider(final AdvancedSchemaSourceProvider<String> delegate) {
             this.delegate = delegate;
         }
 
@@ -63,19 +64,18 @@ public class SchemaSourceProviders {
         }
 
         @Override
-        public Optional<InputStream> getSchemaSource(SourceIdentifier sourceIdentifier) {
+        public Optional<InputStream> getSchemaSource(final SourceIdentifier sourceIdentifier) {
             Optional<String> potentialSource = getDelegate().getSchemaSource(sourceIdentifier);
             if (potentialSource.isPresent()) {
-                String stringSource = potentialSource.get();
-                @SuppressWarnings("deprecation")
-                StringBufferInputStream stringInputStream = new StringBufferInputStream(stringSource);
-                return Optional.<InputStream> of(stringInputStream);
+                final String stringSource = potentialSource.get();
+                return Optional.<InputStream> of(
+                        new ByteArrayInputStream(stringSource.getBytes(Charsets.UTF_8)));
             }
             return Optional.absent();
         }
 
         @Override
-        public Optional<InputStream> getSchemaSource(String moduleName, Optional<String> revision) {
+        public Optional<InputStream> getSchemaSource(final String moduleName, final Optional<String> revision) {
             return getSchemaSource(SourceIdentifier.create(moduleName, revision));
         }
     }
@@ -86,7 +86,7 @@ public class SchemaSourceProviders {
 
         private final SchemaSourceProvider<O> delegate;
 
-        public SchemaSourceCompatibilityWrapper(SchemaSourceProvider<O> delegate) {
+        public SchemaSourceCompatibilityWrapper(final SchemaSourceProvider<O> delegate) {
             this.delegate = delegate;
         }
 
@@ -94,17 +94,17 @@ public class SchemaSourceProviders {
         public SchemaSourceProvider<O> getDelegate() {
             return delegate;
         }
-        
+
         @Override
-        public Optional<O> getSchemaSource(SourceIdentifier sourceIdentifier) {
-            
+        public Optional<O> getSchemaSource(final SourceIdentifier sourceIdentifier) {
+
             final String moduleName = sourceIdentifier.getName();
             Optional<String> revision = Optional.fromNullable(sourceIdentifier.getRevision());
             return delegate.getSchemaSource(moduleName, revision);
         }
-        
+
         @Override
-        public Optional<O> getSchemaSource(String moduleName, Optional<String> revision) {
+        public Optional<O> getSchemaSource(final String moduleName, final Optional<String> revision) {
             return delegate.getSchemaSource(moduleName, revision);
         }
     }
