@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,10 +17,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -71,14 +69,22 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuil
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Collections2;
+import com.google.common.io.ByteSource;
+
 public final class ParserUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParserUtils.class);
+    private static final Splitter SLASH_SPLITTER = Splitter.on('/');
+    private static final Splitter COLON_SPLITTER = Splitter.on(':');
 
     private ParserUtils() {
     }
 
-    public static Collection<ByteSource> streamsToByteSources(Collection<InputStream> streams) {
+    public static Collection<ByteSource> streamsToByteSources(final Collection<InputStream> streams) {
         return Collections2.transform(streams, new Function<InputStream, ByteSource>() {
             @Override
             public ByteSource apply(final InputStream input) {
@@ -101,7 +107,7 @@ public final class ParserUtils {
         };
     }
 
-    public static Collection<ByteSource> filesToByteSources(Collection<File> streams) throws FileNotFoundException {
+    public static Collection<ByteSource> filesToByteSources(final Collection<File> streams) throws FileNotFoundException {
         return Collections2.transform(streams, new Function<File, ByteSource>() {
             @Override
             public ByteSource apply(final File input) {
@@ -121,7 +127,7 @@ public final class ParserUtils {
      * @param sourceToBuilder
      *            source to module mapping
      */
-    public static void setSourceToBuilder(Map<ByteSource, ModuleBuilder> sourceToBuilder) throws IOException {
+    public static void setSourceToBuilder(final Map<ByteSource, ModuleBuilder> sourceToBuilder) throws IOException {
         for (Map.Entry<ByteSource, ModuleBuilder> entry : sourceToBuilder.entrySet()) {
             ModuleBuilder builder = entry.getValue();
             ByteSource source = entry.getKey();
@@ -153,7 +159,7 @@ public final class ParserUtils {
      *            one or more qnames added to base path
      * @return new SchemaPath from given path and qname
      */
-    public static SchemaPath createSchemaPath(SchemaPath schemaPath, QName... qname) {
+    public static SchemaPath createSchemaPath(final SchemaPath schemaPath, final QName... qname) {
         List<QName> path = new ArrayList<>(schemaPath.getPath());
         path.addAll(Arrays.asList(qname));
         return new SchemaPath(path, schemaPath.isAbsolute());
@@ -168,7 +174,7 @@ public final class ParserUtils {
      *            prefix associated with import
      * @return ModuleImport based on given prefix
      */
-    public static ModuleImport getModuleImport(ModuleBuilder builder, String prefix) {
+    public static ModuleImport getModuleImport(final ModuleBuilder builder, final String prefix) {
         for (ModuleImport mi : builder.getModuleImports()) {
             if (mi.getPrefix().equals(prefix)) {
                 return mi;
@@ -191,8 +197,8 @@ public final class ParserUtils {
      *            current line in yang model
      * @return module builder if found, null otherwise
      */
-    public static ModuleBuilder findModuleFromBuilders(Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            ModuleBuilder module, String prefix, int line) {
+    public static ModuleBuilder findModuleFromBuilders(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final ModuleBuilder module, final String prefix, final int line) {
         ModuleBuilder dependentModule = null;
         Date dependentModuleRevision = null;
 
@@ -234,8 +240,8 @@ public final class ParserUtils {
      *            current line in yang model
      * @return module based on given prefix if found in context, null otherwise
      */
-    public static Module findModuleFromContext(SchemaContext context, ModuleBuilder currentModule, String prefix,
-            int line) {
+    public static Module findModuleFromContext(final SchemaContext context, final ModuleBuilder currentModule, final String prefix,
+            final int line) {
         if (context == null) {
             throw new YangParseException(currentModule.getName(), line, "Cannot find module with prefix '" + prefix
                     + "'.");
@@ -275,18 +281,20 @@ public final class ParserUtils {
      *            XPath as String
      * @return SchemaPath from given String
      */
-    public static SchemaPath parseXPathString(String xpathString) {
-        boolean absolute = xpathString.startsWith("/");
-        String[] splittedPath = xpathString.split("/");
-        List<QName> path = new ArrayList<QName>();
-        QName name;
-        for (String pathElement : splittedPath) {
+    public static SchemaPath parseXPathString(final String xpathString) {
+        final boolean absolute = xpathString.indexOf('/') == 0;
+
+        final List<QName> path = new ArrayList<QName>();
+        for (String pathElement : SLASH_SPLITTER.split(xpathString)) {
             if (pathElement.length() > 0) {
-                String[] splittedElement = pathElement.split(":");
-                if (splittedElement.length == 1) {
-                    name = new QName(null, null, null, splittedElement[0]);
+                final Iterator<String> it = COLON_SPLITTER.split(pathElement).iterator();
+                final String s = it.next();
+
+                final QName name;
+                if (it.hasNext()) {
+                    name = new QName(null, null, s, it.next());
                 } else {
-                    name = new QName(null, null, splittedElement[0], splittedElement[1]);
+                    name = new QName(null, null, null, s);
                 }
                 path.add(name);
             }
@@ -302,7 +310,7 @@ public final class ParserUtils {
      * @param target
      *            augmentation target node
      */
-    public static void fillAugmentTarget(AugmentationSchemaBuilder augment, Builder target) {
+    public static void fillAugmentTarget(final AugmentationSchemaBuilder augment, final Builder target) {
         if (target instanceof DataNodeContainerBuilder) {
             fillAugmentTarget(augment, (DataNodeContainerBuilder) target);
         } else if (target instanceof ChoiceBuilder) {
@@ -323,7 +331,7 @@ public final class ParserUtils {
      * @param target
      *            augmentation target node
      */
-    private static void fillAugmentTarget(AugmentationSchemaBuilder augment, DataNodeContainerBuilder target) {
+    private static void fillAugmentTarget(final AugmentationSchemaBuilder augment, final DataNodeContainerBuilder target) {
         for (DataSchemaNodeBuilder child : augment.getChildNodeBuilders()) {
             DataSchemaNodeBuilder childCopy = CopyUtils.copy(child, target, false);
             if (augment.getParent() instanceof UsesNodeBuilder) {
@@ -349,7 +357,7 @@ public final class ParserUtils {
      * @param target
      *            augmentation target choice node
      */
-    private static void fillAugmentTarget(AugmentationSchemaBuilder augment, ChoiceBuilder target) {
+    private static void fillAugmentTarget(final AugmentationSchemaBuilder augment, final ChoiceBuilder target) {
         for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
             DataSchemaNodeBuilder childCopy = CopyUtils.copy(builder, target, false);
             if (augment.getParent() instanceof UsesNodeBuilder) {
@@ -371,7 +379,7 @@ public final class ParserUtils {
      *
      * @param node
      */
-    private static void setNodeAugmenting(DataSchemaNodeBuilder node) {
+    private static void setNodeAugmenting(final DataSchemaNodeBuilder node) {
         node.setAugmenting(true);
         if (node instanceof DataNodeContainerBuilder) {
             DataNodeContainerBuilder dataNodeChild = (DataNodeContainerBuilder) node;
@@ -391,7 +399,7 @@ public final class ParserUtils {
      *
      * @param node
      */
-    public static void setNodeAddedByUses(GroupingMember node) {
+    public static void setNodeAddedByUses(final GroupingMember node) {
         node.setAddedByUses(true);
         if (node instanceof DataNodeContainerBuilder) {
             DataNodeContainerBuilder dataNodeChild = (DataNodeContainerBuilder) node;
@@ -414,7 +422,7 @@ public final class ParserUtils {
      * @param config
      *            new config value
      */
-    public static void setNodeConfig(DataSchemaNodeBuilder node, Boolean config) {
+    public static void setNodeConfig(final DataSchemaNodeBuilder node, final Boolean config) {
         if (node instanceof ContainerSchemaNodeBuilder || node instanceof LeafSchemaNodeBuilder
                 || node instanceof LeafListSchemaNodeBuilder || node instanceof ListSchemaNodeBuilder
                 || node instanceof ChoiceBuilder || node instanceof AnyXmlBuilder) {
@@ -433,7 +441,7 @@ public final class ParserUtils {
         }
     }
 
-    public static DataSchemaNodeBuilder findSchemaNode(List<QName> path, SchemaNodeBuilder parentNode) {
+    public static DataSchemaNodeBuilder findSchemaNode(final List<QName> path, final SchemaNodeBuilder parentNode) {
         DataSchemaNodeBuilder node = null;
         SchemaNodeBuilder parent = parentNode;
         int i = 0;
@@ -464,7 +472,7 @@ public final class ParserUtils {
         return node;
     }
 
-    public static SchemaNodeBuilder findSchemaNodeInModule(List<QName> pathToNode, ModuleBuilder module) {
+    public static SchemaNodeBuilder findSchemaNodeInModule(final List<QName> pathToNode, final ModuleBuilder module) {
         List<QName> path = new ArrayList<>(pathToNode);
         QName first = path.remove(0);
 
@@ -506,7 +514,7 @@ public final class ParserUtils {
      *            path to augment target
      * @return true if augmentation process succeed, false otherwise
      */
-    public static boolean processAugmentation(AugmentationSchemaBuilder augment, ModuleBuilder firstNodeParent) {
+    public static boolean processAugmentation(final AugmentationSchemaBuilder augment, final ModuleBuilder firstNodeParent) {
         List<QName> path = augment.getTargetPath().getPath();
         Builder targetNode = findSchemaNodeInModule(path, firstNodeParent);
         if (targetNode == null) {
@@ -519,27 +527,31 @@ public final class ParserUtils {
         return true;
     }
 
-    public static IdentitySchemaNodeBuilder findBaseIdentity(Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            ModuleBuilder module, String baseString, int line) {
-        IdentitySchemaNodeBuilder result = null;
-        if (baseString.contains(":")) {
-            String[] splittedBase = baseString.split(":");
-            if (splittedBase.length > 2) {
+    public static IdentitySchemaNodeBuilder findBaseIdentity(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final ModuleBuilder module, final String baseString, final int line) {
+
+        // FIXME: optimize indexOf() away?
+        if (baseString.indexOf(':') != -1) {
+            final Iterator<String> it = COLON_SPLITTER.split(baseString).iterator();
+            final String prefix = it.next();
+            final String name = it.next();
+
+            if (it.hasNext()) {
                 throw new YangParseException(module.getName(), line, "Failed to parse identityref base: " + baseString);
             }
-            String prefix = splittedBase[0];
-            String name = splittedBase[1];
+
             ModuleBuilder dependentModule = findModuleFromBuilders(modules, module, prefix, line);
-            if (dependentModule != null) {
-                result = findIdentity(dependentModule.getAddedIdentities(), name);
+            if (dependentModule == null) {
+                return null;
             }
+
+            return findIdentity(dependentModule.getAddedIdentities(), name);
         } else {
-            result = findIdentity(module.getAddedIdentities(), baseString);
+            return findIdentity(module.getAddedIdentities(), baseString);
         }
-        return result;
     }
 
-    public static IdentitySchemaNodeBuilder findIdentity(Set<IdentitySchemaNodeBuilder> identities, String name) {
+    public static IdentitySchemaNodeBuilder findIdentity(final Set<IdentitySchemaNodeBuilder> identities, final String name) {
         for (IdentitySchemaNodeBuilder identity : identities) {
             if (identity.getQName().getLocalName().equals(name)) {
                 return identity;
@@ -554,7 +566,7 @@ public final class ParserUtils {
      * @param node
      * @return builder of module where this node is defined
      */
-    public static ModuleBuilder getParentModule(Builder node) {
+    public static ModuleBuilder getParentModule(final Builder node) {
         if (node instanceof ModuleBuilder) {
             return (ModuleBuilder) node;
         }
@@ -570,8 +582,8 @@ public final class ParserUtils {
         return parentModule;
     }
 
-    public static Set<DataSchemaNodeBuilder> wrapChildNodes(String moduleName, int line, Set<DataSchemaNode> nodes,
-            SchemaPath parentPath, URI ns, Date rev, String pref) {
+    public static Set<DataSchemaNodeBuilder> wrapChildNodes(final String moduleName, final int line, final Set<DataSchemaNode> nodes,
+            final SchemaPath parentPath, final URI ns, final Date rev, final String pref) {
         Set<DataSchemaNodeBuilder> result = new HashSet<>();
 
         for (DataSchemaNode node : nodes) {
@@ -582,8 +594,8 @@ public final class ParserUtils {
         return result;
     }
 
-    public static DataSchemaNodeBuilder wrapChildNode(String moduleName, int line, DataSchemaNode node,
-            SchemaPath parentPath, QName qname) {
+    public static DataSchemaNodeBuilder wrapChildNode(final String moduleName, final int line, final DataSchemaNode node,
+            final SchemaPath parentPath, final QName qname) {
         List<QName> path = new ArrayList<>(parentPath.getPath());
         path.add(qname);
         SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute());
@@ -608,8 +620,8 @@ public final class ParserUtils {
         }
     }
 
-    public static Set<GroupingBuilder> wrapGroupings(String moduleName, int line, Set<GroupingDefinition> nodes,
-            SchemaPath parentPath, URI ns, Date rev, String pref) {
+    public static Set<GroupingBuilder> wrapGroupings(final String moduleName, final int line, final Set<GroupingDefinition> nodes,
+            final SchemaPath parentPath, final URI ns, final Date rev, final String pref) {
         Set<GroupingBuilder> result = new HashSet<>();
         for (GroupingDefinition node : nodes) {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
@@ -621,8 +633,8 @@ public final class ParserUtils {
         return result;
     }
 
-    public static Set<TypeDefinitionBuilder> wrapTypedefs(String moduleName, int line, DataNodeContainer dataNode,
-            SchemaPath parentPath, URI ns, Date rev, String pref) {
+    public static Set<TypeDefinitionBuilder> wrapTypedefs(final String moduleName, final int line, final DataNodeContainer dataNode,
+            final SchemaPath parentPath, final URI ns, final Date rev, final String pref) {
         Set<TypeDefinition<?>> nodes = dataNode.getTypeDefinitions();
         Set<TypeDefinitionBuilder> result = new HashSet<>();
         for (TypeDefinition<?> node : nodes) {
@@ -635,8 +647,8 @@ public final class ParserUtils {
         return result;
     }
 
-    public static List<UnknownSchemaNodeBuilder> wrapUnknownNodes(String moduleName, int line,
-            List<UnknownSchemaNode> nodes, SchemaPath parentPath, URI ns, Date rev, String pref) {
+    public static List<UnknownSchemaNodeBuilder> wrapUnknownNodes(final String moduleName, final int line,
+            final List<UnknownSchemaNode> nodes, final SchemaPath parentPath, final URI ns, final Date rev, final String pref) {
         List<UnknownSchemaNodeBuilder> result = new ArrayList<>();
         for (UnknownSchemaNode node : nodes) {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
