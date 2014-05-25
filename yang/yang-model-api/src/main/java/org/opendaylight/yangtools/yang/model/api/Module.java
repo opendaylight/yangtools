@@ -158,7 +158,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      * @return set of the augmentation schema instances which are specified in
      *         the module as YANG {@link Module <b><font
      *         color="#dc143c">augment</font></b>} keyword and are
-     *         lexicographicaly ordered
+     *         lexicographically ordered
      */
     Set<AugmentationSchema> getAugmentations();
 
@@ -188,7 +188,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      * @return set of identity schema node instances which are specified in the
      *         module as YANG {@link Module <b><font
      *         color="#bdb76b">identity</font></b>} keywords and are
-     *         lexicographicaly ordered
+     *         lexicographically ordered
      */
     Set<IdentitySchemaNode> getIdentities();
 
@@ -199,7 +199,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      * @return set of extension definition instances which are specified in the
      *         module as YANG {@link Module <b><font
      *         color="#808000">extension</font></b>} keyword and are
-     *         lexicographicaly ordered
+     *         lexicographically ordered
      */
     List<ExtensionDefinition> getExtensionSchemaNodes();
 

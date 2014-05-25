@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.parser.api;
 
-import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+
+import com.google.common.io.ByteSource;
 
 /**
  * Parse yang models and convert data to SchemaContext.
@@ -30,7 +32,7 @@ public interface YangContextParser extends YangModelParser {
      *         only module parsed from yangFile and modules which yangFile needs
      *         as dependencies.
      */
-    SchemaContext parseFile(final File yangFile, final File dependenciesDirectory) throws IOException;
+    SchemaContext parseFile(final File yangFile, final File dependenciesDirectory) throws IOException, YangSyntaxErrorException;
 
     /**
      * Parse one or more Yang model files and return the definitions of Yang
@@ -57,7 +59,7 @@ public interface YangContextParser extends YangModelParser {
      *            SchemaContext containing already parsed yang models
      * @return parsed data as SchemaContext
      */
-    SchemaContext parseFiles(final Collection<File> yangFiles, final SchemaContext context) throws IOException;
+    SchemaContext parseFiles(final Collection<File> yangFiles, final SchemaContext context) throws IOException, YangSyntaxErrorException;
 
     /**
      * Parse one or more Yang model streams and return the definitions of Yang
@@ -69,7 +71,7 @@ public interface YangContextParser extends YangModelParser {
      *            yang streams to parse
      * @return parsed data as SchemaContext
      */
-    SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException;
+    SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException;
 
     /**
      * Parse one or more Yang model streams and return the definitions of Yang
@@ -84,6 +86,6 @@ public interface YangContextParser extends YangModelParser {
      *            SchemaContext containing already parsed yang models
      * @return parsed data as SchemaContext
      */
-    SchemaContext parseSources(final Collection<ByteSource> sources, final SchemaContext context) throws IOException;
+    SchemaContext parseSources(final Collection<ByteSource> sources, final SchemaContext context) throws IOException, YangSyntaxErrorException;
 
 }

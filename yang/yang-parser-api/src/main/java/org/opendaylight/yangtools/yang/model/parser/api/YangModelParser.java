@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.parser.api;
 
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
@@ -18,12 +14,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+
 /**
  * Yang Model Parser interface is designed for parsing yang models and convert
  * the information to Data Schema Tree.
  *
  */
-// refactor methods returning input streams, after introducing
+// FIXME: refactor methods returning input streams, after introducing (?)
 public interface YangModelParser {
 
     /**
@@ -113,7 +113,7 @@ public interface YangModelParser {
 
     /**
      * Equivalent to {@link #parseYangModels(List)} that returns parsed modules
-     * mapped to IputStreams from which they were parsed.
+     * mapped to InputStreams from which they were parsed.
      *
      * @param yangModelStreams
      *            yang streams to parse
