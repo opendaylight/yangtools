@@ -19,6 +19,7 @@
 
     <modules>
         <module>bug527-test-model</module>
+        <module>bundle-test</module>
         <module>regression-test-model</module>
         <module>yang-runtime-tests</module>
     </modules>
