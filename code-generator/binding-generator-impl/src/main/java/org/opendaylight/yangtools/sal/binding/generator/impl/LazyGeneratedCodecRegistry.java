@@ -1302,11 +1302,10 @@ class LazyGeneratedCodecRegistry implements //
 
         @Override
         @SuppressWarnings("unchecked")
-        public ValueWithQName<T> deserialize(final Node<?> input, final InstanceIdentifier<?> bindingIdentifier) {
-            // if (!isAcceptable(bindingIdentifier)) {
-            // return null;
-            // }
-            Object rawCodecValue = getDelegate().deserialize(input, bindingIdentifier);
+        public ValueWithQName<T> deserialize(final Node<?> input, final InstanceIdentifier<?> path) {
+            Preconditions.checkArgument(augmentationType.equals(path.getTargetType()), "Supplied path %s must have target type of %s",path,augmentationType);
+            Preconditions.checkArgument(isAcceptable(path),"Path %s is not in the scope of codec. Valid paths are %s",path,validAugmentationTargets.keySet());
+            Object rawCodecValue = getDelegate().deserialize(input, path);
             return new ValueWithQName<T>(input.getNodeType(), (T) rawCodecValue);
         }
 

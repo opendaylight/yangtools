@@ -233,6 +233,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     private CompositeNode toCompositeNodeImpl(final DataObject object) {
         Class<? extends DataContainer> cls = object.getImplementedInterface();
         waitForSchema(cls);
+        @SuppressWarnings("unchecked")
         DataContainerCodec<DataObject> codec = (DataContainerCodec<DataObject>) registry.getCodecForDataObject(cls);
         return codec.serialize(new ValueWithQName<DataObject>(null, object));
     }
@@ -242,6 +243,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         PathArgument last = identifier.getPath().get(identifier.getPath().size() - 1);
         Class<? extends DataContainer> cls = object.getImplementedInterface();
         waitForSchema(cls);
+        @SuppressWarnings("unchecked")
         DataContainerCodec<DataObject> codec = (DataContainerCodec<DataObject>) registry.getCodecForDataObject(cls);
         return codec.serialize(new ValueWithQName<DataObject>(last.getNodeType(), object));
     }
@@ -253,7 +255,9 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         // waitForSchema(cls);
         org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument last = identifier.getPath().get(
                 identifier.getPath().size() - 1);
-        AugmentationCodec codec = registry.getCodecForAugmentation((Class) object.getImplementedInterface());
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        AugmentationCodec codec = registry.getCodecForAugmentation((Class<? extends Augmentation<?>>) object.getImplementedInterface());
+        @SuppressWarnings("unchecked")
         CompositeNode ret = codec.serialize(new ValueWithQName<DataObject>(last.getNodeType(), object));
         if (last instanceof NodeIdentifierWithPredicates) {
             NodeIdentifierWithPredicates predicates = (NodeIdentifierWithPredicates) last;
@@ -261,7 +265,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             for (Map.Entry<QName, Object> predicate : predicates.getKeyValues().entrySet()) {
                 newNodes.add(new SimpleNodeTOImpl<Object>(predicate.getKey(), null, predicate.getValue()));
             }
-            newNodes.addAll(ret.getChildren());
+            newNodes.addAll(ret.getValue());
             return new CompositeNodeTOImpl(last.getNodeType(), null, newNodes);
         }
         return ret;
@@ -303,7 +307,6 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
         try {
             final Class<? extends DataContainer> container = path.getTargetType();
-            // FIXME: deprecate use without iid
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> wildcardedPath = createWildcarded(path);
 
             final DataContainerCodec<? extends DataContainer> transformer = registry.getCodecForDataObject(container);
@@ -405,6 +408,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         // FIXME: Add check for valids inputs
         // which are Notification and Rpc Input / Rpc Output
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataContainer> id = org.opendaylight.yangtools.yang.binding.InstanceIdentifier
                 .create((Class) container);
         Preconditions.checkNotNull(id, "Failed to create path for type %s", container);
@@ -416,6 +420,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             throw new IllegalStateException("Failed to create data object", e);
         }
     }
+
 
     @Override
     public synchronized Optional<Class<? extends RpcService>> getRpcServiceClassFor(final String namespace, final String revision) {
@@ -429,8 +434,9 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
         try {
             Optional<Type> rpcTypeName = getRpcServiceType(module);
             if (rpcTypeName.isPresent()) {
-                Class<?> rpcClass = classLoadingStrategy.loadClass(rpcTypeName.get().getFullyQualifiedName());
-                return Optional.<Class<? extends RpcService>> of((Class<? extends RpcService>) rpcClass);
+                @SuppressWarnings("unchecked")
+                Class<? extends RpcService> rpcClass = (Class<? extends RpcService>) classLoadingStrategy.loadClass(rpcTypeName.get().getFullyQualifiedName());
+                return Optional.<Class<? extends RpcService>> of(rpcClass);
             }
         } catch (Exception e) {
             LOG.debug("RPC class not present for {},{}", namespace, revision, e);
