@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.yang.validator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.opendaylight.yangtools.antlrv4.code.gen.*;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Anyxml_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Augment_stmtContext;
@@ -58,6 +57,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Typedef_stmtContex
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Unique_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Uses_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yin_element_argContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParserBaseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,20 +70,11 @@ import com.google.common.collect.Sets;
  */
 final class YangModelBasicValidationListener extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangModelBasicValidationListener.class);
-    private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
-    private final Set<String> uniquePrefixes;
-    private final Set<String> uniqueImports;
-    private final Set<String> uniqueIncludes;
+    private final Set<String> uniquePrefixes = new HashSet<>();
+    private final Set<String> uniqueImports = new HashSet<>();
+    private final Set<String> uniqueIncludes = new HashSet<>();
 
     private String globalModuleId;
-
-    YangModelBasicValidationListener() {
-        super();
-        uniquePrefixes = Sets.newHashSet();
-        uniqueImports = Sets.newHashSet();
-        uniqueIncludes = Sets.newHashSet();
-    }
 
     /**
      * Constraints:
@@ -95,7 +86,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterModule_stmt(Module_stmtContext ctx) {
+    public void enterModule_stmt(final Module_stmtContext ctx) {
 
         BasicValidations.checkIdentifier(ctx);
 
@@ -116,7 +107,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterSubmodule_stmt(Submodule_stmtContext ctx) {
+    public void enterSubmodule_stmt(final Submodule_stmtContext ctx) {
 
         BasicValidations.checkIdentifier(ctx);
 
@@ -135,7 +126,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterSubmodule_header_stmts(Submodule_header_stmtsContext ctx) {
+    public void enterSubmodule_header_stmts(final Submodule_header_stmtsContext ctx) {
         BasicValidations.checkPresentChildOfType(ctx, Belongs_to_stmtContext.class, true);
 
         // check Yang version present, if not log
@@ -154,7 +145,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterModule_header_stmts(Module_header_stmtsContext ctx) {
+    public void enterModule_header_stmts(final Module_header_stmtsContext ctx) {
         String moduleName = ValidationUtil.getRootParentName(ctx);
 
         BasicValidations.checkPresentChildOfType(ctx, Namespace_stmtContext.class, true);
@@ -175,8 +166,8 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterRevision_stmt(Revision_stmtContext ctx) {
-        BasicValidations.checkDateFormat(ctx, SIMPLE_DATE_FORMAT);
+    public void enterRevision_stmt(final Revision_stmtContext ctx) {
+        BasicValidations.checkDateFormat(ctx);
 
     }
 
@@ -188,7 +179,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterBelongs_to_stmt(Belongs_to_stmtContext ctx) {
+    public void enterBelongs_to_stmt(final Belongs_to_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
 
         BasicValidations.checkPresentChildOfType(ctx, Prefix_stmtContext.class, true);
@@ -201,7 +192,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterNamespace_stmt(Namespace_stmtContext ctx) {
+    public void enterNamespace_stmt(final Namespace_stmtContext ctx) {
         String namespaceName = ValidationUtil.getName(ctx);
         String rootParentName = ValidationUtil.getRootParentName(ctx);
 
@@ -223,7 +214,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterImport_stmt(Import_stmtContext ctx) {
+    public void enterImport_stmt(final Import_stmtContext ctx) {
 
         BasicValidations.checkIdentifier(ctx);
 
@@ -240,8 +231,8 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterRevision_date_stmt(Revision_date_stmtContext ctx) {
-        BasicValidations.checkDateFormat(ctx, SIMPLE_DATE_FORMAT);
+    public void enterRevision_date_stmt(final Revision_date_stmtContext ctx) {
+        BasicValidations.checkDateFormat(ctx);
     }
 
     /**
@@ -253,7 +244,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterInclude_stmt(Include_stmtContext ctx) {
+    public void enterInclude_stmt(final Include_stmtContext ctx) {
 
         BasicValidations.checkIdentifier(ctx);
 
@@ -267,7 +258,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterYang_version_stmt(YangParser.Yang_version_stmtContext ctx) {
+    public void enterYang_version_stmt(final YangParser.Yang_version_stmtContext ctx) {
         String version = ValidationUtil.getName(ctx);
         String rootParentName = ValidationUtil.getRootParentName(ctx);
         if (!version.equals(BasicValidations.SUPPORTED_YANG_VERSION)) {
@@ -285,7 +276,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterPrefix_stmt(Prefix_stmtContext ctx) {
+    public void enterPrefix_stmt(final Prefix_stmtContext ctx) {
 
         BasicValidations.checkIdentifier(ctx);
 
@@ -300,7 +291,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterTypedef_stmt(Typedef_stmtContext ctx) {
+    public void enterTypedef_stmt(final Typedef_stmtContext ctx) {
 
         BasicValidations.checkIdentifier(ctx);
 
@@ -314,7 +305,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterType_stmt(Type_stmtContext ctx) {
+    public void enterType_stmt(final Type_stmtContext ctx) {
         BasicValidations.checkPrefixedIdentifier(ctx);
     }
 
@@ -325,7 +316,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterContainer_stmt(Container_stmtContext ctx) {
+    public void enterContainer_stmt(final Container_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -338,7 +329,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterLeaf_stmt(Leaf_stmtContext ctx) {
+    public void enterLeaf_stmt(final Leaf_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
 
         BasicValidations.checkPresentChildOfType(ctx, Type_stmtContext.class, true);
@@ -354,7 +345,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterLeaf_list_stmt(Leaf_list_stmtContext ctx) {
+    public void enterLeaf_list_stmt(final Leaf_list_stmtContext ctx) {
 
         BasicValidations.checkIdentifier(ctx);
 
@@ -370,7 +361,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterOrdered_by_arg(Ordered_by_argContext ctx) {
+    public void enterOrdered_by_arg(final Ordered_by_argContext ctx) {
         BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_ORDER_BY_ARGS);
     }
 
@@ -381,7 +372,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterList_stmt(List_stmtContext ctx) {
+    public void enterList_stmt(final List_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
         // TODO check: "if config==true then key must be present" could be
         // performed
@@ -394,7 +385,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterKey_stmt(Key_stmtContext ctx) {
+    public void enterKey_stmt(final Key_stmtContext ctx) {
         BasicValidations.getAndCheckUniqueKeys(ctx);
     }
 
@@ -405,7 +396,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterUnique_stmt(Unique_stmtContext ctx) {
+    public void enterUnique_stmt(final Unique_stmtContext ctx) {
         BasicValidations.getAndCheckUniqueKeys(ctx);
     }
 
@@ -417,7 +408,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterChoice_stmt(Choice_stmtContext ctx) {
+    public void enterChoice_stmt(final Choice_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
 
         BasicValidations.checkNotPresentBoth(ctx, Mandatory_stmtContext.class, Default_stmtContext.class);
@@ -431,7 +422,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterCase_stmt(Case_stmtContext ctx) {
+    public void enterCase_stmt(final Case_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -444,7 +435,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterMandatory_arg(Mandatory_argContext ctx) {
+    public void enterMandatory_arg(final Mandatory_argContext ctx) {
         BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_BOOLEAN_ARGS);
     }
 
@@ -455,7 +446,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterAnyxml_stmt(Anyxml_stmtContext ctx) {
+    public void enterAnyxml_stmt(final Anyxml_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -466,7 +457,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterGrouping_stmt(Grouping_stmtContext ctx) {
+    public void enterGrouping_stmt(final Grouping_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -477,7 +468,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterUses_stmt(Uses_stmtContext ctx) {
+    public void enterUses_stmt(final Uses_stmtContext ctx) {
         BasicValidations.checkPrefixedIdentifier(ctx);
     }
 
@@ -488,7 +479,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterRefine_stmt(Refine_stmtContext ctx) {
+    public void enterRefine_stmt(final Refine_stmtContext ctx) {
         BasicValidations.checkSchemaNodeIdentifier(ctx);
     }
 
@@ -499,7 +490,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterRpc_stmt(Rpc_stmtContext ctx) {
+    public void enterRpc_stmt(final Rpc_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -510,7 +501,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterNotification_stmt(Notification_stmtContext ctx) {
+    public void enterNotification_stmt(final Notification_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -521,7 +512,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterAugment_stmt(Augment_stmtContext ctx) {
+    public void enterAugment_stmt(final Augment_stmtContext ctx) {
         BasicValidations.checkSchemaNodeIdentifier(ctx);
     }
 
@@ -532,7 +523,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterIdentity_stmt(Identity_stmtContext ctx) {
+    public void enterIdentity_stmt(final Identity_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -543,7 +534,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterBase_stmt(Base_stmtContext ctx) {
+    public void enterBase_stmt(final Base_stmtContext ctx) {
         BasicValidations.checkPrefixedIdentifier(ctx);
 
     }
@@ -555,7 +546,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterYin_element_arg(Yin_element_argContext ctx) {
+    public void enterYin_element_arg(final Yin_element_argContext ctx) {
         BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_BOOLEAN_ARGS);
     }
 
@@ -566,7 +557,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterExtension_stmt(Extension_stmtContext ctx) {
+    public void enterExtension_stmt(final Extension_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -577,7 +568,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterArgument_stmt(Argument_stmtContext ctx) {
+    public void enterArgument_stmt(final Argument_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
     }
 
@@ -588,7 +579,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterFeature_stmt(Feature_stmtContext ctx) {
+    public void enterFeature_stmt(final Feature_stmtContext ctx) {
         BasicValidations.checkIdentifier(ctx);
 
     }
@@ -600,7 +591,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterIf_feature_stmt(If_feature_stmtContext ctx) {
+    public void enterIf_feature_stmt(final If_feature_stmtContext ctx) {
         BasicValidations.checkPrefixedIdentifier(ctx);
     }
 
@@ -612,7 +603,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterDeviation_stmt(Deviation_stmtContext ctx) {
+    public void enterDeviation_stmt(final Deviation_stmtContext ctx) {
         BasicValidations.checkSchemaNodeIdentifier(ctx);
 
         Set<Class<? extends ParseTree>> types = Sets.newHashSet();
@@ -628,7 +619,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterConfig_arg(Config_argContext ctx) {
+    public void enterConfig_arg(final Config_argContext ctx) {
         BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_BOOLEAN_ARGS);
     }
 
@@ -641,7 +632,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
      * </ol>
      */
     @Override
-    public void enterStatus_arg(Status_argContext ctx) {
+    public void enterStatus_arg(final Status_argContext ctx) {
         BasicValidations.checkOnlyPermittedValues(ctx, PERMITTED_STATUS_ARGS);
     }
 
