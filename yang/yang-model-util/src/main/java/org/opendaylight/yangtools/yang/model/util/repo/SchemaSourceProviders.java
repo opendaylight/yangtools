@@ -13,9 +13,16 @@ import java.io.InputStream;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 
-public class SchemaSourceProviders {
+/**
+ *
+ * Utility functions for {@link SchemaSourceProvider}
+ *
+ */
+public final class SchemaSourceProviders {
 
     @SuppressWarnings("rawtypes")
     private static final SchemaSourceProvider NOOP_PROVIDER = new AdvancedSchemaSourceProvider() {
@@ -32,51 +39,98 @@ public class SchemaSourceProviders {
 
     };
 
+    @SuppressWarnings("rawtypes")
+    private static final SchemaSourceTransformation IDENTITY_TRANFORMATION = new IdentityTransformation();
+
+    private static final StringToInputStreamTransformation STRING_TO_INPUTSTREAM_TRANSFORMATION = new StringToInputStreamTransformation();
+
+    private SchemaSourceProviders() {
+        throw new UnsupportedOperationException("Utility class.");
+    }
+
+    /**
+     * Returns a noop schema source provider.
+     *
+     * Noop schema provider returns {@link Optional#absent()} for each call to
+     * query schema source.
+     *
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static <T> SchemaSourceProvider<T> noopProvider() {
         return NOOP_PROVIDER;
     }
 
+    /**
+     *
+     * Returns delegating schema source provider which returns InputStream from
+     * supplied String based schema source provider.
+     *
+     * @param delegate
+     * @return
+     */
     public static SchemaSourceProvider<InputStream> inputStreamProviderfromStringProvider(
             final AdvancedSchemaSourceProvider<String> delegate) {
-        return new StringToInputStreamSchemaSourceProvider(delegate);
+        return TransformingSourceProvider.create(delegate, STRING_TO_INPUTSTREAM_TRANSFORMATION);
     }
 
-    public static <O> AdvancedSchemaSourceProvider<O> toAdvancedSchemaSourceProvider(final SchemaSourceProvider<O> schemaSourceProvider) {
+    /**
+     * Returns identity implementation of SchemaSourceTransformation
+     *
+     * Identity implementation of SchemaSourceTransformation is useful
+     * for usecases where Input and Output of SchemaSourceTransformation
+     * are identitcal, and you want to reuse input as an output.
+     *
+     * This implementation is really simple <code>return input;</code>.
+     *
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static <I> SchemaSourceTransformation<I, I> identityTransformation() {
+        return IDENTITY_TRANFORMATION;
+    }
+
+    public static <I, O> SchemaSourceTransformation<I, O> schemaSourceTransformationFrom(
+            final Function<I, O> transformation) {
+        return new FunctionBasedSchemaSourceTransformation<I, O>(transformation);
+    }
+
+    /**
+     *
+     * Casts {@link SchemaSourceProvider} to
+     * {@link AdvancedSchemaSourceProvider} or wraps it with utility
+     * implementation if supplied delegate does not implement
+     * {@link AdvancedSchemaSourceProvider}.
+     *
+     * @param schemaSourceProvider
+     */
+    public static <O> AdvancedSchemaSourceProvider<O> toAdvancedSchemaSourceProvider(
+            final SchemaSourceProvider<O> schemaSourceProvider) {
         if (schemaSourceProvider instanceof AdvancedSchemaSourceProvider<?>) {
             return (AdvancedSchemaSourceProvider<O>) schemaSourceProvider;
         }
         return new SchemaSourceCompatibilityWrapper<O>(schemaSourceProvider);
     }
 
-    private final static class StringToInputStreamSchemaSourceProvider implements //
-            AdvancedSchemaSourceProvider<InputStream>, Delegator<AdvancedSchemaSourceProvider<String>> {
+    private static final class FunctionBasedSchemaSourceTransformation<I, O> implements
+            SchemaSourceTransformation<I, O> {
 
-        private final AdvancedSchemaSourceProvider<String> delegate;
 
-        public StringToInputStreamSchemaSourceProvider(final AdvancedSchemaSourceProvider<String> delegate) {
-            this.delegate = delegate;
+        private final Function<I, O> delegate;
+
+        protected FunctionBasedSchemaSourceTransformation(final Function<I, O> delegate) {
+            super();
+            this.delegate = Preconditions.checkNotNull(delegate, "delegate MUST NOT be null.");
         }
 
         @Override
-        public AdvancedSchemaSourceProvider<String> getDelegate() {
-            return delegate;
+        public O transform(final I input) {
+            return delegate.apply(input);
         }
 
         @Override
-        public Optional<InputStream> getSchemaSource(final SourceIdentifier sourceIdentifier) {
-            Optional<String> potentialSource = getDelegate().getSchemaSource(sourceIdentifier);
-            if (potentialSource.isPresent()) {
-                final String stringSource = potentialSource.get();
-                return Optional.<InputStream> of(
-                        new ByteArrayInputStream(stringSource.getBytes(Charsets.UTF_8)));
-            }
-            return Optional.absent();
-        }
-
-        @Override
-        public Optional<InputStream> getSchemaSource(final String moduleName, final Optional<String> revision) {
-            return getSchemaSource(SourceIdentifier.create(moduleName, revision));
+        public String toString() {
+            return "FunctionBasedSchemaSourceTransformation [delegate=" + delegate + "]";
         }
     }
 
@@ -95,6 +149,16 @@ public class SchemaSourceProviders {
             return delegate;
         }
 
+
+        /*
+         * Deprecation warnings are suppresed, since this implementation
+         * needs to invoke deprecated method in order to provide
+         * implementation of non-deprecated APIs using legacy ones.
+         *
+         * (non-Javadoc)
+         * @see org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider#getSchemaSource(org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier)
+         */
+        @SuppressWarnings("deprecation")
         @Override
         public Optional<O> getSchemaSource(final SourceIdentifier sourceIdentifier) {
 
@@ -103,10 +167,37 @@ public class SchemaSourceProviders {
             return delegate.getSchemaSource(moduleName, revision);
         }
 
+        /*
+         * Deprecation warnings are suppresed, since this implementation
+         * needs to invoke deprecated method in order to provide
+         * implementation of non-deprecated APIs using legacy ones.
+         *
+         * (non-Javadoc)
+         * @see org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider#getSchemaSource(org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier)
+         */
         @Override
+        @SuppressWarnings("deprecation")
         public Optional<O> getSchemaSource(final String moduleName, final Optional<String> revision) {
             return delegate.getSchemaSource(moduleName, revision);
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static class  IdentityTransformation implements SchemaSourceTransformation {
+
+        @Override
+        public Object transform(final Object input) {
+            return input;
+        }
+    }
+
+    private static class StringToInputStreamTransformation implements SchemaSourceTransformation<String, InputStream> {
+
+        @Override
+        public InputStream transform(final String input) {
+            return new ByteArrayInputStream(input.getBytes(Charsets.UTF_8));
+        }
+
     }
 
 }
