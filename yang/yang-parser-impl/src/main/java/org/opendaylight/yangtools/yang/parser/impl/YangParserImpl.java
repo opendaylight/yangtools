@@ -26,9 +26,6 @@ import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeU
 import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnionWithContext;
 import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeWithContext;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBiMap;
-import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -64,6 +62,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -97,6 +96,10 @@ import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.HashBiMap;
+import com.google.common.io.ByteSource;
+
 
 public final class YangParserImpl implements YangContextParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
@@ -104,16 +107,17 @@ public final class YangParserImpl implements YangContextParser {
     private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
 
     @Override
+    @Deprecated
     public Set<Module> parseYangModels(final File yangFile, final File directory) {
         try {
             return parseFile(yangFile, directory).getModules();
-        } catch (IOException e) {
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
         }
     }
 
     @Override
-    public SchemaContext parseFile(final File yangFile, final File directory) throws IOException {
+    public SchemaContext parseFile(final File yangFile, final File directory) throws IOException, YangSyntaxErrorException {
         Preconditions.checkState(yangFile.exists(), yangFile + " does not exists");
         Preconditions.checkState(directory.exists(), directory + " does not exists");
         Preconditions.checkState(directory.isDirectory(), directory + " is not a directory");
@@ -153,6 +157,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
+    @Deprecated
     public Set<Module> parseYangModels(final List<File> yangFiles) {
         return parseFiles(yangFiles).getModules();
     }
@@ -166,16 +171,17 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
+    @Deprecated
     public Set<Module> parseYangModels(final List<File> yangFiles, final SchemaContext context) {
         try {
             return parseFiles(yangFiles, context).getModules();
-        } catch (IOException e) {
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
         }
     }
 
     @Override
-    public SchemaContext parseFiles(final Collection<File> yangFiles, final SchemaContext context) throws IOException {
+    public SchemaContext parseFiles(final Collection<File> yangFiles, final SchemaContext context) throws IOException, YangSyntaxErrorException {
         if (yangFiles == null) {
             return resolveSchemaContext(Collections.<Module> emptySet());
         }
@@ -186,17 +192,18 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
+    @Deprecated
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams) {
         Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
         try {
             return parseSources(sources).getModules();
-        } catch (IOException e) {
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
         }
     }
 
     @Override
-    public SchemaContext parseSources(Collection<ByteSource> sources) throws IOException {
+    public SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
         Collection<Module> unsorted = parseYangModelSources(sources).values();
         Set<Module> sorted = new LinkedHashSet<>(
                 ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
@@ -204,17 +211,18 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, SchemaContext context) {
+    @Deprecated
+    public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, final SchemaContext context) {
         Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
         try {
             return parseSources(sources, context).getModules();
-        } catch (IOException e) {
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
         }
     }
 
     @Override
-    public SchemaContext parseSources(Collection<ByteSource> sources, SchemaContext context) throws IOException {
+    public SchemaContext parseSources(final Collection<ByteSource> sources, final SchemaContext context) throws IOException, YangSyntaxErrorException {
         if (sources == null) {
             return resolveSchemaContext(Collections.<Module> emptySet());
         }
@@ -234,7 +242,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    public Map<File, Module> parseYangModelsMapped(Collection<File> yangFiles) {
+    public Map<File, Module> parseYangModelsMapped(final Collection<File> yangFiles) {
         if (yangFiles == null || yangFiles.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -253,7 +261,7 @@ public final class YangParserImpl implements YangContextParser {
         Map<ByteSource, Module> byteSourceToModule;
         try {
             byteSourceToModule = parseYangModelSources(byteSourceToFile.keySet());
-        } catch (IOException e) {
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
         }
         Map<File, Module> result = new LinkedHashMap<>();
@@ -283,7 +291,7 @@ public final class YangParserImpl implements YangContextParser {
         Map<ByteSource, Module> sourceToModule;
         try {
             sourceToModule = parseYangModelSources(sourceToStream.keySet());
-        } catch (IOException e) {
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
         }
         Map<InputStream, Module> result = new LinkedHashMap<>();
@@ -304,7 +312,7 @@ public final class YangParserImpl implements YangContextParser {
         return new SchemaContextImpl(modules, identifiersToSources);
     }
 
-    private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources) throws IOException {
+    private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
         if (sources == null || sources.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -334,14 +342,15 @@ public final class YangParserImpl implements YangContextParser {
      *            collection of streams to parse
      * @return map, where key is source stream and value is module builder
      *         parsed from stream
+     * @throws YangSyntaxErrorException
      */
-    private Map<ByteSource, ModuleBuilder> resolveSources(Collection<ByteSource> streams) throws IOException {
+    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams) throws IOException, YangSyntaxErrorException {
         Map<ByteSource, ModuleBuilder> builders = parseSourcesToBuilders(streams);
         Map<ByteSource, ModuleBuilder> result = resolveSubmodules(builders);
         return result;
     }
 
-    private Map<ByteSource, ModuleBuilder> parseSourcesToBuilders(Collection<ByteSource> sources) throws IOException {
+    private Map<ByteSource, ModuleBuilder> parseSourcesToBuilders(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
         final ParseTreeWalker walker = new ParseTreeWalker();
         final Map<ByteSource, ParseTree> sourceToTree = parseYangSources(sources);
         final Map<ByteSource, ModuleBuilder> sourceToBuilder = new LinkedHashMap<>();
@@ -372,7 +381,7 @@ public final class YangParserImpl implements YangContextParser {
         return sourceToBuilder;
     }
 
-    private Map<ByteSource, ModuleBuilder> resolveSubmodules(Map<ByteSource, ModuleBuilder> builders) {
+    private Map<ByteSource, ModuleBuilder> resolveSubmodules(final Map<ByteSource, ModuleBuilder> builders) {
         Map<ByteSource, ModuleBuilder> modules = new HashMap<>();
         Set<ModuleBuilder> submodules = new HashSet<>();
         for (Map.Entry<ByteSource, ModuleBuilder> entry : builders.entrySet()) {
@@ -403,7 +412,7 @@ public final class YangParserImpl implements YangContextParser {
      *            collection of builders containing modules and submodules
      * @return collection of module builders
      */
-    private Collection<ModuleBuilder> resolveSubmodules(Collection<ModuleBuilder> builders) {
+    private Collection<ModuleBuilder> resolveSubmodules(final Collection<ModuleBuilder> builders) {
         Collection<ModuleBuilder> modules = new HashSet<>();
         Set<ModuleBuilder> submodules = new HashSet<>();
         for (ModuleBuilder moduleBuilder : builders) {
@@ -424,7 +433,7 @@ public final class YangParserImpl implements YangContextParser {
         return modules;
     }
 
-    private void addSubmoduleToModule(ModuleBuilder submodule, ModuleBuilder module) {
+    private void addSubmoduleToModule(final ModuleBuilder submodule, final ModuleBuilder module) {
         submodule.setParent(module);
         module.getDirtyNodes().addAll(submodule.getDirtyNodes());
         module.getModuleImports().addAll(submodule.getModuleImports());
@@ -458,7 +467,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuilders(
-            final Collection<ByteSource> yangFileStreams, final SchemaContext context) throws IOException {
+            final Collection<ByteSource> yangFileStreams, final SchemaContext context) throws IOException, YangSyntaxErrorException {
         Map<ByteSource, ModuleBuilder> parsedBuilders = resolveSources(yangFileStreams);
         ModuleBuilder[] builders = new ModuleBuilder[parsedBuilders.size()];
         parsedBuilders.values().toArray(builders);
@@ -480,7 +489,7 @@ public final class YangParserImpl implements YangContextParser {
      *            modules to order
      * @return modules ordered by name and revision
      */
-    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(List<ModuleBuilder> modules) {
+    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(final List<ModuleBuilder> modules) {
         final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
         for (final ModuleBuilder builder : modules) {
             if (builder == null) {
@@ -512,7 +521,7 @@ public final class YangParserImpl implements YangContextParser {
      * @param filtered
      *            collection to fill up
      */
-    private void filterImports(ModuleBuilder main, Collection<ModuleBuilder> other, Collection<ModuleBuilder> filtered) {
+    private void filterImports(final ModuleBuilder main, final Collection<ModuleBuilder> other, final Collection<ModuleBuilder> filtered) {
         Set<ModuleImport> imports = main.getModuleImports();
 
         // if this is submodule, add parent to filtered and pick its imports
@@ -549,7 +558,7 @@ public final class YangParserImpl implements YangContextParser {
         }
     }
 
-    private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException {
+    private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
         final Map<ByteSource, ParseTree> trees = new HashMap<>();
         for (ByteSource source : sources) {
             trees.put(source, parseYangSource(source));
@@ -557,30 +566,22 @@ public final class YangParserImpl implements YangContextParser {
         return trees;
     }
 
-    private ParseTree parseYangSource(final ByteSource source) throws IOException {
-        ParseTree result = null;
-        InputStream stream = null;
-        try {
-            stream = source.openStream();
+    private YangContext parseYangSource(final ByteSource source) throws IOException, YangSyntaxErrorException {
+    	try (InputStream stream = source.openStream()) {
             final ANTLRInputStream input = new ANTLRInputStream(stream);
             final YangLexer lexer = new YangLexer(input);
             final CommonTokenStream tokens = new CommonTokenStream(lexer);
             final YangParser parser = new YangParser(tokens);
             parser.removeErrorListeners();
-            YangErrorListener errorListener = new YangErrorListener();
+
+            final YangErrorListener errorListener = new YangErrorListener();
             parser.addErrorListener(errorListener);
-            result = parser.yang();
+
+            final YangContext result = parser.yang();
             errorListener.validate();
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOG.warn("Failed to close stream {}", stream);
-                }
-            }
-        }
-        return result;
+
+            return result;
+    	}
     }
 
     public static YangContext parseStreamWithoutErrorListeners(final InputStream yangStream) {
@@ -756,7 +757,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     private void resolveDirtyNodesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder module, SchemaContext context) {
+            final ModuleBuilder module, final SchemaContext context) {
         final Set<TypeAwareBuilder> dirtyNodes = module.getDirtyNodes();
         if (!dirtyNodes.isEmpty()) {
             for (TypeAwareBuilder nodeToResolve : dirtyNodes) {
@@ -787,7 +788,7 @@ public final class YangParserImpl implements YangContextParser {
      *            SchemaContext containing already resolved modules
      */
     private void resolveAugmentsTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            SchemaContext context) {
+            final SchemaContext context) {
         // collect augments from all loaded modules
         final List<AugmentationSchemaBuilder> allAugments = new ArrayList<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
@@ -881,7 +882,7 @@ public final class YangParserImpl implements YangContextParser {
      * @param parentPath
      *            schema path of parent node
      */
-    private void correctPathForAugmentNodes(DataSchemaNodeBuilder node, SchemaPath parentPath) {
+    private void correctPathForAugmentNodes(final DataSchemaNodeBuilder node, final SchemaPath parentPath) {
         SchemaPath newPath = ParserUtils.createSchemaPath(parentPath, node.getQName());
         node.setPath(newPath);
         if (node instanceof DataNodeContainerBuilder) {
@@ -904,7 +905,7 @@ public final class YangParserImpl implements YangContextParser {
      * @param augments
      *            augments to check
      */
-    private void checkAugmentMandatoryNodes(Collection<AugmentationSchemaBuilder> augments) {
+    private void checkAugmentMandatoryNodes(final Collection<AugmentationSchemaBuilder> augments) {
         for (AugmentationSchemaBuilder augment : augments) {
             String augmentPrefix = augment.getTargetPath().getPath().get(0).getPrefix();
             ModuleBuilder module = ParserUtils.getParentModule(augment);
@@ -1270,7 +1271,7 @@ public final class YangParserImpl implements YangContextParser {
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUses(UsesNodeBuilder usesNode,
+    private void resolveUses(final UsesNodeBuilder usesNode,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
         if (!usesNode.isResolved()) {
             DataNodeContainerBuilder parent = usesNode.getParent();
@@ -1307,7 +1308,7 @@ public final class YangParserImpl implements YangContextParser {
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUsesWithContext(UsesNodeBuilder usesNode) {
+    private void resolveUsesWithContext(final UsesNodeBuilder usesNode) {
         final int line = usesNode.getLine();
         DataNodeContainerBuilder parent = usesNode.getParent();
         ModuleBuilder module = ParserUtils.getParentModule(parent);
