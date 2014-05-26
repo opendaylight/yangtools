@@ -1,0 +1,395 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_5c1327b8",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "please refrain from static imports",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7c162ba9",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "what is a \"Source Type\" ?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1c0d9f90",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "What is this class used for? why is it not static?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3c10a3a7",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "when missed?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_dc265716",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "\"looks up\"",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fc21dbfc",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "slepp check",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9c20cff8",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "abstract methods have to be documented just as if they were in an interface, e.g. inputs, outputs, object state assumptions",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_bc1b53c9",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "non-static class.. why?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5c7a47f2",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AbstractCachingSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "can it ever be null?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7c7dcbe6",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AdvancedSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "disconnected how? I think we are missing some description of concepts and interactions",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1c84bfd2",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AdvancedSchemaSourceProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "What is a \"representation\"?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_dc541756",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/FilesystemSchemaCachingProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "are we recovering from this condition? if so, it whould be a warning",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fc4f9bbc",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "This is an identity from mathematical perspective -- let\u0027s call it that.",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9c4e8fc0",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "private ...",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_bc4913b9",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "by same token, this should be called identityTransformation",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5cc80722",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "class docs?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1c5b5f88",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceTransformation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "for example? is text one representation, AST another one and model.api objects another one?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3c5e6377",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceTransformation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "can this ever fail?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fc68fb22",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SourceIdentifier.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "\"module source\" ... is that the text format of a YANG file?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_bc72730f",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SourceIdentifier.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "what is the relation of schema and a module?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9c776f02",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SourceIdentifier.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "can name be null?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5c61e737",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SourceIdentifier.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "what does this method do?",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7c64eb48",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SourceIdentifier.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T13:57:17Z",
+      "side": 1,
+      "message": "\u0027@\u0027 for single characters",
+      "revId": "29e98ad1db1f2d85e2c00ee5772dd832319878ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
