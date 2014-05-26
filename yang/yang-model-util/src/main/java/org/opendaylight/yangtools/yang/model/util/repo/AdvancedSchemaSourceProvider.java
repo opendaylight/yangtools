@@ -9,7 +9,32 @@ package org.opendaylight.yangtools.yang.model.util.repo;
 
 import com.google.common.base.Optional;
 
-public interface AdvancedSchemaSourceProvider<F> extends SchemaSourceProvider<F> {
+/**
+ * Provider of representation of YANG schema sources.
+ *
+ * {@link AdvancedSchemaSourceProvider} is replacement of
+ * {@link SchemaSourceProvider} which did not have object representing source
+ * identifier, and adds {@link SourceIdentifier} to identify
+ * sources. but used name and revision disconnected
+ *
+ *
+ * @param <T>
+ *            Representation of Schema Source
+ */
+public interface AdvancedSchemaSourceProvider<T> extends SchemaSourceProvider<T> {
 
-    Optional<F> getSchemaSource(SourceIdentifier sourceIdentifier);
+    /**
+     * Returns representation source for supplied YANG source identifier.
+     *
+     * Returned representation of schema source must be immutable, must not
+     * change during runtime if {@link SourceIdentifier} has specified both
+     * {@link SourceIdentifier#getName()} and
+     * {@link SourceIdentifier#getRevision()}
+     *
+     * @param sourceIdentifier
+     *            source identifier.
+     * @return source representation if supplied YANG module is available
+     *         {@link Optional#absent()} otherwise.
+     */
+    Optional<T> getSchemaSource(SourceIdentifier sourceIdentifier);
 }
