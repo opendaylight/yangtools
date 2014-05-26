@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_fc631bdb",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AdvancedSchemaSourceProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "What is this? What does \"advanced\" mean?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3c80a345",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/FilesystemSchemaCachingProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "What is \"I\" ?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7c862b67",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/FilesystemSchemaCachingProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "Does it make sense to subclass this?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_dc965794",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/FilesystemSchemaCachingProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "What happens if the directory does not exist?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fc91db9a",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/FilesystemSchemaCachingProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "This would be some sort of interface, I presume?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5cea4710",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/FilesystemSchemaCachingProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "Can directory be null?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_bc8b5367",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/FilesystemSchemaCachingProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "IOExcpetion... is not reported anywhere?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7cedcb24",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "Deprecated users should go where?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1cf4bff0",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "... its purpose is to provide what, when, how, for whom?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3cf743f7",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "missing private constructor and class is not final",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fcd8fb80",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "Reword into two sentences, describe when it\u0027s useful.",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9ce76f40",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "What is this class and why is it not in a separate file?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3c72e3ad",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SourceIdentifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "What is its purpose? Who should use it?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_dc6897bc",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SourceIdentifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-05-26T12:00:52Z",
+      "side": 1,
+      "message": "module or submodule? so what does it identify?",
+      "revId": "98fd7ed1147a3c2710bb8c6251b5f7b25871cbb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
