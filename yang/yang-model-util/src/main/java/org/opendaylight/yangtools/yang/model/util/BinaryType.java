@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,20 +23,20 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  * @see BinaryTypeDefinition
  */
 public final class BinaryType implements BinaryTypeDefinition {
-    private static final BinaryType INSTANCE = new BinaryType();
-    private final QName name = BaseTypes.constructQName("binary");
-    private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
     private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";
-    private final List<Byte> bytes;
-    private final List<LengthConstraint> lengthConstraints;
     private static final String UNITS = "";
 
+    private static final BinaryType INSTANCE = new BinaryType();
+
+    private final QName name = BaseTypes.BINARY_QNAME;
+    private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
+    private final List<Byte> bytes = Collections.emptyList();
+    private final List<LengthConstraint> lengthConstraints;
+
     private BinaryType() {
-        final List<LengthConstraint> constraints = new ArrayList<LengthConstraint>();
-        constraints.add(BaseConstraints.lengthConstraint(0, Long.MAX_VALUE, "", ""));
-        this.lengthConstraints = Collections.unmodifiableList(constraints);
-        this.bytes = Collections.emptyList();
+        this.lengthConstraints = Collections.singletonList(
+                BaseConstraints.lengthConstraint(0, Long.MAX_VALUE, "", ""));
     }
 
     public static BinaryType getInstance() {
@@ -157,7 +156,7 @@ public final class BinaryType implements BinaryTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
