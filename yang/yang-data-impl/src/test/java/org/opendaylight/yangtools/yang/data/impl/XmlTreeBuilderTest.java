@@ -34,10 +34,10 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 public class XmlTreeBuilderTest {
 
 	private InputStream inputStream;
-	
+
 	/**
 	 * Perform pre-test initialization
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Before
@@ -61,42 +61,42 @@ public class XmlTreeBuilderTest {
 		}
 		assertNotNull(rootNode);
 		assertTrue(rootNode instanceof CompositeNode);
-		
+
 		CompositeNode compRootNode = (CompositeNode)rootNode;
-		assertNotNull(compRootNode.getChildren());
-		
+		assertNotNull(compRootNode.getValue());
+
 		SimpleNode<String> methodName = null;
 		SimpleNode<String> emptyTag = null;
 		CompositeNode params = null;
-		for (final Node<?> childNode : compRootNode.getChildren()) {
+		for (final Node<?> childNode : compRootNode.getValue()) {
 			if (childNode instanceof SimpleNode) {
 				if ("emptyTag".equals(childNode.getNodeType().getLocalName())) {
 					emptyTag = (SimpleNode<String>) childNode;
 				} else if ("methodName".equals(childNode.getNodeType().getLocalName())) {
 					methodName = (SimpleNode<String>) childNode;
 				}
-				
+
 			} else if (childNode instanceof CompositeNode) {
 				params = (CompositeNode) childNode;
 			}
 		}
-		
+
 		assertNotNull(methodName);
 		assertNotNull(params);
 		assertTrue(emptyTag.getValue().isEmpty());
 		assertEquals(methodName.getValue(), "getDeviceEquipment");
-		
+
 		String deviceId = null;
 		String deviceIP = null;
-		for (final Node<?> param : params.getChildren()) {
+		for (final Node<?> param : params.getValue()) {
 			if (param instanceof CompositeNode) {
-				final Node<?> valueNode = ((CompositeNode) param).getChildren().get(0);
-				
+				final Node<?> valueNode = ((CompositeNode) param).getValue().get(0);
+
 				assertTrue(valueNode instanceof CompositeNode);
 				final CompositeNode value = (CompositeNode) valueNode;
-				final Node<?> stringNode = value.getChildren().get(0);
+				final Node<?> stringNode = value.getValue().get(0);
 				assertTrue(stringNode instanceof SimpleNode);
-				
+
 				final SimpleNode<String> string = (SimpleNode<String>) stringNode;
 				if ("DeviceID123".equals(string.getValue())) {
 					deviceId = string.getValue();
@@ -105,11 +105,11 @@ public class XmlTreeBuilderTest {
 				}
 			}
 		}
-		
+
 		assertNotNull(deviceId);
 		assertNotNull(deviceIP);
 	}
-	
+
 	@Test
 	public void nodeMapInCompositeNodeTest() {
 	    Node<?> rootNode = null;
@@ -118,7 +118,7 @@ public class XmlTreeBuilderTest {
             } catch (XMLStreamException e) {
                     e.printStackTrace();
             }
-            
+
             CompositeNode compRootNode = (CompositeNode)rootNode;
             List<CompositeNode> params = compRootNode.getCompositesByName("params");
             assertEquals(1, params.size());

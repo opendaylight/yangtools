@@ -129,7 +129,7 @@ public abstract class NodeHelper {
       "    </network-elements>\n" +
       "</network>";
 
-    private static String domTreeString(Document domTree) throws TransformerException {
+    private static String domTreeString(final Document domTree) throws TransformerException {
         TransformerFactory transformerFact = TransformerFactory.newInstance();
         transformerFact.setAttribute("indent-number", 4);
         Transformer transformer = transformerFact.newTransformer();
@@ -146,11 +146,11 @@ public abstract class NodeHelper {
      * @param out
      * @throws Exception
      */
-    private static void dumpDoc(Document domTree, PrintStream out) throws Exception {
+    private static void dumpDoc(final Document domTree, final PrintStream out) throws Exception {
       out.println(domTreeString(domTree));
     }
 
-	public static void dumpDoc(Document domTree, Logger logger) throws TransformerException {
+	public static void dumpDoc(final Document domTree, final Logger logger) throws TransformerException {
 		logger.info("{}", domTreeString(domTree));
 	}
 
@@ -158,7 +158,7 @@ public abstract class NodeHelper {
      * @param qName
      * @return example tree, see {@link #NETWORK_XML}
      */
-    public static CompositeNode buildTestConfigTree(QName qName) {
+    public static CompositeNode buildTestConfigTree(final QName qName) {
         List<Node<?>> value = new ArrayList<Node<?>>();
         value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "element-id"), null, "ntElementId_09"));
         CompositeNode ntElementNode1 = NodeFactory.createImmutableCompositeNode(new QName(qName, "network-element"), null, value);
@@ -330,8 +330,8 @@ public abstract class NodeHelper {
     /**
      * @param parentNode
      */
-    public static void assignParentToChildren(CompositeNode parentNode) {
-        for (Node<?> child : parentNode.getChildren()) {
+    public static void assignParentToChildren(final CompositeNode parentNode) {
+        for (Node<?> child : parentNode.getValue()) {
             ((AbstractNodeTO<?>) child).setParent(parentNode);
         }
     }
@@ -356,7 +356,7 @@ public abstract class NodeHelper {
      * @return tree root
      * @throws Exception
      */
-    public static CompositeNode loadConfigByGroovy(String scriptName) throws Exception {
+    public static CompositeNode loadConfigByGroovy(final String scriptName) throws Exception {
     	InputStream configStream = NodeHelper.class.getResourceAsStream(scriptName);
     	Binding binding = new Binding();
     	GroovyShell gShell = new GroovyShell(binding);
@@ -378,7 +378,7 @@ public abstract class NodeHelper {
      * @param nsArg , e.g.: <pre>{"uri:ns1", "uri:ns2"}</pre>
      * @return pattern with namespaces: <pre>//uri:ns1:network/uri:ns2:xx[text() = ''sss'']"</pre>
      */
-    public static String AddNamespaceToPattern(String pattern, Object... nsArg) {
+    public static String AddNamespaceToPattern(final String pattern, final Object... nsArg) {
         Object[] ns = nsArg;
         String patternNs = pattern.replaceAll("'", "''");
         if (ns == null) {
@@ -399,7 +399,7 @@ public abstract class NodeHelper {
      * @throws SAXException
      * @throws IOException
      */
-    public static void compareXmlTree(Document tree, String xmlFile, Class<?> clazz) throws Exception,
+    public static void compareXmlTree(final Document tree, final String xmlFile, final Class<?> clazz) throws Exception,
             SAXException, IOException {
         ByteArrayOutputStream actualRaw = new ByteArrayOutputStream();
         dumpDoc(tree, new PrintStream(actualRaw));
