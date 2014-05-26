@@ -11,5 +11,12 @@ import com.google.common.base.Optional;
 
 public interface AdvancedSchemaSourceProvider<F> extends SchemaSourceProvider<F> {
 
+    /**
+     * Returns source for supplied YANG source identifier.
+     *
+     * @param sourceIdentifier source identifier.
+     * @return source representation if supplied YANG module is available
+     *  {@link Optional#absent()} otherwise.
+     */
     Optional<F> getSchemaSource(SourceIdentifier sourceIdentifier);
 }

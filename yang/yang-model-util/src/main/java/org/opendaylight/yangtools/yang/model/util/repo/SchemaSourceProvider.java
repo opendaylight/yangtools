@@ -9,8 +9,26 @@ package org.opendaylight.yangtools.yang.model.util.repo;
 
 import com.google.common.base.Optional;
 
+
+/**
+ * Provider of text stream representation of YANG Modules
+ *
+ *
+ * @param <F> Format in which YANG source is represented.
+ */
 public interface SchemaSourceProvider<F> {
 
+    /**
+     * Returns source for supplied YANG module identifier and revision.
+     *
+     * @param moduleName module name
+     * @param revision revision of module
+     * @return source representation if supplied YANG module is available
+     *  {@link Optional#absent()} otherwise.
+     *  @deprecated Use {@link AdvancedSchemaSourceProvider#getSchemaSource(SourceIdentifier)}
+     *     instead.
+     */
+    @Deprecated
     Optional<F> getSchemaSource(String moduleName, Optional<String> revision);
 
 }

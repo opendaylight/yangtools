@@ -32,12 +32,34 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
+/**
+ * Filesystem-based schema caching source provider
+ *
+ * This schema source provider caches all YANG modules loaded from backing
+ * schema source providers (registered via
+ * {@link #createInstanceFor(SchemaSourceProvider)} to supplied folder.
+ *
+ * @param <I>
+ */
 public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSourceProvider<I, InputStream> {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemSchemaCachingProvider.class);
 
     private final File storageDirectory;
     private final Function<I, String> transformationFunction;
 
+    /**
+     *
+     * Construct filesystem caching schema source provider.
+     *
+     *
+     * @param delegate
+     *            Default delegate to lookup for missed entries in cache.
+     * @param directory
+     *            Directory where YANG files should be cached.
+     * @param transformationFunction
+     *            Transformation function which translates from input in format
+     *            I to InputStream.
+     */
     public FilesystemSchemaCachingProvider(final AdvancedSchemaSourceProvider<I> delegate, final File directory,
             final Function<I, String> transformationFunction) {
         super(delegate);
@@ -46,7 +68,8 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
     }
 
     @Override
-    protected synchronized Optional<InputStream> cacheSchemaSource(final SourceIdentifier identifier, final Optional<I> source) {
+    protected synchronized Optional<InputStream> cacheSchemaSource(final SourceIdentifier identifier,
+            final Optional<I> source) {
         File schemaFile = toFile(identifier);
         try {
             if (source.isPresent() && schemaFile.createNewFile()) {
@@ -66,8 +89,8 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
 
     private Optional<InputStream> transformToStream(final Optional<I> source) {
         if (source.isPresent()) {
-            return Optional.<InputStream> of(
-                    new ByteArrayInputStream(transformToString(source.get()).getBytes(Charsets.UTF_8)));
+            return Optional.<InputStream> of(new ByteArrayInputStream(transformToString(source.get()).getBytes(
+                    Charsets.UTF_8)));
         }
         return Optional.absent();
     }
@@ -104,6 +127,7 @@ public class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSou
     private File findFileWithNewestRev(final SourceIdentifier identifier) {
         File[] files = storageDirectory.listFiles(new FilenameFilter() {
             final String regex = identifier.getName() + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)";
+
             @Override
             public boolean accept(final File dir, final String name) {
                 if (name.matches(regex)) {
