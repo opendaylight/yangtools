@@ -25,19 +25,19 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * @author michal.rehak
- * 
+ *
  */
 public class NodeModificationBuilderImpl implements NodeModificationBuilder {
 
-    private SchemaContext context;
+    private final SchemaContext context;
 
-    private Set<MutableNode<?>> changeLog;
-    private LazyNodeToNodeMap originalToMutable;
+    private final Set<MutableNode<?>> changeLog;
+    private final LazyNodeToNodeMap originalToMutable;
 
     /**
      * @param context
      */
-    public NodeModificationBuilderImpl(SchemaContext context) {
+    public NodeModificationBuilderImpl(final SchemaContext context) {
         this.context = context;
         originalToMutable = new LazyNodeToNodeMap();
         changeLog = new HashSet<>();
@@ -47,55 +47,55 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
      * @param modNode
      * @param action
      */
-    private void addModificationToLog(MutableNode<?> modNode, ModifyAction action) {
+    private void addModificationToLog(final MutableNode<?> modNode, final ModifyAction action) {
         modNode.setModifyAction(action);
         changeLog.add(modNode);
     }
 
     @Override
-    public void addNode(MutableSimpleNode<?> newNode) {
+    public void addNode(final MutableSimpleNode<?> newNode) {
         NodeUtils.fixParentRelation(newNode);
         addModificationToLog(newNode, ModifyAction.CREATE);
     }
 
     @Override
-    public void addNode(MutableCompositeNode newNode) {
+    public void addNode(final MutableCompositeNode newNode) {
         NodeUtils.fixParentRelation(newNode);
         addModificationToLog(newNode, ModifyAction.CREATE);
     }
 
     @Override
-    public void replaceNode(MutableSimpleNode<?> replacementNode) {
+    public void replaceNode(final MutableSimpleNode<?> replacementNode) {
         addModificationToLog(replacementNode, ModifyAction.REPLACE);
     }
 
     @Override
-    public void replaceNode(MutableCompositeNode replacementNode) {
+    public void replaceNode(final MutableCompositeNode replacementNode) {
         addModificationToLog(replacementNode, ModifyAction.REPLACE);
     }
 
     @Override
-    public void deleteNode(MutableCompositeNode deadNode) {
+    public void deleteNode(final MutableCompositeNode deadNode) {
         addModificationToLog(deadNode, ModifyAction.DELETE);
     }
 
     @Override
-    public void deleteNode(MutableSimpleNode<?> deadNode) {
+    public void deleteNode(final MutableSimpleNode<?> deadNode) {
         addModificationToLog(deadNode, ModifyAction.DELETE);
     }
 
     @Override
-    public void removeNode(MutableSimpleNode<?> deadNode) {
+    public void removeNode(final MutableSimpleNode<?> deadNode) {
         addModificationToLog(deadNode, ModifyAction.REMOVE);
     }
 
     @Override
-    public void removeNode(MutableCompositeNode deadNode) {
+    public void removeNode(final MutableCompositeNode deadNode) {
         addModificationToLog(deadNode, ModifyAction.REMOVE);
     }
 
     @Override
-    public void mergeNode(MutableCompositeNode alteredNode) {
+    public void mergeNode(final MutableCompositeNode alteredNode) {
         addModificationToLog(alteredNode, ModifyAction.MERGE);
     }
 
@@ -122,7 +122,7 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
                         // try to add key subnode to wanted list
                         List<QName> supportedKeys = listSchema.getKeyDefinition();
                         CompositeNode outlawOriginal = ((MutableCompositeNode) outlaw).getOriginal();
-                        for (Node<?> outlawOriginalChild : outlawOriginal.getChildren()) {
+                        for (Node<?> outlawOriginalChild : outlawOriginal.getValue()) {
                             if (supportedKeys.contains(outlawOriginalChild.getNodeType())) {
                                 originalToMutable.getMutableEquivalent(outlawOriginalChild);
                             }
@@ -139,7 +139,7 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
      * @param focusedDescendant
      * @return set of parents and focusedAncestor itself
      */
-    private static Set<Node<?>> collectSelfAndAllParents(Node<?> focusedDescendant) {
+    private static Set<Node<?>> collectSelfAndAllParents(final Node<?> focusedDescendant) {
         Set<Node<?>> family = new HashSet<>();
         Node<?> tmpNode = focusedDescendant;
         while (tmpNode != null) {
@@ -154,7 +154,7 @@ public class NodeModificationBuilderImpl implements NodeModificationBuilder {
      * @return mutable version of given node
      */
     @Override
-    public Node<?> getMutableEquivalent(Node<?> originalNode) {
+    public Node<?> getMutableEquivalent(final Node<?> originalNode) {
         return originalToMutable.getMutableEquivalent(originalNode);
     }
 

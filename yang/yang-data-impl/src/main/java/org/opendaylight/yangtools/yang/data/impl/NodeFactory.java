@@ -36,8 +36,8 @@ public abstract class NodeFactory {
      * @param value
      * @return simple node modification, based on given qname, value and parent
      */
-    public static <T> SimpleNode<T> createImmutableSimpleNode(QName qName,
-            CompositeNode parent, T value) {
+    public static <T> SimpleNode<T> createImmutableSimpleNode(final QName qName,
+            final CompositeNode parent, final T value) {
         return createImmutableSimpleNode(qName, parent, value, null);
     }
 
@@ -49,8 +49,8 @@ public abstract class NodeFactory {
      * @param original originating node, if available
      * @return simple node modification, based on given qname, value and parent
      */
-    public static <T> MutableSimpleNode<T> createMutableSimpleNode(QName qName,
-            CompositeNode parent, Object value, ModifyAction modifyAction, SimpleNode<T> original) {
+    public static <T> MutableSimpleNode<T> createMutableSimpleNode(final QName qName,
+            final CompositeNode parent, final Object value, final ModifyAction modifyAction, final SimpleNode<T> original) {
         @SuppressWarnings("unchecked")
         MutableSimpleNodeTOImpl<T> simpleNodeTOImpl =
                 new MutableSimpleNodeTOImpl<T>(qName, parent, (T) value, modifyAction);
@@ -64,8 +64,8 @@ public abstract class NodeFactory {
      * @param value
      * @return composite node modification, based on given qname, value (children), parent and modifyAction
      */
-    public static CompositeNode createImmutableCompositeNode(QName qName,
-            CompositeNode parent, List<Node<?>> value) {
+    public static CompositeNode createImmutableCompositeNode(final QName qName,
+            final CompositeNode parent, final List<Node<?>> value) {
         return createImmutableCompositeNode(qName, parent, value, null);
     }
 
@@ -77,8 +77,8 @@ public abstract class NodeFactory {
      * @param original originating node, if available
      * @return composite node modification, based on given qName, value (children), parent and modifyAction
      */
-    public static MutableCompositeNode createMutableCompositeNode(QName qName,
-            CompositeNode parent, List<Node<?>> valueArg, ModifyAction modifyAction, CompositeNode original) {
+    public static MutableCompositeNode createMutableCompositeNode(final QName qName,
+            final CompositeNode parent, final List<Node<?>> valueArg, final ModifyAction modifyAction, final CompositeNode original) {
         List<Node<?>> value = valueArg;
         if (value == null) {
             value = new ArrayList<>();
@@ -97,8 +97,8 @@ public abstract class NodeFactory {
      * @param modifyAction
      * @return simple node modification, based on given qname, value, parent and modifyAction
      */
-    public static <T> SimpleNode<T> createImmutableSimpleNode(QName qName,
-            CompositeNode parent, T value, ModifyAction modifyAction) {
+    public static <T> SimpleNode<T> createImmutableSimpleNode(final QName qName,
+            final CompositeNode parent, final T value, final ModifyAction modifyAction) {
         SimpleNodeTOImpl<T> simpleNodeModTOImpl =
                 new SimpleNodeTOImpl<T>(qName, parent, value, modifyAction);
         return simpleNodeModTOImpl;
@@ -111,8 +111,8 @@ public abstract class NodeFactory {
      * @param modifyAction
      * @return composite node modification, based on given qname, value (children), parent and modifyAction
      */
-    public static CompositeNode createImmutableCompositeNode(QName qName,
-            CompositeNode parent, List<Node<?>> value, ModifyAction modifyAction) {
+    public static CompositeNode createImmutableCompositeNode(final QName qName,
+            final CompositeNode parent, final List<Node<?>> value, final ModifyAction modifyAction) {
         CompositeNodeTOImpl compositeNodeModTOImpl =
                 new CompositeNodeTOImpl(qName, parent, value, modifyAction);
         return compositeNodeModTOImpl;
@@ -123,7 +123,7 @@ public abstract class NodeFactory {
      * @return copy of given node, parent and value are the same, but parent
      * has no reference to this copy
      */
-    public static <T> SimpleNode<T> copyNode(SimpleNode<T> node) {
+    public static <T> SimpleNode<T> copyNode(final SimpleNode<T> node) {
         SimpleNode<T> twinNode = createImmutableSimpleNode(
                     node.getNodeType(), node.getParent(), node.getValue());
         return twinNode;
@@ -134,7 +134,7 @@ public abstract class NodeFactory {
      * @return copy of given node, parent and value are the same, but parent
      * has no reference to this copy
      */
-    public static <T> MutableSimpleNode<T> copyNodeAsMutable(SimpleNode<T> node) {
+    public static <T> MutableSimpleNode<T> copyNodeAsMutable(final SimpleNode<T> node) {
         MutableSimpleNode<T> twinNode = createMutableSimpleNode(
                     node.getNodeType(), node.getParent(), node.getValue(),
                     node.getModificationAction(), null);
@@ -147,7 +147,7 @@ public abstract class NodeFactory {
      * @return copy of given node, parent and children are the same, but parent and children
      * have no reference to this copy
      */
-    public static CompositeNode copyNode(CompositeNode node, Node<?>... children) {
+    public static CompositeNode copyNode(final CompositeNode node, final Node<?>... children) {
         CompositeNode twinNode = createImmutableCompositeNode(
                 node.getNodeType(), node.getParent(), Arrays.asList(children), node.getModificationAction());
         return twinNode;
@@ -158,8 +158,8 @@ public abstract class NodeFactory {
      * @return copy of given node, parent and children are the same, but parent and children
      * have no reference to this copy
      */
-    public static CompositeNode copyNode(CompositeNode node) {
-       return copyNode(node, node.getChildren().toArray(new Node<?>[0]));
+    public static CompositeNode copyNode(final CompositeNode node) {
+       return copyNode(node, node.getValue().toArray(new Node<?>[0]));
     }
 
     /**
@@ -168,8 +168,8 @@ public abstract class NodeFactory {
      * will be stored
      * @return copy of given node and all subnodes recursively
      */
-    public static MutableCompositeNode copyDeepAsMutable(CompositeNode node,
-            Map<Node<?>, Node<?>> originalToCopyArg) {
+    public static MutableCompositeNode copyDeepAsMutable(final CompositeNode node,
+            final Map<Node<?>, Node<?>> originalToCopyArg) {
 
         Map<Node<?>, Node<?>> originalToCopy = originalToCopyArg;
         if (originalToCopy == null) {
@@ -188,7 +188,7 @@ public abstract class NodeFactory {
             MutableCompositeNode mutableNode = job.getValue();
             mutableNode.setValue(new ArrayList<Node<?>>());
 
-            for (Node<?> child : originalNode.getChildren()) {
+            for (Node<?> child : originalNode.getValue()) {
                 Node<?> mutableAscendant = null;
                 if (child instanceof CompositeNode) {
                     MutableCompositeNode newMutable =
@@ -207,7 +207,7 @@ public abstract class NodeFactory {
                             +child.getClass().getName());
                 }
 
-                mutableNode.getChildren().add(mutableAscendant);
+                mutableNode.getValue().add(mutableAscendant);
                 originalToCopy.put(child, mutableAscendant);
             }
             mutableNode.init();
@@ -222,8 +222,8 @@ public abstract class NodeFactory {
      * will be stored
      * @return copy of given node and all subnodes recursively
      */
-    public static CompositeNode copyDeepAsImmutable(CompositeNode node,
-            Map<Node<?>, Node<?>> originalToCopyArg) {
+    public static CompositeNode copyDeepAsImmutable(final CompositeNode node,
+            final Map<Node<?>, Node<?>> originalToCopyArg) {
         Stack<CompositeNode> jobQueue = new Stack<>();
         jobQueue.push(node);
 
@@ -235,15 +235,15 @@ public abstract class NodeFactory {
         while (!jobQueue.isEmpty()) {
             CompositeNode jobNode = jobQueue.peek();
             if (!originalToCopy.isEmpty()
-                    && originalToCopy.keySet().containsAll(jobNode.getChildren())) {
+                    && originalToCopy.keySet().containsAll(jobNode.getValue())) {
                 jobQueue.pop();
-                List<Node<?>> newChildren = NodeUtils.collectMapValues(jobNode.getChildren(), originalToCopy);
+                List<Node<?>> newChildren = NodeUtils.collectMapValues(jobNode.getValue(), originalToCopy);
                 CompositeNode nodeCopy = createImmutableCompositeNode(jobNode.getNodeType(), null,
                         newChildren, jobNode.getModificationAction());
                 NodeUtils.fixChildrenRelation(nodeCopy);
                 originalToCopy.put(jobNode, nodeCopy);
             } else {
-                for (Node<?> child : jobNode.getChildren()) {
+                for (Node<?> child : jobNode.getValue()) {
                     if (child instanceof SimpleNode<?>) {
                         originalToCopy.put(child, createImmutableSimpleNode(
                                 child.getNodeType(), null, child.getValue(),

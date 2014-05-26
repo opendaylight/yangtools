@@ -261,7 +261,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
             for (Map.Entry<QName, Object> predicate : predicates.getKeyValues().entrySet()) {
                 newNodes.add(new SimpleNodeTOImpl<Object>(predicate.getKey(), null, predicate.getValue()));
             }
-            newNodes.addAll(ret.getChildren());
+            newNodes.addAll(ret.getValue());
             return new CompositeNodeTOImpl(last.getNodeType(), null, newNodes);
         }
         return ret;

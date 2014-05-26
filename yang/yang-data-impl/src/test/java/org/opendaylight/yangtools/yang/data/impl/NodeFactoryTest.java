@@ -60,7 +60,7 @@ public class NodeFactoryTest {
      */
     @Test
     public void testImmutableNodes() throws Exception {
-        Assert.assertEquals(2, network.getChildren().size());
+        Assert.assertEquals(2, network.getValue().size());
         CompositeNode tpList = NodeUtils.findNodeByXpath(networkShadow,
                 NodeHelper.AddNamespaceToPattern(
                         "//{0}node[{0}node-id/text()='nodeId_19']/{0}termination-points", ns));
@@ -120,7 +120,7 @@ public class NodeFactoryTest {
         Document shadowConfig = NodeUtils.buildShadowDomTree(root);
         NodeHelper.compareXmlTree(shadowConfig, "./mutableNodesConfig.xml", getClass());
 
-        Assert.assertEquals(1, root.getChildren().size());
+        Assert.assertEquals(1, root.getValue().size());
         Assert.assertEquals(1, ifNode.getSimpleNodesByName("name").size());
         Assert.assertEquals(1, ifNode.getSimpleNodesByName("mtu").size());
         Assert.assertEquals(2, topNode.getCompositesByName("interface").size());

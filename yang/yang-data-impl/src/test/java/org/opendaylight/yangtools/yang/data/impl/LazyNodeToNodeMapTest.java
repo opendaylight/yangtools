@@ -61,8 +61,8 @@ public class LazyNodeToNodeMapTest {
         Assert.assertEquals(2, lazyN2N.getKeyNodes().size());
 
         Assert.assertEquals(mutableTree, subMutant.getParent());
-        Assert.assertEquals(mutableTree.getChildren().size(), 1);
-        Assert.assertEquals(mutableTree.getChildren().iterator().next(), subMutant);
+        Assert.assertEquals(mutableTree.getValue().size(), 1);
+        Assert.assertEquals(mutableTree.getValue().iterator().next(), subMutant);
     }
 
     /**

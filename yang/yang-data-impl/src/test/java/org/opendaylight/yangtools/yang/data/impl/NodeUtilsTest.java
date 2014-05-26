@@ -111,7 +111,7 @@ public class NodeUtilsTest {
         CompositeNode topology = network.getCompositesByName("topologies").iterator().next()
             .getCompositesByName("topology").iterator().next();
 
-        Map<QName, List<Node<?>>> nodeMap = NodeUtils.buildNodeMap(topology.getChildren());
+        Map<QName, List<Node<?>>> nodeMap = NodeUtils.buildNodeMap(topology.getValue());
         Assert.assertEquals(3, nodeMap.size());
     }
 
@@ -144,13 +144,13 @@ public class NodeUtilsTest {
     	NodeHelper.compareXmlTree(shadowTree, "./config02g-shadow.xml", getClass());
     }
 
-    private static void checkFamilyBinding(CompositeNode treeRoot) throws Exception {
+    private static void checkFamilyBinding(final CompositeNode treeRoot) throws Exception {
         Stack<CompositeNode> jobQueue = new Stack<>();
         jobQueue.push(treeRoot);
 
         while (!jobQueue.isEmpty()) {
             CompositeNode job = jobQueue.pop();
-            for (Node<?> child : job.getChildren()) {
+            for (Node<?> child : job.getValue()) {
                 if (child instanceof CompositeNode) {
                     jobQueue.push((CompositeNode) child);
                 }

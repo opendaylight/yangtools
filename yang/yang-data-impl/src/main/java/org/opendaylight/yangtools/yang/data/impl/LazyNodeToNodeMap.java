@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
  */
 public class LazyNodeToNodeMap {
 
-    private Map<Node<?>, Node<?>> node2node = new HashMap<>();
+    private final Map<Node<?>, Node<?>> node2node = new HashMap<>();
     private CompositeNode originalRoot;
     private MutableCompositeNode mutableRoot;
 
@@ -35,7 +35,7 @@ public class LazyNodeToNodeMap {
      * @param originalNode
      * @return mutable twin
      */
-    public Node<?> getMutableEquivalent(Node<?> originalNode) {
+    public Node<?> getMutableEquivalent(final Node<?> originalNode) {
         Node<?> mutableNode = node2node.get(originalNode);
         if (mutableNode == null) {
             addPathMembers(originalNode);
@@ -48,7 +48,7 @@ public class LazyNodeToNodeMap {
     /**
      * @param originalNode
      */
-    private void addPathMembers(Node<?> originalNode) {
+    private void addPathMembers(final Node<?> originalNode) {
         Stack<Node<?>> jobQueue = new Stack<>();
         jobQueue.push(originalNode);
         while (!jobQueue.isEmpty()) {
@@ -84,15 +84,15 @@ public class LazyNodeToNodeMap {
                 mutableEquivalent = nodeMutant;
 
                 // tidy up children
-                if (nodeMutant.getChildren() == null) {
+                if (nodeMutant.getValue() == null) {
                     nodeMutant.setValue(new ArrayList<Node<?>>());
                 }
-                for (Node<?> originalChildNode : ((CompositeNode) node2add).getChildren()) {
+                for (Node<?> originalChildNode : ((CompositeNode) node2add).getValue()) {
                     MutableNode<?> mutableChild = (MutableNode<?>) node2node.get(originalChildNode);
                     fixChildrenRef(nodeMutant, mutableChild);
                 }
 
-                if (nodeMutant.getChildren() != null && !nodeMutant.getChildren().isEmpty()) {
+                if (nodeMutant.getValue() != null && !nodeMutant.getValue().isEmpty()) {
                     nodeMutant.init();
                 }
 
@@ -122,11 +122,11 @@ public class LazyNodeToNodeMap {
      * @param nodeMutant
      * @param mutableChild
      */
-    private static void fixChildrenRef(MutableCompositeNode nodeMutant,
-            MutableNode<?> mutableChild) {
+    private static void fixChildrenRef(final MutableCompositeNode nodeMutant,
+            final MutableNode<?> mutableChild) {
         if (mutableChild != null) {
-            if (!nodeMutant.getChildren().contains(mutableChild)) {
-                nodeMutant.getChildren().add(mutableChild);
+            if (!nodeMutant.getValue().contains(mutableChild)) {
+                nodeMutant.getValue().add(mutableChild);
             }
             CompositeNode parentOfChild = mutableChild.getParent();
             if (parentOfChild == null) {

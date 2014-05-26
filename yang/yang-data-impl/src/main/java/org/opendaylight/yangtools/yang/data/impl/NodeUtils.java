@@ -23,7 +23,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import com.google.common.collect.Maps;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
@@ -40,6 +39,7 @@ import org.w3c.dom.Element;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @author michal.rehak
@@ -58,7 +58,7 @@ public abstract class NodeUtils {
      * @param node
      * @return node path up till root node
      */
-    public static String buildPath(Node<?> node) {
+    public static String buildPath(final Node<?> node) {
         List<String> breadCrumbs = new ArrayList<>();
         Node<?> tmpNode = node;
         while (tmpNode != null) {
@@ -74,7 +74,7 @@ public abstract class NodeUtils {
      * @return dom tree, containing same node structure, yang nodes are
      *         associated to dom nodes as user data
      */
-    public static org.w3c.dom.Document buildShadowDomTree(CompositeNode treeRootNode) {
+    public static org.w3c.dom.Document buildShadowDomTree(final CompositeNode treeRootNode) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         org.w3c.dom.Document doc = null;
         try {
@@ -111,7 +111,7 @@ public abstract class NodeUtils {
             jointPlace.appendChild(itemEl);
 
             if (item instanceof CompositeNode) {
-                for (Node<?> child : ((CompositeNode) item).getChildren()) {
+                for (Node<?> child : ((CompositeNode) item).getValue()) {
                     jobQueue.push(new SimpleEntry<org.w3c.dom.Node, Node<?>>(itemEl, child));
                 }
             }
@@ -127,7 +127,7 @@ public abstract class NodeUtils {
      * @throws XPathExpressionException
      */
     @SuppressWarnings("unchecked")
-    public static <T> T findNodeByXpath(org.w3c.dom.Document doc, String xpathEx) throws XPathExpressionException {
+    public static <T> T findNodeByXpath(final org.w3c.dom.Document doc, final String xpathEx) throws XPathExpressionException {
         T userNode = null;
         XPathFactory xPathfactory = XPathFactory.newInstance();
         XPath xpath = xPathfactory.newXPath();
@@ -148,7 +148,7 @@ public abstract class NodeUtils {
      * @return map of children, where key = qName and value is list of children
      *         groupped by qName
      */
-    public static Map<QName, List<Node<?>>> buildNodeMap(List<Node<?>> value) {
+    public static Map<QName, List<Node<?>>> buildNodeMap(final List<Node<?>> value) {
         Map<QName, List<Node<?>>> nodeMapTmp = Maps.newLinkedHashMap();
         if (value == null) {
             throw new IllegalStateException("nodeList should not be null or empty");
@@ -168,7 +168,7 @@ public abstract class NodeUtils {
      * @param context
      * @return map of lists, where key = path; value = {@link DataSchemaNode}
      */
-    public static Map<String, ListSchemaNode> buildMapOfListNodes(SchemaContext context) {
+    public static Map<String, ListSchemaNode> buildMapOfListNodes(final SchemaContext context) {
         Map<String, ListSchemaNode> mapOfLists = new HashMap<>();
 
         Stack<DataSchemaNode> jobQueue = new Stack<>();
@@ -192,7 +192,7 @@ public abstract class NodeUtils {
      * @param qNamesPath
      * @return path
      */
-    private static String schemaPathToPath(List<QName> qNamesPath) {
+    private static String schemaPathToPath(final List<QName> qNamesPath) {
         List<String> pathSeed = new ArrayList<>();
         for (QName qNameItem : qNamesPath) {
             pathSeed.add(qNameItem.getLocalName());
@@ -205,9 +205,9 @@ public abstract class NodeUtils {
      *
      * @param newNode
      */
-    public static void fixParentRelation(Node<?> newNode) {
+    public static void fixParentRelation(final Node<?> newNode) {
         if (newNode.getParent() != null) {
-            List<Node<?>> siblings = newNode.getParent().getChildren();
+            List<Node<?>> siblings = newNode.getParent().getValue();
             if (!siblings.contains(newNode)) {
                 siblings.add(newNode);
             }
@@ -219,9 +219,9 @@ public abstract class NodeUtils {
      *
      * @param parentNode
      */
-    public static void fixChildrenRelation(CompositeNode parentNode) {
-        if (parentNode.getChildren() != null) {
-            for (Node<?> child : parentNode.getChildren()) {
+    public static void fixChildrenRelation(final CompositeNode parentNode) {
+        if (parentNode.getValue() != null) {
+            for (Node<?> child : parentNode.getValue()) {
                 if (child instanceof AbstractNodeTO<?>) {
                     ((AbstractNodeTO<?>) child).setParent(parentNode);
                 }
@@ -234,7 +234,7 @@ public abstract class NodeUtils {
      * @param dataMap
      * @return list of values of map, found by given keys
      */
-    public static <T, K> List<K> collectMapValues(List<T> keys, Map<T, K> dataMap) {
+    public static <T, K> List<K> collectMapValues(final List<T> keys, final Map<T, K> dataMap) {
         List<K> valueSubList = new ArrayList<>();
         for (T key : keys) {
             valueSubList.add(dataMap.get(key));
@@ -247,7 +247,7 @@ public abstract class NodeUtils {
      * @param nodes
      * @return list of children in list of appropriate type
      */
-    public static List<Node<?>> buildChildrenList(Node<?>... nodes) {
+    public static List<Node<?>> buildChildrenList(final Node<?>... nodes) {
         return Lists.newArrayList(nodes);
     }
 

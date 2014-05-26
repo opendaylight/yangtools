@@ -34,15 +34,15 @@ public class MyNodeBuilder extends BuilderSupport {
             .getLogger(MyNodeBuilder.class);
 
     private URI qnNamespace;
-    private String qnPrefix;
-    private Date qnRevision;
+    private final String qnPrefix;
+    private final Date qnRevision;
 
     private CompositeNode rootNode;
 
 	/**
 	 * @param baseQName
 	 */
-	private MyNodeBuilder(QName baseQName) {
+	private MyNodeBuilder(final QName baseQName) {
 		qnNamespace = baseQName.getNamespace();
 		qnPrefix = baseQName.getPrefix();
 		qnRevision = baseQName.getRevision();
@@ -64,7 +64,7 @@ public class MyNodeBuilder extends BuilderSupport {
     }
 
     @Override
-    protected void setParent(Object parent, Object child) {
+    protected void setParent(final Object parent, final Object child) {
     	// do nothing
         if (child instanceof AbstractNodeTO<?>) {
             ((AbstractNodeTO<?>) child).setParent((CompositeNode) parent);
@@ -74,7 +74,7 @@ public class MyNodeBuilder extends BuilderSupport {
     }
 
     @Override
-    protected Object createNode(Object name) {
+    protected Object createNode(final Object name) {
         MutableCompositeNode newNode = NodeFactory.createMutableCompositeNode(
                 createQName(name), getCurrentNode(), null, null, null);
         NodeUtils.fixParentRelation(newNode);
@@ -82,7 +82,7 @@ public class MyNodeBuilder extends BuilderSupport {
     }
 
     @Override
-    protected Object createNode(Object name, @SuppressWarnings("rawtypes") Map attributes) {
+    protected Object createNode(final Object name, @SuppressWarnings("rawtypes") final Map attributes) {
         ModifyAction modifyAction = processAttributes(attributes);
         MutableCompositeNode newNode = NodeFactory.createMutableCompositeNode(
                 createQName(name), getCurrentNode(), null, modifyAction, null);
@@ -92,7 +92,7 @@ public class MyNodeBuilder extends BuilderSupport {
 
 
     @Override
-    protected Object createNode(Object name, @SuppressWarnings("rawtypes") Map attributes, Object value) {
+    protected Object createNode(final Object name, @SuppressWarnings("rawtypes") final Map attributes, final Object value) {
         ModifyAction modifyAction = processAttributes(attributes);
         SimpleNode<Object> newNode = NodeFactory.createImmutableSimpleNode(
                 createQName(name), (CompositeNode) getCurrent(), value, modifyAction);
@@ -104,7 +104,7 @@ public class MyNodeBuilder extends BuilderSupport {
      * @param attributes
      * @return
      */
-    private ModifyAction processAttributes(@SuppressWarnings("rawtypes") Map attributes) {
+    private ModifyAction processAttributes(@SuppressWarnings("rawtypes") final Map attributes) {
         LOG.debug("attributes:" + attributes);
         ModifyAction modAction = null;
 
@@ -131,13 +131,13 @@ public class MyNodeBuilder extends BuilderSupport {
     }
 
     @Override
-    protected Object createNode(Object name, Object value) {
+    protected Object createNode(final Object name, final Object value) {
         SimpleNode<Object> newNode = NodeFactory.createImmutableSimpleNode(createQName(name), (CompositeNode) getCurrent(), value);
         NodeUtils.fixParentRelation(newNode);
         return newNode;
     }
 
-    private QName createQName(Object localName) {
+    private QName createQName(final Object localName) {
     	LOG.debug("qname for: "+localName);
 	    return new QName(qnNamespace, qnRevision, qnPrefix, (String) localName);
     }
@@ -157,7 +157,7 @@ public class MyNodeBuilder extends BuilderSupport {
     }
 
 	@Override
-	protected Object postNodeCompletion(Object parent, Object node) {
+	protected Object postNodeCompletion(final Object parent, final Object node) {
 	    Node<?> nodeRevisited = (Node<?>) node;
 	    LOG.debug("postNodeCompletion at: \n  "+ nodeRevisited+"\n  "+parent);
 	    if (nodeRevisited instanceof MutableCompositeNode) {
@@ -173,7 +173,7 @@ public class MyNodeBuilder extends BuilderSupport {
 	            rootNode = (CompositeNode) nodeRevisited;
 	        } else {
 	            NodeUtils.fixParentRelation(nodeRevisited);
-	            nodeRevisited.getParent().getChildren().remove(mutant);
+	            nodeRevisited.getParent().getValue().remove(mutant);
 	        }
 	    }
 

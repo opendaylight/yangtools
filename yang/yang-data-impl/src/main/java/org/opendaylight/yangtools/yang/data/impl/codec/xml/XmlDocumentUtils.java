@@ -65,7 +65,7 @@ public class XmlDocumentUtils {
         Element element;
         SchemaContext schemaContext;
 
-        ElementWithSchemaContext(Element element,SchemaContext schemaContext) {
+        ElementWithSchemaContext(final Element element,final SchemaContext schemaContext) {
             this.schemaContext = schemaContext;
             this.element = element;
         }
@@ -82,7 +82,7 @@ public class XmlDocumentUtils {
     private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
 
         @Override
-        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(TypeDefinition<?> baseType) {
+        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
             return TypeDefinitionAwareCodec.from(baseType);
         }
     };
@@ -101,7 +101,7 @@ public class XmlDocumentUtils {
      * @return new instance of XML Document
      * @throws UnsupportedDataTypeException
      */
-    public static Document toDocument(CompositeNode data, DataNodeContainer schema, XmlCodecProvider codecProvider)
+    public static Document toDocument(final CompositeNode data, final DataNodeContainer schema, final XmlCodecProvider codecProvider)
             throws UnsupportedDataTypeException {
         Preconditions.checkNotNull(data);
         Preconditions.checkNotNull(schema);
@@ -139,7 +139,7 @@ public class XmlDocumentUtils {
      * @return new instance of XML Document
      * @throws UnsupportedDataTypeException
      */
-    public static Document toDocument(CompositeNode data, XmlCodecProvider codecProvider)
+    public static Document toDocument(final CompositeNode data, final XmlCodecProvider codecProvider)
             throws UnsupportedDataTypeException {
         Preconditions.checkNotNull(data);
 
@@ -157,8 +157,8 @@ public class XmlDocumentUtils {
         return doc;
     }
 
-    private static Element createXmlRootElement(Document doc, Node<?> data, SchemaNode schema,
-            XmlCodecProvider codecProvider) throws UnsupportedDataTypeException {
+    private static Element createXmlRootElement(final Document doc, final Node<?> data, final SchemaNode schema,
+            final XmlCodecProvider codecProvider) throws UnsupportedDataTypeException {
         Element itemEl = createElementFor(doc, data);
         if (data instanceof SimpleNode<?>) {
             if (schema instanceof LeafListSchemaNode) {
@@ -174,7 +174,7 @@ public class XmlDocumentUtils {
                 }
             }
         } else { // CompositeNode
-            for (Node<?> child : ((CompositeNode) data).getChildren()) {
+            for (Node<?> child : ((CompositeNode) data).getValue()) {
                 DataSchemaNode childSchema = null;
                 if (schema != null) {
                     childSchema = findFirstSchemaForNode(child, ((DataNodeContainer) schema).getChildNodes());
@@ -192,7 +192,7 @@ public class XmlDocumentUtils {
         return itemEl;
     }
 
-    public static Element createElementFor(Document doc, Node<?> data) {
+    public static Element createElementFor(final Document doc, final Node<?> data) {
         QName dataType = data.getNodeType();
         Element ret;
         if (dataType.getNamespace() != null) {
@@ -210,15 +210,15 @@ public class XmlDocumentUtils {
         return ret;
     }
 
-    public static void writeValueByType(Element element, SimpleNode<?> node, TypeDefinition<?> type,
-            DataSchemaNode schema, XmlCodecProvider codecProvider) {
+    public static void writeValueByType(final Element element, final SimpleNode<?> node, final TypeDefinition<?> type,
+            final DataSchemaNode schema, final XmlCodecProvider codecProvider) {
 
         Object nodeValue = node.getValue();
 
         writeValueByType(element, type, codecProvider, nodeValue);
     }
 
-    public static void writeValueByType(Element element, TypeDefinition<?> type, XmlCodecProvider codecProvider, Object nodeValue) {
+    public static void writeValueByType(final Element element, final TypeDefinition<?> type, final XmlCodecProvider codecProvider, final Object nodeValue) {
         TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
         if (baseType instanceof IdentityrefTypeDefinition) {
             if (nodeValue instanceof QName) {
@@ -269,7 +269,7 @@ public class XmlDocumentUtils {
     }
 
 
-    public final static TypeDefinition<?> resolveBaseTypeFrom(TypeDefinition<?> type) {
+    public final static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
         TypeDefinition<?> superType = type;
         while (superType.getBaseType() != null) {
             superType = superType.getBaseType();
@@ -277,7 +277,7 @@ public class XmlDocumentUtils {
         return superType;
     }
 
-    private static final DataSchemaNode findFirstSchemaForNode(Node<?> node, Set<DataSchemaNode> dataSchemaNode) {
+    private static final DataSchemaNode findFirstSchemaForNode(final Node<?> node, final Set<DataSchemaNode> dataSchemaNode) {
         if (dataSchemaNode != null && node != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (node.getNodeType().getLocalName().equals(dsn.getQName().getLocalName())) {
@@ -295,28 +295,28 @@ public class XmlDocumentUtils {
         return null;
     }
 
-    public static Node<?> toDomNode(Element xmlElement, Optional<DataSchemaNode> schema,
-            Optional<XmlCodecProvider> codecProvider) {
+    public static Node<?> toDomNode(final Element xmlElement, final Optional<DataSchemaNode> schema,
+            final Optional<XmlCodecProvider> codecProvider) {
         if (schema.isPresent()) {
             return toNodeWithSchema(xmlElement, schema.get(), codecProvider.or(DEFAULT_XML_VALUE_CODEC_PROVIDER));
         }
         return toDomNode(xmlElement);
     }
 
-    public static CompositeNode fromElement(Element xmlElement) {
+    public static CompositeNode fromElement(final Element xmlElement) {
         CompositeNodeBuilder<ImmutableCompositeNode> node = ImmutableCompositeNode.builder();
         node.setQName(qNameFromElement(xmlElement));
 
         return node.toInstance();
     }
 
-    public static QName qNameFromElement(Element xmlElement) {
+    public static QName qNameFromElement(final Element xmlElement) {
         String namespace = xmlElement.getNamespaceURI();
         String localName = xmlElement.getLocalName();
         return QName.create(namespace != null ? URI.create(namespace) : null, null, localName);
     }
 
-    private static Node<?> toNodeWithSchema(Element xmlElement, DataSchemaNode schema, XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
+    private static Node<?> toNodeWithSchema(final Element xmlElement, final DataSchemaNode schema, final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
         checkQName(xmlElement, schema.getQName());
         if (schema instanceof DataNodeContainer) {
             return toCompositeNodeWithSchema(xmlElement, schema.getQName(), (DataNodeContainer) schema, codecProvider,schemaCtx);
@@ -328,12 +328,12 @@ public class XmlDocumentUtils {
         return null;
     }
 
-    private static Node<?> toNodeWithSchema(Element xmlElement, DataSchemaNode schema, XmlCodecProvider codecProvider) {
+    private static Node<?> toNodeWithSchema(final Element xmlElement, final DataSchemaNode schema, final XmlCodecProvider codecProvider) {
         return toNodeWithSchema(xmlElement, schema, codecProvider, null);
     }
 
-    protected static Node<?> toSimpleNodeWithType(Element xmlElement, LeafSchemaNode schema,
-            XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
+    protected static Node<?> toSimpleNodeWithType(final Element xmlElement, final LeafSchemaNode schema,
+            final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
         TypeDefinitionAwareCodec<? extends Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
         Object value = null;
@@ -355,8 +355,8 @@ public class XmlDocumentUtils {
         return new SimpleNodeTOImpl<>(schema.getQName(), null, value, modifyAction.orNull());
     }
 
-    private static Node<?> toSimpleNodeWithType(Element xmlElement, LeafListSchemaNode schema,
-            XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
+    private static Node<?> toSimpleNodeWithType(final Element xmlElement, final LeafListSchemaNode schema,
+            final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
         TypeDefinitionAwareCodec<? extends Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
         String text = xmlElement.getTextContent();
         Object value = null;
@@ -374,8 +374,8 @@ public class XmlDocumentUtils {
         return new SimpleNodeTOImpl<>(schema.getQName(), null, value, modifyAction.orNull());
     }
 
-    private static Node<?> toCompositeNodeWithSchema(Element xmlElement, QName qName, DataNodeContainer schema,
-            XmlCodecProvider codecProvider,SchemaContext schemaCtx) {
+    private static Node<?> toCompositeNodeWithSchema(final Element xmlElement, final QName qName, final DataNodeContainer schema,
+            final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
         List<Node<?>> values = toDomNodes(xmlElement, Optional.fromNullable(schema.getChildNodes()),schemaCtx);
         Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
         return ImmutableCompositeNode.create(qName, values, modifyAction.orNull());
@@ -383,10 +383,11 @@ public class XmlDocumentUtils {
 
     public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "operation");
 
-    public static Optional<ModifyAction> getModifyOperationFromAttributes(Element xmlElement) {
+    public static Optional<ModifyAction> getModifyOperationFromAttributes(final Element xmlElement) {
         Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
-        if(attributeNodeNS == null)
-            return Optional.absent();
+        if(attributeNodeNS == null) {
+			return Optional.absent();
+		}
 
         ModifyAction action = ModifyAction.fromXmlValue(attributeNodeNS.getValue());
         Preconditions.checkArgument(action.isOnElementPermitted(), "Unexpected operation %s on %s", action, xmlElement);
@@ -394,12 +395,12 @@ public class XmlDocumentUtils {
         return Optional.of(action);
     }
 
-    private static void checkQName(Element xmlElement, QName qName) {
+    private static void checkQName(final Element xmlElement, final QName qName) {
         checkState(Objects.equal(xmlElement.getNamespaceURI(), qName.getNamespace().toString()));
         checkState(qName.getLocalName().equals(xmlElement.getLocalName()));
     }
 
-    public static final Optional<DataSchemaNode> findFirstSchema(QName qname, Set<DataSchemaNode> dataSchemaNode) {
+    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Set<DataSchemaNode> dataSchemaNode) {
         if (dataSchemaNode != null && !dataSchemaNode.isEmpty() && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
@@ -417,11 +418,11 @@ public class XmlDocumentUtils {
         return Optional.absent();
     }
 
-    public static Node<?> toDomNode(Document doc) {
+    public static Node<?> toDomNode(final Document doc) {
         return toDomNode(doc.getDocumentElement());
     }
 
-    private static Node<?> toDomNode(Element element) {
+    private static Node<?> toDomNode(final Element element) {
         QName qname = qNameFromElement(element);
 
         ImmutableList.Builder<Node<?>> values = ImmutableList.<Node<?>> builder();
@@ -447,11 +448,11 @@ public class XmlDocumentUtils {
         return ImmutableCompositeNode.create(qname, values.build());
     }
 
-    public static List<Node<?>> toDomNodes(final Element element, final Optional<Set<DataSchemaNode>> context,SchemaContext schemaCtx) {
+    public static List<Node<?>> toDomNodes(final Element element, final Optional<Set<DataSchemaNode>> context,final SchemaContext schemaCtx) {
         return forEachChild(element.getChildNodes(),schemaCtx, new Function<ElementWithSchemaContext, Optional<Node<?>>>() {
 
             @Override
-            public Optional<Node<?>> apply(ElementWithSchemaContext input) {
+            public Optional<Node<?>> apply(final ElementWithSchemaContext input) {
                 if (context.isPresent()) {
                     QName partialQName = qNameFromElement(input.getElement());
                     Optional<DataSchemaNode> schemaNode = findFirstSchema(partialQName, context.get());
@@ -493,7 +494,7 @@ public class XmlDocumentUtils {
      *         Element with equal notification QName defined in XML Document.
      */
     public static CompositeNode notificationToDomNodes(final Document document,
-            final Optional<Set<NotificationDefinition>> notifications, SchemaContext schemaCtx) {
+            final Optional<Set<NotificationDefinition>> notifications, final SchemaContext schemaCtx) {
         if (notifications.isPresent() && (document != null) && (document.getDocumentElement() != null)) {
             final NodeList originChildNodes = document.getDocumentElement().getChildNodes();
             for (int i = 0; i < originChildNodes.getLength(); i++) {
@@ -532,7 +533,7 @@ public class XmlDocumentUtils {
         return Optional.<NotificationDefinition>absent();
     }
 
-    private static final <T> List<T> forEachChild(NodeList nodes, SchemaContext schemaContext, Function<ElementWithSchemaContext, Optional<T>> forBody) {
+    private static final <T> List<T> forEachChild(final NodeList nodes, final SchemaContext schemaContext, final Function<ElementWithSchemaContext, Optional<T>> forBody) {
         ImmutableList.Builder<T> ret = ImmutableList.<T> builder();
         for (int i = 0; i < nodes.getLength(); i++) {
             org.w3c.dom.Node child = nodes.item(i);
