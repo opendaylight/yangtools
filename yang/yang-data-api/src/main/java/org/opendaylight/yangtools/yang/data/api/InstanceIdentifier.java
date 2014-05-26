@@ -8,8 +8,12 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.opendaylight.yangtools.concepts.Builder;
@@ -120,6 +124,28 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
     }
 
+    static int hashCode( Object value ) {
+        if( value == null ) {
+            return 0;
+        }
+
+        if( value.getClass().equals( byte[].class ) ) {
+            return Arrays.hashCode( (byte[])value );
+        }
+
+        if( value.getClass().isArray() ) {
+            int hash = 0;
+            int length = Array.getLength( value );
+            for( int i = 0; i < length; i++ ) {
+                hash += Objects.hashCode( Array.get( value, i ) );
+            }
+
+            return hash;
+        }
+
+        return Objects.hashCode( value );
+    }
+
     // Static factories & helpers
 
     public static InstanceIdentifier of(final QName name) {
@@ -227,8 +253,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
 
         public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
-            this.nodeType = node;
-            this.keyValues = ImmutableMap.of(key, value);
+            this( node, ImmutableMap.of(key, value) );
         }
 
         @Override
@@ -244,9 +269,18 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((keyValues == null) ? 0 : keyValues.hashCode());
+            result = prime * result + ((keyValues == null) ? 0 : hashKeyValues());
             result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
             return result;
+        }
+
+        private int hashKeyValues() {
+            int hash = 0;
+            for( Entry<QName,Object> entry: keyValues.entrySet() ) {
+                hash += Objects.hashCode( entry.getKey() ) + InstanceIdentifier.hashCode( entry.getValue() );
+            }
+
+            return hash;
         }
 
         @Override
@@ -265,7 +299,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
                 if (other.keyValues != null) {
                     return false;
                 }
-            } else if (!keyValues.equals(other.keyValues)) {
+            } else if (!keyValuesEquals(other.keyValues)) {
                 return false;
             }
             if (nodeType == null) {
@@ -276,6 +310,24 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
                 return false;
             }
             return true;
+        }
+
+        private boolean keyValuesEquals( Map<QName, Object> otherKeyValues ) {
+            if( otherKeyValues == null || keyValues.size() != otherKeyValues.size() ) {
+                return false;
+            }
+
+            boolean result = true;
+            for( Entry<QName,Object> entry: keyValues.entrySet() ) {
+                if( !otherKeyValues.containsKey( entry.getKey() ) ||
+                    !Objects.deepEquals( entry.getValue(), otherKeyValues.get( entry.getKey() ) ) ) {
+
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
         }
 
         @Override
@@ -312,7 +364,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            result = prime * result + ((value == null) ? 0 : InstanceIdentifier.hashCode( value ) );
             result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
             return result;
         }
@@ -329,21 +381,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
                 return false;
             }
             NodeWithValue other = (NodeWithValue) obj;
-            if (value == null) {
-                if (other.value != null) {
-                    return false;
-                }
-            } else if (!value.equals(other.value)) {
-                return false;
-            }
-            if (nodeType == null) {
-                if (other.nodeType != null) {
-                    return false;
-                }
-            } else if (!nodeType.equals(other.nodeType)) {
-                return false;
-            }
-            return true;
+            return Objects.deepEquals(value, other.value) && Objects.equals(nodeType, other.nodeType);
         }
 
         @Override
