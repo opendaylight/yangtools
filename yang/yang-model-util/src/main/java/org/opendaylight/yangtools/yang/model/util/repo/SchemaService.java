@@ -8,9 +8,18 @@
 package org.opendaylight.yangtools.yang.model.util.repo;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextHolder;
 
+
+/**
+ * Represent Schema Service.
+ *
+ *
+ * @deprecated Replaced by {@link SchemaContextHolder}, which provides
+ *    component-local view for actual {@link SchemaContext}.
+ */
+@Deprecated
 public interface SchemaService {
 
-    
     SchemaContext getSchemaContext();
 }
