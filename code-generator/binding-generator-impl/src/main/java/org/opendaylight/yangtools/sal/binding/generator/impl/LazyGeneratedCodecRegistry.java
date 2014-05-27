@@ -1221,7 +1221,7 @@ class LazyGeneratedCodecRegistry implements //
         public Class<?> deserialize(final QName input) {
             Type type = qnamesToIdentityMap.get(input);
             if (type == null) {
-                return null;
+                throw new IllegalArgumentException( "Invalid value \"" + input + "\"." );
             }
             ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
             WeakReference<Class> softref = typeToClass.get(typeref);
@@ -1246,7 +1246,7 @@ class LazyGeneratedCodecRegistry implements //
         public Object deserialize(final Object input, final InstanceIdentifier bindingIdentifier) {
             Type type = qnamesToIdentityMap.get(input);
             if (type == null) {
-                return null;
+                throw new IllegalArgumentException( "Invalid for \"" + input + "\"." );
             }
             ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
             WeakReference<Class> softref = typeToClass.get(typeref);
