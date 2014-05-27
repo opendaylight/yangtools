@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+
+import com.google.common.base.Optional;
 
 /**
  * The Abstract Integer class defines implementation of IntegerTypeDefinition
@@ -44,21 +45,21 @@ abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition 
     private final List<RangeConstraint> rangeStatements;
 
     /**
+     * Construct Unsigned Integer
      *
-     * @param name
-     * @param description
-     * @param maxRange
-     * @param units
+     * @param name Name of type
+     * @param description Description of type
+     * @param maxRange Maximum value
+     * @param units Units
      */
     public AbstractUnsignedInteger(final QName name, final String description, final Number maxRange, final String units) {
         this.name = name;
         this.path = SchemaPath.create(Collections.singletonList(name), true);
         this.description = description;
         this.units = units;
-        this.rangeStatements = new ArrayList<RangeConstraint>();
         final String rangeDescription = "Integer values between " + MIN_VALUE + " and " + maxRange + ", inclusively.";
-        this.rangeStatements.add(BaseConstraints.rangeConstraint(MIN_VALUE, maxRange, rangeDescription,
-                "https://tools.ietf.org/html/rfc6020#section-9.2.4"));
+        this.rangeStatements = Collections.singletonList(BaseConstraints.newRangeConstraint(MIN_VALUE, maxRange, Optional.of(rangeDescription),
+                Optional.of("https://tools.ietf.org/html/rfc6020#section-9.2.4")));
     }
 
     @Override

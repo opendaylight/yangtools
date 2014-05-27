@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.model.util;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 /**
- * The <code>default</code> implementation of Instance Rewision Aware XPath
+ * The <code>helper</code> implementation of Instance Rewision Aware XPath
  * interface.
- * 
+ *
  * @see RevisionAwareXPath
  */
 public class RevisionAwareXPathImpl implements RevisionAwareXPath {
@@ -23,7 +23,7 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
     private static final int HASH_BOOLEAN_TRUE = 1231;
     private static final int HASH_BOOLEAN_FALSE = 1237;
 
-    public RevisionAwareXPathImpl(String xpath, boolean absolute) {
+    public RevisionAwareXPathImpl(final String xpath, final boolean absolute) {
         this.xpath = xpath;
         this.absolute = absolute;
     }
@@ -43,7 +43,7 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
