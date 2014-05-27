@@ -19,6 +19,16 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
+/**
+ * Utility implementation of unknown type definition.
+ *
+ * Unknown type definition is derived type, for
+ * which base built-in type is not yet known. This types
+ * are possible during parsing and resolving of YANG model
+ * without all requisites allready processed.
+ *
+ *
+ */
 public final class UnknownType implements UnknownTypeDefinition {
 
     private final QName name;
@@ -66,12 +76,12 @@ public final class UnknownType implements UnknownTypeDefinition {
             this.path = BaseTypes.schemaPath(name);
         }
 
-        public Builder description(String description) {
+        public Builder description(final String description) {
             this.description = description;
             return this;
         }
 
-        public Builder reference(String reference) {
+        public Builder reference(final String reference) {
             this.reference = reference;
             return this;
         }
@@ -106,12 +116,12 @@ public final class UnknownType implements UnknownTypeDefinition {
             return this;
         }
 
-        public Builder status(Status status) {
+        public Builder status(final Status status) {
             this.status = status;
             return this;
         }
 
-        public Builder units(String units) {
+        public Builder units(final String units) {
             this.units = units;
             return this;
         }
@@ -126,7 +136,7 @@ public final class UnknownType implements UnknownTypeDefinition {
         }
     }
 
-    private UnknownType(Builder builder) {
+    private UnknownType(final Builder builder) {
         this.name = builder.name;
         this.path = builder.path;
         this.description = builder.description;
@@ -296,7 +306,7 @@ public final class UnknownType implements UnknownTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

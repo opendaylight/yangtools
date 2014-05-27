@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -24,10 +25,10 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
  *
  * @see StringTypeDefinition
  */
-public final class StringType implements StringTypeDefinition {
+public final class StringType implements StringTypeDefinition, Immutable {
     private static final StringType INSTANCE = new StringType();
-    private final QName name = BaseTypes.constructQName("string");
-    private final SchemaPath path = SchemaPath.create(Collections.singletonList(name), true);
+    private static final QName NAME = BaseTypes.STRING_QNAME;
+    private static final SchemaPath PATH = SchemaPath.create(Collections.singletonList(NAME), true);
     private static final String DEFAULT_VALUE = "";
     private static final String DESCRIPTION = "";
     private static final String REFERENCE = "";
@@ -89,7 +90,7 @@ public final class StringType implements StringTypeDefinition {
      */
     @Override
     public QName getQName() {
-        return name;
+        return NAME;
     }
 
     /*
@@ -99,7 +100,7 @@ public final class StringType implements StringTypeDefinition {
      */
     @Override
     public SchemaPath getPath() {
-        return path;
+        return PATH;
     }
 
     /*
@@ -166,8 +167,8 @@ public final class StringType implements StringTypeDefinition {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((lengthStatements == null) ? 0 : lengthStatements.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + ((NAME == null) ? 0 : NAME.hashCode());
+        result = prime * result + ((PATH == null) ? 0 : PATH.hashCode());
         result = prime * result + ((patterns == null) ? 0 : patterns.hashCode());
         return result;
     }
@@ -191,18 +192,18 @@ public final class StringType implements StringTypeDefinition {
         } else if (!lengthStatements.equals(other.lengthStatements)) {
             return false;
         }
-        if (name == null) {
-            if (other.name != null) {
+        if (NAME == null) {
+            if (other.NAME != null) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
+        } else if (!NAME.equals(other.NAME)) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
+        if (PATH == null) {
+            if (other.PATH != null) {
                 return false;
             }
-        } else if (!path.getPath().equals(other.path.getPath())) {
+        } else if (!PATH.getPath().equals(other.PATH.getPath())) {
             return false;
         }
         if (patterns == null) {
@@ -219,9 +220,9 @@ public final class StringType implements StringTypeDefinition {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("StringType [name=");
-        builder.append(name);
+        builder.append(NAME);
         builder.append(", path=");
-        builder.append(path);
+        builder.append(PATH);
         builder.append(", defaultValue=");
         builder.append(DEFAULT_VALUE);
         builder.append(", description=");

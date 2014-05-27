@@ -7,31 +7,107 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
+/**
+ * Utility class which provides factory methods to construct Constraints.
+ *
+ * Provides static factory methods which constructs instances of
+ * <ul>
+ * <li>{@link LengthConstraint} - {@link #lengthConstraint(Number, Number, String, String)}
+ * <li>{@link RangeConstraint} - {@link #rangeConstraint(Number, Number, String, String)}
+ * <li>{@link PatternConstraint} - {@link #patternConstraint(String, String, String)}
+ * </ul>
+ */
 public final class BaseConstraints {
 
     private BaseConstraints() {
     }
 
+    /**
+     * Creates a {@link LengthConstraint}.
+     *
+     * Creates an instance of Length constraint based on supplied parameters
+     * with additional behaviour:
+     *
+     * <ul>
+     * <li>{@link LengthConstraint#getErrorAppTag()} returns <code>length-out-of-specified-bounds</code>
+     * <li>{@link LengthConstraint#getErrorMessage() returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * </ul>
+     *
+     * @see LengthConstraint
+     *
+     * @param min  length-restricting lower bound value. The value MUST NOT be negative.
+     * @param max length-restricting upper bound value. The value MUST NOT be negative.
+     * @param description Description associated with constraint.
+     * @param reference Reference associated with constraint.
+     * @return Instance of {@link LengthConstraint}
+     */
     public static LengthConstraint lengthConstraint(final Number min, final Number max, final String description,
             final String reference) {
         return new LengthConstraintImpl(min, max, description, reference);
     }
 
+    /**
+     * Creates a {@link RangeConstraint}.
+     *
+     *
+     *
+     * Creates an instance of Range constraint based on supplied parameters
+     * with additional behaviour:
+     *
+     * <ul>
+     * <li>{@link RangeConstraint#getErrorAppTag()} returns <code>range-out-of-specified-bounds</code>
+     * <li>{@link RangeConstraint#getErrorMessage() returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * </ul>
+     *
+     *
+     * @see RangeConstraint
+     *
+     * @param min value-restricting lower bound value.
+     * @param max value-restricting upper bound value.
+     * @param description Description associated with constraint.
+     * @param reference Reference associated with constraint.
+     * @return Instance of {@link RangeConstraint}
+     */
     public static RangeConstraint rangeConstraint(final Number min, final Number max, final String description,
             final String reference) {
         return new RangeConstraintImpl(min, max, description, reference);
     }
 
+    /**
+     * Creates a {@link PatternConstraint}.
+     *
+     *
+     *
+     * Creates an instance of Range constraint based on supplied parameters
+     * with additional behaviour:
+     *
+     * <ul>
+     * <li>{@link PatternConstraint#getErrorAppTag()} returns <code>invalid-regular-expression</code>
+     * </ul>
+     *
+     *
+     * @see PatternConstraint
+     *
+     * @param pattern Regular expression
+     * @param description Description associated with constraint.
+     * @param reference Reference associated with constraint.
+     * @returnInstance of {@link PatternConstraint}
+     */
     public static PatternConstraint patternConstraint(final String pattern, final String description,
             final String reference) {
         return new PatternConstraintImpl(pattern, description, reference);
     }
 
-    private static final class LengthConstraintImpl implements LengthConstraint {
+    /**
+     * {@link Immutable} implementation of {@link LengthConstraint}.
+     *
+     */
+    private static final class LengthConstraintImpl implements LengthConstraint, Immutable {
 
         private final Number min;
         private final Number max;
@@ -42,7 +118,7 @@ public final class BaseConstraints {
         private final String errorAppTag;
         private final String errorMessage;
 
-        public LengthConstraintImpl(Number min, Number max, final String description, final String reference) {
+        public LengthConstraintImpl(final Number min, final Number max, final String description, final String reference) {
             super();
             this.min = min;
             this.max = max;
@@ -165,7 +241,11 @@ public final class BaseConstraints {
         }
     }
 
-    private static final class RangeConstraintImpl implements RangeConstraint {
+    /**
+     * {@link Immutable} implementation of {@link LengthConstraint}.
+     *
+     */
+    private static final class RangeConstraintImpl implements RangeConstraint, Immutable {
         private final Number min;
         private final Number max;
 
@@ -175,7 +255,7 @@ public final class BaseConstraints {
         private final String errorAppTag;
         private final String errorMessage;
 
-        public RangeConstraintImpl(Number min, Number max, String description, String reference) {
+        public RangeConstraintImpl(final Number min, final Number max, final String description, final String reference) {
             super();
             this.min = min;
             this.max = max;
@@ -306,6 +386,11 @@ public final class BaseConstraints {
         }
     }
 
+    /**
+     * {@link Immutable} implementation of {@link PatternConstraint}
+     * @author tony
+     *
+     */
     private static final class PatternConstraintImpl implements PatternConstraint {
 
         private final String regex;

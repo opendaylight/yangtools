@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * Implementation of Yang int32 built-in type. <br>
@@ -18,20 +18,20 @@ import org.opendaylight.yangtools.yang.common.QName;
  * @see AbstractSignedInteger
  *
  */
-public final class Int32 extends AbstractSignedInteger {
-    private static Int32 instance;
-    private static final QName NAME = BaseTypes.constructQName("int32");
+public final class Int32 extends AbstractSignedInteger implements Immutable {
+    private static final Int32 INSTANCE = new Int32();
     private static final String DESCRIPTION = "int32  represents integer values between -2147483648 and 2147483647, inclusively.";
 
     private Int32() {
-        super(Int32.NAME, Int32.DESCRIPTION, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
+        super(BaseTypes.INT32_QNAME, Int32.DESCRIPTION, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
     }
 
+    /**
+     * Returns default instance of int32 type.
+     * @return default instance of int32 type.
+     */
     public static Int32 getInstance() {
-        if (instance == null) {
-            instance = new Int32();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -41,6 +41,7 @@ public final class Int32 extends AbstractSignedInteger {
 
     @Override
     public String toString() {
-        return "type " + NAME;
+        return "type " + BaseTypes.INT32_QNAME;
     }
+
 }

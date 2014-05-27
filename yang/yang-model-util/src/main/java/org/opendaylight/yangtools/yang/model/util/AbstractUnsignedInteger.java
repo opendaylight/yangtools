@@ -44,11 +44,12 @@ abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition 
     private final List<RangeConstraint> rangeStatements;
 
     /**
+     * Construct Unsigned Integer
      *
-     * @param name
-     * @param description
-     * @param maxRange
-     * @param units
+     * @param name Name of type
+     * @param description Description of type
+     * @param maxRange Maximum value
+     * @param units Units
      */
     public AbstractUnsignedInteger(final QName name, final String description, final Number maxRange, final String units) {
         this.name = name;

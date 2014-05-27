@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * Implementation of Yang uint16 built-in type. <br>
@@ -15,21 +15,18 @@ import org.opendaylight.yangtools.yang.common.QName;
  * counterpart of Yang uint16 built-in type is {@link Integer}.
  *
  */
-public final class Uint16 extends AbstractUnsignedInteger {
+public final class Uint16 extends AbstractUnsignedInteger implements Immutable {
+    private static Uint16 INSTANCE = new Uint16();
+
     public static final int MAX_VALUE = 65535;
-    private static Uint16 instance;
-    private static final QName NAME = BaseTypes.constructQName("uint16");
     private static final String DESCRIPTION = "uint16 represents integer values between 0 and 65535, inclusively.";
 
     private Uint16() {
-        super(NAME, DESCRIPTION, MAX_VALUE, "");
+        super(BaseTypes.UINT16_QNAME, DESCRIPTION, MAX_VALUE, "");
     }
 
     public static Uint16 getInstance() {
-        if (instance == null) {
-            instance = new Uint16();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -39,7 +36,7 @@ public final class Uint16 extends AbstractUnsignedInteger {
 
     @Override
     public String toString() {
-        return "type " + NAME;
+        return "type " + BaseTypes.UINT16_QNAME;
     }
 
 }
