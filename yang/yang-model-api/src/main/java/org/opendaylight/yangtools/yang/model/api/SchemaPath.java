@@ -188,9 +188,14 @@ public class SchemaPath {
         final int prime = 31;
         int result = 1;
         result = prime * result + absolute.hashCode();
+
+        // TODO: Temporary fix for Bug 1076 - hash computation
+        // Which adds same behaviour as using List.hashCode().
+        int pathHash = 1;
         for (Object o : path) {
-            result = prime * result + o.hashCode();
+            pathHash = prime * pathHash + o.hashCode();
         }
+        result = prime * result + pathHash;
         return result;
     }
 
