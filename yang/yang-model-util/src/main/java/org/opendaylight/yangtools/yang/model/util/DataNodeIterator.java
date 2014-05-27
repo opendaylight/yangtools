@@ -24,6 +24,15 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
+/**
+ * DataNodeIterator is iterator, which walks down whole YANG DataNodeContainer
+ * and walks all instances of {@link DataSchemaNode} present in subtree.
+ *
+ * Iterator instance is eagerly created, walking happens on initialization.
+ *
+ * Iteration is not ordered.
+ *
+ */
 public class DataNodeIterator implements Iterator<DataSchemaNode> {
 
     private final DataNodeContainer container;
@@ -50,22 +59,47 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         traverse(this.container);
     }
 
+    /**
+     * Returns list all containers present in subtree.
+     *
+     * @return Returns list all containers present in subtree.
+     */
     public List<ContainerSchemaNode> allContainers() {
         return allContainers;
     }
 
+    /**
+     * Returns list all lists present in subtree.
+     *
+     * @return Returns list all containers present in subtree.
+     */
     public List<ListSchemaNode> allLists() {
         return allLists;
     }
 
+    /**
+     * Returns list all choices present in subtree.
+     *
+     * @return Returns list all containers present in subtree.
+     */
     public List<ChoiceNode> allChoices() {
         return allChoices;
     }
 
+    /**
+     * Returns list all groupings present in subtree.
+     *
+     * @return Returns list all containers present in subtree.
+     */
     public List<GroupingDefinition> allGroupings() {
         return allGroupings;
     }
 
+    /**
+     * Returns list all typedefs present in subtree.
+     *
+     * @return Returns list all containers present in subtree.
+     */
     public List<TypeDefinition<?>> allTypedefs() {
         return allTypedefs;
     }
@@ -109,7 +143,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
 
     }
 
-    private void traverseModule(DataNodeContainer dataNode) {
+    private void traverseModule(final DataNodeContainer dataNode) {
         final Module module;
         if (dataNode instanceof Module) {
             module = (Module) dataNode;
@@ -136,7 +170,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         }
     }
 
-    private void traverseGroupings(DataNodeContainer dataNode) {
+    private void traverseGroupings(final DataNodeContainer dataNode) {
         final Set<GroupingDefinition> groupings = dataNode.getGroupings();
         if (groupings != null) {
             for (GroupingDefinition grouping : groupings) {

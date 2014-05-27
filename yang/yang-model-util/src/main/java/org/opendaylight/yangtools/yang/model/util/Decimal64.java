@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * @see DecimalTypeDefinition
  */
 public final class Decimal64 implements DecimalTypeDefinition {
-    private final QName name = BaseTypes.constructQName("decimal64");
+    private static final QName NAME = BaseTypes.DECIMAL64_QNAME;
     private final SchemaPath path;
     private static final String UNITS = "";
     private static final BigDecimal DEFAULT_VALUE = null;
@@ -60,7 +60,9 @@ public final class Decimal64 implements DecimalTypeDefinition {
      *
      * @see DecimalTypeDefinition
      * @exception IllegalArgumentException
+     * @deprecated Use static factory {@link #create(SchemaPath, Integer)}.
      */
+    @Deprecated
     public Decimal64(final SchemaPath path, final Integer fractionDigits) {
         if (!((fractionDigits.intValue() >= 1) && (fractionDigits.intValue() <= MAX_NUMBER_OF_FRACTION_DIGITS))) {
             throw new IllegalArgumentException(
@@ -69,6 +71,10 @@ public final class Decimal64 implements DecimalTypeDefinition {
         this.fractionDigits = fractionDigits;
         rangeStatements = defaultRangeStatements();
         this.path = path;
+    }
+
+    public static Decimal64 create(final SchemaPath path, final Integer fractionDigits) {
+        return new Decimal64(path, fractionDigits);
     }
 
     /**
@@ -103,7 +109,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
 
     @Override
     public QName getQName() {
-        return name;
+        return NAME;
     }
 
     @Override
@@ -145,13 +151,13 @@ public final class Decimal64 implements DecimalTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((NAME == null) ? 0 : NAME.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -162,11 +168,11 @@ public final class Decimal64 implements DecimalTypeDefinition {
             return false;
         }
         Decimal64 other = (Decimal64) obj;
-        if (name == null) {
-            if (other.name != null) {
+        if (NAME == null) {
+            if (other.NAME != null) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
+        } else if (!NAME.equals(other.NAME)) {
             return false;
         }
         if (path == null) {
@@ -181,6 +187,6 @@ public final class Decimal64 implements DecimalTypeDefinition {
 
     @Override
     public String toString() {
-        return Decimal64.class.getSimpleName() + "[qname=" + name + ", fractionDigits=" + fractionDigits + "]";
+        return Decimal64.class.getSimpleName() + "[qname=" + NAME + ", fractionDigits=" + fractionDigits + "]";
     }
 }

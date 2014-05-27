@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -16,20 +17,21 @@ import org.opendaylight.yangtools.yang.common.QName;
  * type is {@link Long}.
  *
  */
-public final class Int64 extends AbstractSignedInteger {
-    private static Int64 instance;
-    private static final QName NAME = BaseTypes.constructQName("int64");
+public final class Int64 extends AbstractSignedInteger implements Immutable {
+    private static final Int64 INSTANCE = new Int64();
+    private static final QName NAME = BaseTypes.INT64_QNAME;
     private static final String DESCRIPTION = "int64  represents integer values between -9223372036854775808 and 9223372036854775807, inclusively.";
 
     private Int64() {
-        super(NAME, DESCRIPTION, Long.MIN_VALUE, Long.MAX_VALUE, "");
+        super(BaseTypes.INT64_QNAME, DESCRIPTION, Long.MIN_VALUE, Long.MAX_VALUE, "");
     }
 
+    /**
+     * Returns default instance of int64 type.
+     * @return default instance of int64 type.
+     */
     public static Int64 getInstance() {
-        if (instance == null) {
-            instance = new Int64();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override

@@ -35,10 +35,10 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
     private List<PatternConstraint> patterns = Collections.emptyList();
     private Integer fractionDigits = null;
 
-    private Status status;
-    private String units;
-    private Object defaultValue;
-    private boolean addedByUses;
+    private final Status status;
+    private final String units;
+    private final Object defaultValue;
+    private final boolean addedByUses;
 
     public static class Builder {
         private final QName typeName;
@@ -60,20 +60,28 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
         private List<PatternConstraint> patterns = Collections.emptyList();
         private Integer fractionDigits = null;
 
+        /**
+         *
+         * @param actualPath
+         * @param namespace
+         * @param revision
+         * @param typeName
+         * @param baseType
+         * @param description
+         * @param reference
+         * @deprecated
+         */
+        @Deprecated
         public Builder(final List<String> actualPath, final URI namespace,
                 final Date revision, final QName typeName,
-                TypeDefinition<?> baseType, final String description,
+                final TypeDefinition<?> baseType, final String description,
                 final String reference) {
-            this.typeName = typeName;
-            this.baseType = baseType;
-            this.path = BaseTypes.schemaPath(actualPath, namespace, revision);
-            this.description = description;
-            this.reference = reference;
+            this(typeName,baseType,description,reference,BaseTypes.schemaPath(actualPath, namespace, revision));
         }
 
-        public Builder(final QName typeName, TypeDefinition<?> baseType,
+        public Builder(final QName typeName, final TypeDefinition<?> baseType,
                 final String description, final String reference,
-                SchemaPath path) {
+                final SchemaPath path) {
             this.typeName = typeName;
             this.baseType = baseType;
             this.path = path;
@@ -81,12 +89,12 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
             this.reference = reference;
         }
 
-        public Builder status(Status status) {
+        public Builder status(final Status status) {
             this.status = status;
             return this;
         }
 
-        public Builder units(String units) {
+        public Builder units(final String units) {
             this.units = units;
             return this;
         }
@@ -138,7 +146,7 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
         }
     }
 
-    private ExtendedType(Builder builder) {
+    private ExtendedType(final Builder builder) {
         this.typeName = builder.typeName;
         this.baseType = builder.baseType;
         this.path = builder.path;
@@ -206,7 +214,7 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }

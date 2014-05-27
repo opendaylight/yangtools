@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * Implementation of Yang uint8 built-in type. <br>
@@ -15,21 +15,18 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  * @see AbstractUnsignedInteger
  */
-public final class Uint8 extends AbstractUnsignedInteger {
+public final class Uint8 extends AbstractUnsignedInteger implements Immutable {
+    private static final Uint8 INSTANCE = new Uint8();
+
     public static final int MAX_VALUE = 255;
-    private static Uint8 instance;
-    private static final QName NAME = BaseTypes.constructQName("uint8");
     private static final String DESCRIPTION = "uint8  represents integer values between 0 and 255, inclusively.";
 
     private Uint8() {
-        super(NAME, DESCRIPTION, MAX_VALUE, "");
+        super(BaseTypes.UINT8_QNAME, DESCRIPTION, MAX_VALUE, "");
     }
 
     public static Uint8 getInstance() {
-        if (instance == null) {
-            instance = new Uint8();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override

@@ -43,13 +43,15 @@ abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     private final List<RangeConstraint> rangeStatements;
 
     /**
-     * @param name
-     * @param description
-     * @param minRange
-     * @param maxRange
-     * @param units
+     * Construct SignedInteger
+     *
+     * @param name Name of type
+     * @param description Description of type
+     * @param minRange Minimal value
+     * @param maxRange Maximum value
+     * @param units Units
      */
-    public AbstractSignedInteger(final QName name, final String description, final Number minRange,
+    protected AbstractSignedInteger(final QName name, final String description, final Number minRange,
             final Number maxRange, final String units) {
         this.name = name;
         this.path = SchemaPath.create(Collections.singletonList(name), true);
