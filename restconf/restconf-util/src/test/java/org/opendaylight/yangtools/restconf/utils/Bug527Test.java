@@ -46,9 +46,7 @@ public class Bug527Test {
 
     @Before
     public void setup() {
-        this.mappingService = new RuntimeGeneratedMappingServiceImpl();
-        this.mappingService.setPool(new ClassPool());
-        this.mappingService.init();
+        this.mappingService = new RuntimeGeneratedMappingServiceImpl(new ClassPool());
 
         final ModuleInfoBackedContext moduleInfo = ModuleInfoBackedContext.create();
         moduleInfo.addModuleInfos(BindingReflections.loadModuleInfos());
