@@ -60,7 +60,9 @@ public final class Decimal64 implements DecimalTypeDefinition {
      *
      * @see DecimalTypeDefinition
      * @exception IllegalArgumentException
+     * @deprecated Use static factory {@link #create(SchemaPath, Integer)}.
      */
+    @Deprecated
     public Decimal64(final SchemaPath path, final Integer fractionDigits) {
         if (!((fractionDigits.intValue() >= 1) && (fractionDigits.intValue() <= MAX_NUMBER_OF_FRACTION_DIGITS))) {
             throw new IllegalArgumentException(
@@ -69,6 +71,10 @@ public final class Decimal64 implements DecimalTypeDefinition {
         this.fractionDigits = fractionDigits;
         rangeStatements = defaultRangeStatements();
         this.path = path;
+    }
+
+    public static Decimal64 create(final SchemaPath path, final Integer fractionDigits) {
+        return new Decimal64(path, fractionDigits);
     }
 
     /**
@@ -151,7 +157,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

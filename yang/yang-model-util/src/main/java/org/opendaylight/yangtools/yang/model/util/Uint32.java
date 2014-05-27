@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -14,9 +15,10 @@ import org.opendaylight.yangtools.yang.common.QName;
  * uint32 represents integer values between 0 and 4294967295, inclusively.
  *
  */
-public final class Uint32 extends AbstractUnsignedInteger {
+public final class Uint32 extends AbstractUnsignedInteger implements Immutable {
+    private static final Uint32 INSTANCE = new Uint32();
+
     public static final long MAX_VALUE = 4294967295L;
-    private static Uint32 instance;
     private static final QName NAME = BaseTypes.constructQName("uint32");
     private static final String DESCRIPTION = "uint32 represents integer values between 0 and 4294967295, inclusively.";
 
@@ -25,10 +27,7 @@ public final class Uint32 extends AbstractUnsignedInteger {
     }
 
     public static Uint32 getInstance() {
-        if (instance == null) {
-            instance = new Uint32();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override

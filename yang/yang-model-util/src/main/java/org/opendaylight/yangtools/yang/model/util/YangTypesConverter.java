@@ -43,47 +43,16 @@ public final class YangTypesConverter {
         BASE_YANG_TYPES.add("union");
     }
 
-    public static boolean isBaseYangType(String type) {
+    public static boolean isBaseYangType(final String type) {
         return BASE_YANG_TYPES.contains(type);
     }
 
-    public static TypeDefinition<?> javaTypeForBaseYangType(String typeName) {
-        TypeDefinition<?> type = null;
 
-        if (typeName.startsWith("int")) {
-            if ("int8".equals(typeName)) {
-                type = Int8.getInstance();
-            } else if ("int16".equals(typeName)) {
-                type = Int16.getInstance();
-            } else if ("int32".equals(typeName)) {
-                type = Int32.getInstance();
-            } else if ("int64".equals(typeName)) {
-                type = Int64.getInstance();
-            }
-        } else if (typeName.startsWith("uint")) {
-            if ("uint8".equals(typeName)) {
-                type = Uint8.getInstance();
-            } else if ("uint16".equals(typeName)) {
-                type = Uint16.getInstance();
-            } else if ("uint32".equals(typeName)) {
-                type = Uint32.getInstance();
-            } else if ("uint64".equals(typeName)) {
-                type = Uint64.getInstance();
-            }
-        } else if ("string".equals(typeName)) {
-            type = StringType.getInstance();
-        } else if ("binary".equals(typeName)) {
-            type = BinaryType.getInstance();
-        } else if ("boolean".equals(typeName)) {
-            type = BooleanType.getInstance();
-        } else if ("empty".equals(typeName)) {
-            type = EmptyType.getInstance();
-        } else if ("instance-identifier".equals(typeName)) {
-            // FIXME
-            type = new InstanceIdentifier(null, true);
-        }
 
-        return type;
+
+    @Deprecated
+    public static TypeDefinition<?> javaTypeForBaseYangType(final String typeName) {
+        return BaseTypes.baseTypeFrom(typeName);
     }
 
 }

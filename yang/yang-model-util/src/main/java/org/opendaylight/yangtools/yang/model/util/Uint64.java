@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import java.math.BigInteger;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -18,9 +19,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  * {@link BigInteger}.
  *
  */
-public final class Uint64 extends AbstractUnsignedInteger {
+public final class Uint64 extends AbstractUnsignedInteger implements Immutable {
+    private static final Uint64 INSTANCE = new Uint64();
     public static final BigInteger MAX_VALUE = new BigInteger("18446744073709551615");
-    private static Uint64 instance;
     private static final QName NAME = BaseTypes.constructQName("uint64");
     private static final String DESCRIPTION = "uint64 represents integer values between 0 and 18446744073709551615, inclusively.";
 
@@ -29,10 +30,7 @@ public final class Uint64 extends AbstractUnsignedInteger {
     }
 
     public static Uint64 getInstance() {
-        if (instance == null) {
-            instance = new Uint64();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override

@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
+import com.google.common.base.Preconditions;
+
 /**
  * The <code>default</code> implementation of Instance Leafref Type Definition
  * interface.
@@ -32,7 +34,11 @@ public final class Leafref implements LeafrefTypeDefinition {
     private final RevisionAwareXPath xpath;
 
     public Leafref(final RevisionAwareXPath xpath) {
-        this.xpath = xpath;
+        this.xpath = Preconditions.checkNotNull(xpath,"xpath must not be null.");
+    }
+
+    public static Leafref create(final RevisionAwareXPath xpath) {
+        return new Leafref(xpath);
     }
 
     @Override
@@ -94,7 +100,7 @@ public final class Leafref implements LeafrefTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

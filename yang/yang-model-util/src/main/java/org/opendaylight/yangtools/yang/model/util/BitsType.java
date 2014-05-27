@@ -37,7 +37,9 @@ public final class BitsType implements BitsTypeDefinition {
      * Instantiates Bits type as empty bits list.
      *
      * @param path
+     * @deprecated Use static factory method {@link #create(SchemaPath, List)} instead.
      */
+    @Deprecated
     public BitsType(final SchemaPath path) {
         super();
         this.bits = Collections.emptyList();
@@ -49,11 +51,17 @@ public final class BitsType implements BitsTypeDefinition {
      *
      * @param path
      * @param bits
+     * @deprecated Use static factory method {@link #create(SchemaPath, List)} instead.
      */
+    @Deprecated
     public BitsType(final SchemaPath path, final List<Bit> bits) {
         super();
         this.bits = Collections.unmodifiableList(bits);
         this.path = path;
+    }
+
+    public static BitsType create(final SchemaPath path, final List<Bit> bits) {
+        return new BitsType(path,bits);
     }
 
     /*
@@ -162,7 +170,7 @@ public final class BitsType implements BitsTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

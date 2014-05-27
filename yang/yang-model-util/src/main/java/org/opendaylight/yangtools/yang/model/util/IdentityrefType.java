@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
+import com.google.common.base.Preconditions;
+
 /**
  * The <code>default</code> implementation of Identityref Type Definition
  * interface.
@@ -31,9 +33,18 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
     private final IdentitySchemaNode identity;
     private static final String UNITS = "";
 
-    public IdentityrefType(IdentitySchemaNode identity, SchemaPath schemaPath) {
-        this.identity = identity;
-        this.path = schemaPath;
+    @Deprecated
+    public IdentityrefType(final IdentitySchemaNode identity, final SchemaPath schemaPath) {
+        this(schemaPath,identity);
+    }
+
+    private IdentityrefType(final SchemaPath path, final IdentitySchemaNode baseIdentity) {
+        this.path = Preconditions.checkNotNull(path, "Path must be specified");
+        this.identity = Preconditions.checkNotNull(baseIdentity,"baseIdentity must be specified.");
+    }
+
+    public static IdentityrefType create(final SchemaPath path, final IdentitySchemaNode baseIdentity) {
+        return new IdentityrefType(path, baseIdentity);
     }
 
     @Override

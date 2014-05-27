@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -16,8 +17,8 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  * @see AbstractSignedInteger
  */
-public final class Int16 extends AbstractSignedInteger {
-    private static Int16 instance;
+public final class Int16 extends AbstractSignedInteger implements Immutable {
+    private static final Int16 INSTANCE = new Int16();
     private static final QName NAME = BaseTypes.constructQName("int16");
     private static final String DESCRIPTION = "int16  represents integer values between -32768 and 32767, inclusively.";
 
@@ -26,10 +27,7 @@ public final class Int16 extends AbstractSignedInteger {
     }
 
     public static Int16 getInstance() {
-        if (instance == null) {
-            instance = new Int16();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override

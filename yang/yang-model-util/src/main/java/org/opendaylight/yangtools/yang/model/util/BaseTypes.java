@@ -15,6 +15,9 @@ import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+
+import com.google.common.base.Preconditions;
 
 public final class BaseTypes {
 
@@ -38,6 +41,7 @@ public final class BaseTypes {
     public static final QName UINT16_QNAME = constructQName("uint16");
     public static final QName UINT32_QNAME = constructQName("uint32");
     public static final QName UINT64_QNAME = constructQName("uint64");
+
 
     /**
      * Construct QName for Built-in base Yang type. The namespace for built-in
@@ -87,5 +91,42 @@ public final class BaseTypes {
             }
         }
         return new SchemaPath(pathList, true);
+    }
+
+    public static TypeDefinition<?> baseTypeFrom(final String typeName) {
+        Preconditions.checkNotNull(typeName, "typeName must not be null.");
+
+        if (typeName.startsWith("int")) {
+            if ("int8".equals(typeName)) {
+                return Int8.getInstance();
+            } else if ("int16".equals(typeName)) {
+                return Int16.getInstance();
+            } else if ("int32".equals(typeName)) {
+                return Int32.getInstance();
+            } else if ("int64".equals(typeName)) {
+                return Int64.getInstance();
+            }
+        } else if (typeName.startsWith("uint")) {
+            if ("uint8".equals(typeName)) {
+                return Uint8.getInstance();
+            } else if ("uint16".equals(typeName)) {
+                return Uint16.getInstance();
+            } else if ("uint32".equals(typeName)) {
+                return Uint32.getInstance();
+            } else if ("uint64".equals(typeName)) {
+                return Uint64.getInstance();
+            }
+        } else if ("string".equals(typeName)) {
+            return StringType.getInstance();
+        } else if ("binary".equals(typeName)) {
+            return BinaryType.getInstance();
+        } else if ("boolean".equals(typeName)) {
+            return BooleanType.getInstance();
+        } else if ("empty".equals(typeName)) {
+            return EmptyType.getInstance();
+        } else if ("instance-identifier".equals(typeName)) {
+            return InstanceIdentifier.getInstance();
+        }
+        return null;
     }
 }

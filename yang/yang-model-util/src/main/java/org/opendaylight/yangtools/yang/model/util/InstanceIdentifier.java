@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import java.util.Collections;
 import java.util.List;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -21,31 +22,65 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
  * The <code>default</code> implementation of Instance Identifier Type
  * Definition interface.
  *
+ * Instance Identifier has only two possible variants - one with
+ * {@link #requireInstance()} which returns true, other one
+ * returns false.
+ *
  * @see InstanceIdentifierTypeDefinition
- * @deprecated Depracated, use {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier} instead
+ *
  */
-@Deprecated
-public final class InstanceIdentifier implements InstanceIdentifierTypeDefinition {
+public final class InstanceIdentifier implements InstanceIdentifierTypeDefinition, Immutable {
+    private static final InstanceIdentifier INSTANCE_WITH_REQUIRED_TRUE = new InstanceIdentifier(true);
+    private static final InstanceIdentifier INSTANCE_WITH_REQUIRED_FALSE = new InstanceIdentifier(false);
+
     private static final QName NAME = BaseTypes.constructQName("instance-identifier");
     private static final SchemaPath PATH = new SchemaPath(Collections.singletonList(NAME), true);
     private static final String DESCRIPTION = "The instance-identifier built-in type is used to "
             + "uniquely identify a particular instance node in the data tree.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.13";
 
-    private final RevisionAwareXPath xpath;
     private static final String UNITS = "";
-    private boolean requireInstance = true;
+    private final boolean requireInstance;
 
     private static final int HASH_BOOLEAN_TRUE = 1231;
     private static final int HASH_BOOLEAN_FALSE = 1237;
 
+
+
+
+    /**
+     * Constructs new instance identifier.
+     *
+     * @param xpath
+     * @deprecated Use {@link #getInstance()} for default one, since Instance Identifier does not have xpath.
+     */
+    @Deprecated
     public InstanceIdentifier(final RevisionAwareXPath xpath) {
-        this.xpath = xpath;
+        requireInstance = true;
     }
 
+    /**
+     * Constructs new instance identifier.
+     *
+     * @param xpath
+     * @param requireInstance if instance of data is required
+     * @deprecated Use {@link #create(boolean)}, since Instance Identifier does not have xpath.
+     */
+    @Deprecated
     public InstanceIdentifier(final RevisionAwareXPath xpath, final boolean requireInstance) {
-        this.xpath = xpath;
         this.requireInstance = requireInstance;
+    }
+
+    private InstanceIdentifier(final boolean requiredInstance) {
+        this.requireInstance = requiredInstance;
+    }
+
+    public static InstanceIdentifier getInstance() {
+        return INSTANCE_WITH_REQUIRED_TRUE;
+    }
+
+    public static InstanceIdentifier create(final boolean requireInstance) {
+        return requireInstance ? INSTANCE_WITH_REQUIRED_TRUE : INSTANCE_WITH_REQUIRED_FALSE;
     }
 
     /*
@@ -78,7 +113,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
      */
     @Override
     public Object getDefaultValue() {
-        return xpath;
+        return null;
     }
 
     /*
@@ -151,8 +186,9 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
      * InstanceIdentifierTypeDefinition# getPathStatement()
      */
     @Override
+    @Deprecated
     public RevisionAwareXPath getPathStatement() {
-        return xpath;
+        return null;
     }
 
     /*
@@ -171,12 +207,11 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
         final int prime = 31;
         int result = 1;
         result = prime * result + (requireInstance ? HASH_BOOLEAN_TRUE : HASH_BOOLEAN_FALSE);
-        result = prime * result + ((xpath == null) ? 0 : xpath.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -190,14 +225,9 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
         if (requireInstance != other.requireInstance) {
             return false;
         }
-        if (xpath == null) {
-            if (other.xpath != null) {
-                return false;
-            }
-        } else if (!xpath.equals(other.xpath)) {
-            return false;
-        }
         return true;
     }
+
+
 
 }

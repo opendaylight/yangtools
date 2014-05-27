@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -24,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
  *
  * @see StringTypeDefinition
  */
-public final class StringType implements StringTypeDefinition {
+public final class StringType implements StringTypeDefinition, Immutable {
     private static final StringType INSTANCE = new StringType();
     private final QName name = BaseTypes.constructQName("string");
     private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
@@ -173,7 +174,7 @@ public final class StringType implements StringTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
