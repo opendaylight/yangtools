@@ -1,0 +1,127 @@
+module uses-grouping {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:uses-grouping";
+    prefix "ug";
+
+    import grouping-definitions { prefix gd; revision-date 2013-09-04; }
+
+    organization "opendaylight";
+    contact "asdf";
+
+    revision "2013-07-30" {
+    }
+
+
+    grouping bandwidth-object {
+        uses gd:object-header;
+
+        container bandwidth {
+            uses gd:ieee754-32;
+        }
+    }
+
+    grouping endpoints-object {
+        uses gd:object;
+
+        choice address-family {
+            case ipv4 {
+                leaf source-ipv4-address {
+                    type string;
+                    mandatory true;
+                }
+            }
+            case ipv6 {
+                leaf source-ipv6-address {
+                    type string;
+                    mandatory true;
+                }
+            }
+        }
+    }
+
+    grouping lsp-attributes {
+        container bandwidth {
+            uses bandwidth-object;
+        }
+    }
+
+    grouping metric-object {
+        uses gd:object;
+        leaf metric-type {
+            type uint8;
+            mandatory true;
+        }
+    }
+
+    grouping path-key-object {
+        uses gd:object-header;
+
+        list path-keys {
+        }
+    }
+
+    grouping route-object {
+        uses gd:object-header;
+
+        list subobjects {
+        }
+    }
+
+    grouping svec-object {
+        uses gd:object-header;
+
+        leaf link-diverse {
+            type boolean;
+            default false;
+        }
+    }
+
+
+    notification pcreq {
+        uses gd:message-header;
+
+        list requests {
+            container rp {
+                uses gd:rp-object;
+            }
+            container path-key-expansion {
+                when "rp/path-key = true";
+                container path-key {
+                    uses path-key-object {
+                        augment path-keys {
+                            uses gd:message-header;
+                        }
+                    }
+                }
+            }
+            container segment-computation {
+                when "rp/path-key = false";
+
+                container p2p {
+                    when "../rp/p2mp = false";
+
+                    container endpoints {
+                        uses endpoints-object;
+                    }
+                    container reported-route {
+                        uses route-object;
+
+                        container bandwidth {
+                            uses bandwidth-object;
+                        }
+                    }
+
+                    uses lsp-attributes;
+                }
+            }
+        }
+
+        list svec {
+            uses svec-object;
+            list metric {
+                uses metric-object;
+            }
+        }
+    }
+
+}
