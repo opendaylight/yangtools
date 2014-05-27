@@ -34,6 +34,10 @@ public final class BooleanType implements BooleanTypeDefinition {
     private BooleanType() {
     }
 
+    /**
+     * Returns default instance of boolean built-in type.
+     * @return default instance of boolean built-in type.
+     */
     public static BooleanType getInstance() {
         return INSTANCE;
     }

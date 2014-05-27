@@ -17,18 +17,23 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
 public final class UnionType implements UnionTypeDefinition {
-    private final QName name = BaseTypes.constructQName("union");
-    private final SchemaPath path = BaseTypes.schemaPath(name);
+    private final SchemaPath path = SchemaPath.create(Collections.singletonList(BaseTypes.UNION_QNAME),true);
     private static final String DESCRIPTION = "The union built-in type represents a value that corresponds to one of its member types.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.12";
     private final List<TypeDefinition<?>> types;
 
-    public UnionType(List<TypeDefinition<?>> types) {
-        if (types == null) {
-            throw new IllegalArgumentException("When the type is 'union', the 'type' statement MUST be present.");
-        }
-        this.types = types;
+    @Deprecated
+    public UnionType(final List<TypeDefinition<?>> types) {
+        Preconditions.checkNotNull(types,"When the type is 'union', the 'type' statement MUST be present.");
+        this.types = ImmutableList.copyOf(types);
+    }
+
+    public static UnionType create(final List<TypeDefinition<?>> types) {
+        return new UnionType(types);
     }
 
     @Override
@@ -48,7 +53,7 @@ public final class UnionType implements UnionTypeDefinition {
 
     @Override
     public QName getQName() {
-        return name;
+        return BaseTypes.UNION_QNAME;
     }
 
     @Override
@@ -90,7 +95,7 @@ public final class UnionType implements UnionTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -111,7 +116,7 @@ public final class UnionType implements UnionTypeDefinition {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("type ");
-        builder.append(name);
+        builder.append(BaseTypes.UNION_QNAME);
         builder.append(" (types=[");
         for (TypeDefinition<?> td : types) {
             builder.append(", " + td.getQName().getLocalName());

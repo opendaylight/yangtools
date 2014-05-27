@@ -16,13 +16,16 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * The <code>default</code> implementation of Bits Type Definition interface.
  *
  * @see BitsTypeDefinition
  */
 public final class BitsType implements BitsTypeDefinition {
-    private final QName name = BaseTypes.constructQName("bits");
+    private final static QName NAME = BaseTypes.BITS_QNAME;
+
     private final SchemaPath path;
     private final String description = "The bits built-in type represents a bit set.  "
             + "That is, a bits value is a set of flags identified by small integer position "
@@ -37,7 +40,9 @@ public final class BitsType implements BitsTypeDefinition {
      * Instantiates Bits type as empty bits list.
      *
      * @param path
+     * @deprecated Use static factory method {@link #create(SchemaPath, List)} instead.
      */
+    @Deprecated
     public BitsType(final SchemaPath path) {
         super();
         this.bits = Collections.emptyList();
@@ -49,11 +54,17 @@ public final class BitsType implements BitsTypeDefinition {
      *
      * @param path
      * @param bits
+     * @deprecated Use static factory method {@link #create(SchemaPath, List)} instead.
      */
+    @Deprecated
     public BitsType(final SchemaPath path, final List<Bit> bits) {
         super();
-        this.bits = Collections.unmodifiableList(bits);
+        this.bits = ImmutableList.copyOf(bits);
         this.path = path;
+    }
+
+    public static BitsType create(final SchemaPath path, final List<Bit> bits) {
+        return new BitsType(path,bits);
     }
 
     /*
@@ -96,7 +107,7 @@ public final class BitsType implements BitsTypeDefinition {
      */
     @Override
     public QName getQName() {
-        return name;
+        return NAME;
     }
 
     /*
@@ -156,13 +167,13 @@ public final class BitsType implements BitsTypeDefinition {
         int result = 1;
         result = prime * result + ((bits == null) ? 0 : bits.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((NAME == null) ? 0 : NAME.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -187,13 +198,7 @@ public final class BitsType implements BitsTypeDefinition {
         } else if (!description.equals(other.description)) {
             return false;
         }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
+
         if (path == null) {
             if (other.path != null) {
                 return false;
@@ -208,7 +213,7 @@ public final class BitsType implements BitsTypeDefinition {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("BitsType [name=");
-        builder.append(name);
+        builder.append(NAME);
         builder.append(", path=");
         builder.append(path);
         builder.append(", description=");
