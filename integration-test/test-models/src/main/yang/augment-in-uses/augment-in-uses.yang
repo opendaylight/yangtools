@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module augment-in-uses {
+    yang-version 1;
+    namespace "odl:test:augment-in-uses";
+    prefix "aiu";
+
+    revision "2014-03-10" {
+    }
+
+    container links {
+        container link {
+            uses g1 {
+                augment nodes/node {
+                    leaf id {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    grouping g1 {
+        list nodes {
+            container node {
+            }
+        }
+    }
+
+}

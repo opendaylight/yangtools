@@ -1,0 +1,46 @@
+module target {
+    yang-version 1;
+    namespace "odl:test:target";
+    prefix "t";
+
+    revision "2013-10-14" {
+        reference " WILL BE DEFINED LATER";
+    }
+
+    container interfaces {
+        grouping ifEntry {
+            container augment-holder;
+        }
+        list ifEntry {
+            key "ifIndex";
+
+            leaf ifIndex {
+                type uint32;
+                units minutes;
+            }
+
+            leaf ifMtu {
+                type int32;
+            }
+
+            min-elements 1;
+            max-elements 11;
+        }
+    }
+
+    container controller {
+        choice switch {
+            case start {
+                leaf start {
+                    type int8;
+                }
+            }
+            case stop {
+                leaf stop {
+                    type int16;
+                }
+            }
+        }
+    }
+
+}
