@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -59,8 +58,7 @@ public final class BaseTypes {
      * @return Schema Path from Qname.
      */
     public static SchemaPath schemaPath(final QName typeName) {
-        List<QName> pathList = Collections.singletonList(typeName);
-        return new SchemaPath(pathList, true);
+        return SchemaPath.create(true, typeName);
     }
 
     /**
@@ -86,6 +84,6 @@ public final class BaseTypes {
                 pathList.add(qname);
             }
         }
-        return new SchemaPath(pathList, true);
+        return SchemaPath.create(pathList, true);
     }
 }

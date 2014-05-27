@@ -866,7 +866,7 @@ public final class YangParserImpl implements YangContextParser {
                 newPath.add(new QName(ns, rev, localPrefix, qn.getLocalName()));
             }
         }
-        augment.setTargetNodeSchemaPath(new SchemaPath(newPath, true));
+        augment.setTargetNodeSchemaPath(SchemaPath.create(newPath, true));
 
         for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
             correctPathForAugmentNodes(childNode, augment.getTargetNodeSchemaPath());

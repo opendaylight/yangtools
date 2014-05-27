@@ -12,8 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,6 +26,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -46,6 +45,9 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 import org.opendaylight.yangtools.yang.parser.util.RefineUtils;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 //Test for class RefineUtils
 public class RefineTest {
 
@@ -56,7 +58,7 @@ public class RefineTest {
         testModels.add(listModelFile);
     }
 
-    private void findUnknownNode(DataSchemaNodeBuilder childNode, String unknownNodeValue, String unknownNodeName) {
+    private void findUnknownNode(final DataSchemaNodeBuilder childNode, final String unknownNodeValue, final String unknownNodeName) {
         List<UnknownSchemaNodeBuilder> unknownSchemaNodesBuilder = childNode.getUnknownNodes();
         boolean refinedUnknownNodeLflstFound = false;
 
@@ -70,7 +72,7 @@ public class RefineTest {
                 refinedUnknownNodeLflstFound);
     }
 
-    private void findMustConstraint(ConstraintsBuilder conDef, String mustValue) {
+    private void findMustConstraint(final ConstraintsBuilder conDef, final String mustValue) {
         boolean mustLflstFound = false;
         for (MustDefinition mustDef : conDef.getMustDefinitions()) {
             if (mustDef.toString().equals(mustValue)) {
@@ -150,8 +152,8 @@ public class RefineTest {
         return moduleBuilder;
     }
 
-    private void checkAnyXmlRefineHolderAndSchemaNodeBuilder(String string, List<RefineHolder> refineHolders,
-            Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
+    private void checkAnyXmlRefineHolderAndSchemaNodeBuilder(final String string, final List<RefineHolder> refineHolders,
+            final Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
         RefineHolder refHolderData = getRefineHolder("data", refineHolders);
 
         QName qname = createQname();
@@ -171,13 +173,13 @@ public class RefineTest {
 
     }
 
-    private void checkChc2RefineHolderAndSchemaNodeBuilder(String nodeName, List<RefineHolder> refineHolders,
-            Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
+    private void checkChc2RefineHolderAndSchemaNodeBuilder(final String nodeName, final List<RefineHolder> refineHolders,
+            final Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
         RefineHolder refHolderChc2 = getRefineHolder("chc2", refineHolders);
 
         QName qname = createQname();
         List<QName> path = Lists.newArrayList(qname);
-        DataSchemaNodeBuilder builderChc2 = new ChoiceBuilder("module", 4, qname, new SchemaPath(path, true));
+        DataSchemaNodeBuilder builderChc2 = new ChoiceBuilder("module", 4, qname, SchemaPath.create(path, true));
         assertNotNull("Refine holder chc2 wasn't initialized.", refHolderChc2);
 
         RefineUtils.refineChoice((ChoiceBuilder) builderChc2, refHolderChc2);
@@ -187,13 +189,13 @@ public class RefineTest {
         assertFalse("'chc2' has incorrect value for 'mandatory'", conDefChc2.isMandatory());
     }
 
-    private void checkChcRefineHolderAndSchemaNodeBuilder(String nodeName, List<RefineHolder> refineHolders,
-            Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
+    private void checkChcRefineHolderAndSchemaNodeBuilder(final String nodeName, final List<RefineHolder> refineHolders,
+            final Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
         RefineHolder refHolderChc = getRefineHolder("chc", refineHolders);
 
         QName qname = createQname();
         List<QName> path = Lists.newArrayList(qname);
-        DataSchemaNodeBuilder builderChc = new ChoiceBuilder("module", 4, qname, new SchemaPath(path, true));
+        DataSchemaNodeBuilder builderChc = new ChoiceBuilder("module", 4, qname, SchemaPath.create(path, true));
 
         assertNotNull("Refine holder chc wasn't initialized.", refHolderChc);
         assertNotNull("Data schema node builder chc wasn't initialized.", builderChc);
@@ -210,8 +212,8 @@ public class RefineTest {
         findUnknownNode(choiceBuilder, unknownNodeChcValue, unknownNodeChcName);
     }
 
-    private void checkLflstRefineHolderAndSchemaNodeBuilder(String nodeName, List<RefineHolder> refineHolders,
-            Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
+    private void checkLflstRefineHolderAndSchemaNodeBuilder(final String nodeName, final List<RefineHolder> refineHolders,
+            final Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
         RefineHolder refHolderLflst = getRefineHolder(nodeName, refineHolders);
 
         QName qname = createQname();
@@ -243,7 +245,7 @@ public class RefineTest {
 
     }
 
-    private RefineHolder getRefineHolder(String refHolderName, List<RefineHolder> refineHolders) {
+    private RefineHolder getRefineHolder(final String refHolderName, final List<RefineHolder> refineHolders) {
         for (RefineHolder refineHolder : refineHolders) {
             if (refineHolder.getName().equals(refHolderName)) {
                 return refineHolder;
@@ -264,10 +266,10 @@ public class RefineTest {
         return qname;
     }
 
-    private SchemaPath createSchemaPath(QName qname) {
+    private SchemaPath createSchemaPath(final QName qname) {
         List<QName> qnames = new ArrayList<>();
         qnames.add(createQname());
-        return new SchemaPath(qnames, true);
+        return SchemaPath.create(qnames, true);
     }
 
 }

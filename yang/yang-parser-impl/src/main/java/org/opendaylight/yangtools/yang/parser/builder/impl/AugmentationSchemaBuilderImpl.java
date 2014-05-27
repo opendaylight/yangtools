@@ -109,7 +109,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             for (QName name : parsedPath) {
                 newPath.add(new QName(mb.getNamespace(), mb.getRevision(), name.getPrefix(), name.getLocalName()));
             }
-            instance.targetPath = new SchemaPath(newPath, false);
+            instance.targetPath = SchemaPath.create(newPath, false);
         } else {
             instance.targetPath = targetNodeSchemaPath;
         }
@@ -203,7 +203,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 

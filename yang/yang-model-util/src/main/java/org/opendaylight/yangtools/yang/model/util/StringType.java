@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
  */
 public final class StringType implements StringTypeDefinition {
     private static final StringType INSTANCE = new StringType();
-    private final QName name = BaseTypes.constructQName("string");
-    private final SchemaPath path = new SchemaPath(Collections.singletonList(name), true);
+    private final QName name = BaseTypes.STRING_QNAME;
+    private final SchemaPath path = SchemaPath.create(true, name);
     private static final String DEFAULT_VALUE = "";
     private static final String DESCRIPTION = "";
     private static final String REFERENCE = "";
@@ -173,7 +173,7 @@ public final class StringType implements StringTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

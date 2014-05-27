@@ -52,7 +52,7 @@ abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     public AbstractSignedInteger(final QName name, final String description, final Number minRange,
             final Number maxRange, final String units) {
         this.name = name;
-        this.path = new SchemaPath(Collections.singletonList(name), true);
+        this.path = SchemaPath.create(true, name);
         this.description = description;
         this.units = units;
         this.rangeStatements = new ArrayList<RangeConstraint>();
@@ -119,7 +119,7 @@ abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

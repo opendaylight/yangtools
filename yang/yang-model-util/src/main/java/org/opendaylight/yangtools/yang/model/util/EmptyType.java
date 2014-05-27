@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 public final class EmptyType implements EmptyTypeDefinition {
     private static EmptyType instance;
     private static final QName NAME = BaseTypes.constructQName("empty");
-    private static final SchemaPath PATH = new SchemaPath(Collections.singletonList(NAME), true);
+    private static final SchemaPath PATH = SchemaPath.create(true, NAME);
     private static final String DESCRIPTION = "The empty built-in type represents a leaf that does not have any value, it conveys information by its presence or absence.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#page-131";
 

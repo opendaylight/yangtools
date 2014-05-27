@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.net.URI;
@@ -126,7 +129,7 @@ public class UsesAugmentTest {
         assertNotNull(pcreq);
         QName expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "pcreq");
         path.offer(expectedQName);
-        SchemaPath expectedPath = new SchemaPath(path, true);
+        SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, pcreq.getPath());
         Set<DataSchemaNode> childNodes = pcreq.getChildNodes();
         assertEquals(4, childNodes.size());
@@ -135,11 +138,11 @@ public class UsesAugmentTest {
         assertNotNull(version);
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "version");
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, version.getPath());
         expectedQName = new QName(GD_NS, GD_REV, GD_PREF, "protocol-version");
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(Lists.newArrayList(expectedQName), true);
+        expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
         assertEquals(expectedPath, version.getType().getPath());
         assertEquals(Uint8.getInstance(), version.getType().getBaseType());
         assertTrue(version.isAddedByUses());
@@ -151,11 +154,11 @@ public class UsesAugmentTest {
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, type.getPath());
         expectedQName = new QName(GD_NS, GD_REV, GD_PREF, "int-ext");
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(Lists.newArrayList(expectedQName), true);
+        expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
         assertEquals(expectedPath, type.getType().getPath());
         UnionType union = (UnionType)type.getType().getBaseType();
         assertEquals(BaseTypes.schemaPath(BaseTypes.constructQName("union")), union.getPath());
@@ -168,7 +171,7 @@ public class UsesAugmentTest {
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, requests.getPath());
         assertFalse(requests.isAddedByUses());
         childNodes = requests.getChildNodes();
@@ -178,7 +181,7 @@ public class UsesAugmentTest {
         assertNotNull(rp);
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "rp");
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, rp.getPath());
         assertFalse(rp.isAddedByUses());
         childNodes = rp.getChildNodes();
@@ -189,7 +192,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
         assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
@@ -200,7 +203,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
         assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
@@ -211,11 +214,11 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, priority.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, priority.getPath());
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "uint8");
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         // TODO
         //assertEquals(expectedPath, priority.getType().getPath());
         assertEquals(Uint8.getInstance(), priority.getType().getBaseType());
@@ -228,7 +231,7 @@ public class UsesAugmentTest {
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, box.getPath());
         assertTrue(box.isAddedByUses());
         // * |-- |-- |-- |-- container order
@@ -237,7 +240,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "order");
         assertEquals(expectedQName, order.getQName());
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, order.getPath());
         assertTrue(order.isAddedByUses());
         assertTrue(order.isAugmenting());
@@ -248,7 +251,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "delete");
         assertEquals(expectedQName, delete.getQName());
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, delete.getPath());
         assertEquals(Uint32.getInstance(), delete.getType());
         assertTrue(delete.isAddedByUses());
@@ -259,7 +262,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, setup.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, setup.getPath());
         assertEquals(Uint32.getInstance(), setup.getType());
         assertTrue(setup.isAddedByUses());
@@ -273,7 +276,7 @@ public class UsesAugmentTest {
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath = new SchemaPath(path, true);
+        expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, pke.getPath());
         assertFalse(pke.isAddedByUses());
         // * |-- |-- |-- path-key
@@ -282,7 +285,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "path-key");
         assertEquals(expectedQName, pathKey.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, pathKey.getPath());
         assertFalse(pathKey.isAddedByUses());
         assertEquals(3, pathKey.getChildNodes().size());
@@ -292,7 +295,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
         assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
@@ -303,7 +306,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
         assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
@@ -314,7 +317,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, pathKeys.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, pathKeys.getPath());
         assertTrue(pathKeys.isAddedByUses());
         childNodes = pathKeys.getChildNodes();
@@ -325,7 +328,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "version");
         assertEquals(expectedQName, version.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, version.getPath());
         assertTrue(version.getType() instanceof ExtendedType);
         assertEquals(Uint8.getInstance(), version.getType().getBaseType());
@@ -338,7 +341,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, type.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, type.getPath());
         assertTrue(type.getType() instanceof ExtendedType);
         assertTrue(type.isAddedByUses());
@@ -353,7 +356,7 @@ public class UsesAugmentTest {
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, sc.getPath());
         assertFalse(sc.isAddedByUses());
         // * |-- |-- |-- container p2p
@@ -362,7 +365,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "p2p");
         assertEquals(expectedQName, p2p.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, p2p.getPath());
         assertFalse(p2p.isAddedByUses());
         // * |-- |-- |-- |-- container endpoints
@@ -371,7 +374,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "endpoints");
         assertEquals(expectedQName, endpoints.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, endpoints.getPath());
         assertFalse(endpoints.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf processing-rule
@@ -380,7 +383,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
         assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
@@ -391,7 +394,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
         assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
@@ -402,7 +405,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, box.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, box.getPath());
         assertTrue(box.isAddedByUses());
         // * |-- |-- |-- |-- |-- choice address-family
@@ -412,7 +415,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, af.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, af.getPath());
         assertTrue(af.isAddedByUses());
         // * |-- |-- |-- |-- container reported-route
@@ -423,7 +426,7 @@ public class UsesAugmentTest {
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, reportedRoute.getPath());
         assertFalse(reportedRoute.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf processing-rule
@@ -432,7 +435,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
         assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
@@ -443,7 +446,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
         assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
@@ -454,7 +457,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, subobjects.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, subobjects.getPath());
         assertTrue(subobjects.isAddedByUses());
         // * |-- |-- |-- |-- |-- container bandwidth
@@ -464,7 +467,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, bandwidth.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, bandwidth.getPath());
         assertFalse(bandwidth.isAddedByUses());
         // * |-- |-- |-- |-- container bandwidth
@@ -475,7 +478,7 @@ public class UsesAugmentTest {
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, bandwidth.getPath());
         assertTrue(bandwidth.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf processing-rule
@@ -484,7 +487,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
         assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
@@ -495,7 +498,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
         assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
@@ -506,7 +509,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, bandwidth.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, bandwidthInner.getPath());
         assertTrue(bandwidthInner.isAddedByUses());
         // * |-- list svec
@@ -520,7 +523,7 @@ public class UsesAugmentTest {
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, svec.getPath());
         assertFalse(svec.isAddedByUses());
         // * |-- |-- leaf link-diverse
@@ -529,7 +532,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "link-diverse");
         assertEquals(expectedQName, linkDiverse.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, linkDiverse.getPath());
         assertEquals(BooleanType.getInstance(), linkDiverse.getType());
         assertTrue(linkDiverse.isAddedByUses());
@@ -540,7 +543,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, processingRule.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
         assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
@@ -551,7 +554,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
         assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
@@ -562,7 +565,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, metric.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, metric.getPath());
         assertFalse(metric.isAddedByUses());
         // * |-- |-- |-- leaf metric-type
@@ -571,7 +574,7 @@ public class UsesAugmentTest {
         expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "metric-type");
         assertEquals(expectedQName, metricType.getQName());
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, metricType.getPath());
         assertEquals(Uint8.getInstance(), metricType.getType());
         assertTrue(metricType.isAddedByUses());
@@ -582,7 +585,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, box.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, box.getPath());
         assertTrue(box.isAddedByUses());
         // * |-- |-- |-- leaf processing-rule
@@ -592,7 +595,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, processingRule.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
         assertEquals(BooleanType.getInstance(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
@@ -603,7 +606,7 @@ public class UsesAugmentTest {
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
-        expectedPath= new SchemaPath(path, true);
+        expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
         assertEquals(BooleanType.getInstance(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
@@ -624,7 +627,7 @@ public class UsesAugmentTest {
         assertNotNull(intExt);
 
         List<QName> path = Lists.newArrayList(new QName(GD_NS, GD_REV, GD_PREF, "int-ext"));
-        SchemaPath expectedPath = new SchemaPath(path, true);
+        SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, intExt.getPath());
 
         UnionType union = (UnionType)intExt.getBaseType();
@@ -642,7 +645,7 @@ public class UsesAugmentTest {
         assertNotNull(pv);
 
         QName q1 = BaseTypes.constructQName("union");
-        expectedPath = new SchemaPath(Lists.newArrayList(q1), true);
+        expectedPath = SchemaPath.create(true, q1);
         assertEquals(expectedPath, union.getPath());
     }
 

@@ -20,7 +20,7 @@ import java.util.Stack;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.opendaylight.yangtools.antlrv4.code.gen.*;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Base_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Bit_stmtContext;
@@ -154,7 +154,7 @@ public final class ParserListenerUtils {
         return result;
     }
 
-    public static String stringFromStringContext(StringContext context) {
+    public static String stringFromStringContext(final StringContext context) {
         StringBuilder str = new StringBuilder();
         for (TerminalNode stringNode : context.STRING()) {
             String result = stringNode.getText();
@@ -292,7 +292,7 @@ public final class ParserListenerUtils {
      */
     public static SchemaPath createActualSchemaPath(final Stack<QName> actualPath) {
         final List<QName> path = new ArrayList<>(actualPath);
-        return new SchemaPath(path, true);
+        return SchemaPath.create(path, true);
     }
 
     /**
@@ -413,7 +413,7 @@ public final class ParserListenerUtils {
         private String description;
         private String reference;
         private Status status;
-        private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+        private final List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
         private String name;
         private Integer value;
 
@@ -470,7 +470,7 @@ public final class ParserListenerUtils {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -789,7 +789,7 @@ public final class ParserListenerUtils {
      * @return 'fraction-digits' value if present in given context, null
      *         otherwise
      */
-    private static Integer getFractionDigits(Type_body_stmtsContext ctx, String moduleName) {
+    private static Integer getFractionDigits(final Type_body_stmtsContext ctx, final String moduleName) {
         Integer result = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree dec64specChild = ctx.getChild(i);
@@ -809,7 +809,7 @@ public final class ParserListenerUtils {
      *            name of current module
      * @return fraction-digits value as Integer
      */
-    private static Integer parseFractionDigits(Decimal64_specificationContext ctx, String moduleName) {
+    private static Integer parseFractionDigits(final Decimal64_specificationContext ctx, final String moduleName) {
         Integer result = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree fdChild = ctx.getChild(i);
@@ -838,8 +838,8 @@ public final class ParserListenerUtils {
      *            current module name
      * @return List of Bit objects created from this context
      */
-    private static List<BitsTypeDefinition.Bit> getBits(Type_body_stmtsContext ctx, Stack<QName> actualPath,
-            String moduleName) {
+    private static List<BitsTypeDefinition.Bit> getBits(final Type_body_stmtsContext ctx, final Stack<QName> actualPath,
+            final String moduleName) {
         final List<BitsTypeDefinition.Bit> bits = new ArrayList<>();
         for (int j = 0; j < ctx.getChildCount(); j++) {
             ParseTree bitsSpecChild = ctx.getChild(j);
@@ -873,8 +873,8 @@ public final class ParserListenerUtils {
      *            current module name
      * @return Bit object parsed from this context
      */
-    private static BitsTypeDefinition.Bit parseBit(final Bit_stmtContext ctx, long highestPosition,
-            Stack<QName> actualPath, final String moduleName) {
+    private static BitsTypeDefinition.Bit parseBit(final Bit_stmtContext ctx, final long highestPosition,
+            final Stack<QName> actualPath, final String moduleName) {
         String name = stringFromNode(ctx);
         Long position = null;
 
@@ -922,7 +922,7 @@ public final class ParserListenerUtils {
      *            Ordered_by_stmtContext
      * @return true, if ordered-by contains value 'user', false otherwise
      */
-    public static boolean parseUserOrdered(Ordered_by_stmtContext ctx) {
+    public static boolean parseUserOrdered(final Ordered_by_stmtContext ctx) {
         boolean result = false;
         for (int j = 0; j < ctx.getChildCount(); j++) {
             ParseTree orderArg = ctx.getChild(j);
@@ -987,7 +987,7 @@ public final class ParserListenerUtils {
         return result;
     }
 
-    private static boolean getParentConfig(Builder node) {
+    private static boolean getParentConfig(final Builder node) {
         Builder parent = node.getParent();
         boolean config = false;
 
@@ -1225,7 +1225,7 @@ public final class ParserListenerUtils {
 
         List<QName> path = new ArrayList<>(actualPath);
         path.add(new QName(namespace, revision, prefix, typeName));
-        SchemaPath schemaPath = new SchemaPath(path, true);
+        SchemaPath schemaPath = SchemaPath.create(path, true);
 
         QName qname = schemaPath.getPath().get(schemaPath.getPath().size() - 1);
         ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, "", "", schemaPath);
@@ -1238,28 +1238,28 @@ public final class ParserListenerUtils {
         return typeBuilder.build();
     }
 
-    private static SchemaPath createTypePath(Stack<QName> actual, String typeName) {
+    private static SchemaPath createTypePath(final Stack<QName> actual, final String typeName) {
         QName last = actual.peek();
         QName typeQName = new QName(last.getNamespace(), last.getRevision(), last.getPrefix(), typeName);
         List<QName> path = new ArrayList<>(actual);
         path.add(typeQName);
-        return new SchemaPath(path, true);
+        return SchemaPath.create(path, true);
     }
 
-    private static SchemaPath createBaseTypePath(Stack<QName> actual, String typeName) {
+    private static SchemaPath createBaseTypePath(final Stack<QName> actual, final String typeName) {
         List<QName> path = new ArrayList<>(actual);
         path.add(BaseTypes.constructQName(typeName));
-        return new SchemaPath(path, true);
+        return SchemaPath.create(path, true);
     }
 
-    private static SchemaPath createExtendedBaseTypePath(Stack<QName> actual, URI namespace, Date revision,
-            String prefix, String typeName) {
+    private static SchemaPath createExtendedBaseTypePath(final Stack<QName> actual, final URI namespace, final Date revision,
+            final String prefix, final String typeName) {
         QName extTypeName = new QName(namespace, revision, prefix, typeName);
         QName baseTypeName = BaseTypes.constructQName(typeName);
         List<QName> path = new ArrayList<>(actual);
         path.add(extTypeName);
         path.add(baseTypeName);
-        return new SchemaPath(path, true);
+        return SchemaPath.create(path, true);
     }
 
     /**
@@ -1269,7 +1269,7 @@ public final class ParserListenerUtils {
      *            type body
      * @return identityref base value as String
      */
-    public static String getIdentityrefBase(Type_body_stmtsContext ctx) {
+    public static String getIdentityrefBase(final Type_body_stmtsContext ctx) {
         String result = null;
         outer: for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
@@ -1293,7 +1293,7 @@ public final class ParserListenerUtils {
      *            type body context
      * @return require-instance value
      */
-    private static boolean isRequireInstance(Type_body_stmtsContext ctx) {
+    private static boolean isRequireInstance(final Type_body_stmtsContext ctx) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Instance_identifier_specificationContext) {
@@ -1320,7 +1320,7 @@ public final class ParserListenerUtils {
      *            type body context
      * @return leafref path as String
      */
-    private static String parseLeafrefPath(Type_body_stmtsContext ctx) {
+    private static String parseLeafrefPath(final Type_body_stmtsContext ctx) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Leafref_specificationContext) {
@@ -1416,7 +1416,7 @@ public final class ParserListenerUtils {
         }
     }
 
-    private static Integer parseMinElements(Min_elements_stmtContext ctx, String moduleName) {
+    private static Integer parseMinElements(final Min_elements_stmtContext ctx, final String moduleName) {
         Integer result = null;
         try {
             for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -1434,7 +1434,7 @@ public final class ParserListenerUtils {
         }
     }
 
-    private static Integer parseMaxElements(Max_elements_stmtContext ctx, String moduleName) {
+    private static Integer parseMaxElements(final Max_elements_stmtContext ctx, final String moduleName) {
         Integer result = null;
         try {
             for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -1459,7 +1459,7 @@ public final class ParserListenerUtils {
      *            context to parse
      * @return true if value is 'true', false otherwise
      */
-    public static boolean parseYinValue(Argument_stmtContext ctx) {
+    public static boolean parseYinValue(final Argument_stmtContext ctx) {
         boolean yinValue = false;
         outer: for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree yin = ctx.getChild(i);
@@ -1520,7 +1520,7 @@ public final class ParserListenerUtils {
      *            name of current module
      * @return RefineHolder object representing this refine statement
      */
-    public static RefineHolder parseRefine(Refine_stmtContext refineCtx, String moduleName) {
+    public static RefineHolder parseRefine(final Refine_stmtContext refineCtx, final String moduleName) {
         final String refineTarget = stringFromNode(refineCtx);
         final RefineHolder refine = new RefineHolder(moduleName, refineCtx.getStart().getLine(), refineTarget);
         for (int i = 0; i < refineCtx.getChildCount(); i++) {
@@ -1549,7 +1549,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static void parseRefineDefault(RefineHolder refine, ParseTree refineStmt) {
+    private static void parseRefineDefault(final RefineHolder refine, final ParseTree refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Description_stmtContext) {
@@ -1565,7 +1565,7 @@ public final class ParserListenerUtils {
         }
     }
 
-    private static RefineHolder parseRefine(RefineHolder refine, Refine_leaf_stmtsContext refineStmt) {
+    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_leaf_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Default_stmtContext) {
@@ -1588,7 +1588,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(RefineHolder refine, Refine_container_stmtsContext refineStmt) {
+    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_container_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Must_stmtContext) {
@@ -1601,7 +1601,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(RefineHolder refine, Refine_list_stmtsContext refineStmt) {
+    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_list_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Must_stmtContext) {
@@ -1618,7 +1618,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(RefineHolder refine, Refine_leaf_list_stmtsContext refineStmt) {
+    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_leaf_list_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Must_stmtContext) {
@@ -1635,7 +1635,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(RefineHolder refine, Refine_choice_stmtsContext refineStmt) {
+    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_choice_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Default_stmtContext) {
@@ -1654,7 +1654,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(RefineHolder refine, Refine_anyxml_stmtsContext refineStmt) {
+    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_anyxml_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Must_stmtContext) {
@@ -1673,13 +1673,13 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    public static String getArgumentString(org.antlr.v4.runtime.ParserRuleContext ctx) {
+    public static String getArgumentString(final org.antlr.v4.runtime.ParserRuleContext ctx) {
         List<StringContext> potentialValues = ctx.getRuleContexts(StringContext.class);
         checkState(!potentialValues.isEmpty());
         return ParserListenerUtils.stringFromStringContext(potentialValues.get(0));
     }
 
-    public static <T extends ParserRuleContext> Optional<T> getFirstContext(ParserRuleContext context,Class<T> contextType) {
+    public static <T extends ParserRuleContext> Optional<T> getFirstContext(final ParserRuleContext context,final Class<T> contextType) {
         List<T> potential = context.getRuleContexts(contextType);
         if(potential.isEmpty()) {
             return Optional.absent();

@@ -27,8 +27,23 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
@@ -206,7 +221,7 @@ public class YangParserWithContextTest {
         QName qname = new QName(URI.create("urn:opendaylight.baz"), simpleDateFormat.parse("2013-02-27"), "baz",
                 "target");
         path.add(qname);
-        SchemaPath expectedPath = new SchemaPath(path, true);
+        SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, usesNode.getGroupingPath());
 
         // test refine
@@ -397,7 +412,7 @@ public class YangParserWithContextTest {
         List<QName> path = new ArrayList<>();
         path.add(new QName(expectedNS, expectedRev, "bar", "interfaces"));
         path.add(new QName(expectedNS, expectedRev, "bar", "ifEntry"));
-        SchemaPath expectedPath = new SchemaPath(path, true);
+        SchemaPath expectedPath = SchemaPath.create(path, true);
 
         assertEquals(expectedPath, dev.getTargetPath());
         assertEquals(Deviate.ADD, dev.getDeviate());
