@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * Implementation of Yang int8 built-in type. <br>
@@ -16,20 +16,21 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  * @see AbstractSignedInteger
  */
-public final class Int8 extends AbstractSignedInteger {
-    private static Int8 instance;
-    private static final QName NAME = BaseTypes.constructQName("int8");
+public final class Int8 extends AbstractSignedInteger implements Immutable {
     private static final String DESCRIPTION = "represents integer values between -128 and 127, inclusively.";
 
     private Int8() {
-        super(NAME, DESCRIPTION, Byte.MIN_VALUE, Byte.MAX_VALUE, "");
+        super(BaseTypes.INT8_QNAME, DESCRIPTION, Byte.MIN_VALUE, Byte.MAX_VALUE, "");
     }
 
+    private static final Int8 INSTANCE = new Int8();
+
+    /**
+     * Returns default instance of int8 type.
+     * @return default instance of int8 type.
+     */
     public static Int8 getInstance() {
-        if (instance == null) {
-            instance = new Int8();
-        }
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -39,7 +40,7 @@ public final class Int8 extends AbstractSignedInteger {
 
     @Override
     public String toString() {
-        return "type " + NAME;
+        return "type " + BaseTypes.INT8_QNAME;
     }
 
 }

@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
+import com.google.common.base.Optional;
+
 /**
  * The <code>default</code> implementation of Binary Type Definition interface.
  *
@@ -27,16 +29,17 @@ public final class BinaryType implements BinaryTypeDefinition {
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";
     private static final String UNITS = "";
 
+    private final static QName QNAME = BaseTypes.BINARY_QNAME;
+
     private static final BinaryType INSTANCE = new BinaryType();
 
-    private final QName name = BaseTypes.BINARY_QNAME;
-    private final SchemaPath path = SchemaPath.create(Collections.singletonList(name), true);
+    private final static SchemaPath PATH = SchemaPath.create(Collections.singletonList(QNAME), true);
     private final List<Byte> bytes = Collections.emptyList();
     private final List<LengthConstraint> lengthConstraints;
 
     private BinaryType() {
         this.lengthConstraints = Collections.singletonList(
-                BaseConstraints.lengthConstraint(0, Long.MAX_VALUE, "", ""));
+                BaseConstraints.newLengthConstraint(0, Long.MAX_VALUE, Optional.of(""), Optional.of("")));
     }
 
     public static BinaryType getInstance() {
@@ -83,7 +86,7 @@ public final class BinaryType implements BinaryTypeDefinition {
      */
     @Override
     public QName getQName() {
-        return name;
+        return QNAME;
     }
 
     /*
@@ -93,7 +96,7 @@ public final class BinaryType implements BinaryTypeDefinition {
      */
     @Override
     public SchemaPath getPath() {
-        return path;
+        return PATH;
     }
 
     /*
@@ -150,8 +153,8 @@ public final class BinaryType implements BinaryTypeDefinition {
         int result = 1;
         result = prime * result + ((bytes == null) ? 0 : bytes.hashCode());
         result = prime * result + ((lengthConstraints == null) ? 0 : lengthConstraints.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + QNAME.hashCode();
+        result = prime * result + PATH.hashCode();
         return result;
     }
 
@@ -181,20 +184,6 @@ public final class BinaryType implements BinaryTypeDefinition {
         } else if (!lengthConstraints.equals(other.lengthConstraints)) {
             return false;
         }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
         return true;
     }
 
@@ -202,9 +191,7 @@ public final class BinaryType implements BinaryTypeDefinition {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("BinaryType [name=");
-        builder.append(name);
-        builder.append(", path=");
-        builder.append(path);
+        builder.append(QNAME);
         builder.append(", description=");
         builder.append(DESCRIPTION);
         builder.append(", reference=");

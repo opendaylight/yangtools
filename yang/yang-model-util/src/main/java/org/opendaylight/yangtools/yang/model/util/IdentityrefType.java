@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
+import com.google.common.base.Preconditions;
+
 /**
  * The <code>default</code> implementation of Identityref Type Definition
  * interface.
@@ -24,16 +26,39 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
  * @see IdentityrefTypeDefinition
  */
 public final class IdentityrefType implements IdentityrefTypeDefinition {
-    private final QName name = BaseTypes.constructQName("identityref");
+    private static final QName NAME = BaseTypes.IDENTITYREF_QNAME;
     private final SchemaPath path;
     private static final String DESCRIPTION = "The identityref type is used to reference an existing identity.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.10";
     private final IdentitySchemaNode identity;
     private static final String UNITS = "";
 
-    public IdentityrefType(IdentitySchemaNode identity, SchemaPath schemaPath) {
-        this.identity = identity;
-        this.path = schemaPath;
+    /**
+     * Constructs new {@link IdentityrefTypeDefinition} definition.
+     *
+     * @param identity
+     * @param schemaPath
+     */
+    @Deprecated
+    public IdentityrefType(final IdentitySchemaNode identity, final SchemaPath schemaPath) {
+        this(schemaPath,identity);
+    }
+
+    private IdentityrefType(final SchemaPath path, final IdentitySchemaNode baseIdentity) {
+        this.path = Preconditions.checkNotNull(path, "Path must be specified");
+        this.identity = Preconditions.checkNotNull(baseIdentity,"baseIdentity must be specified.");
+    }
+
+    /**
+     *
+     * Constructs new {@link IdentityrefTypeDefinition} definition.
+     *
+     * @param path Path to the definition.
+     * @param baseIdentity Base Identity, all derived identities are valid arguments for instance of this type.
+     * @return New identityref definition.
+     */
+    public static IdentityrefType create(final SchemaPath path, final IdentitySchemaNode baseIdentity) {
+        return new IdentityrefType(path, baseIdentity);
     }
 
     @Override
@@ -48,7 +73,7 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
 
     @Override
     public QName getQName() {
-        return name;
+        return NAME;
     }
 
     @Override

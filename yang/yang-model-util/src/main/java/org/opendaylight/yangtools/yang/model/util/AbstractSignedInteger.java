@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+
+import com.google.common.base.Optional;
 
 /**
  * The Abstract Integer class defines implementation of IntegerTypeDefinition
@@ -43,22 +44,23 @@ abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     private final List<RangeConstraint> rangeStatements;
 
     /**
-     * @param name
-     * @param description
-     * @param minRange
-     * @param maxRange
-     * @param units
+     * Construct SignedInteger
+     *
+     * @param name Name of type
+     * @param description Description of type
+     * @param minRange Minimal range
+     * @param maxRange Maxium range
+     * @param units Units
      */
-    public AbstractSignedInteger(final QName name, final String description, final Number minRange,
+    protected AbstractSignedInteger(final QName name, final String description, final Number minRange,
             final Number maxRange, final String units) {
         this.name = name;
         this.path = SchemaPath.create(Collections.singletonList(name), true);
         this.description = description;
         this.units = units;
-        this.rangeStatements = new ArrayList<RangeConstraint>();
         final String rangeDescription = "Integer values between " + minRange + " and " + maxRange + ", inclusively.";
-        this.rangeStatements.add(BaseConstraints.rangeConstraint(minRange, maxRange, rangeDescription,
-                "https://tools.ietf.org/html/rfc6020#section-9.2.4"));
+        this.rangeStatements = Collections.singletonList(BaseConstraints.newRangeConstraint(minRange, maxRange, Optional.of(rangeDescription),
+                Optional.of("https://tools.ietf.org/html/rfc6020#section-9.2.4")));
     }
 
     @Override
