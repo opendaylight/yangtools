@@ -21,11 +21,9 @@ public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifi
         implements NormalizedNode<K, V>, Immutable {
 
     private final K nodeIdentifier;
-    private final V value;
 
-    protected AbstractImmutableNormalizedNode(final K nodeIdentifier, final V value) {
+    protected AbstractImmutableNormalizedNode(final K nodeIdentifier) {
         this.nodeIdentifier = Preconditions.checkNotNull(nodeIdentifier, "nodeIdentifier");
-        this.value = Preconditions.checkNotNull(value, "value");
     }
 
     @Override
@@ -46,11 +44,6 @@ public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifi
     @Override
     public final QName getKey() {
         return getNodeType();
-    }
-
-    @Override
-    public final V getValue() {
-        return value;
     }
 
     @Override

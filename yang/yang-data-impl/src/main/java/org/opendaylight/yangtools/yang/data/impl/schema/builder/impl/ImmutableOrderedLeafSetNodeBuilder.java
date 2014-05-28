@@ -122,7 +122,7 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
 
         ImmutableOrderedLeafSetNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                 final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
-            super(nodeIdentifier, Iterables.unmodifiableIterable(children.values()));
+            super(nodeIdentifier);
             this.children = children;
         }
 
@@ -155,6 +155,11 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
             // TODO Auto-generated method stub
             return 0;
         }
+
+		@Override
+		public Iterable<LeafSetEntryNode<T>> getValue() {
+			return Iterables.unmodifiableIterable(children.values());
+		}
     }
 
     @Override

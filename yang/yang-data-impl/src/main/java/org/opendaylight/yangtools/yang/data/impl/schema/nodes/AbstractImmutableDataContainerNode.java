@@ -26,13 +26,18 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     public AbstractImmutableDataContainerNode(
             final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, final K nodeIdentifier) {
-        super(nodeIdentifier, Iterables.unmodifiableIterable(children.values()));
+        super(nodeIdentifier);
         this.children = children;
     }
 
     @Override
     public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
         return Optional.<DataContainerChild<? extends PathArgument, ?>> fromNullable(children.get(child));
+    }
+
+    @Override
+    public final Iterable<DataContainerChild<? extends PathArgument, ?>> getValue() {
+        return Iterables.unmodifiableIterable(children.values());
     }
 
     @Override

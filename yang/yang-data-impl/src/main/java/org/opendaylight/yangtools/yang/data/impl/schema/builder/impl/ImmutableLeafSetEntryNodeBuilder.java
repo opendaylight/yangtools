@@ -12,7 +12,7 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedAttrNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
 
 import com.google.common.base.Preconditions;
 
@@ -27,7 +27,7 @@ public class ImmutableLeafSetEntryNodeBuilder<T> extends AbstractImmutableNormal
         return new ImmutableLeafSetEntryNode<>(getNodeIdentifier(), getValue(), getAttributes());
     }
 
-    private static final class ImmutableLeafSetEntryNode<T> extends AbstractImmutableNormalizedAttrNode<InstanceIdentifier.NodeWithValue, T> implements LeafSetEntryNode<T> {
+    private static final class ImmutableLeafSetEntryNode<T> extends AbstractImmutableNormalizedValueAttrNode<InstanceIdentifier.NodeWithValue, T> implements LeafSetEntryNode<T> {
 
         ImmutableLeafSetEntryNode(final InstanceIdentifier.NodeWithValue nodeIdentifier, final T value, final Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);
