@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_e26850bc",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/AdvancedSchemaSourceProvider.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-28T13:32:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_d76dd033",
+      "revId": "2c8644885492dfc3f7444920bff36d2bf5f256d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_97774802",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_3dec1d8f",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceProviders.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-28T13:32:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_97774802",
+      "revId": "2c8644885492dfc3f7444920bff36d2bf5f256d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_b7728c0f",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceTransformation.java",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2014-05-27T10:16:45Z",
       "side": 1,
       "message": "import used only in comment -- fix the reference, remove the import. same goes for ByteSource",
+      "revId": "2c8644885492dfc3f7444920bff36d2bf5f256d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_629c40c1",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/repo/SchemaSourceTransformation.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-28T13:32:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_b7728c0f",
       "revId": "2c8644885492dfc3f7444920bff36d2bf5f256d0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
