@@ -7,11 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
@@ -44,7 +50,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public void setQName(QName qname) {
+    public void setQName(final QName qname) {
         throw new UnsupportedOperationException("Can not set qname to union type");
     }
 
@@ -75,10 +81,10 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     @Override
     public UnionType build() {
         if (!isBuilt) {
-            instance = new UnionType(types);
             for (TypeDefinitionBuilder tdb : typedefs) {
                 types.add(tdb.build());
             }
+            instance = new UnionType(types);
             isBuilt = true;
         }
         return instance;
@@ -120,7 +126,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public void setPath(SchemaPath path) {
+    public void setPath(final SchemaPath path) {
         throw new YangParseException(moduleName, line, "Can not set path to " + NAME);
     }
 
@@ -145,7 +151,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public void setRanges(List<RangeConstraint> ranges) {
+    public void setRanges(final List<RangeConstraint> ranges) {
         throw new YangParseException(moduleName, line, "Can not set ranges to " + NAME);
     }
 
@@ -155,7 +161,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public void setLengths(List<LengthConstraint> lengths) {
+    public void setLengths(final List<LengthConstraint> lengths) {
         throw new YangParseException(moduleName, line, "Can not set lengths to " + NAME);
     }
 
@@ -165,7 +171,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public void setPatterns(List<PatternConstraint> patterns) {
+    public void setPatterns(final List<PatternConstraint> patterns) {
         throw new YangParseException(moduleName, line, "Can not set patterns to " + NAME);
     }
 
@@ -175,7 +181,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public void setFractionDigits(Integer fractionDigits) {
+    public void setFractionDigits(final Integer fractionDigits) {
         throw new YangParseException(moduleName, line, "Can not set fraction digits to " + NAME);
     }
 
@@ -190,7 +196,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public void setDefaultValue(Object defaultValue) {
+    public void setDefaultValue(final Object defaultValue) {
         throw new YangParseException(moduleName, line, "Can not set default value to " + NAME);
     }
 
@@ -200,7 +206,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     }
 
     @Override
-    public void setUnits(String units) {
+    public void setUnits(final String units) {
         throw new YangParseException(moduleName, line, "Can not set units to " + NAME);
     }
 
