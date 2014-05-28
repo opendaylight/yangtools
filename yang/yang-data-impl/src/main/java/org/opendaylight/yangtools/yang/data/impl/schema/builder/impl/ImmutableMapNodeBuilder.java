@@ -104,7 +104,7 @@ public class ImmutableMapNodeBuilder
 
         ImmutableMapNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                          final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier, Iterables.unmodifiableIterable(children.values()));
+            super(nodeIdentifier);
             this.children = children;
         }
 
@@ -112,6 +112,11 @@ public class ImmutableMapNodeBuilder
         public Optional<MapEntryNode> getChild(final InstanceIdentifier.NodeIdentifierWithPredicates child) {
             return Optional.fromNullable(children.get(child));
         }
+
+		@Override
+		public Iterable<MapEntryNode> getValue() {
+			return Iterables.unmodifiableIterable(children.values());
+		}
 
         @Override
         protected int valueHashCode() {

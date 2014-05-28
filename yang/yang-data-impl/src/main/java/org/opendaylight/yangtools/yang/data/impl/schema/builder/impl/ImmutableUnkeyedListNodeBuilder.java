@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -109,7 +110,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     protected static final class ImmutableUnkeyedListNode extends
-            AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<UnkeyedListEntryNode>>
+            AbstractImmutableNormalizedValueNode<InstanceIdentifier.NodeIdentifier, Iterable<UnkeyedListEntryNode>>
             implements Immutable, UnkeyedListNode {
 
         private final ImmutableList<UnkeyedListEntryNode> children;

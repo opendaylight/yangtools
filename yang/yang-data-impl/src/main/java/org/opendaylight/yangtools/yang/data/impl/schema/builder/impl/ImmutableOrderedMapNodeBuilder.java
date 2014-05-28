@@ -116,7 +116,7 @@ public class ImmutableOrderedMapNodeBuilder
 
         ImmutableOrderedMapNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
                          final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier, Iterables.unmodifiableIterable(children.values()));
+            super(nodeIdentifier);
             this.children = children;
         }
 
@@ -144,5 +144,10 @@ public class ImmutableOrderedMapNodeBuilder
         public int getSize() {
             return children.size();
         }
+
+		@Override
+		public Iterable<MapEntryNode> getValue() {
+			return Iterables.unmodifiableIterable(children.values());
+		}
     }
 }

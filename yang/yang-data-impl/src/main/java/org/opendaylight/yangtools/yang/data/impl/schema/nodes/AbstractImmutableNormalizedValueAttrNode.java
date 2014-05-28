@@ -16,13 +16,13 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 
-public abstract class AbstractImmutableNormalizedAttrNode<K extends InstanceIdentifier.PathArgument,V>
-        extends AbstractImmutableNormalizedNode<K, V>
+public abstract class AbstractImmutableNormalizedValueAttrNode<K extends InstanceIdentifier.PathArgument,V>
+        extends AbstractImmutableNormalizedValueNode<K, V>
         implements AttributesContainer {
 
     private final Map<QName, String> attributes;
 
-    protected AbstractImmutableNormalizedAttrNode(final K nodeIdentifier, final V value, final Map<QName, String> attributes) {
+    protected AbstractImmutableNormalizedValueAttrNode(final K nodeIdentifier, final V value, final Map<QName, String> attributes) {
         super(nodeIdentifier, value);
         this.attributes = ImmutableMap.copyOf(attributes);
     }
