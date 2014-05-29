@@ -9,8 +9,20 @@ package org.opendaylight.yangtools.yang.model.api;
 
 /**
  *
+ * Data Schema Node represents abstract supertype from which all data tree
+ * definitions are derived.
+ *
  * Contains the method which are used for getting metadata from the schema nodes
  * which contains data.
+ *
+ * @see ContainerSchemaNode
+ * @see ListSchemaNode
+ * @see LeafListSchemaNode
+ * @see ChoiceNode
+ * @see ChoiceCaseNode
+ * @see LeafSchemaNode
+ * @see AnyXmlSchemaNode
+ *
  *
  */
 public interface DataSchemaNode extends SchemaNode {
