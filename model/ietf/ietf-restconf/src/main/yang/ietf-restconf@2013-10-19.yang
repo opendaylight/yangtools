@@ -2,7 +2,7 @@ module ietf-restconf {
   namespace "urn:ietf:params:xml:ns:yang:ietf-restconf";
   prefix "restconf";
 
-  import ietf-yang-types { prefix yang; }
+  import ietf-yang-types { prefix yang; revision-date 2013-07-15; }
   import ietf-inet-types { prefix inet; }
 
   organization
