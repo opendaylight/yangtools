@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
@@ -27,19 +28,16 @@ import com.google.common.collect.Iterables;
 public class ImmutableMapNodeBuilder
         implements CollectionNodeBuilder<MapEntryNode, MapNode> {
 
-    private Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
+    private final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
     private InstanceIdentifier.NodeIdentifier nodeIdentifier;
-    private boolean dirty = false;
 
     protected ImmutableMapNodeBuilder() {
-        this.value = new LinkedHashMap<>();
-        this.dirty = false;
+        this.value = new HashMap<>();
     }
 
     protected ImmutableMapNodeBuilder(final ImmutableMapNode node) {
         this.nodeIdentifier = node.getIdentifier();
-        this.value = node.children;
-        this.dirty = true;
+        this.value = MapAdaptor.getDefaultInstance().takeSnapshot(node.children);
     }
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> create() {
@@ -54,23 +52,14 @@ public class ImmutableMapNodeBuilder
         return new ImmutableMapNodeBuilder((ImmutableMapNode) node);
     }
 
-    private void checkDirty() {
-        if (dirty) {
-            value = new LinkedHashMap<>(value);
-            dirty = false;
-        }
-    }
-
     @Override
     public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
-        checkDirty();
         this.value.put(child.getIdentifier(), child);
         return this;
     }
 
     @Override
     public CollectionNodeBuilder<MapEntryNode, MapNode> withoutChild(final InstanceIdentifier.PathArgument key) {
-        checkDirty();
         this.value.remove(key);
         return this;
     }
@@ -93,8 +82,7 @@ public class ImmutableMapNodeBuilder
 
     @Override
     public MapNode build() {
-        dirty = true;
-        return new ImmutableMapNode(nodeIdentifier, value);
+        return new ImmutableMapNode(nodeIdentifier, MapAdaptor.getDefaultInstance().optimize(value));
     }
 
     @Override

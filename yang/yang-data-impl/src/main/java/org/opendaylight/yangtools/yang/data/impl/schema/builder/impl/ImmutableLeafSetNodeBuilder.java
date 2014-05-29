@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
@@ -28,19 +29,16 @@ import com.google.common.collect.Iterables;
 
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
 
-    private Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> value;
+    private final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> value;
     private InstanceIdentifier.NodeIdentifier nodeIdentifier;
-    private boolean dirty;
 
     protected ImmutableLeafSetNodeBuilder() {
-        value = new LinkedHashMap<>();
-        dirty = false;
+        value = new HashMap<>();
     }
 
     protected ImmutableLeafSetNodeBuilder(final ImmutableLeafSetNode<T> node) {
         nodeIdentifier = node.getIdentifier();
-        value = node.getChildren();
-        dirty = true;
+        value = MapAdaptor.getDefaultInstance().takeSnapshot(node.children);
     }
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
@@ -55,31 +53,21 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         return new ImmutableLeafSetNodeBuilder<T>((ImmutableLeafSetNode<T>) node);
     }
 
-    private void checkDirty() {
-        if (dirty) {
-            value = new LinkedHashMap<>(value);
-            dirty = false;
-        }
-    }
-
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(final LeafSetEntryNode<T> child) {
-        checkDirty();
         this.value.put(child.getIdentifier(), child);
         return this;
     }
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withoutChild(final PathArgument key) {
-        checkDirty();
         this.value.remove(key);
         return this;
     }
 
     @Override
     public LeafSetNode<T> build() {
-        dirty = true;
-        return new ImmutableLeafSetNode<>(nodeIdentifier, value);
+        return new ImmutableLeafSetNode<>(nodeIdentifier, MapAdaptor.getDefaultInstance().optimize(value));
     }
 
     @Override
@@ -91,7 +79,6 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withValue(final List<LeafSetEntryNode<T>> value) {
-        checkDirty();
         for (final LeafSetEntryNode<T> leafSetEntry : value) {
             withChild(leafSetEntry);
         }
@@ -133,10 +120,6 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         @Override
         protected int valueHashCode() {
             return children.hashCode();
-        }
-
-        private Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> getChildren() {
-            return Collections.unmodifiableMap(children);
         }
 
         @Override
