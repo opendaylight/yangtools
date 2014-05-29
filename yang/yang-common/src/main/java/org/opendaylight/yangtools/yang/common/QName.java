@@ -30,13 +30,17 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * same local name, but from different schemas.
  *
  * <ul>
- * <li><b>XMLNamespace</b> - the namespace assigned to the YANG module which
+ * <li><b>XMLNamespace</b> - {@link #getNamespace()} - the namespace assigned to the YANG module which
  * defined element, type, procedure or notification.</li>
- * <li><b>Revision</b> - the revision of the YANG module which describes the
+ * <li><b>Revision</b> - {@link #getRevision()} - the revision of the YANG module which describes the
  * element</li>
- * <li><b>LocalName</b> - the YANG schema identifier which were defined for this
+ * <li><b>LocalName</b> - {@link #getLocalName()} - the YANG schema identifier which were defined for this
  * node in the YANG module</li>
  * </ul>
+ *
+ * QName may also have <code>prefix</code> assigned, but prefix does not
+ * affect equality and identity of two QNames and carry only information
+ * which may be useful for serializers / deserializers.
  *
  *
  */
@@ -47,21 +51,25 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     static final String QNAME_LEFT_PARENTHESIS = "(";
     static final String QNAME_RIGHT_PARENTHESIS = ")";
 
-    private static final Pattern QNAME_PATTERN_FULL = Pattern.compile(
-            "^\\((.+)\\" + QNAME_REVISION_DELIMITER + "(.+)\\)(.+)$");
-    private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(
-           "^\\((.+)\\)(.+)$");
-    private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile(
-            "^(.+)$");
+    private static final Pattern QNAME_PATTERN_FULL = Pattern.compile("^\\((.+)\\" + QNAME_REVISION_DELIMITER
+            + "(.+)\\)(.+)$");
+    private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile("^\\((.+)\\)(.+)$");
+    private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile("^(.+)$");
 
-    private static final char[] ILLEGAL_CHARACTERS = new char[] {'?', '(', ')', '&'};
+    private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&' };
 
-    //Mandatory
+    // Mandatory
     private final QNameModule module;
-    //Mandatory
+    // Mandatory
     private final String localName;
-    //Nullable
+    // Nullable
     private final String prefix;
+
+    private QName(final QNameModule module, final String prefix, final String localName) {
+        this.localName = checkLocalName(localName);
+        this.prefix = prefix;
+        this.module = module;
+    }
 
     /**
      * QName Constructor.
@@ -74,11 +82,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            locally defined prefix assigned to local name
      * @param localName
      *            YANG schema identifier
+     *
      */
     public QName(final URI namespace, final Date revision, final String prefix, final String localName) {
-        this.localName = checkLocalName(localName);
-        this.prefix = prefix;
-        this.module = QNameModule.create(namespace, revision);
+        this(QNameModule.create(namespace, revision), prefix, localName);
     }
 
     /**
@@ -101,11 +108,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             throw new IllegalArgumentException("Parameter 'localName' must be a non-empty string.");
         }
 
-        for (char c: ILLEGAL_CHARACTERS) {
+        for (char c : ILLEGAL_CHARACTERS) {
             if (localName.indexOf(c) != -1) {
                 throw new IllegalArgumentException(String.format(
-                        "Parameter 'localName':'%s' contains illegal character '%s'",
-                        localName, c));
+                        "Parameter 'localName':'%s' contains illegal character '%s'", localName, c));
             }
         }
         return localName;
@@ -120,18 +126,30 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            the revision of the YANG module
      * @param localName
      *            YANG schema identifier
+     *
+     * @deprecated Use {@link #create(URI, Date, String)} instead.
      */
+    @Deprecated
     public QName(final URI namespace, final Date revision, final String localName) {
-        this(namespace, revision, null, localName);
+        this(QNameModule.create(namespace, revision), null, localName);
     }
 
+    /**
+     * Construct new QName which reuses namespace, revision and prefix from
+     * base.
+     *
+     * @param base
+     * @param localName
+     * @deprecated Use {@link #create(QName, String)} instead.
+     */
+    @Deprecated
     public QName(final QName base, final String localName) {
         this(base.getNamespace(), base.getRevision(), base.getPrefix(), localName);
     }
 
     /**
-     * @deprecated Use {@link #create(String)} instead.
-     * This implementation is broken.
+     * @deprecated Use {@link #create(String)} instead. This implementation is
+     *             broken.
      */
     @Deprecated
     public QName(final String input) throws ParseException {
@@ -169,7 +187,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         matcher = QNAME_PATTERN_NO_NAMESPACE_NO_REVISION.matcher(input);
         if (matcher.matches()) {
             String localName = matcher.group(1);
-            return new QName((URI)null, localName);
+            return new QName((URI) null, localName);
         }
         throw new IllegalArgumentException("Invalid input:" + input);
     }
@@ -224,6 +242,17 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return result;
     }
 
+    /**
+     *
+     * Compares the specified object with this list for equality.  Returns
+     * <tt>true</tt> if and only if the specified object is also instance of
+     * {@link QName} and its {@link #getLocalName()}, {@link #getNamespace()} and
+     * {@link #getRevision()} are equals to same properties of this instance.
+     *
+     * @param o the object to be compared for equality with this QName
+     * @return <tt>true</tt> if the specified object is equal to this QName
+     *
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -257,20 +286,48 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return true;
     }
 
-    public static QName create(final QName base, final String localName){
+    public static QName create(final QName base, final String localName) {
         return new QName(base, localName);
     }
 
-    public static QName create(final URI namespace, final Date revision, final String localName){
-        return new QName(namespace, revision, localName);
+    /**
+     *
+     * Creates new QName.
+     *
+     * @param namespace Namespace of QName or null if namespace is undefined.
+     * @param revision Revision of namespace or null if revision is unspecified.
+     * @param localName Local name part of QName. MUST NOT BE null.
+     * @return Instance of QName
+     */
+    public static QName create(final URI namespace, final Date revision, final String localName) {
+        return new QName(QNameModule.create(namespace, revision), null,localName);
     }
 
-
-    public static QName create(final String namespace, final String revision, final String localName) throws IllegalArgumentException{
+    /**
+     *
+     * Creates new QName.
+     *
+     * @param namespace
+     *            Namespace of QName, MUST NOT BE Null.
+     * @param revision
+     *            Revision of namespace / YANG module. MUST NOT BE null, MUST BE
+     *            in format <code>YYYY-mm-dd</code>.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @return
+     * @throws NullPointerException
+     *             If any of paramaters is null.
+     * @throws IllegalArgumentException
+     *             If <code>namespace</code> is not valid URI or
+     *             <code>revision</code> is not according to format
+     *             <code>YYYY-mm-dd</code>.
+     */
+    public static QName create(final String namespace, final String revision, final String localName)
+            throws IllegalArgumentException {
         final URI namespaceUri;
         try {
             namespaceUri = new URI(namespace);
-        }  catch (URISyntaxException ue) {
+        } catch (URISyntaxException ue) {
             throw new IllegalArgumentException(String.format("Namespace '%s' is not a valid URI", namespace), ue);
         }
 
@@ -293,10 +350,26 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return sb.toString();
     }
 
+    /**
+     * Return string representation of revision in format
+     * <code>YYYY-mm-dd</code>
+     *
+     * YANG Specification defines format for <code>revision</code> as
+     * YYYY-mm-dd. This format for revision is reused accross multiple places
+     * such as capabilities URI, YANG modules, etc.
+     *
+     * @return String representation of revision or null, if revision is not
+     *         set.
+     */
     public String getFormattedRevision() {
         return module.getFormattedRevision();
     }
 
+    /**
+     * Creates copy of this with revision and prefix unset.
+     *
+     * @return copy of this QName with revision and prefix unset.
+     */
     public QName withoutRevision() {
         return QName.create(getNamespace(), null, localName);
     }
@@ -304,18 +377,46 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     public static Date parseRevision(final String formatedDate) {
         try {
             return getRevisionFormat().parse(formatedDate);
-        } catch (ParseException| RuntimeException e) {
-            throw new IllegalArgumentException(String.format("Revision '%s'is not in a supported format", formatedDate), e);
+        } catch (ParseException | RuntimeException e) {
+            throw new IllegalArgumentException(
+                    String.format("Revision '%s'is not in a supported format", formatedDate), e);
         }
     }
 
+    /**
+     * Formats {@link Date} representing revision to format
+     * <code>YYYY-mm-dd</code>
+     *
+     * YANG Specification defines format for <code>revision</code> as
+     * YYYY-mm-dd. This format for revision is reused accross multiple places
+     * such as capabilities URI, YANG modules, etc.
+     *
+     * @param revision
+     *            Date object to format or null
+     * @return String representation or null if the input was null.
+     */
     public static String formattedRevision(final Date revision) {
-        if(revision == null) {
+        if (revision == null) {
             return null;
         }
         return getRevisionFormat().format(revision);
     }
 
+    /**
+     *
+     * Compares this QName to other, without comparing revision.
+     *
+     * Compares instance of this to other instance of QName and returns true if
+     * both instances have equal <code>localName</code> ({@link #getLocalName()}
+     * ) and <code>namespace</code> ({@link #getNamespace()}).
+     *
+     * @param other
+     *            Other QName. Must not be null.
+     * @return true if this instance and other have equals localName and
+     *         namespace.
+     * @throws NullPointerException
+     *             if <code>other</code> is null.
+     */
     public boolean isEqualWithoutRevision(final QName other) {
         return localName.equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
     }
