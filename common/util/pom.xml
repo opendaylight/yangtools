@@ -45,8 +45,10 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <Export-Package>org.opendaylight.yangtools.util</Export-Package>
-                    <Embed-Dependency>java-concurrent-hash-trie-map;inline=true</Embed-Dependency>
+                    <instructions>
+                        <Export-Package>org.opendaylight.yangtools.util</Export-Package>
+                        <Embed-Dependency>java-concurrent-hash-trie-map;inline=true</Embed-Dependency>
+                    </instructions>
                 </configuration>
             </plugin>
         </plugins>
