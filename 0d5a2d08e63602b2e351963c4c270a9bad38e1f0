@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_2847f61e",
+        "filename": "yang/yang-data-api/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-05-30T12:48:08Z",
+      "side": 1,
+      "message": "Tom - we should remove these tabs that snuck in here. :)",
+      "revId": "0d5a2d08e63602b2e351963c4c270a9bad38e1f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
