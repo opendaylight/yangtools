@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_283616e8",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/BinaryType.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_c558b358",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_65168757",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/BitsType.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2014-05-30T06:03:26Z",
       "side": 1,
       "message": "known to be non-null, right?",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c8344ae0",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/BitsType.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_65168757",
       "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_e82fce86",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/ExtendedType.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_e5537737",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_8532ab0e",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/IdentityrefType.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2014-05-30T06:03:26Z",
       "side": 1,
       "message": "missing @deprecated Javadoc",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_884e426e",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/IdentityrefType.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_8532ab0e",
       "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_8875e299",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/InstanceIdentifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_a5356ff8",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_453ca3e2",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/InstanceIdentifier.java",
         "patchSetId": 5
@@ -98,6 +188,24 @@
       "writtenOn": "2014-05-30T06:03:26Z",
       "side": 1,
       "message": "return requireInstance.equals(other.requireInstance);",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a878e68f",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/InstanceIdentifier.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_453ca3e2",
       "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_48583a32",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/LengthConstraintImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_25215fb4",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_a51c8f78",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/LengthConstraintImpl.java",
         "patchSetId": 5
@@ -132,6 +258,24 @@
       "writtenOn": "2014-05-30T06:03:26Z",
       "side": 1,
       "message": "min/max are checked to be non-null",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a851c60f",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/LengthConstraintImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_a51c8f78",
       "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_685bbe2e",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/PatternConstraintImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_05269bce",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_85194b8a",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/PatternConstraintImpl.java",
         "patchSetId": 5
@@ -166,6 +328,24 @@
       "writtenOn": "2014-05-30T06:03:26Z",
       "side": 1,
       "message": "regex is checked to be non-null",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_0842323e",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/PatternConstraintImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_85194b8a",
       "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_283db6bb",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/RangeConstraintImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_c52f53a0",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_e52a978f",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/RangeConstraintImpl.java",
         "patchSetId": 5
@@ -206,6 +404,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_c84bea57",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/RangeConstraintImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_e52a978f",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_45134366",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/StringType.java",
         "patchSetId": 5
@@ -217,6 +433,24 @@
       "writtenOn": "2014-05-30T06:03:26Z",
       "side": 1,
       "message": "we know these are non-null",
+      "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e846ee4e",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/StringType.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-05-30T10:44:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_45134366",
       "revId": "1111f16fe572e487a344bcdb8b037caa01f5ad10",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
