@@ -18,7 +18,7 @@ public interface ListenerRegistration<T extends EventListener> extends ObjectReg
     /**
      * Unregister the listener. No events should be delivered to the listener
      * once this method returns successfully. While the interface contract
-     * allows an implementation to ignore the occurence of RuntimeExceptions,
+     * allows an implementation to ignore the occurrence of RuntimeExceptions,
      * implementations are strongly encouraged to deal with such exceptions
      * internally and to ensure invocations of this method do not fail in such
      * circumstances.
