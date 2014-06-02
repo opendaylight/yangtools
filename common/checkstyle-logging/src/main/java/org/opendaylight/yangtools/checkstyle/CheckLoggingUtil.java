@@ -45,7 +45,7 @@ public class CheckLoggingUtil {
         return identifier.getText();
     }
 
-    public static boolean itsAFieldVariable(final DetailAST aAST) {
+    public static boolean isAFieldVariable(final DetailAST aAST) {
         return aAST.getParent().getType() == TokenTypes.OBJBLOCK;
     }
 
@@ -58,6 +58,14 @@ public class CheckLoggingUtil {
 
     public static boolean isLogMethod(final String methodName) {
         return LOG_METHODS.contains(methodName);
+    }
+
+    public static String getClassName(final DetailAST aAST) {
+        DetailAST parent = aAST.getParent();
+        while(parent.getType() != TokenTypes.CLASS_DEF && parent.getType() != TokenTypes.ENUM_DEF) {
+            parent = parent.getParent();
+        }
+        return parent.findFirstToken(TokenTypes.IDENT).getText();
     }
 
 }

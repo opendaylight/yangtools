@@ -29,7 +29,7 @@ public class LoggerMustBeSlf4jCheck extends Check {
     public void visitToken(DetailAST aAST) {
         if(aAST.getType() == TokenTypes.VARIABLE_DEF) {
             final String typeName = CheckLoggingUtil.getTypeName(aAST);
-            if (CheckLoggingUtil.itsAFieldVariable(aAST) && typeName.contains("." + LOGGER_TYPE_NAME)) {
+            if (CheckLoggingUtil.isAFieldVariable(aAST) && typeName.contains("." + LOGGER_TYPE_NAME)) {
                 if(!typeName.equals(LOGGER_TYPE_FULL_NAME)) {
                     log(aAST.getLineNo(), LOG_MESSAGE);
                 }
