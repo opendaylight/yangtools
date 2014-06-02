@@ -16,6 +16,41 @@
       "revId": "ddc26b5084b40d0f975b6bae0cf076c56c4a5dfe",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9e351cf9",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-02T14:27:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_178498d2",
+      "revId": "ddc26b5084b40d0f975b6bae0cf076c56c4a5dfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_de53a437",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-02T14:27:54Z",
+      "side": 1,
+      "message": "Done, code was removed since addRawInterfaceDefinition now adds qnameConstant",
+      "revId": "ddc26b5084b40d0f975b6bae0cf076c56c4a5dfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
