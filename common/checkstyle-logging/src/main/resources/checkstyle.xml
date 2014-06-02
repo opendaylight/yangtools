@@ -45,4 +45,32 @@
         <property name="minimum" value="0"/>
         <property name="maximum" value="1"/>
     </module>
+
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="\s+$"/>
+        <property name="message" value="Line has trailing spaces."/>
+    </module>
+
+    <module name="RegexpMultiline">
+        <property name="format" value="(\r\n|\r)"/>
+        <property name="message" value="Line has Windows line delimiter."/>
+    </module>
+
+    <module name="TreeWalker">
+        <module name="Indentation">
+            <property name="caseIndent" value="0"/>
+        </module>
+
+        <module name="UnusedImports"/>
+
+        <module name="ImportOrder">
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+            <property name="option" value="above"/>
+        </module>
+    </module>
 </module>
