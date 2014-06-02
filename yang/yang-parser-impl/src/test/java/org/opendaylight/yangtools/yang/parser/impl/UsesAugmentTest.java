@@ -12,7 +12,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.Lists;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
@@ -22,7 +24,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -41,8 +42,6 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-
-import com.google.common.collect.Lists;
 
 public class UsesAugmentTest {
     private static final URI UG_NS = URI.create("urn:opendaylight:params:xml:ns:yang:uses-grouping");
@@ -161,7 +160,7 @@ public class UsesAugmentTest {
         expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
         assertEquals(expectedPath, type.getType().getPath());
         UnionType union = (UnionType)type.getType().getBaseType();
-        assertEquals(BaseTypes.schemaPath(BaseTypes.constructQName("union")), union.getPath());
+        assertEquals(SchemaPath.create(true, BaseTypes.constructQName("union")), union.getPath());
         assertEquals(2, union.getTypes().size());
         // * |-- list requests
         ListSchemaNode requests = (ListSchemaNode) pcreq.getDataChildByName("requests");
@@ -613,7 +612,7 @@ public class UsesAugmentTest {
     }
 
     @Test
-    public void testTypedefs() throws FileNotFoundException, URISyntaxException {
+    public void testTypedefs() throws IOException, URISyntaxException {
         modules = TestUtils.loadModules(getClass().getResource("/grouping-test").toURI());
         Module testModule = TestUtils.findModule(modules, "grouping-definitions");
         Set<TypeDefinition<?>> types = testModule.getTypeDefinitions();
