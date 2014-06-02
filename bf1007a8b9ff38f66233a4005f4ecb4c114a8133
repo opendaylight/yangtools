@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_de7c04b8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1010,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-02T14:26:05Z",
+      "side": 1,
+      "message": "is this supposed to be a \u0027can\u0027? please expand it a bit to make it more understandable as to how the FIXME can be addressed.",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1e734ce8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1023,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-02T14:26:05Z",
+      "side": 1,
+      "message": "String.format()",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_be810091",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1027,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-02T14:26:05Z",
+      "side": 1,
+      "message": "String.format()",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7e4b7887",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-02T14:26:05Z",
+      "side": 1,
+      "message": "is this an exception?",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3e45f06f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-02T14:26:05Z",
+      "side": 1,
+      "message": "add a trace here",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5e48f486",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-02T14:26:05Z",
+      "side": 1,
+      "message": "add a trace here",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1e5a6c50",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-02T14:26:05Z",
+      "side": 1,
+      "message": "add a trace here",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fe5ea844",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-02T14:26:05Z",
+      "side": 1,
+      "message": "add a trace here",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
