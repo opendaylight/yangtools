@@ -441,29 +441,103 @@ public class BindingReflections {
 
         @Override
         public Optional<QName> load(final Class<?> key) throws Exception {
-            try {
-                Field field = key.getField(BindingMapping.QNAME_STATIC_FIELD_NAME);
-                Object obj = field.get(null);
-                if (obj instanceof QName) {
-                    return Optional.of((QName) obj);
-                }
-            } catch (NoSuchFieldException e) {
-                if (Augmentation.class.isAssignableFrom(key)) {
-                    YangModuleInfo moduleInfo = getModuleInfo(key);
-                    return Optional.of(QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(),
-                            moduleInfo.getName()));
-                }
-            } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-                /*
-                 *
-                 * It is safe to log this this exception on debug, since
-                 * this method should not fail. Only failures are possible if
-                 * the runtime / backing.
-                 *
-                 */
-                LOG.debug("Unexpected exception during extracting QName for {}",key,e);
-            }
-            return Optional.absent();
+            return resolveQNameNoCache(key);
         }
     }
+
+    /**
+     *
+     * Tries to resolve QName for supplied class.
+     *
+     * Looks up for static field with name from constant {@link BindingMapping#QNAME_STATIC_FIELD_NAME}
+     * and returns value if present.
+     *
+     * If field is not present uses {@link #computeQName(Class)} to compute QName for missing types.
+     *
+     * @param key
+     * @return
+     */
+    private static Optional<QName> resolveQNameNoCache(final Class<?> key) {
+        try {
+            Field field = key.getField(BindingMapping.QNAME_STATIC_FIELD_NAME);
+            Object obj = field.get(null);
+            if (obj instanceof QName) {
+                return Optional.of((QName) obj);
+            }
+
+        } catch (NoSuchFieldException e) {
+            return Optional.of(computeQName(key));
+
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            /*
+             *
+             * It is safe to log this this exception on debug, since
+             * this method should not fail. Only failures are possible if
+             * the runtime / backing.
+             *
+             */
+            LOG.debug("Unexpected exception during extracting QName for {}",key,e);
+        }
+        return Optional.absent();
+    }
+
+    /**
+     * Computes QName for supplied class
+     *
+     * Namespace and revision are same as {@link YangModuleInfo}
+     * associated with supplied class.
+     * <p>
+     * If class is
+     * <ul>
+     *  <li>rpc input: local name is "input".
+     *  <li>rpc output: local name is "output".
+     *  <li>augmentation: local name is "module name".
+     * </ul>
+     *
+     * There is also fallback, if it is not possible to compute QName
+     * using following algorithm returns module QName.
+     *
+     * FIXME: Extend this algorithm to also provide QName for YANG modeled simple types.
+     *
+     * @throws IllegalStateException If YangModuleInfo could not be resolved
+     * @throws IllegalArgumentException If supplied class was not derived from YANG model.
+     *
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static QName computeQName(final Class key) {
+        if(isBindingClass(key)) {
+            YangModuleInfo moduleInfo;
+            try {
+                moduleInfo = getModuleInfo(key);
+            } catch (Exception e) {
+                throw new IllegalStateException("Unable to get QName for " + key + ". YangModuleInfo was not found.",e);
+            }
+            final QName module = getModuleQName(moduleInfo);
+            if (Augmentation.class.isAssignableFrom(key)) {
+                return module;
+            } else if(isRpcType(key)) {
+                final String className = key.getSimpleName();
+                if(className.endsWith(BindingMapping.RPC_OUTPUT_SUFFIX)) {
+                    return QName.create(module,"output");
+                } else {
+                    return QName.create(module,"input");
+                }
+            }
+            /*
+             *  Fallback for Binding types which fo not have QNAME
+             *  field
+             */
+            return module;
+        } else {
+            throw new IllegalArgumentException("Supplied class "+key+"is not derived from YANG.");
+        }
+    }
+
+    public static QName getModuleQName(final YangModuleInfo moduleInfo) {
+        checkArgument(moduleInfo != null, "moduleInfo must not be null.");
+        return QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(),
+                moduleInfo.getName());
+    }
+
+
 }

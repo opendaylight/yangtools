@@ -1544,7 +1544,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def GeneratedTypeBuilder addDefaultInterfaceDefinition(String packageName, SchemaNode schemaNode,
         Type parent) {
         val it = addRawInterfaceDefinition(packageName, schemaNode, "");
-        qnameConstant(BindingMapping.QNAME_STATIC_FIELD_NAME,schemaNode.QName);
         if (parent === null) {
             addImplementsType(DATA_OBJECT);
         } else {
@@ -1616,6 +1615,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         //FIXME: Validation of name conflict
         val newType = new GeneratedTypeBuilderImpl(packageName, genTypeName);
+        qnameConstant(newType,BindingMapping.QNAME_STATIC_FIELD_NAME,schemaNode.QName);
         newType.addComment(schemaNode.getDescription());
         if (!genTypeBuilders.containsKey(packageName)) {
             val Map<String, GeneratedTypeBuilder> builders = new HashMap();
