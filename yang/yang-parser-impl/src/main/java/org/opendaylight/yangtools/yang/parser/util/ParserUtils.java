@@ -7,64 +7,70 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingBuilderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import java.util.HashSet;
-import java.net.URI;
-
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingBuilderImpl;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 public final class ParserUtils {
+
+    private static final String INPUT = "input";
+    private static final String OUTPUT = "output";
+    private static final Logger LOG = LoggerFactory.getLogger(ParserUtils.class);
 
     private ParserUtils() {
     }
@@ -78,7 +84,7 @@ public final class ParserUtils {
      *            one or more qnames added to base path
      * @return new SchemaPath from given path and qname
      */
-    public static SchemaPath createSchemaPath(SchemaPath schemaPath, QName... qname) {
+    public static SchemaPath createSchemaPath(final SchemaPath schemaPath, final QName... qname) {
         List<QName> path = new ArrayList<>(schemaPath.getPath());
         path.addAll(Arrays.asList(qname));
         return new SchemaPath(path, schemaPath.isAbsolute());
@@ -93,7 +99,7 @@ public final class ParserUtils {
      *            prefix associated with import
      * @return ModuleImport based on given prefix
      */
-    public static ModuleImport getModuleImport(ModuleBuilder builder, String prefix) {
+    public static ModuleImport getModuleImport(final ModuleBuilder builder, final String prefix) {
         for (ModuleImport mi : builder.getModuleImports()) {
             if (mi.getPrefix().equals(prefix)) {
                 return mi;
@@ -116,8 +122,8 @@ public final class ParserUtils {
      *            current line in yang model
      * @return module builder if found, null otherwise
      */
-    public static ModuleBuilder findModuleFromBuilders(Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            ModuleBuilder module, String prefix, int line) {
+    public static ModuleBuilder findModuleFromBuilders(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final ModuleBuilder module, final String prefix, final int line) {
         ModuleBuilder dependentModule = null;
         Date dependentModuleRevision = null;
 
@@ -159,8 +165,8 @@ public final class ParserUtils {
      *            current line in yang model
      * @return module based on given prefix if found in context, null otherwise
      */
-    public static Module findModuleFromContext(SchemaContext context, ModuleBuilder currentModule, String prefix,
-            int line) {
+    public static Module findModuleFromContext(final SchemaContext context, final ModuleBuilder currentModule, final String prefix,
+            final int line) {
         if (context == null) {
             throw new YangParseException(currentModule.getName(), line, "Cannot find module with prefix '" + prefix
                     + "'.");
@@ -200,7 +206,7 @@ public final class ParserUtils {
      *            XPath as String
      * @return SchemaPath from given String
      */
-    public static SchemaPath parseXPathString(String xpathString) {
+    public static SchemaPath parseXPathString(final String xpathString) {
         boolean absolute = xpathString.startsWith("/");
         String[] splittedPath = xpathString.split("/");
         List<QName> path = new ArrayList<QName>();
@@ -227,7 +233,7 @@ public final class ParserUtils {
      * @param target
      *            augmentation target node
      */
-    public static void fillAugmentTarget(AugmentationSchemaBuilder augment, Builder target) {
+    public static void fillAugmentTarget(final AugmentationSchemaBuilder augment, final Builder target) {
         if (target instanceof DataNodeContainerBuilder) {
             fillAugmentTarget(augment, (DataNodeContainerBuilder) target);
         } else if (target instanceof ChoiceBuilder) {
@@ -248,7 +254,7 @@ public final class ParserUtils {
      * @param target
      *            augmentation target node
      */
-    private static void fillAugmentTarget(AugmentationSchemaBuilder augment, DataNodeContainerBuilder target) {
+    private static void fillAugmentTarget(final AugmentationSchemaBuilder augment, final DataNodeContainerBuilder target) {
         for (DataSchemaNodeBuilder child : augment.getChildNodeBuilders()) {
             DataSchemaNodeBuilder childCopy = CopyUtils.copy(child, target, false);
             if (augment.getParent() instanceof UsesNodeBuilder) {
@@ -274,7 +280,7 @@ public final class ParserUtils {
      * @param target
      *            augmentation target choice node
      */
-    private static void fillAugmentTarget(AugmentationSchemaBuilder augment, ChoiceBuilder target) {
+    private static void fillAugmentTarget(final AugmentationSchemaBuilder augment, final ChoiceBuilder target) {
         for (DataSchemaNodeBuilder builder : augment.getChildNodeBuilders()) {
             DataSchemaNodeBuilder childCopy = CopyUtils.copy(builder, target, false);
             if (augment.getParent() instanceof UsesNodeBuilder) {
@@ -296,7 +302,7 @@ public final class ParserUtils {
      *
      * @param node
      */
-    private static void setNodeAugmenting(DataSchemaNodeBuilder node) {
+    private static void setNodeAugmenting(final DataSchemaNodeBuilder node) {
         node.setAugmenting(true);
         if (node instanceof DataNodeContainerBuilder) {
             DataNodeContainerBuilder dataNodeChild = (DataNodeContainerBuilder) node;
@@ -316,7 +322,7 @@ public final class ParserUtils {
      *
      * @param node
      */
-    public static void setNodeAddedByUses(GroupingMember node) {
+    public static void setNodeAddedByUses(final GroupingMember node) {
         node.setAddedByUses(true);
         if (node instanceof DataNodeContainerBuilder) {
             DataNodeContainerBuilder dataNodeChild = (DataNodeContainerBuilder) node;
@@ -339,7 +345,7 @@ public final class ParserUtils {
      * @param config
      *            new config value
      */
-    public static void setNodeConfig(DataSchemaNodeBuilder node, Boolean config) {
+    public static void setNodeConfig(final DataSchemaNodeBuilder node, final Boolean config) {
         if (node instanceof ContainerSchemaNodeBuilder || node instanceof LeafSchemaNodeBuilder
                 || node instanceof LeafListSchemaNodeBuilder || node instanceof ListSchemaNodeBuilder
                 || node instanceof ChoiceBuilder || node instanceof AnyXmlBuilder) {
@@ -358,7 +364,7 @@ public final class ParserUtils {
         }
     }
 
-    public static DataSchemaNodeBuilder findSchemaNode(List<QName> path, SchemaNodeBuilder parentNode) {
+    public static DataSchemaNodeBuilder findSchemaNode(final List<QName> path, final SchemaNodeBuilder parentNode) {
         DataSchemaNodeBuilder node = null;
         SchemaNodeBuilder parent = parentNode;
         int i = 0;
@@ -389,36 +395,197 @@ public final class ParserUtils {
         return node;
     }
 
-    public static SchemaNodeBuilder findSchemaNodeInModule(List<QName> pathToNode, ModuleBuilder module) {
-        List<QName> path = new ArrayList<>(pathToNode);
-        QName first = path.remove(0);
+    /**
+     *
+     * Find a builder for node in data namespace of YANG module.
+     *
+     * Search is performed on full QName equals, this means builders and schema
+     * path MUST be resolved against imports and their namespaces.
+     *
+     * Search is done in data namespace, this means notification, rpc
+     * definitions and top level data definitions are considered as top-level
+     * items, from which it is possible to traverse.
+     *
+     *
+     * @param schemaPath
+     *            Schema Path to node
+     * @param module
+     *            ModuleBuilder to start lookup in
+     * @return Node Builder if found, {@link Optional#absent()} otherwise.
+     */
+    public static Optional<SchemaNodeBuilder> findSchemaNodeInModule(final SchemaPath schemaPath,
+            final ModuleBuilder module) {
+        Iterator<QName> path = schemaPath.getPath().iterator();
+        Preconditions.checkArgument(path.hasNext(), "Schema Path must contain at least one element.");
+        QName first = path.next();
+        Optional<SchemaNodeBuilder> currentNode = getDataNamespaceChild(module, first);
 
-        SchemaNodeBuilder node = module.getDataChildByName(first.getLocalName());
-        if (node == null) {
+        while (currentNode.isPresent() && path.hasNext()) {
+            currentNode = findDataChild(currentNode.get(), path.next());
+        }
+        return currentNode;
+    }
+
+    private static Optional<SchemaNodeBuilder> findDataChild(final SchemaNodeBuilder parent, final QName child) {
+        if (parent instanceof DataNodeContainerBuilder) {
+            return castOptional(SchemaNodeBuilder.class,
+                    findDataChildInDataNodeContainer((DataNodeContainerBuilder) parent, child));
+        } else if (parent instanceof ChoiceBuilder) {
+            return castOptional(SchemaNodeBuilder.class, findCaseInChoice((ChoiceBuilder) parent, child));
+        } else if (parent instanceof RpcDefinitionBuilder) {
+            return castOptional(SchemaNodeBuilder.class, findContainerInRpc((RpcDefinitionBuilder) parent, child));
+
+        } else {
+            LOG.trace("Child {} not found in node {}", child, parent);
+            return Optional.absent();
+        }
+    }
+
+    /**
+     * Casts optional from one argument to other.
+     *
+     * @param cls
+     *            Class to be checked
+     * @param optional
+     *            Original value
+     * @return
+     */
+    private static <T> Optional<T> castOptional(final Class<T> cls, final Optional<?> optional) {
+        if (optional.isPresent()) {
+            Object value = optional.get();
+            if (cls.isInstance(value)) {
+                @SuppressWarnings("unchecked")
+                // Actually checked by outer if
+                T casted = (T) value;
+                return Optional.of(casted);
+            }
+        }
+        return Optional.absent();
+    }
+
+    /**
+     *
+     * Gets input / output container from {@link RpcDefinitionBuilder} if QName
+     * is input/output.
+     *
+     *
+     * @param parent
+     *            RPC Definition builder
+     * @param child
+     *            Child QName
+     * @return Optional of input/output if defined and QName is input/output.
+     *         Otherwise {@link Optional#absent()}.
+     */
+    private static Optional<ContainerSchemaNodeBuilder> findContainerInRpc(final RpcDefinitionBuilder parent, final QName child) {
+        if (INPUT.equals(child.getLocalName())) {
+            return Optional.of(parent.getInput());
+        } else if (OUTPUT.equals(child.getLocalName())) {
+            return Optional.of(parent.getOutput());
+        }
+        LOG.trace("Child {} not found in node {}", child, parent);
+        return Optional.absent();
+    }
+
+    /**
+     * Finds case by QName in {@link ChoiceBuilder}
+     *
+     *
+     * @param parent
+     *            DataNodeContainer in which lookup should be performed
+     * @param child
+     *            QName of child
+     * @return Optional of child if found.
+     */
+
+    private static Optional<ChoiceCaseBuilder> findCaseInChoice(final ChoiceBuilder parent, final QName child) {
+        for (ChoiceCaseBuilder caze : parent.getCases()) {
+            if (caze.getQName().equals(child)) {
+                return Optional.of(caze);
+            }
+        }
+        LOG.trace("Child {} not found in node {}", child, parent);
+        return Optional.absent();
+    }
+
+    /**
+     * Finds direct child by QName in {@link DataNodeContainerBuilder}
+     *
+     *
+     * @param parent
+     *            DataNodeContainer in which lookup should be performed
+     * @param child
+     *            QName of child
+     * @return Optional of child if found.
+     */
+    private static Optional<DataSchemaNodeBuilder> findDataChildInDataNodeContainer(final DataNodeContainerBuilder parent,
+            final QName child) {
+        for (DataSchemaNodeBuilder childNode : parent.getChildNodeBuilders()) {
+            if (childNode.getQName().equals(child)) {
+                return Optional.of(childNode);
+            }
+        }
+        LOG.trace("Child {} not found in node {}", child, parent);
+        return Optional.absent();
+    }
+
+    /**
+     *
+     * Find a child builder for node in data namespace of YANG module.
+     *
+     * Search is performed on full QName equals, this means builders and schema
+     * path MUST be resolved against imports and their namespaces.
+     *
+     * Search is done in data namespace, this means notification, rpc
+     * definitions and top level data definitions are considered as top-level
+     * items, from which it is possible to traverse.
+     *
+     *
+     * @param child
+     *            Child QName.
+     * @param module
+     *            ModuleBuilder to start lookup in
+     * @return Node Builder if found, {@link Optional#absent()} otherwise.
+     */
+    private static Optional<SchemaNodeBuilder> getDataNamespaceChild(final ModuleBuilder module, final QName child) {
+        /*
+         * First we do lookup in data tree, if node is found we return it.
+         */
+        final Optional<SchemaNodeBuilder> dataTreeNode = getDataChildByQName(module, child);
+        if (dataTreeNode.isPresent()) {
+            return dataTreeNode;
+        }
+
+        /*
+         * We lookup in notifications
+         */
             Set<NotificationBuilder> notifications = module.getAddedNotifications();
             for (NotificationBuilder notification : notifications) {
-                if (notification.getQName().getLocalName().equals(first.getLocalName())) {
-                    node = notification;
+            if (notification.getQName().equals(child)) {
+                return Optional.<SchemaNodeBuilder> of(notification);
                 }
             }
-        }
-        if (node == null) {
+
+        /*
+         * We lookup in RPCs
+         */
             Set<RpcDefinitionBuilder> rpcs = module.getAddedRpcs();
             for (RpcDefinitionBuilder rpc : rpcs) {
-                if (rpc.getQName().getLocalName().equals(first.getLocalName())) {
-                    node = rpc;
+            if (rpc.getQName().equals(child)) {
+                return Optional.<SchemaNodeBuilder> of(rpc);
                 }
             }
-        }
-        if (node == null) {
-            return null;
-        }
-
-        if (!path.isEmpty()) {
-            node = findSchemaNode(path, node);
+        LOG.trace("Child {} not found in data namespace of module {}", child, module);
+        return Optional.absent();
         }
 
-        return node;
+    private static Optional<SchemaNodeBuilder> getDataChildByQName(final DataNodeContainerBuilder builder, final QName child) {
+        for (DataSchemaNodeBuilder childNode : builder.getChildNodeBuilders()) {
+            if (childNode.getQName().equals(child)) {
+                return Optional.<SchemaNodeBuilder> of(childNode);
+        }
+        }
+        LOG.trace("Child {} not found in node {}", child, builder);
+        return Optional.absent();
     }
 
     /**
@@ -431,21 +598,24 @@ public final class ParserUtils {
      *            path to augment target
      * @return true if augmentation process succeed, false otherwise
      */
-    public static boolean processAugmentation(AugmentationSchemaBuilder augment, ModuleBuilder firstNodeParent) {
-        List<QName> path = augment.getTargetPath().getPath();
-        Builder targetNode = findSchemaNodeInModule(path, firstNodeParent);
-        if (targetNode == null) {
+    public static boolean processAugmentation(final AugmentationSchemaBuilder augment,
+            final ModuleBuilder firstNodeParent) {
+        Optional<SchemaNodeBuilder> potentialTargetNode = findSchemaNodeInModule(augment.getTargetNodeSchemaPath(),
+                firstNodeParent);
+        if (!potentialTargetNode.isPresent()) {
             return false;
         }
-
+        SchemaNodeBuilder targetNode = potentialTargetNode.get();
         fillAugmentTarget(augment, targetNode);
+        Preconditions.checkState(targetNode instanceof AugmentationTargetBuilder,
+                "Node refered by augmentation must be valid augmentation target");
         ((AugmentationTargetBuilder) targetNode).addAugmentation(augment);
         augment.setResolved(true);
         return true;
     }
 
-    public static IdentitySchemaNodeBuilder findBaseIdentity(Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            ModuleBuilder module, String baseString, int line) {
+    public static IdentitySchemaNodeBuilder findBaseIdentity(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final ModuleBuilder module, final String baseString, final int line) {
         IdentitySchemaNodeBuilder result = null;
         if (baseString.contains(":")) {
             String[] splittedBase = baseString.split(":");
@@ -464,7 +634,7 @@ public final class ParserUtils {
         return result;
     }
 
-    public static IdentitySchemaNodeBuilder findIdentity(Set<IdentitySchemaNodeBuilder> identities, String name) {
+    public static IdentitySchemaNodeBuilder findIdentity(final Set<IdentitySchemaNodeBuilder> identities, final String name) {
         for (IdentitySchemaNodeBuilder identity : identities) {
             if (identity.getQName().getLocalName().equals(name)) {
                 return identity;
@@ -479,7 +649,7 @@ public final class ParserUtils {
      * @param node
      * @return builder of module where this node is defined
      */
-    public static ModuleBuilder getParentModule(Builder node) {
+    public static ModuleBuilder getParentModule(final Builder node) {
         if (node instanceof ModuleBuilder) {
             return (ModuleBuilder) node;
         }
@@ -495,8 +665,8 @@ public final class ParserUtils {
         return parentModule;
     }
 
-    public static Set<DataSchemaNodeBuilder> wrapChildNodes(String moduleName, int line, Set<DataSchemaNode> nodes,
-            SchemaPath parentPath, URI ns, Date rev, String pref) {
+    public static Set<DataSchemaNodeBuilder> wrapChildNodes(final String moduleName, final int line, final Set<DataSchemaNode> nodes,
+            final SchemaPath parentPath, final URI ns, final Date rev, final String pref) {
         Set<DataSchemaNodeBuilder> result = new HashSet<>();
 
         for (DataSchemaNode node : nodes) {
@@ -507,8 +677,8 @@ public final class ParserUtils {
         return result;
     }
 
-    public static DataSchemaNodeBuilder wrapChildNode(String moduleName, int line, DataSchemaNode node,
-            SchemaPath parentPath, QName qname) {
+    public static DataSchemaNodeBuilder wrapChildNode(final String moduleName, final int line, final DataSchemaNode node,
+            final SchemaPath parentPath, final QName qname) {
         List<QName> path = new ArrayList<>(parentPath.getPath());
         path.add(qname);
         SchemaPath schemaPath = new SchemaPath(path, parentPath.isAbsolute());
@@ -533,8 +703,8 @@ public final class ParserUtils {
         }
     }
 
-    public static Set<GroupingBuilder> wrapGroupings(String moduleName, int line, Set<GroupingDefinition> nodes,
-            SchemaPath parentPath, URI ns, Date rev, String pref) {
+    public static Set<GroupingBuilder> wrapGroupings(final String moduleName, final int line, final Set<GroupingDefinition> nodes,
+            final SchemaPath parentPath, final URI ns, final Date rev, final String pref) {
         Set<GroupingBuilder> result = new HashSet<>();
         for (GroupingDefinition node : nodes) {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
@@ -546,8 +716,8 @@ public final class ParserUtils {
         return result;
     }
 
-    public static Set<TypeDefinitionBuilder> wrapTypedefs(String moduleName, int line, DataNodeContainer dataNode,
-            SchemaPath parentPath, URI ns, Date rev, String pref) {
+    public static Set<TypeDefinitionBuilder> wrapTypedefs(final String moduleName, final int line, final DataNodeContainer dataNode,
+            final SchemaPath parentPath, final URI ns, final Date rev, final String pref) {
         Set<TypeDefinition<?>> nodes = dataNode.getTypeDefinitions();
         Set<TypeDefinitionBuilder> result = new HashSet<>();
         for (TypeDefinition<?> node : nodes) {
@@ -560,8 +730,8 @@ public final class ParserUtils {
         return result;
     }
 
-    public static List<UnknownSchemaNodeBuilder> wrapUnknownNodes(String moduleName, int line,
-            List<UnknownSchemaNode> nodes, SchemaPath parentPath, URI ns, Date rev, String pref) {
+    public static List<UnknownSchemaNodeBuilder> wrapUnknownNodes(final String moduleName, final int line,
+            final List<UnknownSchemaNode> nodes, final SchemaPath parentPath, final URI ns, final Date rev, final String pref) {
         List<UnknownSchemaNodeBuilder> result = new ArrayList<>();
         for (UnknownSchemaNode node : nodes) {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());

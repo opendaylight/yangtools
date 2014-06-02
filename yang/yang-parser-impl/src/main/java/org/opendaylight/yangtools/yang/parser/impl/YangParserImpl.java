@@ -7,7 +7,43 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.fillAugmentTarget;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentity;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNode;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNodeInModule;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.processAugmentation;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.setNodeAddedByUses;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNode;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNodes;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapGroupings;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapTypedefs;
+import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapUnknownNodes;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveType;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnion;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnionWithContext;
+import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeWithContext;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -61,43 +97,8 @@ import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.fillAugmentTarget;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentity;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNode;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNodeInModule;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.processAugmentation;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.setNodeAddedByUses;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNode;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNodes;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapGroupings;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapTypedefs;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapUnknownNodes;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveType;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnion;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnionWithContext;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeWithContext;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 
 
 public final class YangParserImpl implements YangModelParser {
@@ -208,7 +209,7 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     @Override
-    public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, SchemaContext context) {
+    public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, final SchemaContext context) {
         if (yangModelStreams == null) {
             return Collections.emptySet();
         }
@@ -228,7 +229,7 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     @Override
-    public Map<File, Module> parseYangModelsMapped(List<File> yangFiles) {
+    public Map<File, Module> parseYangModelsMapped(final List<File> yangFiles) {
         if (yangFiles == null) {
             return Collections.emptyMap();
         }
@@ -344,8 +345,8 @@ public final class YangParserImpl implements YangModelParser {
 
     // FIXME: why a list is required?
     // FIXME: streamToBuilderMap is output of this method, not input
-    private Map<InputStream, ModuleBuilder> parseModuleBuilders(List<InputStream> inputStreams,
-            Map<ModuleBuilder, InputStream> streamToBuilderMap) {
+    private Map<InputStream, ModuleBuilder> parseModuleBuilders(final List<InputStream> inputStreams,
+            final Map<ModuleBuilder, InputStream> streamToBuilderMap) {
         Map<InputStream, ModuleBuilder> modules = parseBuilders(inputStreams, streamToBuilderMap);
         Map<InputStream, ModuleBuilder> result = resolveSubmodules(modules);
         return result;
@@ -353,8 +354,8 @@ public final class YangParserImpl implements YangModelParser {
 
     // FIXME: why a list is required?
     // FIXME: streamToBuilderMap is output of this method, not input
-    private Map<InputStream, ModuleBuilder> parseBuilders(List<InputStream> inputStreams,
-            Map<ModuleBuilder, InputStream> streamToBuilderMap) {
+    private Map<InputStream, ModuleBuilder> parseBuilders(final List<InputStream> inputStreams,
+            final Map<ModuleBuilder, InputStream> streamToBuilderMap) {
         final ParseTreeWalker walker = new ParseTreeWalker();
         final Map<InputStream, ParseTree> trees = parseStreams(inputStreams);
         final Map<InputStream, ModuleBuilder> builders = new LinkedHashMap<>();
@@ -383,7 +384,7 @@ public final class YangParserImpl implements YangModelParser {
         return builders;
     }
 
-    private Map<InputStream, ModuleBuilder> resolveSubmodules(Map<InputStream, ModuleBuilder> builders) {
+    private Map<InputStream, ModuleBuilder> resolveSubmodules(final Map<InputStream, ModuleBuilder> builders) {
         Map<InputStream, ModuleBuilder> modules = new HashMap<>();
         Set<ModuleBuilder> submodules = new HashSet<>();
         for (Map.Entry<InputStream, ModuleBuilder> entry : builders.entrySet()) {
@@ -406,7 +407,7 @@ public final class YangParserImpl implements YangModelParser {
         return modules;
     }
 
-    private Collection<ModuleBuilder> resolveSubmodules(Collection<ModuleBuilder> builders) {
+    private Collection<ModuleBuilder> resolveSubmodules(final Collection<ModuleBuilder> builders) {
         Collection<ModuleBuilder> modules = new HashSet<>();
         Set<ModuleBuilder> submodules = new HashSet<>();
         for (ModuleBuilder moduleBuilder : builders) {
@@ -427,7 +428,7 @@ public final class YangParserImpl implements YangModelParser {
         return modules;
     }
 
-    private void addSubmoduleToModule(ModuleBuilder submodule, ModuleBuilder module) {
+    private void addSubmoduleToModule(final ModuleBuilder submodule, final ModuleBuilder module) {
         submodule.setParent(module);
         module.getDirtyNodes().addAll(submodule.getDirtyNodes());
         module.getModuleImports().addAll(submodule.getModuleImports());
@@ -485,7 +486,7 @@ public final class YangParserImpl implements YangModelParser {
      *            modules to order
      * @return modules ordered by name and revision
      */
-    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(List<ModuleBuilder> modules) {
+    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(final List<ModuleBuilder> modules) {
         final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
         for (final ModuleBuilder builder : modules) {
             if (builder == null) {
@@ -506,7 +507,7 @@ public final class YangParserImpl implements YangModelParser {
         return result;
     }
 
-    private void filterImports(ModuleBuilder main, List<ModuleBuilder> other, List<ModuleBuilder> filtered) {
+    private void filterImports(final ModuleBuilder main, final List<ModuleBuilder> other, final List<ModuleBuilder> filtered) {
         Set<ModuleImport> imports = main.getModuleImports();
 
         // if this is submodule, add parent to filtered and pick its imports
@@ -744,7 +745,7 @@ public final class YangParserImpl implements YangModelParser {
     }
 
     private void resolveDirtyNodesWithContext(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder module, SchemaContext context) {
+            final ModuleBuilder module, final SchemaContext context) {
         final Set<TypeAwareBuilder> dirtyNodes = module.getDirtyNodes();
         if (!dirtyNodes.isEmpty()) {
             for (TypeAwareBuilder nodeToResolve : dirtyNodes) {
@@ -775,7 +776,7 @@ public final class YangParserImpl implements YangModelParser {
      *            SchemaContext containing already resolved modules
      */
     private void resolveAugmentsTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            SchemaContext context) {
+            final SchemaContext context) {
         // collect augments from all loaded modules
         final List<AugmentationSchemaBuilder> allAugments = new ArrayList<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
@@ -869,7 +870,7 @@ public final class YangParserImpl implements YangModelParser {
      * @param parentPath
      *            schema path of parent node
      */
-    private void correctPathForAugmentNodes(DataSchemaNodeBuilder node, SchemaPath parentPath) {
+    private void correctPathForAugmentNodes(final DataSchemaNodeBuilder node, final SchemaPath parentPath) {
         SchemaPath newPath = ParserUtils.createSchemaPath(parentPath, node.getQName());
         node.setPath(newPath);
         if (node instanceof DataNodeContainerBuilder) {
@@ -892,7 +893,7 @@ public final class YangParserImpl implements YangModelParser {
      * @param augments
      *            augments to check
      */
-    private void checkAugmentMandatoryNodes(Collection<AugmentationSchemaBuilder> augments) {
+    private void checkAugmentMandatoryNodes(final Collection<AugmentationSchemaBuilder> augments) {
         for (AugmentationSchemaBuilder augment : augments) {
             String augmentPrefix = augment.getTargetPath().getPath().get(0).getPrefix();
             ModuleBuilder module = ParserUtils.getParentModule(augment);
@@ -974,22 +975,39 @@ public final class YangParserImpl implements YangModelParser {
 
         UsesNodeBuilder usesNode = (UsesNodeBuilder) augment.getParent();
         DataNodeContainerBuilder parentNode = usesNode.getParent();
-        SchemaNodeBuilder targetNode;
-        if (parentNode instanceof ModuleBuilder) {
-            targetNode = findSchemaNodeInModule(augment.getTargetPath().getPath(), (ModuleBuilder) parentNode);
+        Optional<SchemaNodeBuilder> potentialTargetNode;
+        SchemaPath resolvedTargetPath = augment.getTargetNodeSchemaPath();
+        if (parentNode instanceof ModuleBuilder && resolvedTargetPath.isAbsolute()) {
+            // Uses is directly used in module body, we lookup
+            // We lookup in data namespace to find correct augmentation target
+            potentialTargetNode = findSchemaNodeInModule(resolvedTargetPath, (ModuleBuilder) parentNode);
         } else {
-            targetNode = findSchemaNode(augment.getTargetPath().getPath(), (SchemaNodeBuilder) parentNode);
+            // Uses is used in local context (be it data namespace or grouping namespace,
+            // since all nodes via uses are imported to localName, it is safe to
+            // to proceed only with local names.
+            //
+            // Conflicting elements in other namespaces are still not present
+            // since resolveUsesAugment occurs before augmenting from external modules.
+            potentialTargetNode = Optional.<SchemaNodeBuilder> fromNullable(findSchemaNode(augment.getTargetPath()
+                    .getPath(), (SchemaNodeBuilder) parentNode));
         }
 
+        if (potentialTargetNode.isPresent()) {
+            SchemaNodeBuilder targetNode = potentialTargetNode.get();
         if (targetNode instanceof AugmentationTargetBuilder) {
             fillAugmentTarget(augment, targetNode);
             ((AugmentationTargetBuilder) targetNode).addAugmentation(augment);
             augment.setResolved(true);
             return true;
         } else {
-            throw new YangParseException(module.getName(), augment.getLine(),
-                    "Failed to resolve augment in uses. Invalid augment target: " + targetNode);
+                throw new YangParseException(module.getName(), augment.getLine(), String.format(
+                        "Failed to resolve augment in uses. Invalid augment target: %s", potentialTargetNode));
         }
+        } else {
+            throw new YangParseException(module.getName(), augment.getLine(), String.format(
+                    "Failed to resolve augment in uses. Invalid augment target path: %s", augment.getTargetPath()));
+        }
+
     }
 
     /**
@@ -1258,7 +1276,7 @@ public final class YangParserImpl implements YangModelParser {
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUses(UsesNodeBuilder usesNode,
+    private void resolveUses(final UsesNodeBuilder usesNode,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
         if (!usesNode.isResolved()) {
             DataNodeContainerBuilder parent = usesNode.getParent();
@@ -1295,7 +1313,7 @@ public final class YangParserImpl implements YangModelParser {
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUsesWithContext(UsesNodeBuilder usesNode) {
+    private void resolveUsesWithContext(final UsesNodeBuilder usesNode) {
         final int line = usesNode.getLine();
         DataNodeContainerBuilder parent = usesNode.getParent();
         ModuleBuilder module = ParserUtils.getParentModule(parent);
