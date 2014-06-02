@@ -3,6 +3,8 @@ module augment0 {
     namespace "urn:simple.augment0.demo";
     prefix "a0";
 
+    revision "2014-06-02";
+
     container foo {
         description "foo container";
         container bar {

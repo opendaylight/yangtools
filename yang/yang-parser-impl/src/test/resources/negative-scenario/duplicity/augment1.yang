@@ -1,10 +1,19 @@
 module augment1 {
     yang-version 1;
-    namespace "urn:simple.augment0.demo";
+    namespace "urn:simple.augment1.demo";
     prefix "a1";
+
 
     import augment0 {
         prefix "a0";
+    }
+
+    revision "2014-06-02";
+
+    augment "/a0:foo/a0:bar" {
+        leaf id {
+            type string;
+        }
     }
 
     augment "/a0:foo/a0:bar" {

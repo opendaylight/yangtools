@@ -11,8 +11,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
@@ -174,8 +178,9 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'augment1' at line 10: Failed to perform augmentation: Error in module 'augment0' at line 8: Can not add 'leaf id' to 'container bar' in module 'augment0': node with same name already declared at line 9";
-            assertEquals(expected, e.getMessage());
+            assertTrue(e.getMessage().contains("Error in module 'augment1'"));
+            assertTrue(e.getMessage().contains("Failed to perform augmentation:"));
+
         }
     }
 
@@ -189,8 +194,8 @@ public class YangParserNegativeTest {
                 fail("YangParseException should by thrown");
             }
         } catch (YangParseException e) {
-            String expected = "Error in module 'augment0' at line 17: Can not add 'anyxml delta' to node 'choice-ext' in module 'augment0': case with same name already declared at line 18";
-            assertEquals(expected, e.getMessage());
+            assertTrue(e.getMessage().contains("Error in module "));
+            assertTrue(e.getMessage().contains("case with same name already declared "));
         }
     }
 
