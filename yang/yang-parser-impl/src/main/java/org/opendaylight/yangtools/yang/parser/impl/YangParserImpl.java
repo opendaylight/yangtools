@@ -96,10 +96,10 @@ import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
-
 
 public final class YangParserImpl implements YangContextParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
@@ -117,7 +117,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    public SchemaContext parseFile(final File yangFile, final File directory) throws IOException, YangSyntaxErrorException {
+    public SchemaContext parseFile(final File yangFile, final File directory) throws IOException,
+            YangSyntaxErrorException {
         Preconditions.checkState(yangFile.exists(), yangFile + " does not exists");
         Preconditions.checkState(directory.exists(), directory + " does not exists");
         Preconditions.checkState(directory.isDirectory(), directory + " is not a directory");
@@ -181,7 +182,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    public SchemaContext parseFiles(final Collection<File> yangFiles, final SchemaContext context) throws IOException, YangSyntaxErrorException {
+    public SchemaContext parseFiles(final Collection<File> yangFiles, final SchemaContext context) throws IOException,
+            YangSyntaxErrorException {
         if (yangFiles == null) {
             return resolveSchemaContext(Collections.<Module> emptySet());
         }
@@ -203,7 +205,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    public SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
+    public SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException,
+            YangSyntaxErrorException {
         Collection<Module> unsorted = parseYangModelSources(sources).values();
         Set<Module> sorted = new LinkedHashSet<>(
                 ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
@@ -222,7 +225,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    public SchemaContext parseSources(final Collection<ByteSource> sources, final SchemaContext context) throws IOException, YangSyntaxErrorException {
+    public SchemaContext parseSources(final Collection<ByteSource> sources, final SchemaContext context)
+            throws IOException, YangSyntaxErrorException {
         if (sources == null) {
             return resolveSchemaContext(Collections.<Module> emptySet());
         }
@@ -303,16 +307,18 @@ public final class YangParserImpl implements YangContextParser {
 
     @Override
     public SchemaContext resolveSchemaContext(final Set<Module> modules) {
-        // after merging parse method with this one, add support for getting submodule sources.
+        // after merging parse method with this one, add support for getting
+        // submodule sources.
         Map<ModuleIdentifier, String> identifiersToSources = new HashMap<>();
-        for(Module module: modules) {
+        for (Module module : modules) {
             ModuleImpl moduleImpl = (ModuleImpl) module;
             identifiersToSources.put(module, moduleImpl.getSource());
         }
         return new SchemaContextImpl(modules, identifiersToSources);
     }
 
-    private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
+    private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources) throws IOException,
+            YangSyntaxErrorException {
         if (sources == null || sources.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -337,20 +343,22 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Parse streams and resolve submodules.
-     *
+     * 
      * @param streams
      *            collection of streams to parse
      * @return map, where key is source stream and value is module builder
      *         parsed from stream
      * @throws YangSyntaxErrorException
      */
-    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams) throws IOException, YangSyntaxErrorException {
+    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams) throws IOException,
+            YangSyntaxErrorException {
         Map<ByteSource, ModuleBuilder> builders = parseSourcesToBuilders(streams);
         Map<ByteSource, ModuleBuilder> result = resolveSubmodules(builders);
         return result;
     }
 
-    private Map<ByteSource, ModuleBuilder> parseSourcesToBuilders(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
+    private Map<ByteSource, ModuleBuilder> parseSourcesToBuilders(final Collection<ByteSource> sources)
+            throws IOException, YangSyntaxErrorException {
         final ParseTreeWalker walker = new ParseTreeWalker();
         final Map<ByteSource, ParseTree> sourceToTree = parseYangSources(sources);
         final Map<ByteSource, ModuleBuilder> sourceToBuilder = new LinkedHashMap<>();
@@ -408,7 +416,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Traverse collection of builders, find builders representing submodule and
      * add this submodule to its parent module.
-     *
+     * 
      * @param builders
      *            collection of builders containing modules and submodules
      * @return collection of module builders
@@ -468,7 +476,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     private Map<String, TreeMap<Date, ModuleBuilder>> resolveModuleBuilders(
-            final Collection<ByteSource> yangFileStreams, final SchemaContext context) throws IOException, YangSyntaxErrorException {
+            final Collection<ByteSource> yangFileStreams, final SchemaContext context) throws IOException,
+            YangSyntaxErrorException {
         Map<ByteSource, ModuleBuilder> parsedBuilders = resolveSources(yangFileStreams);
         ModuleBuilder[] builders = new ModuleBuilder[parsedBuilders.size()];
         parsedBuilders.values().toArray(builders);
@@ -485,7 +494,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Order modules by name and revision.
-     *
+     * 
      * @param modules
      *            modules to order
      * @return modules ordered by name and revision
@@ -514,7 +523,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Find {@code main} dependencies from {@code other} and add them to
      * {@code filtered}.
-     *
+     * 
      * @param main
      *            main yang module
      * @param other
@@ -522,7 +531,8 @@ public final class YangParserImpl implements YangContextParser {
      * @param filtered
      *            collection to fill up
      */
-    private void filterImports(final ModuleBuilder main, final Collection<ModuleBuilder> other, final Collection<ModuleBuilder> filtered) {
+    private void filterImports(final ModuleBuilder main, final Collection<ModuleBuilder> other,
+            final Collection<ModuleBuilder> filtered) {
         Set<ModuleImport> imports = main.getModuleImports();
 
         // if this is submodule, add parent to filtered and pick its imports
@@ -559,7 +569,8 @@ public final class YangParserImpl implements YangContextParser {
         }
     }
 
-    private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
+    private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException,
+            YangSyntaxErrorException {
         final Map<ByteSource, ParseTree> trees = new HashMap<>();
         for (ByteSource source : sources) {
             trees.put(source, parseYangSource(source));
@@ -568,7 +579,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     private YangContext parseYangSource(final ByteSource source) throws IOException, YangSyntaxErrorException {
-    	try (InputStream stream = source.openStream()) {
+        try (InputStream stream = source.openStream()) {
             final ANTLRInputStream input = new ANTLRInputStream(stream);
             final YangLexer lexer = new YangLexer(input);
             final CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -582,7 +593,7 @@ public final class YangParserImpl implements YangContextParser {
             errorListener.validate();
 
             return result;
-    	}
+        }
     }
 
     public static YangContext parseStreamWithoutErrorListeners(final InputStream yangStream) {
@@ -604,7 +615,7 @@ public final class YangParserImpl implements YangContextParser {
      * Creates builder-to-module map based on given modules. Method first
      * resolve unresolved type references, instantiate groupings through uses
      * statements and perform augmentation.
-     *
+     * 
      * Node resolving must be performed in following order:
      * <ol>
      * <li>
@@ -616,7 +627,7 @@ public final class YangParserImpl implements YangContextParser {
      * <li>
      * augments</li>
      * </ol>
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @return modules mapped on their builders
@@ -647,7 +658,7 @@ public final class YangParserImpl implements YangContextParser {
      * Creates builder-to-module map based on given modules. Method first
      * resolve unresolved type references, instantiate groupings through uses
      * statements and perform augmentation.
-     *
+     * 
      * Node resolving must be performed in following order:
      * <ol>
      * <li>
@@ -659,7 +670,7 @@ public final class YangParserImpl implements YangContextParser {
      * <li>
      * augments</li>
      * </ol>
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -691,7 +702,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Resolve all unresolved type references.
-     *
+     * 
      * @param modules
      *            all loaded modules
      */
@@ -707,7 +718,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Resolve all unresolved type references.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -727,7 +738,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Search for dirty nodes (node which contains UnknownType) and resolve
      * unknown types.
-     *
+     * 
      * @param modules
      *            all available modules
      * @param module
@@ -782,7 +793,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Traverse through augmentations of modules and fix their child nodes
      * schema path.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -805,7 +816,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Find augment target and set correct schema path for all its child nodes.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param augment
@@ -877,7 +888,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Set new schema path to node and all its child nodes based on given parent
      * path. This method do not change the namespace.
-     *
+     * 
      * @param node
      *            node which schema path should be updated
      * @param parentPath
@@ -892,7 +903,7 @@ public final class YangParserImpl implements YangContextParser {
             }
         }
         if (node instanceof ChoiceBuilder) {
-            for (ChoiceCaseBuilder child : ((ChoiceBuilder)node).getCases()) {
+            for (ChoiceCaseBuilder child : ((ChoiceBuilder) node).getCases()) {
                 correctPathForAugmentNodes(child, node.getPath());
             }
         }
@@ -902,7 +913,7 @@ public final class YangParserImpl implements YangContextParser {
      * Check augments for mandatory nodes. If the target node is in another
      * module, then nodes added by the augmentation MUST NOT be mandatory nodes.
      * If mandatory node is found, throw an exception.
-     *
+     * 
      * @param augments
      *            augments to check
      */
@@ -928,7 +939,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Go through all augment definitions and resolve them.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -969,7 +980,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Perform augmentation defined under uses statement.
-     *
+     * 
      * @param augment
      *            augment to resolve
      * @param module
@@ -988,27 +999,39 @@ public final class YangParserImpl implements YangContextParser {
 
         UsesNodeBuilder usesNode = (UsesNodeBuilder) augment.getParent();
         DataNodeContainerBuilder parentNode = usesNode.getParent();
-        SchemaNodeBuilder targetNode;
-        if (parentNode instanceof ModuleBuilder) {
-            targetNode = findSchemaNodeInModule(augment.getTargetPath().getPath(), (ModuleBuilder) parentNode);
+        Optional<SchemaNodeBuilder> potentialTargetNode;
+        SchemaPath resolvedTargetPath = augment.getTargetNodeSchemaPath();
+        if (parentNode instanceof ModuleBuilder && resolvedTargetPath.isAbsolute()) {
+            potentialTargetNode = findSchemaNodeInModule(resolvedTargetPath, (ModuleBuilder) parentNode);
+
         } else {
-            targetNode = findSchemaNode(augment.getTargetPath().getPath(), (SchemaNodeBuilder) parentNode);
+            // FIXME: Should there be case for absolute path and parent which is
+            // not module?
+            potentialTargetNode = Optional.<SchemaNodeBuilder> fromNullable(findSchemaNode(
+                    augment.getTargetPath().getPath(), (SchemaNodeBuilder) parentNode));
         }
 
-        if (targetNode instanceof AugmentationTargetBuilder) {
-            fillAugmentTarget(augment, targetNode);
-            ((AugmentationTargetBuilder) targetNode).addAugmentation(augment);
-            augment.setResolved(true);
-            return true;
+        if (potentialTargetNode.isPresent()) {
+            SchemaNodeBuilder targetNode = potentialTargetNode.get();
+            if (targetNode instanceof AugmentationTargetBuilder) {
+                fillAugmentTarget(augment, targetNode);
+                ((AugmentationTargetBuilder) targetNode).addAugmentation(augment);
+                augment.setResolved(true);
+                return true;
+            } else {
+                throw new YangParseException(module.getName(), augment.getLine(),
+                        "Failed to resolve augment in uses. Invalid augment target: " + potentialTargetNode);
+            }
         } else {
             throw new YangParseException(module.getName(), augment.getLine(),
-                    "Failed to resolve augment in uses. Invalid augment target: " + targetNode);
+                    "Failed to resolve augment in uses. Invalid augment target path: " + augment.getTargetPath());
         }
+
     }
 
     /**
      * Find augment target module and perform augmentation.
-     *
+     * 
      * @param augment
      *            augment to resolve
      * @param module
@@ -1039,7 +1062,7 @@ public final class YangParserImpl implements YangContextParser {
      * Find module from loaded modules or from context based on given qname. If
      * module is found in context, create wrapper over this module and add it to
      * collection of loaded modules.
-     *
+     * 
      * @param qname
      * @param module
      *            current module
@@ -1104,7 +1127,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Go through identity statements defined in current module and resolve
      * their 'base' statement if present.
-     *
+     * 
      * @param modules
      *            all modules
      * @param module
@@ -1119,9 +1142,11 @@ public final class YangParserImpl implements YangContextParser {
                     final String baseIdentityName = identity.getBaseIdentityName();
                     final int line = identity.getLine();
                     if (baseIdentityName != null) {
-                        IdentitySchemaNodeBuilder baseIdentity = findBaseIdentity(modules, module, baseIdentityName, line);
+                        IdentitySchemaNodeBuilder baseIdentity = findBaseIdentity(modules, module, baseIdentityName,
+                                line);
                         if (baseIdentity == null) {
-                            throw new YangParseException(module.getName(), identity.getLine(), "Failed to find base identity");
+                            throw new YangParseException(module.getName(), identity.getLine(),
+                                    "Failed to find base identity");
                         } else {
                             identity.setBaseIdentity(baseIdentity);
                         }
@@ -1136,7 +1161,7 @@ public final class YangParserImpl implements YangContextParser {
      * Go through identity statements defined in current module and resolve
      * their 'base' statement. Method tries to find base identity in given
      * modules. If base identity is not found, method will search it in context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1180,7 +1205,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Find and add reference of uses target grouping.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -1216,13 +1241,14 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Resolve uses statements defined in groupings.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUsesForGroupings(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
+    private void resolveUsesForGroupings(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final SchemaContext context) {
         final Set<GroupingBuilder> allGroupings = new HashSet<>();
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
@@ -1242,13 +1268,14 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Resolve uses statements.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUsesForNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
+    private void resolveUsesForNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final SchemaContext context) {
         for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 ModuleBuilder module = inner.getValue();
@@ -1264,7 +1291,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Find target grouping and copy its child nodes to current location with
      * new namespace.
-     *
+     * 
      * @param usesNode
      *            uses node to resolve
      * @param modules
@@ -1272,8 +1299,8 @@ public final class YangParserImpl implements YangContextParser {
      * @param context
      *            SchemaContext containing already resolved modules
      */
-    private void resolveUses(final UsesNodeBuilder usesNode,
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context) {
+    private void resolveUses(final UsesNodeBuilder usesNode, final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+            final SchemaContext context) {
         if (!usesNode.isResolved()) {
             DataNodeContainerBuilder parent = usesNode.getParent();
             ModuleBuilder module = ParserUtils.getParentModule(parent);
@@ -1299,9 +1326,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     /**
-     * Copy target grouping child nodes to current location with
-     * new namespace.
-     *
+     * Copy target grouping child nodes to current location with new namespace.
+     * 
      * @param usesNode
      *            uses node to resolve
      * @param modules
@@ -1322,35 +1348,34 @@ public final class YangParserImpl implements YangContextParser {
             rev = module.getRevision();
             pref = module.getPrefix();
             if (parent instanceof AugmentationSchemaBuilder) {
-                parentPath = ((AugmentationSchemaBuilder)parent).getTargetNodeSchemaPath();
+                parentPath = ((AugmentationSchemaBuilder) parent).getTargetNodeSchemaPath();
             } else {
-                parentPath = ((ModuleBuilder)parent).getPath();
+                parentPath = ((ModuleBuilder) parent).getPath();
             }
         } else {
             ns = ((DataSchemaNodeBuilder) parent).getQName().getNamespace();
             rev = ((DataSchemaNodeBuilder) parent).getQName().getRevision();
             pref = ((DataSchemaNodeBuilder) parent).getQName().getPrefix();
-            parentPath = ((DataSchemaNodeBuilder)parent).getPath();
+            parentPath = ((DataSchemaNodeBuilder) parent).getPath();
         }
 
         GroupingDefinition gd = usesNode.getGroupingDefinition();
 
-        Set<DataSchemaNodeBuilder> childNodes = wrapChildNodes(module.getModuleName(), line,
-                gd.getChildNodes(), parentPath, ns, rev, pref);
+        Set<DataSchemaNodeBuilder> childNodes = wrapChildNodes(module.getModuleName(), line, gd.getChildNodes(),
+                parentPath, ns, rev, pref);
         parent.getChildNodeBuilders().addAll(childNodes);
         for (DataSchemaNodeBuilder childNode : childNodes) {
             setNodeAddedByUses(childNode);
         }
 
-        Set<TypeDefinitionBuilder> typedefs = wrapTypedefs(module.getModuleName(), line, gd, parentPath, ns,
-                rev, pref);
+        Set<TypeDefinitionBuilder> typedefs = wrapTypedefs(module.getModuleName(), line, gd, parentPath, ns, rev, pref);
         parent.getTypeDefinitionBuilders().addAll(typedefs);
         for (TypeDefinitionBuilder typedef : typedefs) {
             setNodeAddedByUses(typedef);
         }
 
-        Set<GroupingBuilder> groupings = wrapGroupings(module.getModuleName(), line, usesNode
-                .getGroupingDefinition().getGroupings(), parentPath, ns, rev, pref);
+        Set<GroupingBuilder> groupings = wrapGroupings(module.getModuleName(), line, usesNode.getGroupingDefinition()
+                .getGroupings(), parentPath, ns, rev, pref);
         parent.getGroupingBuilders().addAll(groupings);
         for (GroupingBuilder gb : groupings) {
             setNodeAddedByUses(gb);
@@ -1367,7 +1392,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Try to find extension builder describing this unknown node and assign it
      * to unknown node builder.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1397,7 +1422,7 @@ public final class YangParserImpl implements YangContextParser {
      * Try to find extension builder describing this unknown node and assign it
      * to unknown node builder. If extension is not found in loaded modules, try
      * to find it in context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1443,7 +1468,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Traverse through modules and resolve their deviation statements.
-     *
+     * 
      * @param modules
      *            all loaded modules
      */
@@ -1458,7 +1483,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Traverse through module and resolve its deviation statements.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1483,7 +1508,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Traverse through modules and resolve their deviation statements with
      * given context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param context
@@ -1502,7 +1527,7 @@ public final class YangParserImpl implements YangContextParser {
     /**
      * Traverse through module and resolve its deviation statements with given
      * context.
-     *
+     * 
      * @param modules
      *            all loaded modules
      * @param module
@@ -1551,7 +1576,7 @@ public final class YangParserImpl implements YangContextParser {
 
     /**
      * Correct deviation target path in deviation builder.
-     *
+     * 
      * @param dev
      *            deviation
      * @param dependentModuleBuilder
