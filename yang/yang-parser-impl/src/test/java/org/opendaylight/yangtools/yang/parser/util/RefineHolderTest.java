@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -182,8 +181,8 @@ public class RefineHolderTest {
 
         URI uriA = getUri("some:uriA");
         assertNotNull("URI can't be null", simpleUri);
-        QName qnameA = new QName(uriA, new Date(5000000), "some nameA");
-        QName qnameB = new QName(uriA, new Date(6000000), "some nameB");
+        QName qnameA = QName.create(uriA, new Date(5000000), "some nameA");
+        QName qnameB = QName.create(uriA, new Date(6000000), "some nameB");
         List<QName> qnamesA = new ArrayList<>();
         List<QName> qnamesB = new ArrayList<>();
         qnamesA.add(qnameA);

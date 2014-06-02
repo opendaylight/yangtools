@@ -11,11 +11,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.*;
-import java.util.*;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
@@ -214,8 +217,8 @@ public class YangParserNegativeTest {
         try {
             File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
             File dependenciesDir = new File("/invalid");
-            YangModelParser parser = new YangParserImpl();
-            parser.parseYangModels(yangFile, dependenciesDir);
+            YangContextParser parser = new YangParserImpl();
+            parser.parseFile(yangFile, dependenciesDir);
             fail("Exception should by thrown");
         } catch (IllegalStateException e) {
             String expected = File.separator + "invalid does not exists";
@@ -228,8 +231,8 @@ public class YangParserNegativeTest {
         try {
             File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
             File dependenciesDir = new File(getClass().getResource("/model").toURI());
-            YangModelParser parser = new YangParserImpl();
-            parser.parseYangModels(yangFile, dependenciesDir);
+            YangContextParser parser = new YangParserImpl();
+            parser.parseFile(yangFile, dependenciesDir);
             fail("Exception should by thrown");
         } catch (YangValidationException e) {
             String expected = "Not existing module imported";

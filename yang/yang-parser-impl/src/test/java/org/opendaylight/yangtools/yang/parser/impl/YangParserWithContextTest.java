@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -23,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,10 +45,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-
-import com.google.common.collect.Lists;
 
 public class YangParserWithContextTest {
     private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -277,8 +275,8 @@ public class YangParserWithContextTest {
         SchemaContext context;
         File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
         File dependenciesDir = new File(getClass().getResource("/ietf").toURI());
-        YangModelParser parser = new YangParserImpl();
-        context = parser.resolveSchemaContext(parser.parseYangModels(yangFile, dependenciesDir));
+        YangContextParser parser = new YangParserImpl();
+        context = parser.parseFile(yangFile, dependenciesDir);
 
         Module module;
         try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test3.yang")
@@ -310,8 +308,8 @@ public class YangParserWithContextTest {
         SchemaContext context;
         File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
         File dependenciesDir = new File(getClass().getResource("/ietf").toURI());
-        YangModelParser parser = new YangParserImpl();
-        context = parser.resolveSchemaContext(parser.parseYangModels(yangFile, dependenciesDir));
+        YangContextParser parser = new YangParserImpl();
+        context = parser.parseFile(yangFile, dependenciesDir);
 
         Module module;
         try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test3.yang")

@@ -7,13 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
@@ -42,8 +45,8 @@ public class TypesResolutionTest {
     public void init() throws Exception {
         File yangFile = new File(getClass().getResource("/types/custom-types-test@2012-4-4.yang").toURI());
         File dependenciesDir = new File(getClass().getResource("/ietf").toURI());
-        YangModelParser parser = new YangParserImpl();
-        testedModules = parser.parseYangModels(yangFile, dependenciesDir);
+        YangContextParser parser = new YangParserImpl();
+        testedModules = parser.parseFile(yangFile, dependenciesDir).getModules();
         assertEquals(4, testedModules.size());
     }
 

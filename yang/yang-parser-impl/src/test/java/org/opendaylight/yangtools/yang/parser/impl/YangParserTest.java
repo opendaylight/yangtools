@@ -14,12 +14,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.Iterables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,7 +32,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -62,7 +61,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.Int16;
@@ -70,6 +69,7 @@ import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 
 public class YangParserTest {
     public static final String FS = File.separator;
@@ -784,9 +784,9 @@ public class YangParserTest {
         assertEquals("int32-ext1", int32TypedefQName.getLocalName());
 
         SchemaPath typeSchemaPath = int32ext1.getPath();
-        List<QName> typePath = typeSchemaPath.getPath();
-        assertEquals(1, typePath.size());
-        assertEquals(int32TypedefQName, typePath.get(0));
+        Iterable<QName> typePath = typeSchemaPath.getPathFromRoot();
+        assertEquals(1, Iterables.size(typePath));
+        assertEquals(int32TypedefQName, typePath.iterator().next());
 
         // int32-ext1/int32
         Int32 int32 = (Int32) int32ext1.getBaseType();
@@ -808,9 +808,10 @@ public class YangParserTest {
         assertEquals("my-decimal-type", myDecTypeQName.getLocalName());
 
         SchemaPath typeSchemaPath = myDecType.getPath();
-        List<QName> typePath = typeSchemaPath.getPath();
-        assertEquals(1, typePath.size());
-        assertEquals(myDecTypeQName, typePath.get(0));
+        Iterable<QName> typePath = typeSchemaPath.getPathFromRoot();
+        Iterator<QName> typePathIt = typePath.iterator();
+        assertEquals(myDecTypeQName, typePathIt.next());
+        assertFalse(typePathIt.hasNext());
 
         // my-base-int32-type/int32
         Decimal64 dec64 = (Decimal64) myDecType.getBaseType();
@@ -822,18 +823,19 @@ public class YangParserTest {
         assertEquals("decimal64", dec64QName.getLocalName());
 
         SchemaPath dec64SchemaPath = dec64.getPath();
-        List<QName> dec64Path = dec64SchemaPath.getPath();
-        assertEquals(2, dec64Path.size());
-        assertEquals(myDecTypeQName, dec64Path.get(0));
-        assertEquals(dec64QName, dec64Path.get(1));
+        Iterable<QName> dec64Path = dec64SchemaPath.getPathFromRoot();
+        Iterator<QName> it = dec64Path.iterator();
+        assertEquals(2, Iterables.size(dec64Path));
+        assertEquals(myDecTypeQName, it.next());
+        assertEquals(dec64QName, it.next());
     }
 
     @Test
     public void testParseMethod1() throws Exception {
         File yangFile = new File(getClass().getResource("/parse-methods/m1.yang").toURI());
         File dependenciesDir = new File(getClass().getResource("/parse-methods").toURI());
-        YangModelParser parser = new YangParserImpl();
-        modules = parser.parseYangModels(yangFile, dependenciesDir);
+        YangContextParser parser = new YangParserImpl();
+        modules = parser.parseFile(yangFile, dependenciesDir).getModules();
         assertEquals(6, modules.size());
     }
 
@@ -841,8 +843,8 @@ public class YangParserTest {
     public void testParseMethod2() throws Exception {
         File yangFile = new File(getClass().getResource("/parse-methods/m1.yang").toURI());
         File dependenciesDir = new File(getClass().getResource("/parse-methods/dependencies").toURI());
-        YangModelParser parser = new YangParserImpl();
-        modules = parser.parseYangModels(yangFile, dependenciesDir);
+        YangContextParser parser = new YangParserImpl();
+        modules = parser.parseFile(yangFile, dependenciesDir).getModules();
         assertEquals(6, modules.size());
     }
 
@@ -851,8 +853,8 @@ public class YangParserTest {
         // Correct order: m2, m4, m6, m8, m7, m6, m3, m1
         File yangFile = new File(getClass().getResource("/sorting-test/m1.yang").toURI());
         File dependenciesDir = new File(getClass().getResource("/sorting-test").toURI());
-        YangModelParser parser = new YangParserImpl();
-        modules = parser.parseYangModels(yangFile, dependenciesDir);
+        YangContextParser parser = new YangParserImpl();
+        modules = parser.parseFile(yangFile, dependenciesDir).getModules();
         SchemaContext ctx = new SchemaContextImpl(modules, Collections.<ModuleIdentifier, String>emptyMap());
         checkOrder(modules);
         assertSetEquals(modules, ctx.getModules());
@@ -868,12 +870,12 @@ public class YangParserTest {
         for (String fileName : fileList) {
             testFiles.add(new File(testDir, fileName));
         }
-        Set<Module> newModules = parser.parseYangModels(testFiles);
+        Set<Module> newModules = parser.parseFiles(testFiles).getModules();
         assertSetEquals(newModules, modules);
         ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
-        newModules = parser.parseYangModels(testFiles, null);
+        newModules = parser.parseFiles(testFiles, null).getModules();
         assertSetEquals(newModules, modules);
         ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
@@ -882,7 +884,7 @@ public class YangParserTest {
         for (File f : testFiles) {
             streams.add(new FileInputStream(f));
         }
-        newModules = parser.parseYangModelsFromStreams(streams);
+        newModules = parser.parseSources(ParserUtils.filesToByteSources(testFiles)).getModules();
         assertSetEquals(newModules, modules);
         ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
@@ -891,7 +893,7 @@ public class YangParserTest {
         for (File f : testFiles) {
             streams.add(new FileInputStream(f));
         }
-        newModules = parser.parseYangModelsFromStreams(streams, null);
+        newModules = parser.parseSources(ParserUtils.filesToByteSources(testFiles), null).getModules();
         assertSetEquals(newModules, modules);
         ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
@@ -942,14 +944,14 @@ public class YangParserTest {
     }
 
     @Test
-    public void testSubmodules() throws URISyntaxException {
+    public void testSubmodules() throws Exception {
         URI yangFilePath = getClass().getResource("/submodule-test/subfoo.yang").toURI();
         URI directoryPath = getClass().getResource("/model").toURI();
 
         File directory = new File(directoryPath);
         File yangFile = new File(yangFilePath);
 
-        Set<Module> modules = new YangParserImpl().parseYangModels(yangFile, directory);
+        Set<Module> modules = new YangParserImpl().parseFile(yangFile, directory).getModules();
         assertEquals(3, modules.size());
 
         Module foo = TestUtils.findModule(modules, "foo");

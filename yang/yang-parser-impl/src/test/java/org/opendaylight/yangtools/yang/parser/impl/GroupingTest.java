@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -41,13 +40,13 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 
 public class GroupingTest {
     private Set<Module> modules;
 
     @Before
-    public void init() throws FileNotFoundException, URISyntaxException {
+    public void init() throws IOException, URISyntaxException {
         modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         assertEquals(3, modules.size());
     }
@@ -351,8 +350,8 @@ public class GroupingTest {
     @Test
     public void testCascadeUses() throws Exception {
         File yangFile = new File(getClass().getResource("/grouping-test/cascade-uses.yang").toURI());
-        YangModelParser parser = new YangParserImpl();
-        modules = parser.parseYangModels(Collections.singletonList(yangFile));
+        YangContextParser parser = new YangParserImpl();
+        modules = parser.parseFiles(Collections.singleton(yangFile)).getModules();
         assertEquals(1, modules.size());
 
         Module testModule = TestUtils.findModule(modules, "cascade-uses");

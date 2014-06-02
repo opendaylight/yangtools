@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,12 +19,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -35,7 +35,10 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 
 final class TestUtils {
 
@@ -43,8 +46,8 @@ final class TestUtils {
     }
 
 
-    public static Set<Module> loadModules(final URI resourceDirectory) throws FileNotFoundException {
-        final YangModelParser parser = new YangParserImpl();
+    public static Set<Module> loadModules(final URI resourceDirectory) throws IOException {
+        final YangContextParser parser = new YangParserImpl();
         final File testDir = new File(resourceDirectory);
         final String[] fileList = testDir.list();
         final List<File> testFiles = new ArrayList<>();
@@ -54,31 +57,42 @@ final class TestUtils {
         for (String fileName : fileList) {
             testFiles.add(new File(testDir, fileName));
         }
-        return parser.parseYangModels(testFiles);
+        SchemaContext ctx = parser.parseFiles(testFiles);
+        return ctx.getModules();
     }
 
-    public static Set<Module> loadModules(final List<InputStream> input) throws IOException {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input));
-        for (InputStream stream : input) {
-            stream.close();
-        }
-        return modules;
+    public static Set<Module> loadModules(final List<InputStream> input) throws IOException, YangSyntaxErrorException {
+        Collection<ByteSource> sources = ParserUtils.streamsToByteSources(input);
+        final YangContextParser parser = new YangParserImpl();
+        SchemaContext ctx = parser.parseSources(sources);
+        return ctx.getModules();
     }
 
-    public static Module loadModule(final InputStream stream) throws IOException {
-        final YangModelParser parser = new YangParserImpl();
-        final List<InputStream> input = Collections.singletonList(stream);
-        final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input));
-        stream.close();
-        return modules.iterator().next();
+    public static Module loadModule(final InputStream stream) throws IOException, YangSyntaxErrorException {
+        final YangContextParser parser = new YangParserImpl();
+        ByteSource source = new ByteSource() {
+            @Override
+            public InputStream openStream() throws IOException {
+                return NamedByteArrayInputStream.create(stream);
+            }
+        };
+        final Collection<ByteSource> sources = Collections.singletonList(source);
+        SchemaContext ctx = parser.parseSources(sources);
+        return ctx.getModules().iterator().next();
     }
 
     public static Module loadModuleWithContext(final String name, final InputStream stream, final SchemaContext context)
-            throws IOException {
-        final YangModelParser parser = new YangParserImpl();
-        final List<InputStream> input = Collections.singletonList(stream);
-        final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input, context));
+            throws IOException, YangSyntaxErrorException {
+        final YangContextParser parser = new YangParserImpl();
+        ByteSource source = new ByteSource() {
+            @Override
+            public InputStream openStream() throws IOException {
+                return NamedByteArrayInputStream.create(stream);
+            }
+        };
+        final Collection<ByteSource> sources = Collections.singletonList(source);
+        SchemaContext ctx = parser.parseSources(sources, context);
+        final Set<Module> modules = ctx.getModules();
         stream.close();
         Module result = null;
         for (Module module : modules) {
@@ -90,15 +104,12 @@ final class TestUtils {
         return result;
     }
 
-    public static Set<Module> loadModulesWithContext(final List<InputStream> input, final SchemaContext context)
-            throws IOException {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = new HashSet<>(parser.parseYangModelsFromStreams(input, context));
-        for (InputStream is : input) {
-            if (is != null) {
-                is.close();
-            }
-        }
+    public static Set<Module> loadModulesWithContext(final Collection<InputStream> input, final SchemaContext context)
+            throws IOException, YangSyntaxErrorException {
+        Collection<ByteSource> sources = ParserUtils.streamsToByteSources(input);
+        final YangContextParser parser = new YangParserImpl();
+        SchemaContext ctx = parser.parseSources(sources, context);
+        final Set<Module> modules = ctx.getModules();
         return modules;
     }
 
@@ -200,14 +211,8 @@ final class TestUtils {
 
     public static void checkIsAddedByUses(final GroupingDefinition node, final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
-        if (node instanceof DataNodeContainer) {
-            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
-                checkIsAddedByUses(child, expected);
-            }
-        } else if (node instanceof ChoiceNode) {
-            for (ChoiceCaseNode caseNode : ((ChoiceNode) node).getCases()) {
-                checkIsAddedByUses(caseNode, expected);
-            }
+        for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
+            checkIsAddedByUses(child, expected);
         }
     }
 

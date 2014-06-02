@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -52,19 +51,19 @@ public class BitImplTest {
             assertTrue("Not all required uri variables were instantiated.", urisInitiallized);
 
         }
-        QName qnameA = new QName(uriA, new Date(5000000), "some name");
+        QName qnameA = QName.create(uriA, new Date(5000000), "some name");
 
-        QName qnameA1 = new QName(uriA1, new Date(6000000), "some nameA1");
-        QName qnameA2 = new QName(uriA2, new Date(7000000), "some nameA2");
+        QName qnameA1 = QName.create(uriA1, new Date(6000000), "some nameA1");
+        QName qnameA2 = QName.create(uriA2, new Date(7000000), "some nameA2");
         List<QName> qnamesA = new ArrayList<>();
         qnamesA.add(qnameA1);
         qnamesA.add(qnameA2);
         SchemaPath schemaPathA = SchemaPath.create(qnamesA, true);
 
-        QName qnameB = new QName(uriB, new Date(5000000), "some name");
+        QName qnameB = QName.create(uriB, new Date(5000000), "some name");
 
-        QName qnameB1 = new QName(uriB1, new Date(6000000), "some nameB1");
-        QName qnameB2 = new QName(uriB2, new Date(7000000), "some nameB2");
+        QName qnameB1 = QName.create(uriB1, new Date(6000000), "some nameB1");
+        QName qnameB2 = QName.create(uriB2, new Date(7000000), "some nameB2");
         List<QName> qnamesB = new ArrayList<>();
         qnamesB.add(qnameB1);
         qnamesB.add(qnameB2);
