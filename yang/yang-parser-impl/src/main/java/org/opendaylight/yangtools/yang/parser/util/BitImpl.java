@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.util;
 import java.util.Collections;
 import java.util.List;
 
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -17,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
-final class BitImpl implements BitsTypeDefinition.Bit {
+final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
     private final Long position;
     private final QName qname;
     private final SchemaPath schemaPath;

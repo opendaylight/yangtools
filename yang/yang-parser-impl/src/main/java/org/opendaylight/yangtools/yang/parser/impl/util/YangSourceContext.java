@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -29,7 +30,30 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
-public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStream>, AutoCloseable {
+/**
+ *
+ * Context of YANG model sources
+ *
+ * YANG sources context represent information learned about set of model sources
+ * which could be derived from dependency information only.
+ *
+ * Contains following information:
+ * <ul>
+ * <li>{@link #getValidSources()} - set of {@link SourceIdentifier} which have their
+ * dependencies present and are safe to be used by full blown parser.
+ * <li>{@link #getMissingSources()} - set of {@link SourceIdentifier} which have been
+ * referenced by other YANG sources, but source code for them is missing.
+ * <li>{@link #getMissingDependencies()} - map of {@link SourceIdentifier} and their imports
+ * for which source codes was not available.
+ *
+ * {@link YangSourceContext} may be associated with {@link SchemaSourceProvider} (see {@link #getDelegate()},
+ * which was used for retrieval of sources during context computation.
+ *
+ * {@link YangSourceContext} may be used as schema source provider to retrieve this sources.
+ *
+ *
+ */
+public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStream>, AutoCloseable, Delegator<AdvancedSchemaSourceProvider<InputStream>> {
 
     private final ImmutableSet<SourceIdentifier> validSources;
 
@@ -74,6 +98,11 @@ public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStre
 
     private AdvancedSchemaSourceProvider<InputStream> getDelegateChecked() {
         Preconditions.checkState(sourceProvider != null, "Instance is already closed.");
+        return sourceProvider;
+    }
+
+    @Override
+    public AdvancedSchemaSourceProvider<InputStream> getDelegate() {
         return sourceProvider;
     }
 
