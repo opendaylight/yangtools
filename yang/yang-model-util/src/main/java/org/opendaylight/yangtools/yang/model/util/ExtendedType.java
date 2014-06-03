@@ -95,7 +95,7 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
          * @param description
          * @param reference
          *
-         * @deprecated Use {@link ExtendedType#builder(QName, TypeDefinition, Optional, Optional, SchemaPath) instead.
+         * @deprecated Use {@link ExtendedType#builder(QName, TypeDefinition, Optional, Optional, SchemaPath)} instead.
          */
         @Deprecated
         public Builder(final List<String> actualPath, final URI namespace,
@@ -115,7 +115,7 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
          * @param reference Reference of Type
          * @param path Schema path to type definition.
          *
-         * @deprecated Use {@link ExtendedType#builder(QName, TypeDefinition, Optional, Optional, SchemaPath) instead.
+         * @deprecated Use {@link ExtendedType#builder(QName, TypeDefinition, Optional, Optional, SchemaPath)} instead.
          */
         @Deprecated
         public Builder(final QName typeName, final TypeDefinition<?> baseType,
