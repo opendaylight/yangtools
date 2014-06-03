@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_f420074b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1010,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-03T09:48:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_de7c04b8",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_1e734ce8",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-06-02T14:26:05Z",
       "side": 1,
       "message": "String.format()",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_141c8b12",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1023,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-03T09:48:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_1e734ce8",
       "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_b41a7f15",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1027,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-03T09:48:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_be810091",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_7e4b7887",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2014-06-02T14:26:05Z",
       "side": 1,
       "message": "is this an exception?",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_146ecb96",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-03T09:48:30Z",
+      "side": 1,
+      "message": "Added comment, logged error. Patch set does not introduce promotion of this error, since was fixing unrelated issue. \n\nImprovement of this contract will be addressed separately in API Clarity patch.",
+      "parentUuid": "fa82b9bf_7e4b7887",
       "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_9462dbab",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-03T09:48:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_3e45f06f",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_5e48f486",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2014-06-02T14:26:05Z",
       "side": 1,
       "message": "add a trace here",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_34598ffe",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-03T09:48:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_5e48f486",
       "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_545c53ed",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-03T09:48:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_1e5a6c50",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_fe5ea844",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
         "patchSetId": 1
@@ -132,6 +258,24 @@
       "writtenOn": "2014-06-02T14:26:05Z",
       "side": 1,
       "message": "add a trace here",
+      "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f472477b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ParserUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-03T09:48:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_fe5ea844",
       "revId": "bf1007a8b9ff38f66233a4005f4ecb4c114a8133",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
