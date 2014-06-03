@@ -10,11 +10,20 @@ package org.opendaylight.yangtools.yang.parser.impl.util;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Resolver for YANG Schema Source which is based on DependencyInfo
+ *
+ * This resolver does not use {@link SchemaSourceProvider} but supplied map
+ * of source identifiers and {@link YangModelDependencyInfo} to construct
+ * {@link YangSourceContext}.
+ *
+ */
 public final class YangSourceFromDependencyInfoResolver extends YangSourceContextResolver {
 
     private final Map<SourceIdentifier, YangModelDependencyInfo> dependencyInfo;

@@ -16,10 +16,28 @@ import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
 
 import com.google.common.base.Optional;
 
+/**
+ *
+ * Source code resolver which resolves Yang Source Context against
+ * {@link SchemaSourceProvider} and set of QName which represent capabilities.
+ *
+ * This source code resolver is useful for components which deals with
+ * capability exchange similar to YANG/Netconf specification
+ * and there is {@link SchemaSourceProvider} able to retrieve YANG models.
+ *
+ */
 public final class YangSourceFromCapabilitiesResolver extends YangSourceContextResolver {
 
     private final Iterable<QName> capabilities;
 
+    /**
+     * Construct new {@link YangSourceFromCapabilitiesResolver}.
+     *
+     * @param capabilities Set of QName representing module capabilities, {@link QName#getLocalName()} represents
+     * source name and {@link QName#getRevision()} represents revision of source.
+     *
+     * @param schemaSourceProvider - {@link SchemaSourceProvider} which should be used to resolve sources.
+     */
     public YangSourceFromCapabilitiesResolver(final Iterable<QName> capabilities,
             final SchemaSourceProvider<InputStream> schemaSourceProvider) {
         super(SchemaSourceProviders.toAdvancedSchemaSourceProvider(schemaSourceProvider));
@@ -40,16 +58,11 @@ public final class YangSourceFromCapabilitiesResolver extends YangSourceContextR
 
     @Override
     public Optional<YangModelDependencyInfo> getDependencyInfo(final SourceIdentifier identifier) {
-        Optional<InputStream> source = getSchemaSource(identifier);
+        Optional<InputStream> source = getSourceProvider().getSchemaSource(identifier);
         if (source.isPresent()) {
             return Optional.of(YangModelDependencyInfo.fromInputStream(source.get()));
         }
         return Optional.absent();
-    }
-
-    private Optional<InputStream> getSchemaSource(final SourceIdentifier identifier) {
-        return getSourceProvider().getSchemaSource(identifier.getName(),
-                Optional.fromNullable(identifier.getRevision()));
     }
 
 }
