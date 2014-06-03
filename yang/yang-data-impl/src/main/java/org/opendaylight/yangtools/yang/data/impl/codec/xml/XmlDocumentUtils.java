@@ -177,7 +177,7 @@ public class XmlDocumentUtils {
             for (Node<?> child : ((CompositeNode) data).getValue()) {
                 DataSchemaNode childSchema = null;
                 if (schema instanceof DataNodeContainer) {
-                    childSchema = findFirstSchemaForNode(child, ((DataNodeContainer) schema).getChildNodes());
+                    childSchema = findFirstSchema(child.getNodeType(), ((DataNodeContainer) schema).getChildNodes()).orNull();
                     if (logger.isDebugEnabled()) {
                         if (childSchema == null) {
                             logger.debug("Probably the data node \""
@@ -268,31 +268,12 @@ public class XmlDocumentUtils {
         }
     }
 
-
     public final static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
         TypeDefinition<?> superType = type;
         while (superType.getBaseType() != null) {
             superType = superType.getBaseType();
         }
         return superType;
-    }
-
-    private static final DataSchemaNode findFirstSchemaForNode(final Node<?> node, final Set<DataSchemaNode> dataSchemaNode) {
-        if (dataSchemaNode != null && node != null) {
-            for (DataSchemaNode dsn : dataSchemaNode) {
-                if (node.getNodeType().getLocalName().equals(dsn.getQName().getLocalName())) {
-                    return dsn;
-                } else if (dsn instanceof ChoiceNode) {
-                    for (ChoiceCaseNode choiceCase : ((ChoiceNode) dsn).getCases()) {
-                        DataSchemaNode foundDsn = findFirstSchemaForNode(node, choiceCase.getChildNodes());
-                        if (foundDsn != null) {
-                            return foundDsn;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     public static Node<?> toDomNode(final Element xmlElement, final Optional<DataSchemaNode> schema,
