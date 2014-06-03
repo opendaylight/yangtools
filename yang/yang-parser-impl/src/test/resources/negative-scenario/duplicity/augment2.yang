@@ -7,6 +7,12 @@ module augment2 {
         prefix "a0";
     }
 
+    revision "2014-06-02";
+
+    augment "/a0:foo/a0:bar/a0:choice-ext" {
+        anyxml delta;
+    }
+
     augment "/a0:foo/a0:bar/a0:choice-ext" {
         anyxml delta;
     }
