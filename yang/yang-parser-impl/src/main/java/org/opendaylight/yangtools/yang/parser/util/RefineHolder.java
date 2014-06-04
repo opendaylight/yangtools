@@ -121,7 +121,7 @@ public final class RefineHolder extends AbstractBuilder {
         result = prime * result + ((minElements == null) ? 0 : minElements.hashCode());
         result = prime * result + ((must == null) ? 0 : must.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((parentBuilder == null) ? 0 : parentBuilder.hashCode());
+        result = prime * result + ((getParent() == null) ? 0 : getParent().hashCode());
         result = prime * result + ((presence == null) ? 0 : presence.hashCode());
         result = prime * result + ((reference == null) ? 0 : reference.hashCode());
         return result;
@@ -202,11 +202,11 @@ public final class RefineHolder extends AbstractBuilder {
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (parentBuilder == null) {
-            if (other.parentBuilder != null) {
+        if (getParent() == null) {
+            if (other.getParent() != null) {
                 return false;
             }
-        } else if (!parentBuilder.equals(other.parentBuilder)) {
+        } else if (!getParent().equals(other.getParent())) {
             return false;
         }
         if (presence == null) {

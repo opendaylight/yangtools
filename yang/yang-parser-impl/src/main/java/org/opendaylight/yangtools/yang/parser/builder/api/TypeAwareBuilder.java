@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- * Builders of all nodes, which can have 'type' statement must implement this
+ * Builder for nodes, which can have 'type' statement must implement this
  * interface. [typedef, type, leaf, leaf-list, deviate]
  */
 public interface TypeAwareBuilder extends Builder {
