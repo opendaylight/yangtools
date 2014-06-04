@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_7c35bdd8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangSourceContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:05:08Z",
+      "side": 1,
+      "message": "can all of these be null?",
+      "revId": "2d1ee068a74f46325d24ca43b53e8598ed5f652b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fc21cd9f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangSourceContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:05:08Z",
+      "side": 1,
+      "message": "Missing documentation",
+      "revId": "2d1ee068a74f46325d24ca43b53e8598ed5f652b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1c2591aa",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangSourceContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:05:08Z",
+      "side": 1,
+      "message": "Let\u0027s not call  Object\u0027s super",
+      "revId": "2d1ee068a74f46325d24ca43b53e8598ed5f652b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
