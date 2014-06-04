@@ -13,7 +13,6 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 
 /**
  * Builder for  'uses' statement.
@@ -107,7 +106,7 @@ public interface UsesNodeBuilder extends GroupingMember {
      *
      * @return list of RefineHolder objects
      */
-    List<RefineHolder> getRefines();
+    List<RefineBuilder> getRefines();
 
     /**
      * Get refined nodes.
@@ -122,7 +121,7 @@ public interface UsesNodeBuilder extends GroupingMember {
      * @param refine
      *            new RefineHolder object
      */
-    void addRefine(RefineHolder refine);
+    void addRefine(RefineBuilder refine);
 
     /**
      * Add refine node.

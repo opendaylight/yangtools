@@ -16,8 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.base.Preconditions;
@@ -41,13 +43,13 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     public LeafSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath schemaPath) {
         super(moduleName, line, qname);
         this.schemaPath = schemaPath;
-        constraints = new ConstraintsBuilder(moduleName, line);
+        constraints = new ConstraintsBuilderImpl(moduleName, line);
     }
 
     public LeafSchemaNodeBuilder(String moduleName, int line, QName qname, SchemaPath path, LeafSchemaNode base) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+        constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
         description = base.getDescription();
         reference = base.getReference();

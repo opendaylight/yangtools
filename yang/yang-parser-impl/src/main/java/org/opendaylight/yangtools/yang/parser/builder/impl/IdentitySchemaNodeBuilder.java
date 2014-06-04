@@ -8,16 +8,19 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.collect.ImmutableList;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 
 public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private IdentitySchemaNodeImpl instance;
