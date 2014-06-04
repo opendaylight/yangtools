@@ -81,7 +81,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         instance.unitsStr = unitsStr;
 
         if (type == null && typedef == null) {
-            throw new YangParseException(moduleName, line, "Failed to resolve leaf type.");
+            throw new YangParseException(getModuleName(), getLine(), "Failed to resolve leaf type.");
         }
 
         // TYPE
@@ -218,11 +218,11 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         } else if (!schemaPath.equals(other.schemaPath)) {
             return false;
         }
-        if (parentBuilder == null) {
-            if (other.parentBuilder != null) {
+        if (getParent() == null) {
+            if (other.getParent() != null) {
                 return false;
             }
-        } else if (!parentBuilder.equals(other.parentBuilder)) {
+        } else if (!getParent().equals(other.getParent())) {
             return false;
         }
         return true;

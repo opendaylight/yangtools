@@ -95,7 +95,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     @Override
     public void setParent(final Builder parent) {
         if (!(parent instanceof DataNodeContainerBuilder)) {
-            throw new YangParseException(moduleName, line,
+            throw new YangParseException(getModuleName(), getLine(),
                     "Parent of 'uses' has to be instance of DataNodeContainerBuilder, but was: '" + parent + "'.");
         }
         this.parentBuilder = (DataNodeContainerBuilder) parent;

@@ -70,27 +70,27 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setType(final TypeDefinition<?> type) {
-        throw new YangParseException(moduleName, line, "Can not set type to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set type to " + NAME);
     }
 
     @Override
     public void setTypedef(final TypeDefinitionBuilder tdb) {
-        throw new YangParseException(moduleName, line, "Can not set type to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set type to " + NAME);
     }
 
     @Override
     public void setDescription(final String description) {
-        throw new YangParseException(moduleName, line, "Can not set description to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set description to " + NAME);
     }
 
     @Override
     public void setReference(final String reference) {
-        throw new YangParseException(moduleName, line, "Can not set reference to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set reference to " + NAME);
     }
 
     @Override
     public void setStatus(final Status status) {
-        throw new YangParseException(moduleName, line, "Can not set status to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set status to " + NAME);
     }
 
     @Override
@@ -100,12 +100,12 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
-        throw new YangParseException(moduleName, line, "Identityref type can not be added by uses.");
+        throw new YangParseException(getModuleName(), getLine(), "Identityref type can not be added by uses.");
     }
 
     @Override
     public void addUnknownNodeBuilder(final UnknownSchemaNodeBuilder unknownNode) {
-        throw new YangParseException(moduleName, line, "Can not add unknown node to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not add unknown node to " + NAME);
     }
 
     @Override
@@ -144,8 +144,13 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
+<<<<<<< HEAD
     public void setRanges(final List<RangeConstraint> ranges) {
         throw new YangParseException(moduleName, line, "Can not set ranges to " + NAME);
+=======
+    public void setRanges(List<RangeConstraint> ranges) {
+        throw new YangParseException(getModuleName(), getLine(), "Can not set ranges to " + NAME);
+>>>>>>> 075ab2e... Bug 981: Removed direct access to parent fields.
     }
 
     @Override
@@ -154,8 +159,13 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
+<<<<<<< HEAD
     public void setLengths(final List<LengthConstraint> lengths) {
         throw new YangParseException(moduleName, line, "Can not set lengths to " + NAME);
+=======
+    public void setLengths(List<LengthConstraint> lengths) {
+        throw new YangParseException(getModuleName(), getLine(), "Can not set lengths to " + NAME);
+>>>>>>> 075ab2e... Bug 981: Removed direct access to parent fields.
     }
 
     @Override
@@ -164,8 +174,13 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
+<<<<<<< HEAD
     public void setPatterns(final List<PatternConstraint> patterns) {
         throw new YangParseException(moduleName, line, "Can not set patterns to " + NAME);
+=======
+    public void setPatterns(List<PatternConstraint> patterns) {
+        throw new YangParseException(getModuleName(), getLine(), "Can not set patterns to " + NAME);
+>>>>>>> 075ab2e... Bug 981: Removed direct access to parent fields.
     }
 
     @Override
@@ -174,8 +189,13 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
+<<<<<<< HEAD
     public void setFractionDigits(final Integer fractionDigits) {
         throw new YangParseException(moduleName, line, "Can not set fraction digits to " + NAME);
+=======
+    public void setFractionDigits(Integer fractionDigits) {
+        throw new YangParseException(getModuleName(), getLine(), "Can not set fraction digits to " + NAME);
+>>>>>>> 075ab2e... Bug 981: Removed direct access to parent fields.
     }
 
     @Override
@@ -189,8 +209,13 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
+<<<<<<< HEAD
     public void setDefaultValue(final Object defaultValue) {
         throw new YangParseException(moduleName, line, "Can not set default value to " + NAME);
+=======
+    public void setDefaultValue(Object defaultValue) {
+        throw new YangParseException(getModuleName(), getLine(), "Can not set default value to " + NAME);
+>>>>>>> 075ab2e... Bug 981: Removed direct access to parent fields.
     }
 
     @Override
@@ -199,8 +224,13 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
+<<<<<<< HEAD
     public void setUnits(final String units) {
         throw new YangParseException(moduleName, line, "Can not set units to " + NAME);
+=======
+    public void setUnits(String units) {
+        throw new YangParseException(getModuleName(), getLine(), "Can not set units to " + NAME);
+>>>>>>> 075ab2e... Bug 981: Removed direct access to parent fields.
     }
 
     @Override

@@ -170,7 +170,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         String typeName = type.getQName().getLocalName();
         for (TypeDefinitionBuilder addedTypedef : addedTypedefs) {
             if (addedTypedef.getQName().getLocalName().equals(typeName)) {
-                throw new YangParseException(moduleName, type.getLine(), "Can not add typedef '" + typeName
+                throw new YangParseException(getModuleName(), type.getLine(), "Can not add typedef '" + typeName
                         + "': typedef with same name already declared at line " + addedTypedef.getLine());
             }
         }
@@ -304,11 +304,11 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         } else if (!schemaPath.equals(other.schemaPath)) {
             return false;
         }
-        if (parentBuilder == null) {
-            if (other.parentBuilder != null) {
+        if (getParent() == null) {
+            if (other.getParent() != null) {
                 return false;
             }
-        } else if (!parentBuilder.equals(other.parentBuilder)) {
+        } else if (!getParent().equals(other.getParent())) {
             return false;
         }
         return true;

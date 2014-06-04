@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.*;
+import java.util.List;
 
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
-import org.opendaylight.yangtools.yang.parser.util.*;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.collect.ImmutableList;
 
@@ -36,7 +39,7 @@ public final class DeviationBuilder extends AbstractBuilder {
     @Override
     public Deviation build() {
         if (targetPath == null) {
-            throw new YangParseException(moduleName, line, "Unresolved deviation target");
+            throw new YangParseException(getModuleName(), getLine(), "Unresolved deviation target");
         }
 
         if (instance != null) {
@@ -75,7 +78,7 @@ public final class DeviationBuilder extends AbstractBuilder {
         } else if ("delete".equals(deviate)) {
             this.deviate = Deviate.DELETE;
         } else {
-            throw new YangParseException(moduleName, line, "Unsupported type of 'deviate' statement: " + deviate);
+            throw new YangParseException(getModuleName(), getLine(), "Unsupported type of 'deviate' statement: " + deviate);
         }
     }
 

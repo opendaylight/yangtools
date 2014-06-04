@@ -14,7 +14,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
@@ -147,7 +156,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         String typeName = type.getQName().getLocalName();
         for (TypeDefinitionBuilder addedTypedef : addedTypedefs) {
             if (addedTypedef.getQName().getLocalName().equals(typeName)) {
-                throw new YangParseException(moduleName, type.getLine(), "Can not add typedef '" + typeName
+                throw new YangParseException(getModuleName(), type.getLine(), "Can not add typedef '" + typeName
                         + "': typedef with same name already declared at line " + addedTypedef.getLine());
             }
         }
@@ -273,11 +282,13 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         } else if (!path.equals(other.path)) {
             return false;
         }
-        if (parentBuilder == null) {
-            if (other.parentBuilder != null) {
+        // FIXME: Do we really need this? This actually triggers equals
+        // up to the root builder.
+        if (getParent() == null) {
+            if (other.getParent() != null) {
                 return false;
             }
-        } else if (!parentBuilder.equals(other.parentBuilder)) {
+        } else if (!getParent().equals(other.getParent())) {
             return false;
         }
         return true;
