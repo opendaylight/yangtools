@@ -5,12 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 
-public final class RefineHolder extends AbstractBuilder {
+public final class RefineHolderImpl extends AbstractBuilder implements RefineBuilder {
     private final String name;
     private String defaultStr;
     private String description;
@@ -22,7 +23,7 @@ public final class RefineHolder extends AbstractBuilder {
     private Integer minElements;
     private Integer maxElements;
 
-    public RefineHolder(final String moduleName, final int line, final String name) {
+    public RefineHolderImpl(final String moduleName, final int line, final String name) {
         super(moduleName, line);
         this.name = name;
     }
@@ -35,70 +36,138 @@ public final class RefineHolder extends AbstractBuilder {
         this.defaultStr = defaultStr;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getDescription()
+     */
+    @Override
     public String getDescription() {
         return description;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setDescription(java.lang.String)
+     */
+    @Override
     public void setDescription(final String description) {
         this.description = description;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getReference()
+     */
+    @Override
     public String getReference() {
         return reference;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setReference(java.lang.String)
+     */
+    @Override
     public void setReference(final String reference) {
         this.reference = reference;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#isConfiguration()
+     */
+    @Override
     public Boolean isConfiguration() {
         return config;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setConfiguration(java.lang.Boolean)
+     */
+    @Override
     public void setConfiguration(final Boolean config) {
         this.config = config;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#isMandatory()
+     */
+    @Override
     public Boolean isMandatory() {
         return mandatory;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setMandatory(java.lang.Boolean)
+     */
+    @Override
     public void setMandatory(Boolean mandatory) {
         this.mandatory = mandatory;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#isPresence()
+     */
+    @Override
     public Boolean isPresence() {
         return presence;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setPresence(java.lang.Boolean)
+     */
+    @Override
     public void setPresence(Boolean presence) {
         this.presence = presence;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getMust()
+     */
+    @Override
     public MustDefinition getMust() {
         return must;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setMust(org.opendaylight.yangtools.yang.model.api.MustDefinition)
+     */
+    @Override
     public void setMust(MustDefinition must) {
         this.must = must;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getMinElements()
+     */
+    @Override
     public Integer getMinElements() {
         return minElements;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setMinElements(java.lang.Integer)
+     */
+    @Override
     public void setMinElements(Integer minElements) {
         this.minElements = minElements;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getMaxElements()
+     */
+    @Override
     public Integer getMaxElements() {
         return maxElements;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setMaxElements(java.lang.Integer)
+     */
+    @Override
     public void setMaxElements(Integer maxElements) {
         this.maxElements = maxElements;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getName()
+     */
+    @Override
     public String getName() {
         return name;
     }
@@ -138,7 +207,7 @@ public final class RefineHolder extends AbstractBuilder {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        RefineHolder other = (RefineHolder) obj;
+        RefineHolderImpl other = (RefineHolderImpl) obj;
         if (addedUnknownNodes == null) {
             if (other.addedUnknownNodes != null) {
                 return false;

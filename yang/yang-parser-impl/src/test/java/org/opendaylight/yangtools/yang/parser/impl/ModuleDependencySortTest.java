@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
@@ -28,7 +28,10 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort.ModuleNodeImpl;
+import org.opendaylight.yangtools.yang.parser.impl.ModuleDependencySort;
+import org.opendaylight.yangtools.yang.parser.impl.ModuleDependencySort.ModuleNodeImpl;
+import org.opendaylight.yangtools.yang.parser.util.TopologicalSort;
+import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Edge;
 
 import com.google.common.collect.Sets;

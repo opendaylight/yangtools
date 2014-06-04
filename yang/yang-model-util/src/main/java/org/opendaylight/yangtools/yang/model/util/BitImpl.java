@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
-final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
+public final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
     private final Long position;
     private final QName qname;
     private final SchemaPath schemaPath;
@@ -27,7 +27,7 @@ final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
     private final Status status;
     private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
 
-    BitImpl(final Long position, final QName qname, final SchemaPath schemaPath, final String description,
+    public BitImpl(final Long position, final QName qname, final SchemaPath schemaPath, final String description,
             final String reference, final Status status, final List<UnknownSchemaNode> unknownNodes) {
         this.position = position;
         this.qname = qname;

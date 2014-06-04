@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -13,16 +13,12 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 /**
  * Utility class with helper methods to perform operations tied to refine
@@ -33,7 +29,7 @@ public final class RefineUtils {
     private RefineUtils() {
     }
 
-    public static void refineLeaf(LeafSchemaNodeBuilder leaf, RefineHolder refine) {
+    public static void refineLeaf(final LeafSchemaNodeBuilder leaf, final RefineBuilder refine) {
         String defaultStr = refine.getDefaultStr();
         Boolean mandatory = refine.isMandatory();
         MustDefinition must = refine.getMust();
@@ -56,7 +52,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineContainer(ContainerSchemaNodeBuilder container, RefineHolder refine) {
+    public static void refineContainer(final ContainerSchemaNodeBuilder container, final RefineBuilder refine) {
         Boolean presence = refine.isPresence();
         MustDefinition must = refine.getMust();
         List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
@@ -75,7 +71,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineList(ListSchemaNodeBuilder list, RefineHolder refine) {
+    public static void refineList(final ListSchemaNodeBuilder list, final RefineBuilder refine) {
         MustDefinition must = refine.getMust();
         Integer min = refine.getMinElements();
         Integer max = refine.getMaxElements();
@@ -98,7 +94,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineLeafList(LeafListSchemaNodeBuilder leafList, RefineHolder refine) {
+    public static void refineLeafList(final LeafListSchemaNodeBuilder leafList, final RefineBuilder refine) {
         MustDefinition must = refine.getMust();
         Integer min = refine.getMinElements();
         Integer max = refine.getMaxElements();
@@ -121,7 +117,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineChoice(ChoiceBuilder choice, RefineHolder refine) {
+    public static void refineChoice(final ChoiceBuilder choice, final RefineBuilder refine) {
         String defaultStr = refine.getDefaultStr();
         Boolean mandatory = refine.isMandatory();
         List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
@@ -140,7 +136,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineAnyxml(AnyXmlBuilder anyXml, RefineHolder refine) {
+    public static void refineAnyxml(final AnyXmlBuilder anyXml, final RefineBuilder refine) {
         Boolean mandatory = refine.isMandatory();
         MustDefinition must = refine.getMust();
         List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
@@ -167,7 +163,7 @@ public final class RefineUtils {
      * @param refine
      *            refine object containing information about refine process
      */
-    private static void checkRefine(SchemaNodeBuilder node, RefineHolder refine) {
+    private static void checkRefine(final SchemaNodeBuilder node, final RefineBuilder refine) {
         String moduleName = refine.getModuleName();
         int line = refine.getLine();
         String name = node.getQName().getLocalName();
@@ -209,35 +205,35 @@ public final class RefineUtils {
         }
     }
 
-    private static void checkRefineDefault(SchemaNodeBuilder node, String defaultStr, String moduleName, int line) {
+    private static void checkRefineDefault(final SchemaNodeBuilder node, final String defaultStr, final String moduleName, final int line) {
         if (defaultStr != null) {
             throw new YangParseException(moduleName, line, "Can not refine 'default' for '"
                     + node.getQName().getLocalName() + "'.");
         }
     }
 
-    private static void checkRefineMandatory(SchemaNodeBuilder node, Boolean mandatory, String moduleName, int line) {
+    private static void checkRefineMandatory(final SchemaNodeBuilder node, final Boolean mandatory, final String moduleName, final int line) {
         if (mandatory != null) {
             throw new YangParseException(moduleName, line, "Can not refine 'mandatory' for '"
                     + node.getQName().getLocalName() + "'.");
         }
     }
 
-    private static void checkRefinePresence(SchemaNodeBuilder node, Boolean presence, String moduleName, int line) {
+    private static void checkRefinePresence(final SchemaNodeBuilder node, final Boolean presence, final String moduleName, final int line) {
         if (presence != null) {
             throw new YangParseException(moduleName, line, "Can not refine 'presence' for '"
                     + node.getQName().getLocalName() + "'.");
         }
     }
 
-    private static void checkRefineMust(SchemaNodeBuilder node, MustDefinition must, String moduleName, int line) {
+    private static void checkRefineMust(final SchemaNodeBuilder node, final MustDefinition must, final String moduleName, final int line) {
         if (must != null) {
             throw new YangParseException(moduleName, line, "Can not refine 'must' for '"
                     + node.getQName().getLocalName() + "'.");
         }
     }
 
-    private static void checkRefineMinMax(String refineTargetName, Integer min, Integer max, String moduleName, int line) {
+    private static void checkRefineMinMax(final String refineTargetName, final Integer min, final Integer max, final String moduleName, final int line) {
         if (min != null || max != null) {
             throw new YangParseException(moduleName, line, "Can not refine 'min-elements' or 'max-elements' for '"
                     + refineTargetName + "'.");
@@ -259,7 +255,7 @@ public final class RefineUtils {
      * @param refine
      *            refine object containing information about refine process
      */
-    private static void refineDefault(final Builder node, final RefineHolder refine) {
+    private static void refineDefault(final Builder node, final RefineBuilder refine) {
         final String moduleName = refine.getModuleName();
         final int line = refine.getLine();
         Class<? extends Builder> cls = node.getClass();
@@ -303,7 +299,7 @@ public final class RefineUtils {
      * @param refine
      *            refine object containing information about refine process
      */
-    static void performRefine(SchemaNodeBuilder nodeToRefine, RefineHolder refine) {
+    static void performRefine(final SchemaNodeBuilder nodeToRefine, final RefineBuilder refine) {
         checkRefine(nodeToRefine, refine);
         refineDefault(nodeToRefine, refine);
         if (nodeToRefine instanceof LeafSchemaNodeBuilder) {

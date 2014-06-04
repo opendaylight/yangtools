@@ -5,13 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.util.TopologicalSort;
+import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
