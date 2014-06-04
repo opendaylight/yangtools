@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_fc58ed33",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/AbstractBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "move the fixme down...",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1c5cb124",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/AbstractBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "what is this?",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_bc42653c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/AbstractBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "documentation?",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_dc3de9bc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/AbstractBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "documentation?",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7c4cdd70",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/AbstractDataNodeContainerBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "String.format(), for the other two as well",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fc6f8dc3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/DataNodeContainerBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "missing docs",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1c7351b2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/DocumentedNodeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_bc6905c0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/DocumentedNodeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "class documentatio",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_dc6409e7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/TypeDefinitionBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "missing docs, also the other three at least",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7c637ddc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/UsesNodeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "missing docs, also the setter",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9c5e8111",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/RefineHolder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T18:14:49Z",
+      "side": 1,
+      "message": "are starting with super.hashCode()?",
+      "revId": "06b01a77036c6b11cd5a11e0b2c6d7ce5e4c4f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
