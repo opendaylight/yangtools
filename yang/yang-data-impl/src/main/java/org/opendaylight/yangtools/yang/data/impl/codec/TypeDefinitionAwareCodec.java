@@ -87,7 +87,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 if (octMatcher.matches()) {
                     return 8;
                 } else {
-                    String formatedMessage = String.format("Incorrect lexical representation of Integer value: %s" 
+                    final String formatedMessage = String.format("Incorrect lexical representation of Integer value: %s"
                             + "%nThe Integer value can be defined as "
                             + "%n- Integer Number,"
                             + "%n- Hexadecimal Number (prefix 0x),"
@@ -167,7 +167,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         return inputClass;
     }
 
-    protected TypeDefinitionAwareCodec(Optional<T> typeDefinition, Class<J> outputClass) {
+    protected TypeDefinitionAwareCodec(final Optional<T> typeDefinition, final Class<J> outputClass) {
         Preconditions.checkArgument(outputClass != null, "Output class must be specified.");
         this.typeDefinition = typeDefinition;
         this.inputClass = outputClass;
@@ -178,12 +178,12 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> from(TypeDefinition typeDefinition) {
+    public static final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> from(final TypeDefinition typeDefinition) {
         final TypeDefinitionAwareCodec codec = fromType(typeDefinition);
         return (TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>>) codec;
     }
 
-    public static final <T extends TypeDefinition<T>> TypeDefinitionAwareCodec<?, T> fromType(T typeDefinition) {
+    public static final <T extends TypeDefinition<T>> TypeDefinitionAwareCodec<?, T> fromType(final T typeDefinition) {
         T superType = typeDefinition;
         while (superType.getBaseType() != null) {
             superType = superType.getBaseType();
@@ -233,6 +233,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
             }
         }
         @SuppressWarnings("unchecked")
+        final
         TypeDefinitionAwareCodec<?, T> ret = (TypeDefinitionAwareCodec<?, T>) codec;
         return ret;
     }
@@ -240,17 +241,17 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class BooleanCodecStringImpl extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
             implements BooleanCodec<String> {
 
-        protected BooleanCodecStringImpl(Optional<BooleanTypeDefinition> typeDef) {
+        protected BooleanCodecStringImpl(final Optional<BooleanTypeDefinition> typeDef) {
             super(typeDef, Boolean.class);
         }
 
         @Override
-        public String serialize(Boolean data) {
+        public String serialize(final Boolean data) {
             return data == null ? "" : data.toString();
         }
 
         @Override
-        public Boolean deserialize(String stringRepresentation) {
+        public Boolean deserialize(final String stringRepresentation) {
             return Boolean.valueOf(stringRepresentation);
         }
     };
@@ -258,18 +259,18 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class Uint8CodecStringImpl extends TypeDefinitionAwareCodec<Short, UnsignedIntegerTypeDefinition>
             implements Uint8Codec<String> {
 
-        protected Uint8CodecStringImpl(Optional<UnsignedIntegerTypeDefinition> typeDef) {
+        protected Uint8CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
             super(typeDef, Short.class);
         }
 
         @Override
-        public String serialize(Short data) {
+        public String serialize(final Short data) {
             return data == null ? "" : data.toString();
         }
 
         @Override
-        public Short deserialize(String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
+        public Short deserialize(final String stringRepresentation) {
+            final int base = provideBase(stringRepresentation);
             if (base == 16) {
                 return Short.valueOf(normalizeHexadecimal(stringRepresentation), base);
             }
@@ -279,13 +280,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
     public static class Uint16CodecStringImpl extends TypeDefinitionAwareCodec<Integer, UnsignedIntegerTypeDefinition>
             implements Uint16Codec<String> {
-        protected Uint16CodecStringImpl(Optional<UnsignedIntegerTypeDefinition> typeDef) {
+        protected Uint16CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
             super(typeDef, Integer.class);
         }
 
         @Override
-        public Integer deserialize(String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
+        public Integer deserialize(final String stringRepresentation) {
+            final int base = provideBase(stringRepresentation);
             if (base == 16) {
                 return Integer.valueOf(normalizeHexadecimal(stringRepresentation), base);
             }
@@ -293,7 +294,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public String serialize(Integer data) {
+        public String serialize(final Integer data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -301,13 +302,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class Uint32CodecStringImpl extends TypeDefinitionAwareCodec<Long, UnsignedIntegerTypeDefinition>
             implements Uint32Codec<String> {
 
-        protected Uint32CodecStringImpl(Optional<UnsignedIntegerTypeDefinition> typeDef) {
+        protected Uint32CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
             super(typeDef, Long.class);
         }
 
         @Override
-        public Long deserialize(String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
+        public Long deserialize(final String stringRepresentation) {
+            final int base = provideBase(stringRepresentation);
             if (base == 16) {
                 return Long.valueOf(normalizeHexadecimal(stringRepresentation), base);
             }
@@ -315,7 +316,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public String serialize(Long data) {
+        public String serialize(final Long data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -323,13 +324,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class Uint64CodecStringImpl extends
             TypeDefinitionAwareCodec<BigInteger, UnsignedIntegerTypeDefinition> implements Uint64Codec<String> {
 
-        protected Uint64CodecStringImpl(Optional<UnsignedIntegerTypeDefinition> typeDef) {
+        protected Uint64CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
             super(typeDef, BigInteger.class);
         }
 
         @Override
-        public BigInteger deserialize(String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
+        public BigInteger deserialize(final String stringRepresentation) {
+            final int base = provideBase(stringRepresentation);
             if (base == 16) {
                 return new BigInteger(normalizeHexadecimal(stringRepresentation), base);
             }
@@ -337,7 +338,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public String serialize(BigInteger data) {
+        public String serialize(final BigInteger data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -345,17 +346,17 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class StringCodecStringImpl extends TypeDefinitionAwareCodec<String, StringTypeDefinition> implements
             StringCodec<String> {
 
-        protected StringCodecStringImpl(Optional<StringTypeDefinition> typeDef) {
+        protected StringCodecStringImpl(final Optional<StringTypeDefinition> typeDef) {
             super(typeDef, String.class);
         }
 
         @Override
-        public String deserialize(String stringRepresentation) {
-            return stringRepresentation;
+        public String deserialize(final String stringRepresentation) {
+            return stringRepresentation == null ? "" : stringRepresentation;
         }
 
         @Override
-        public String serialize(String data) {
+        public String serialize(final String data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -363,13 +364,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class Int16CodecStringImpl extends TypeDefinitionAwareCodec<Short, IntegerTypeDefinition> implements
             Int16Codec<String> {
 
-        protected Int16CodecStringImpl(Optional<IntegerTypeDefinition> typeDef) {
+        protected Int16CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
             super(typeDef, Short.class);
         }
 
         @Override
-        public Short deserialize(String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
+        public Short deserialize(final String stringRepresentation) {
+            final int base = provideBase(stringRepresentation);
             if (base == 16) {
                 return Short.valueOf(normalizeHexadecimal(stringRepresentation), base);
             }
@@ -377,7 +378,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public String serialize(Short data) {
+        public String serialize(final Short data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -385,13 +386,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class Int32CodecStringImpl extends TypeDefinitionAwareCodec<Integer, IntegerTypeDefinition> implements
             Int32Codec<String> {
 
-        protected Int32CodecStringImpl(Optional<IntegerTypeDefinition> typeDef) {
+        protected Int32CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
             super(typeDef, Integer.class);
         }
 
         @Override
-        public Integer deserialize(String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
+        public Integer deserialize(final String stringRepresentation) {
+            final int base = provideBase(stringRepresentation);
             if (base == 16) {
                 return Integer.valueOf(normalizeHexadecimal(stringRepresentation), base);
             }
@@ -399,7 +400,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public String serialize(Integer data) {
+        public String serialize(final Integer data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -407,13 +408,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class Int64CodecStringImpl extends TypeDefinitionAwareCodec<Long, IntegerTypeDefinition> implements
             Int64Codec<String> {
 
-        protected Int64CodecStringImpl(Optional<IntegerTypeDefinition> typeDef) {
+        protected Int64CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
             super(typeDef, Long.class);
         }
 
         @Override
-        public Long deserialize(String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
+        public Long deserialize(final String stringRepresentation) {
+            final int base = provideBase(stringRepresentation);
             if (base == 16) {
                 return Long.valueOf(normalizeHexadecimal(stringRepresentation), base);
             }
@@ -421,7 +422,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public String serialize(Long data) {
+        public String serialize(final Long data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -429,13 +430,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class Int8CodecStringImpl extends TypeDefinitionAwareCodec<Byte, IntegerTypeDefinition> implements
             Int8Codec<String> {
 
-        protected Int8CodecStringImpl(Optional<IntegerTypeDefinition> typeDef) {
+        protected Int8CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
             super(typeDef, Byte.class);
         }
 
         @Override
-        public Byte deserialize(String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
+        public Byte deserialize(final String stringRepresentation) {
+            final int base = provideBase(stringRepresentation);
             if (base == 16) {
                 return Byte.valueOf(normalizeHexadecimal(stringRepresentation), base);
             }
@@ -443,7 +444,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public String serialize(Byte data) {
+        public String serialize(final Byte data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -451,17 +452,17 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class EmptyCodecStringImpl extends TypeDefinitionAwareCodec<Void, EmptyTypeDefinition> implements
             EmptyCodec<String> {
 
-        protected EmptyCodecStringImpl(Optional<EmptyTypeDefinition> typeDef) {
+        protected EmptyCodecStringImpl(final Optional<EmptyTypeDefinition> typeDef) {
             super(typeDef, Void.class);
         }
 
         @Override
-        public String serialize(Void data) {
+        public String serialize(final Void data) {
             return "";
         }
 
         @Override
-        public Void deserialize(String stringRepresentation) {
+        public Void deserialize(final String stringRepresentation) {
             return null;
         }
     };
@@ -469,17 +470,17 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static final class BinaryCodecStringImpl extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition>
             implements BinaryCodec<String> {
 
-        protected BinaryCodecStringImpl(Optional<BinaryTypeDefinition> typeDef) {
+        protected BinaryCodecStringImpl(final Optional<BinaryTypeDefinition> typeDef) {
             super(typeDef, byte[].class);
         }
 
         @Override
-        public String serialize(byte[] data) {
+        public String serialize(final byte[] data) {
             return data == null ? "" : BaseEncoding.base64().encode(data);
         }
 
         @Override
-        public byte[] deserialize(String stringRepresentation) {
+        public byte[] deserialize(final String stringRepresentation) {
             return BaseEncoding.base64().decode(stringRepresentation);
         }
     };
@@ -491,20 +492,20 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public static final Splitter SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
         @SuppressWarnings("unchecked")
-        protected BitsCodecStringImpl(Optional<BitsTypeDefinition> typeDef) {
+        protected BitsCodecStringImpl(final Optional<BitsTypeDefinition> typeDef) {
             super(typeDef, (Class<Set<String>>) ((Class<?>) Set.class));
         }
 
         @Override
-        public String serialize(Set<String> data) {
+        public String serialize(final Set<String> data) {
             return data == null ? "" : JOINER.join(data);
         }
 
         @Override
-        public Set<String> deserialize(String stringRepresentation) {
+        public Set<String> deserialize(final String stringRepresentation) {
             if (stringRepresentation == null)
                 return ImmutableSet.of();
-            Iterable<String> strings = SPLITTER.split(stringRepresentation);
+            final Iterable<String> strings = SPLITTER.split(stringRepresentation);
             return ImmutableSet.copyOf(strings);
         }
     };
@@ -512,17 +513,17 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class EnumCodecStringImpl extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements
             EnumCodec<String> {
 
-        protected EnumCodecStringImpl(Optional<EnumTypeDefinition> typeDef) {
+        protected EnumCodecStringImpl(final Optional<EnumTypeDefinition> typeDef) {
             super(typeDef, String.class);
         }
 
         @Override
-        public String deserialize(String stringRepresentation) {
+        public String deserialize(final String stringRepresentation) {
             return stringRepresentation;
         }
 
         @Override
-        public String serialize(String data) {
+        public String serialize(final String data) {
             return data == null ? "" : data.toString();
         }
     };
@@ -530,17 +531,17 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class DecimalCodecStringImpl extends TypeDefinitionAwareCodec<BigDecimal, DecimalTypeDefinition>
             implements DecimalCodec<String> {
 
-        protected DecimalCodecStringImpl(Optional<DecimalTypeDefinition> typeDef) {
+        protected DecimalCodecStringImpl(final Optional<DecimalTypeDefinition> typeDef) {
             super(typeDef, BigDecimal.class);
         }
 
         @Override
-        public String serialize(BigDecimal data) {
+        public String serialize(final BigDecimal data) {
             return data == null ? "" : data.toString();
         }
 
         @Override
-        public BigDecimal deserialize(String stringRepresentation) {
+        public BigDecimal deserialize(final String stringRepresentation) {
             return new BigDecimal(stringRepresentation);
         }
     };
@@ -548,17 +549,17 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     public static class UnionCodecStringImpl extends TypeDefinitionAwareCodec<String, UnionTypeDefinition> implements
             UnionCodec<String> {
 
-        protected UnionCodecStringImpl(Optional<UnionTypeDefinition> typeDef) {
+        protected UnionCodecStringImpl(final Optional<UnionTypeDefinition> typeDef) {
             super(typeDef, String.class);
         }
 
         @Override
-        public String serialize(String data) {
+        public String serialize(final String data) {
             return data == null ? "" : data;
         }
 
         @Override
-        public String deserialize(String stringRepresentation) {
+        public String deserialize(final String stringRepresentation) {
             return stringRepresentation;
         }
     };
