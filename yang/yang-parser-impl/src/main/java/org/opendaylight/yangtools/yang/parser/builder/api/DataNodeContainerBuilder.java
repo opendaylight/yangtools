@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
- *
+ * Copyright (c) 2013 Cisco Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,40 +9,45 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- * Interface for all yang data-node containers [augment, case, container,
- * grouping, list, module, notification].
+ * Common builder for for all YANG {@link DataNodeContainer}
+ * <code>augment, case, container,
+ * grouping, list, module, notification</code>.
  */
 public interface DataNodeContainerBuilder extends Builder {
 
     /**
-     * Get qname of this node.
+     * Returns QName of this node.
      *
      * @return QName of this node
      */
     QName getQName();
 
     /**
-     * Get schema path of this node.
+     * Returns Schema path of this node.
      *
      * @return SchemaPath of this node
      */
     SchemaPath getPath();
 
     /**
-     * Get builders of child nodes.
+     * Returns set of of child node builders.
+     *
+     * This child node builder are build, during invoking {@link #build()} and
+     * added as children to resulting {@link DataNodeContainer}.
      *
      * @return collection child nodes builders
      */
     Set<DataSchemaNodeBuilder> getChildNodeBuilders();
 
     /**
-     * Get child node by name.
+     * Retrieves child node builder by local name.
      *
      * @param name
      *            name of child to seek
@@ -97,6 +101,11 @@ public interface DataNodeContainerBuilder extends Builder {
      */
     void addUsesNode(UsesNodeBuilder usesBuilder);
 
+    /**
+     * Returns set of already built type definitions.
+     *
+     * @return
+     */
     Set<TypeDefinition<?>> getTypeDefinitions();
 
     /**
@@ -112,5 +121,18 @@ public interface DataNodeContainerBuilder extends Builder {
      * @param typedefBuilder
      */
     void addTypedef(TypeDefinitionBuilder typedefBuilder);
+
+    /**
+     * Returns an instance of product - DataNodeContainer
+     *
+     * Returns an instance of data node container with
+     * children and properties constructed as per this builder state,
+     * all nested builders are also built and their product is
+     * set to DataNodeContainer.
+     *
+     * @return Instance of DataNodeContainer
+     */
+    @Override
+    DataNodeContainer build();
 
 }
