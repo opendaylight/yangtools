@@ -194,7 +194,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
     @Override
     public void addTypedef(final TypeDefinitionBuilder typedefBuilder) {
-        throw new YangParseException(moduleName, line, "Can not add type definition to choice case.");
+        throw new YangParseException(getModuleName(), typedefBuilder.getLine(), "Can not add type definition to choice case.");
     }
 
     @Override
@@ -204,7 +204,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
     @Override
     public void setConfiguration(final boolean configuration) {
-        throw new YangParseException(moduleName, line, "Can not add config statement to choice case.");
+        throw new YangParseException(getModuleName(), getLine(), "Can not add config statement to choice case.");
     }
 
     @Override
@@ -244,11 +244,11 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         } else if (!schemaPath.equals(other.schemaPath)) {
             return false;
         }
-        if (parentBuilder == null) {
-            if (other.parentBuilder != null) {
+        if (getParent() == null) {
+            if (other.getParent() != null) {
                 return false;
             }
-        } else if (!parentBuilder.equals(other.parentBuilder)) {
+        } else if (!getParent().equals(other.getParent())) {
             return false;
         }
         return true;

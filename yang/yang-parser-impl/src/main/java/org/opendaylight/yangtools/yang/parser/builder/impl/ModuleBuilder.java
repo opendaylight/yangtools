@@ -1380,7 +1380,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         String msg = String.format("%s%s with same name '%s' already declared at line %d.", msgPrefix, type, name,
                 duplicateLine);
-        throw new YangParseException(moduleName, currentLine, msg);
+        throw new YangParseException(getModuleName(), currentLine, msg);
     }
 
     @Override
