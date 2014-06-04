@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_19cfe3b1",
+        "filename": "common/checkstyle-logging/src/test/java/org/opendaylight/yangtools/checkstyle/CheckCodingStyleTestClass.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T11:40:57Z",
+      "side": 1,
+      "message": "copyright header",
+      "revId": "6df9f61b5fc39a84beba13fafaefecf412543437",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b9c5978f",
+        "filename": "common/checkstyle-logging/src/test/java/org/opendaylight/yangtools/checkstyle/CheckCodingStyleTestClass.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T11:40:57Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "revId": "6df9f61b5fc39a84beba13fafaefecf412543437",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d9c09b7e",
+        "filename": "common/checkstyle-logging/src/test/java/org/opendaylight/yangtools/checkstyle/CheckstyleTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-04T11:40:57Z",
+      "side": 1,
+      "message": "please use a logger",
+      "revId": "6df9f61b5fc39a84beba13fafaefecf412543437",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
