@@ -15,8 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 
 import com.google.common.collect.ImmutableList;
 
@@ -32,14 +34,14 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     public AnyXmlBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line);
+        constraints = new ConstraintsBuilderImpl(moduleName, line);
     }
 
     public AnyXmlBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final AnyXmlSchemaNode base) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+        constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
         description = base.getDescription();
         reference = base.getReference();
@@ -65,7 +67,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
 
-        instance.constraintsDef = constraints.build();
+        instance.constraintsDef = constraints.toInstance();
 
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {

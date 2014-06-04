@@ -21,14 +21,13 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.CopyUtils;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.base.Preconditions;
@@ -47,13 +46,12 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
 
     public GroupingBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        schemaPath = path;
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
     }
 
     public GroupingBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final GroupingDefinition base) {
-        super(moduleName, line, base.getQName());
-        schemaPath = path;
+        this(moduleName, line, base.getQName(),path);
 
         description = base.getDescription();
         reference = base.getReference();
@@ -63,10 +61,10 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         URI ns = qname.getNamespace();
         Date rev = qname.getRevision();
         String pref = qname.getPrefix();
-        addedChildNodes.addAll(ParserUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
-        addedGroupings.addAll(ParserUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
-        addedTypedefs.addAll(ParserUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
-        addedUnknownNodes.addAll(ParserUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
+        addedChildNodes.addAll(BuilderUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
+        addedGroupings.addAll(BuilderUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
+        addedTypedefs.addAll(BuilderUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
+        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
                 rev, pref));
 
         usesNodes.addAll(base.getUses());
@@ -123,7 +121,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         final Set<DataSchemaNodeBuilder> nodes = new HashSet<>();
         for (DataSchemaNodeBuilder node : addedChildNodes) {
             DataSchemaNodeBuilder copy = CopyUtils.copy(node, newParent, true);
-            ParserUtils.setNodeAddedByUses(copy);
+            BuilderUtils.setNodeAddedByUses(copy);
             nodes.add(copy);
         }
         return nodes;
@@ -146,7 +144,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
             GroupingBuilder copy = CopyUtils.copy(node, newParent, true);
             copy.setAddedByUses(true);
             for (DataSchemaNodeBuilder childNode : copy.getChildNodeBuilders()) {
-                ParserUtils.setNodeAddedByUses(childNode);
+                BuilderUtils.setNodeAddedByUses(childNode);
             }
             nodes.add(copy);
         }
@@ -157,7 +155,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     public Set<UnknownSchemaNodeBuilder> instantiateUnknownNodes(final Builder newParent) {
         final Set<UnknownSchemaNodeBuilder> nodes = new HashSet<>();
         for (UnknownSchemaNodeBuilder node : addedUnknownNodes) {
-            UnknownSchemaNodeBuilder copy = CopyUtils.copy(node, newParent, true);
+            UnknownSchemaNodeBuilderImpl copy = CopyUtils.copy(node, newParent, true);
             copy.setAddedByUses(true);
             nodes.add(copy);
         }

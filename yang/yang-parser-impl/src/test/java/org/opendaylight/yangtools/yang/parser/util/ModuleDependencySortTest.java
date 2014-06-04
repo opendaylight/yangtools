@@ -35,10 +35,10 @@ import com.google.common.collect.Sets;
 
 public class ModuleDependencySortTest {
     private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private ModuleBuilder a = mockModuleBuilder("a", null);
-    private ModuleBuilder b = mockModuleBuilder("b", null);
-    private ModuleBuilder c = mockModuleBuilder("c", null);
-    private ModuleBuilder d = mockModuleBuilder("d", null);
+    private final ModuleBuilder a = mockModuleBuilder("a", null);
+    private final ModuleBuilder b = mockModuleBuilder("b", null);
+    private final ModuleBuilder c = mockModuleBuilder("c", null);
+    private final ModuleBuilder d = mockModuleBuilder("d", null);
 
     @Test
     public void testValid() throws Exception {
@@ -142,7 +142,7 @@ public class ModuleDependencySortTest {
         }
     }
 
-    private void assertDependencyGraph(Map<String, Map<Date, ModuleNodeImpl>> moduleGraph) {
+    private void assertDependencyGraph(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph) {
         for (Entry<String, Map<Date, ModuleNodeImpl>> node : moduleGraph.entrySet()) {
             String name = node.getKey();
 
@@ -161,26 +161,26 @@ public class ModuleDependencySortTest {
         }
     }
 
-    private void assertEdgeCount(Set<Edge> inEdges, int i, Set<Edge> outEdges, int j) {
+    private void assertEdgeCount(final Set<Edge> inEdges, final int i, final Set<Edge> outEdges, final int j) {
         assertThat(inEdges.size(), is(i));
         assertThat(outEdges.size(), is(j));
     }
 
-    private void mockDependency(ModuleBuilder a, ModuleBuilder b) {
+    private void mockDependency(final ModuleBuilder a, final ModuleBuilder b) {
         ModuleImport imprt = mock(ModuleImport.class);
         doReturn(b.getName()).when(imprt).getModuleName();
         doReturn(b.getRevision()).when(imprt).getRevision();
         a.getModuleImports().add(imprt);
     }
 
-    private void mockDependency(Module a, Module b) {
+    private void mockDependency(final Module a, final Module b) {
         ModuleImport imprt = mock(ModuleImport.class);
         doReturn(b.getName()).when(imprt).getModuleName();
         doReturn(b.getRevision()).when(imprt).getRevision();
         a.getImports().add(imprt);
     }
 
-    private ModuleBuilder mockModuleBuilder(String name, Date rev) {
+    private ModuleBuilder mockModuleBuilder(final String name, final Date rev) {
         ModuleBuilder a = mock(ModuleBuilder.class);
         doReturn(name).when(a).getName();
         Set<ModuleImport> set = Sets.newHashSet();
@@ -191,7 +191,7 @@ public class ModuleDependencySortTest {
         return a;
     }
 
-    private Module mockModule(String name, Date rev) {
+    private Module mockModule(final String name, final Date rev) {
         Module a = mock(Module.class);
         doReturn(name).when(a).getName();
         Set<ModuleImport> set = Sets.newHashSet();

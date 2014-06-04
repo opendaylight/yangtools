@@ -16,8 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -38,15 +40,15 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
 
     public LeafListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line);
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
+        constraints = new ConstraintsBuilderImpl(moduleName, line);
     }
 
     public LeafListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final LeafListSchemaNode base) {
         super(moduleName, line, qname);
-        schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
+        constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
         description = base.getDescription();
         reference = base.getReference();
@@ -73,7 +75,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
-        instance.constraintsDef = constraints.build();
+        instance.constraintsDef = constraints.toInstance();
         instance.userOrdered = userOrdered;
 
         if (type == null) {
@@ -97,7 +99,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public void setPath(SchemaPath path) {
+    public void setPath(final SchemaPath path) {
         this.schemaPath = path;
     }
 
@@ -127,7 +129,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
@@ -137,7 +139,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public void setAugmenting(boolean augmenting) {
+    public void setAugmenting(final boolean augmenting) {
         this.augmenting = augmenting;
     }
 
@@ -157,7 +159,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public void setConfiguration(boolean configuration) {
+    public void setConfiguration(final boolean configuration) {
         this.configuration = configuration;
     }
 
@@ -183,7 +185,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -305,7 +307,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
