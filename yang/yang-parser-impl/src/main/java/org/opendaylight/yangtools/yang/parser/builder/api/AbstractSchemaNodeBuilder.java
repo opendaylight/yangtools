@@ -77,7 +77,7 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((parentBuilder == null) ? 0 : parentBuilder.hashCode());
+        result = prime * result + ((getParent() == null) ? 0 : getParent().hashCode());
         result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
         return result;
     }
@@ -97,11 +97,11 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
             return false;
         }
         AbstractSchemaNodeBuilder other = (AbstractSchemaNodeBuilder) obj;
-        if (parentBuilder == null) {
-            if (other.parentBuilder != null) {
+        if (getParent() == null) {
+            if (other.getParent() != null) {
                 return false;
             }
-        } else if (!parentBuilder.equals(other.parentBuilder)) {
+        } else if (!getParent().equals(other.getParent())) {
             return false;
         }
         if (schemaPath == null) {

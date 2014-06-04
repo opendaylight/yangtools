@@ -26,4 +26,5 @@ public class YangParseException extends RuntimeException {
         super("Error in module '" + moduleName + "' at line " + line + ": " + errorMsg, exception);
     }
 
+
 }

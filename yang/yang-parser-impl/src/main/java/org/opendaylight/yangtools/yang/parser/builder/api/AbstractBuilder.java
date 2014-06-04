@@ -13,19 +13,22 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
+import com.google.common.base.Preconditions;
+
 /**
- * Basic implementation of Builder.
+ * Base helper implementation of Builders for Yang Model elements.
+ *
  */
 public abstract class AbstractBuilder implements Builder {
-    protected String moduleName;
-    protected final int line;
-    protected Builder parentBuilder;
+    private String moduleName;
+    private final int line;
+    private Builder parentBuilder;
 
     protected final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
     protected final List<UnknownSchemaNodeBuilder> addedUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
 
     protected AbstractBuilder(final String moduleName, final int line) {
-        this.moduleName = moduleName;
+        this.moduleName = Preconditions.checkNotNull(moduleName,"moduleName must not be null");
         this.line = line;
     }
 
@@ -35,6 +38,7 @@ public abstract class AbstractBuilder implements Builder {
     }
 
     @Override
+    @Deprecated
     public void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
     }

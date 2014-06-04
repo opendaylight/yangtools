@@ -9,31 +9,41 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 
 /**
- * Interface for builders of 'augment' statement.
+ * Builder for {@link AugmentationSchema}, which represents 'augment' statement.
  */
-public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
-
-    String getWhenCondition();
-
-    void addWhenCondition(String whenCondition);
-
-    String getDescription();
-
-    void setDescription(String description);
-
-    String getReference();
-
-    void setReference(String reference);
-
-    Status getStatus();
-
-    void setStatus(Status status);
+public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder,DocumentedNodeBuilder {
 
     /**
-     * Get path to target node as single string.
+     * Returns when condition
+     *
+     * If when condition is present node defined by the parent data definition
+     * statement is only valid when the returned XPath
+     * expression conceptually evaluates to "true"
+     * for a particular instance, then the node defined by the parent data
+     * definition statement is valid; otherwise, it is not.
+     *
+     *
+     * @return
+     */
+    String getWhenCondition();
+
+    /**
+     * Adds string representation of when condition.
+     *
+     * If when condition is present node defined by the parent data definition
+     * statement is only valid when the returned XPath
+     * expression conceptually evaluates to "true"
+     * for a particular instance, then the node defined by the parent data
+     * definition statement is valid; otherwise, it is not.
+     *
+     * @param whenCondition
+     */
+    void addWhenCondition(String whenCondition);
+
+    /**
+     * Returns target path representation as was present in schema source.
      *
      * @return path to target node as String
      */
@@ -65,6 +75,7 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
      */
     void setTargetNodeSchemaPath(SchemaPath path);
 
+    @Override
     AugmentationSchema build();
 
     /**
@@ -82,6 +93,13 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
      */
     void setResolved(boolean resolved);
 
+    /**
+     *
+     * Returns position of defining <code>augment</code> statement
+     * as was present in schema source.
+     *
+     * @return Position of definiing augment statement in source code.
+     */
     int getOrder();
 
 }

@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
- *
+ * Copyright (c) 2013 Cisco Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,7 +19,16 @@ import com.google.common.base.Optional;
 public interface AugmentationSchema extends DataNodeContainer {
 
     /**
-     * @return when statement
+     *
+     * Returns when statement
+     *
+     * If when condition is present node defined by the parent data definition
+     * statement is only valid when the returned XPath
+     * expression conceptually evaluates to "true"
+     * for a particular instance, then the node defined by the parent data
+     * definition statement is valid; otherwise, it is not.
+     *
+     * @return XPath condition
      */
     RevisionAwareXPath getWhenCondition();
 
@@ -53,12 +61,13 @@ public interface AugmentationSchema extends DataNodeContainer {
      * @return collection of all unknown nodes defined in this augmentation
      */
     List<UnknownSchemaNode> getUnknownSchemaNodes();
+
     /**
      * Returns Augmentation Definition from which this augmentation is derived
      * if augmentation was added transitively via augmented uses.
      *
      * @return ugmentation Definition from which this augmentation is derived
-     * if augmentation was added transitively via augmented uses.
+     *         if augmentation was added transitively via augmented uses.
      */
     Optional<AugmentationSchema> getOriginalDefinition();
 
