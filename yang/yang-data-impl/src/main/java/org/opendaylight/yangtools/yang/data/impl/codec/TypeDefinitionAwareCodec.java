@@ -87,7 +87,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 if (octMatcher.matches()) {
                     return 8;
                 } else {
-                    String formatedMessage = String.format("Incorrect lexical representation of Integer value: %s" 
+                    String formatedMessage = String.format("Incorrect lexical representation of Integer value: %s"
                             + "%nThe Integer value can be defined as "
                             + "%n- Integer Number,"
                             + "%n- Hexadecimal Number (prefix 0x),"
@@ -351,7 +351,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String deserialize(String stringRepresentation) {
-            return stringRepresentation;
+            return stringRepresentation == null ? "" :stringRepresentation;
         }
 
         @Override
