@@ -159,11 +159,11 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         QName caseQName = caseNode.getQName();
         String caseName = caseQName.getLocalName();
 
-        for (ChoiceCaseBuilder addedCase : caseBuilders) {
-            if (addedCase.getQName().getLocalName().equals(caseName)) {
+        for (ChoiceCaseBuilder existingCase : caseBuilders) {
+            if (existingCase.getQName().getLocalName().equals(caseName)) {
                 throw new YangParseException(caseNode.getModuleName(), caseNode.getLine(), "Can not add '" + caseNode
-                        + "' to node '" + qname.getLocalName() + "' in module '" + moduleName
-                        + "': case with same name already declared at line " + addedCase.getLine());
+                        + "' to node '" + qname.getLocalName() + "' in module '" + getModuleName()
+                        + "': case with same name already declared at line " + existingCase.getLine());
             }
         }
 
@@ -264,11 +264,11 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         } else if (!schemaPath.equals(other.schemaPath)) {
             return false;
         }
-        if (parentBuilder == null) {
-            if (other.parentBuilder != null) {
+        if (getParent() == null) {
+            if (other.getParent() != null) {
                 return false;
             }
-        } else if (!parentBuilder.equals(other.parentBuilder)) {
+        } else if (!getParent().equals(other.getParent())) {
             return false;
         }
         return true;

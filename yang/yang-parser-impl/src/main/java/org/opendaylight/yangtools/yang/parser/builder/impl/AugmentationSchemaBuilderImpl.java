@@ -75,7 +75,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
     @Override
     public void addGrouping(final GroupingBuilder grouping) {
-        throw new YangParseException(moduleName, line, "augment can not contains grouping statement");
+        throw new YangParseException(getModuleName(), grouping.getLine(), "augment can not contains grouping statement");
     }
 
     @Override
@@ -174,7 +174,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
     @Override
     public void addTypedef(final TypeDefinitionBuilder type) {
-        throw new YangParseException(moduleName, line, "Augmentation can not contains typedef statement.");
+        throw new YangParseException(getModuleName(), type.getLine(), "Augmentation can not contains typedef statement.");
     }
 
     @Override

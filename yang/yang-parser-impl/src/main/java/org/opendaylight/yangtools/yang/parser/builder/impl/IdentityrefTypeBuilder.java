@@ -11,8 +11,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
@@ -66,27 +70,27 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setType(final TypeDefinition<?> type) {
-        throw new YangParseException(moduleName, line, "Can not set type to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set type to " + NAME);
     }
 
     @Override
     public void setTypedef(final TypeDefinitionBuilder tdb) {
-        throw new YangParseException(moduleName, line, "Can not set type to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set type to " + NAME);
     }
 
     @Override
     public void setDescription(final String description) {
-        throw new YangParseException(moduleName, line, "Can not set description to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set description to " + NAME);
     }
 
     @Override
     public void setReference(final String reference) {
-        throw new YangParseException(moduleName, line, "Can not set reference to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set reference to " + NAME);
     }
 
     @Override
     public void setStatus(final Status status) {
-        throw new YangParseException(moduleName, line, "Can not set status to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set status to " + NAME);
     }
 
     @Override
@@ -96,12 +100,12 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setAddedByUses(final boolean addedByUses) {
-        throw new YangParseException(moduleName, line, "Identityref type can not be added by uses.");
+        throw new YangParseException(getModuleName(), getLine(), "Identityref type can not be added by uses.");
     }
 
     @Override
     public void addUnknownNodeBuilder(final UnknownSchemaNodeBuilder unknownNode) {
-        throw new YangParseException(moduleName, line, "Can not add unknown node to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not add unknown node to " + NAME);
     }
 
     @Override
@@ -141,7 +145,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setRanges(List<RangeConstraint> ranges) {
-        throw new YangParseException(moduleName, line, "Can not set ranges to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set ranges to " + NAME);
     }
 
     @Override
@@ -151,7 +155,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setLengths(List<LengthConstraint> lengths) {
-        throw new YangParseException(moduleName, line, "Can not set lengths to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set lengths to " + NAME);
     }
 
     @Override
@@ -161,7 +165,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setPatterns(List<PatternConstraint> patterns) {
-        throw new YangParseException(moduleName, line, "Can not set patterns to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set patterns to " + NAME);
     }
 
     @Override
@@ -171,7 +175,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setFractionDigits(Integer fractionDigits) {
-        throw new YangParseException(moduleName, line, "Can not set fraction digits to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set fraction digits to " + NAME);
     }
 
     @Override
@@ -186,7 +190,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setDefaultValue(Object defaultValue) {
-        throw new YangParseException(moduleName, line, "Can not set default value to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set default value to " + NAME);
     }
 
     @Override
@@ -196,7 +200,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setUnits(String units) {
-        throw new YangParseException(moduleName, line, "Can not set units to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set units to " + NAME);
     }
 
     @Override

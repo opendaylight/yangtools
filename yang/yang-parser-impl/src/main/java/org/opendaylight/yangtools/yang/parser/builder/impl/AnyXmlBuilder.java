@@ -138,11 +138,11 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         } else if (!schemaPath.equals(other.schemaPath)) {
             return false;
         }
-        if (parentBuilder == null) {
-            if (other.parentBuilder != null) {
+        if (getParent() == null) {
+            if (other.getParent() != null) {
                 return false;
             }
-        } else if (!parentBuilder.equals(other.parentBuilder)) {
+        } else if (!getParent().equals(other.getParent())) {
             return false;
         }
         return true;

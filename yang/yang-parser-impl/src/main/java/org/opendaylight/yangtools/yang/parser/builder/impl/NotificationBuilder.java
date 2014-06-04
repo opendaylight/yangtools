@@ -78,8 +78,8 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
 
     @Override
     public NotificationDefinition build() {
-        if (!(parentBuilder instanceof ModuleBuilder)) {
-            throw new YangParseException(moduleName, line, "Notification can be defined only under module (was " + parentBuilder + ")");
+        if (!(getParent() instanceof ModuleBuilder)) {
+            throw new YangParseException(getModuleName(), getLine(), "Notification can be defined only under module (was " + getParent() + ")");
         }
         if (instance != null) {
             return instance;
