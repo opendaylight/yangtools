@@ -31,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -68,7 +69,7 @@ import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
+import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
 
 public class YangParserTest {
     public static final String FS = File.separator;
@@ -885,7 +886,7 @@ public class YangParserTest {
         for (File f : testFiles) {
             streams.add(new FileInputStream(f));
         }
-        newModules = parser.parseSources(ParserUtils.filesToByteSources(testFiles)).getModules();
+        newModules = parser.parseSources(BuilderUtils.filesToByteSources(testFiles)).getModules();
         assertSetEquals(newModules, modules);
         ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());
@@ -894,7 +895,7 @@ public class YangParserTest {
         for (File f : testFiles) {
             streams.add(new FileInputStream(f));
         }
-        newModules = parser.parseSources(ParserUtils.filesToByteSources(testFiles), null).getModules();
+        newModules = parser.parseSources(BuilderUtils.filesToByteSources(testFiles), null).getModules();
         assertSetEquals(newModules, modules);
         ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
         assertSetEquals(newModules, ctx.getModules());

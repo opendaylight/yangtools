@@ -17,20 +17,20 @@ public final class NodeWrappedType extends NodeImpl {
 
     /**
      * Create new instance of class <code>NodeWrappedType</code>.
-     * 
+     *
      * @param wrappedType
      *            object with payload data
      */
-    NodeWrappedType(Object wrappedType) {
+    public NodeWrappedType(Object wrappedType) {
         this.wrappedType = wrappedType;
     }
 
     /**
      * Gets payload from class
-     * 
+     *
      * @return object with <code>wrappedType</code>
      */
-    Object getWrappedType() {
+    public Object getWrappedType() {
         return wrappedType;
     }
 

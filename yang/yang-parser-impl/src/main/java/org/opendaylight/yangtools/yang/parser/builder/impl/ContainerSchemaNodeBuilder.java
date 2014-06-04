@@ -24,14 +24,15 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.base.Preconditions;
@@ -58,16 +59,16 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
 
     public ContainerSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        this.path = path;
-        this.constraints = new ConstraintsBuilder(moduleName, line);
+        this.path = Preconditions.checkNotNull(path, "Schema Path must not be null");
+        this.constraints = new ConstraintsBuilderImpl(moduleName, line);
     }
 
     // constructor for uses
     public ContainerSchemaNodeBuilder(final String moduleName, final int line, final QName qname,
             final SchemaPath path, final ContainerSchemaNode base) {
         super(moduleName, line, qname);
-        this.path = path;
-        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+        this.path = Preconditions.checkNotNull(path, "Schema Path must not be null");
+        constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
         description = base.getDescription();
         reference = base.getReference();
@@ -80,10 +81,10 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         URI ns = qname.getNamespace();
         Date rev = qname.getRevision();
         String pref = qname.getPrefix();
-        addedChildNodes.addAll(ParserUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
-        addedGroupings.addAll(ParserUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
-        addedTypedefs.addAll(ParserUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
-        addedUnknownNodes.addAll(ParserUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
+        addedChildNodes.addAll(BuilderUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
+        addedGroupings.addAll(BuilderUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
+        addedTypedefs.addAll(BuilderUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
+        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
                 rev, pref));
 
         augmentations.addAll(base.getAvailableAugmentations());
@@ -104,7 +105,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
-        instance.constraints = constraints.build();
+        instance.constraints = constraints.toInstance();
         instance.presence = presence;
 
         // CHILD NODES

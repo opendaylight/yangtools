@@ -20,15 +20,16 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.collect.ImmutableList;
@@ -47,7 +48,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private boolean resolved;
     private final Set<AugmentationSchemaBuilder> augmentationBuilders = new HashSet<>();
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<>();
-    private final List<RefineHolder> refines = new ArrayList<>();
+    private final List<RefineBuilder> refines = new ArrayList<>();
 
     public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
         super(moduleName, line);
@@ -188,12 +189,12 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public List<RefineHolder> getRefines() {
+    public List<RefineBuilder> getRefines() {
         return refines;
     }
 
     @Override
-    public void addRefine(final RefineHolder refine) {
+    public void addRefine(final RefineBuilder refine) {
         refines.add(refine);
     }
 

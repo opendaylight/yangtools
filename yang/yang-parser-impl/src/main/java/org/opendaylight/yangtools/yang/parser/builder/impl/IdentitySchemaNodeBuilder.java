@@ -7,17 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private IdentitySchemaNodeImpl instance;
@@ -28,10 +32,10 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
 
     IdentitySchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        schemaPath = path;
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
     }
 
-    IdentitySchemaNodeBuilder(final String moduleName, IdentitySchemaNode base) {
+    IdentitySchemaNodeBuilder(final String moduleName, final IdentitySchemaNode base) {
         super(moduleName, 0, base.getQName());
         schemaPath = base.getPath();
         derivedIdentities.addAll(base.getDerivedIdentities());
@@ -77,7 +81,7 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         this.baseIdentityBuilder = baseType;
     }
 
-    public void addDerivedIdentity(IdentitySchemaNode derivedIdentity) {
+    public void addDerivedIdentity(final IdentitySchemaNode derivedIdentity) {
         if (derivedIdentity != null) {
             derivedIdentities.add(derivedIdentity);
         }
@@ -155,7 +159,7 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }

@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,20 +33,15 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContainerBuilder implements
         AugmentationSchemaBuilder {
@@ -64,7 +64,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         super(moduleName, line, null);
         this.order = order;
         this.augmentTargetStr = augmentTargetStr;
-        targetPath = ParserUtils.parseXPathString(augmentTargetStr);
+        targetPath = BuilderUtils.parseXPathString(augmentTargetStr);
     }
 
     @Override

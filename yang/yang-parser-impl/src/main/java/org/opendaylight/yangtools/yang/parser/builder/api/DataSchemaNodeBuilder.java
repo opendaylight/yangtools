@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
 
 /**
  * Interface for all yang data-schema nodes [anyxml, case, container, grouping,

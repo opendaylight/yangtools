@@ -25,13 +25,14 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.base.Preconditions;
@@ -56,15 +57,15 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
     public ChoiceCaseBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line);
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
+        constraints = new ConstraintsBuilderImpl(moduleName, line);
     }
 
     public ChoiceCaseBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final ChoiceCaseNode base) {
         super(moduleName, line, qname);
-        this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
+        constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
         description = base.getDescription();
         reference = base.getReference();
@@ -75,9 +76,9 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         URI ns = qname.getNamespace();
         Date rev = qname.getRevision();
         String pref = qname.getPrefix();
-        addedChildNodes.addAll(ParserUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
-        addedGroupings.addAll(ParserUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
-        addedUnknownNodes.addAll(ParserUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
+        addedChildNodes.addAll(BuilderUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
+        addedGroupings.addAll(BuilderUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
+        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
                 rev, pref));
 
         augmentations.addAll(base.getAvailableAugmentations());
@@ -98,7 +99,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
 
-        instance.constraints = constraints.build();
+        instance.constraints = constraints.toInstance();
 
         // CHILD NODES
         for (DataSchemaNodeBuilder node : addedChildNodes) {

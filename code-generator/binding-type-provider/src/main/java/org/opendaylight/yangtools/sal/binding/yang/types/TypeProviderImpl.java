@@ -14,9 +14,6 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findD
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import com.google.common.io.BaseEncoding;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
@@ -33,6 +30,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
@@ -89,7 +87,11 @@ import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import com.google.common.io.BaseEncoding;
+
 
 public final class TypeProviderImpl implements TypeProvider {
     private static final Pattern NUMBERS_PATTERN = Pattern.compile("[0-9]+\\z");
@@ -606,7 +608,7 @@ public final class TypeProviderImpl implements TypeProvider {
         for (Module modul : modules) {
             modulesArray[i++] = modul;
         }
-        final List<Module> modulesSortedByDependency = ModuleDependencySort.sort(modulesArray);
+        final List<Module> modulesSortedByDependency = org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort.sort(modulesArray);
 
         for (final Module module : modulesSortedByDependency) {
             Map<Date, Map<String, Type>> dateTypeMap = genTypeDefsContextMap.get(module.getName());
