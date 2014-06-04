@@ -16,13 +16,15 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.BitImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilderImpl;
 
 public class BitImplTest {
 
@@ -113,7 +115,7 @@ public class BitImplTest {
 
         List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
         SchemaPath path = org.mockito.Mockito.mock(SchemaPath.class);
-        UnknownSchemaNodeBuilder usnb = new UnknownSchemaNodeBuilder("module", 3, qnameB, path);
+        UnknownSchemaNodeBuilderImpl usnb = new UnknownSchemaNodeBuilderImpl("module", 3, qnameB, path);
         ModuleBuilder parent = org.mockito.Mockito.mock(ModuleBuilder.class);
         usnb.setParent(parent);
 

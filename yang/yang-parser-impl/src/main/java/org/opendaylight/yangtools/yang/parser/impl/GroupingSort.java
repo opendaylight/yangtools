@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
+import org.opendaylight.yangtools.yang.parser.util.NodeWrappedType;
+import org.opendaylight.yangtools.yang.parser.util.TopologicalSort;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 
 import com.google.common.collect.Maps;

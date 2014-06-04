@@ -7,24 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.checkMissingBody;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.createActualSchemaPath;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.createListKey;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.getConfig;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.getIdentityrefBase;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseConstraints;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseDefault;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseRefine;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseSchemaNodeArgs;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseStatus;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseTypeWithBody;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUnits;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUnknownTypeWithBody;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseUserOrdered;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.parseYinValue;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.stringFromNode;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.checkMissingBody;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.createActualSchemaPath;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.createListKey;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getConfig;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getIdentityrefBase;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseConstraints;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseDefault;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseRefine;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseSchemaNodeArgs;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseStatus;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseTypeWithBody;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseUnits;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseUnknownTypeWithBody;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseUserOrdered;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseYinValue;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.stringFromNode;
 
-import com.google.common.base.Strings;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -32,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
@@ -72,6 +72,7 @@ import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.YangTypesConverter;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
@@ -80,7 +81,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.FeatureBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
@@ -88,12 +88,14 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder
 import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.RefineHolderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
@@ -110,7 +112,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private final Stack<Stack<QName>> actualPath = new Stack<>();
     private int augmentOrder;
 
-    private void addNodeToPath(QName name) {
+    private void addNodeToPath(final QName name) {
         actualPath.peek().push(name);
     }
 
@@ -118,12 +120,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         return actualPath.peek().pop();
     }
 
-    public YangParserListenerImpl(String sourcePath) {
+    public YangParserListenerImpl(final String sourcePath) {
         this.sourcePath = sourcePath;
     }
 
     @Override
-    public void enterModule_stmt(YangParser.Module_stmtContext ctx) {
+    public void enterModule_stmt(final YangParser.Module_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
         LOGGER.trace("entering module " + moduleName);
         enterLog("module", moduleName, 0);
@@ -150,12 +152,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitModule_stmt(YangParser.Module_stmtContext ctx) {
+    public void exitModule_stmt(final YangParser.Module_stmtContext ctx) {
         exitLog("module", "");
         actualPath.pop();
     }
 
-    @Override public void enterSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
+    @Override public void enterSubmodule_stmt(final YangParser.Submodule_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
         LOGGER.trace("entering submodule " + moduleName);
         enterLog("submodule", moduleName, 0);
@@ -181,17 +183,17 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         moduleBuilder.setReference(reference);
     }
 
-    @Override public void exitSubmodule_stmt(YangParser.Submodule_stmtContext ctx) {
+    @Override public void exitSubmodule_stmt(final YangParser.Submodule_stmtContext ctx) {
         exitLog("submodule", "");
         actualPath.pop();
     }
 
-    @Override public void enterBelongs_to_stmt(YangParser.Belongs_to_stmtContext ctx) {
+    @Override public void enterBelongs_to_stmt(final YangParser.Belongs_to_stmtContext ctx) {
         moduleBuilder.setBelongsTo(stringFromNode(ctx));
     }
 
     @Override
-    public void enterModule_header_stmts(Module_header_stmtsContext ctx) {
+    public void enterModule_header_stmts(final Module_header_stmtsContext ctx) {
         enterLog("module_header", "", ctx.getStart().getLine());
         String yangVersion = null;
         for (int i = 0; i < ctx.getChildCount(); ++i) {
@@ -218,12 +220,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitModule_header_stmts(Module_header_stmtsContext ctx) {
+    public void exitModule_header_stmts(final Module_header_stmtsContext ctx) {
         exitLog("module_header", "");
     }
 
     @Override
-    public void enterMeta_stmts(YangParser.Meta_stmtsContext ctx) {
+    public void enterMeta_stmts(final YangParser.Meta_stmtsContext ctx) {
         enterLog("meta_stmt", "", ctx.getStart().getLine());
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
@@ -248,12 +250,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitMeta_stmts(YangParser.Meta_stmtsContext ctx) {
+    public void exitMeta_stmts(final YangParser.Meta_stmtsContext ctx) {
         exitLog("meta_stmt", "");
     }
 
     @Override
-    public void enterRevision_stmts(Revision_stmtsContext ctx) {
+    public void enterRevision_stmts(final Revision_stmtsContext ctx) {
         enterLog("revisions", "", ctx.getStart().getLine());
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             final ParseTree treeNode = ctx.getChild(i);
@@ -264,7 +266,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitRevision_stmts(Revision_stmtsContext ctx) {
+    public void exitRevision_stmts(final Revision_stmtsContext ctx) {
         exitLog("revisions", "");
     }
 
@@ -290,7 +292,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void enterImport_stmt(Import_stmtContext ctx) {
+    public void enterImport_stmt(final Import_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String importName = stringFromNode(ctx);
         enterLog("import", importName, line);
@@ -317,12 +319,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitImport_stmt(Import_stmtContext ctx) {
+    public void exitImport_stmt(final Import_stmtContext ctx) {
         exitLog("import", "");
     }
 
     @Override
-    public void enterAugment_stmt(YangParser.Augment_stmtContext ctx) {
+    public void enterAugment_stmt(final YangParser.Augment_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String augmentPath = stringFromNode(ctx);
         enterLog(AUGMENT_STR, augmentPath, line);
@@ -347,14 +349,14 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitAugment_stmt(YangParser.Augment_stmtContext ctx) {
+    public void exitAugment_stmt(final YangParser.Augment_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog(AUGMENT_STR, "");
         actualPath.pop();
     }
 
     @Override
-    public void enterExtension_stmt(YangParser.Extension_stmtContext ctx) {
+    public void enterExtension_stmt(final YangParser.Extension_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String extName = stringFromNode(ctx);
         enterLog("extension", extName, line);
@@ -382,13 +384,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitExtension_stmt(YangParser.Extension_stmtContext ctx) {
+    public void exitExtension_stmt(final YangParser.Extension_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("extension", removeNodeFromPath());
     }
 
     @Override
-    public void enterTypedef_stmt(YangParser.Typedef_stmtContext ctx) {
+    public void enterTypedef_stmt(final YangParser.Typedef_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String typedefName = stringFromNode(ctx);
         enterLog("typedef", typedefName, line);
@@ -405,13 +407,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitTypedef_stmt(YangParser.Typedef_stmtContext ctx) {
+    public void exitTypedef_stmt(final YangParser.Typedef_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("typedef", removeNodeFromPath());
     }
 
     @Override
-    public void enterType_stmt(YangParser.Type_stmtContext ctx) {
+    public void enterType_stmt(final YangParser.Type_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String typeName = stringFromNode(ctx);
         enterLog("type", typeName, line);
@@ -471,7 +473,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     }
 
-    private QName parseQName(String typeName) {
+    private QName parseQName(final String typeName) {
         QName typeQName;
         if (typeName.contains(":")) {
             String[] splittedName = typeName.split(":");
@@ -489,7 +491,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitType_stmt(YangParser.Type_stmtContext ctx) {
+    public void exitType_stmt(final YangParser.Type_stmtContext ctx) {
         final String typeName = stringFromNode(ctx);
         if ("union".equals(typeName)) {
             moduleBuilder.exitNode();
@@ -498,7 +500,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void enterGrouping_stmt(YangParser.Grouping_stmtContext ctx) {
+    public void enterGrouping_stmt(final YangParser.Grouping_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String groupName = stringFromNode(ctx);
         enterLog("grouping", groupName, line);
@@ -513,13 +515,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitGrouping_stmt(YangParser.Grouping_stmtContext ctx) {
+    public void exitGrouping_stmt(final YangParser.Grouping_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("grouping", removeNodeFromPath());
     }
 
     @Override
-    public void enterContainer_stmt(Container_stmtContext ctx) {
+    public void enterContainer_stmt(final Container_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String containerName = stringFromNode(ctx);
         enterLog("container", containerName, line);
@@ -545,13 +547,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitContainer_stmt(Container_stmtContext ctx) {
+    public void exitContainer_stmt(final Container_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("container", removeNodeFromPath());
     }
 
     @Override
-    public void enterLeaf_stmt(Leaf_stmtContext ctx) {
+    public void enterLeaf_stmt(final Leaf_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String leafName = stringFromNode(ctx);
         enterLog("leaf", leafName, line);
@@ -582,13 +584,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitLeaf_stmt(YangParser.Leaf_stmtContext ctx) {
+    public void exitLeaf_stmt(final YangParser.Leaf_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("leaf", removeNodeFromPath());
     }
 
     @Override
-    public void enterUses_stmt(YangParser.Uses_stmtContext ctx) {
+    public void enterUses_stmt(final YangParser.Uses_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String groupingPathStr = stringFromNode(ctx);
         enterLog("uses", groupingPathStr, line);
@@ -599,13 +601,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitUses_stmt(YangParser.Uses_stmtContext ctx) {
+    public void exitUses_stmt(final YangParser.Uses_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("uses", "");
     }
 
     @Override
-    public void enterUses_augment_stmt(YangParser.Uses_augment_stmtContext ctx) {
+    public void enterUses_augment_stmt(final YangParser.Uses_augment_stmtContext ctx) {
         actualPath.push(new Stack<QName>());
         final int line = ctx.getStart().getLine();
         final String augmentPath = stringFromNode(ctx);
@@ -630,30 +632,30 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitUses_augment_stmt(YangParser.Uses_augment_stmtContext ctx) {
+    public void exitUses_augment_stmt(final YangParser.Uses_augment_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog(AUGMENT_STR, "");
         actualPath.pop();
     }
 
     @Override
-    public void enterRefine_stmt(YangParser.Refine_stmtContext ctx) {
+    public void enterRefine_stmt(final YangParser.Refine_stmtContext ctx) {
         final String refineString = stringFromNode(ctx);
         enterLog("refine", refineString, ctx.getStart().getLine());
 
-        RefineHolder refine = parseRefine(ctx, moduleName);
+        RefineHolderImpl refine = parseRefine(ctx, moduleName);
         moduleBuilder.addRefine(refine);
         moduleBuilder.enterNode(refine);
     }
 
     @Override
-    public void exitRefine_stmt(YangParser.Refine_stmtContext ctx) {
+    public void exitRefine_stmt(final YangParser.Refine_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("refine", "");
     }
 
     @Override
-    public void enterLeaf_list_stmt(Leaf_list_stmtContext ctx) {
+    public void enterLeaf_list_stmt(final Leaf_list_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String leafListName = stringFromNode(ctx);
         enterLog("leaf-list", leafListName, line);
@@ -680,13 +682,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitLeaf_list_stmt(YangParser.Leaf_list_stmtContext ctx) {
+    public void exitLeaf_list_stmt(final YangParser.Leaf_list_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("leaf-list", removeNodeFromPath());
     }
 
     @Override
-    public void enterList_stmt(List_stmtContext ctx) {
+    public void enterList_stmt(final List_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String listName = stringFromNode(ctx);
         enterLog("list", listName, line);
@@ -716,13 +718,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitList_stmt(List_stmtContext ctx) {
+    public void exitList_stmt(final List_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("list", removeNodeFromPath());
     }
 
     @Override
-    public void enterAnyxml_stmt(YangParser.Anyxml_stmtContext ctx) {
+    public void enterAnyxml_stmt(final YangParser.Anyxml_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String anyXmlName = stringFromNode(ctx);
         enterLog("anyxml", anyXmlName, line);
@@ -740,13 +742,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitAnyxml_stmt(YangParser.Anyxml_stmtContext ctx) {
+    public void exitAnyxml_stmt(final YangParser.Anyxml_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("anyxml", removeNodeFromPath());
     }
 
     @Override
-    public void enterChoice_stmt(YangParser.Choice_stmtContext ctx) {
+    public void enterChoice_stmt(final YangParser.Choice_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String choiceName = stringFromNode(ctx);
         enterLog("choice", choiceName, line);
@@ -774,13 +776,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitChoice_stmt(YangParser.Choice_stmtContext ctx) {
+    public void exitChoice_stmt(final YangParser.Choice_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("choice", removeNodeFromPath());
     }
 
     @Override
-    public void enterCase_stmt(YangParser.Case_stmtContext ctx) {
+    public void enterCase_stmt(final YangParser.Case_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String caseName = stringFromNode(ctx);
         enterLog("case", caseName, line);
@@ -797,13 +799,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitCase_stmt(YangParser.Case_stmtContext ctx) {
+    public void exitCase_stmt(final YangParser.Case_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("case", removeNodeFromPath());
     }
 
     @Override
-    public void enterNotification_stmt(YangParser.Notification_stmtContext ctx) {
+    public void enterNotification_stmt(final YangParser.Notification_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String notificationName = stringFromNode(ctx);
         enterLog("notification", notificationName, line);
@@ -819,52 +821,52 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitNotification_stmt(YangParser.Notification_stmtContext ctx) {
+    public void exitNotification_stmt(final YangParser.Notification_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("notification", removeNodeFromPath());
     }
 
     // Unknown nodes
     @Override
-    public void enterIdentifier_stmt(YangParser.Identifier_stmtContext ctx) {
+    public void enterIdentifier_stmt(final YangParser.Identifier_stmtContext ctx) {
         handleUnknownNode(ctx.getStart().getLine(), ctx);
     }
 
     @Override
-    public void exitIdentifier_stmt(YangParser.Identifier_stmtContext ctx) {
+    public void exitIdentifier_stmt(final YangParser.Identifier_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("unknown-node", removeNodeFromPath());
     }
 
-    @Override public void enterUnknown_statement(YangParser.Unknown_statementContext ctx) {
+    @Override public void enterUnknown_statement(final YangParser.Unknown_statementContext ctx) {
         handleUnknownNode(ctx.getStart().getLine(), ctx);
     }
 
-    @Override public void exitUnknown_statement(YangParser.Unknown_statementContext ctx) {
+    @Override public void exitUnknown_statement(final YangParser.Unknown_statementContext ctx) {
         moduleBuilder.exitNode();
         exitLog("unknown-node", removeNodeFromPath());
     }
 
-    @Override public void enterUnknown_statement2(YangParser.Unknown_statement2Context ctx) {
+    @Override public void enterUnknown_statement2(final YangParser.Unknown_statement2Context ctx) {
         handleUnknownNode(ctx.getStart().getLine(), ctx);
     }
 
-    @Override public void exitUnknown_statement2(YangParser.Unknown_statement2Context ctx) {
+    @Override public void exitUnknown_statement2(final YangParser.Unknown_statement2Context ctx) {
         moduleBuilder.exitNode();
         exitLog("unknown-node", removeNodeFromPath());
     }
 
-    @Override public void enterUnknown_statement3(YangParser.Unknown_statement3Context ctx) {
+    @Override public void enterUnknown_statement3(final YangParser.Unknown_statement3Context ctx) {
         handleUnknownNode(ctx.getStart().getLine(), ctx);
     }
 
-    @Override public void exitUnknown_statement3(YangParser.Unknown_statement3Context ctx) {
+    @Override public void exitUnknown_statement3(final YangParser.Unknown_statement3Context ctx) {
         moduleBuilder.exitNode();
         exitLog("unknown-node", removeNodeFromPath());
     }
 
     @Override
-    public void enterRpc_stmt(YangParser.Rpc_stmtContext ctx) {
+    public void enterRpc_stmt(final YangParser.Rpc_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String rpcName = stringFromNode(ctx);
         enterLog("rpc", rpcName, line);
@@ -881,13 +883,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitRpc_stmt(YangParser.Rpc_stmtContext ctx) {
+    public void exitRpc_stmt(final YangParser.Rpc_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("rpc", removeNodeFromPath());
     }
 
     @Override
-    public void enterInput_stmt(YangParser.Input_stmtContext ctx) {
+    public void enterInput_stmt(final YangParser.Input_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String input = "input";
         enterLog(input, input, line);
@@ -905,13 +907,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitInput_stmt(YangParser.Input_stmtContext ctx) {
+    public void exitInput_stmt(final YangParser.Input_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("input", removeNodeFromPath());
     }
 
     @Override
-    public void enterOutput_stmt(YangParser.Output_stmtContext ctx) {
+    public void enterOutput_stmt(final YangParser.Output_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String output = "output";
         enterLog(output, output, line);
@@ -929,13 +931,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitOutput_stmt(YangParser.Output_stmtContext ctx) {
+    public void exitOutput_stmt(final YangParser.Output_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("output", removeNodeFromPath());
     }
 
     @Override
-    public void enterFeature_stmt(YangParser.Feature_stmtContext ctx) {
+    public void enterFeature_stmt(final YangParser.Feature_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String featureName = stringFromNode(ctx);
         enterLog("feature", featureName, line);
@@ -951,13 +953,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitFeature_stmt(YangParser.Feature_stmtContext ctx) {
+    public void exitFeature_stmt(final YangParser.Feature_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("feature", removeNodeFromPath());
     }
 
     @Override
-    public void enterDeviation_stmt(YangParser.Deviation_stmtContext ctx) {
+    public void enterDeviation_stmt(final YangParser.Deviation_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String targetPath = stringFromNode(ctx);
         enterLog("deviation", targetPath, line);
@@ -986,13 +988,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitDeviation_stmt(YangParser.Deviation_stmtContext ctx) {
+    public void exitDeviation_stmt(final YangParser.Deviation_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("deviation", "");
     }
 
     @Override
-    public void enterIdentity_stmt(YangParser.Identity_stmtContext ctx) {
+    public void enterIdentity_stmt(final YangParser.Identity_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String identityName = stringFromNode(ctx);
         enterLog("identity", identityName, line);
@@ -1017,7 +1019,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitIdentity_stmt(YangParser.Identity_stmtContext ctx) {
+    public void exitIdentity_stmt(final YangParser.Identity_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("identity", removeNodeFromPath());
     }
@@ -1026,19 +1028,19 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         return moduleBuilder;
     }
 
-    private void enterLog(String p1, String p2, int line) {
+    private void enterLog(final String p1, final String p2, final int line) {
         LOGGER.trace("entering {} {} ({})", p1, p2, line);
     }
 
-    private void exitLog(String p1, String p2) {
+    private void exitLog(final String p1, final String p2) {
         LOGGER.trace("exiting {} {}", p1, p2);
     }
 
-    private void exitLog(String p1, QName p2) {
+    private void exitLog(final String p1, final QName p2) {
         LOGGER.trace("exiting {} {}", p1, p2.getLocalName());
     }
 
-    private void setLog(String p1, String p2) {
+    private void setLog(final String p1, final String p2) {
         LOGGER.trace("setting {} {}", p1, p2);
     }
 
@@ -1074,7 +1076,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         addNodeToPath(qname);
         SchemaPath path = createActualSchemaPath(actualPath.peek());
 
-        UnknownSchemaNodeBuilder builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
+        UnknownSchemaNodeBuilderImpl builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
         builder.setNodeType(nodeType);
         builder.setNodeParameter(nodeParameter);
 

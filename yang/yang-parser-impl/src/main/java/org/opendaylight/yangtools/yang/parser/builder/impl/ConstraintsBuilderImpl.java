@@ -15,10 +15,11 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 
 import com.google.common.collect.ImmutableSet;
 
-public final class ConstraintsBuilder {
+public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
     private static final ConstraintDefinitionImpl EMPTY_CONSTRAINT = new ConstraintDefinitionImpl();
     private static final ConstraintDefinitionImpl EMPTY_MANDATORY_CONSTRAINT;
 
@@ -39,13 +40,13 @@ public final class ConstraintsBuilder {
     private Integer min;
     private Integer max;
 
-    public ConstraintsBuilder(final String moduleName, final int line) {
+    public ConstraintsBuilderImpl(final String moduleName, final int line) {
         this.moduleName = moduleName;
         this.line = line;
         mustDefinitions = new HashSet<MustDefinition>();
     }
 
-    ConstraintsBuilder(final ConstraintsBuilder b) {
+    ConstraintsBuilderImpl(final ConstraintsBuilder b) {
         this.moduleName = b.getModuleName();
         this.line = b.getLine();
         mustDefinitions = new HashSet<MustDefinition>(b.getMustDefinitions());
@@ -55,7 +56,7 @@ public final class ConstraintsBuilder {
         max = b.getMaxElements();
     }
 
-    ConstraintsBuilder(final String moduleName, final int line, final ConstraintDefinition base) {
+    ConstraintsBuilderImpl(final String moduleName, final int line, final ConstraintDefinition base) {
         this.moduleName = moduleName;
         this.line = line;
         whenStmt = base.getWhenCondition();
@@ -65,6 +66,10 @@ public final class ConstraintsBuilder {
         max = base.getMaxElements();
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#build()
+     */
+    @Override
     public ConstraintDefinition build() {
         if (instance != null) {
             return instance;
@@ -97,50 +102,98 @@ public final class ConstraintsBuilder {
         return instance;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#getModuleName()
+     */
+    @Override
     public String getModuleName() {
         return moduleName;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#getLine()
+     */
+    @Override
     public int getLine() {
         return line;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#getMinElements()
+     */
+    @Override
     public Integer getMinElements() {
         return min;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#setMinElements(java.lang.Integer)
+     */
+    @Override
     public void setMinElements(final Integer minElements) {
         this.min = minElements;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#getMaxElements()
+     */
+    @Override
     public Integer getMaxElements() {
         return max;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#setMaxElements(java.lang.Integer)
+     */
+    @Override
     public void setMaxElements(final Integer maxElements) {
         this.max = maxElements;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#getMustDefinitions()
+     */
+    @Override
     public Set<MustDefinition> getMustDefinitions() {
         return mustDefinitions;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#addMustDefinition(org.opendaylight.yangtools.yang.model.api.MustDefinition)
+     */
+    @Override
     public void addMustDefinition(final MustDefinition must) {
         mustDefinitions.add(must);
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#getWhenCondition()
+     */
+    @Override
     public String getWhenCondition() {
         return whenCondition;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#addWhenCondition(java.lang.String)
+     */
+    @Override
     public void addWhenCondition(final String whenCondition) {
         this.whenCondition = whenCondition;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#isMandatory()
+     */
+    @Override
     public boolean isMandatory() {
         return mandatory;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#setMandatory(boolean)
+     */
+    @Override
     public void setMandatory(final boolean mandatory) {
         this.mandatory = mandatory;
     }

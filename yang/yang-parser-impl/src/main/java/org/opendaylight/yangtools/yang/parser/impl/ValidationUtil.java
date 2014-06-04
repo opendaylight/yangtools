@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/eplv10.html
  */
-package org.opendaylight.yangtools.yang.validator;
+package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,7 +16,6 @@ import java.util.Set;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtContext;
-import org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 /**

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilderImpl;
 
 /**
  * Interface for builders of 'grouping' statement.
@@ -88,6 +88,6 @@ public interface GroupingBuilder extends DataNodeContainerBuilder, SchemaNodeBui
     * @param newParent Parent node, under which this grouping should be instantiated.
     * @return Set of new builders representing instantiation of this grouping.
     */
-    Set<UnknownSchemaNodeBuilder> instantiateUnknownNodes(Builder newParent);
+    Set<UnknownSchemaNodeBuilderImpl> instantiateUnknownNodes(Builder newParent);
 
 }

@@ -14,16 +14,18 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 
 import com.google.common.collect.ImmutableList;
 
-public final class ExtensionBuilder extends AbstractSchemaNodeBuilder {
+public final class ExtensionBuilderImpl extends AbstractSchemaNodeBuilder implements ExtensionBuilder {
     private ExtensionDefinitionImpl instance;
     private String argument;
     private boolean yin;
 
-    ExtensionBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
+    ExtensionBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
         this.schemaPath = path;
     }
@@ -47,11 +49,13 @@ public final class ExtensionBuilder extends AbstractSchemaNodeBuilder {
         return instance;
     }
 
-    public void setYinElement(boolean yin) {
+    @Override
+    public void setYinElement(final boolean yin) {
         this.yin = yin;
     }
 
-    public void setArgument(String argument) {
+    @Override
+    public void setArgument(final String argument) {
         this.argument = argument;
     }
 
@@ -70,7 +74,7 @@ public final class ExtensionBuilder extends AbstractSchemaNodeBuilder {
         private ImmutableList<UnknownSchemaNode> unknownNodes;
         private boolean yin;
 
-        private ExtensionDefinitionImpl(QName qname, SchemaPath path) {
+        private ExtensionDefinitionImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
             this.schemaPath = path;
         }
@@ -125,7 +129,7 @@ public final class ExtensionBuilder extends AbstractSchemaNodeBuilder {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
