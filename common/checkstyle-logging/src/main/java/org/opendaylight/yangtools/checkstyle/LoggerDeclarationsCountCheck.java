@@ -8,30 +8,37 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
+import static org.opendaylight.yangtools.checkstyle.CheckLoggingUtil.isAFieldVariable;
+
 import com.puppycrawl.tools.checkstyle.api.Check;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
-public class LoggerFactoryClassParameterCheck extends Check {
+public class LoggerDeclarationsCountCheck extends Check {
 
-    private static final String LOG_MESSAGE = "LoggerFactory.getLogger Class argument is incorrect.";
-    private static final String METHOD_NAME = "getLogger";
+    private static final String LOG_MESSAGE = "Logger might be declared only once.";
+    private String prevClassName = "";
 
     @Override
     public int[] getDefaultTokens() {
-        return new int[]{TokenTypes.METHOD_CALL};
+        return new int[]{TokenTypes.VARIABLE_DEF};
     }
 
     @Override
     public void visitToken(DetailAST aAST) {
-        final String methodName = CheckLoggingUtil.getMethodName(aAST);
-        if(methodName.equals(METHOD_NAME)) {
+        if (CheckLoggingUtil.isLoggerType(aAST) && isAFieldVariable(aAST)) {
             final String className = CheckLoggingUtil.getClassName(aAST);
-            final String parameter = aAST.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild().getFirstChild().getText();
-            if(!parameter.equals(className)) {
+            if(this.prevClassName.equals(className)) {
                 log(aAST.getLineNo(), LOG_MESSAGE);
             }
+            this.prevClassName = className;
         }
+    }
+
+    @Override
+    public void finishTree(DetailAST aRootAST) {
+        super.finishTree(aRootAST);
+        this.prevClassName = "";
     }
 
 }

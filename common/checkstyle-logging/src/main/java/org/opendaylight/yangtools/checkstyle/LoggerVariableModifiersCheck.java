@@ -23,7 +23,7 @@ public class LoggerVariableModifiersCheck extends Check {
 
     @Override
     public void visitToken(DetailAST aAST) {
-        if (CheckLoggingUtil.itsAFieldVariable(aAST) && CheckLoggingUtil.isLoggerType(aAST) && !hasPrivatStaticFinalModifier(aAST)) {
+        if (CheckLoggingUtil.isAFieldVariable(aAST) && CheckLoggingUtil.isLoggerType(aAST) && !hasPrivatStaticFinalModifier(aAST)) {
             log(aAST.getLineNo(), LOG_MESSAGE);
         }
     }

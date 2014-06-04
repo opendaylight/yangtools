@@ -56,10 +56,17 @@ public class CheckstyleTest {
     @Test
     public void testLoggerChecks() throws Exception {
         verify(CheckLoggingTestClass.class, "15: Logger must be declared as private static final.", "15: Logger name should be LOG.",
-                "16: Logger might be declared only once.", "16: Logger must be slf4j.", "22: Line contains printStacktrace", 
+                "17: Logger might be declared only once.", "16: Logger must be slf4j.", "22: Line contains printStacktrace",
                 "23: Line contains console output", "24: Line contains console output",
                 "15: LoggerFactory.getLogger Class argument is incorrect.", "20: Log message contains string concatenation.",
                 "26: Log message placeholders count is incorrect.", "32: Log message placeholders count is incorrect");
+    }
+
+    @Test
+    public void testCodingChecks() {
+        verify(CheckCodingStyleTestClass.class, "9: Line has Windows line delimiter.", "14: Wrong order for", "24:1: Line contains a tab character.",
+                "22: Line has trailing spaces.", "22: ctor def child at indentation level 16 not at correct indentation, 8", "17:8: Unused import",
+                "23: Line has trailing spaces.");
     }
 
     private void verify(final Class<?> testClass, final String... expectedMessages) {
