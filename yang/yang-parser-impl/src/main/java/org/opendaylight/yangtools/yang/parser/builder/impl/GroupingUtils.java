@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -20,10 +20,9 @@ import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class GroupingUtils {
 
@@ -68,7 +67,7 @@ public final class GroupingUtils {
         if (groupingPrefix.equals(module.getPrefix())) {
             dependentModule = module;
         } else {
-            dependentModule = ParserUtils.findModuleFromBuilders(modules, module, groupingPrefix, line);
+            dependentModule = BuilderUtils.findModuleFromBuilders(modules, module, groupingPrefix, line);
         }
 
         if (dependentModule == null) {
@@ -135,7 +134,7 @@ public final class GroupingUtils {
             groupingName = groupingString;
         }
 
-        Module dependentModule = ParserUtils.findModuleFromContext(context, module, groupingPrefix, line);
+        Module dependentModule = BuilderUtils.findModuleFromContext(context, module, groupingPrefix, line);
         return findGroupingDefinition(dependentModule.getGroupings(), groupingName);
     }
 
@@ -148,7 +147,7 @@ public final class GroupingUtils {
      *            name of grouping
      * @return grouping with given name if present in collection, null otherwise
      */
-    public static GroupingBuilder findGroupingBuilder(Set<GroupingBuilder> groupings, String name) {
+    public static GroupingBuilder findGroupingBuilder(final Set<GroupingBuilder> groupings, final String name) {
         for (GroupingBuilder grouping : groupings) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;
@@ -166,7 +165,7 @@ public final class GroupingUtils {
      *            name of grouping
      * @return grouping with given name if present in collection, null otherwise
      */
-    public static GroupingDefinition findGroupingDefinition(Set<GroupingDefinition> groupings, String name) {
+    public static GroupingDefinition findGroupingDefinition(final Set<GroupingDefinition> groupings, final String name) {
         for (GroupingDefinition grouping : groupings) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;
@@ -182,8 +181,8 @@ public final class GroupingUtils {
      * @param usesNode
      *            uses node containing refine statements
      */
-    public static void performRefine(UsesNodeBuilder usesNode) {
-        for (RefineHolder refine : usesNode.getRefines()) {
+    public static void performRefine(final UsesNodeBuilder usesNode) {
+        for (RefineBuilder refine : usesNode.getRefines()) {
             String refineTargetPath = refine.getName();
 
             String[] splitted = refineTargetPath.split("/");
@@ -208,12 +207,12 @@ public final class GroupingUtils {
 
     public static class UsesComparator implements Comparator<UsesNodeBuilder> {
         @Override
-        public int compare(UsesNodeBuilder o1, UsesNodeBuilder o2) {
+        public int compare(final UsesNodeBuilder o1, final UsesNodeBuilder o2) {
             return getElementPosition(o2) - getElementPosition(o1);
         }
     }
 
-    private static int getElementPosition(UsesNodeBuilder usesNode) {
+    private static int getElementPosition(final UsesNodeBuilder usesNode) {
         int i = 0;
         Builder parent = usesNode.getParent();
         while (!(parent instanceof ModuleBuilder)) {

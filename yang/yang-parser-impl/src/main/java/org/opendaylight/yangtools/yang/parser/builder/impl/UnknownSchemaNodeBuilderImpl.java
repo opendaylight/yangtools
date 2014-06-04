@@ -16,10 +16,12 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
+import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 
-public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
+public final class UnknownSchemaNodeBuilderImpl extends AbstractSchemaNodeBuilder implements UnknownSchemaNodeBuilder {
     private boolean isBuilt;
     private final UnknownSchemaNodeImpl instance;
     private QName nodeType;
@@ -28,13 +30,13 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private ExtensionDefinition extensionDefinition;
     private ExtensionBuilder extensionBuilder;
 
-    public UnknownSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
+    public UnknownSchemaNodeBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
         this.schemaPath = path;
         instance = new UnknownSchemaNodeImpl(qname, path);
     }
 
-    public UnknownSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final UnknownSchemaNode base) {
+    public UnknownSchemaNodeBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path, final UnknownSchemaNode base) {
         super(moduleName, line, base.getQName());
         this.schemaPath = path;
         instance = new UnknownSchemaNodeImpl(qname, path);
@@ -49,6 +51,9 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         instance.unknownNodes.addAll(base.getUnknownSchemaNodes());
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#getPath()
+     */
     @Override
     public SchemaPath getPath() {
         return instance.path;
@@ -66,7 +71,7 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -76,7 +81,7 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        UnknownSchemaNodeBuilder other = (UnknownSchemaNodeBuilder) obj;
+        UnknownSchemaNodeBuilderImpl other = (UnknownSchemaNodeBuilderImpl) obj;
         if (qname == null) {
             if (other.qname != null) {
                 return false;
@@ -108,6 +113,9 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#build()
+     */
     @Override
     public UnknownSchemaNode build() {
         if (!isBuilt) {
@@ -136,6 +144,9 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         return instance;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#getDescription()
+     */
     @Override
     public String getDescription() {
         return instance.description;
@@ -146,36 +157,60 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         instance.description = description;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#getReference()
+     */
     @Override
     public String getReference() {
         return instance.reference;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#setReference(java.lang.String)
+     */
     @Override
     public void setReference(final String reference) {
         instance.reference = reference;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#getStatus()
+     */
     @Override
     public Status getStatus() {
         return instance.status;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#setStatus(org.opendaylight.yangtools.yang.model.api.Status)
+     */
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         if (status != null) {
             instance.status = status;
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#isAddedByUses()
+     */
+    @Override
     public boolean isAddedByUses() {
         return instance.addedByUses;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#setAddedByUses(boolean)
+     */
+    @Override
     public void setAddedByUses(final boolean addedByUses) {
         instance.addedByUses = addedByUses;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#getNodeType()
+     */
+    @Override
     public QName getNodeType() {
         return nodeType;
     }
@@ -184,26 +219,50 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         this.nodeType = nodeType;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#getNodeParameter()
+     */
+    @Override
     public String getNodeParameter() {
         return nodeParameter;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#setNodeParameter(java.lang.String)
+     */
+    @Override
     public void setNodeParameter(final String nodeParameter) {
         this.nodeParameter = nodeParameter;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#getExtensionDefinition()
+     */
+    @Override
     public ExtensionDefinition getExtensionDefinition() {
         return extensionDefinition;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#setExtensionDefinition(org.opendaylight.yangtools.yang.model.api.ExtensionDefinition)
+     */
+    @Override
     public void setExtensionDefinition(final ExtensionDefinition extensionDefinition) {
         this.extensionDefinition = extensionDefinition;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#getExtensionBuilder()
+     */
+    @Override
     public ExtensionBuilder getExtensionBuilder() {
         return extensionBuilder;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IUnkownSchemaNodeBuilder#setExtensionBuilder(org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder)
+     */
+    @Override
     public void setExtensionBuilder(final ExtensionBuilder extension) {
         this.extensionBuilder = extension;
     }
@@ -327,7 +386,7 @@ public final class UnknownSchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }

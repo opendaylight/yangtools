@@ -40,10 +40,10 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.RefineHolder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.RefineUtils;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
-import org.opendaylight.yangtools.yang.parser.util.RefineUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
