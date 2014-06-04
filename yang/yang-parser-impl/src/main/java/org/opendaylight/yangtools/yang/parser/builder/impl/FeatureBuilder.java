@@ -14,8 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
@@ -23,7 +25,7 @@ public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
 
     FeatureBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
-        this.schemaPath = path;
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
     }
 
     @Override
@@ -101,7 +103,7 @@ public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
