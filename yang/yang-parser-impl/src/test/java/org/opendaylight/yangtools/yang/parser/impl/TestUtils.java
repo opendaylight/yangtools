@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,6 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -37,8 +37,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
 import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
+
+import com.google.common.io.ByteSource;
 
 final class TestUtils {
 
@@ -62,7 +64,7 @@ final class TestUtils {
     }
 
     public static Set<Module> loadModules(final List<InputStream> input) throws IOException, YangSyntaxErrorException {
-        Collection<ByteSource> sources = ParserUtils.streamsToByteSources(input);
+        Collection<ByteSource> sources = BuilderUtils.streamsToByteSources(input);
         final YangContextParser parser = new YangParserImpl();
         SchemaContext ctx = parser.parseSources(sources);
         return ctx.getModules();
@@ -106,7 +108,7 @@ final class TestUtils {
 
     public static Set<Module> loadModulesWithContext(final Collection<InputStream> input, final SchemaContext context)
             throws IOException, YangSyntaxErrorException {
-        Collection<ByteSource> sources = ParserUtils.streamsToByteSources(input);
+        Collection<ByteSource> sources = BuilderUtils.streamsToByteSources(input);
         final YangContextParser parser = new YangParserImpl();
         SchemaContext ctx = parser.parseSources(sources, context);
         final Set<Module> modules = ctx.getModules();

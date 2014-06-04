@@ -19,9 +19,12 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Builder for YANG identityref type.
@@ -37,7 +40,8 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
             final SchemaPath schemaPath) {
         super(moduleName, line, BaseTypes.constructQName(NAME));
         this.baseString = baseString;
-        this.schemaPath = schemaPath;
+        this.schemaPath = Preconditions.checkNotNull(schemaPath, "Schema Path must not be null");
+
     }
 
     @Override

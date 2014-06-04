@@ -33,17 +33,17 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.RefineUtils;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
-import org.opendaylight.yangtools.yang.parser.util.RefineUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -91,23 +91,23 @@ public class RefineTest {
         assertEquals("Incorrect number of test files.", 1, testModels.size());
 
         Set<UsesNodeBuilder> usesNodeBuilders = getModuleBuilder().getUsesNodeBuilders();
-        List<RefineHolder> refineHolders = null;
+        List<RefineBuilder> RefineBuilders = null;
         Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders = null;
         for (UsesNodeBuilder usesNodeBuilder : usesNodeBuilders) {
             if (usesNodeBuilder.getGroupingPathAsString().equals("grp")) {
-                refineHolders = usesNodeBuilder.getRefines();
+                RefineBuilders = usesNodeBuilder.getRefines();
                 dataSchemaNodeBuilders = usesNodeBuilder.getParent().getChildNodeBuilders();
                 break;
             }
         }
 
-        assertNotNull("List of refine holders wasn't initialized.", refineHolders);
-        assertEquals("Incorrect number of refine holders", 4, refineHolders.size());
+        assertNotNull("List of refine holders wasn't initialized.", RefineBuilders);
+        assertEquals("Incorrect number of refine holders", 4, RefineBuilders.size());
 
-        checkLflstRefineHolderAndSchemaNodeBuilder("lflst", refineHolders, dataSchemaNodeBuilders);
-        checkChcRefineHolderAndSchemaNodeBuilder("chc", refineHolders, dataSchemaNodeBuilders);
-        checkChc2RefineHolderAndSchemaNodeBuilder("chc2", refineHolders, dataSchemaNodeBuilders);
-        checkAnyXmlRefineHolderAndSchemaNodeBuilder("data", refineHolders, dataSchemaNodeBuilders);
+        checkLflstRefineBuilderAndSchemaNodeBuilder("lflst", RefineBuilders, dataSchemaNodeBuilders);
+        checkChcRefineBuilderAndSchemaNodeBuilder("chc", RefineBuilders, dataSchemaNodeBuilders);
+        checkChc2RefineBuilderAndSchemaNodeBuilder("chc2", RefineBuilders, dataSchemaNodeBuilders);
+        checkAnyXmlRefineBuilderAndSchemaNodeBuilder("data", RefineBuilders, dataSchemaNodeBuilders);
     }
 
     private ModuleBuilder getModuleBuilder() {
@@ -152,9 +152,9 @@ public class RefineTest {
         return moduleBuilder;
     }
 
-    private void checkAnyXmlRefineHolderAndSchemaNodeBuilder(final String string, final List<RefineHolder> refineHolders,
+    private void checkAnyXmlRefineBuilderAndSchemaNodeBuilder(final String string, final List<RefineBuilder> RefineBuilders,
             final Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
-        RefineHolder refHolderData = getRefineHolder("data", refineHolders);
+        RefineBuilder refHolderData = getRefineBuilder("data", RefineBuilders);
 
         QName qname = createQname();
         DataSchemaNodeBuilder builderData = new AnyXmlBuilder("module", 4, qname, createSchemaPath(qname));
@@ -173,9 +173,9 @@ public class RefineTest {
 
     }
 
-    private void checkChc2RefineHolderAndSchemaNodeBuilder(final String nodeName, final List<RefineHolder> refineHolders,
+    private void checkChc2RefineBuilderAndSchemaNodeBuilder(final String nodeName, final List<RefineBuilder> RefineBuilders,
             final Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
-        RefineHolder refHolderChc2 = getRefineHolder("chc2", refineHolders);
+        RefineBuilder refHolderChc2 = getRefineBuilder("chc2", RefineBuilders);
 
         QName qname = createQname();
         List<QName> path = Lists.newArrayList(qname);
@@ -189,9 +189,9 @@ public class RefineTest {
         assertFalse("'chc2' has incorrect value for 'mandatory'", conDefChc2.isMandatory());
     }
 
-    private void checkChcRefineHolderAndSchemaNodeBuilder(final String nodeName, final List<RefineHolder> refineHolders,
+    private void checkChcRefineBuilderAndSchemaNodeBuilder(final String nodeName, final List<RefineBuilder> RefineBuilders,
             final Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
-        RefineHolder refHolderChc = getRefineHolder("chc", refineHolders);
+        RefineBuilder refHolderChc = getRefineBuilder("chc", RefineBuilders);
 
         QName qname = createQname();
         List<QName> path = Lists.newArrayList(qname);
@@ -212,9 +212,9 @@ public class RefineTest {
         findUnknownNode(choiceBuilder, unknownNodeChcValue, unknownNodeChcName);
     }
 
-    private void checkLflstRefineHolderAndSchemaNodeBuilder(final String nodeName, final List<RefineHolder> refineHolders,
+    private void checkLflstRefineBuilderAndSchemaNodeBuilder(final String nodeName, final List<RefineBuilder> RefineBuilders,
             final Set<DataSchemaNodeBuilder> dataSchemaNodeBuilders) {
-        RefineHolder refHolderLflst = getRefineHolder(nodeName, refineHolders);
+        RefineBuilder refHolderLflst = getRefineBuilder(nodeName, RefineBuilders);
 
         QName qname = createQname();
         DataSchemaNodeBuilder builderLflst = new LeafListSchemaNodeBuilder("module", 4, qname, createSchemaPath(qname));
@@ -245,10 +245,10 @@ public class RefineTest {
 
     }
 
-    private RefineHolder getRefineHolder(final String refHolderName, final List<RefineHolder> refineHolders) {
-        for (RefineHolder refineHolder : refineHolders) {
-            if (refineHolder.getName().equals(refHolderName)) {
-                return refineHolder;
+    private RefineBuilder getRefineBuilder(final String refHolderName, final List<RefineBuilder> RefineBuilders) {
+        for (RefineBuilder RefineBuilder : RefineBuilders) {
+            if (RefineBuilder.getTargetPathString().equals(refHolderName)) {
+                return RefineBuilder;
             }
         }
         return null;

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
 /**
  * Interface for builders of 'grouping' statement.

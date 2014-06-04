@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.yang.parser.util;
 /**
  * Marker object representing special 'min' or 'max' values in YANG.
  */
-final class UnknownBoundaryNumber extends Number {
+public final class UnknownBoundaryNumber extends Number {
     private static final long serialVersionUID = 1464861684686434869L;
 
     private final String value;
 
+    @Deprecated
+    public
     UnknownBoundaryNumber(final String value) {
         this.value = value;
     }

@@ -6,8 +6,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.getArgumentString;
-import static org.opendaylight.yangtools.yang.parser.util.ParserListenerUtils.getFirstContext;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getArgumentString;
+import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getFirstContext;
 
 import java.io.InputStream;
 import java.util.Date;

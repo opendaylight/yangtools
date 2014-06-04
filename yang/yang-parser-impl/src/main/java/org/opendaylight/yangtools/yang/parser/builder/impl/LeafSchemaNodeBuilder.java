@@ -16,8 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.base.Preconditions;
@@ -40,14 +42,14 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
 
     public LeafSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath schemaPath) {
         super(moduleName, line, qname);
-        this.schemaPath = schemaPath;
-        constraints = new ConstraintsBuilder(moduleName, line);
+        this.schemaPath = Preconditions.checkNotNull(schemaPath, "Schema Path must not be null");
+        constraints = new ConstraintsBuilderImpl(moduleName, line);
     }
 
-    public LeafSchemaNodeBuilder(String moduleName, int line, QName qname, SchemaPath path, LeafSchemaNode base) {
+    public LeafSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final LeafSchemaNode base) {
         super(moduleName, line, qname);
-        this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
+        constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
         description = base.getDescription();
         reference = base.getReference();
@@ -76,7 +78,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
-        instance.constraintsDef = constraints.build();
+        instance.constraintsDef = constraints.toInstance();
         instance.defaultStr = defaultStr;
         instance.unitsStr = unitsStr;
 
@@ -106,7 +108,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     }
 
     @Override
-    public void setPath(SchemaPath path) {
+    public void setPath(final SchemaPath path) {
         this.schemaPath = path;
     }
 
@@ -141,7 +143,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
@@ -179,7 +181,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         return defaultStr;
     }
 
-    public void setDefaultStr(String defaultStr) {
+    public void setDefaultStr(final String defaultStr) {
         this.defaultStr = defaultStr;
     }
 
@@ -187,7 +189,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         return unitsStr;
     }
 
-    public void setUnits(String unitsStr) {
+    public void setUnits(final String unitsStr) {
         this.unitsStr = unitsStr;
     }
 
@@ -200,7 +202,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -328,7 +330,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
