@@ -15,6 +15,7 @@
     <groupId>org.opendaylight.yangtools</groupId>
     <version>0.6.2-SNAPSHOT</version>
     <packaging>pom</packaging>
+        <maven.checkstyle.version>2.12</maven.checkstyle.version>
 
     <scm>
         <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
@@ -34,4 +35,32 @@
         <!-- module>third-party</module -->
     </modules>
 
+                <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-checkstyle-plugin</artifactId>
+                 <version>${maven.checkstyle.version}</version>
+                 <configuration>
+                   <failOnViolation>false</failOnViolation>
+                   <configLocation>checkstyle-logging.xml</configLocation>
+                   <consoleOutput>true</consoleOutput>
+                   <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                   <sourceDirectory>${project.basedir}</sourceDirectory>
+                   <includes>**\/*.java,**\/*.xml,**\/*.ini,**\/*.sh,**\/*.bat,**\/*.yang</includes>
+                   <excludes>**\/target\/,**\/bin\/,**\/target-ide\/,**\/src/main/yang-gen-config\/,**\/src/main/yang-gen-sal\/,**\/src/main/xtend-gen\/</excludes>
+                 </configuration>
+                 <dependencies>
+                   <dependency>
+                     <groupId>org.opendaylight.yangtools</groupId>
+                     <artifactId>checkstyle-logging</artifactId>
+                     <version>${project.version}</version>
+                   </dependency>
+                 </dependencies>
+                 <executions>
+                   <execution>
+                     <goals>
+                       <goal>check</goal>
+                     </goals>
+                   </execution>
+                 </executions>
+               </plugin>
 </project>
