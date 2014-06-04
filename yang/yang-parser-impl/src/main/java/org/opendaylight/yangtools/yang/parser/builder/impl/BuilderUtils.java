@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -53,20 +53,9 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.NotificationBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,15 +66,15 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.io.ByteSource;
 
-public final class ParserUtils {
+public final class BuilderUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ParserUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BuilderUtils.class);
     private static final Splitter SLASH_SPLITTER = Splitter.on('/');
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final String INPUT = "input";
     private static final String OUTPUT = "output";
 
-    private ParserUtils() {
+    private BuilderUtils() {
     }
 
     public static Collection<ByteSource> streamsToByteSources(final Collection<InputStream> streams) throws IOException {
@@ -255,7 +244,7 @@ public final class ParserUtils {
         }
         TreeMap<Date, Module> modulesByRevision = new TreeMap<>();
 
-        ModuleImport dependentModuleImport = ParserUtils.getModuleImport(currentModule, prefix);
+        ModuleImport dependentModuleImport = BuilderUtils.getModuleImport(currentModule, prefix);
         if (dependentModuleImport == null) {
             throw new YangParseException(currentModule.getName(), line, "No import found with prefix '" + prefix + "'.");
         }
@@ -819,16 +808,16 @@ public final class ParserUtils {
         return result;
     }
 
-    public static List<UnknownSchemaNodeBuilder> wrapUnknownNodes(final String moduleName, final int line,
+    public static List<UnknownSchemaNodeBuilderImpl> wrapUnknownNodes(final String moduleName, final int line,
             final List<UnknownSchemaNode> nodes, final SchemaPath parentPath, final URI ns, final Date rev,
             final String pref) {
-        List<UnknownSchemaNodeBuilder> result = new ArrayList<>();
+        List<UnknownSchemaNodeBuilderImpl> result = new ArrayList<>();
         for (UnknownSchemaNode node : nodes) {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
             List<QName> path = new ArrayList<>(parentPath.getPath());
             path.add(qname);
             SchemaPath schemaPath = SchemaPath.create(path, parentPath.isAbsolute());
-            result.add(new UnknownSchemaNodeBuilder(moduleName, line, qname, schemaPath, node));
+            result.add(new UnknownSchemaNodeBuilderImpl(moduleName, line, qname, schemaPath, node));
         }
         return result;
     }

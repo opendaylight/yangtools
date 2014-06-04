@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromBuilders;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromContext;
 
 import java.util.*;
 
@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.*;
 import org.opendaylight.yangtools.yang.parser.builder.impl.*;
+import org.opendaylight.yangtools.yang.parser.util.TypeConstraints;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 /**
  * Utility class which contains helper methods for dealing with type operations.
@@ -416,14 +418,14 @@ public final class TypeUtils {
         } else {
             QName qname = type.getQName();
             if (type instanceof UnknownType) {
-                ModuleBuilder dependentModuleBuilder = ParserUtils.findModuleFromBuilders(modules, builder,
+                ModuleBuilder dependentModuleBuilder = BuilderUtils.findModuleFromBuilders(modules, builder,
                         qname.getPrefix(), nodeToResolve.getLine());
                 if (dependentModuleBuilder == null) {
                     if (context == null) {
                         throw new YangParseException(builder.getName(), nodeToResolve.getLine(),
                                 "Failed to resolved type constraints.");
                     }
-                    Module dm = ParserUtils.findModuleFromContext(context, builder, qname.getPrefix(),
+                    Module dm = BuilderUtils.findModuleFromContext(context, builder, qname.getPrefix(),
                             nodeToResolve.getLine());
                     TypeDefinition<?> t = findTypeByName(dm.getTypeDefinitions(), qname.getLocalName());
                     return mergeConstraints(t, constraints);
@@ -438,7 +440,7 @@ public final class TypeUtils {
 
                 TypeDefinition<?> base = ((ExtendedType) type).getBaseType();
                 if (base instanceof UnknownType) {
-                    ModuleBuilder dependentModule = ParserUtils.findModuleFromBuilders(modules, builder, base
+                    ModuleBuilder dependentModule = BuilderUtils.findModuleFromBuilders(modules, builder, base
                             .getQName().getPrefix(), nodeToResolve.getLine());
                     TypeDefinitionBuilder tdb = findTypeDefinitionBuilder(nodeToResolve, dependentModule, base
                             .getQName().getLocalName(), builder.getName(), nodeToResolve.getLine());

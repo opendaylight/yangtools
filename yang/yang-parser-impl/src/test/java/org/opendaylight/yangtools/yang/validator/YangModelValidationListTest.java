@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Mandatory_stmtCont
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Ordered_by_argContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Type_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Unique_stmtContext;
+import org.opendaylight.yangtools.yang.parser.impl.YangModelBasicValidationListener;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 public class YangModelValidationListTest {

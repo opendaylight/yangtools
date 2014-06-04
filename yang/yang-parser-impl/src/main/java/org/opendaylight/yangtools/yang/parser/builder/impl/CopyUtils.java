@@ -5,11 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -17,25 +18,12 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuil
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.AugmentationSchemaBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.LeafSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ListSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UsesNodeBuilderImpl;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class CopyUtils {
 
@@ -424,12 +412,12 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static UnknownSchemaNodeBuilder copy(final UnknownSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
+    public static UnknownSchemaNodeBuilderImpl copy(final UnknownSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        UnknownSchemaNodeBuilder c = new UnknownSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
+        UnknownSchemaNodeBuilderImpl c = new UnknownSchemaNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
                 newQName, newSchemaPath);
 
         c.setNodeType(old.getNodeType());
@@ -463,7 +451,7 @@ public final class CopyUtils {
             }
         } else if (newParent instanceof AugmentationSchemaBuilder) {
             AugmentationSchemaBuilder augment = (AugmentationSchemaBuilder) newParent;
-            ModuleBuilder parent = ParserUtils.getParentModule(newParent);
+            ModuleBuilder parent = BuilderUtils.getParentModule(newParent);
             if (updateQName) {
                 newQName = new QName(parent.getNamespace(), parent.getRevision(), parent.getPrefix(), old.getQName()
                         .getLocalName());

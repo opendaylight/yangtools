@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/eplv10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -98,6 +98,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.BinaryType;
+import org.opendaylight.yangtools.yang.model.util.BitImpl;
 import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
@@ -108,6 +109,7 @@ import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.Int64;
 import org.opendaylight.yangtools.yang.model.util.Int8;
 import org.opendaylight.yangtools.yang.model.util.Leafref;
+import org.opendaylight.yangtools.yang.model.util.MustDefinitionImpl;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.Uint16;
@@ -117,11 +119,16 @@ import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.RefineHolderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.util.TypeConstraints;
+import org.opendaylight.yangtools.yang.parser.util.UnknownBoundaryNumber;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1519,9 +1526,9 @@ public final class ParserListenerUtils {
      *            name of current module
      * @return RefineHolder object representing this refine statement
      */
-    public static RefineHolder parseRefine(final Refine_stmtContext refineCtx, final String moduleName) {
+    public static RefineHolderImpl parseRefine(final Refine_stmtContext refineCtx, final String moduleName) {
         final String refineTarget = stringFromNode(refineCtx);
-        final RefineHolder refine = new RefineHolder(moduleName, refineCtx.getStart().getLine(), refineTarget);
+        final RefineHolderImpl refine = new RefineHolderImpl(moduleName, refineCtx.getStart().getLine(), refineTarget);
         for (int i = 0; i < refineCtx.getChildCount(); i++) {
             ParseTree refinePom = refineCtx.getChild(i);
             if (refinePom instanceof Refine_pomContext) {
@@ -1548,7 +1555,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static void parseRefineDefault(final RefineHolder refine, final ParseTree refineStmt) {
+    private static void parseRefineDefault(final RefineHolderImpl refine, final ParseTree refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Description_stmtContext) {
@@ -1564,7 +1571,7 @@ public final class ParserListenerUtils {
         }
     }
 
-    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_leaf_stmtsContext refineStmt) {
+    private static RefineBuilder parseRefine(final RefineHolderImpl refine, final Refine_leaf_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Default_stmtContext) {
@@ -1587,7 +1594,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_container_stmtsContext refineStmt) {
+    private static RefineBuilder parseRefine(final RefineBuilder refine, final Refine_container_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Must_stmtContext) {
@@ -1600,7 +1607,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_list_stmtsContext refineStmt) {
+    private static RefineBuilder parseRefine(final RefineHolderImpl refine, final Refine_list_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Must_stmtContext) {
@@ -1617,7 +1624,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_leaf_list_stmtsContext refineStmt) {
+    private static RefineBuilder parseRefine(final RefineHolderImpl refine, final Refine_leaf_list_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Must_stmtContext) {
@@ -1634,7 +1641,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_choice_stmtsContext refineStmt) {
+    private static RefineBuilder parseRefine(final RefineHolderImpl refine, final Refine_choice_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Default_stmtContext) {
@@ -1653,7 +1660,7 @@ public final class ParserListenerUtils {
         return refine;
     }
 
-    private static RefineHolder parseRefine(final RefineHolder refine, final Refine_anyxml_stmtsContext refineStmt) {
+    private static RefineBuilder parseRefine(final RefineBuilder refine, final Refine_anyxml_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
             if (refineArg instanceof Must_stmtContext) {

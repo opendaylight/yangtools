@@ -7,23 +7,23 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.fillAugmentTarget;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findBaseIdentity;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromBuilders;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findModuleFromContext;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNode;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.findSchemaNodeInModule;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.processAugmentation;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.setNodeAddedByUses;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNode;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapChildNodes;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapGroupings;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapTypedefs;
-import static org.opendaylight.yangtools.yang.parser.util.ParserUtils.wrapUnknownNodes;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveType;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnion;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeUnionWithContext;
-import static org.opendaylight.yangtools.yang.parser.util.TypeUtils.resolveTypeWithContext;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.fillAugmentTarget;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findBaseIdentity;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromBuilders;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromContext;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNode;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNodeInModule;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.processAugmentation;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.setNodeAddedByUses;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapChildNode;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapChildNodes;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapGroupings;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapTypedefs;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapUnknownNodes;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveType;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnion;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnionWithContext;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeWithContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,31 +67,29 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuil
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ExtensionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.util.GroupingSort;
-import org.opendaylight.yangtools.yang.parser.util.GroupingUtils;
-import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
+import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilderImpl;
+import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-import org.opendaylight.yangtools.yang.validator.YangModelBasicValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +124,7 @@ public final class YangParserImpl implements YangContextParser {
         final String[] fileList = checkNotNull(directory.list(), directory + " not found or is not a directory");
 
         Map<ByteSource, File> sourceToFile = new LinkedHashMap<>();
-        ByteSource mainFileSource = ParserUtils.fileToByteSource(yangFile);
+        ByteSource mainFileSource = BuilderUtils.fileToByteSource(yangFile);
         sourceToFile.put(mainFileSource, yangFile);
 
         for (String fileName : fileList) {
@@ -135,7 +133,7 @@ public final class YangParserImpl implements YangContextParser {
             }
             File dependency = new File(directory, fileName);
             if (dependency.isFile()) {
-                sourceToFile.put(ParserUtils.fileToByteSource(dependency), dependency);
+                sourceToFile.put(BuilderUtils.fileToByteSource(dependency), dependency);
             }
         }
 
@@ -187,7 +185,7 @@ public final class YangParserImpl implements YangContextParser {
             return resolveSchemaContext(Collections.<Module> emptySet());
         }
 
-        Collection<ByteSource> sources = ParserUtils.filesToByteSources(yangFiles);
+        Collection<ByteSource> sources = BuilderUtils.filesToByteSources(yangFiles);
         SchemaContext result = parseSources(sources, context);
         return result;
     }
@@ -196,7 +194,7 @@ public final class YangParserImpl implements YangContextParser {
     @Deprecated
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams) {
         try {
-            Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
+            Collection<ByteSource> sources = BuilderUtils.streamsToByteSources(yangModelStreams);
             return parseSources(sources).getModules();
         } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
@@ -216,7 +214,7 @@ public final class YangParserImpl implements YangContextParser {
     @Deprecated
     public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, final SchemaContext context) {
         try {
-            Collection<ByteSource> sources = ParserUtils.streamsToByteSources(yangModelStreams);
+            Collection<ByteSource> sources = BuilderUtils.streamsToByteSources(yangModelStreams);
             return parseSources(sources, context).getModules();
         } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
@@ -325,7 +323,7 @@ public final class YangParserImpl implements YangContextParser {
         Map<ByteSource, ModuleBuilder> sourceToBuilder = resolveSources(sources);
         // sort and check for duplicates
         List<ModuleBuilder> sorted = ModuleDependencySort.sort(sourceToBuilder.values());
-        ParserUtils.setSourceToBuilder(sourceToBuilder);
+        BuilderUtils.setSourceToBuilder(sourceToBuilder);
         Map<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
         Map<ModuleBuilder, Module> builderToModule = build(modules);
         Map<ModuleBuilder, ByteSource> builderToSource = HashBiMap.create(sourceToBuilder).inverse();
@@ -385,7 +383,7 @@ public final class YangParserImpl implements YangContextParser {
             sourceToBuilder.put(source, moduleBuilder);
         }
 
-        ParserUtils.setSourceToBuilder(sourceToBuilder);
+        BuilderUtils.setSourceToBuilder(sourceToBuilder);
         return sourceToBuilder;
     }
 
@@ -825,7 +823,7 @@ public final class YangParserImpl implements YangContextParser {
      */
     private void setCorrectAugmentTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final AugmentationSchemaBuilder augment, final SchemaContext context) {
-        ModuleBuilder module = ParserUtils.getParentModule(augment);
+        ModuleBuilder module = BuilderUtils.getParentModule(augment);
         SchemaPath oldSchemaPath = augment.getTargetPath();
         List<QName> oldPath = oldSchemaPath.getPath();
         List<QName> newPath = new ArrayList<>();
@@ -840,7 +838,7 @@ public final class YangParserImpl implements YangContextParser {
             String prefix;
             QName baseQName = usesParent.getQName();
             if (baseQName == null) {
-                ModuleBuilder m = ParserUtils.getParentModule(usesParent);
+                ModuleBuilder m = BuilderUtils.getParentModule(usesParent);
                 ns = m.getNamespace();
                 revision = m.getRevision();
                 prefix = m.getPrefix();
@@ -859,10 +857,10 @@ public final class YangParserImpl implements YangContextParser {
                 Date rev = module.getRevision();
                 String localPrefix = qn.getPrefix();
                 if (localPrefix != null && !("".equals(localPrefix))) {
-                    ModuleBuilder currentModule = ParserUtils.findModuleFromBuilders(modules, module, localPrefix,
+                    ModuleBuilder currentModule = BuilderUtils.findModuleFromBuilders(modules, module, localPrefix,
                             augment.getLine());
                     if (currentModule == null) {
-                        Module m = ParserUtils.findModuleFromContext(context, module, localPrefix, augment.getLine());
+                        Module m = BuilderUtils.findModuleFromContext(context, module, localPrefix, augment.getLine());
                         if (m == null) {
                             throw new YangParseException(module.getName(), augment.getLine(), "Module with prefix "
                                     + localPrefix + " not found.");
@@ -919,7 +917,7 @@ public final class YangParserImpl implements YangContextParser {
     private void checkAugmentMandatoryNodes(final Collection<AugmentationSchemaBuilder> augments) {
         for (AugmentationSchemaBuilder augment : augments) {
             String augmentPrefix = augment.getTargetPath().getPathFromRoot().iterator().next().getPrefix();
-            ModuleBuilder module = ParserUtils.getParentModule(augment);
+            ModuleBuilder module = BuilderUtils.getParentModule(augment);
             String modulePrefix = module.getPrefix();
 
             if (augmentPrefix == null || augmentPrefix.isEmpty() || augmentPrefix.equals(modulePrefix)) {
@@ -1195,10 +1193,10 @@ public final class YangParserImpl implements YangContextParser {
                             String name = splittedBase[1];
                             ModuleBuilder dependentModule = findTargetModule(prefix, module, modules, context, line);
                             if (dependentModule != null) {
-                                result = ParserUtils.findIdentity(dependentModule.getAddedIdentities(), name);
+                                result = BuilderUtils.findIdentity(dependentModule.getAddedIdentities(), name);
                             }
                         } else {
-                            result = ParserUtils.findIdentity(module.getAddedIdentities(), baseIdentityName);
+                            result = BuilderUtils.findIdentity(module.getAddedIdentities(), baseIdentityName);
                         }
                         identity.setBaseIdentity(result);
                     }
@@ -1225,7 +1223,7 @@ public final class YangParserImpl implements YangContextParser {
             }
         }
         for (UsesNodeBuilder usesNode : allUses) {
-            ModuleBuilder module = ParserUtils.getParentModule(usesNode);
+            ModuleBuilder module = BuilderUtils.getParentModule(usesNode);
             final GroupingBuilder targetGroupingBuilder = GroupingUtils.getTargetGroupingFromModules(usesNode, modules,
                     module);
             if (targetGroupingBuilder == null) {
@@ -1307,7 +1305,7 @@ public final class YangParserImpl implements YangContextParser {
             final SchemaContext context) {
         if (!usesNode.isResolved()) {
             DataNodeContainerBuilder parent = usesNode.getParent();
-            ModuleBuilder module = ParserUtils.getParentModule(parent);
+            ModuleBuilder module = BuilderUtils.getParentModule(parent);
             GroupingBuilder target = GroupingUtils.getTargetGroupingFromModules(usesNode, modules, module);
             if (target == null) {
                 resolveUsesWithContext(usesNode);
@@ -1342,7 +1340,7 @@ public final class YangParserImpl implements YangContextParser {
     private void resolveUsesWithContext(final UsesNodeBuilder usesNode) {
         final int line = usesNode.getLine();
         DataNodeContainerBuilder parent = usesNode.getParent();
-        ModuleBuilder module = ParserUtils.getParentModule(parent);
+        ModuleBuilder module = BuilderUtils.getParentModule(parent);
         SchemaPath parentPath;
         URI ns = null;
         Date rev = null;
@@ -1385,7 +1383,7 @@ public final class YangParserImpl implements YangContextParser {
             setNodeAddedByUses(gb);
         }
 
-        List<UnknownSchemaNodeBuilder> unknownNodes = wrapUnknownNodes(module.getModuleName(), line,
+        List<UnknownSchemaNodeBuilderImpl> unknownNodes = wrapUnknownNodes(module.getModuleName(), line,
                 gd.getUnknownSchemaNodes(), parentPath, ns, rev, pref);
         parent.getUnknownNodes().addAll(unknownNodes);
         for (UnknownSchemaNodeBuilder un : unknownNodes) {
