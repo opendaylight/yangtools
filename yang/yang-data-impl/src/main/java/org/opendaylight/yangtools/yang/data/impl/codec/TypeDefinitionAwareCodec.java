@@ -351,7 +351,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String deserialize(String stringRepresentation) {
-            return stringRepresentation;
+            return stringRepresentation == null ? "" :stringRepresentation;
         }
 
         @Override
