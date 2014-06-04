@@ -7,15 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
 
 /**
- * Interface for builders of 'augment' statement.
+ * Builder for {@link AugmentationSchema}, which represents 'augment' statement.
  */
 public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
 
+    /**
+     * Returns when condition
+     *
+     *
+     * @return
+     */
     String getWhenCondition();
 
+    /**
+     * Adds when condition
+     *
+     * @param whenCondition
+     */
     void addWhenCondition(String whenCondition);
 
     String getDescription();
@@ -63,6 +76,7 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder {
      */
     void setTargetNodeSchemaPath(SchemaPath path);
 
+    @Override
     AugmentationSchema build();
 
     /**

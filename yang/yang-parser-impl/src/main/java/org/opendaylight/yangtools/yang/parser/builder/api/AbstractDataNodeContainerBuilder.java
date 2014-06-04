@@ -73,7 +73,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         for (DataSchemaNodeBuilder addedChildNode : addedChildNodes) {
             if (addedChildNode.getQName().equals(childName)) {
                 throw new YangParseException(child.getModuleName(), child.getLine(), "Can not add '" + child + "' to '"
-                        + this + "' in module '" + moduleName + "': node with same name already declared at line "
+                        + this + "' in module '" + getModuleName() + "': node with same name already declared at line "
                         + addedChildNode.getLine());
             }
         }
@@ -90,8 +90,8 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         QName childName = child.getQName();
         for (DataSchemaNode childNode : childNodes) {
             if (childNode.getQName().equals(childName)) {
-                throw new YangParseException(moduleName, line, "Can not add '" + child + "' to '" + this
-                        + "' in module '" + moduleName + "': node with same name already declared");
+                throw new YangParseException(getModuleName(), getLine(), "Can not add '" + child + "' to '" + this
+                        + "' in module '" + getModuleName() + "': node with same name already declared");
             }
         }
         childNodes.add(child);
@@ -116,7 +116,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         for (GroupingBuilder addedGrouping : addedGroupings) {
             if (addedGrouping.getQName().equals(groupingName)) {
                 throw new YangParseException(grouping.getModuleName(), grouping.getLine(), "Can not add '" + grouping
-                        + "': grouping with same name already declared in module '" + moduleName + "' at line "
+                        + "': grouping with same name already declared in module '" + getModuleName() + "' at line "
                         + addedGrouping.getLine());
             }
         }

@@ -20,12 +20,29 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  */
 public interface TypeDefinitionBuilder extends TypeAwareBuilder, SchemaNodeBuilder, GroupingMember {
 
+    /**
+     * Sets QName for resulting type definition.
+     *
+     * @param qname
+     */
     void setQName(QName qname);
 
+    @Override
     TypeDefinition<?> build();
 
+    /**
+     *
+     * Returns range restrictions of resulting type definition.
+     *
+     * @return range restrictions of resulting type definition.
+     */
     List<RangeConstraint> getRanges();
 
+    /**
+     * Set Range restrictions for resulting type definition.
+     *
+     * @param ranges Ranges of resulting type definition.
+     */
     void setRanges(List<RangeConstraint> ranges);
 
     List<LengthConstraint> getLengths();
