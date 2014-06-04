@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
 
 /**
@@ -17,21 +16,18 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ConstraintsBuilder;
  */
 public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember {
 
-    /**
-     * Build DataSchemaNode object from this builder.
-     */
-    DataSchemaNode build();
 
-    void setPath(SchemaPath path);
 
     /**
+     *
+     * Returns true if product of this builder is added by augmentation.
      *
      * @return true, if this node is added by augmentation, false otherwise
      */
     boolean isAugmenting();
 
     /**
-     * Set if this node is added by augmentation.
+     * Set if the product of the builder node is introduced by augmentation.
      *
      * @param augmenting
      */
@@ -45,9 +41,10 @@ public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember
     boolean isConfiguration();
 
     /**
-     * Set config statement.
+     * Set config statement to the product.
      *
-     * @param config
+     *
+     * @param config true if config true was set, false if config false was set.
      */
     void setConfiguration(boolean config);
 
@@ -57,5 +54,11 @@ public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember
      * @return constraints of this builder
      */
     ConstraintsBuilder getConstraints();
+
+    /**
+     * Build DataSchemaNode object from this builder.
+     */
+    @Override
+    DataSchemaNode build();
 
 }

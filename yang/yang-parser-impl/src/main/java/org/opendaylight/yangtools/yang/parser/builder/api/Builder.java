@@ -9,15 +9,17 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import java.util.List;
 
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilder;
 
 /**
  * Parent interface for all builder interfaces.
  */
-public interface Builder {
+public interface Builder extends Mutable {
 
     /**
-     * Get name of module in which this node is declared.
+     * Returns name of module in which node created by this builder
+     * was declared.
      *
      * @return module name
      */
@@ -27,18 +29,21 @@ public interface Builder {
      * Set name of module in which this node is declared.
      *
      * @param moduleName
+     * @deprecated Module name should be set during creation of builder.
      */
+    @Deprecated
     void setModuleName(String moduleName);
 
     /**
-     * Get current line in yang file.
+     * Get current line in yang file, on which statement
+     * associated with this builder was declared.
      *
      * @return current line in yang file
      */
     int getLine();
 
     /**
-     * Get parent node of this node.
+     * Returns parent node builder of this node.
      *
      * @return parent node builder or null if this is top level node
      */
@@ -53,7 +58,11 @@ public interface Builder {
     void setParent(Builder parent);
 
     /**
-     * Add unknown node to this builder.
+     * Adds an unknown node builder to this builder.
+     *
+     * When product (child) is builded by the {@link #build()}
+     * method, this builder is also built and unknown node is added
+     * as child to the product of this builder.
      *
      * @param unknownNode
      */

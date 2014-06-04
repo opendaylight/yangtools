@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 
 /**
- * Interface for builders of 'uses' statement.
+ * Builder for  'uses' statement.
  */
 public interface UsesNodeBuilder extends GroupingMember {
 
@@ -25,6 +25,7 @@ public interface UsesNodeBuilder extends GroupingMember {
      * module, container, list, case, grouping, input, output, notification or
      * augment, return type is DataNodeContainerBuilder.
      */
+    @Override
     DataNodeContainerBuilder getParent();
 
     /**
@@ -134,6 +135,7 @@ public interface UsesNodeBuilder extends GroupingMember {
     /**
      * Build new UsesNode object.
      */
+    @Override
     UsesNode build();
 
     boolean isResolved();
