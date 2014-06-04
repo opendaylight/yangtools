@@ -5,19 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
-final class MustDefinitionImpl implements MustDefinition {
+public final class MustDefinitionImpl implements MustDefinition {
     private final String mustStr;
     private final String description;
     private final String reference;
     private final String errorAppTag;
     private final String errorMessage;
 
-    MustDefinitionImpl(String mustStr, String description, String reference, String errorAppTag, String errorMessage) {
+    @Deprecated
+    public MustDefinitionImpl(String mustStr, String description, String reference, String errorAppTag, String errorMessage) {
         this.mustStr = mustStr;
         this.description = description;
         this.reference = reference;

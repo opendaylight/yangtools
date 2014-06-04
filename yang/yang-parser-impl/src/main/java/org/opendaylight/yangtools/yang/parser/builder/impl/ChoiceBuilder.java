@@ -24,12 +24,13 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.collect.ImmutableList;
@@ -54,14 +55,14 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
     public ChoiceBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line);
+        constraints = new ConstraintsBuilderImpl(moduleName, line);
     }
 
     public ChoiceBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final ChoiceNode base) {
         super(moduleName, line, qname);
         this.schemaPath = path;
-        constraints = new ConstraintsBuilder(moduleName, line, base.getConstraints());
+        constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
         description = base.getDescription();
         reference = base.getReference();
@@ -74,7 +75,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         URI ns = qname.getNamespace();
         Date rev = qname.getRevision();
         String pref = qname.getPrefix();
-        Set<DataSchemaNodeBuilder> wrapped = ParserUtils.wrapChildNodes(moduleName, line, new HashSet<DataSchemaNode>(
+        Set<DataSchemaNodeBuilder> wrapped = BuilderUtils.wrapChildNodes(moduleName, line, new HashSet<DataSchemaNode>(
                 base.getCases()), path, ns, rev, pref);
         for (DataSchemaNodeBuilder wrap : wrapped) {
             if (wrap instanceof ChoiceCaseBuilder) {
@@ -82,7 +83,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
             }
         }
 
-        addedUnknownNodes.addAll(ParserUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
+        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
                 rev, pref));
     }
 

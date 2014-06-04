@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
- *
+ * Copyright (c) 2013 Cisco Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -35,19 +34,20 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractDataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.model.util.ModuleImportImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.util.ModuleImportImpl;
-import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 /**
@@ -70,7 +70,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private ModuleBuilder parent;
 
     @Override
-	public ModuleBuilder getParent() {
+    public ModuleBuilder getParent() {
         return parent;
     }
 
@@ -109,9 +109,9 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
     private final List<ExtensionDefinition> extensions = new ArrayList<>();
     private final List<ExtensionBuilder> addedExtensions = new ArrayList<>();
 
-    private final List<UnknownSchemaNodeBuilder> allUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
+    private final List<UnknownSchemaNodeBuilder> allUnknownNodes = new ArrayList<>();
 
-    private final List<ListSchemaNodeBuilder> allLists = new ArrayList<ListSchemaNodeBuilder>();
+    private final List<ListSchemaNodeBuilder> allLists = new ArrayList<>();
 
     private String source;
 
@@ -437,7 +437,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                 raiseYangParserException("extension", "node", extName, line, addedExtension.getLine());
             }
         }
-        final ExtensionBuilder builder = new ExtensionBuilder(name, line, qname, path);
+        final ExtensionBuilder builder = new ExtensionBuilderImpl(name, line, qname, path);
         builder.setParent(parent);
         addedExtensions.add(builder);
         return builder;
@@ -585,7 +585,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return usesBuilder;
     }
 
-    public void addRefine(final RefineHolder refine) {
+    public void addRefine(final RefineHolderImpl refine) {
         final Builder parent = getActualNode();
         if (!(parent instanceof UsesNodeBuilder)) {
             throw new YangParseException(name, refine.getLine(), "refine can be defined only in uses statement");
@@ -871,9 +871,9 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         allUnknownNodes.add(builder);
     }
 
-    public UnknownSchemaNodeBuilder addUnknownSchemaNode(final int line, final QName qname, final SchemaPath path) {
+    public UnknownSchemaNodeBuilderImpl addUnknownSchemaNode(final int line, final QName qname, final SchemaPath path) {
         final Builder parent = getActualNode();
-        final UnknownSchemaNodeBuilder builder = new UnknownSchemaNodeBuilder(name, line, qname, path);
+        final UnknownSchemaNodeBuilderImpl builder = new UnknownSchemaNodeBuilderImpl(name, line, qname, path);
         builder.setParent(parent);
         allUnknownNodes.add(builder);
 
@@ -884,8 +884,8 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
                 ((SchemaNodeBuilder) parent).addUnknownNodeBuilder(builder);
             } else if (parent instanceof DataNodeContainerBuilder) {
                 ((DataNodeContainerBuilder) parent).addUnknownNodeBuilder(builder);
-            } else if (parent instanceof RefineHolder) {
-                ((RefineHolder) parent).addUnknownNodeBuilder(builder);
+            } else if (parent instanceof RefineHolderImpl) {
+                ((RefineHolderImpl) parent).addUnknownNodeBuilder(builder);
             } else {
                 throw new YangParseException(name, line, "Unresolved parent of unknown node '" + qname.getLocalName()
                         + "'");
@@ -1187,7 +1187,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return getChildNode(childNodes, name);
         }
 
-        void setSource(final String source){
+        void setSource(final String source) {
             this.source = source;
         }
 
@@ -1437,6 +1437,5 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         }
         return true;
     }
-
 
 }

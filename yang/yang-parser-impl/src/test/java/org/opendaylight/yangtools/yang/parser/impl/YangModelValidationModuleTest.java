@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.validator;
+package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Namespace_stmtCont
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtsContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
+import org.opendaylight.yangtools.yang.parser.impl.BasicValidations;
+import org.opendaylight.yangtools.yang.parser.impl.YangModelBasicValidationListener;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 public class YangModelValidationModuleTest {

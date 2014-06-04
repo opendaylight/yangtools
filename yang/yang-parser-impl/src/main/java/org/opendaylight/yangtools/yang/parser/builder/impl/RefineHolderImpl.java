@@ -5,13 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.parser.builder.api.AbstractBuilder;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 
-public final class RefineHolder extends AbstractBuilder {
-    private final String name;
+public final class RefineHolderImpl extends AbstractBuilder implements RefineBuilder {
+    private final String targetPathString;
     private String defaultStr;
     private String description;
     private String reference;
@@ -22,11 +24,12 @@ public final class RefineHolder extends AbstractBuilder {
     private Integer minElements;
     private Integer maxElements;
 
-    public RefineHolder(final String moduleName, final int line, final String name) {
+    public RefineHolderImpl(final String moduleName, final int line, final String name) {
         super(moduleName, line);
-        this.name = name;
+        this.targetPathString = name;
     }
 
+    @Override
     public String getDefaultStr() {
         return defaultStr;
     }
@@ -35,77 +38,157 @@ public final class RefineHolder extends AbstractBuilder {
         this.defaultStr = defaultStr;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getDescription()
+     */
+    @Override
     public String getDescription() {
         return description;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setDescription(java.lang.String)
+     */
+    @Override
     public void setDescription(final String description) {
         this.description = description;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getReference()
+     */
+    @Override
     public String getReference() {
         return reference;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setReference(java.lang.String)
+     */
+    @Override
     public void setReference(final String reference) {
         this.reference = reference;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#isConfiguration()
+     */
+    @Override
     public Boolean isConfiguration() {
         return config;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setConfiguration(java.lang.Boolean)
+     */
+    @Override
     public void setConfiguration(final Boolean config) {
         this.config = config;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#isMandatory()
+     */
+    @Override
     public Boolean isMandatory() {
         return mandatory;
     }
 
-    public void setMandatory(Boolean mandatory) {
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setMandatory(java.lang.Boolean)
+     */
+    @Override
+    public void setMandatory(final Boolean mandatory) {
         this.mandatory = mandatory;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#isPresence()
+     */
+    @Override
     public Boolean isPresence() {
         return presence;
     }
 
-    public void setPresence(Boolean presence) {
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setPresence(java.lang.Boolean)
+     */
+    @Override
+    public void setPresence(final Boolean presence) {
         this.presence = presence;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getMust()
+     */
+    @Override
     public MustDefinition getMust() {
         return must;
     }
 
-    public void setMust(MustDefinition must) {
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setMust(org.opendaylight.yangtools.yang.model.api.MustDefinition)
+     */
+    @Override
+    public void setMust(final MustDefinition must) {
         this.must = must;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getMinElements()
+     */
+    @Override
     public Integer getMinElements() {
         return minElements;
     }
 
-    public void setMinElements(Integer minElements) {
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setMinElements(java.lang.Integer)
+     */
+    @Override
+    public void setMinElements(final Integer minElements) {
         this.minElements = minElements;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getMaxElements()
+     */
+    @Override
     public Integer getMaxElements() {
         return maxElements;
     }
 
-    public void setMaxElements(Integer maxElements) {
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#setMaxElements(java.lang.Integer)
+     */
+    @Override
+    public void setMaxElements(final Integer maxElements) {
         this.maxElements = maxElements;
     }
 
+    /* (non-Javadoc)
+     * @see org.opendaylight.yangtools.yang.parser.builder.impl.IRefineBuilder#getName()
+     */
+    @Override
     public String getName() {
-        return name;
+        return targetPathString;
     }
 
     @Override
-    public Object build() {
+    public String toString() {
+        return "refine " + targetPathString;
+    }
+
+    @Override
+    public Status getStatus() {
+        // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void setStatus(final Status status) {
+        // TODO Auto-generated method stub
+
     }
 
     @Override
@@ -120,7 +203,7 @@ public final class RefineHolder extends AbstractBuilder {
         result = prime * result + ((maxElements == null) ? 0 : maxElements.hashCode());
         result = prime * result + ((minElements == null) ? 0 : minElements.hashCode());
         result = prime * result + ((must == null) ? 0 : must.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((targetPathString == null) ? 0 : targetPathString.hashCode());
         result = prime * result + ((getParent() == null) ? 0 : getParent().hashCode());
         result = prime * result + ((presence == null) ? 0 : presence.hashCode());
         result = prime * result + ((reference == null) ? 0 : reference.hashCode());
@@ -128,7 +211,7 @@ public final class RefineHolder extends AbstractBuilder {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -138,7 +221,7 @@ public final class RefineHolder extends AbstractBuilder {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        RefineHolder other = (RefineHolder) obj;
+        RefineHolderImpl other = (RefineHolderImpl) obj;
         if (addedUnknownNodes == null) {
             if (other.addedUnknownNodes != null) {
                 return false;
@@ -195,11 +278,11 @@ public final class RefineHolder extends AbstractBuilder {
         } else if (!must.equals(other.must)) {
             return false;
         }
-        if (name == null) {
-            if (other.name != null) {
+        if (targetPathString == null) {
+            if (other.targetPathString != null) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
+        } else if (!targetPathString.equals(other.targetPathString)) {
             return false;
         }
         if (getParent() == null) {
@@ -226,9 +309,20 @@ public final class RefineHolder extends AbstractBuilder {
         return true;
     }
 
+
+
     @Override
-    public String toString() {
-        return "refine " + name;
+    public Object build() {
+        // FIXME: Currently RefineBuilder.build() is not used
+        // build should returned refined element, so
+        // whole refine process is encapsulated in this refinement
+        // statement.
+        return null;
+    }
+
+    @Override
+    public String getTargetPathString() {
+        return targetPathString;
     }
 
 }

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/eplv10.html
  */
-package org.opendaylight.yangtools.yang.validator;
+package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.text.ParseException;
 import java.util.Date;

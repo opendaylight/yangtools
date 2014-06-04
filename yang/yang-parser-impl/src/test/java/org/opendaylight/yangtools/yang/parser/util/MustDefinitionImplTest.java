@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.util.MustDefinitionImpl;
 
 public class MustDefinitionImplTest {
 
