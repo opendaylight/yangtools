@@ -34,6 +34,7 @@
         <maven.release.version>2.4.2</maven.release.version>
         <maven.source.version>2.2.1</maven.source.version>
         <maven.surefire.version>2.16</maven.surefire.version>
+        <maven.checkstyle.version>2.12</maven.checkstyle.version>
 
         <!-- Supporting Libraries -->
         <commons.lang.version>3.1</commons.lang.version>
@@ -378,6 +379,34 @@
                         <completionGoals>clean install</completionGoals>
                     </configuration>
                 </plugin>
+                <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-checkstyle-plugin</artifactId>
+                 <version>${maven.checkstyle.version}</version>
+                 <configuration>
+                   <failOnViolation>false</failOnViolation>
+                   <configLocation>checkstyle-logging.xml</configLocation>
+                   <consoleOutput>true</consoleOutput>
+                   <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                   <sourceDirectory>${project.basedir}</sourceDirectory>
+                   <includes>**\/*.java,**\/*.xml,**\/*.ini,**\/*.sh,**\/*.bat,**\/*.yang</includes>
+                   <excludes>**\/target\/,**\/bin\/,**\/target-ide\/,**\/src/main/yang-gen-config\/,**\/src/main/yang-gen-sal\/,**\/src/main/xtend-gen\/</excludes>
+                 </configuration>
+                 <dependencies>
+                   <dependency>
+                     <groupId>org.opendaylight.yangtools</groupId>
+                     <artifactId>checkstyle-logging</artifactId>
+                     <version>${project.version}</version>
+                   </dependency>
+                 </dependencies>
+                 <executions>
+                   <execution>
+                     <goals>
+                       <goal>check</goal>
+                     </goals>
+                   </execution>
+                 </executions>
+               </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
