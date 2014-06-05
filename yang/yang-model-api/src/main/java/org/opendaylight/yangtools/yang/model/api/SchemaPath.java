@@ -7,39 +7,55 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.util.HashCodeBuilder;
+import org.opendaylight.yangtools.yang.common.QName;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.util.Arrays;
-import java.util.List;
-import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  *
  * Represents unique path to the every node inside the module.
  *
  */
-public class SchemaPath {
+public class SchemaPath implements Immutable {
     /**
      * Shared instance of the conceptual root schema node.
      */
-    public static final SchemaPath ROOT = new SchemaPath(ImmutableList.<QName> of(), true, null);
+    public static final SchemaPath ROOT = new SchemaPath(Collections.<QName>emptyList(), true, Boolean.TRUE.hashCode());
 
     /**
      * Shared instance of the "same" relative schema node.
      */
-    public static final SchemaPath SAME = new SchemaPath(ImmutableList.<QName> of(), false, null);
+    public static final SchemaPath SAME = new SchemaPath(Collections.<QName>emptyList(), false, Boolean.FALSE.hashCode());
 
     /**
      * List of QName instances which represents complete path to the node.
      */
-    private final ImmutableList<QName> path;
+    private final Iterable<QName> path;
 
     /**
      * Boolean value which represents type of schema path (relative or
      * absolute).
      */
-    private final Boolean absolute;
+    private final boolean absolute;
+
+    /**
+     * Cached hash code. We can use this since we are immutable.
+     */
+    private final int hash;
+
+    /**
+     * Cached legacy path, filled-in when {@link #getPath()} or {@link #getPathTowardsRoot()}
+     * is invoked.
+     */
+    private ImmutableList<QName> legacyPath;
 
     /**
      * Constructs new instance of this class with the concrete path.
@@ -55,7 +71,15 @@ public class SchemaPath {
      */
     @Deprecated
     public SchemaPath(final List<QName> path, final boolean absolute) {
-        this(ImmutableList.copyOf(path), absolute, null);
+        this(ImmutableList.copyOf(path), absolute, Boolean.valueOf(absolute).hashCode());
+    }
+
+    private ImmutableList<QName> getLegacyPath() {
+        if (legacyPath == null) {
+            legacyPath = ImmutableList.copyOf(path);
+        }
+
+        return legacyPath;
     }
 
     /**
@@ -68,12 +92,13 @@ public class SchemaPath {
      */
     @Deprecated
     public List<QName> getPath() {
-        return path;
+        return getLegacyPath();
     }
 
-    private SchemaPath(final ImmutableList<QName> path, final boolean absolute, final Void dummy) {
+    private SchemaPath(final Iterable<QName> path, final boolean absolute, final int hash) {
         this.path = Preconditions.checkNotNull(path);
         this.absolute = absolute;
+        this.hash = hash;
     }
 
     /**
@@ -89,11 +114,8 @@ public class SchemaPath {
      * @return A SchemaPath instance.
      */
     public static SchemaPath create(final Iterable<QName> path, final boolean absolute) {
-        if (Iterables.isEmpty(path)) {
-            return absolute ? ROOT : SAME;
-        } else {
-            return new SchemaPath(ImmutableList.copyOf(path), absolute, null);
-        }
+        final SchemaPath parent = absolute ? ROOT : SAME;
+        return parent.createChild(path);
     }
 
     /**
@@ -109,7 +131,20 @@ public class SchemaPath {
      * @return A SchemaPath instance.
      */
     public static SchemaPath create(final boolean absolute, final QName... path) {
-    	return create(Arrays.asList(path), absolute);
+        return create(Arrays.asList(path), absolute);
+    }
+
+    private SchemaPath trustedCreateChild(final Iterable<QName> relative) {
+        if (Iterables.isEmpty(relative)) {
+            return this;
+        }
+
+        final HashCodeBuilder<QName> b = new HashCodeBuilder<>(hash);
+        for (QName p : relative) {
+            b.addArgument(p);
+        }
+
+        return new SchemaPath(Iterables.concat(path, relative), absolute, b.hashCode());
     }
 
     /**
@@ -122,7 +157,8 @@ public class SchemaPath {
         if (Iterables.isEmpty(relative)) {
             return this;
         }
-        return create(Iterables.concat(path, relative), absolute);
+
+        return trustedCreateChild(ImmutableList.copyOf(relative));
     }
 
     /**
@@ -133,7 +169,7 @@ public class SchemaPath {
      */
     public SchemaPath createChild(final SchemaPath relative) {
         Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
-        return createChild(relative.path);
+        return trustedCreateChild(relative.path);
     }
 
     /**
@@ -167,7 +203,7 @@ public class SchemaPath {
      *         path from the schema node towards the root.
      */
     public Iterable<QName> getPathTowardsRoot() {
-        return path.reverse();
+        return getLegacyPath().reverse();
     }
 
     /**
@@ -182,18 +218,7 @@ public class SchemaPath {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + absolute.hashCode();
-
-        // TODO: Temporary fix for Bug 1076 - hash computation
-        // Which adds same behaviour as using List.hashCode().
-        int pathHash = 1;
-        for (Object o : path) {
-            pathHash = prime * pathHash + o.hashCode();
-        }
-        result = prime * result + pathHash;
-        return result;
+        return hash;
     }
 
     @Override
