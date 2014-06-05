@@ -186,7 +186,7 @@ public class XmlDocumentUtils {
                         }
                     }
                 }
-                itemEl.appendChild(createXmlRootElement(doc, child, childSchema, codecProvider));
+                itemEl.appendChild(createXmlRootElement(doc, child, childSchema == null ? schema : childSchema, codecProvider));
             }
         }
         return itemEl;
