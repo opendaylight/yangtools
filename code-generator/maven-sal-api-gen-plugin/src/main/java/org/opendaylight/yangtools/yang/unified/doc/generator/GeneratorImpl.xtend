@@ -1252,7 +1252,7 @@ class GeneratorImpl {
             var i = 0;
             for (pathElement : path) {
                 actual.add(pathElement)
-                val DataSchemaNode nodeByPath = childNodes.get(new SchemaPath(actual, absolute))
+                val DataSchemaNode nodeByPath = childNodes.get(SchemaPath.create(actual, absolute))
                 if (!(nodeByPath instanceof ChoiceNode) && !(nodeByPath instanceof ChoiceCaseNode)) {
                     result.append(pathElement.localName)
                     if (i != path.size - 1) {
