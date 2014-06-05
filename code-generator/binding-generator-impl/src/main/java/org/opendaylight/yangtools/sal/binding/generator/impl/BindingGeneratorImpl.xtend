@@ -1156,7 +1156,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     val List<QName> nodeNames = nodeSp.path
                     val List<QName> nodeNewNames = new ArrayList(nodeNames)
                     nodeNewNames.remove(nodeNewNames.size - 1)
-                    val SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.absolute)
+                    val SchemaPath nodeNewSp = SchemaPath.create(nodeNewNames, nodeSp.absolute)
                     parentNode = findDataSchemaNode(schemaContext, nodeNewSp)
 
                     var SchemaNode parent
@@ -1179,7 +1179,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         val List<QName> names = sp.path
                         val List<QName> newNames = new ArrayList(names)
                         newNames.remove(newNames.size - 1)
-                        val SchemaPath newSp = new SchemaPath(newNames, sp.absolute)
+                        val SchemaPath newSp = SchemaPath.create(newNames, sp.absolute)
                         parent = findDataSchemaNode(schemaContext, newSp)
                     }
                     var GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.path)
@@ -1233,7 +1233,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val List<QName> nodeNames = nodeSp.path
                 val List<QName> nodeNewNames = new ArrayList(nodeNames)
                 nodeNewNames.remove(nodeNewNames.size - 1)
-                val SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.absolute)
+                val SchemaPath nodeNewSp = SchemaPath.create(nodeNewNames, nodeSp.absolute)
                 parent = findDataSchemaNode(schemaContext, nodeNewSp)
 
                 var GeneratedTypeBuilder childOfType = null;
