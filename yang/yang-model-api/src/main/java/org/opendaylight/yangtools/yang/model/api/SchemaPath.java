@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.opendaylight.yangtools.yang.common.QName;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.util.Arrays;
-import java.util.List;
-import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  *
@@ -182,6 +184,7 @@ public class SchemaPath {
 
     @Override
     public int hashCode() {
+    	// FIXME: needs to be optimized
         final int prime = 31;
         int result = 1;
         result = prime * result + absolute.hashCode();
