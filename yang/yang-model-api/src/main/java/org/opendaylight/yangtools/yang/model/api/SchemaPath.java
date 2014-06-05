@@ -7,19 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.util.Arrays;
-import java.util.List;
-import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  *
  * Represents unique path to the every node inside the module.
  *
  */
-public class SchemaPath {
+public class SchemaPath implements Immutable {
     /**
      * Shared instance of the conceptual root schema node.
      */
@@ -33,13 +36,15 @@ public class SchemaPath {
     /**
      * List of QName instances which represents complete path to the node.
      */
-    private final ImmutableList<QName> path;
+    private final Iterable<QName> path;
 
     /**
      * Boolean value which represents type of schema path (relative or
      * absolute).
      */
     private final Boolean absolute;
+
+    private ImmutableList<QName> legacyPath;
 
     /**
      * Constructs new instance of this class with the concrete path.
@@ -58,6 +63,14 @@ public class SchemaPath {
         this(ImmutableList.copyOf(path), absolute, null);
     }
 
+    private ImmutableList<QName> getLegacyPath() {
+        if (legacyPath == null) {
+            legacyPath = ImmutableList.copyOf(path);
+        }
+
+        return legacyPath;
+    }
+
     /**
      * Returns the complete path to schema node.
      *
@@ -68,10 +81,10 @@ public class SchemaPath {
      */
     @Deprecated
     public List<QName> getPath() {
-        return path;
+        return getLegacyPath();
     }
 
-    private SchemaPath(final ImmutableList<QName> path, final boolean absolute, final Void dummy) {
+    private SchemaPath(final Iterable<QName> path, final boolean absolute, final Void dummy) {
         this.path = Preconditions.checkNotNull(path);
         this.absolute = absolute;
     }
@@ -109,7 +122,7 @@ public class SchemaPath {
      * @return A SchemaPath instance.
      */
     public static SchemaPath create(final boolean absolute, final QName... path) {
-    	return create(Arrays.asList(path), absolute);
+        return create(Arrays.asList(path), absolute);
     }
 
     /**
@@ -122,7 +135,9 @@ public class SchemaPath {
         if (Iterables.isEmpty(relative)) {
             return this;
         }
-        return create(Iterables.concat(path, relative), absolute);
+
+        return new SchemaPath(Iterables.concat(path,
+                Iterables.concat(path, ImmutableList.copyOf(relative))), absolute, null);
     }
 
     /**
@@ -133,7 +148,12 @@ public class SchemaPath {
      */
     public SchemaPath createChild(final SchemaPath relative) {
         Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
-        return createChild(relative.path);
+
+        if (Iterables.isEmpty(relative.path)) {
+            return this;
+        }
+
+        return new SchemaPath(Iterables.concat(path, relative.path), absolute, null);
     }
 
     /**
@@ -167,7 +187,7 @@ public class SchemaPath {
      *         path from the schema node towards the root.
      */
     public Iterable<QName> getPathTowardsRoot() {
-        return path.reverse();
+        return getLegacyPath().reverse();
     }
 
     /**
@@ -182,6 +202,7 @@ public class SchemaPath {
 
     @Override
     public int hashCode() {
+        // FIXME: needs to be optimized
         final int prime = 31;
         int result = 1;
         result = prime * result + absolute.hashCode();
