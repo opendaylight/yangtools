@@ -193,7 +193,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         for (final PathArgument a : getPathArguments()) {
             if (type.equals(a.getType())) {
                 @SuppressWarnings("unchecked")
-                final InstanceIdentifier<I> ret = (InstanceIdentifier<I>) create(Iterables.limit(getPathArguments(), i));
+                final InstanceIdentifier<I> ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(getPathArguments(), i));
                 return ret;
             }
 
@@ -385,20 +385,17 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     }
 
     /**
-     * Create an instance identifier for a very specific object type.
+     * Create an instance identifier for a very specific object type. This method
+     * implements {@link #create(Iterable)} semantics, except it is used by internal
+     * callers, which have assured that the argument is an immutable Iterable.
      *
-     * Example
-     * <pre>
-     *  List<PathArgument> path = Arrays.asList(new Item(Nodes.class))
-     *  new InstanceIdentifier(path);
-     * </pre>
      *
      * @param pathArguments The path to a specific node in the data tree
      * @return InstanceIdentifier instance
      * @throws IllegalArgumentException if pathArguments is empty or
      *         contains a null element.
      */
-    public static InstanceIdentifier<?> create(final Iterable<? extends PathArgument> pathArguments) {
+    private static InstanceIdentifier<?> internalCreate(final Iterable<PathArgument> pathArguments) {
         final Iterator<? extends PathArgument> it = Preconditions.checkNotNull(pathArguments, "pathArguments may not be null").iterator();
         final HashCodeBuilder<PathArgument> hashBuilder = new HashCodeBuilder<>();
         boolean wildcard = false;
@@ -417,14 +414,31 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         }
         Preconditions.checkArgument(a != null, "pathArguments may not be empty");
 
-        final Iterable<PathArgument> immutableArguments;
-        if (pathArguments instanceof ImmutableCollection<?>) {
-            immutableArguments = (Iterable<PathArgument>) pathArguments;
-        } else {
-            immutableArguments = ImmutableList.copyOf(pathArguments);
-        }
+        return trustedCreate(a, pathArguments, hashBuilder.toInstance(), wildcard);
+    }
 
-        return trustedCreate(a, immutableArguments, hashBuilder.toInstance(), wildcard);
+    /**
+     * Create an instance identifier for a very specific object type.
+     *
+     * Example
+     * <pre>
+     *  List<PathArgument> path = Arrays.asList(new Item(Nodes.class))
+     *  new InstanceIdentifier(path);
+     * </pre>
+     *
+     * @param pathArguments The path to a specific node in the data tree
+     * @return InstanceIdentifier instance
+     * @throws IllegalArgumentException if pathArguments is empty or
+     *         contains a null element.
+     */
+    public static InstanceIdentifier<?> create(final Iterable<? extends PathArgument> pathArguments) {
+        if (pathArguments instanceof ImmutableCollection<?>) {
+            @SuppressWarnings("unchecked")
+            final Iterable<PathArgument> immutableArguments = (Iterable<PathArgument>) pathArguments;
+            return internalCreate(immutableArguments);
+        } else {
+            return internalCreate(ImmutableList.copyOf(pathArguments));
+        }
     }
 
     /**
