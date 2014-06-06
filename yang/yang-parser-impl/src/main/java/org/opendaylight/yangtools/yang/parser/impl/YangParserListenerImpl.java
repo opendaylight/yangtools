@@ -108,6 +108,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private final Stack<Stack<QName>> actualPath = new Stack<>();
+    private int augmentOrder;
 
     private void addNodeToPath(QName name) {
         actualPath.peek().push(name);
@@ -327,7 +328,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog(AUGMENT_STR, augmentPath, line);
         actualPath.push(new Stack<QName>());
 
-        AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath);
+        AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, augmentOrder++);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
@@ -610,7 +611,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String augmentPath = stringFromNode(ctx);
         enterLog(AUGMENT_STR, augmentPath, line);
 
-        AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath);
+        AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, augmentOrder++);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);

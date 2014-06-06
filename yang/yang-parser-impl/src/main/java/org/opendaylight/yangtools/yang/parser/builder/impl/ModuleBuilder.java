@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -82,7 +83,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
     private final Set<ModuleImport> imports = new HashSet<ModuleImport>();
 
-    private final Set<AugmentationSchema> augments = new HashSet<>();
+    private final Set<AugmentationSchema> augments = new LinkedHashSet<>();
     private final List<AugmentationSchemaBuilder> augmentBuilders = new ArrayList<>();
     private final List<AugmentationSchemaBuilder> allAugments = new ArrayList<>();
 
@@ -523,8 +524,8 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         return builder;
     }
 
-    public AugmentationSchemaBuilder addAugment(final int line, final String augmentTargetStr) {
-        final AugmentationSchemaBuilder builder = new AugmentationSchemaBuilderImpl(name, line, augmentTargetStr);
+    public AugmentationSchemaBuilder addAugment(final int line, final String augmentTargetStr, final int order) {
+        final AugmentationSchemaBuilder builder = new AugmentationSchemaBuilderImpl(name, line, augmentTargetStr, order);
 
         Builder parent = getActualNode();
         builder.setParent(parent);
