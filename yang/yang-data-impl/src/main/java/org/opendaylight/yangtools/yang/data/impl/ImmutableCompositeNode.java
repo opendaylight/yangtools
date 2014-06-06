@@ -53,7 +53,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
      *            use null to create top composite node (without parent)
      * @param value
      */
-    private ImmutableCompositeNode(final QName qname, final Map<QName,String> attributes,final List<Node<?>> value) {
+    public ImmutableCompositeNode(final QName qname, final Map<QName,String> attributes,final List<Node<?>> value) {
         super(qname, null, ImmutableList.copyOf(value));
         if(attributes == null) {
             this.attributes = ImmutableMap.<QName, String>of();
