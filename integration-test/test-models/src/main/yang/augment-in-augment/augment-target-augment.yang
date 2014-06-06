@@ -1,0 +1,59 @@
+module augment-target-augment {
+    yang-version 1;
+    namespace "odl:test:augment-target-augment";
+    prefix "ata";
+
+    import target {
+        prefix "t";
+        revision-date 2013-10-14;
+    }
+
+    import augment {
+        prefix "a";
+        revision-date 2013-10-15;
+    }
+
+    revision "2013-10-13" {
+        reference " WILL BE DEFINED LATER";
+    }
+
+
+    augment "/t:interfaces/t:ifEntry/a:augment-holder" {
+        when "if:ifType='ds0'";
+        leaf ds0ChannelNumber {
+            type string;
+        }
+        leaf interface-id {
+            type leafref {
+                path "/t:interfaces/t:ifEntry/t:ifMtu";
+            }
+        }
+        container schemas {
+        }
+        choice odl {
+            leaf id {
+                type int8;
+            }
+            case node1 {
+                description "node1";
+            }
+            case node2 {
+                description "node2";
+            }
+            container node3 {
+                description "node3";
+            }
+        }
+    }
+
+
+    uses a:target {
+        augment "how/interval" {
+            description "inner augment";
+            leaf name {
+                type string;
+            }
+        }
+    }
+
+}
