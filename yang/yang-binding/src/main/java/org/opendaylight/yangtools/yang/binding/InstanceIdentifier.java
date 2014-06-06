@@ -567,12 +567,12 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
 
         @Override
         public boolean equals(final Object obj) {
-            return super.equals(obj) && obj.hashCode() == hashCode() && key.equals(((IdentifiableItem<?, ?>) obj).getKey());
+            return super.equals(obj) && key.equals(((IdentifiableItem<?, ?>) obj).getKey());
         }
 
         @Override
         public int hashCode() {
-            return key.hashCode();
+            return super.hashCode() * 31 + key.hashCode();
         }
 
         @Override
