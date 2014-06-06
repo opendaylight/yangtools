@@ -510,10 +510,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((type == null) ? 0 : type.hashCode());
-            return result;
+            return type.hashCode();
         }
 
         @Override
@@ -528,14 +525,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
                 return false;
             }
             final AbstractPathArgument<?> other = (AbstractPathArgument<?>) obj;
-            if (type == null) {
-                if (other.type != null) {
-                    return false;
-                }
-            } else if (!type.equals(other.type)) {
-                return false;
-            }
-            return true;
+            return type.equals(other.type);
         }
     }
 
