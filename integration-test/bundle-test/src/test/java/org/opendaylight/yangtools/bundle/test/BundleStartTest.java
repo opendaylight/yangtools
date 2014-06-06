@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+package org.opendaylight.yangtools.bundle.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.junitBundles;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -38,6 +38,7 @@ public class BundleStartTest {
         options.add(mavenBundle("ch.qos.logback", "logback-core").versionAsInProject());
         options.add(mavenBundle("ch.qos.logback", "logback-classic").versionAsInProject());
         options.add(mavenBundle("com.google.guava", "guava").versionAsInProject());
+        options.add(mavenBundle("commons-io", "commons-io").versionAsInProject());
         options.add(mavenBundle("org.apache.commons", "commons-lang3").versionAsInProject());
         options.add(mavenBundle("org.opendaylight.yangtools.thirdparty", "antlr4-runtime-osgi-nohead")
                 .versionAsInProject());
@@ -47,6 +48,7 @@ public class BundleStartTest {
         options.add(mavenBundle("org.javassist", "javassist").versionAsInProject());
 
         options.add(mavenBundle(GROUP, "concepts").versionAsInProject());
+        options.add(mavenBundle(GROUP, "util").versionAsInProject());
         options.add(mavenBundle(GROUP, "yang-binding").versionAsInProject());
         options.add(mavenBundle(GROUP, "yang-common").versionAsInProject());
         options.add(mavenBundle(GROUP, "yang-data-api").versionAsInProject());
