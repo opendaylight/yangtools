@@ -112,9 +112,9 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
         // CHILD NODES
         for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.add(node.build());
+            childNodes.put(node.getQName(), node.build());
         }
-        instance.childNodes = ImmutableSet.copyOf(childNodes);
+        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
 
         // KEY
         if (keys == null) {
@@ -183,7 +183,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     @Override
-    public void setPath(SchemaPath path) {
+    public void setPath(final SchemaPath path) {
         this.schemaPath = path;
     }
 
@@ -213,7 +213,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
@@ -240,7 +240,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     @Override
-    public void setAugmenting(boolean augmenting) {
+    public void setAugmenting(final boolean augmenting) {
         this.augmenting = augmenting;
     }
 
@@ -260,7 +260,7 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     @Override
-    public void setConfiguration(boolean configuration) {
+    public void setConfiguration(final boolean configuration) {
         this.configuration = configuration;
     }
 
