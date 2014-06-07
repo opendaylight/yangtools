@@ -33,7 +33,7 @@ module opendaylight-l2-types {
 
 	typedef vlan-id {
 		type uint16 {
-			range "0..4095";
+			range "0..65535";
 		}
 	}
 
