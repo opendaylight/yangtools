@@ -449,7 +449,7 @@ public final class YangParserImpl implements YangContextParser {
         module.getAugmentBuilders().addAll(submodule.getAugmentBuilders());
         module.getAllAugments().addAll(submodule.getAllAugments());
         module.getChildNodeBuilders().addAll(submodule.getChildNodeBuilders());
-        module.getChildNodes().addAll(submodule.getChildNodes());
+        module.getChildNodes().putAll(submodule.getChildNodes());
         module.getGroupings().addAll(submodule.getGroupings());
         module.getGroupingBuilders().addAll(submodule.getGroupingBuilders());
         module.getTypeDefinitions().addAll(submodule.getTypeDefinitions());
