@@ -14,6 +14,7 @@ import java.util.List;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
+import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;

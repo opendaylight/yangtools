@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
