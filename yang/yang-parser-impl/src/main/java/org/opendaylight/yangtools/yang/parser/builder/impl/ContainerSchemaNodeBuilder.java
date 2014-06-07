@@ -109,9 +109,9 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
 
         // CHILD NODES
         for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.add(node.build());
+            childNodes.put(node.getQName(), node.build());
         }
-        instance.childNodes = ImmutableSet.copyOf(childNodes);
+        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
 
         // GROUPINGS
         for (GroupingBuilder builder : addedGroupings) {
@@ -168,7 +168,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     }
 
     @Override
-    public void addAugmentation(AugmentationSchemaBuilder augment) {
+    public void addAugmentation(final AugmentationSchemaBuilder augment) {
         augmentationBuilders.add(augment);
     }
 
@@ -178,7 +178,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     }
 
     @Override
-    public void setPath(SchemaPath path) {
+    public void setPath(final SchemaPath path) {
         this.path = path;
     }
 
@@ -208,7 +208,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
@@ -218,7 +218,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     }
 
     @Override
-    public void setAugmenting(boolean augmenting) {
+    public void setAugmenting(final boolean augmenting) {
         this.augmenting = augmenting;
     }
 
@@ -238,7 +238,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     }
 
     @Override
-    public void setConfiguration(boolean configuration) {
+    public void setConfiguration(final boolean configuration) {
         this.configuration = configuration;
     }
 
@@ -251,7 +251,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         return presence;
     }
 
-    public void setPresence(boolean presence) {
+    public void setPresence(final boolean presence) {
         this.presence = presence;
     }
 
@@ -264,7 +264,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -319,7 +319,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
 
         private boolean presence;
 
-        private ContainerSchemaNodeImpl(QName qname, SchemaPath path) {
+        private ContainerSchemaNodeImpl(final QName qname, final SchemaPath path) {
             this.qname = qname;
             this.path = path;
         }
@@ -385,12 +385,12 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             return getChildNode(childNodes, name);
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(String name) {
+        public DataSchemaNode getDataChildByName(final String name) {
             return getChildNode(childNodes, name);
         }
 
@@ -424,7 +424,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDataNodeContainerB
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }

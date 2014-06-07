@@ -8,7 +8,9 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder implements DataNodeContainerBuilder {
     protected final QName qname;
 
-    protected final Set<DataSchemaNode> childNodes = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+    protected final Map<QName, DataSchemaNode> childNodes = new TreeMap<>();
     protected final Set<DataSchemaNodeBuilder> addedChildNodes = new HashSet<>();
 
     protected final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
@@ -47,7 +49,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         return qname;
     }
 
-    public Set<DataSchemaNode> getChildNodes() {
+    public Map<QName, DataSchemaNode> getChildNodes() {
         return childNodes;
     }
 
@@ -67,7 +69,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
     }
 
     @Override
-    public void addChildNode(DataSchemaNodeBuilder child) {
+    public void addChildNode(final DataSchemaNodeBuilder child) {
         QName childName = child.getQName();
         for (DataSchemaNodeBuilder addedChildNode : addedChildNodes) {
             if (addedChildNode.getQName().equals(childName)) {
@@ -80,21 +82,19 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
     }
 
     @Override
-    public void addChildNodeToContext(DataSchemaNodeBuilder child) {
+    public void addChildNodeToContext(final DataSchemaNodeBuilder child) {
         addedChildNodes.add(child);
     }
 
     @Override
-    public void addChildNode(DataSchemaNode child) {
+    public void addChildNode(final DataSchemaNode child) {
         QName childName = child.getQName();
-        for (DataSchemaNode childNode : childNodes) {
-            if (childNode.getQName().equals(childName)) {
-                throw new YangParseException(getModuleName(), getLine(), String.format(
-                        "Can not add '%s' to '%s' in module '%s': node with same name already declared", child, this,
-                        getModuleName()));
-            }
+        if (childNodes.containsKey(childName)) {
+            throw new YangParseException(moduleName, line,
+                    String.format("Can not add '%s' to '%s' in module '%s': node with same name already declared",
+                            child, this, moduleName));
         }
-        childNodes.add(child);
+        childNodes.put(childName, child);
     }
 
     @Override
@@ -111,7 +111,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
     }
 
     @Override
-    public void addGrouping(GroupingBuilder grouping) {
+    public void addGrouping(final GroupingBuilder grouping) {
         QName groupingName = grouping.getQName();
         for (GroupingBuilder addedGrouping : addedGroupings) {
             if (addedGrouping.getQName().equals(groupingName)) {
@@ -138,11 +138,11 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
     }
 
     @Override
-    public void addUsesNode(UsesNodeBuilder usesNode) {
+    public void addUsesNode(final UsesNodeBuilder usesNode) {
         addedUsesNodes.add(usesNode);
     }
 
-    protected static DataSchemaNode getChildNode(Set<DataSchemaNode> childNodes, QName name) {
+    protected static DataSchemaNode getChildNode(final Set<DataSchemaNode> childNodes, final QName name) {
         for (DataSchemaNode node : childNodes) {
             if (node.getQName().equals(name)) {
                 return node;
@@ -151,7 +151,7 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         return null;
     }
 
-    protected static DataSchemaNode getChildNode(Set<DataSchemaNode> childNodes, String name) {
+    protected static DataSchemaNode getChildNode(final Set<DataSchemaNode> childNodes, final String name) {
         for (DataSchemaNode node : childNodes) {
             if (node.getQName().getLocalName().equals(name)) {
                 return node;

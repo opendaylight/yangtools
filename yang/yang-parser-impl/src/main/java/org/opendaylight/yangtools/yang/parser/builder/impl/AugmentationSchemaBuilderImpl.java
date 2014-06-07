@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +14,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -40,6 +37,11 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContainerBuilder implements
         AugmentationSchemaBuilder {
     private final int order;
@@ -57,7 +59,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private boolean resolved;
     private AugmentationSchemaBuilder copyOf;
 
-    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr, int order) {
+    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr, final int order) {
         super(moduleName, line, null);
         this.order = order;
         this.augmentTargetStr = augmentTargetStr;
@@ -129,9 +131,9 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
         // CHILD NODES
         for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.add(node.build());
+            childNodes.put(node.getQName(), node.build());
         }
-        instance.childNodes = ImmutableSet.copyOf(childNodes);
+        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
 
         // USES
         for (UsesNodeBuilder builder : addedUsesNodes) {
@@ -453,7 +455,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         }
 
         @Override
-        public int compareTo(AugmentationSchemaImpl o) {
+        public int compareTo(final AugmentationSchemaImpl o) {
             Iterator<QName> thisIt = this.targetPath.getPath().iterator();
             Iterator<QName> otherIt = o.getTargetPath().getPath().iterator();
             while (thisIt.hasNext()) {
