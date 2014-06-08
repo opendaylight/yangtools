@@ -918,7 +918,7 @@ public final class YangParserImpl implements YangContextParser {
      */
     private void checkAugmentMandatoryNodes(final Collection<AugmentationSchemaBuilder> augments) {
         for (AugmentationSchemaBuilder augment : augments) {
-            String augmentPrefix = augment.getTargetPath().getPath().get(0).getPrefix();
+            String augmentPrefix = augment.getTargetPath().getPathFromRoot().iterator().next().getPrefix();
             ModuleBuilder module = ParserUtils.getParentModule(augment);
             String modulePrefix = module.getPrefix();
 
@@ -1052,8 +1052,8 @@ public final class YangParserImpl implements YangContextParser {
             return true;
         }
 
-        List<QName> targetPath = augment.getTargetPath().getPath();
-        ModuleBuilder targetModule = findTargetModule(targetPath.get(0), module, modules, context, augment.getLine());
+        QName targetPath = augment.getTargetPath().getPathFromRoot().iterator().next();
+        ModuleBuilder targetModule = findTargetModule(targetPath, module, modules, context, augment.getLine());
         if (targetModule == null) {
             throw new YangParseException(module.getModuleName(), augment.getLine(), "Failed to resolve augment "
                     + augment);
@@ -1497,8 +1497,8 @@ public final class YangParserImpl implements YangContextParser {
         for (DeviationBuilder dev : module.getDeviationBuilders()) {
             int line = dev.getLine();
             SchemaPath targetPath = dev.getTargetPath();
-            List<QName> path = targetPath.getPath();
-            QName q0 = path.get(0);
+            Iterable<QName> path = targetPath.getPathFromRoot();
+            QName q0 = path.iterator().next();
             String prefix = q0.getPrefix();
             if (prefix == null) {
                 prefix = module.getPrefix();
@@ -1544,8 +1544,8 @@ public final class YangParserImpl implements YangContextParser {
         for (DeviationBuilder dev : module.getDeviationBuilders()) {
             int line = dev.getLine();
             SchemaPath targetPath = dev.getTargetPath();
-            List<QName> path = targetPath.getPath();
-            QName q0 = path.get(0);
+            Iterable<QName> path = targetPath.getPathFromRoot();
+            QName q0 = path.iterator().next();
             String prefix = q0.getPrefix();
             if (prefix == null) {
                 prefix = module.getPrefix();
@@ -1591,7 +1591,7 @@ public final class YangParserImpl implements YangContextParser {
      *            current module
      */
     private void processDeviation(final DeviationBuilder dev, final ModuleBuilder dependentModuleBuilder,
-            final List<QName> path, final ModuleBuilder module) {
+            final Iterable<QName> path, final ModuleBuilder module) {
         final int line = dev.getLine();
         Builder currentParent = dependentModuleBuilder;
 

@@ -11,8 +11,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.parser.builder.api.AbstractTypeAwareBuilder;
@@ -37,20 +41,20 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setQName(QName qname) {
+    public void setQName(final QName qname) {
         this.qname = qname;
     }
 
     @Override
     public IdentityrefType build() {
-        return new IdentityrefType(baseIdentity.build(), schemaPath);
+        return IdentityrefType.create(schemaPath, baseIdentity.build());
     }
 
     public String getBaseString() {
         return baseString;
     }
 
-    public void setBaseIdentity(IdentitySchemaNodeBuilder baseIdentity) {
+    public void setBaseIdentity(final IdentitySchemaNodeBuilder baseIdentity) {
         this.baseIdentity = baseIdentity;
     }
 
@@ -115,7 +119,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setPath(SchemaPath path) {
+    public void setPath(final SchemaPath path) {
         this.schemaPath = path;
     }
 
@@ -140,7 +144,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setRanges(List<RangeConstraint> ranges) {
+    public void setRanges(final List<RangeConstraint> ranges) {
         throw new YangParseException(moduleName, line, "Can not set ranges to " + NAME);
     }
 
@@ -150,7 +154,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setLengths(List<LengthConstraint> lengths) {
+    public void setLengths(final List<LengthConstraint> lengths) {
         throw new YangParseException(moduleName, line, "Can not set lengths to " + NAME);
     }
 
@@ -160,7 +164,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setPatterns(List<PatternConstraint> patterns) {
+    public void setPatterns(final List<PatternConstraint> patterns) {
         throw new YangParseException(moduleName, line, "Can not set patterns to " + NAME);
     }
 
@@ -170,7 +174,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setFractionDigits(Integer fractionDigits) {
+    public void setFractionDigits(final Integer fractionDigits) {
         throw new YangParseException(moduleName, line, "Can not set fraction digits to " + NAME);
     }
 
@@ -185,7 +189,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setDefaultValue(Object defaultValue) {
+    public void setDefaultValue(final Object defaultValue) {
         throw new YangParseException(moduleName, line, "Can not set default value to " + NAME);
     }
 
@@ -195,7 +199,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
     }
 
     @Override
-    public void setUnits(String units) {
+    public void setUnits(final String units) {
         throw new YangParseException(moduleName, line, "Can not set units to " + NAME);
     }
 

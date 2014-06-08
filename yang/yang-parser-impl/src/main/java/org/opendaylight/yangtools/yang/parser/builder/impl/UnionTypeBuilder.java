@@ -84,7 +84,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
             for (TypeDefinitionBuilder tdb : typedefs) {
                 types.add(tdb.build());
             }
-            instance = new UnionType(types);
+            instance = UnionType.create(types);
             isBuilt = true;
         }
         return instance;
@@ -122,7 +122,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
 
     @Override
     public SchemaPath getPath() {
-        return BaseTypes.schemaPath(QNAME);
+        return SchemaPath.create(true,  QNAME);
     }
 
     @Override

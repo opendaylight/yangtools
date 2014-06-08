@@ -178,7 +178,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
                 caseBuilder.setAugmenting(true);
                 caseNode.setAugmenting(false);
             }
-            SchemaPath newPath = ParserUtils.createSchemaPath(caseNode.getPath(), caseQName);
+            SchemaPath newPath = caseNode.getPath().createChild(caseQName);
             caseNode.setPath(newPath);
             caseBuilder.addChildNode(caseNode);
             caseBuilders.add(caseBuilder);
