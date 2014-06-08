@@ -99,7 +99,7 @@ final class BasicValidations {
         }
     }
 
-    private static Pattern identifierPattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
+    private static final Pattern identifierPattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
 
     static void checkIdentifier(final ParseTree statement) {
         checkIdentifierInternal(statement, ValidationUtil.getName(statement));

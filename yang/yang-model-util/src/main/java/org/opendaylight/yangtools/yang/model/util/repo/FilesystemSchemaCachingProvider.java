@@ -45,6 +45,7 @@ import com.google.common.base.Preconditions;
  */
 public final class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSourceProvider<I, InputStream> {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemSchemaCachingProvider.class);
+    private static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
 
     private final File storageDirectory;
     private final SchemaSourceTransformation<I, String> transformationFunction;
@@ -165,15 +166,11 @@ public final class FilesystemSchemaCachingProvider<I> extends AbstractCachingSch
 
     private File findFileWithNewestRev(final SourceIdentifier identifier) {
         File[] files = storageDirectory.listFiles(new FilenameFilter() {
-            final String regex = identifier.getName() + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)";
+            final Pattern p = Pattern.compile(Pattern.quote(identifier.getName()) + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)");
 
             @Override
             public boolean accept(final File dir, final String name) {
-                if (name.matches(regex)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return p.matcher(name).matches();
             }
         });
 
@@ -185,11 +182,10 @@ public final class FilesystemSchemaCachingProvider<I> extends AbstractCachingSch
         }
 
         File file = null;
-        Pattern p = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
         TreeMap<Date, File> map = new TreeMap<>();
         for (File sorted : files) {
             String fileName = sorted.getName();
-            Matcher m = p.matcher(fileName);
+            Matcher m = REVISION_PATTERN.matcher(fileName);
             if (m.find()) {
                 String revStr = m.group();
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
