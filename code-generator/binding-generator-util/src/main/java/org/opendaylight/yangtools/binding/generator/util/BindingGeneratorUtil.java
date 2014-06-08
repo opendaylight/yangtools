@@ -353,21 +353,25 @@ public final class BindingGeneratorUtil {
      *             if the length of the returning string has length 0
      */
     private static String replaceWithCamelCase(final String text, final char removalChar) {
+        int toBeRemovedPos = text.indexOf(removalChar);
+        if (toBeRemovedPos == -1) {
+            return text;
+        }
+
         StringBuilder sb = new StringBuilder(text);
         String toBeRemoved = String.valueOf(removalChar);
-
-        int toBeRemovedPos = sb.indexOf(toBeRemoved);
-        while (toBeRemovedPos != -1) {
+        do {
             sb.replace(toBeRemovedPos, toBeRemovedPos + 1, "");
             // check if 'toBeRemoved' character is not the only character in
             // 'text'
             if (sb.length() == 0) {
                 throw new IllegalArgumentException("The resulting string can not be empty");
             }
-            String replacement = String.valueOf(sb.charAt(toBeRemovedPos)).toUpperCase();
-            sb.setCharAt(toBeRemovedPos, replacement.charAt(0));
+            char replacement = Character.toUpperCase(sb.charAt(toBeRemovedPos));
+            sb.setCharAt(toBeRemovedPos, replacement);
             toBeRemovedPos = sb.indexOf(toBeRemoved);
-        }
+        } while (toBeRemovedPos != -1);
+
         return sb.toString();
     }
 
