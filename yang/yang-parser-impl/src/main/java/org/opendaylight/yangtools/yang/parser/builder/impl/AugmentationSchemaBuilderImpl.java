@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -106,11 +107,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         }
 
         if (parent instanceof UsesNodeBuilder) {
-            ModuleBuilder mb = ParserUtils.getParentModule(this);
+            final ModuleBuilder mb = ParserUtils.getParentModule(this);
+            final QNameModule qm = QNameModule.create(mb.getNamespace(), mb.getRevision());
+
             List<QName> newPath = new ArrayList<>();
-            List<QName> parsedPath = targetPath.getPath();
-            for (QName name : parsedPath) {
-                newPath.add(new QName(mb.getNamespace(), mb.getRevision(), name.getPrefix(), name.getLocalName()));
+            for (QName name : targetPath.getPathFromRoot()) {
+                newPath.add(QName.create(qm, name.getPrefix(), name.getLocalName()));
             }
             instance.targetPath = SchemaPath.create(newPath, false);
         } else {
@@ -456,8 +458,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
 
         @Override
         public int compareTo(final AugmentationSchemaImpl o) {
-            Iterator<QName> thisIt = this.targetPath.getPath().iterator();
-            Iterator<QName> otherIt = o.getTargetPath().getPath().iterator();
+            Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
+            Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();
             while (thisIt.hasNext()) {
                 if (otherIt.hasNext()) {
                     int comp = thisIt.next().compareTo(otherIt.next());
