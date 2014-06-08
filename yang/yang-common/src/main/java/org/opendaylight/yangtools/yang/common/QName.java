@@ -193,6 +193,15 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
+     * Get the module component of the QName.
+     *
+     * @return Module component
+     */
+    public QNameModule getModule() {
+        return module;
+    }
+
+    /**
      * Returns XMLNamespace assigned to the YANG module.
      *
      * @return XMLNamespace assigned to the YANG module.
@@ -290,6 +299,13 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return new QName(base, localName);
     }
 
+    public static QName create(final QNameModule module, final String prefix, final String localName) {
+        if (module == null) {
+            throw new NullPointerException("module may not be null");
+        }
+        return new QName(module, prefix, localName);
+    }
+
     /**
      *
      * Creates new QName.
@@ -300,7 +316,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final URI namespace, final Date revision, final String localName) {
-        return new QName(QNameModule.create(namespace, revision), null,localName);
+        return new QName(QNameModule.create(namespace, revision), null, localName);
     }
 
     /**
