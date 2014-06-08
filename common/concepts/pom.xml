@@ -11,14 +11,11 @@
 
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools-parent</artifactId>
+        <artifactId>common-parent</artifactId>
         <version>0.6.2-SNAPSHOT</version>
-        <relativePath>/../../common/parent/pom.xml</relativePath>
     </parent>
-
     <packaging>bundle</packaging>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>concepts</artifactId>
     <name>${project.artifactId}</name>
     <description>Common concepts</description>

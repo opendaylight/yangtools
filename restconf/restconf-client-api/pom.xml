@@ -12,7 +12,7 @@
     <artifactId>restconf-client-api</artifactId>
     <packaging>bundle</packaging>
 
-   <parent>
+    <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>restconf-parent</artifactId>
         <version>0.6.2-SNAPSHOT</version>

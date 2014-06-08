@@ -11,13 +11,11 @@
 
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools-parent</artifactId>
+        <artifactId>yang</artifactId>
         <version>0.6.2-SNAPSHOT</version>
-        <relativePath>/../../common/parent/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <description>
