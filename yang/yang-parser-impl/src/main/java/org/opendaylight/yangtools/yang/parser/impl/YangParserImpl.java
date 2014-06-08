@@ -50,6 +50,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -850,8 +851,9 @@ public final class YangParserImpl implements YangContextParser {
                 prefix = baseQName.getPrefix();
             }
 
+            final QNameModule qm = QNameModule.create(ns, revision);
             for (QName qn : oldSchemaPath.getPath()) {
-                newPath.add(new QName(ns, revision, prefix, qn.getLocalName()));
+                newPath.add(QName.create(qm, prefix, qn.getLocalName()));
             }
         } else {
             for (QName qn : oldPath) {
