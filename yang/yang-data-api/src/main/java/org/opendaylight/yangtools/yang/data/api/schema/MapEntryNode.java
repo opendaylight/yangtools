@@ -10,10 +10,29 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 
+/**
+ *
+ * Instance of Map entry, this node does not contains value, but child nodes.
+ *
+ *
+ *
+ *
+ */
 public interface MapEntryNode extends
         AttributesContainer,
         DataContainerNode<NodeIdentifierWithPredicates> {
 
+    /**
+     *
+     * Returns identifier of this node in parent map node
+     *
+     * Contents of identifier is defined by <code>key</code> ({@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.ListSchemaNode#getKeyDefinition()}) statement
+     * in YANG schema for associated list item and child {@link LeafNode}s values
+     * with {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier} as defined in the schema.
+     *
+     *
+     */
     @Override
     NodeIdentifierWithPredicates getIdentifier();
+
 }

@@ -7,6 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+
+/**
+ *
+ * Leaf set node which preserves user-supplied ordering.
+ *
+ * This node represents a data instance of <code>leaf-list</code> with
+ * <code>ordered-by user;</code> substatement.
+ *
+ * Except preserving user-ordering all other semantics and behaviour is same
+ * as in {@link LeafSetNode}.
+ *
+ * @param <T> Value type of Leaf entries
+ */
 public interface OrderedLeafSetNode<T> extends LeafSetNode<T>, OrderedNodeContainer<LeafSetEntryNode<T>> {
 
 }

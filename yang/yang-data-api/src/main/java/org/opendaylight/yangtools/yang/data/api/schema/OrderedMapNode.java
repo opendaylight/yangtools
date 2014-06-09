@@ -7,6 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+/**
+*
+* Map node which preserves user-supplied ordering.
+*
+* This node represents a data instance of <code>list</code> with
+* <code>ordered-by user;</code> substatement and <code>key</code>
+* definition.
+*
+* Except preserving user-ordering all other semantics and behaviour is same
+* as in {@link MapNode}.
+*
+*/
 public interface OrderedMapNode extends MapNode, OrderedNodeContainer<MapEntryNode> {
 
 }

@@ -11,9 +11,12 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifie
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 
 /**
- * Containment node, which contains {@link MapEntryNode} of the same type.
+ * Containment node, which contains {@link MapEntryNode} of the same type, which may
+ * be quickly retrieved using key.
  *
- * This node maps to the list node in YANG schema.
+ * This node maps to the list node in YANG schema, schema and semantics of this node,
+ * its children and key construction is  defined by YANG <code>list</code>
+ * statement and its <code>key</code> and <code>ordered-by</code> substatements.
  *
  */
 public interface MapNode extends //
@@ -21,6 +24,4 @@ public interface MapNode extends //
         DataContainerChild<NodeIdentifier, Iterable<MapEntryNode>>,
         NormalizedNodeContainer<NodeIdentifier, NodeIdentifierWithPredicates, MapEntryNode> {
 
-    @Override
-    NodeIdentifier getIdentifier();
 }

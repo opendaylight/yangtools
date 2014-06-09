@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
- *
+ * Copyright (c) 2014 Cisco Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -32,6 +31,41 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * Unique identifier of a partical node instance in the data tree.
+ * 
+ * 
+ * <p>
+ * Java representation of YANG Built-in type <code>instance-identifier</code>,
+ * which conceptually is XPath expression minimised to uniquely identify element
+ * in data tree which conforms to constraints maintained by YANG Model,
+ * effectively this makes Instance Identifier a path to element in data tree.
+ * <p>
+ * Constraints put in YANG specification on instance-identifier allowed it to be
+ * effectively represented in Java and it's evaluation does not require
+ * full-blown XPath processor.
+ * <p>
+ * <h3>Path Arguments</h3>
+ * Path to the node represented in instance identifier consists of
+ * {@link PathArgument} which carries necessary information to uniquely identify
+ * node on particular level in the subtree.
+ * <p>
+ * <ul>
+ * <li>{@link NodeIdentifier} - Identifier of node, which has cardinality
+ * <code>0..1</code> in particular subtree in data tree.</li>
+ * <li>{@link NodeIdentifierWithPredicates} - Identifier of node (list item),
+ * which has cardinality <code>0..n</code>.</li>
+ * <li>{@link NodeWithValue} - Identifier of instance <code>leaf</code> node or
+ * <code>leaf-list</code> node.</li>
+ * <li>{@link AugmentationIdentifier} - Identifier of instance of
+ * <code>augmentation</code> node.</li>
+ * </ul>
+ * 
+ * 
+ * @see http://tools.ietf.org/html/rfc6020#section-9.13
+ * 
+ * 
+ */
 public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
 
     private static final long serialVersionUID = 8467409862384206193L;
@@ -40,16 +74,50 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     private transient String toStringCache = null;
     private transient Integer hashCodeCache = null;
 
+    /**
+     * 
+     * Returns a list of path arguments.
+     * 
+     * @deprecated Use {@link #getPathArguments()} instead.
+     * @return Immutable list of path arguments.
+     */
     public List<PathArgument> getPath() {
         return path;
     }
 
+    /**
+     * 
+     * Returns a ordered iteration of path arguments.
+     * 
+     * @deprecated Use {@link #getPathArguments()} instead.
+     * @return Immutable iteration of path arguments.
+     */
+    public Iterable<PathArgument> getPathArguments() {
+        return path;
+    }
+
+    /**
+     * 
+     * 
+     * @deprecated Use {@link #create(Iterable)} instead.
+     * @param path
+     */
+    @Deprecated
     public InstanceIdentifier(final List<? extends PathArgument> path) {
+        this.path = ImmutableList.copyOf(path);
+    }
+
+    private InstanceIdentifier(Iterable<? extends PathArgument> path) {
+        Preconditions.checkNotNull(path, "path must not be null.");
         this.path = ImmutableList.copyOf(path);
     }
 
     private InstanceIdentifier(final NodeIdentifier nodeIdentifier) {
         this.path = ImmutableList.<PathArgument> of(nodeIdentifier);
+    }
+
+    public static final InstanceIdentifier create(Iterable<? extends PathArgument> path) {
+        return new InstanceIdentifier(path);
     }
 
     @Override
@@ -58,17 +126,15 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
          * The hashCodeCache is safe, since the object contract requires
          * immutability of the object and all objects referenced from this
          * object.
-         *
          * Used lists, maps are immutable. Path Arguments (elements) are also
          * immutable, since the PathArgument contract requires immutability.
-         *
          * The cache is thread-safe - if multiple computations occurs at the
          * same time, cache will be overwritten with same result.
          */
         if (hashCodeCache == null) {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((path == null) ? 0 : path.hashCode());
+            result = prime * result + path.hashCode();
             hashCodeCache = result;
         }
         return hashCodeCache;
@@ -104,15 +170,18 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     public InstanceIdentifier node(final PathArgument arg) {
-        return new InstanceIdentifier(ImmutableList.<PathArgument>builder().addAll(path).add(arg).build());
+        return create(ImmutableList.<PathArgument> builder().addAll(path).add(arg).build());
     }
 
     /**
-     * Get the relative path from an ancestor. This method attempts to perform the reverse
+     * Get the relative path from an ancestor. This method attempts to perform
+     * the reverse
      * of concatenating a base (ancestor) and a path.
-     *
-     * @param ancestor Ancestor against which the relative path should be calculated
-     * @return This object's relative path from parent, or Optional.absent() if the
+     * 
+     * @param ancestor
+     *            Ancestor against which the relative path should be calculated
+     * @return This object's relative path from parent, or Optional.absent() if
+     *         the
      *         specified parent is not in fact an ancestor of this object.
      */
     public Optional<InstanceIdentifier> relativeTo(final InstanceIdentifier ancestor) {
@@ -169,10 +238,10 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         /**
          * If applicable returns uniqee QName of data node as defined in YANG
          * Schema.
-         *
+         * 
          * This method may return null, if the corresponding schema node, does
          * not have QName associated, such as in cases of augmentations.
-         *
+         * 
          * @return
          */
         QName getNodeType();
@@ -193,7 +262,8 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     /**
-     * Simple path argument identifying a {@link ContainerNode} or {@link LeafNode} leaf
+     * Simple path argument identifying a {@link ContainerNode} or
+     * {@link LeafNode} leaf
      * overall data tree.
      */
     public static final class NodeIdentifier implements PathArgument, Comparable<NodeIdentifier> {
@@ -392,8 +462,19 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     /**
-     * Composite path argument identifying a {@link AugmentationNode} leaf
-     * overall data tree.
+     * Composite path argument identifying a {@link AugmentationNode} node in
+     * particular
+     * subtree.
+     * 
+     * Augmentation is uniquely identified by set of all possible child nodes.
+     * This is possible
+     * to identify instance of augmentation,
+     * since RFC6020 states that <code>augment</code> that augment
+     * statement must not add multiple nodes from same namespace
+     * / module to the target node.
+     * 
+     * 
+     * @see http://tools.ietf.org/html/rfc6020#section-7.15
      */
     public static final class AugmentationIdentifier implements PathArgument {
         private static final long serialVersionUID = -8122335594681936939L;
@@ -405,18 +486,32 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             throw new UnsupportedOperationException("Augmentation node has no QName");
         }
 
+        /**
+         * 
+         * Construct new augmentation identifier using supplied set of possible child nodes
+         * 
+         * @param childNames Set of possible child nodes.
+         */
         public AugmentationIdentifier(final Set<QName> childNames) {
             this.childNames = ImmutableSet.copyOf(childNames);
         }
 
         /**
          * Augmentation node has no QName
+         * 
+         * @deprecated Use {@link AugmentationIdentifier#AugmentationIdentifier(Set)} instead.
          */
         @Deprecated
         public AugmentationIdentifier(final QName nodeType, final Set<QName> childNames) {
             this(childNames);
         }
 
+        /**
+         * 
+         * Returns set of all possible child nodes
+         * 
+         * @return set of all possible child nodes.
+         */
         public Set<QName> getPossibleChildNames() {
             return childNames;
         }
@@ -526,10 +621,8 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
          * The toStringCache is safe, since the object contract requires
          * immutability of the object and all objects referenced from this
          * object.
-         *
          * Used lists, maps are immutable. Path Arguments (elements) are also
          * immutable, since the PathArgument contract requires immutability.
-         *
          * The cache is thread-safe - if multiple computations occurs at the
          * same time, cache will be overwritten with same result.
          */
