@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_20013f05",
+        "filename": "integration-test/yang-runtime-tests/src/test/java/org/opendaylight/yangtools/it/yang/runtime/tests/RuntimeCodecAugmentationWithGroupingsAndCasesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T08:47:10Z",
+      "side": 1,
+      "message": "Why is this test disabled?",
+      "revId": "7b0b12a389181f4e97641b0482b4540cd7b0fb72",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7d02940c",
+        "filename": "integration-test/yang-runtime-tests/src/test/java/org/opendaylight/yangtools/it/yang/runtime/tests/RuntimeCodecAugmentationWithGroupingsAndCasesTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T08:47:10Z",
+      "side": 1,
+      "message": "Use consistent whitespace, please",
+      "revId": "7b0b12a389181f4e97641b0482b4540cd7b0fb72",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
