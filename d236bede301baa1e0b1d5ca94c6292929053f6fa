@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_9303c741",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-06-09T20:22:59Z",
+      "side": 1,
+      "message": "This is basically a simple helper class. I suppose there could be different impls (although isn\u0027t that the case with everything). I can make an interface although I think it\u0027s probably overkill.",
+      "parentUuid": "fa82b9bf_e0a6f70f",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_40524314",
         "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
         "patchSetId": 6
@@ -64,6 +82,24 @@
       "writtenOn": "2014-06-09T09:11:10Z",
       "side": 1,
       "message": "the \u0027generate\u0027 source bit should be in the caller of the contructor -- e.g. elide constructing if not enabled.\n\nthe target directotry should be an argument, again determined by the caller -- multiple different instances should be possible\n\nfinally, the magic strings need to be public constants with appropriate javadocs",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_73f88349",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-06-09T20:22:59Z",
+      "side": 1,
+      "message": "Yeah I can have the caller avoid constructing if not enabled and pass in the target dir. Again I was trying  to keep it simple and not over-engineer this. If we avoid constructing then I have to check if not null all over the place. I think he overhead of constructing an instance is negligible compared to the rest of processing to generate a codec classes.\n\nHowever, if we\u0027re going to have an interface and elide construction if not enabled, then we may as well go all out and create a factory class to create SourceCodeGenerator instances. If not enabled then return a static impl that does nothing.",
+      "parentUuid": "fa82b9bf_40524314",
       "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -149,6 +185,24 @@
       "writtenOn": "2014-06-09T09:11:10Z",
       "side": 1,
       "message": "This looks like an unrelated change",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d3b70f85",
+        "filename": "code-generator/maven-sal-api-gen-plugin/src/main/java/org/opendaylight/yangtools/yang/unified/doc/generator/GeneratorImpl.xtend",
+        "patchSetId": 6
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-06-09T20:22:59Z",
+      "side": 1,
+      "message": "It is. Fixes compile error in eclipse.",
+      "parentUuid": "fa82b9bf_603507d9",
       "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
