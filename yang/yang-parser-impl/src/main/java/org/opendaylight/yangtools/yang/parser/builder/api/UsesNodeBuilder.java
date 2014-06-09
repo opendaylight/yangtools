@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.util.RefineHolder;
 
 /**
- * Interface for builders of 'uses' statement.
+ * Builder for  'uses' statement.
  */
 public interface UsesNodeBuilder extends GroupingMember {
 
@@ -25,6 +25,7 @@ public interface UsesNodeBuilder extends GroupingMember {
      * module, container, list, case, grouping, input, output, notification or
      * augment, return type is DataNodeContainerBuilder.
      */
+    @Override
     DataNodeContainerBuilder getParent();
 
     /**
@@ -133,11 +134,31 @@ public interface UsesNodeBuilder extends GroupingMember {
 
     /**
      * Build new UsesNode object.
+     *
+     *
+     * @return UsesNode Instance of {@link UsesNode} described by this builder.
      */
+    @Override
     UsesNode build();
 
+    /**
+     *
+     * Returns true if uses node was resolved and {@link #getGroupingBuilder()}
+     * was instantiated for parent done of this node.
+     *
+     * @return true if uses node was resolved and associated nodes were instantiated in parent node.
+     */
     boolean isResolved();
 
+    /**
+     *
+     * Sets state of instantiation of {@link #getGroupingBuilder()}
+     * into parent node of this node.
+     *
+     * @deprecated Do not use this, this should be internal to the implementation
+     *  and public API contract.
+     */
+    @Deprecated
     void setResolved(boolean resolved);
 
 }

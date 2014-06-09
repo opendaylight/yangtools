@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
- *
+ * Copyright (c) 2013 Cisco Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -72,9 +71,9 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         QName childName = child.getQName();
         for (DataSchemaNodeBuilder addedChildNode : addedChildNodes) {
             if (addedChildNode.getQName().equals(childName)) {
-                throw new YangParseException(child.getModuleName(), child.getLine(), "Can not add '" + child + "' to '"
-                        + this + "' in module '" + moduleName + "': node with same name already declared at line "
-                        + addedChildNode.getLine());
+                throw new YangParseException(child.getModuleName(), child.getLine(), String.format(
+                        "Can not add '%s' to '%s' in module '%s': node with same name already declared at line %d",
+                        child, this, getModuleName(), addedChildNode.getLine()));
             }
         }
         addedChildNodes.add(child);
@@ -90,8 +89,9 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         QName childName = child.getQName();
         for (DataSchemaNode childNode : childNodes) {
             if (childNode.getQName().equals(childName)) {
-                throw new YangParseException(moduleName, line, "Can not add '" + child + "' to '" + this
-                        + "' in module '" + moduleName + "': node with same name already declared");
+                throw new YangParseException(getModuleName(), getLine(), String.format(
+                        "Can not add '%s' to '%s' in module '%s': node with same name already declared", child, this,
+                        getModuleName()));
             }
         }
         childNodes.add(child);
@@ -115,9 +115,9 @@ public abstract class AbstractDataNodeContainerBuilder extends AbstractBuilder i
         QName groupingName = grouping.getQName();
         for (GroupingBuilder addedGrouping : addedGroupings) {
             if (addedGrouping.getQName().equals(groupingName)) {
-                throw new YangParseException(grouping.getModuleName(), grouping.getLine(), "Can not add '" + grouping
-                        + "': grouping with same name already declared in module '" + moduleName + "' at line "
-                        + addedGrouping.getLine());
+                throw new YangParseException(grouping.getModuleName(), grouping.getLine(), String.format(
+                        "Can not add '%s': grouping with same name already declared in module '%s' at line %d",
+                        grouping, getModuleName(), addedGrouping.getLine()));
             }
         }
         addedGroupings.add(grouping);
