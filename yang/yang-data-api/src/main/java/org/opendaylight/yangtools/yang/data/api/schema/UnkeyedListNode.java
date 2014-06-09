@@ -9,6 +9,22 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 
+
+/**
+ *
+ * Containment node, which contains {@link UnkeyedListEntryNode} of the same type, which may
+ * be quickly retrieved using key.
+ *
+ * <p>
+ * This node maps to the <code>list</code> statement in YANG schema,
+ * which did not define <code>key</code> substatement.
+ *
+ * <p>
+ * Ordering of the elements is user-defined during construction of instance of this
+ * interface. Ordered view of elements (iteration)
+ * is provided by {@link #getValue()} call.
+ *
+ */
 public interface UnkeyedListNode extends
     DataContainerChild<NodeIdentifier, Iterable<UnkeyedListEntryNode>>,
     OrderedNodeContainer<UnkeyedListEntryNode> {

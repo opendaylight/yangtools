@@ -10,19 +10,20 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
 
-import com.google.common.base.Optional;
-
+/**
+ *
+ * Node representing set of simple leaf nodes.
+ *
+ * Node containing instances of {@link LeafSetEntryNode}
+ *
+ * Schema and semantics of this node are described by instance of {@link org.opendaylight.yangtools.yang.model.api.LeafListSchema}.
+ *
+ *
+ * @param <T> Type of leaf node values.
+ */
 public interface LeafSetNode<T> extends
     MixinNode, //
     DataContainerChild<NodeIdentifier, Iterable<LeafSetEntryNode<T>>>, //
     NormalizedNodeContainer<NodeIdentifier, NodeWithValue,LeafSetEntryNode<T>> {
 
-    @Override
-    NodeIdentifier getIdentifier();
-
-    @Override
-    Iterable<LeafSetEntryNode<T>> getValue();
-
-    @Override
-    Optional<LeafSetEntryNode<T>> getChild(NodeWithValue child);
 }
