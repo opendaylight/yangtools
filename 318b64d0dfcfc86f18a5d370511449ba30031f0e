@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_400a43d3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/AugmentationSchemaBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "missing docs",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e0103703",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/AugmentationSchemaBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "please expand this",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_00143bf3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/DataNodeContainerBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "missing doc",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a0fa2fbb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/DataSchemaNodeBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "@return missing",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_600427c0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/GroupingBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "missing @return",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_80ffeba9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/TypeDefinitionBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "missing docs",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_202e1f44",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/TypeDefinitionBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "missing doc",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_4031e3a0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/TypeDefinitionBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "missing doc",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e027d762",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/UsesNodeBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "@return",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_002bdb30",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/UsesNodeBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "@return",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a021cf4e",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/UsesNodeBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T10:26:01Z",
+      "side": 1,
+      "message": "I do not quite get the deprecation comment",
+      "revId": "318b64d0dfcfc86f18a5d370511449ba30031f0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
