@@ -31,6 +31,8 @@ public interface Node<T> extends Entry<QName, T> {
      * Returns parent node
      *
      * @return parent node
+     * @deprecated Unused, Deprecated because  reference to parent disallows of sharing one instance
+     *   in multiple trees / subtress.
      */
     @Deprecated
     CompositeNode getParent();

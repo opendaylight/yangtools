@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
- *
+ * Copyright (c) 2014 Cisco Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,16 +8,42 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 
-import com.google.common.base.Optional;
-
+/**
+ *
+ * Abstract node which does not have value but contains valid {@link DataContainerChild} nodes.
+ *
+ * Schema of this node is described by instance of {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer}.
+ *
+ * <h2>Implementation notes</h2>
+ * This interface should not be implemented
+ * directly, but rather implementing
+ * one of it's subclasses
+ * <ul>
+ * <li>{@link ContainerNode}
+ * <li>{@link MapEntryNode}
+ * <li>{@link UnkeyedListEntryNode}
+ * <li>{@link ChoiceNode}
+ * <li>{@link AugmentationNode}
+ * </ul>
+ * @param <K> {@link PathArgument} which identifies instance of {@link DataContainerNode}
+ */
 public interface DataContainerNode<K extends PathArgument> extends //
         NormalizedNodeContainer<K, PathArgument, DataContainerChild<? extends PathArgument, ?>> {
-    @Override
-    K getIdentifier();
 
+
+
+    /**
+     * Returns iteration of all child nodes
+     *
+     * Order of returned child nodes may be defined by subinterfaces.
+     *
+     * <b>Implementation Notes:</b>
+     * <p>
+     * All nodes returned in this iterable, MUST also be accessible via
+     * {@link #getChild(PathArgument)} using their associated identifier.
+     *
+     * @return Iteration of all child nodes
+     */
     @Override
     Iterable<DataContainerChild<? extends PathArgument, ?>> getValue();
-
-    @Override
-    Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
 }

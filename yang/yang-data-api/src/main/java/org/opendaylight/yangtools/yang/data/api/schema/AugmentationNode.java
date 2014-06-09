@@ -10,12 +10,16 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 
-import com.google.common.base.Optional;
 
 /**
  *
- * Node representing Augmentation.
+ * Data instance of <code>augment</code> assiociated with parent node.
+ * 
+ * Augmentation is addition of subtree defined by other external YANG Model and
+ * is schema for subtree is described by instance of  {@link AugmentationSchema}
+ * associated with parent node of this node.
  *
  * Augmentation node MUST NOT be direct child of other augmentation node.
  *
@@ -25,12 +29,21 @@ public interface AugmentationNode extends //
     DataContainerNode<AugmentationIdentifier>,
     DataContainerChild<InstanceIdentifier.AugmentationIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
 
+    /**
+     * Gets identifier of augmentation node
+     * 
+     * Returned identifier of augmentation node contains all possible 
+     * direct child QNames.
+     * 
+     * This is sufficient to identify instance of augmentation,
+     * since RFC6020 states that <code>augment</code> that augment
+     * statement must not add multiple nodes from same namespace 
+     * / module
+     * to the target node.
+     * 
+     * @return Identifier which uniquelly identifies augmentation in particular subtree.
+     * 
+     */
     @Override
-    Iterable<DataContainerChild<? extends PathArgument, ?>> getValue();
-
-    @Override
-    Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
-
-    @Override
-    AugmentationIdentifier getIdentifier();
+    public AugmentationIdentifier getIdentifier();
 }
