@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_00251baa",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/TransformerGenerator.xtend",
+        "patchSetId": 6
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_209dbfbc",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/JavassistUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "unused imports?",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e0a6f70f",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "I think it is conceivable to have differing implementations... can we have an interface/implementation?",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_40524314",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "the \u0027generate\u0027 source bit should be in the caller of the contructor -- e.g. elide constructing if not enabled.\n\nthe target directotry should be an argument, again determined by the caller -- multiple different instances should be possible\n\nfinally, the magic strings need to be public constants with appropriate javadocs",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_20761fa5",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "I think the return is guaranteed to be non-null",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_4079e391",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "curly braces are mandatory even for single-line conditional body",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e0583734",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "curly brace and catch should be on the same line",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_805e0b11",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "do not use string concat in logging, but rather proper format string",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_603507d9",
+        "filename": "code-generator/maven-sal-api-gen-plugin/src/main/java/org/opendaylight/yangtools/yang/unified/doc/generator/GeneratorImpl.xtend",
+        "patchSetId": 6
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-09T09:11:10Z",
+      "side": 1,
+      "message": "This looks like an unrelated change",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
