@@ -11,16 +11,17 @@ import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 
-import com.google.common.base.Optional;
-
+/**
+ * Data subtree with cardinality 0..1 in the context of parent node
+ * 
+ * Node which does not have value but contains valid {@link DataContainerChild} nodes.
+ * 
+ * Schema of this node is described by instance of {@link org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode}.
+ * 
+ */
 public interface ContainerNode extends //
         AttributesContainer,
         DataContainerNode<NodeIdentifier>,
         DataContainerChild<NodeIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
 
-    @Override
-    NodeIdentifier getIdentifier();
-
-    @Override
-    Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
 }

@@ -12,22 +12,24 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 /**
  *
  * Marker interface for direct children of {@link DataContainerNode}.
- *
- * Implementation notes:
+ * 
+ * <h3>Implementation notes</h3>
  * This interface should not be implemented directly, but rather using one
  * of its subinterfaces:
  *
+ * <ul>
+ * <li>{@link LeafNode}
+ * <li>{@link ContainerNode}
+ * <li>{@link ChoiceNode}
+ * <li>{@link MapNode}
+ * <li>{@link AugmentationNode}
+ *</ul>
  *
- * {@link LeafNode}
- * {@link ContainerNode}
- * {@link ChoiceNode}
- * {@link MapNode}
- * {@link AugmentationNode}
- *
- * @param <K>
- * @param <V>
+ * @param <K> Path Argument Type which is used to identify node
+ * @param <V> Value type
  */
 public interface DataContainerChild<K extends PathArgument,V> extends NormalizedNode<K, V> {
+
     @Override
     K getIdentifier();
 }

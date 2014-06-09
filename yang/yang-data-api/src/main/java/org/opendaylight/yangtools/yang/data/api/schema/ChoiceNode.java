@@ -10,13 +10,16 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 
-import com.google.common.base.Optional;
-
 /**
  *
- * Node representing choice.
+ * Node representing data instance of <code>choice</code>.
  *
- * @author Tony Tkacik
+ * Choice node is instance of one of possible alternatives, from which
+ * only one is allowed to exist at one time in particular context of parent node.
+   YANG Model and
+ * schema for choice is described by instance of  {@link org.opendaylight.yangtools.yang.model.api.ChoiceNode}.
+ * Valid alternatives of subtree are described by instances of {@link org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode}
+ * which are retrieved via {@link org.opendaylight.yangtools.yang.model.api.ChoiceNode#getCases()}.
  *
  */
 public interface ChoiceNode extends //
@@ -24,9 +27,4 @@ public interface ChoiceNode extends //
         DataContainerNode<NodeIdentifier>,
         DataContainerChild<NodeIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
 
-    @Override
-    NodeIdentifier getIdentifier();
-
-    @Override
-    Optional<DataContainerChild<? extends PathArgument, ?>> getChild(PathArgument child);
 }
