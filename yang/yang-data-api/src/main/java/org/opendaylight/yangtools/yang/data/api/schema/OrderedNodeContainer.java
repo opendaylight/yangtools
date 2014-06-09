@@ -9,7 +9,28 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 
+/**
+ *
+ * Normalized Node container which preserves user supplied ordering
+ * and allows addressing of child elements by positiion.
+ *
+ * @param <V>
+ */
 public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends MixinNode, NormalizedNode<NodeIdentifier, Iterable<V>> {
+
+    /**
+     * Returns child node by position
+     *
+     * @param position Position of child node
+     * @return Child Node
+     * @throws IndexOutOfBoundsException
+     */
     V getChild(int position);
+
+    /**
+     * Returns count of child nodes
+     *
+     * @return count of child nodes.
+     */
     int getSize();
 }
