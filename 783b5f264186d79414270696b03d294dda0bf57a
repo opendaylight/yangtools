@@ -16,6 +16,24 @@
       "revId": "783b5f264186d79414270696b03d294dda0bf57a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_000e7b34",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ChoiceCaseBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-09T11:05:06Z",
+      "side": 1,
+      "message": "Parent classes does not define customized equals(), this will be addressed in later cleanup of abstract builders.",
+      "parentUuid": "fa82b9bf_3c4f356d",
+      "revId": "783b5f264186d79414270696b03d294dda0bf57a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
