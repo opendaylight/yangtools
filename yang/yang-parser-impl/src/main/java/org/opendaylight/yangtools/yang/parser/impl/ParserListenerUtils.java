@@ -9,14 +9,15 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.Optional;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -131,8 +132,6 @@ import org.opendaylight.yangtools.yang.parser.util.UnknownBoundaryNumber;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 public final class ParserListenerUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ParserListenerUtils.class);
@@ -707,7 +706,7 @@ public final class ParserListenerUtils {
                 if (value.contains(".")) {
                     result = new BigDecimal(value);
                 } else {
-                    result = Long.valueOf(value);
+                    result = new BigInteger(value);
                 }
             } catch (NumberFormatException e) {
                 throw new YangParseException(moduleName, line, "Unable to parse range value '" + value + "'.", e);

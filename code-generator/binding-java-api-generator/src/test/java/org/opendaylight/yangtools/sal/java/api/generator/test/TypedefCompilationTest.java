@@ -50,6 +50,8 @@ public class TypedefCompilationTest extends BaseCompilationTest {
     private static final String VAL = "_value";
     private static final String GET_VAL = "getValue";
     private static final String UNITS = "_UNITS";
+    private static final String LENGTH = "_length";
+    private static final String RANGE = "_range";
 
     @Test
     public void test() throws Exception {
@@ -134,8 +136,9 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef int32-ext1
         assertFalse(int32Ext1Class.isInterface());
         assertContainsField(int32Ext1Class, VAL, Integer.class);
+        assertContainsField(int32Ext1Class, RANGE, List.class);
         assertContainsFieldWithValue(int32Ext1Class, "serialVersionUID", Long.TYPE, 5351634010010233292L, Integer.class);
-        assertEquals(2, int32Ext1Class.getDeclaredFields().length);
+        assertEquals(3, int32Ext1Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(int32Ext1Class, Integer.class);
         assertContainsConstructor(int32Ext1Class, int32Ext1Class);
         assertEquals(2, int32Ext1Class.getConstructors().length);
@@ -155,9 +158,10 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
         // typedef int32-ext2
         assertFalse(int32Ext2Class.isInterface());
+        assertContainsField(int32Ext1Class, RANGE, List.class);
         assertContainsFieldWithValue(int32Ext2Class, UNITS, String.class, "mile", Integer.class);
         assertContainsFieldWithValue(int32Ext2Class, "serialVersionUID", Long.TYPE, 317831889060130988L, Integer.class);
-        assertEquals(2, int32Ext2Class.getDeclaredFields().length);
+        assertEquals(3, int32Ext2Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(int32Ext2Class, Integer.class);
         assertContainsConstructor(int32Ext2Class, int32Ext2Class);
         assertContainsConstructor(int32Ext2Class, int32Ext1Class);
@@ -179,10 +183,11 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef string-ext1
         assertFalse(stringExt1Class.isInterface());
         assertContainsField(stringExt1Class, VAL, String.class);
+        assertContainsField(stringExt1Class, LENGTH, List.class);
         assertContainsField(stringExt1Class, "patterns", List.class);
         assertContainsField(stringExt1Class, "PATTERN_CONSTANTS", List.class);
         assertContainsFieldWithValue(stringExt1Class, "serialVersionUID", Long.TYPE, 6943827552297110991L, String.class);
-        assertEquals(4, stringExt1Class.getDeclaredFields().length);
+        assertEquals(5, stringExt1Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(stringExt1Class, String.class);
         assertContainsConstructor(stringExt1Class, stringExt1Class);
         assertEquals(2, stringExt1Class.getDeclaredConstructors().length);
@@ -202,8 +207,9 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
         // typedef string-ext2
         assertFalse(stringExt2Class.isInterface());
+        assertContainsField(stringExt2Class, LENGTH, List.class);
         assertContainsFieldWithValue(stringExt2Class, "serialVersionUID", Long.TYPE, 8100233177432072092L, String.class);
-        assertEquals(1, stringExt2Class.getDeclaredFields().length);
+        assertEquals(2, stringExt2Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(stringExt2Class, String.class);
         assertContainsConstructor(stringExt2Class, stringExt2Class);
         assertContainsConstructor(stringExt2Class, stringExt1Class);
@@ -237,8 +243,9 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef my-decimal-type
         assertFalse(myDecimalTypeClass.isInterface());
         assertContainsField(myDecimalTypeClass, VAL, BigDecimal.class);
+        assertContainsField(myDecimalTypeClass, RANGE, List.class);
         assertContainsFieldWithValue(myDecimalTypeClass, "serialVersionUID", Long.TYPE, 3143735729419861095L, BigDecimal.class);
-        assertEquals(2, myDecimalTypeClass.getDeclaredFields().length);
+        assertEquals(3, myDecimalTypeClass.getDeclaredFields().length);
         assertContainsMethod(myDecimalTypeClass, BigDecimal.class, "getValue");
         expectedConstructor = assertContainsConstructor(myDecimalTypeClass, BigDecimal.class);
         assertContainsConstructor(myDecimalTypeClass, myDecimalTypeClass);

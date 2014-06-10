@@ -125,9 +125,9 @@ class ClassTemplate extends BaseTemplate {
 
             «generateToString(genTO.toStringIdentifiers)»
 
-            «generateGetLength»
+            «generateLengthMethod("length", genTO, genTO.importedName, "_length")»
 
-            «generateGetRange»
+            «generateRangeMethod("range", genTO, genTO.importedName, "_range")»
 
         }
     '''
@@ -164,7 +164,7 @@ class ClassTemplate extends BaseTemplate {
             «parentConstructor»
         «ENDIF»
     '''
-    
+
     def protected allValuesConstructor() '''
     «IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
         @«ConstructorProperties.importedName»("value")
@@ -365,6 +365,16 @@ class ClassTemplate extends BaseTemplate {
      * @return string with the class attributes in JAVA format
      */
     def protected generateFields() '''
+        «IF restrictions != null»
+            «IF !(restrictions.lengthConstraints.empty)»
+                «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
+                private static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> _length;
+            «ENDIF»
+            «IF !(restrictions.rangeConstraints.empty)»
+                «val numberClass = restrictions.rangeConstraints.iterator.next.min.class»
+                private static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> _range;
+            «ENDIF»
+        «ENDIF»
         «IF !properties.empty»
             «FOR f : properties»
                 «IF f.readOnly»final«ENDIF» private «f.returnType.importedName» «f.fieldName»;
@@ -430,32 +440,6 @@ class ClassTemplate extends BaseTemplate {
                     }
                 «ENDFOR»
                 return true;
-            }
-        «ENDIF»
-    '''
-
-    def private generateGetLength() '''
-        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
-            «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
-            public static «List.importedName»<«Range.importedName»<«clazz.importedName»>> length() {
-                final «List.importedName»<«Range.importedName»<«clazz.importedName»>> result = new «ArrayList.importedName»<>();
-                «FOR r : restrictions.lengthConstraints»
-                    result.add(«Range.importedName».closed(new «clazz.importedName»("«r.min»"), new «clazz.importedName»("«r.max»")));
-                «ENDFOR»
-                return result;
-            }
-        «ENDIF»
-    '''
-
-    def private generateGetRange() '''
-        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
-            «val clazz = restrictions.rangeConstraints.iterator.next.min.class»
-            public static «List.importedName»<«Range.importedName»<«clazz.importedName»>> range() {
-                final «List.importedName»<«Range.importedName»<«clazz.importedName»>> result = new «ArrayList.importedName»<>();
-                «FOR r : restrictions.rangeConstraints»
-                    result.add(«Range.importedName».closed(new «clazz.importedName»("«r.min»"), new «clazz.importedName»("«r.max»")));
-                «ENDFOR»
-                return result;
             }
         «ENDIF»
     '''
