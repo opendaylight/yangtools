@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -85,8 +86,8 @@ public class YangParserWithContextTest {
         List<RangeConstraint> ranges = dscpExt.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
-        assertEquals(0L, range.getMin());
-        assertEquals(63L, range.getMax());
+        assertEquals(BigInteger.ZERO, range.getMin());
+        assertEquals(BigInteger.valueOf(63), range.getMax());
     }
 
     @Test

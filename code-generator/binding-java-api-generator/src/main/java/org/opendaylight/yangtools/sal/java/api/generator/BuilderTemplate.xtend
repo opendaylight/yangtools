@@ -29,6 +29,8 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.Collection
 import org.opendaylight.yangtools.yang.binding.Identifiable
+import com.google.common.collect.Range
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 
 /**
  * Template for generating JAVA builder classes. 
@@ -154,7 +156,7 @@ class BuilderTemplate extends BaseTemplate {
      * @param set of method signature instances which should be transformed to list of properties 
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
-    def private propertiesFromMethods(Set<MethodSignature> methods) {
+    def private propertiesFromMethods(Collection<MethodSignature> methods) {
         if (methods == null || methods.isEmpty()) {
             return Collections.emptySet
         }
@@ -390,16 +392,27 @@ class BuilderTemplate extends BaseTemplate {
         return names
     }
 
-	/**
-	 * Template method which generates class attributes.
-	 * 
-	 * @param boolean value which specify whether field is|isn't final
-	 * @return string with class attributes and their types
-	 */
+    /**
+     * Template method which generates class attributes.
+     *
+     * @param boolean value which specify whether field is|isn't final
+     * @return string with class attributes and their types
+     */
     def private generateFields(boolean _final) '''
-        «IF !properties.empty»
+        «IF properties !== null»
             «FOR f : properties»
                 private«IF _final» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
+                «val restrictions = f.returnType.restrictions»
+                «IF !_final && restrictions != null»
+                    «IF !(restrictions.lengthConstraints.empty)»
+                        «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
+                        private static «List.importedName»<«Range.importedName»<«clazz.importedNumber»>> «f.fieldName»_length;
+                    «ENDIF»
+                    «IF !(restrictions.rangeConstraints.empty)»
+                        «val clazz = restrictions.rangeConstraints.iterator.next.min.class»
+                        private static «List.importedName»<«Range.importedName»<«clazz.importedNumber»>> «f.fieldName»_range;
+                    «ENDIF»
+                «ENDIF»
             «ENDFOR»
         «ENDIF»
     '''
@@ -410,19 +423,22 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-	/**
-	 * Template method which generates setter methods
-	 * 
-	 * @return string with the setter methods 
-	 */
+    /**
+     * Template method which generates setter methods
+     *
+     * @return string with the setter methods
+     */
     def private generateSetters() '''
         «FOR field : properties SEPARATOR '\n'»
+            «val length = field.fieldName + "_length"»
+            «val range = field.fieldName + "_range"»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
-                «generateRestrictions(field, "value")»
-
+                «generateRestrictions(field, "value", length, range)»
                 this.«field.fieldName» = value;
                 return this;
             }
+            «generateLengthMethod(length, field.returnType, type.name+BUILDER, length)»
+            «generateRangeMethod(range, field.returnType, type.name+BUILDER, range)»
         «ENDFOR»
         «IF augmentField != null»
 
@@ -431,6 +447,62 @@ class BuilderTemplate extends BaseTemplate {
                 return this;
             }
         «ENDIF»
+    '''
+
+    def generateRestrictions(GeneratedProperty field, String paramName, String lengthGetter, String rangeGetter) '''
+        «val Type type = field.returnType»
+        «IF type instanceof ConcreteType»
+            «createRestrictions(type, paramName, type.name.contains("["), lengthGetter, rangeGetter)»
+        «ELSEIF type instanceof GeneratedTransferObject»
+            «createRestrictions(type, paramName, isArrayType(type as GeneratedTransferObject), lengthGetter, rangeGetter)»
+        «ENDIF»
+    '''
+
+    def private createRestrictions(Type type, String paramName, boolean isArray, String lengthGetter, String rangeGetter) '''
+        «val restrictions = type.getRestrictions»
+        «IF restrictions !== null»
+            «val boolean isNestedType = !(type instanceof ConcreteType)»
+            «IF !restrictions.lengthConstraints.empty»
+                «generateLengthRestriction(type, paramName, lengthGetter, isNestedType, isArray)»
+            «ENDIF»
+            «IF !restrictions.rangeConstraints.empty»
+                «generateRangeRestriction(type, paramName, rangeGetter, isNestedType, isArray)»
+            «ENDIF»
+        «ENDIF»
+    '''
+
+    def private generateLengthRestriction(Type type, String paramName, String getterName, boolean isNestedType, boolean isArray) '''
+        «val restrictions = type.getRestrictions»
+        if («paramName» != null) {
+            «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
+            «printLengthConstraint(type, clazz, paramName, isNestedType, isArray)»
+            boolean isValidLength = false;
+            for («Range.importedName»<«clazz.importedNumber»> r : «getterName»()) {
+                if (r.contains(_constraint)) {
+                    isValidLength = true;
+                }
+            }
+            if (!isValidLength) {
+                throw new IllegalArgumentException(String.format("Invalid length: %s, expected: %s.", «paramName», «getterName»));
+            }
+        }
+    '''
+
+    def private generateRangeRestriction(Type type, String paramName, String getterName, boolean isNestedType, boolean isArray) '''
+        «val restrictions = type.getRestrictions»
+        if («paramName» != null) {
+            «val clazz = restrictions.rangeConstraints.iterator.next.min.class»
+            «printRangeConstraint(type, clazz, paramName, isNestedType)»
+            boolean isValidRange = false;
+            for («Range.importedName»<«clazz.importedNumber»> r : «getterName»()) {
+                if (r.contains(_constraint)) {
+                    isValidRange = true;
+                }
+            }
+            if (!isValidRange) {
+                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", «paramName», «getterName»));
+            }
+        }
     '''
 
     /**
