@@ -14,13 +14,24 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findD
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import com.google.common.io.BaseEncoding;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
@@ -32,6 +43,7 @@ import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -51,14 +63,33 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
-import org.opendaylight.yangtools.yang.model.util.*;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
+import org.opendaylight.yangtools.yang.model.util.EnumerationType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.Int16;
+import org.opendaylight.yangtools.yang.model.util.Int32;
+import org.opendaylight.yangtools.yang.model.util.Int64;
+import org.opendaylight.yangtools.yang.model.util.Int8;
+import org.opendaylight.yangtools.yang.model.util.StringType;
+import org.opendaylight.yangtools.yang.model.util.Uint16;
+import org.opendaylight.yangtools.yang.model.util.Uint32;
+import org.opendaylight.yangtools.yang.model.util.Uint64;
+import org.opendaylight.yangtools.yang.model.util.Uint8;
+import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import com.google.common.io.BaseEncoding;
 
 public final class TypeProviderImpl implements TypeProvider {
     /**
@@ -157,15 +188,25 @@ public final class TypeProviderImpl implements TypeProvider {
             Restrictions r) {
         Type returnType = null;
         Preconditions.checkArgument(typeDefinition != null, "Type Definition cannot be NULL!");
-        if (typeDefinition.getQName() == null) {
-            throw new IllegalArgumentException(
-                    "Type Definition cannot have non specified QName (QName cannot be NULL!)");
-        }
-        Preconditions.checkArgument(typeDefinition.getQName().getLocalName() != null,
+        Preconditions.checkArgument(typeDefinition.getQName() != null,
+                "Type Definition cannot have non specified QName (QName cannot be NULL!)");
+        String typedefName = typeDefinition.getQName().getLocalName();
+        Preconditions.checkArgument(typedefName != null,
                 "Type Definitions Local Name cannot be NULL!");
 
         if (typeDefinition instanceof ExtendedType) {
             returnType = javaTypeForExtendedType(typeDefinition);
+            if (r != null && returnType instanceof GeneratedTransferObject) {
+                GeneratedTransferObject gto = (GeneratedTransferObject) returnType;
+                Module module = findParentModule(schemaContext, parentNode);
+                String basePackageName = moduleNamespaceToPackageName(module);
+                String packageName = packageNameForGeneratedType(basePackageName, typeDefinition.getPath());
+                String genTOName = BindingMapping.getClassName(typedefName);
+                String name = packageName + "." + genTOName;
+                if (!(returnType.getFullyQualifiedName().equals(name))) {
+                    returnType = shadedTOWithRestrictions(gto, r);
+                }
+            }
         } else {
             returnType = javaTypeForLeafrefOrIdentityRef(typeDefinition, parentNode);
             if (returnType == null) {
@@ -180,6 +221,25 @@ public final class TypeProviderImpl implements TypeProvider {
         // "type for specified Type Definition " + typedefName);
         // }
         return returnType;
+    }
+
+    private GeneratedTransferObject shadedTOWithRestrictions(GeneratedTransferObject gto, Restrictions r) {
+        GeneratedTOBuilder gtob = new GeneratedTOBuilderImpl(gto.getPackageName(), gto.getName());
+        GeneratedTransferObject parent = gto.getSuperType();
+        if (parent != null) {
+            gtob.setExtendsType(parent);
+        }
+        gtob.setRestrictions(r);
+        for (GeneratedProperty gp : gto.getProperties()) {
+            GeneratedPropertyBuilder gpb = gtob.addProperty(gp.getName());
+            gpb.setValue(gp.getValue());
+            gpb.setReadOnly(gp.isReadOnly());
+            gpb.setAccessModifier(gp.getAccessModifier());
+            gpb.setReturnType(gp.getReturnType());
+            gpb.setFinal(gp.isFinal());
+            gpb.setStatic(gp.isStatic());
+        }
+        return gtob.toInstance();
     }
 
     /**
@@ -623,7 +683,6 @@ public final class TypeProviderImpl implements TypeProvider {
         final String moduleName = module.getName();
         final Date moduleRevision = module.getRevision();
         if ((basePackageName != null) && (moduleName != null) && (typedef != null) && (typedef.getQName() != null)) {
-
             final String typedefName = typedef.getQName().getLocalName();
             final TypeDefinition<?> innerTypeDefinition = typedef.getBaseType();
             if (!(innerTypeDefinition instanceof LeafrefTypeDefinition)
