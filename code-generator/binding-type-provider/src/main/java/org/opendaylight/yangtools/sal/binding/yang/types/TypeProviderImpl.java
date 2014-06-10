@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -197,15 +198,25 @@ public final class TypeProviderImpl implements TypeProvider {
             final Restrictions r) {
         Type returnType = null;
         Preconditions.checkArgument(typeDefinition != null, "Type Definition cannot be NULL!");
-        if (typeDefinition.getQName() == null) {
-            throw new IllegalArgumentException(
-                    "Type Definition cannot have non specified QName (QName cannot be NULL!)");
-        }
-        Preconditions.checkArgument(typeDefinition.getQName().getLocalName() != null,
+        Preconditions.checkArgument(typeDefinition.getQName() != null,
+                "Type Definition cannot have non specified QName (QName cannot be NULL!)");
+        String typedefName = typeDefinition.getQName().getLocalName();
+        Preconditions.checkArgument(typedefName != null,
                 "Type Definitions Local Name cannot be NULL!");
 
         if (typeDefinition instanceof ExtendedType) {
             returnType = javaTypeForExtendedType(typeDefinition);
+            if (r != null && returnType instanceof GeneratedTransferObject) {
+                GeneratedTransferObject gto = (GeneratedTransferObject) returnType;
+                Module module = findParentModule(schemaContext, parentNode);
+                String basePackageName = moduleNamespaceToPackageName(module);
+                String packageName = packageNameForGeneratedType(basePackageName, typeDefinition.getPath());
+                String genTOName = BindingMapping.getClassName(typedefName);
+                String name = packageName + "." + genTOName;
+                if (!(returnType.getFullyQualifiedName().equals(name))) {
+                    returnType = shadedTOWithRestrictions(gto, r);
+                }
+            }
         } else {
             returnType = javaTypeForLeafrefOrIdentityRef(typeDefinition, parentNode);
             if (returnType == null) {
@@ -220,6 +231,25 @@ public final class TypeProviderImpl implements TypeProvider {
         // "type for specified Type Definition " + typedefName);
         // }
         return returnType;
+    }
+
+    private GeneratedTransferObject shadedTOWithRestrictions(GeneratedTransferObject gto, Restrictions r) {
+        GeneratedTOBuilder gtob = new GeneratedTOBuilderImpl(gto.getPackageName(), gto.getName());
+        GeneratedTransferObject parent = gto.getSuperType();
+        if (parent != null) {
+            gtob.setExtendsType(parent);
+        }
+        gtob.setRestrictions(r);
+        for (GeneratedProperty gp : gto.getProperties()) {
+            GeneratedPropertyBuilder gpb = gtob.addProperty(gp.getName());
+            gpb.setValue(gp.getValue());
+            gpb.setReadOnly(gp.isReadOnly());
+            gpb.setAccessModifier(gp.getAccessModifier());
+            gpb.setReturnType(gp.getReturnType());
+            gpb.setFinal(gp.isFinal());
+            gpb.setStatic(gp.isStatic());
+        }
+        return gtob.toInstance();
     }
 
     /**
@@ -663,7 +693,6 @@ public final class TypeProviderImpl implements TypeProvider {
         final String moduleName = module.getName();
         final Date moduleRevision = module.getRevision();
         if ((basePackageName != null) && (moduleName != null) && (typedef != null) && (typedef.getQName() != null)) {
-
             final String typedefName = typedef.getQName().getLocalName();
             final TypeDefinition<?> innerTypeDefinition = typedef.getBaseType();
             if (!(innerTypeDefinition instanceof LeafrefTypeDefinition)
