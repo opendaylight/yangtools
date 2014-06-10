@@ -7,9 +7,27 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
-import static org.junit.Assert.*;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.BASE_PKG;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_PATH;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.FS;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.NS_FOO;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsConstructor;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsDefaultMethods;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsField;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsFieldWithValue;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsGetLengthOrRange;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsMethod;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsRestrictionCheck;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertFilesCount;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
 
+import com.google.common.collect.Range;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -20,14 +38,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-
-import com.google.common.collect.Range;
 
 /**
  * Test correct code generation.
@@ -120,7 +135,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef int32-ext1
         assertFalse(int32Ext1Class.isInterface());
         assertContainsField(int32Ext1Class, VAL, Integer.class);
-        assertEquals(1, int32Ext1Class.getDeclaredFields().length);
+        assertEquals(2, int32Ext1Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(int32Ext1Class, Integer.class);
         assertContainsConstructor(int32Ext1Class, int32Ext1Class);
         assertEquals(2, int32Ext1Class.getConstructors().length);
@@ -141,7 +156,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef int32-ext2
         assertFalse(int32Ext2Class.isInterface());
         assertContainsFieldWithValue(int32Ext2Class, UNITS, String.class, "mile", Integer.class);
-        assertEquals(1, int32Ext2Class.getDeclaredFields().length);
+        assertEquals(2, int32Ext2Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(int32Ext2Class, Integer.class);
         assertContainsConstructor(int32Ext2Class, int32Ext2Class);
         assertContainsConstructor(int32Ext2Class, int32Ext1Class);
@@ -165,7 +180,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsField(stringExt1Class, VAL, String.class);
         assertContainsField(stringExt1Class, "patterns", List.class);
         assertContainsField(stringExt1Class, "PATTERN_CONSTANTS", List.class);
-        assertEquals(3, stringExt1Class.getDeclaredFields().length);
+        assertEquals(4, stringExt1Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(stringExt1Class, String.class);
         assertContainsConstructor(stringExt1Class, stringExt1Class);
         assertEquals(2, stringExt1Class.getDeclaredConstructors().length);
@@ -185,7 +200,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
         // typedef string-ext2
         assertFalse(stringExt2Class.isInterface());
-        assertEquals(0, stringExt2Class.getDeclaredFields().length);
+        assertEquals(1, stringExt2Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(stringExt2Class, String.class);
         assertContainsConstructor(stringExt2Class, stringExt2Class);
         assertContainsConstructor(stringExt2Class, stringExt1Class);
@@ -218,7 +233,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef my-decimal-type
         assertFalse(myDecimalTypeClass.isInterface());
         assertContainsField(myDecimalTypeClass, VAL, BigDecimal.class);
-        assertEquals(1, myDecimalTypeClass.getDeclaredFields().length);
+        assertEquals(2, myDecimalTypeClass.getDeclaredFields().length);
         assertContainsMethod(myDecimalTypeClass, BigDecimal.class, "getValue");
         expectedConstructor = assertContainsConstructor(myDecimalTypeClass, BigDecimal.class);
         assertContainsConstructor(myDecimalTypeClass, myDecimalTypeClass);
@@ -293,7 +308,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(6, unionExt4Class.getDeclaredConstructors().length);
         assertContainsDefaultMethods(unionExt4Class);
 
-        //cleanUp(sourcesOutputDir, compiledOutputDir);
+        cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
 }
