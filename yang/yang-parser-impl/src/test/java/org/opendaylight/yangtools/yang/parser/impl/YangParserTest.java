@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -264,8 +265,8 @@ public class YangParserTest {
         List<RangeConstraint> ranges = leafType.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
-        assertEquals(12L, range.getMin());
-        assertEquals(20L, range.getMax());
+        assertEquals(BigInteger.valueOf(12), range.getMin());
+        assertEquals(BigInteger.valueOf(20), range.getMax());
 
         ExtendedType baseType = (ExtendedType) leafType.getBaseType();
         QName baseTypeQName = baseType.getQName();
@@ -280,11 +281,11 @@ public class YangParserTest {
         List<RangeConstraint> baseTypeRanges = baseType.getRangeConstraints();
         assertEquals(2, baseTypeRanges.size());
         RangeConstraint baseTypeRange1 = baseTypeRanges.get(0);
-        assertEquals(3L, baseTypeRange1.getMin());
-        assertEquals(9L, baseTypeRange1.getMax());
+        assertEquals(BigInteger.valueOf(3), baseTypeRange1.getMin());
+        assertEquals(BigInteger.valueOf(9), baseTypeRange1.getMax());
         RangeConstraint baseTypeRange2 = baseTypeRanges.get(1);
-        assertEquals(11L, baseTypeRange2.getMin());
-        assertEquals(20L, baseTypeRange2.getMax());
+        assertEquals(BigInteger.valueOf(11), baseTypeRange2.getMin());
+        assertEquals(BigInteger.valueOf(20), baseTypeRange2.getMax());
 
         ExtendedType base = (ExtendedType) baseType.getBaseType();
         QName baseQName = base.getQName();
@@ -299,8 +300,8 @@ public class YangParserTest {
         List<RangeConstraint> baseRanges = base.getRangeConstraints();
         assertEquals(1, baseRanges.size());
         RangeConstraint baseRange = baseRanges.get(0);
-        assertEquals(2L, baseRange.getMin());
-        assertEquals(20L, baseRange.getMax());
+        assertEquals(BigInteger.valueOf(2), baseRange.getMin());
+        assertEquals(BigInteger.valueOf(20), baseRange.getMax());
 
         assertTrue(base.getBaseType() instanceof Int32);
     }
@@ -352,8 +353,8 @@ public class YangParserTest {
         List<LengthConstraint> baseType2Lengths = baseType2.getLengthConstraints();
         assertEquals(1, baseType2Lengths.size());
         LengthConstraint length = baseType2Lengths.get(0);
-        assertEquals(6L, length.getMin());
-        assertEquals(10L, length.getMax());
+        assertEquals(BigInteger.valueOf(6), length.getMin());
+        assertEquals(BigInteger.TEN, length.getMax());
         assertTrue(baseType2.getRangeConstraints().isEmpty());
 
         ExtendedType baseType3 = (ExtendedType) baseType2.getBaseType();
@@ -371,8 +372,8 @@ public class YangParserTest {
         List<LengthConstraint> baseType3Lengths = baseType3.getLengthConstraints();
         assertEquals(1, baseType3Lengths.size());
         length = baseType3Lengths.get(0);
-        assertEquals(5L, length.getMin());
-        assertEquals(11L, length.getMax());
+        assertEquals(BigInteger.valueOf(5), length.getMin());
+        assertEquals(BigInteger.valueOf(11), length.getMax());
         assertTrue(baseType3.getRangeConstraints().isEmpty());
 
         assertTrue(baseType3.getBaseType() instanceof StringType);
@@ -396,8 +397,8 @@ public class YangParserTest {
         List<LengthConstraint> typeLengths = type.getLengthConstraints();
         assertEquals(1, typeLengths.size());
         LengthConstraint length = typeLengths.get(0);
-        assertEquals(7L, length.getMin());
-        assertEquals(10L, length.getMax());
+        assertEquals(BigInteger.valueOf(7), length.getMin());
+        assertEquals(BigInteger.TEN, length.getMax());
         assertTrue(type.getRangeConstraints().isEmpty());
 
         ExtendedType baseType1 = (ExtendedType) type.getBaseType();
@@ -412,8 +413,8 @@ public class YangParserTest {
         List<LengthConstraint> baseType2Lengths = baseType1.getLengthConstraints();
         assertEquals(1, baseType2Lengths.size());
         length = baseType2Lengths.get(0);
-        assertEquals(6L, length.getMin());
-        assertEquals(10L, length.getMax());
+        assertEquals(BigInteger.valueOf(6), length.getMin());
+        assertEquals(BigInteger.TEN, length.getMax());
         assertTrue(baseType1.getRangeConstraints().isEmpty());
 
         ExtendedType baseType2 = (ExtendedType) baseType1.getBaseType();
@@ -431,8 +432,8 @@ public class YangParserTest {
         List<LengthConstraint> baseType3Lengths = baseType2.getLengthConstraints();
         assertEquals(1, baseType3Lengths.size());
         length = baseType3Lengths.get(0);
-        assertEquals(5L, length.getMin());
-        assertEquals(11L, length.getMax());
+        assertEquals(BigInteger.valueOf(5), length.getMin());
+        assertEquals(BigInteger.valueOf(11), length.getMax());
         assertTrue(baseType2.getRangeConstraints().isEmpty());
 
         assertTrue(baseType2.getBaseType() instanceof StringType);
@@ -544,8 +545,8 @@ public class YangParserTest {
         List<RangeConstraint> ranges = unionType1.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
-        assertEquals(1L, range.getMin());
-        assertEquals(100L, range.getMax());
+        assertEquals(BigInteger.ONE, range.getMin());
+        assertEquals(BigInteger.valueOf(100), range.getMax());
         assertTrue(unionType1.getBaseType() instanceof Int16);
 
         assertTrue(unionTypes.get(1) instanceof Int32);
@@ -653,8 +654,8 @@ public class YangParserTest {
         List<RangeConstraint> ranges = int16Ext.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
-        assertEquals(1L, range.getMin());
-        assertEquals(100L, range.getMax());
+        assertEquals(BigInteger.ONE, range.getMin());
+        assertEquals(BigInteger.valueOf(100), range.getMax());
 
         assertTrue(int16Ext.getBaseType() instanceof Int16);
     }
