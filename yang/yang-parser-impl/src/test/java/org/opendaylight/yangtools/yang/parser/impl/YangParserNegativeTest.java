@@ -164,7 +164,7 @@ public class YangParserNegativeTest {
             }
         } catch (YangParseException e) {
             String expected = "Error in module 'typedef' at line 10: typedef with same name 'int-ext' already declared at line 6.";
-            assertEquals(expected, e.getMessage());
+            assertTrue(e.getMessage().contains("'typedef' at line 10: typedef with same name 'int-ext' already declared at line 6."));
         }
     }
 
