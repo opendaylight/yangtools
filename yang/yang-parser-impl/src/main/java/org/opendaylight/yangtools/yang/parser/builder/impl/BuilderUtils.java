@@ -499,7 +499,7 @@ public final class BuilderUtils {
         return currentNode;
     }
 
-    private static Optional<SchemaNodeBuilder> findDataChild(SchemaNodeBuilder parent, QName child) {
+    private static Optional<SchemaNodeBuilder> findDataChild(final SchemaNodeBuilder parent, final QName child) {
         if (parent instanceof DataNodeContainerBuilder) {
             return castOptional(SchemaNodeBuilder.class,
                     findDataChildInDataNodeContainer((DataNodeContainerBuilder) parent, child));
@@ -523,7 +523,7 @@ public final class BuilderUtils {
      *            Original value
      * @return
      */
-    private static <T> Optional<T> castOptional(Class<T> cls, Optional<?> optional) {
+    private static <T> Optional<T> castOptional(final Class<T> cls, final Optional<?> optional) {
         if (optional.isPresent()) {
             Object value = optional.get();
             if (cls.isInstance(value)) {
@@ -549,7 +549,7 @@ public final class BuilderUtils {
      * @return Optional of input/output if defined and QName is input/output.
      *         Otherwise {@link Optional#absent()}.
      */
-    private static Optional<ContainerSchemaNodeBuilder> findContainerInRpc(RpcDefinitionBuilder parent, QName child) {
+    private static Optional<ContainerSchemaNodeBuilder> findContainerInRpc(final RpcDefinitionBuilder parent, final QName child) {
         if (INPUT.equals(child.getLocalName())) {
             return Optional.of(parent.getInput());
         } else if (OUTPUT.equals(child.getLocalName())) {
@@ -570,7 +570,7 @@ public final class BuilderUtils {
      * @return Optional of child if found.
      */
 
-    private static Optional<ChoiceCaseBuilder> findCaseInChoice(ChoiceBuilder parent, QName child) {
+    private static Optional<ChoiceCaseBuilder> findCaseInChoice(final ChoiceBuilder parent, final QName child) {
         for (ChoiceCaseBuilder caze : parent.getCases()) {
             if (caze.getQName().equals(child)) {
                 return Optional.of(caze);
@@ -590,8 +590,8 @@ public final class BuilderUtils {
      *            QName of child
      * @return Optional of child if found.
      */
-    private static Optional<DataSchemaNodeBuilder> findDataChildInDataNodeContainer(DataNodeContainerBuilder parent,
-            QName child) {
+    private static Optional<DataSchemaNodeBuilder> findDataChildInDataNodeContainer(final DataNodeContainerBuilder parent,
+            final QName child) {
         for (DataSchemaNodeBuilder childNode : parent.getChildNodeBuilders()) {
             if (childNode.getQName().equals(child)) {
                 return Optional.of(childNode);
@@ -619,7 +619,7 @@ public final class BuilderUtils {
      *            ModuleBuilder to start lookup in
      * @return Node Builder if found, {@link Optional#absent()} otherwise.
      */
-    private static Optional<SchemaNodeBuilder> getDataNamespaceChild(ModuleBuilder module, QName child) {
+    private static Optional<SchemaNodeBuilder> getDataNamespaceChild(final ModuleBuilder module, final QName child) {
         /*
          * First we do lookup in data tree, if node is found we return it.
          */
@@ -651,7 +651,7 @@ public final class BuilderUtils {
         return Optional.absent();
     }
 
-    private static Optional<SchemaNodeBuilder> getDataChildByQName(DataNodeContainerBuilder builder, QName child) {
+    private static Optional<SchemaNodeBuilder> getDataChildByQName(final DataNodeContainerBuilder builder, final QName child) {
         for (DataSchemaNodeBuilder childNode : builder.getChildNodeBuilders()) {
             if (childNode.getQName().equals(child)) {
                 return Optional.<SchemaNodeBuilder> of(childNode);
@@ -826,7 +826,7 @@ public final class BuilderUtils {
         private final String toString;
         private final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        private ByteSourceImpl(InputStream input) throws IOException {
+        private ByteSourceImpl(final InputStream input) throws IOException {
             toString = input.toString();
             IOUtils.copy(input, output);
         }
