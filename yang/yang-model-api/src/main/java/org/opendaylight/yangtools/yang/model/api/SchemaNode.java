@@ -14,11 +14,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * SchemaNode represents a node in schema tree.
  */
-public interface SchemaNode {
+public interface SchemaNode extends DocumentedNode {
 
     /**
      * Returns QName of the instance of the type <code>SchemaNode</code>.
-     * 
+     *
      * @return QName with the name of the schema node
      */
     QName getQName();
@@ -26,44 +26,16 @@ public interface SchemaNode {
     /**
      * Returns the schema path of the instance of the type
      * <code>SchemaNode</code> <code>SchemaNode</code>.
-     * 
+     *
      * @return schema path of the schema node
      */
     SchemaPath getPath();
 
     /**
-     * Returns description of the instance of the type <code>SchemaNode</code>
-     * 
-     * @return string with textual description the node which represents the
-     *         argument of the YANG <code>description</code> substatement
-     */
-    String getDescription();
-
-    /**
-     * Returns reference of the instance of the type <code>SchemaNode</code>
-     * 
-     * The reference refers to external document that provides additional
-     * information relevant for the instance of this type.
-     * 
-     * @return string with the reference to some external document which
-     *         represents the argument of the YANG <code>reference</code>
-     *         substatement
-     */
-    String getReference();
-
-    /**
-     * Returns status of the instance of the type <code>SchemaNode</code>
-     * 
-     * @return status of this node which represents the argument of the YANG
-     *         <code>status</code> substatement
-     */
-    Status getStatus();
-
-    /**
-     * 
+     *
      * Returns unknown schema nodes which belongs to this instance of the type
      * <code>SchemaNode</code>.
-     * 
+     *
      * @return list of unknown schema nodes defined under this schema node.
      */
     List<UnknownSchemaNode> getUnknownSchemaNodes();
