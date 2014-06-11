@@ -14,21 +14,19 @@ import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestU
 import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class ChoiceCaseGenTypesTest {
@@ -72,11 +70,9 @@ public class ChoiceCaseGenTypesTest {
     }
 
     @Test
-    public void choiceCaseResolvingTypeTest() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(yangModels);
-
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public void choiceCaseResolvingTypeTest() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(yangModels);
 
         assertNotNull("context is null", context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
@@ -147,7 +143,6 @@ public class ChoiceCaseGenTypesTest {
 
         genType = checkGeneratedType(genTypes, "LeafAugCase", pcgPref
                 + ".netconf.state.datastores.datastore.locks.lock.type"); // choice
-        // FIXME
         containsMethods(genType, new NameTypePattern("getLeafAugCase", "String"));
         containsInterface("LockType", genType);
 

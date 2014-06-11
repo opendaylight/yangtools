@@ -13,11 +13,10 @@ import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestU
 import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -25,9 +24,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class BitAndUnionTOEnclosingTest {
@@ -36,10 +34,9 @@ public class BitAndUnionTOEnclosingTest {
     private static List<Type> genTypes = null;
     private static GeneratedType parentContainer = null;
 
-    public static void parseResources() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(testModels);
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public static void parseResources() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
@@ -56,7 +53,7 @@ public class BitAndUnionTOEnclosingTest {
     }
 
     @BeforeClass
-    public static void loadTestResources() throws URISyntaxException {
+    public static void loadTestResources() throws IOException, URISyntaxException {
         final File listModelFile = new File(ExtendedTypedefTest.class.getResource("/bit_and_union.yang").toURI());
         testModels.add(listModelFile);
         parseResources();

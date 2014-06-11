@@ -12,20 +12,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GenTypesSubSetTest {
@@ -46,10 +46,10 @@ public class GenTypesSubSetTest {
     }
 
     @Test
-    public void genTypesFromSubsetOfTwoModulesTest() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(yangModels);
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public void genTypesFromSubsetOfTwoModulesTest() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(yangModels);
+        Set<Module> modules = context.getModules();
 
         final Set<Module> toGenModules = new HashSet<>();
         for (final Module module : modules) {
@@ -73,10 +73,10 @@ public class GenTypesSubSetTest {
     }
 
     @Test
-    public void genTypesFromSubsetOfThreeModulesTest() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(yangModels);
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public void genTypesFromSubsetOfThreeModulesTest() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(yangModels);
+        final Set<Module> modules = context.getModules();
 
         final Set<Module> toGenModules = new HashSet<>();
         for (final Module module : modules) {
