@@ -9,8 +9,25 @@ package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.*;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.BASE_PKG;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_PATH;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.FS;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.NS_BAR;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.NS_BAZ;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.NS_FOO;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.NS_TEST;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsConstructor;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsField;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsMethod;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsRestrictionCheck;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertFilesCount;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertImplementsIfc;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
 
+import com.google.common.collect.Range;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -25,15 +42,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-
-import com.google.common.collect.Range;
 
 /**
  * Test correct code generation.
@@ -489,13 +503,33 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void bug586Test() throws Exception {
+    public void testBug586() throws Exception {
         final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "bug586");
         assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "bug586");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
         generateTestSources("/compilation/bug586", sourcesOutputDir);
+
+        // Test if sources are compilable
+        testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    /**
+     * Test handling nested uses-augmentations.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testBug1172() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "bug1172");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "bug1172");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        generateTestSources("/compilation/bug1172", sourcesOutputDir);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
