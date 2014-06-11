@@ -866,17 +866,16 @@ public class BindingGeneratorImpl implements BindingGenerator {
             return null;
         }
 
-        val String targetSchemaNodeName = result.QName.localName;
         var boolean fromUses = (result as DataSchemaNode).addedByUses
         var Iterator<UsesNode> groupingUses = grouping.uses.iterator;
-        while (fromUses) {
-            if (groupingUses.hasNext()) {
-                grouping = findNodeInSchemaContext(schemaContext, groupingUses.next().groupingPath.path) as GroupingDefinition;
-                result = grouping.getDataChildByName(targetSchemaNodeName);
-                fromUses = (result as DataSchemaNode).addedByUses;
-            } else {
-                throw new NullPointerException("Failed to generate code for augment in " + parentUsesNode);
+        while (groupingUses.hasNext && fromUses) {
+            result = findOriginalTargetFromGrouping(targetPath, groupingUses.next);
+            if (result != null) {
+                fromUses = (result as DataSchemaNode).addedByUses
             }
+        }
+        if (fromUses) {
+            throw new NullPointerException("Failed to generate code for augment in " + parentUsesNode);
         }
 
         return result as DataSchemaNode
