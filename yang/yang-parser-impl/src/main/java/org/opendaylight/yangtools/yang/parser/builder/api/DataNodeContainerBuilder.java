@@ -135,4 +135,6 @@ public interface DataNodeContainerBuilder extends Builder {
     @Override
     DataNodeContainer build();
 
+    Set<DataSchemaNode> getChildNodes();
+
 }
