@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DocumentedNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
@@ -260,33 +261,41 @@ public final class RefineUtils {
         final int line = refine.getLine();
         Class<? extends Builder> cls = node.getClass();
 
+
+        final DocumentedNodeBuilder documentedNode;
+        if(node instanceof DocumentedNodeBuilder) {
+            documentedNode = ((DocumentedNodeBuilder) node);
+        } else {
+            documentedNode = null;
+        }
+
         String description = refine.getDescription();
+
+
         if (description != null) {
-            try {
-                Method method = cls.getMethod("setDescription", String.class);
-                method.invoke(node, description);
-            } catch (Exception e) {
-                throw new YangParseException(moduleName, line, "Cannot refine description in " + cls.getName(), e);
+            if(documentedNode != null) {
+                documentedNode.setDescription(description);
+            } else {
+                throw new YangParseException(moduleName, line, String.format("Cannot refine description in of target %s",refine.getTargetPathString()));
             }
+
         }
 
         String reference = refine.getReference();
         if (reference != null) {
-            try {
-                Method method = cls.getMethod("setReference", String.class);
-                method.invoke(node, reference);
-            } catch (Exception e) {
-                throw new YangParseException(moduleName, line, "Cannot refine reference in " + cls.getName(), e);
+            if(documentedNode != null) {
+                documentedNode.setReference(reference);
+            } else {
+                throw new YangParseException(moduleName, line, String.format("Cannot refine reference in of target %s",refine.getTargetPathString()));
             }
         }
 
         Boolean config = refine.isConfiguration();
         if (config != null) {
-            try {
-                Method method = cls.getMethod("setConfiguration", Boolean.TYPE);
-                method.invoke(node, config);
-            } catch (Exception e) {
-                throw new YangParseException(moduleName, line, "Cannot refine config in " + cls.getName(), e);
+            if(node instanceof DataSchemaNodeBuilder) {
+                ((DataSchemaNodeBuilder) node).setConfiguration(config);
+            } else {
+                throw new YangParseException(moduleName, line, String.format("Cannot refine config of target %s ",refine.getTargetPathString()));
             }
         }
     }
