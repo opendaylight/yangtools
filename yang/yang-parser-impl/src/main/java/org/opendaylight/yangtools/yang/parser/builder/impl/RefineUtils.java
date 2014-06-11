@@ -263,7 +263,7 @@ public final class RefineUtils {
         String description = refine.getDescription();
         if (description != null) {
             try {
-                Method method = cls.getDeclaredMethod("setDescription", String.class);
+                Method method = cls.getMethod("setDescription", String.class);
                 method.invoke(node, description);
             } catch (Exception e) {
                 throw new YangParseException(moduleName, line, "Cannot refine description in " + cls.getName(), e);
@@ -273,7 +273,7 @@ public final class RefineUtils {
         String reference = refine.getReference();
         if (reference != null) {
             try {
-                Method method = cls.getDeclaredMethod("setReference", String.class);
+                Method method = cls.getMethod("setReference", String.class);
                 method.invoke(node, reference);
             } catch (Exception e) {
                 throw new YangParseException(moduleName, line, "Cannot refine reference in " + cls.getName(), e);
@@ -283,7 +283,7 @@ public final class RefineUtils {
         Boolean config = refine.isConfiguration();
         if (config != null) {
             try {
-                Method method = cls.getDeclaredMethod("setConfiguration", Boolean.TYPE);
+                Method method = cls.getMethod("setConfiguration", Boolean.TYPE);
                 method.invoke(node, config);
             } catch (Exception e) {
                 throw new YangParseException(moduleName, line, "Cannot refine config in " + cls.getName(), e);
