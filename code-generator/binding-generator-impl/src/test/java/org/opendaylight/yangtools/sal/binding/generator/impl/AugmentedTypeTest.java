@@ -12,12 +12,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -26,9 +25,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class AugmentedTypeTest {
@@ -49,10 +47,9 @@ public class AugmentedTypeTest {
     }
 
     @Test
-    public void augmentedAbstractTopologyTest() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(augmentModels);
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public void augmentedAbstractTopologyTest() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(augmentModels);
 
         assertNotNull("context is null", context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
@@ -176,19 +173,20 @@ public class AugmentedTypeTest {
         final List<MethodSignature> networkLink2Methods = gtNetworkLink2.getMethodDefinitions();
         assertNotNull("networkLink2Methods is null", networkLink2Methods);
 
-//        FIXME: in some cases getIfcMethod is null which causes test fail. fix ASAP
-//      MethodSignature getIfcMethod = null;
-//      for (MethodSignature method : networkLink2Methods) {
-//          if (method.getName().equals("getInterface")) {
-//              getIfcMethod = method;
-//              break;
-//          }
-//      }
-//
-//      assertNotNull("getIfcMethod is null", getIfcMethod);
-//      assertNotNull("getIfcMethod.getReturnType() is null", getIfcMethod.getReturnType());
-//      assertFalse("getIfcMethod.getReturnType() should not be Void", getIfcMethod.getReturnType().equals("java.lang.Void"));
-//      assertTrue("getIfcMethod.getReturnType().getName() must be String", getIfcMethod.getReturnType().getName().equals("String"));
+        MethodSignature getIfcMethod = null;
+        for (MethodSignature method : networkLink2Methods) {
+            if (method.getName().equals("getInterface")) {
+                getIfcMethod = method;
+                break;
+            }
+        }
+
+        assertNotNull("getIfcMethod is null", getIfcMethod);
+        assertNotNull("getIfcMethod.getReturnType() is null", getIfcMethod.getReturnType());
+        assertFalse("getIfcMethod.getReturnType() should not be Void",
+                getIfcMethod.getReturnType().equals("java.lang.Void"));
+        assertTrue("getIfcMethod.getReturnType().getName() must be String", getIfcMethod.getReturnType().getName()
+                .equals("String"));
     }
 
     @Test

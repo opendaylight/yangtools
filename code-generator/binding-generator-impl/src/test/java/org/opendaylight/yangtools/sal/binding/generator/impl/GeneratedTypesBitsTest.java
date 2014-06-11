@@ -13,9 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
@@ -30,7 +28,7 @@ public class GeneratedTypesBitsTest {
 
 
     @Test
-    public void testGeneretedTypesBitsTest() throws URISyntaxException {
+    public void testGeneretedTypesBitsTest() throws Exception {
         final URI yangTypesPath = getClass().getResource("/simple-bits-demo.yang").toURI();
 
         final SchemaContext context = SupportTestUtil.resolveSchemaContextFromFiles(yangTypesPath);
@@ -51,7 +49,6 @@ public class GeneratedTypesBitsTest {
         int hashPropertiesNum = 0;
 
         String nameReturnParamType = "";
-        String nameMethodeParamType = "";
         boolean getByteLeafMethodFound = false;
         boolean setByteLeafMethodFound = false;
         int setByteLeafMethodParamNum = 0;
@@ -100,10 +97,6 @@ public class GeneratedTypesBitsTest {
 
                                 List<Parameter> parameters = methodSignature.getParameters();
                                 setByteLeafMethodParamNum = parameters.size();
-                                for (Parameter parameter : parameters) {
-                                    nameMethodeParamType = parameter.getType().getName();
-                                }
-
                             }
 
                         }
