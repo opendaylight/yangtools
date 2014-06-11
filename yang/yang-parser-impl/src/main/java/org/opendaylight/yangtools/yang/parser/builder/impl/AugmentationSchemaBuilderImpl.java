@@ -7,50 +7,36 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
-import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 
-public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContainerBuilder implements
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataNodeContainerBuilder implements
         AugmentationSchemaBuilder {
     private final int order;
     private AugmentationSchemaImpl instance;
     private String whenCondition;
-
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
 
     private final String augmentTargetStr;
     private final SchemaPath targetPath;
@@ -59,7 +45,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     private boolean resolved;
     private AugmentationSchemaBuilder copyOf;
 
-    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr, int order) {
+    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr, final int order) {
         super(moduleName, line, null);
         this.order = order;
         this.augmentTargetStr = augmentTargetStr;
@@ -67,18 +53,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     }
 
     @Override
-    public Set<GroupingDefinition> getGroupings() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<GroupingBuilder> getGroupingBuilders() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public void addGrouping(final GroupingBuilder grouping) {
-        throw new YangParseException(getModuleName(), grouping.getLine(), "augment can not contains grouping statement");
+    protected String getStatementName() {
+        return "augment";
     }
 
     @Override
@@ -92,11 +68,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return instance;
         }
 
-        instance = new AugmentationSchemaImpl(targetPath, order);
-
-        instance.description = description;
-        instance.reference = reference;
-        instance.status = status;
+        buildChildren();
+        instance = new AugmentationSchemaImpl(targetPath, order,this);
 
         Builder parent = getParent();
         if (parent instanceof ModuleBuilder) {
@@ -129,18 +102,6 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         }
         instance.whenCondition = whenStmt;
 
-        // CHILD NODES
-        for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.add(node.build());
-        }
-        instance.childNodes = ImmutableSet.copyOf(childNodes);
-
-        // USES
-        for (UsesNodeBuilder builder : addedUsesNodes) {
-            usesNodes.add(builder.build());
-        }
-        instance.uses = ImmutableSet.copyOf(usesNodes);
-
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
             unknownNodes.add(b.build());
@@ -168,46 +129,6 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
     @Override
     public void addWhenCondition(final String whenCondition) {
         this.whenCondition = whenCondition;
-    }
-
-    @Override
-    public Set<TypeDefinitionBuilder> getTypeDefinitionBuilders() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public void addTypedef(final TypeDefinitionBuilder type) {
-        throw new YangParseException(getModuleName(), type.getLine(), "Augmentation can not contains typedef statement.");
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        this.reference = reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
-    }
-
-    @Override
-    public void setStatus(final Status status) {
-        this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
     @Override
@@ -241,7 +162,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         int result = 1;
         result = prime * result + ((augmentTargetStr == null) ? 0 : augmentTargetStr.hashCode());
         result = prime * result + ((whenCondition == null) ? 0 : whenCondition.hashCode());
-        result = prime * result + ((addedChildNodes == null) ? 0 : addedChildNodes.hashCode());
+        result = prime * result + getChildNodeBuilders().hashCode();
         return result;
     }
 
@@ -271,11 +192,11 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         } else if (!whenCondition.equals(other.whenCondition)) {
             return false;
         }
-        if (addedChildNodes == null) {
-            if (other.addedChildNodes != null) {
+        if (other.getChildNodeBuilders() == null) {
+            if (other.getChildNodeBuilders() != null) {
                 return false;
             }
-        } else if (!addedChildNodes.equals(other.addedChildNodes)) {
+        } else if (!getChildNodeBuilders().equals(other.getChildNodeBuilders())) {
             return false;
         }
         return true;
@@ -290,23 +211,20 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         copyOf = old;
     }
 
-    private static final class AugmentationSchemaImpl implements AugmentationSchema, NamespaceRevisionAware,
+    private static final class AugmentationSchemaImpl extends AbstractDocumentedDataNodeContainer implements AugmentationSchema, NamespaceRevisionAware,
             Comparable<AugmentationSchemaImpl> {
         private final int order;
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
         private ImmutableSet<DataSchemaNode> childNodes;
-        private ImmutableSet<UsesNode> uses;
-        private String description;
-        private String reference;
-        private Status status;
 
         private URI namespace;
         private Date revision;
         private ImmutableList<UnknownSchemaNode> unknownNodes;
         private AugmentationSchema copyOf;
 
-        public AugmentationSchemaImpl(final SchemaPath targetPath, final int order) {
+        public AugmentationSchemaImpl(final SchemaPath targetPath, final int order, final AugmentationSchemaBuilderImpl builder) {
+            super(builder);
             this.targetPath = targetPath;
             this.order = order;
         }
@@ -331,61 +249,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         }
 
         @Override
-        public Set<DataSchemaNode> getChildNodes() {
-            return childNodes;
-        }
-
-        /**
-         * Always returns an empty set, because augment can not contains
-         * grouping statement.
-         */
-        @Override
-        public Set<GroupingDefinition> getGroupings() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public Set<UsesNode> getUses() {
-            return uses;
-        }
-
-        /**
-         * Always returns an empty set, because augment can not contains type
-         * definitions.
-         */
-        @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String getReference() {
-            return reference;
-        }
-
-        @Override
-        public Status getStatus() {
-            return status;
-        }
-
-        @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
             return unknownNodes;
-        }
-
-        @Override
-        public DataSchemaNode getDataChildByName(final QName name) {
-            return getChildNode(childNodes, name);
-        }
-
-        @Override
-        public DataSchemaNode getDataChildByName(final String name) {
-            return getChildNode(childNodes, name);
         }
 
         @Override
@@ -455,7 +320,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
         }
 
         @Override
-        public int compareTo(AugmentationSchemaImpl o) {
+        public int compareTo(final AugmentationSchemaImpl o) {
             Iterator<QName> thisIt = this.targetPath.getPath().iterator();
             Iterator<QName> otherIt = o.getTargetPath().getPath().iterator();
             while (thisIt.hasNext()) {
@@ -474,5 +339,4 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDataNodeContain
             return this.order - o.order;
         }
     }
-
 }
