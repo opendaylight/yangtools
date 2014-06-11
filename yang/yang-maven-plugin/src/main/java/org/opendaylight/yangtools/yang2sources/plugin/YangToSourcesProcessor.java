@@ -9,6 +9,17 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -25,20 +36,6 @@ import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
 import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
@@ -124,7 +121,7 @@ class YangToSourcesProcessor {
             }
 
             if (noChange) {
-            	log.info(Util.message("None of %s input files changed", LOG_PREFIX, allFiles.size()));
+                log.info(Util.message("None of %s input files changed", LOG_PREFIX, allFiles.size()));
                 return null;
             }
 
@@ -136,6 +133,13 @@ class YangToSourcesProcessor {
             List<InputStream> all = new ArrayList<>(yangsInProject);
             closeables.addAll(yangsInProject);
             Map<InputStream, Module> allYangModules;
+
+            /**
+             * Set contains all modules generated from input sources. Number of
+             * modules may differ from number of sources due to submodules
+             * (parsed submodule's data are added to its parent module). Set
+             * cannot contains null values.
+             */
             Set<Module> projectYangModules;
             try {
                 if (inspectDependencies) {
@@ -149,8 +153,10 @@ class YangToSourcesProcessor {
 
                 projectYangModules = new HashSet<>();
                 for (InputStream inProject : yangsInProject) {
-                    Module module = checkNotNull(allYangModules.get(inProject), "Cannot find module by %s", inProject);
-                    projectYangModules.add(module);
+                    Module module = allYangModules.get(inProject);
+                    if (module != null) {
+                        projectYangModules.add(module);
+                    }
                 }
 
             } finally {
