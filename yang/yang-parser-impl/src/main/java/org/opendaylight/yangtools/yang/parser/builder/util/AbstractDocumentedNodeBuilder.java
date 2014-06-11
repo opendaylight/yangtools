@@ -5,8 +5,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.parser.builder.api.DocumentedNodeBuilder;
 
 public abstract class AbstractDocumentedNodeBuilder extends AbstractBuilder implements DocumentedNodeBuilder{
-    private String description = "";
-    private String reference = "";
+    private String description = null;
+    private String reference = null;
     private Status status = Status.CURRENT;
 
 

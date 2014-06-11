@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DocumentedNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
@@ -261,32 +262,20 @@ public final class RefineUtils {
         Class<? extends Builder> cls = node.getClass();
 
         String description = refine.getDescription();
-        if (description != null) {
-            try {
-                Method method = cls.getDeclaredMethod("setDescription", String.class);
-                method.invoke(node, description);
-            } catch (Exception e) {
-                throw new YangParseException(moduleName, line, "Cannot refine description in " + cls.getName(), e);
-            }
-        }
 
-        String reference = refine.getReference();
-        if (reference != null) {
-            try {
-                Method method = cls.getDeclaredMethod("setReference", String.class);
-                method.invoke(node, reference);
-            } catch (Exception e) {
-                throw new YangParseException(moduleName, line, "Cannot refine reference in " + cls.getName(), e);
-            }
+        if(node instanceof DocumentedNodeBuilder) {
+            DocumentedNodeBuilder documentedNode = ((DocumentedNodeBuilder) node);
+            documentedNode.setDescription(description);
+            documentedNode.setReference(refine.getReference());
+        } else {
+            throw new YangParseException(moduleName, line, "Cannot refine description in " + cls.getName());
         }
-
         Boolean config = refine.isConfiguration();
         if (config != null) {
-            try {
-                Method method = cls.getDeclaredMethod("setConfiguration", Boolean.TYPE);
-                method.invoke(node, config);
-            } catch (Exception e) {
-                throw new YangParseException(moduleName, line, "Cannot refine config in " + cls.getName(), e);
+            if(node instanceof DataSchemaNodeBuilder) {
+                ((DataSchemaNodeBuilder) node).setConfiguration(config);
+            } else {
+                throw new YangParseException(moduleName, line, "Cannot refine config in " + cls.getName());
             }
         }
     }
