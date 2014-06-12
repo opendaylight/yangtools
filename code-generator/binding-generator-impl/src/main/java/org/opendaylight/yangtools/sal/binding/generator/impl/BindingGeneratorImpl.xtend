@@ -297,7 +297,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             // serialVersionUID
             if (genTOBuilder !== null) {
                 val GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
-                prop.setValue(Long.toString(computeDefaultSUID(genTOBuilder as GeneratedTOBuilderImpl)));
+                prop.setValue(Long.toString(computeDefaultSUID(genTOBuilder)));
                 genTOBuilder.setSUID(prop);
             }
 
