@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,10 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
@@ -39,8 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-
-import com.google.common.base.Splitter;
 
 /**
  * Contains the methods for converting strings to valid JAVA language strings
@@ -215,16 +215,18 @@ public final class BindingGeneratorUtil {
 
         final StringBuilder builder = new StringBuilder();
         builder.append(basePackageName);
-        final List<QName> pathToNode = schemaPath.getPath();
+        final Iterable<QName> iterable = schemaPath.getPathFromRoot();
+        final Iterator<QName> iterator = iterable.iterator();
+        int size = Iterables.size(iterable);
         final int traversalSteps;
         if (isUsesAugment) {
-            traversalSteps = (pathToNode.size());
+            traversalSteps = size;
         } else {
-            traversalSteps = (pathToNode.size() - 1);
+            traversalSteps = size - 1;
         }
         for (int i = 0; i < traversalSteps; ++i) {
             builder.append('.');
-            String nodeLocalName = pathToNode.get(i).getLocalName();
+            String nodeLocalName = iterator.next().getLocalName();
 
             nodeLocalName = nodeLocalName.replace(':', '.');
             nodeLocalName = nodeLocalName.replace('-', '.');

@@ -13,17 +13,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
@@ -54,10 +54,10 @@ public class BindingGeneratorUtilTest {
      * - without revision </ul>
      */
     @Test
-    public void testBindingGeneratorUtilMethods() {
+    public void testBindingGeneratorUtilMethods() throws IOException {
         List<File> testModels = loadTestResources("/module.yang");
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(testModels);
+        final YangContextParser parser = new YangParserImpl();
+        final Set<Module> modules = parser.parseFiles(testModels).getModules();
         String packageName = "";
         Module module = null;
         for (Module m : modules) {
