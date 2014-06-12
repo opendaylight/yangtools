@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
@@ -391,7 +392,7 @@ public final class BindingGeneratorUtil {
         gto.setSUID(prop);
     }
 
-    public static long computeDefaultSUID(final GeneratedTOBuilderImpl to) {
+    public static long computeDefaultSUID(final GeneratedTypeBuilderBase<?> to) {
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             DataOutputStream dout = new DataOutputStream(bout);
