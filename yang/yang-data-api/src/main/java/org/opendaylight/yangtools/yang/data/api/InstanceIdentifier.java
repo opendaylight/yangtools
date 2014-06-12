@@ -6,26 +6,25 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-
-import org.opendaylight.yangtools.concepts.Builder;
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.Path;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import org.opendaylight.yangtools.concepts.Builder;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Path;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 
 /**
  * Unique identifier of a partical node instance in the data tree.
@@ -293,10 +292,10 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      *
      *
      */
-    public interface PathArgument extends Immutable, Serializable {
+    public interface PathArgument extends Comparable<PathArgument>, Immutable, Serializable {
 
         /**
-         * If applicable returns uniqee QName of data node as defined in YANG
+         * If applicable returns unique QName of data node as defined in YANG
          * Schema.
          *
          * This method may return null, if the corresponding schema node, does
@@ -305,6 +304,26 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
          * @return
          */
         QName getNodeType();
+
+    }
+
+    private static abstract class AbstractPathArgument implements PathArgument {
+        private static final long serialVersionUID = -4546547994250849340L;
+        protected final QName nodeType;
+
+        protected AbstractPathArgument(final QName nodeType) {
+            this.nodeType = Preconditions.checkNotNull(nodeType);
+        }
+
+        @Override
+        public QName getNodeType() {
+            return nodeType;
+        }
+
+        @Override
+        public int compareTo(final PathArgument o) {
+            return nodeType.compareTo(o.getNodeType());
+        }
 
     }
 
@@ -369,17 +388,11 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * Simple path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.ContainerNode} or
      * {@link org.opendaylight.yangtools.yang.data.api.schema.LeafNode} leaf in particular subtree.
      */
-    public static final class NodeIdentifier implements PathArgument, Comparable<NodeIdentifier> {
+    public static final class NodeIdentifier extends AbstractPathArgument {
         private static final long serialVersionUID = -2255888212390871347L;
-        private final QName nodeType;
 
         public NodeIdentifier(final QName node) {
-            this.nodeType = Preconditions.checkNotNull(node);
-        }
-
-        @Override
-        public QName getNodeType() {
-            return nodeType;
+            super(node);
         }
 
         @Override
@@ -404,24 +417,19 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             return nodeType.toString();
         }
 
-        @Override
-        public int compareTo(final NodeIdentifier o) {
-            return nodeType.compareTo(o.nodeType);
-        }
     }
 
     /**
      * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode} leaf
      * overall data tree.
      */
-    public static final class NodeIdentifierWithPredicates implements PathArgument {
+    public static final class NodeIdentifierWithPredicates extends AbstractPathArgument {
         private static final long serialVersionUID = -4787195606494761540L;
 
-        private final QName nodeType;
         private final Map<QName, Object> keyValues;
 
         public NodeIdentifierWithPredicates(final QName node, final Map<QName, Object> keyValues) {
-            this.nodeType = Preconditions.checkNotNull(node);
+            super(node);
             this.keyValues = ImmutableMap.copyOf(keyValues);
         }
 
@@ -513,14 +521,13 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * Simple path argument identifying a {@link LeafSetEntryNode} leaf
      * overall data tree.
      */
-    public static final class NodeWithValue implements PathArgument {
+    public static final class NodeWithValue extends AbstractPathArgument {
         private static final long serialVersionUID = -3637456085341738431L;
 
-        private final QName nodeType;
         private final Object value;
 
         public NodeWithValue(final QName node, final Object value) {
-            this.nodeType = Preconditions.checkNotNull(node);
+            super(node);
             this.value = value;
         }
 
@@ -651,6 +658,31 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         @Override
         public int hashCode() {
             return childNames.hashCode();
+        }
+
+        @Override
+        public int compareTo(PathArgument o) {
+            if (!(o instanceof AugmentationIdentifier)) {
+                return -1;
+            }
+            AugmentationIdentifier other = (AugmentationIdentifier) o;
+            Set<QName> otherChildNames = other.getPossibleChildNames();
+            int thisSize = childNames.size();
+            int otherSize = otherChildNames.size();
+            if (thisSize == otherSize) {
+                Iterator<QName> otherIterator = otherChildNames.iterator();
+                for (QName name : childNames) {
+                    int c = name.compareTo(otherIterator.next());
+                    if (c != 0) {
+                        return c;
+                    }
+                }
+                return 0;
+            } else if (thisSize < otherSize) {
+                return 1;
+            } else {
+                return -1;
+            }
         }
     }
 
