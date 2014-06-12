@@ -14,13 +14,25 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findD
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import com.google.common.io.BaseEncoding;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
@@ -51,14 +63,33 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
-import org.opendaylight.yangtools.yang.model.util.*;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
+import org.opendaylight.yangtools.yang.model.util.EnumerationType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.Int16;
+import org.opendaylight.yangtools.yang.model.util.Int32;
+import org.opendaylight.yangtools.yang.model.util.Int64;
+import org.opendaylight.yangtools.yang.model.util.Int8;
+import org.opendaylight.yangtools.yang.model.util.StringType;
+import org.opendaylight.yangtools.yang.model.util.Uint16;
+import org.opendaylight.yangtools.yang.model.util.Uint32;
+import org.opendaylight.yangtools.yang.model.util.Uint64;
+import org.opendaylight.yangtools.yang.model.util.Uint8;
+import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import com.google.common.io.BaseEncoding;
 
 public final class TypeProviderImpl implements TypeProvider {
     /**
@@ -1279,9 +1310,10 @@ public final class TypeProviderImpl implements TypeProvider {
         } else if (base instanceof BitsTypeDefinition) {
             String parentName;
             String className;
-            SchemaPath nodePath = node.getPath();
             Module parent = getParentModule(node);
-            if (nodePath.getPath().size() == 1) {
+            Iterator<QName> path = node.getPath().getPathFromRoot().iterator();
+            path.next();
+            if (!(path.hasNext())) {
                 parentName = BindingMapping.getClassName((parent).getName()) + "Data";
                 String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
                 className = basePackageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
@@ -1404,7 +1436,7 @@ public final class TypeProviderImpl implements TypeProvider {
     }
 
     private Module getParentModule(SchemaNode node) {
-        QName qname = node.getPath().getPath().get(0);
+        QName qname = node.getPath().getPathFromRoot().iterator().next();
         URI namespace = qname.getNamespace();
         Date revision = qname.getRevision();
         return schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
@@ -1472,9 +1504,9 @@ public final class TypeProviderImpl implements TypeProvider {
             String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
             className = basePackageName + "." + BindingMapping.getClassName(typeQName);
         } else {
-            SchemaPath nodePath = node.getPath();
-            if (nodePath.getPath().size() == 1) {
-                QName first = nodePath.getPath().get(0);
+            Iterator<QName> path = node.getPath().getPathFromRoot().iterator();
+            QName first = path.next();
+            if (!(path.hasNext())) {
                 URI namespace = first.getNamespace();
                 Date revision = first.getRevision();
                 Module parent = schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
@@ -1482,7 +1514,6 @@ public final class TypeProviderImpl implements TypeProvider {
                 String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
                 className = basePackageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
             } else {
-                QName first = node.getPath().getPath().get(0);
                 URI namespace = first.getNamespace();
                 Date revision = first.getRevision();
                 Module parentModule = schemaContext.findModuleByNamespaceAndRevision(namespace, revision);

@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
+import com.google.common.base.Optional;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
@@ -228,7 +228,8 @@ public final class BaseYangTypes {
 
             @Override
             public List<RangeConstraint> getRangeConstraints() {
-                return Collections.singletonList(BaseConstraints.rangeConstraint(min, max, null, null));
+                return Collections.singletonList(BaseConstraints.newRangeConstraint(min, max,
+                        Optional.<String> absent(), Optional.<String> absent()));
             }
 
             @Override
