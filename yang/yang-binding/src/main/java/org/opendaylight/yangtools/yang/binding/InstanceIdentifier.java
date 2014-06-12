@@ -7,20 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import org.opendaylight.yangtools.concepts.Builder;
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.Path;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import org.opendaylight.yangtools.concepts.Builder;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Path;
 
 /**
  *
@@ -492,7 +490,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * Interface which implementations are used as path components of the
      * path in overall data tree.
      */
-    public interface PathArgument {
+    public interface PathArgument extends Comparable<PathArgument> {
         Class<? extends DataObject> getType();
     }
 
@@ -526,6 +524,11 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
             }
             final AbstractPathArgument<?> other = (AbstractPathArgument<?>) obj;
             return type.equals(other.type);
+        }
+
+        @Override
+        public int compareTo(PathArgument arg) {
+            return type.getCanonicalName().compareTo(arg.getType().getCanonicalName());
         }
     }
 
