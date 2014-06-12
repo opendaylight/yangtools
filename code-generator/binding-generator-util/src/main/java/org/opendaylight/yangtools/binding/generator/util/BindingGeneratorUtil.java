@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
+import com.google.common.base.Splitter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,12 +20,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
@@ -39,8 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-
-import com.google.common.base.Splitter;
 
 /**
  * Contains the methods for converting strings to valid JAVA language strings
@@ -369,7 +367,7 @@ public final class BindingGeneratorUtil {
         return sb.toString();
     }
 
-    public static long computeDefaultSUID(final GeneratedTOBuilderImpl to) {
+    public static long computeDefaultSUID(final GeneratedTypeBuilderBase<?> to) {
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             DataOutputStream dout = new DataOutputStream(bout);
