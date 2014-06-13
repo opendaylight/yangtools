@@ -3,13 +3,17 @@ package org.opendaylight.yangtools.yang.binding.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -20,10 +24,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 
 public class DataObjectReadingUtil {
 
@@ -48,10 +48,7 @@ public class DataObjectReadingUtil {
         checkArgument(childPath != null, "Child path must not be null");
         checkArgument(parentPath.containsWildcarded(childPath), "Parent object must be parent of child.");
 
-        final int commonOffset = parentPath.getPath().size();
-        final int lastIndex = childPath.getPath().size();
-        List<PathArgument> pathArgs = childPath.getPath().subList(commonOffset, lastIndex);
-
+        List<PathArgument> pathArgs = subList(parentPath.getPathArguments(), childPath.getPathArguments());
         @SuppressWarnings("rawtypes")
         Map<InstanceIdentifier, DataContainer> lastFound = Collections
                 .<InstanceIdentifier, DataContainer> singletonMap(parentPath, parent);
@@ -316,4 +313,31 @@ public class DataObjectReadingUtil {
             return (DataContainer) potential;
         }
     }
+
+    /**
+     * Create sublist view of child from element on [size-of-parent] position to
+     * last element.
+     *
+     * @param parent
+     * @param child
+     * @return sublist view of child argument
+     * @throws IllegalArgumentException
+     *             if parent argument is bigger than child
+     */
+    private static <P, C> List<C> subList(Iterable<P> parent, Iterable<C> child) {
+        Iterator<P> iParent = parent.iterator();
+        List<C> result = new ArrayList<>();
+        for (C arg : child) {
+            if (iParent.hasNext()) {
+                iParent.next();
+            } else {
+                result.add(arg);
+            }
+        }
+        if (iParent.hasNext()) {
+            throw new IllegalArgumentException("Parent argument is bigger than child.");
+        }
+        return result;
+    }
+
 }
