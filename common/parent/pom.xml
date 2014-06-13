@@ -14,6 +14,7 @@
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
         <version>1.4.2-SNAPSHOT</version>
+        <relativePath></relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -26,15 +27,18 @@
     </prerequisites>
 
     <properties>
-        <junit.version>4.10</junit.version>
+        <antlr4.version>4.0</antlr4.version>
+        <ctrie.version>0.2.0</ctrie.version>
         <exam.version>3.0.0</exam.version>
         <groovy.version>2.1.6</groovy.version>
-        <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
-        <ctrie.version>0.2.0</ctrie.version>
         <ietf.topology.version>2013.10.21.2-SNAPSHOT</ietf.topology.version>
         <ietf.inet.types.version>2010.09.24.4-SNAPSHOT</ietf.inet.types.version>
         <ietf.yang.types.version>2010.09.24.4-SNAPSHOT</ietf.yang.types.version>
         <ietf.restconf.version>2013.10.19.1-SNAPSHOT</ietf.restconf.version>
+        <junit.version>4.10</junit.version>
+        <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
+        <opendaylight.l2.types.version>2013.08.27.4-SNAPSHOT</opendaylight.l2.types.version>
+        <yang.ext.version>2013.09.07.4-SNAPSHOT</yang.ext.version>
         <maven.javadoc.version>2.9.1</maven.javadoc.version>
     </properties>
 
