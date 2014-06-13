@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_180a6bd2",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-06-13T23:52:42Z",
+      "side": 1,
+      "message": "Yeah that\u0027s another way to do it.   I can change it although I really don\u0027t think this needs to be that fancy - again it\u0027s just a simple helper class to aid troubleshooting.",
+      "parentUuid": "fa82b9bf_0d91cb46",
+      "revId": "d236bede301baa1e0b1d5ca94c6292929053f6fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_40524314",
         "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGenerator.java",
         "patchSetId": 6
