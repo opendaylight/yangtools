@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -22,9 +22,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GeneratedTypesStringTest {
@@ -39,10 +38,9 @@ public class GeneratedTypesStringTest {
     }
 
     @Test
-    public void constantGenerationTest() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(testModels);
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public void constantGenerationTest() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();

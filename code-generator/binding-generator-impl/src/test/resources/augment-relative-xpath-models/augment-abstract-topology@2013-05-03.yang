@@ -3,11 +3,6 @@ module augment-abstract-topology {
     namespace "urn:model:augment:abstract:topology";
     prefix "atp";
 
-    import ietf-inet-types { 
-        prefix "inet";
-        revision-date 2010-09-24;
-    }
-
     import ietf-interfaces {
         prefix "if";
         revision-date 2012-11-15;
@@ -18,11 +13,7 @@ module augment-abstract-topology {
         revision-date 2013-02-08;
     }
 
-    organization "OPEN DAYLIGHT";
-    contact "http://www.opendaylight.org/";
-
     revision "2013-05-03" {
-        reference "http://www.opendaylight.org/";
     }
 
     augment "/at:topology" {

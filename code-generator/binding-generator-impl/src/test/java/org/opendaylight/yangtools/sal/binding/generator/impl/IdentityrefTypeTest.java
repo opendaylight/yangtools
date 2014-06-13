@@ -11,12 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -25,9 +24,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class IdentityrefTypeTest {
@@ -57,10 +55,9 @@ public class IdentityrefTypeTest {
      * provideTypeForIdentityref}
      */
     @Test
-    public void testIdentityrefYangBuiltInType() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(testModels);
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public void testIdentityrefYangBuiltInType() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();

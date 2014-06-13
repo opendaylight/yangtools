@@ -12,19 +12,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class ControllerTest {
@@ -45,10 +43,9 @@ public class ControllerTest {
     }
 
     @Test
-    public void controllerAugmentationTest() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(controllerModels);
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public void controllerAugmentationTest() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(controllerModels);
 
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();

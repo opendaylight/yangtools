@@ -11,11 +11,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,7 +31,7 @@ public class TypeProviderIntegrationTest {
     private Module m;
 
     @BeforeClass
-    public static void setup() throws ParseException, URISyntaxException {
+    public static void setup() throws Exception {
         final URI path1 = TypeProviderIntegrationTest.class.getResource("/type-provider/test.yang").toURI();
         final URI path2 = TypeProviderIntegrationTest.class.getResource(
                 "/type-provider/ietf-inet-types@2010-09-24.yang").toURI();

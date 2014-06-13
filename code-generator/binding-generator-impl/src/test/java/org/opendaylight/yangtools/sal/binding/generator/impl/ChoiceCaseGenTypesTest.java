@@ -13,42 +13,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsInterface;
 import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestUtil.containsMethods;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
-import java.util.Set;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
-public class ChoiceCaseGenTypesTest {
+public class ChoiceCaseGenTypesTest extends AbstractTypesTest {
 
-    private final static List<File> yangModels = new ArrayList<>();
-    private final static URL yangModelsFolder = AugmentedTypeTest.class.getResource("/choice-case-type-test-models")
-            ;
-
-    @BeforeClass
-    public static void loadTestResources() throws URISyntaxException {
-        final File augFolder = new File(yangModelsFolder.toURI());
-        for (final File fileEntry : augFolder.listFiles()) {
-            if (fileEntry.isFile()) {
-                yangModels.add(fileEntry);
-            }
-        }
+    public ChoiceCaseGenTypesTest() {
+        super(ChoiceCaseGenTypesTest.class.getResource("/choice-case-type-test-models"));
     }
 
-    private static GeneratedType checkGeneratedType(List<Type> genTypes, String genTypeName, String packageName,
-            int occurences) {
+    private GeneratedType checkGeneratedType(List<Type> genTypes, String genTypeName, String packageName, int occurences) {
         GeneratedType searchedGenType = null;
         int searchedGenTypeCounter = 0;
         for (Type type : genTypes) {
@@ -67,16 +49,14 @@ public class ChoiceCaseGenTypesTest {
 
     }
 
-    private static GeneratedType checkGeneratedType(List<Type> genTypes, String genTypeName, String packageName) {
+    private GeneratedType checkGeneratedType(List<Type> genTypes, String genTypeName, String packageName) {
         return checkGeneratedType(genTypes, genTypeName, packageName, 1);
     }
 
     @Test
-    public void choiceCaseResolvingTypeTest() {
-        final YangModelParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModels(yangModels);
-
-        final SchemaContext context = parser.resolveSchemaContext(modules);
+    public void choiceCaseResolvingTypeTest() throws IOException {
+        final YangContextParser parser = new YangParserImpl();
+        final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull("context is null", context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
@@ -147,7 +127,6 @@ public class ChoiceCaseGenTypesTest {
 
         genType = checkGeneratedType(genTypes, "LeafAugCase", pcgPref
                 + ".netconf.state.datastores.datastore.locks.lock.type"); // choice
-        // FIXME
         containsMethods(genType, new NameTypePattern("getLeafAugCase", "String"));
         containsInterface("LockType", genType);
 
