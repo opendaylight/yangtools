@@ -178,7 +178,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         List<Range<Integer>> lengthConstraints = new ArrayList<>();
         lengthConstraints.add(Range.closed(5, 11));
         arg = "abcd";
-        expectedMsg = String.format("Invalid length: {}, expected: {}.", arg, lengthConstraints);
+        expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
         assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance("hello world");
         assertEquals(obj, defInst.invoke(null, "hello world"));
@@ -197,7 +197,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         lengthConstraints.clear();
         lengthConstraints.add(Range.closed(6, 10));
         arg = "abcde";
-        String.format("Invalid length: {}, expected: {}.", arg, lengthConstraints);
+        expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
         assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance("helloWorld");
         assertEquals(obj, defInst.invoke(null, "helloWorld"));

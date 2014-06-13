@@ -423,7 +423,7 @@ public class CompilationTest extends BaseCompilationTest {
         List<Range<Integer>> lengthConstraints = new ArrayList<>();
         lengthConstraints.add(Range.closed(1, 10));
         Object arg = new byte[] {};
-        String expectedMsg = String.format("Invalid length: {}, expected: {}.", arg, lengthConstraints);
+        String expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
         assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg);
 
         m = assertContainsMethod(builderClass, builderClass, "setIdDecimal64", BigDecimal.class);

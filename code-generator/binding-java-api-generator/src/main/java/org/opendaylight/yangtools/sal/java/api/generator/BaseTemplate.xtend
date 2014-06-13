@@ -225,7 +225,7 @@ abstract class BaseTemplate {
                 }
             }
             if (!isValidLength) {
-                throw new IllegalArgumentException(String.format("Invalid length: {}, expected: {}.", «paramName», lengthConstraints));
+                throw new IllegalArgumentException(String.format("Invalid length: %s, expected: %s.", «paramName», lengthConstraints));
             }
         }
     '''
