@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_33f2f0d2",
+        "filename": "common/features/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1777
+      },
+      "writtenOn": "2014-06-16T13:31:10Z",
+      "side": 1,
+      "message": "Future improvement - use ${karaf.version}",
+      "revId": "981d0be9786ec0e4693aa77e7306a54ed87d0222",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
