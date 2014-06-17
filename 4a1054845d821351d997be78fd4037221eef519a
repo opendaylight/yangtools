@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_193cad92",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/LazyGeneratedCodecRegistry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T16:20:26Z",
+      "side": 1,
+      "message": "missing @deprecated javadoc",
+      "revId": "4a1054845d821351d997be78fd4037221eef519a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
