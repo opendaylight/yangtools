@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Copyright (c) 2013 Cisco Systems, Inc. and others. All rights reserved. This
+    program and the accompanying materials are made available under the terms of the
+    Eclipse Public License v1.0 which accompanies this distribution, and is available
+    at http://www.eclipse.org/legal/epl-v10.html -->
+<topology xmlns="urn:TBD:params:xml:ns:yang:network-topology">
+    <server-provided>true</server-provided>
+    <topology-id>example-pcep-topology</topology-id>
+    <topology-types/>
+    <node>
+     <path-computation-client xmlns="urn:opendaylight:params:xml:ns:yang:topology:pcep">
+      <state-sync>synchronized</state-sync>
+       <stateful-tlv>
+        <stateful>
+         <lsp-update-capability>true</lsp-update-capability>
+         <include-db-version>false</include-db-version>
+         <initiation>true</initiation>
+        </stateful>
+       </stateful-tlv>
+       <reported-lsp>
+        <name>update-tunel</name>
+        <path>
+          <bandwidth>
+           <bandwidth>AAAAAA==</bandwidth>
+           <ignore>false</ignore>
+           <processing-rule>false</processing-rule>
+          </bandwidth>
+          <ero>
+            <ignore>false</ignore>
+            <processing-rule>false</processing-rule>
+            <subobject>
+             <loose>false</loose>
+             <ip-prefix>
+              <ip-prefix>195.20.160.40/32</ip-prefix>
+             </ip-prefix>
+          </subobject>
+          <subobject>
+           <loose>false</loose>
+           <ip-prefix>
+            <ip-prefix>201.20.160.43/32</ip-prefix>
+           </ip-prefix>
+          </subobject>
+         </ero>
+         <lspa>
+          <exclude-any>0</exclude-any>
+          <hold-priority>7</hold-priority>
+          <ignore>false</ignore>
+          <include-all>0</include-all>
+          <include-any>0</include-any>
+          <local-protection-desired>false</local-protection-desired>
+          <processing-rule>false</processing-rule>
+          <setup-priority>7</setup-priority>
+         </lspa>
+        </path>
+        <lsp xmlns="urn:opendaylight:params:xml:ns:yang:pcep:ietf:stateful">
+         <tlvs>
+          <symbolic-path-name>
+           <path-name>dXBkYXRlLXR1bmVs</path-name>
+          </symbolic-path-name>
+            <vs-tlv>
+                 <enterprise-number>9</enterprise-number>
+                 <unix-sub-tlvs xmlns="urn:opendaylight:params:xml:ns:yang:network:topology-unix">
+                    <unix-value>5</unix-value>
+                 </unix-sub-tlvs>
+            </vs-tlv>
+         </tlvs>
+         <delegate>true</delegate>
+         <processing-rule>false</processing-rule>
+         <ignore>false</ignore>
+         <operational>true</operational>
+         <sync>false</sync>
+         <plsp-id>40</plsp-id>
+         <remove>false</remove>
+        </lsp>
+      </reported-lsp>
+      <ip-address>39.39.39.39</ip-address>
+     </path-computation-client>
+     <node-id>pcc://39.39.39.39</node-id>
+    </node>
+</topology>
