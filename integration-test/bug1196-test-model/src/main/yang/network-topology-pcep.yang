@@ -1,0 +1,32 @@
+module network-topology-pcep {
+    // vi: set et smarttab sw=4 tabstop=4:
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:topology:pcep";
+    prefix "pn";
+
+    import network-topology { prefix nt; revision-date 2013-10-21; }
+
+    revision "2013-10-24" {
+    }
+
+
+    grouping pcep-client-attributes {
+        container path-computation-client {
+            config false;
+            list reported-lsp {
+                leaf name {
+                    type string;
+                }
+                key name;
+            }
+        }
+    }
+
+    augment "/nt:network-topology/nt:topology/nt:node" {
+        when "../../nt:topology-types/topology-pcep";
+
+        uses pcep-client-attributes;
+    }
+
+}
+

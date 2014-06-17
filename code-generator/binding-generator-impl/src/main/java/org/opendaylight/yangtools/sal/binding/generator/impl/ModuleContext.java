@@ -7,24 +7,23 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 public final class ModuleContext {
     private GeneratedTypeBuilder moduleNode;
@@ -39,6 +38,7 @@ public final class ModuleContext {
     private final BiMap<Type,AugmentationSchema> typeToAugmentation = HashBiMap.create();
 
     private final Multimap<Type, Type> choiceToCases = HashMultimap.create();
+    private final BiMap<Type,ChoiceCaseNode> caseTypeToSchema = HashBiMap.create();
 
     private final Multimap<Type, Type> augmentableToAugmentations = HashMultimap.create();
 
@@ -176,6 +176,15 @@ public final class ModuleContext {
 
     public void addTargetToAugmentation(final Type target, final GeneratedTypeBuilder augmentation) {
         augmentableToAugmentations.put(target,augmentation);
+    }
+
+    public void addChoiceToCaseMapping(Type choiceType, Type caseType, ChoiceCaseNode schema) {
+        choiceToCases.put(choiceType, caseType);
+        caseTypeToSchema.put(caseType, schema);
+    }
+
+    public BiMap<Type, ChoiceCaseNode> getCaseTypeToSchemas() {
+        return caseTypeToSchema;
     }
 
 }
