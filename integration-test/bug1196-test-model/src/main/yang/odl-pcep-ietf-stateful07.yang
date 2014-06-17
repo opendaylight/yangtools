@@ -1,0 +1,38 @@
+module odl-pcep-ietf-stateful07 {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:pcep:ietf:stateful";
+    prefix "stateful";
+
+    import network-topology { prefix nt; revision-date 2013-10-21; }
+    import network-topology-pcep { prefix topo; revision-date 2013-10-24; }
+    import pcep-types { prefix pcep; revision-date 2013-10-05; }
+    import yang-ext { prefix ext; revision-date 2013-07-09; }
+
+    revision "2013-12-22" {
+    }
+
+
+    grouping lsp-object {
+        container lsp {
+            container "tlvs" {
+                uses pcep:vs-tlv;
+            }
+        }
+    }
+
+    augment "/nt:network-topology/nt:topology/nt:node/topo:path-computation-client/topo:reported-lsp" {
+        uses lsp-object;
+    }
+
+    augment "/nt:network-topology/nt:topology/nt:node/topo:path-computation-client/topo:reported-lsp/stateful:lsp/stateful:tlvs/stateful:vs-tlv/stateful:vendor-payload" {
+        case linux {
+            container linux-sub-tlvs {
+                leaf linux-value {
+                    type uint8;
+                }
+            }
+        }
+    }
+
+}
+
