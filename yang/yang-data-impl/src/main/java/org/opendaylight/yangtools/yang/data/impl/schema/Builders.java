@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -24,6 +26,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
@@ -44,6 +48,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOr
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -72,6 +77,15 @@ public final class Builders {
     public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
             final LeafListSchemaNode schema) {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
+    }
+    
+    public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, Node<?>, AnyXmlNode> anyXmlBuilder() {
+        return ImmutableAnyXmlNodeBuilder.create();
+    }
+    
+    public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, Node<?>, AnyXmlNode> anyXmlBuilder(
+            final AnyXmlSchemaNode schema) {
+        return ImmutableAnyXmlNodeSchemaAwareBuilder.create(schema);
     }
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder() {
