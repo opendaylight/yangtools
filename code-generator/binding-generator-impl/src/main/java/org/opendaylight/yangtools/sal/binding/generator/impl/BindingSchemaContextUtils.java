@@ -55,7 +55,7 @@ public class BindingSchemaContextUtils {
                 if(pathArguments.hasNext()) {
                     currentArg = pathArguments.next();
                 } else {
-                    return Optional.absent();
+                    return currentContainer;
                 }
             }
             if(ChildOf.class.isAssignableFrom(currentArg.getType()) && BindingReflections.isAugmentationChild(currentArg.getType())) {

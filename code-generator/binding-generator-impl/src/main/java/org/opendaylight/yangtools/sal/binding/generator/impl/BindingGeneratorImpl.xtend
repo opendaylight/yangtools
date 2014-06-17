@@ -1148,6 +1148,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val caseTypeBuilder = addDefaultInterfaceDefinition(packageName, caseNode)
                 caseTypeBuilder.addImplementsType(refChoiceType)
                 genCtx.get(module).addCaseType(caseNode.path, caseTypeBuilder)
+                genCtx.get(module).addChoiceToCaseMapping(refChoiceType, caseTypeBuilder,caseNode)
                 val Set<DataSchemaNode> caseChildNodes = caseNode.childNodes
                 if (caseChildNodes !== null) {
                     var Object parentNode = null
@@ -1250,21 +1251,18 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     throw new IllegalArgumentException("Failed to find parent type of choice " + targetNode);
                 }
 
-                if (caseNode instanceof DataNodeContainer) {
-                    val DataNodeContainer dataNodeCase = caseNode as DataNodeContainer;
-                    val Set<DataSchemaNode> childNodes = dataNodeCase.childNodes;
-                    if (childNodes !== null) {
-                        resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, childNodes);
-                    }
-                } else {
-                    val ChoiceCaseNode node = targetNode.getCaseNodeByName(caseNode.getQName().getLocalName());
-                    val Set<DataSchemaNode> childNodes = node.childNodes;
-                    if (childNodes !== null) {
-                        resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, childNodes);
-                    }
+                var ChoiceCaseNode node = null;
+                if (caseNode instanceof ChoiceCaseNode) {
+                    node = caseNode as ChoiceCaseNode;
+                }  else {
+                    node = targetNode.getCaseNodeByName(caseNode.getQName().getLocalName());
                 }
-
+                val Set<DataSchemaNode> childNodes = node.childNodes;
+                if (childNodes !== null) {
+                    resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, childNodes);
+                }
                 genCtx.get(module).addCaseType(caseNode.path, caseTypeBuilder)
+                genCtx.get(module).addChoiceToCaseMapping(targetType, caseTypeBuilder,node);
             }
         }
 
