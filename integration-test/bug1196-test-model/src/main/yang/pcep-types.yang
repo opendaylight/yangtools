@@ -1,0 +1,19 @@
+module pcep-types {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:pcep:types";
+    prefix "pcep-t";
+
+    revision "2013-10-05" {
+    }
+
+
+    grouping vs-tlv {
+        description "Vendor-specific TLV.";
+        container vs-tlv {
+                choice vendor-payload {
+                }
+        }
+    }
+
+}
+

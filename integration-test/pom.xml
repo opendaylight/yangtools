@@ -7,18 +7,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools</artifactId>
-        <version>0.6.1-1-SNAPSHOT</version>
-    </parent>
-
+    <groupId>org.opendaylight.yangtools</groupId>
+    <version>0.6.2-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>integration-tests</artifactId>
+    <artifactId>integration-tests-aggregator</artifactId>
     <packaging>pom</packaging>
 
     <modules>
         <module>bug527-test-model</module>
+        <module>bundle-test</module>
+        <module>test-models</module>
         <module>regression-test-model</module>
         <module>yang-runtime-tests</module>
     </modules>

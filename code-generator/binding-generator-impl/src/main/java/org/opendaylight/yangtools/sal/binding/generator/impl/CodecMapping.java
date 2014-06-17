@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-
-import org.opendaylight.yangtools.yang.data.impl.codec.IdentityCodec;
-import org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.binding.BindingCodec;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.impl.codec.IdentityCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +26,7 @@ public class CodecMapping {
     public static final String CLASS_TO_CASE_MAP = "CLASS_TO_CASE";
     public static final String COMPOSITE_TO_CASE = "COMPOSITE_TO_CASE";
     public static final String AUGMENTATION_CODEC = "AUGMENTATION_CODEC";
+    public static final String DISPATCH_CODEC = "DISPATCH_CODEC";
 
     public static void setIdentifierCodec(Class<?> obj,InstanceIdentifierCodec codec) {
         Field instanceIdField;
@@ -79,6 +79,19 @@ public class CodecMapping {
             LOG.debug("BUG: Class to case mappping is not needed for {}",codec.getName(),e);
         } catch (SecurityException | IllegalAccessException e) {
             LOG.error("Composite node to case mappping could not be set for {}",codec.getName(),e);
+        }
+    }
+
+    public static void setDispatchCodec(Class<? extends BindingCodec<?,?>> codec,
+            BindingCodec<?, ?> dispatchCodec) {
+        Field instanceIdField;
+        try {
+            instanceIdField = codec.getField(DISPATCH_CODEC);
+            instanceIdField.set(null, dispatchCodec);
+        } catch (NoSuchFieldException e) {
+            LOG.debug("BUG: dispatch codec is not needed for {}",codec.getName(),e);
+        } catch (SecurityException | IllegalAccessException e) {
+            LOG.error("Dispatch codec could not be set for {}",codec.getName(),e);
         }
     }
 
