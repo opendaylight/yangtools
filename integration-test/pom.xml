@@ -8,7 +8,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
+    <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools</artifactId>
         <version>0.6.1-1-SNAPSHOT</version>
     </parent>
@@ -19,6 +19,7 @@
 
     <modules>
         <module>bug527-test-model</module>
+        <module>bug1196-test-model</module>
         <module>regression-test-model</module>
         <module>yang-runtime-tests</module>
     </modules>

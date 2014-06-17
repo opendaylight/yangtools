@@ -95,5 +95,11 @@
             <version>0.6.1-1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>bug1196-test-model</artifactId>
+            <version>0.6.1-1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
