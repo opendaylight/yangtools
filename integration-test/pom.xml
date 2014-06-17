@@ -15,7 +15,6 @@
 
     <modules>
         <module>bug527-test-model</module>
-        <module>bug1196-test-model</module>
         <module>bundle-test</module>
         <module>test-models</module>
         <module>regression-test-model</module>

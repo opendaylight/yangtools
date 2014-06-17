@@ -625,7 +625,8 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 //staticQNameField(inputType);
                 staticField(it, INSTANCE_IDENTIFIER_CODEC, BindingCodec)
                 staticField(it, IDENTITYREF_CODEC, BindingCodec)
-                staticField(it, DISPATCH_CODEC, BindingCodec)
+                staticField(it, CLASS_TO_CASE_MAP, Map)
+                staticField(it, COMPOSITE_TO_CASE, Map)
                 //staticField(it,QNAME_TO_CASE_MAP,BindingCodec)
                 implementsType(BINDING_CODEC)
                 method(List, "toDomStatic", #[QName, Object]) [
@@ -635,11 +636,14 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                             if($2 == null) {
                                 return null;
                             }
-                            if («DISPATCH_CODEC» == null) {
-                                throw new «IllegalStateException.name»("Implementation of codec was not initialized.");
+                            «DataObject.name» _baValue = («DataObject.name») $2;
+                            Class _baClass = _baValue.getImplementedInterface();
+                            «BINDING_CODEC.name» _codec =  «CLASS_TO_CASE_MAP».get(_baClass);
+                            if(_codec == null) {
+                                return null;
                             }
-                            java.util.Map.Entry _input = new «SimpleEntry.name»($1,$2);
-                            Object _ret =  «DISPATCH_CODEC».serialize(_input);
+                            java.util.Map.Entry _input = new «SimpleEntry.name»($1,_baValue);
+                            Object _ret =  _codec.serialize(_input);
                             ////System.out.println("«typeSpec.name»#toDomStatic: " + _ret);
                             return («List.name») _ret;
                         }
@@ -654,10 +658,11 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                     modifiers = PUBLIC + FINAL + STATIC
                     bodyChecked = '''
                         {
-                            if («DISPATCH_CODEC» == null) {
-                                throw new «IllegalStateException.name»("Implementation of codec was not initialized.");
+                            «BINDING_CODEC.name» _codec = («BINDING_CODEC.name») «COMPOSITE_TO_CASE».get($2);
+                            if(_codec != null) {
+                                return _codec.deserialize(new «SimpleEntry.name»($1,$2),$3);
                             }
-                            return «DISPATCH_CODEC».deserialize($2,$3);
+                            return null;
                         }
                     '''
                 ]
