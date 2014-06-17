@@ -1,0 +1,25 @@
+module network-topology-unix {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:network:topology-unix";
+    prefix "unix";
+
+    import network-topology { prefix nt; revision-date 2013-10-21; }
+    import network-topology-pcep { prefix topo; revision-date 2013-10-24; }
+    import odl-pcep-ietf-stateful07 { prefix stateful; revision-date 2013-12-22; }
+
+    revision "2013-12-22" {
+    }
+
+
+    augment "/nt:network-topology/nt:topology/nt:node/topo:path-computation-client/topo:reported-lsp/stateful:lsp/stateful:tlvs/stateful:vs-tlv/stateful:vendor-payload" {
+        case unix {
+            container unix-sub-tlvs {
+                leaf unix-value {
+                    type uint8;
+                }
+            }
+        }
+    }
+
+}
+
