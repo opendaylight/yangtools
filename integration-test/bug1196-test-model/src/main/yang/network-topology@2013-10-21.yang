@@ -1,0 +1,23 @@
+module network-topology  {
+    yang-version 1;
+    namespace "urn:TBD:params:xml:ns:yang:network-topology";
+    prefix "nt";
+
+
+    revision 2013-10-21 {
+    }
+
+
+
+    container network-topology {
+        list topology {
+            key "topology-id";
+            leaf topology-id {
+                type string;
+            }
+            list node {
+            }
+        }
+    }
+}
+
