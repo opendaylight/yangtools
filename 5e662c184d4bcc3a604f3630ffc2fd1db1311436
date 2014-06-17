@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_332190fb",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/BitImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "can any of these be null?",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_531c54c1",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/MustDefinitionImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b3e840b5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/ConstraintsBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "missing documentation",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d3eb84ae",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/ConstraintsBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "misaligned",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_73d2b801",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/ConstraintsBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "any reason why this is not using concepts.Builder?",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_73f9587f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/GroupingBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "api-\u003eimpl dependency?",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_93f41c88",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/RefineBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "misaligned whitespace",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_33f3d09f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/RefineBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "Missing @deprecated javadoc",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f32c8804",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/UnknownSchemaNodeBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "missing copyright header",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_53ee94b5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/UnknownSchemaNodeBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "whitespace",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_13300c55",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/api/UnknownSchemaNodeBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "whitespace",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_73271813",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ContainerSchemaNodeBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "can this be null?",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f37a48f0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/util/package-info.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-06-17T07:40:52Z",
+      "side": 1,
+      "message": "missed somehting?",
+      "revId": "5e662c184d4bcc3a604f3630ffc2fd1db1311436",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
