@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -39,8 +40,6 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
 import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
-
-import com.google.common.io.ByteSource;
 
 final class TestUtils {
 
@@ -86,12 +85,11 @@ final class TestUtils {
     public static Module loadModuleWithContext(final String name, final InputStream stream, final SchemaContext context)
             throws IOException, YangSyntaxErrorException {
         final YangContextParser parser = new YangParserImpl();
-        ByteSource source = new ByteSource() {
-            @Override
-            public InputStream openStream() throws IOException {
-                return NamedByteArrayInputStream.create(stream);
-            }
-        };
+
+        final byte[] streamContent = ByteStreams.toByteArray(stream);
+
+        ByteSource source = ByteStreams.asByteSource(streamContent);
+
         final Collection<ByteSource> sources = Collections.singletonList(source);
         SchemaContext ctx = parser.parseSources(sources, context);
         final Set<Module> modules = ctx.getModules();
