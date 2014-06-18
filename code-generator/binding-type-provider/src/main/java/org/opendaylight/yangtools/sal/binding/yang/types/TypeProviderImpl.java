@@ -669,6 +669,7 @@ public final class TypeProviderImpl implements TypeProvider {
                     genTOBuilder.setTypedef(true);
                     genTOBuilder.setIsUnion(true);
                     addUnitsToGenTO(genTOBuilder, typedef.getUnits());
+                    BindingGeneratorUtil.makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
                     returnType = genTOBuilder.toInstance();
                     // union builder
                     GeneratedTOBuilder unionBuilder = new GeneratedTOBuilderImpl(genTOBuilder.getPackageName(),
@@ -687,6 +688,7 @@ public final class TypeProviderImpl implements TypeProvider {
                         types.add(unionBuilder.toInstance());
                     }
                 } else if (innerTypeDefinition instanceof EnumTypeDefinition) {
+                    // enums are automatically Serializable
                     final EnumTypeDefinition enumTypeDef = (EnumTypeDefinition) innerTypeDefinition;
                     // TODO units for typedef enum
                     returnType = provideTypeForEnum(enumTypeDef, typedefName, typedef);
@@ -696,6 +698,7 @@ public final class TypeProviderImpl implements TypeProvider {
                             basePackageName, bitsTypeDefinition, typedefName);
                     genTOBuilder.setTypedef(true);
                     addUnitsToGenTO(genTOBuilder, typedef.getUnits());
+                    BindingGeneratorUtil.makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
                     returnType = genTOBuilder.toInstance();
                 } else {
                     final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(
@@ -744,6 +747,7 @@ public final class TypeProviderImpl implements TypeProvider {
         }
         addUnitsToGenTO(genTOBuilder, typedef.getUnits());
         genTOBuilder.setTypedef(true);
+        BindingGeneratorUtil.makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
         return genTOBuilder.toInstance();
     }
 
@@ -1163,7 +1167,7 @@ public final class TypeProviderImpl implements TypeProvider {
         final String typedefName = typedef.getQName().getLocalName();
         final String classTypedefName = BindingMapping.getClassName(typedefName);
         final String innerTypeDef = innerExtendedType.getQName().getLocalName();
-        final GeneratedTOBuilder genTOBuilder = new GeneratedTOBuilderImpl(basePackageName, classTypedefName);
+        final GeneratedTOBuilderImpl genTOBuilder = new GeneratedTOBuilderImpl(basePackageName, classTypedefName);
         genTOBuilder.setTypedef(true);
         Restrictions r = BindingGeneratorUtil.getRestrictions(typedef);
         genTOBuilder.setRestrictions(r);
@@ -1187,6 +1191,7 @@ public final class TypeProviderImpl implements TypeProvider {
             }
         }
         addUnitsToGenTO(genTOBuilder, typedef.getUnits());
+        BindingGeneratorUtil.makeSerializable(genTOBuilder);
 
         return genTOBuilder.toInstance();
     }

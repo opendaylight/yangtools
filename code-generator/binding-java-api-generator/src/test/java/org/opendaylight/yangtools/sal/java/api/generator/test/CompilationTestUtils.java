@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +23,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -126,6 +128,7 @@ public class CompilationTestUtils {
     static void assertContainsFieldWithValue(Class<?> clazz, String name, Class<?> returnType, Object expectedValue,
             Class<?>[] constructorArgs, Object... initargs) {
         Field f = assertContainsField(clazz, name, returnType);
+        f.setAccessible(true);
         try {
             Constructor<?> c = clazz.getDeclaredConstructor(constructorArgs);
             Object o = c.newInstance(initargs);

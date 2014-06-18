@@ -12,6 +12,7 @@ import com.google.common.collect.Iterables;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
@@ -373,6 +375,20 @@ public final class BindingGeneratorUtil {
         } while (toBeRemovedPos != -1);
 
         return sb.toString();
+    }
+
+    /**
+     * Add {@link Serializable} to implemented interfaces of this TO. Also
+     * compute and add serialVersionUID property.
+     *
+     * @param gto
+     *            transfer object which needs to be serializable
+     */
+    public static void makeSerializable(GeneratedTOBuilderImpl gto) {
+        gto.addImplementsType(Types.typeForClass(Serializable.class));
+        GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
+        prop.setValue(Long.toString(computeDefaultSUID(gto)));
+        gto.setSUID(prop);
     }
 
     public static long computeDefaultSUID(final GeneratedTOBuilderImpl to) {
