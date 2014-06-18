@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.annotation.concurrent.Immutable;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -100,10 +101,18 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
 
+@Immutable
 public final class YangParserImpl implements YangContextParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
 
     private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
+    private static final YangParserImpl INSTANCE = new YangParserImpl();
+
+    public static YangParserImpl getInstance() {
+        return INSTANCE;
+    }
+
+
 
     @Override
     @Deprecated
@@ -595,6 +604,9 @@ public final class YangParserImpl implements YangContextParser {
         }
     }
 
+    /**
+     * Mini parser
+     */
     public static YangContext parseStreamWithoutErrorListeners(final InputStream yangStream) {
         YangContext result = null;
         try {

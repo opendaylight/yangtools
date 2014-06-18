@@ -6,28 +6,29 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.opendaylight.yangtools.concepts.Delegator;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.ByteSource;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import javax.annotation.concurrent.ThreadSafe;
+import org.opendaylight.yangtools.concepts.Delegator;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
+import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProvider;
+import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.util.ParserUtils;
 
 /**
  *
@@ -54,14 +55,17 @@ import com.google.common.collect.ImmutableSet;
  *
  *
  */
-public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStream>, AutoCloseable,
+// FIXME: for some reason this class is Closeable even though close is never called and no resources are leaked
+@ThreadSafe
+public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStream>, Closeable,
         Delegator<AdvancedSchemaSourceProvider<InputStream>> {
 
     private final ImmutableSet<SourceIdentifier> validSources;
 
     private final ImmutableSet<SourceIdentifier> missingSources;
     private final ImmutableMultimap<SourceIdentifier, ModuleImport> missingDependencies;
-    private AdvancedSchemaSourceProvider<InputStream> sourceProvider;
+    private final AdvancedSchemaSourceProvider<InputStream> sourceProvider;
+    private final AtomicBoolean isClosed = new AtomicBoolean();
 
     /**
      * Construct YANG Source Context
@@ -76,10 +80,10 @@ public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStre
             final ImmutableSet<SourceIdentifier> missingSourcesSet,
             final ImmutableMultimap<SourceIdentifier, ModuleImport> missingDependenciesMap,
             final AdvancedSchemaSourceProvider<InputStream> sourceProvider) {
-        validSources = Preconditions.checkNotNull(validSourcesSet, "Valid source set must not be null");
-        missingSources = Preconditions.checkNotNull(missingSourcesSet, "Missing sources set must not be null");
-        missingDependencies = Preconditions.checkNotNull(missingDependenciesMap, "Missing dependencies map must not be null");
-        this.sourceProvider = sourceProvider;
+        validSources = checkNotNull(validSourcesSet, "Valid source set must not be null");
+        missingSources = checkNotNull(missingSourcesSet, "Missing sources set must not be null");
+        missingDependencies = checkNotNull(missingDependenciesMap, "Missing dependencies map must not be null");
+        this.sourceProvider = checkNotNull(sourceProvider, "Missing sourceProvider");
     }
 
     /**
@@ -137,20 +141,25 @@ public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStre
     }
 
     private AdvancedSchemaSourceProvider<InputStream> getDelegateChecked() {
-        Preconditions.checkState(sourceProvider != null, "Instance is already closed.");
+        assertNotClosed();
         return sourceProvider;
     }
 
     @Override
     public AdvancedSchemaSourceProvider<InputStream> getDelegate() {
+        assertNotClosed();
         return sourceProvider;
+    }
+
+    private void assertNotClosed() {
+        if (isClosed.get()) {
+            throw new IllegalStateException("Instance already closed");
+        }
     }
 
     @Override
     public void close() {
-        if (sourceProvider != null) {
-            sourceProvider = null;
-        }
+        isClosed.set(true);
     }
 
     /**
@@ -170,114 +179,49 @@ public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStre
      *         and their dependencies
      *         against supplied schema source provider.
      */
-    public static final YangSourceContext createFrom(final Iterable<QName> capabilities,
+    public static YangSourceContext createFrom(final Iterable<QName> capabilities,
             final SchemaSourceProvider<InputStream> schemaSourceProvider) {
         YangSourceContextResolver resolver = new YangSourceFromCapabilitiesResolver(capabilities, schemaSourceProvider);
         return resolver.resolveContext();
     }
 
-    public static final YangSourceContext createFrom(
-            final Map<SourceIdentifier, YangModelDependencyInfo> moduleDependencies) {
-        YangSourceContextResolver resolver = new YangSourceFromDependencyInfoResolver(moduleDependencies);
+    public static YangSourceContext createFrom(
+            final Map<SourceIdentifier, YangModelDependencyInfo> moduleDependencies, AdvancedSchemaSourceProvider<InputStream> sourceProvider) {
+        YangSourceFromDependencyInfoResolver resolver = new YangSourceFromDependencyInfoResolver(moduleDependencies, sourceProvider);
         return resolver.resolveContext();
     }
 
     /**
-     * Tries to create schema context using {@link YangParserImpl} and valid
-     * sources
-     * retrieved from YANG Source context and schema source provider which
-     * was used to create YANG Source Context
-     *
-     * @param context
-     * @return Schema Context created from valid sources in YANG Source Context
-     * @deprecated Use {@link #toSchemaContext(AdvancedSchemaSourceProvider)}
-     *  with {@link #getDelegate()}
-     */
-    @Deprecated
-    public static final SchemaContext toSchemaContext(final YangSourceContext context) {
-        return context.toSchemaContext(context.getDelegate());
-    }
-
-    /**
-     * Tries to create schema context using {@link YangParserImpl} and valid
-     * sources
-     * retrieved from YANG Source context and schema source provider which
-     * was used to create YANG Source Context
-     *
-     * @param provider
-     *            Schema Source Provider to be used to retrieve sources
-     * @return Schema Context created from valid sources in YANG Source Context
-     */
-    public final SchemaContext toSchemaContext(AdvancedSchemaSourceProvider<InputStream> provider) {
-        List<InputStream> inputStreams = this.getValidInputStreams(provider);
-        YangParserImpl parser = new YangParserImpl();
-        @SuppressWarnings("deprecation")
-        Set<Module> models = parser.parseYangModelsFromStreams(inputStreams);
-        return parser.resolveSchemaContext(models);
-    }
-
-    /**
-     * Returns a list of valid input streams from YANG Source Context
-     * using schema source provider which was used to create YANG Source Context
-     *
-     * @param context
-     *            YANG Source context
-     * @return List of input streams for valid sources.
-     * @deprecated Use
-     *             {@link #getValidInputStreams(AdvancedSchemaSourceProvider)}
-     *             combined with {@link #getDelegate()} instead.
-     */
-    @Deprecated
-    public static List<InputStream> getValidInputStreams(final YangSourceContext context) {
-        return context.getValidInputStreams(context.getDelegate());
-    }
-
-    /**
      * Returns a list of valid input streams from YANG Source Context
      * using supplied schema source provider.
      *
-     * @param context
-     *            YANG Source context from which list of valid sources is used
-     * @param provider
-     *            Schema Source Provider which is used to retrieve sources
      * @return List of input streams.
-     * @deprecated Use
-     *             {@link #getValidInputStreams(AdvancedSchemaSourceProvider)}
-     *             instead.
+     * @deprecated Use {@link #getValidByteSources()}
      */
     @Deprecated
-    public static List<InputStream> getValidInputStreams(final YangSourceContext context,
-            final AdvancedSchemaSourceProvider<InputStream> provider) {
-        return context.getValidInputStreams(provider);
-    }
-
-    /**
-     * Returns a list of valid input streams from YANG Source Context
-     * using supplied schema source provider.
-     *
-     * @param context
-     *            YANG Source context from which list of valid sources is used
-     * @param provider
-     *            Schema Source Provider which is used to retrieve sources
-     * @return List of input streams.
-     */
-    public List<InputStream> getValidInputStreams(final AdvancedSchemaSourceProvider<InputStream> provider) {
-        Preconditions.checkNotNull(provider, "provider must not be null.");
+    public List<InputStream> getValidInputStreams() {
+        checkNotNull(sourceProvider, "provider must not be null.");
         final HashSet<SourceIdentifier> sourcesToLoad = new HashSet<>();
         sourcesToLoad.addAll(this.getValidSources());
         for (SourceIdentifier source : this.getValidSources()) {
             if (source.getRevision() != null) {
                 SourceIdentifier sourceWithoutRevision = SourceIdentifier.create(source.getName(),
                         Optional.<String> absent());
-                sourcesToLoad.removeAll(Collections.singleton(sourceWithoutRevision));
+                sourcesToLoad.remove(sourceWithoutRevision);
             }
         }
 
         ImmutableList.Builder<InputStream> ret = ImmutableList.<InputStream> builder();
         for (SourceIdentifier sourceIdentifier : sourcesToLoad) {
-            Optional<InputStream> source = provider.getSchemaSource(sourceIdentifier);
+            Optional<InputStream> source = sourceProvider.getSchemaSource(sourceIdentifier);
             ret.add(source.get());
         }
         return ret.build();
     }
+
+    public Collection<ByteSource> getValidByteSources() throws IOException {
+        List<InputStream> yangModelStreams = getValidInputStreams();
+        return ParserUtils.streamsToByteSources(yangModelStreams);
+    }
+
 }

@@ -21,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 /**
  * Yang Model Parser interface is designed for parsing yang models and convert
  * the information to Data Schema Tree.
- *
+ * @deprecated Use YangModelParser instead
  */
-// FIXME: refactor methods returning input streams, after introducing (?)
+@Deprecated
 public interface YangModelParser {
 
     /**
@@ -98,7 +98,7 @@ public interface YangModelParser {
      * Parse one or more Yang model streams and return the definitions of Yang
      * modules defined in *.yang files. <br>
      * This method SHOULD be used if user has already parsed context and need to
-     * parse additinal yang models which can have dependencies on models in this
+     * parse additional yang models which can have dependencies on models in this
      * context.
      *
      * @param yangModelStreams
@@ -121,6 +121,7 @@ public interface YangModelParser {
      */
     //TODO: when working with input streams do not swallow IOException, it should be propagated without having to wrap it in a runtime exception
     //FIXME: it is not defined in which state are the returning streams.
+    @Deprecated
     Map<InputStream, Module> parseYangModelsFromStreamsMapped(final Collection<InputStream> yangModelStreams);
 
     /**
@@ -135,5 +136,6 @@ public interface YangModelParser {
      *            Set of Yang Modules
      * @return Schema Context instance constructed from whole Set of Modules.
      */
+    @Deprecated
     SchemaContext resolveSchemaContext(final Set<Module> modules);
 }
