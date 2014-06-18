@@ -6,6 +6,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.io.ByteSource;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -102,7 +106,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     private final List<ListSchemaNodeBuilder> allLists = new ArrayList<>();
 
-    String source;
+    private String source;
     private String yangVersion;
     private String organization;
     private String contact;
@@ -116,7 +120,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         this.name = name;
         this.sourcePath = sourcePath;
         this.submodule = submodule;
-        actualPath.push(this);
+        actualPath.push(this);//FIXME: this escapes constructor
     }
 
     public ModuleBuilder(final Module base) {
@@ -127,7 +131,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
         submodule = false;
         yangVersion = base.getYangVersion();
-        actualPath.push(this);
+        actualPath.push(this);//FIXME: this escapes constructor
         namespace = base.getNamespace();
         prefix = base.getPrefix();
         revision = base.getRevision();
@@ -144,6 +148,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         deviations.addAll(base.getDeviations());
         extensions.addAll(base.getExtensionSchemaNodes());
         unknownNodes.addAll(base.getUnknownSchemaNodes());
+        source = base.getSource();
     }
 
     @Override
@@ -869,6 +874,12 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     @Override
     public String toString() {
         return "module " + name;
+    }
+
+    public void setSource(ByteSource byteSource) throws IOException {
+        try (InputStream stream = byteSource.openStream()) {
+            setSource(IOUtils.toString(stream));
+        }
     }
 
     public void setSource(final String source) {

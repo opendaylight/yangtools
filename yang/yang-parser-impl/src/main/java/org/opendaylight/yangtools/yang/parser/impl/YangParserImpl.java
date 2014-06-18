@@ -25,6 +25,10 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.reso
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnionWithContext;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeWithContext;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.HashBiMap;
+import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
+import javax.annotation.concurrent.Immutable;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -94,15 +98,18 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBiMap;
-import com.google.common.io.ByteSource;
-
+@Immutable
 public final class YangParserImpl implements YangContextParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
 
     private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
+    private static final YangParserImpl INSTANCE = new YangParserImpl();
+
+    public static YangParserImpl getInstance() {
+        return INSTANCE;
+    }
+
+
 
     @Override
     @Deprecated
@@ -324,7 +331,6 @@ public final class YangParserImpl implements YangContextParser {
         Map<ByteSource, ModuleBuilder> sourceToBuilder = resolveSources(sources);
         // sort and check for duplicates
         List<ModuleBuilder> sorted = ModuleDependencySort.sort(sourceToBuilder.values());
-        BuilderUtils.setSourceToBuilder(sourceToBuilder);
         Map<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
         Map<ModuleBuilder, Module> builderToModule = build(modules);
         Map<ModuleBuilder, ByteSource> builderToSource = HashBiMap.create(sourceToBuilder).inverse();
@@ -348,8 +354,9 @@ public final class YangParserImpl implements YangContextParser {
      *         parsed from stream
      * @throws YangSyntaxErrorException
      */
-    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams) throws IOException,
-    YangSyntaxErrorException {
+    // TODO: remove ByteSource result after removing YangModelParser
+    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams)
+            throws IOException, YangSyntaxErrorException {
         Map<ByteSource, ModuleBuilder> builders = parseSourcesToBuilders(streams);
         Map<ByteSource, ModuleBuilder> result = resolveSubmodules(builders);
         return result;
@@ -367,24 +374,19 @@ public final class YangParserImpl implements YangContextParser {
         YangParserListenerImpl yangModelParser;
         for (Map.Entry<ByteSource, ParseTree> entry : sourceToTree.entrySet()) {
             ByteSource source = entry.getKey();
-            String path = null;
-            InputStream stream = source.openStream();
-            if (stream instanceof NamedInputStream) {
-                path = stream.toString();
+            String path = null; // TODO refactor to Optional
+            //TODO refactor so that path can be retrieved without opening stream: NamedInputStream -> NamedByteSource ?
+            try(InputStream stream = source.openStream()) {
+                if (stream instanceof NamedInputStream) {
+                    path = stream.toString();
+                }
             }
-            try {
-                stream.close();
-            } catch (IOException e) {
-                LOG.warn("Failed to close stream {}", stream);
-            }
-
             yangModelParser = new YangParserListenerImpl(path);
             walker.walk(yangModelParser, entry.getValue());
             ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
+            moduleBuilder.setSource(source);
             sourceToBuilder.put(source, moduleBuilder);
         }
-
-        BuilderUtils.setSourceToBuilder(sourceToBuilder);
         return sourceToBuilder;
     }
 
@@ -594,6 +596,11 @@ public final class YangParserImpl implements YangContextParser {
         }
     }
 
+    /**
+     * Mini parser: This parsing context does not validate full YANG module, only
+     * parses header up to the revisions and imports.
+     * @see org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo
+     */
     public static YangContext parseStreamWithoutErrorListeners(final InputStream yangStream) {
         YangContext result = null;
         try {

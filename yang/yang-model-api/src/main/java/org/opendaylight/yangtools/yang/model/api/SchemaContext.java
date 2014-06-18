@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.base.Optional;
+import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 import java.net.URI;
@@ -15,10 +16,14 @@ import java.util.Date;
 import java.util.Set;
 
 /**
- * The interface contains the methods for manipulating all the top level context
- * data (data from all red modules) like YANG notifications, extensions,
+ * The interface represents static view of compiled yang files,
+ * contains the methods for obtaining all the top level context
+ * data (data from all modules) like YANG notifications, extensions,
  * operations...
+ * Instances MUST be immutable and thus usage in multi threaded
+ * environment is safe.
  */
+@Immutable
 public interface SchemaContext extends ContainerSchemaNode {
 
     public static final QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "data");
