@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class QNameModule implements Immutable, Serializable {
+public final class QNameModule implements Immutable, Serializable {
 	private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
 	private static final long serialVersionUID = 1L;
 
