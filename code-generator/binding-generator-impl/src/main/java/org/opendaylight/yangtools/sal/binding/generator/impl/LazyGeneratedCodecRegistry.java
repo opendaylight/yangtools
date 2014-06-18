@@ -100,6 +100,10 @@ class LazyGeneratedCodecRegistry implements //
             .synchronizedMap(new WeakHashMap<Class<?>, AugmentableDispatchCodec>());
     private static final Map<Class<?>, AugmentationCodecWrapper<?>> augmentationCodecs = Collections
             .synchronizedMap(new WeakHashMap<Class<?>, AugmentationCodecWrapper<?>>());
+
+    private static final Map<Class<?>, LocationAwareDispatchCodec<?>> dispatchCodecs = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, LocationAwareDispatchCodec<?>>());
+
     private static final Map<Class<?>, QName> identityQNames = Collections
             .synchronizedMap(new WeakHashMap<Class<?>, QName>());
     private static final Map<QName, Type> qnamesToIdentityMap = new ConcurrentHashMap<>();
@@ -433,6 +437,24 @@ class LazyGeneratedCodecRegistry implements //
     @Override
     public void onGlobalContextUpdated(final SchemaContext context) {
         currentSchema = context;
+
+    }
+
+    /**
+     * Resets / clears adaptation for all schema context sensitive codecs in
+     * order for them to adapt to new schema context and maybe newly discovered
+     * augmentations This ensure correct behaviour for augmentations and
+     * augmented cases for preexisting codecs, which augmentations were
+     * introduced at later point in time.
+     *
+     * This also makes removed augmentations unavailable.
+     */
+    private void resetDispatchCodecsAdaptation() {
+        synchronized (dispatchCodecs) {
+            for (LocationAwareDispatchCodec<?> codec : dispatchCodecs.values()) {
+                codec.resetAdaptation();
+            }
+        }
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -445,6 +467,9 @@ class LazyGeneratedCodecRegistry implements //
         PublicChoiceCodecImpl<?> newCodec = new PublicChoiceCodecImpl(delegate);
         DispatchChoiceCodecImpl dispatchCodec = new DispatchChoiceCodecImpl(choiceClass);
         choiceCodecs.put(choiceClass, newCodec);
+        synchronized (dispatchCodecs) {
+            dispatchCodecs.put(choiceClass, dispatchCodec);
+        }
         CodecMapping.setDispatchCodec(choiceCodec, dispatchCodec);
     }
 
@@ -473,6 +498,9 @@ class LazyGeneratedCodecRegistry implements //
         }
         ret = new AugmentableDispatchCodec(dataClass);
         augmentableCodecs.put(dataClass, ret);
+        synchronized (dispatchCodecs) {
+            dispatchCodecs.put(dataClass, ret);
+        }
         ret.tryToLoadImplementations();
         return ret;
     }
@@ -581,6 +609,25 @@ class LazyGeneratedCodecRegistry implements //
 
         protected Map<Class, T> getImplementations() {
             return implementations;
+        }
+
+        /**
+         * Resets codec adaptation based on location and schema context.
+         *
+         * This is required if new cases / augmentations were introduced
+         * or removed and first use of codec is triggered by invocation
+         * from DOM to Java, so the implementations may change
+         * and this may require loading of new codecs and/or
+         * removal of existing ones.
+         *
+         */
+        public synchronized void resetAdaptation() {
+            adaptedForPaths.clear();
+            resetAdaptationImpl();
+        }
+
+        protected void resetAdaptationImpl() {
+            // Intentionally NOOP, subclasses may specify their custom behaviour.
         }
 
         protected void addImplementation(final T implementation) {
@@ -762,7 +809,7 @@ class LazyGeneratedCodecRegistry implements //
             return checkAgainstSchema(instantiatedSchema, input);
         }
 
-        protected boolean isAugmenting(final QName choiceName,final QName proposedQName) {
+        protected boolean isAugmenting(final QName choiceName, final QName proposedQName) {
             if (schema.isAugmenting()) {
                 return true;
             }
@@ -772,11 +819,13 @@ class LazyGeneratedCodecRegistry implements //
                 return true;
             }
             if (!parentQName.equals(choiceName)) {
-                // This item is instantiation of choice via uses in other YANG module
-                if(choiceName.getNamespace().equals(schema.getQName())) {
+                // This item is instantiation of choice via uses in other YANG
+                // module
+                if (choiceName.getNamespace().equals(schema.getQName())) {
                     // Original definition of grouping is in same namespace
                     // as original definition of case
-                    // so for sure case is introduced via instantiation of grouping
+                    // so for sure case is introduced via instantiation of
+                    // grouping
                     return false;
                 }
                 // Since we are still here, that means case has same namespace
@@ -854,22 +903,20 @@ class LazyGeneratedCodecRegistry implements //
         public Object serialize(final Object input) {
             Preconditions.checkArgument(input instanceof Map.Entry<?, ?>, "Input must be QName, Value");
             @SuppressWarnings("rawtypes")
-            QName derivedQName =  (QName) ((Map.Entry) input).getKey();
-                    @SuppressWarnings("rawtypes")
+            QName derivedQName = (QName) ((Map.Entry) input).getKey();
+            @SuppressWarnings("rawtypes")
             Object inputValue = ((Map.Entry) input).getValue();
             Preconditions.checkArgument(inputValue instanceof DataObject);
             Class<? extends DataContainer> inputType = ((DataObject) inputValue).getImplementedInterface();
             ChoiceCaseCodecImpl<?> codec = tryToLoadImplementation(inputType);
             Preconditions.checkState(codec != null, "Unable to get codec for %s", inputType);
-            if (codec.isAugmenting(choiceName,derivedQName)) {
+            if (codec.isAugmenting(choiceName, derivedQName)) {
                 // If choice is augmenting we use QName which defined this
                 // augmentation
                 return codec.getDelegate().serialize(new ValueWithQName<>(codec.getSchema().getQName(), inputValue));
             }
             return codec.getDelegate().serialize(input);
         }
-
-
 
         @SuppressWarnings("rawtypes")
         protected Optional<ChoiceCaseCodecImpl> tryToLoadImplementation(final Type potential) {
