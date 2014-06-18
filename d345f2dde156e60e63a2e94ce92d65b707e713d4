@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_2b6d9498",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/test/codecs/EmptyCodecStringTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-06-18T08:11:06Z",
+      "side": 1,
+      "message": "this is tested in testSerialize method",
+      "revId": "d345f2dde156e60e63a2e94ce92d65b707e713d4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_4b681887",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/test/codecs/Int16CodecStringTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-06-18T08:11:06Z",
+      "side": 1,
+      "message": "just cosmetic. integer and negInteger could have name decadic and negDecadic (the same for other tests of integer codecs)",
+      "revId": "d345f2dde156e60e63a2e94ce92d65b707e713d4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ab10c401",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/test/codecs/UnionCodecStringTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-06-18T08:11:06Z",
+      "side": 1,
+      "message": "maybe also case like with numeric value could be suitable:\nassertEquals( \"serialize\", \"123\", codec.serialize( 123 ) )",
+      "revId": "d345f2dde156e60e63a2e94ce92d65b707e713d4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
