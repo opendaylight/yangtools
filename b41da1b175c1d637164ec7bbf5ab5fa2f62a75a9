@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_4b51f8d6",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/Builders.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-06-18T07:19:05Z",
+      "side": 1,
+      "message": "Whitespaces",
+      "revId": "b41da1b175c1d637164ec7bbf5ab5fa2f62a75a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
