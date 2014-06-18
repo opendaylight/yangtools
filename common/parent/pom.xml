@@ -609,6 +609,9 @@
                     <version>${maven.javadoc.version}</version>
                     <configuration>
                         <stylesheetfile>stylesheet.css</stylesheetfile>
+
+                        <!-- FIXME: BUG-1201: Suppress javadoc 8 warnings for now -->
+                        <additionalparam>-Xdoclint:none</additionalparam>
                     </configuration>
                     <executions>
                         <execution>
