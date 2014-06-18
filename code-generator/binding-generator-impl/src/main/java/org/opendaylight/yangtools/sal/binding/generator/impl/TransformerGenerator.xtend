@@ -71,6 +71,7 @@ import static javassist.Modifier.*
 import static org.opendaylight.yangtools.sal.binding.generator.impl.CodecMapping.*
 
 import static extension org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils.*
+import java.util.ArrayList
 
 class TransformerGenerator extends AbstractTransformerGenerator {
     private static val LOG = LoggerFactory.getLogger(TransformerGenerator)
@@ -1111,7 +1112,10 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 ]
                 method(Object, "fromDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    val sortedBits = typeDef.bits.sort[o1, o2|o1.propertyName.compareTo(o2.propertyName)]
+                    val sortedBits = new ArrayList(typeDef.bits)
+                    Collections.sort(sortedBits, [o1, o2|
+                        o1.propertyName.compareTo(o2.propertyName)
+                    ])
                     bodyChecked = '''
                         {
                             //System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
