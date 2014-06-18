@@ -110,40 +110,6 @@ public final class BuilderUtils {
     }
 
     /**
-     * Set string representation of source to ModuleBuilder.
-     *
-     * @param sourceToBuilder
-     *            source to module mapping
-     */
-    public static void setSourceToBuilder(final Map<ByteSource, ModuleBuilder> sourceToBuilder) throws IOException {
-        for (Map.Entry<ByteSource, ModuleBuilder> entry : sourceToBuilder.entrySet()) {
-            ModuleBuilder builder = entry.getValue();
-            ByteSource source = entry.getKey();
-
-            String content = null;
-            InputStream stream = null;
-            try {
-                stream = source.openStream();
-                content = IOUtils.toString(stream);
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException e) {
-                        /*
-                         * Failed stream close does not prevent us from
-                         * continuing to work correctly, we just report that and
-                         * continue.
-                         */
-                        LOG.warn("Failed to close stream {}. Leaving stream unclosed.", stream, e);
-                    }
-                }
-            }
-            builder.setSource(content);
-        }
-    }
-
-    /**
      * Create new SchemaPath from given path and qname.
      *
      * @param schemaPath

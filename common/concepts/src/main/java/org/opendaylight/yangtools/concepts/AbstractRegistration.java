@@ -18,6 +18,8 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 public abstract class AbstractRegistration implements AutoCloseable {
     private static final AtomicIntegerFieldUpdater<AbstractRegistration> CLOSED_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(AbstractRegistration.class, "closed");
+
+    @SuppressWarnings("unused") // updated by CLOSED_UPDATER
     private volatile int closed = 0;
 
     /**

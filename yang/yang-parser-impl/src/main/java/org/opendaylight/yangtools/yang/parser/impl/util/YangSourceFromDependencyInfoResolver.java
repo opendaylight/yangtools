@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.concurrent.NotThreadSafe;
+import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
 
@@ -24,11 +27,14 @@ import com.google.common.collect.ImmutableMap;
  * {@link YangSourceContext}.
  *
  */
+@NotThreadSafe
 public final class YangSourceFromDependencyInfoResolver extends YangSourceContextResolver {
 
     private final Map<SourceIdentifier, YangModelDependencyInfo> dependencyInfo;
 
-    public YangSourceFromDependencyInfoResolver(final Map<SourceIdentifier, YangModelDependencyInfo> moduleDependencies) {
+    public YangSourceFromDependencyInfoResolver(final Map<SourceIdentifier, YangModelDependencyInfo> moduleDependencies,
+                                                AdvancedSchemaSourceProvider<InputStream> sourceProvider) {
+        super(sourceProvider);
         dependencyInfo = ImmutableMap.copyOf(moduleDependencies);
     }
 
