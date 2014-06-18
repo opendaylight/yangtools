@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+// TODO: switch to checked exception, add YangSemanticException
 public class YangParseException extends RuntimeException {
     private static final long serialVersionUID = 1239548963471793178L;
 

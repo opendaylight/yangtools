@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import com.google.common.collect.ImmutableMap;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -44,6 +46,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
+@Immutable
 final class SchemaContextImpl implements SchemaContext {
     private static final Supplier<HashSet<Module>> URI_SET_SUPPLIER = new Supplier<HashSet<Module>>() {
         @Override
@@ -52,12 +55,12 @@ final class SchemaContextImpl implements SchemaContext {
         }
     };
 
-    private final Map<ModuleIdentifier, String> identifiersToSources;
-    private final SetMultimap<URI, Module> namespaceToModules;
-    private final Set<Module> modules;
+    private final ImmutableMap<ModuleIdentifier, String> identifiersToSources;
+    private final ImmutableSetMultimap<URI, Module> namespaceToModules;
+    private final ImmutableSet<Module> modules;
 
     SchemaContextImpl(final Set<Module> modules, final Map<ModuleIdentifier, String> identifiersToSources) {
-        this.identifiersToSources = identifiersToSources;
+        this.identifiersToSources = ImmutableMap.copyOf(identifiersToSources);
 
         /*
          * Instead of doing this on each invocation of getModules(), pre-compute
