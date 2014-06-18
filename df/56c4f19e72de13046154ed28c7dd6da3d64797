@@ -1,0 +1,7 @@
+Code-Review+2: Jan Medved <jmedved@cisco.com>
+Verified+1: jenkins-yangtools <jenkins-lispflowmapping@opendaylight.org>
+Submitted-by: Jan Medved <jmedved@cisco.com>
+Submitted-at: Wed, 18 Jun 2014 01:20:09 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/7997
+Project: yangtools
+Branch: refs/heads/master
