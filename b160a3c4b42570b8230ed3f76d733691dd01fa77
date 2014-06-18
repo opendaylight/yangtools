@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_6e696abd",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/AbstractRegistration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-18T17:03:18Z",
+      "side": 1,
+      "message": "I would suggest just using an AtomicInteger here - has everything we need. Additionally, it appears as if we only need true false, so I am curious why you moved away from the AtomicBoolean?",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_8e64eee5",
+        "filename": "yang/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/model/parser/api/YangModelParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-18T17:03:18Z",
+      "side": 1,
+      "message": "I think you have the wrong class name here to use. We are in the YangModelParser.",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_2e6362dd",
+        "filename": "yang/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/model/parser/api/YangModelParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-18T17:03:18Z",
+      "side": 1,
+      "message": "Please provide a link and description to the method that replaces this one.",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_4e5ee613",
+        "filename": "yang/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/model/parser/api/YangModelParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-18T17:03:18Z",
+      "side": 1,
+      "message": "Please provide a link and description to the method that replaces this one.",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ee9c9ac2",
+        "filename": "yang/yang-parser-impl/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-18T17:03:18Z",
+      "side": 1,
+      "message": "I have not used findbugs myself, but is this something that is set up to already run on our source code? I think it ties to the GaurdedBy, ThreadSafe annotations etc, but I am not sure. I want to make sure that we are actually making use of these annotations and that they are not going to be noise for the majority of devs. I don\u0027t have a problem per-say, just want to understand the thought behind adding them.",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ee5fbae3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/URLSchemaContextResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-18T17:03:18Z",
+      "side": 1,
+      "message": "This needs to be synchronized as well. This is the main concurrency issue - it is a visibility issue. A synchronized flag here forces the code to go to main memory to get the values, instead of using the memory local to the cpu cache. Volatile is also an option, but that has other cases to be careful of.",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ce5c36f0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/URLSchemaContextResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-18T17:03:18Z",
+      "side": 1,
+      "message": "Is sourceContext thread safe? If not, then when we try to open streams etc  in sub methods we have issues.",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_0ea0def2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/YangParseException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-18T17:03:18Z",
+      "side": 1,
+      "message": "Very much agree. :)",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
