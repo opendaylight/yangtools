@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.base.Optional;
+import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 import java.net.URI;
@@ -19,6 +20,7 @@ import java.util.Set;
  * data (data from all red modules) like YANG notifications, extensions,
  * operations...
  */
+@Immutable
 public interface SchemaContext extends ContainerSchemaNode {
 
     public static final QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "data");

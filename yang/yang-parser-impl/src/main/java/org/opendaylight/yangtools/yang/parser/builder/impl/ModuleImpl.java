@@ -1,5 +1,7 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
@@ -50,7 +52,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
      *
      *
      * <b>Note</b>Constructor has intentionality limited visibility to package, since
-     * this class should be only instantied via builders.
+     * this class should be only instantiated via builders.
      *
      * @param name
      * @param sourcePath
@@ -58,8 +60,8 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
      */
     ModuleImpl(final String name, final String sourcePath, final ModuleBuilder builder) {
         super(builder);
-        this.name = name;
-        this.sourcePath = sourcePath;
+        this.name = checkNotNull(name, "Missing name");
+        this.sourcePath = sourcePath; //TODO: can this be nullable?
         this.imports = ImmutableSet.<ModuleImport> copyOf(builder.imports);
         this.namespace = builder.getNamespace();
         this.prefix = builder.getPrefix();
@@ -75,7 +77,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         this.extensionNodes = ImmutableList.copyOf(builder.getExtensions());
         this.identities = ImmutableSet.copyOf(builder.getIdentities());
         this.unknownNodes = ImmutableList.copyOf(builder.getExtensionInstances());
-        this.source = builder.source;
+        this.source = checkNotNull(builder.getSource(), "Missing source");
 
     }
 

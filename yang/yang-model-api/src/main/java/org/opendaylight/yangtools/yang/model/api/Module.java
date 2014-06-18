@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.List;
 import java.util.Set;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * This interface contains the methods for getting the data from the YANG
@@ -54,7 +55,7 @@ import java.util.Set;
 
     </code>
  */
-
+@Immutable
 public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIdentifier {
 
 
@@ -209,5 +210,10 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      * @return unknown nodes in lexicographical order
      */
     List<UnknownSchemaNode> getUnknownSchemaNodes();
+
+    /**
+     * Get yang source.
+     */
+    String getSource();
 
 }
