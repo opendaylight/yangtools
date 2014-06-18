@@ -9,19 +9,22 @@ package org.opendaylight.yangtools.yang.parser.impl.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
@@ -29,19 +32,22 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-
+@ThreadSafe
 public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<InputStream> {
 
     private static final Logger LOG = LoggerFactory.getLogger(URLSchemaContextResolver.class);
-    private final ConcurrentMap<SourceIdentifier, SourceContext> availableSources = new ConcurrentHashMap<>();
 
+    @GuardedBy("this")
+    private final ConcurrentMap<SourceIdentifier, SourceContext> availableSources = new ConcurrentHashMap<>();
+    @GuardedBy("this")
     private YangSourceContext currentSourceContext;
+    @GuardedBy("this")
     private Optional<SchemaContext> currentSchemaContext = Optional.absent();
 
-    public ObjectRegistration<URL> registerSource(URL source) {
+    /**
+     * Register new yang schema when it appears.
+     */
+    public synchronized ObjectRegistration<URL> registerSource(URL source) {
         checkArgument(source != null, "Supplied source must not be null");
         InputStream yangStream = getInputStream(source);
         YangModelDependencyInfo modelInfo = YangModelDependencyInfo.fromInputStream(yangStream);
@@ -52,12 +58,12 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         return sourceContext;
     }
 
-    public Optional<SchemaContext> getSchemaContext() {
+    public synchronized Optional<SchemaContext> getSchemaContext() {
         return currentSchemaContext;
     }
 
     @Override
-    public Optional<InputStream> getSchemaSource(SourceIdentifier key) {
+    public synchronized Optional<InputStream> getSchemaSource(SourceIdentifier key) {
         SourceContext ctx = availableSources.get(key);
         if (ctx != null) {
             InputStream stream = getInputStream(ctx.getInstance());
@@ -71,7 +77,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         return getSchemaSource(SourceIdentifier.create(name, version));
     }
 
-    private InputStream getInputStream(URL source) {
+    private static InputStream getInputStream(URL source) {
         InputStream stream;
         try {
             stream = source.openStream();
@@ -108,46 +114,49 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         }
     }
 
-    private void removeSource(SourceContext sourceContext) {
+    private synchronized void removeSource(SourceContext sourceContext) {
         boolean removed = availableSources.remove(sourceContext.getIdentifier(), sourceContext);
-        if(removed) {
+        if (removed) {
             tryToUpdateSchemaContext();
         }
     }
 
+    /**
+     * Try to parse all currently available yang files and build new schema context.
+     * @return new schema context iif there is at least 1 yang file registered and new schema context was successfully built.
+     */
     public synchronized Optional<SchemaContext> tryToUpdateSchemaContext() {
-        if(availableSources.isEmpty()) {
+        if (availableSources.isEmpty()) {
             return Optional.absent();
         }
         ImmutableMap<SourceIdentifier, SourceContext> actualSources = ImmutableMap.copyOf(availableSources);
-        Builder<SourceIdentifier, YangModelDependencyInfo> builder = ImmutableMap.<SourceIdentifier, YangModelDependencyInfo> builder();
-        for(Entry<SourceIdentifier, SourceContext> entry : actualSources.entrySet()) {
+        Builder<SourceIdentifier, YangModelDependencyInfo> builder = ImmutableMap.<SourceIdentifier, YangModelDependencyInfo>builder();
+        for (Entry<SourceIdentifier, SourceContext> entry : actualSources.entrySet()) {
             builder.put(entry.getKey(), entry.getValue().getDependencyInfo());
         }
         ImmutableMap<SourceIdentifier, YangModelDependencyInfo> sourcesMap = builder.build();
-        YangSourceContext context = YangSourceContext.createFrom(sourcesMap);
-        LOG.debug("Trying to create schema context from {}",sourcesMap.keySet());
+        YangSourceContext yangSourceContext = YangSourceContext.createFrom(sourcesMap, this);
+        LOG.debug("Trying to create schema context from {}", sourcesMap.keySet());
 
-        if (context.getMissingDependencies().size() != 0) {
-            LOG.debug("Omitting {} because of unresolved dependencies", context.getMissingDependencies().keySet());
-            LOG.debug("Missing model sources for {}", context.getMissingSources());
+        if (yangSourceContext.getMissingDependencies().size() != 0) {
+            LOG.debug("Omitting {} because of unresolved dependencies", yangSourceContext.getMissingDependencies().keySet());
+            LOG.debug("Missing model sources for {}", yangSourceContext.getMissingSources());
         }
-
-        try {
-            if(currentSourceContext == null || !context.getValidSources().equals(currentSourceContext.getValidSources())) {
-                List<InputStream> streams = YangSourceContext.getValidInputStreams(context, this);
-                YangParserImpl parser = new YangParserImpl();
-                Set<Module> modules = parser.parseYangModelsFromStreams(streams);
-                SchemaContext schemaContext = parser.resolveSchemaContext(modules);
+        if (currentSourceContext == null || !yangSourceContext.getValidSources().equals(currentSourceContext.getValidSources())) {
+            try {
+                Collection<ByteSource> byteSources = yangSourceContext.getValidByteSources();
+                YangParserImpl parser = YangParserImpl.getInstance();
+                SchemaContext schemaContext = parser.parseSources(byteSources);
                 currentSchemaContext = Optional.of(schemaContext);
-                currentSourceContext = context;
-                return currentSchemaContext;
+                currentSourceContext = yangSourceContext;
+                return Optional.of(schemaContext);
+            } catch (Exception e) {
+                LOG.error("Could not create schema context for {} ", yangSourceContext.getValidSources(), e);
+                return Optional.absent();
             }
-            currentSourceContext = context;
-        } catch (Exception e) {
-            LOG.error("Could not create schema context for {} ", context.getValidSources(), e);
+        } else {
+            currentSourceContext = yangSourceContext;
+            return Optional.absent();
         }
-        return Optional.absent();
     }
-
 }

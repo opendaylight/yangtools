@@ -6,9 +6,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.InputStream;
 import java.util.HashMap;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
@@ -49,12 +52,13 @@ import com.google.common.collect.ImmutableSet;
  * supplied model identifier and updates internal state. If state was not
  * already resolved for identifier it invokes
  * {@link #getDependencyInfo(SourceIdentifier)} for particular identifier. This
- * method is recursivelly invoked for all dependencies.</li>
+ * method is recursively invoked for all dependencies.</li>
  * <li>{@link #createSourceContext()} - Creates {@link YangSourceContext} based
  * on previous invocations of {@link #resolveSource(SourceIdentifier)} methods.</li>
  * </ul>
  *
  */
+@NotThreadSafe
 public abstract class YangSourceContextResolver {
 
     /**
@@ -96,12 +100,8 @@ public abstract class YangSourceContextResolver {
     private final ImmutableSet.Builder<SourceIdentifier> validSources = ImmutableSet.builder();
     private final AdvancedSchemaSourceProvider<InputStream> sourceProvider;
 
-    public YangSourceContextResolver() {
-        sourceProvider = null;
-    }
-
-    public YangSourceContextResolver(final AdvancedSchemaSourceProvider<InputStream> sourceProvicer) {
-        this.sourceProvider = sourceProvicer;
+    public YangSourceContextResolver(final AdvancedSchemaSourceProvider<InputStream> sourceProvider) {
+        this.sourceProvider = checkNotNull(sourceProvider, "Missing sourceProvider");
     }
 
     /**

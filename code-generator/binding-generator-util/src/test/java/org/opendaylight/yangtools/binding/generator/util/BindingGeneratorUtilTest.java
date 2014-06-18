@@ -101,6 +101,7 @@ public class BindingGeneratorUtilTest {
 
         // test of exception part of the method moduleNamespaceToPackageName()
         ModuleBuilder moduleBuilder = new ModuleBuilder("module-withut-revision", null);
+        moduleBuilder.setSource("");
         Module moduleWithoutRevision = moduleBuilder.build();
         boolean passedSuccesfully = false;
         try {
