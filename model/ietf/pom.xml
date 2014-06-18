@@ -38,6 +38,7 @@
         <module>ietf-topology-l3-unicast-igp</module>
         <module>ietf-topology-ospf</module>
         <module>ietf-restconf</module>
+        <module>netconf-notifications</module>
         <!--module>ietf-netconf</module -->
     </modules>
 
@@ -85,4 +86,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-   </project>
+</project>
