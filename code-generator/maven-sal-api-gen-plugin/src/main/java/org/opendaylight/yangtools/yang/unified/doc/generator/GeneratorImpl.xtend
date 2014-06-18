@@ -306,6 +306,7 @@ class GeneratorImpl {
                     <h3 id="«schemaPathToString(module, augment.targetPath, context, augment)»">
                     Target [«typeAnchorLink(augment.targetPath,schemaPathToString(module, augment.targetPath, context, augment))»]</h3>
                     «augment.description»
+                        Status: «strong(String.valueOf(augment.status))»
                     «IF augment.reference !== null»
                         Reference «augment.reference»
                     «ENDIF»
@@ -936,32 +937,57 @@ class GeneratorImpl {
     def CharSequence printShortInfo(ContainerSchemaNode node, int level, InstanceIdentifier path) {
         val newPath = path.append(node);
         return '''
-            <li>«strong(localLink(newPath,node.QName.localName))» (container)</li>
+            <li>«strong(localLink(newPath,node.QName.localName))» (container)
+            <ul>
+                <li>configuration data: «strong(String.valueOf(node.configuration))»</li>
+                <li>mandatory: «strong(String.valueOf(node.constraints.mandatory))»</li>
+            </ul>
+            </li>
         '''
     }
 
     def CharSequence printShortInfo(ListSchemaNode node, int level, InstanceIdentifier path) {
         val newPath = path.append(node);
         return '''
-            <li>«strong(localLink(newPath,node.QName.localName))» (list)</li>
+            <li>«strong(localLink(newPath,node.QName.localName))» (list)
+            <ul>
+                <li>configuration data: «strong(String.valueOf(node.configuration))»</li>
+                <li>mandatory: «strong(String.valueOf(node.constraints.mandatory))»</li>
+            </ul>
+            </li>
         '''
     }
 
     def CharSequence printShortInfo(AnyXmlSchemaNode node, int level, InstanceIdentifier path) {
         return '''
-            <li>«strong((node.QName.localName))» (anyxml)</li>
+            <li>«strong((node.QName.localName))» (anyxml)
+            <ul>
+                <li>configuration data: «strong(String.valueOf(node.configuration))»</li>
+                <li>mandatory: «strong(String.valueOf(node.constraints.mandatory))»</li>
+            </ul>
+            </li>
         '''
     }
 
     def CharSequence printShortInfo(LeafSchemaNode node, int level, InstanceIdentifier path) {
         return '''
-            <li>«strong((node.QName.localName))» (leaf)</li>
+            <li>«strong((node.QName.localName))» (leaf)
+            <ul>
+                <li>configuration data: «strong(String.valueOf(node.configuration))»</li>
+                <li>mandatory: «strong(String.valueOf(node.constraints.mandatory))»</li>
+            </ul>
+            </li>
         '''
     }
 
     def CharSequence printShortInfo(LeafListSchemaNode node, int level, InstanceIdentifier path) {
         return '''
-            <li>«strong((node.QName.localName))» (leaf-list)</li>
+            <li>«strong((node.QName.localName))» (leaf-list)
+            <ul>
+                <li>configuration data: «strong(String.valueOf(node.configuration))»</li>
+                <li>mandatory: «strong(String.valueOf(node.constraints.mandatory))»</li>
+            </ul>
+            </li>
         '''
     }
 
