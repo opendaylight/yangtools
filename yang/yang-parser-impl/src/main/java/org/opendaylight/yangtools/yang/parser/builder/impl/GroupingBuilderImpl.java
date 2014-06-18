@@ -87,9 +87,9 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
 
         // CHILD NODES
         for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.add(node.build());
+            childNodes.put(node.getQName(), node.build());
         }
-        instance.childNodes = ImmutableSet.copyOf(childNodes);
+        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
 
         // GROUPINGS
         for (GroupingBuilder builder : addedGroupings) {
@@ -119,7 +119,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public Set<DataSchemaNodeBuilder> instantiateChildNodes(Builder newParent) {
+    public Set<DataSchemaNodeBuilder> instantiateChildNodes(final Builder newParent) {
         final Set<DataSchemaNodeBuilder> nodes = new HashSet<>();
         for (DataSchemaNodeBuilder node : addedChildNodes) {
             DataSchemaNodeBuilder copy = CopyUtils.copy(node, newParent, true);
@@ -130,7 +130,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public Set<TypeDefinitionBuilder> instantiateTypedefs(Builder newParent) {
+    public Set<TypeDefinitionBuilder> instantiateTypedefs(final Builder newParent) {
         final Set<TypeDefinitionBuilder> nodes = new HashSet<>();
         for (TypeDefinitionBuilder node : addedTypedefs) {
             TypeDefinitionBuilder copy = CopyUtils.copy(node, newParent, true);
@@ -140,7 +140,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public Set<GroupingBuilder> instantiateGroupings(Builder newParent) {
+    public Set<GroupingBuilder> instantiateGroupings(final Builder newParent) {
         final Set<GroupingBuilder> nodes = new HashSet<>();
         for (GroupingBuilder node : addedGroupings) {
             GroupingBuilder copy = CopyUtils.copy(node, newParent, true);
@@ -154,7 +154,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public Set<UnknownSchemaNodeBuilder> instantiateUnknownNodes(Builder newParent) {
+    public Set<UnknownSchemaNodeBuilder> instantiateUnknownNodes(final Builder newParent) {
         final Set<UnknownSchemaNodeBuilder> nodes = new HashSet<>();
         for (UnknownSchemaNodeBuilder node : addedUnknownNodes) {
             UnknownSchemaNodeBuilder copy = CopyUtils.copy(node, newParent, true);
@@ -215,7 +215,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
@@ -244,7 +244,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -349,12 +349,12 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             return getChildNode(childNodes, name);
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(String name) {
+        public DataSchemaNode getDataChildByName(final String name) {
             return getChildNode(childNodes, name);
         }
 
@@ -368,7 +368,7 @@ public final class GroupingBuilderImpl extends AbstractDataNodeContainerBuilder 
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }

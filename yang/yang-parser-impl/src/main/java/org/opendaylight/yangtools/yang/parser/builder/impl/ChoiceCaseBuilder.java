@@ -102,9 +102,9 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
         // CHILD NODES
         for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.add(node.build());
+            childNodes.put(node.getQName(), node.build());
         }
-        instance.childNodes = ImmutableSet.copyOf(childNodes);
+        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
 
         // USES
         for (UsesNodeBuilder builder : addedUsesNodes) {
@@ -163,7 +163,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 

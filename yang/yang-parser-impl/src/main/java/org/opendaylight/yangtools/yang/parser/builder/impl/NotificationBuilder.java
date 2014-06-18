@@ -93,9 +93,9 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
 
         // CHILD NODES
         for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.add(node.build());
+            childNodes.put(node.getQName(), node.build());
         }
-        instance.childNodes = ImmutableSet.copyOf(childNodes);
+        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
 
         // GROUPINGS
         for (GroupingBuilder builder : addedGroupings) {
@@ -147,7 +147,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public void setPath(SchemaPath path) {
+    public void setPath(final SchemaPath path) {
         this.schemaPath = path;
     }
 
@@ -177,7 +177,7 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 

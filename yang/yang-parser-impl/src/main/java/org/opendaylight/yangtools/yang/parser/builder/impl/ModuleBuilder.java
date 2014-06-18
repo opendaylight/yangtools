@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
@@ -143,7 +144,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
         revision = base.getRevision();
 
         for (DataSchemaNode childNode : base.getChildNodes()) {
-            childNodes.add(childNode);
+            childNodes.put(childNode.getQName(), childNode);
         }
 
         typedefs.addAll(base.getTypeDefinitions());
@@ -181,9 +182,9 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
 
         // CHILD NODES
         for (DataSchemaNodeBuilder child : addedChildNodes) {
-            childNodes.add(child.build());
+            childNodes.put(child.getQName(), child.build());
         }
-        instance.addChildNodes(childNodes);
+        instance.addChildNodes(childNodes.values());
 
         // GROUPINGS
         for (GroupingBuilder gb : addedGroupings) {
@@ -1115,7 +1116,7 @@ public class ModuleBuilder extends AbstractDataNodeContainerBuilder {
             return Collections.unmodifiableSet(childNodes);
         }
 
-        private void addChildNodes(final Set<DataSchemaNode> childNodes) {
+        private void addChildNodes(final Collection<DataSchemaNode> childNodes) {
             if (childNodes != null) {
                 this.childNodes.addAll(childNodes);
             }
