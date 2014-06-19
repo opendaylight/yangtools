@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_81503f5f",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/AbstractRegistration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-19T12:04:41Z",
+      "side": 1,
+      "message": "This switch was done by Robert Varga, but the switch is preserving memory when dealing with 1000s of instances",
+      "parentUuid": "fa82b9bf_6e696abd",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_8e64eee5",
         "filename": "yang/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/model/parser/api/YangModelParser.java",
         "patchSetId": 1
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_214ff3be",
+        "filename": "yang/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/model/parser/api/YangModelParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-19T12:04:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_2e6362dd",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_4e5ee613",
         "filename": "yang/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/model/parser/api/YangModelParser.java",
         "patchSetId": 1
@@ -64,6 +100,24 @@
       "writtenOn": "2014-06-18T17:03:18Z",
       "side": 1,
       "message": "Please provide a link and description to the method that replaces this one.",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_414a37ad",
+        "filename": "yang/yang-parser-api/src/main/java/org/opendaylight/yangtools/yang/model/parser/api/YangModelParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-19T12:04:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_4e5ee613",
       "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_c1d5e7b9",
+        "filename": "yang/yang-parser-impl/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-19T12:04:41Z",
+      "side": 1,
+      "message": "ThreadSafe/Immutable/ThreadUnsafe annotations are for documentation only. Annotations like @Nullable are useful with static code analysis, e.g. Idea reports unsafe operations on nullable objects. This dependency is used already in controller so it does not result in new bundle being required.",
+      "parentUuid": "fa82b9bf_ee9c9ac2",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_ee5fbae3",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/URLSchemaContextResolver.java",
         "patchSetId": 1
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_81859fae",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/URLSchemaContextResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-19T12:04:41Z",
+      "side": 1,
+      "message": "Done. Thanks for catch.",
+      "parentUuid": "fa82b9bf_ee5fbae3",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_ce5c36f0",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/URLSchemaContextResolver.java",
         "patchSetId": 1
@@ -115,6 +205,24 @@
       "writtenOn": "2014-06-18T17:03:18Z",
       "side": 1,
       "message": "Is sourceContext thread safe? If not, then when we try to open streams etc  in sub methods we have issues.",
+      "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a1b78385",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/URLSchemaContextResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-19T12:04:41Z",
+      "side": 1,
+      "message": "Yes, I\u0027ve rebased the commit on Tony\u0027s effort on making those classes immutable, added @Immutable markers",
+      "parentUuid": "fa82b9bf_ce5c36f0",
       "revId": "b160a3c4b42570b8230ed3f76d733691dd01fa77",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
