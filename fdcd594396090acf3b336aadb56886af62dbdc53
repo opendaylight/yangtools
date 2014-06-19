@@ -36,6 +36,23 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_a4b79185",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/URLSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-19T14:33:47Z",
+      "side": 1,
+      "message": "I realize that you labeled this as the first round for synchronization - but synchronizing on \"This\" is essentially single threading all access to this class, which will affect performance in the long run.\n\nWhat are the long term plans to implement more targeted synchronization?\n\nAlso, in my opinion it is better to not synchronize on methods. Synchronizing on method level is the same as synchronizing on \"this\" which means that if anyone else synchronizing on your object outside of your class then you can get unintended interference. This is definitely not a blocking point, but wanted to share my experiences. I find it better to create a private Object called lock, and synchronize on that. That way you know you are the only one synchronizing on it. :)",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_84228dff",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangSourceContext.java",
         "patchSetId": 2
