@@ -14,9 +14,6 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findD
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import com.google.common.io.BaseEncoding;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
@@ -33,6 +30,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
@@ -90,6 +88,10 @@ import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import com.google.common.io.BaseEncoding;
 
 public final class TypeProviderImpl implements TypeProvider {
     private static final Pattern NUMBERS_PATTERN = Pattern.compile("[0-9]+\\z");
@@ -163,6 +165,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * @see TypeProvider#javaTypeForYangType(String)
      */
     @Override
+    @Deprecated
     public Type javaTypeForYangType(final String type) {
         return BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForYangType(type);
     }
@@ -370,7 +373,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *             if <code>extendTypeDef</code> equal null
      */
     private TypeDefinition<?> baseTypeDefForExtendedType(final TypeDefinition<?> extendTypeDef) {
-        Preconditions.checkArgument(extendTypeDef != null, "Type Definiition reference cannot be NULL!");
+        Preconditions.checkArgument(extendTypeDef != null, "Type Definition reference cannot be NULL!");
         final TypeDefinition<?> baseTypeDef = extendTypeDef.getBaseType();
         if (baseTypeDef == null) {
             return extendTypeDef;
@@ -410,9 +413,7 @@ public final class TypeProviderImpl implements TypeProvider {
         final String strXPath = xpath.toString();
 
         if (strXPath != null) {
-            if (strXPath.contains("[")) {
-                returnType = Types.typeForClass(Object.class);
-            } else {
+            if (strXPath.indexOf('[') == -1) {
                 final Module module = findParentModule(schemaContext, parentNode);
                 if (module != null) {
                     final SchemaNode dataNode;
@@ -430,6 +431,8 @@ public final class TypeProviderImpl implements TypeProvider {
                         returnType = resolveTypeFromDataSchemaNode(dataNode);
                     }
                 }
+            } else {
+                returnType = Types.typeForClass(Object.class);
             }
         }
         if (returnType == null) {
@@ -1392,7 +1395,7 @@ public final class TypeProviderImpl implements TypeProvider {
             String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
             String className = packageName + "." + BindingMapping.getClassName(typeQName);
             sb.insert(0, "new " + className + "(");
-            sb.insert(sb.length(), ")");
+            sb.insert(sb.length(), ')');
         }
 
         return sb.toString();
@@ -1413,7 +1416,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 sb.append(", ");
             }
         }
-        sb.append("}");
+        sb.append('}');
         return sb.toString();
     }
 
@@ -1426,7 +1429,11 @@ public final class TypeProviderImpl implements TypeProvider {
             }
         });
         StringBuilder sb = new StringBuilder();
-        sb.append(isExt ? "" : "new " + className + "(");
+        if (!isExt) {
+            sb.append("new ");
+            sb.append(className);
+            sb.append('(');
+        }
         for (int i = 0; i < bits.size(); i++) {
             if (bits.get(i).getName().equals(defaultValue)) {
                 sb.append(true);
@@ -1437,7 +1444,9 @@ public final class TypeProviderImpl implements TypeProvider {
                 sb.append(", ");
             }
         }
-        sb.append(isExt ? "" : ")");
+        if (!isExt) {
+            sb.append(')');
+        }
         return sb.toString();
     }
 
@@ -1457,9 +1466,7 @@ public final class TypeProviderImpl implements TypeProvider {
         final String strXPath = xpath.toString();
 
         if (strXPath != null) {
-            if (strXPath.contains("[")) {
-                return "new java.lang.Object()";
-            } else {
+            if (strXPath.indexOf('[') == -1) {
                 final Module module = findParentModule(schemaContext, parentNode);
                 if (module != null) {
                     final SchemaNode dataNode;
@@ -1471,6 +1478,8 @@ public final class TypeProviderImpl implements TypeProvider {
                     String result = getTypeDefaultConstruction((LeafSchemaNode) dataNode, parentNode.getDefault());
                     return result;
                 }
+            } else {
+                return "new java.lang.Object()";
             }
         }
 
@@ -1533,12 +1542,11 @@ public final class TypeProviderImpl implements TypeProvider {
 
     private String union(final String className, final String defaultValue, final LeafSchemaNode node) {
         StringBuilder sb = new StringBuilder();
-        sb.append("new " + className + "(");
-        sb.append("\"");
+        sb.append("new ");
+        sb.append(className);
+        sb.append("(\"");
         sb.append(defaultValue);
-        sb.append("\"");
-        sb.append(".toCharArray()");
-        sb.append(")");
+        sb.append("\".toCharArray())");
         return sb.toString();
     }
 
