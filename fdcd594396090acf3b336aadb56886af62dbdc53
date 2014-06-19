@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_24f3819f",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/SchemaContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-19T14:32:52Z",
+      "side": 1,
+      "message": "Given that this is immutable, the comment that this provides methods for manipulating the top level context is inappropriate. Manipulation implies modification, which we are saying is not possible.\n\nIt would also be a good idea to just state in the comments details about concurrency / thread safety etc. Even though the annotation is there, putting a quick note such as \"Represents a static view of the compiled yang files\" or something similar is helpful. We should write comments such that someone with limited knowledge can quickly understand what is happening.",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_04175da4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-19T14:32:52Z",
+      "side": 1,
+      "message": "I would expand on this comment you added - I realize it was a quick note, but I would add some more content or remove it. This comment as is likely only helpful a select few, and serves to confuse anyone else. :)",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_84228dff",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangSourceContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-19T14:32:52Z",
+      "side": 1,
+      "message": "please use newlines to separate these arguments - took me a minute to figure out these were arguments when just review the change online.",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_2494e1e0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangSourceContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-06-19T14:32:52Z",
+      "side": 1,
+      "message": "It doesn\u0027t look like this should be deprecated (I know you didn\u0027t specifically add the tag, but we should clean this up). getValidInputStreams() is used by the method we are telling folks to use, so it looks like the business logic is fine, we just don\u0027t want people accessing the streams directly. If we want to maintain backwards compatibility but deprecate the use of streams then I would move the business intelligence out into a new, private method, and keep the deprecated public API around which is a pass through.\n\nAlso, we don\u0027t need the checkNotNull here, as it is now final and checked in the constructor. Also, I think we want to check the \"isClosed\" here.",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
