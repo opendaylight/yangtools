@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_a1e9c381",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-19T09:01:03Z",
+      "side": 1,
+      "message": "I would prefer declaring sets as ImmutableSet",
+      "revId": "549eb4d747fd95011afc8dbb81403e2d026c693e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e1efcb85",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-19T09:01:03Z",
+      "side": 1,
+      "message": "not thread safe",
+      "revId": "549eb4d747fd95011afc8dbb81403e2d026c693e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
