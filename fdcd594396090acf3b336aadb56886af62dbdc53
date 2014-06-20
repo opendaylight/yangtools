@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_df906245",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/SchemaContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-20T09:05:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_24f3819f",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_04175da4",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-06-19T14:32:52Z",
       "side": 1,
       "message": "I would expand on this comment you added - I realize it was a quick note, but I would add some more content or remove it. This comment as is likely only helpful a select few, and serves to confuse anyone else. :)",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ffba06bf",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-20T09:05:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_04175da4",
       "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_bfeb1eaf",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/URLSchemaContextResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-20T09:05:23Z",
+      "side": 1,
+      "message": "Long term plans are that this piece of code needs refactoring, but that\u0027s outside of the scope of this bug fix. I envision something that would return last good schema snapshot and thus not needing so much locking. I think that building of schema context should be done on a single threaded executor, and registering new URL should return Future object that will contain new schema or failure (eventually). Getting the schema would always return the latest available one. This way synchronization will not be required anymore.",
+      "parentUuid": "fa82b9bf_a4b79185",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_84228dff",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangSourceContext.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-06-19T14:32:52Z",
       "side": 1,
       "message": "please use newlines to separate these arguments - took me a minute to figure out these were arguments when just review the change online.",
+      "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5fd21201",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangSourceContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-06-20T09:05:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_84228dff",
       "revId": "fdcd594396090acf3b336aadb56886af62dbdc53",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
