@@ -22,15 +22,19 @@ public class HostBuilder {
     public static Host getDefaultInstance(String defaultValue) {
 
         List<String> matchers = new ArrayList<>();
-        if (ipv4Pattern.matcher(defaultValue).matches()) {
-            matchers.add(Ipv4Address.class.getSimpleName());
-        }
-        if (ipv6Pattern1.matcher(defaultValue).matches() && ipv6Pattern2.matcher(defaultValue).matches()) {
+        if (ipv6Pattern1.matcher(defaultValue).matches() || ipv6Pattern2.matcher(defaultValue).matches()) {
             matchers.add(Ipv6Address.class.getSimpleName());
         }
-        if (domainPattern.matcher(defaultValue).matches()) {
+
+        // Ipv4 and Domain Name patterns are not exclusive
+        // Address 127.0.0.1 matches both patterns
+        // This way Ipv4 address is preferred to domain name
+        if (ipv4Pattern.matcher(defaultValue).matches()) {
+            matchers.add(Ipv4Address.class.getSimpleName());
+        } else if (domainPattern.matcher(defaultValue).matches()) {
             matchers.add(DomainName.class.getSimpleName());
         }
+
         if (matchers.size() > 1) {
             throw new IllegalArgumentException("Cannot create Host from " + defaultValue + ". Value is ambigious for "
                     + matchers);
@@ -41,7 +45,7 @@ public class HostBuilder {
             IpAddress ipAddress = new IpAddress(ipv4);
             return new Host(ipAddress);
         }
-        if (ipv6Pattern1.matcher(defaultValue).matches() && ipv6Pattern2.matcher(defaultValue).matches()) {
+        if (ipv6Pattern1.matcher(defaultValue).matches() || ipv6Pattern2.matcher(defaultValue).matches()) {
             Ipv6Address ipv6 = new Ipv6Address(defaultValue);
             IpAddress ipAddress = new IpAddress(ipv6);
             return new Host(ipAddress);
