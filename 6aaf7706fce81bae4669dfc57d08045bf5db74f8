@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_d5603ea7",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/SourceCodeGeneratorFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-23T15:20:48Z",
+      "side": 1,
+      "message": "I think default value should be false instead of true (for now), since we want to prevent polution of all places with this.\n\nFor controller you could submit patch which will configure distribution to generate sources.",
+      "revId": "6aaf7706fce81bae4669dfc57d08045bf5db74f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
