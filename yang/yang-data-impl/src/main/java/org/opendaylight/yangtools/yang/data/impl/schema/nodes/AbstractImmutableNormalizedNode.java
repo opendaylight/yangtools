@@ -7,18 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.base.Preconditions;
+import java.io.Serializable;
 
 public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifier.PathArgument,V>
-        implements NormalizedNode<K, V>, Immutable {
+        implements NormalizedNode<K, V>, Immutable, Serializable {
+
+    private static final long serialVersionUID = 7526472295622776147L;
 
     private final K nodeIdentifier;
 
