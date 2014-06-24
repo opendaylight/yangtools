@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -20,31 +22,61 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- *
  * Represents unique path to the every node inside the module.
- *
  */
-public class SchemaPath implements Immutable {
+public abstract class SchemaPath implements Immutable {
+    /**
+     * An absolute SchemaPath.
+     */
+    private static final class AbsoluteSchemaPath extends SchemaPath {
+        private AbsoluteSchemaPath(final Iterable<QName> path, final int hash) {
+            super(path, hash);
+        }
+
+        @Override
+        public boolean isAbsolute() {
+            return true;
+        }
+
+        @Override
+        protected SchemaPath createInstance(final Iterable<QName> path, final int hash) {
+            return new AbsoluteSchemaPath(path, hash);
+        }
+    }
+
+    /**
+     * A relative SchemaPath.
+     */
+    private static final class RelativeSchemaPath extends SchemaPath {
+        private RelativeSchemaPath(final Iterable<QName> path, final int hash) {
+            super(path, hash);
+        }
+
+        @Override
+        public boolean isAbsolute() {
+            return false;
+        }
+
+        @Override
+        protected SchemaPath createInstance(final Iterable<QName> path, final int hash) {
+            return new RelativeSchemaPath(path, hash);
+        }
+    }
+
     /**
      * Shared instance of the conceptual root schema node.
      */
-    public static final SchemaPath ROOT = new SchemaPath(Collections.<QName>emptyList(), true, Boolean.TRUE.hashCode());
+    public static final SchemaPath ROOT = new AbsoluteSchemaPath(Collections.<QName>emptyList(), Boolean.TRUE.hashCode());
 
     /**
      * Shared instance of the "same" relative schema node.
      */
-    public static final SchemaPath SAME = new SchemaPath(Collections.<QName>emptyList(), false, Boolean.FALSE.hashCode());
+    public static final SchemaPath SAME = new RelativeSchemaPath(Collections.<QName>emptyList(), Boolean.FALSE.hashCode());
 
     /**
      * List of QName instances which represents complete path to the node.
      */
     private final Iterable<QName> path;
-
-    /**
-     * Boolean value which represents type of schema path (relative or
-     * absolute).
-     */
-    private final boolean absolute;
 
     /**
      * Cached hash code. We can use this since we are immutable.
@@ -78,9 +110,8 @@ public class SchemaPath implements Immutable {
         return getLegacyPath();
     }
 
-    private SchemaPath(final Iterable<QName> path, final boolean absolute, final int hash) {
+    protected SchemaPath(final Iterable<QName> path, final int hash) {
         this.path = Preconditions.checkNotNull(path);
-        this.absolute = absolute;
         this.hash = hash;
     }
 
@@ -117,6 +148,15 @@ public class SchemaPath implements Immutable {
         return create(Arrays.asList(path), absolute);
     }
 
+    /**
+     * Create a new instance.
+     *
+     * @param path path from root
+     * @param hash intended hash code
+     * @return A new SchemaPath instance
+     */
+    protected abstract SchemaPath createInstance(Iterable<QName> path, int hash);
+
     private SchemaPath trustedCreateChild(final Iterable<QName> relative) {
         if (Iterables.isEmpty(relative)) {
             return this;
@@ -127,7 +167,7 @@ public class SchemaPath implements Immutable {
             b.addArgument(p);
         }
 
-        return new SchemaPath(Iterables.concat(path, relative), absolute, b.toInstance());
+        return createInstance(Iterables.concat(path, relative), b.toInstance());
     }
 
     /**
@@ -210,12 +250,10 @@ public class SchemaPath implements Immutable {
      * @return boolean value which is <code>true</code> if schema path is
      *         absolute.
      */
-    public boolean isAbsolute() {
-        return absolute;
-    }
+    public abstract boolean isAbsolute();
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return hash;
     }
 
@@ -231,21 +269,15 @@ public class SchemaPath implements Immutable {
             return false;
         }
         SchemaPath other = (SchemaPath) obj;
-        if (absolute != other.absolute) {
-            return false;
-        }
-
         return Iterables.elementsEqual(path, other.path);
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SchemaPath [path=");
-        builder.append(path);
-        builder.append(", absolute=");
-        builder.append(absolute);
-        builder.append("]");
-        return builder.toString();
+    public final String toString() {
+        return addToStringAttributes(Objects.toStringHelper(this)).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("path", path);
     }
 }
