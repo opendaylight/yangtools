@@ -116,6 +116,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
 
     @Override
     public final void addChildNode(final DataSchemaNode child) {
+        checkNotSealed();
         QName childName = child.getQName();
         for (DataSchemaNode childNode : childNodes.values()) {
             if (childNode.getQName().equals(childName)) {
@@ -139,6 +140,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
 
     @Override
     public final void addGrouping(final GroupingBuilder grouping) {
+        checkNotSealed();
         QName groupingName = grouping.getQName();
         for (GroupingBuilder addedGrouping : addedGroupings) {
             if (addedGrouping.getQName().equals(groupingName)) {
@@ -166,6 +168,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
 
     @Override
     public final void addUsesNode(final UsesNodeBuilder usesNode) {
+        checkNotSealed();
         addedUsesNodes.add(usesNode);
     }
 
@@ -177,6 +180,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
 
     @Override
     public void addTypedef(final TypeDefinitionBuilder type) {
+        checkNotSealed();
         String typeName = type.getQName().getLocalName();
         for (TypeDefinitionBuilder addedTypedef : addedTypedefs) {
             if (addedTypedef.getQName().getLocalName().equals(typeName)) {
@@ -190,6 +194,9 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
     protected abstract String getStatementName();
 
     protected void buildChildren() {
+        checkNotSealed();
+        seal();
+
         for (DataSchemaNodeBuilder node : addedChildNodes) {
             childNodes.put(node.getQName(), node.build());
         }

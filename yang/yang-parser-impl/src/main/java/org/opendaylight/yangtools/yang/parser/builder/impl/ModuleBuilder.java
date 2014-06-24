@@ -45,12 +45,9 @@ import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Builder of Module object. If this module is dependent on external
@@ -71,11 +68,10 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     private String belongsTo;
     private ModuleBuilder parent;
 
-
     private final Deque<Builder> actualPath = new LinkedList<>();
     private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<>();
 
-    private final Set<ModuleImport> imports = new HashSet<ModuleImport>();
+    final Set<ModuleImport> imports = new HashSet<ModuleImport>();
 
     private final Set<AugmentationSchema> augments = new LinkedHashSet<>();
     private final List<AugmentationSchemaBuilder> augmentBuilders = new ArrayList<>();
@@ -107,18 +103,13 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     private final List<ListSchemaNodeBuilder> allLists = new ArrayList<>();
 
-    private String source;
+    String source;
     private String yangVersion;
     private String organization;
     private String contact;
 
     public ModuleBuilder(final String name, final String sourcePath) {
         this(name, false, sourcePath);
-    }
-
-    @Override
-    protected String getStatementName() {
-        return "module";
     }
 
     public ModuleBuilder(final String name, final boolean submodule, final String sourcePath) {
@@ -156,65 +147,66 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         unknownNodes.addAll(base.getUnknownSchemaNodes());
     }
 
+    @Override
+    protected String getStatementName() {
+        return "module";
+    }
+
     /**
      * Build new Module object based on this builder.
      */
     @Override
     public Module build() {
+        if(instance != null) {
+            return instance;
+        }
+
         buildChildren();
-        instance = new ModuleImpl(name, sourcePath, this);
+
         // FEATURES
         for (FeatureBuilder fb : addedFeatures) {
             features.add(fb.build());
         }
-        instance.setFeatures(features);
 
         // NOTIFICATIONS
         for (NotificationBuilder entry : addedNotifications) {
             notifications.add(entry.build());
         }
-        instance.setNotifications(notifications);
 
         // AUGMENTATIONS
         for (AugmentationSchemaBuilder builder : augmentBuilders) {
             augments.add(builder.build());
         }
-        instance.setAugmentations(augments);
 
         // RPCs
         for (RpcDefinitionBuilder rpc : addedRpcs) {
             rpcs.add(rpc.build());
         }
-        instance.setRpcs(rpcs);
 
         // DEVIATIONS
         for (DeviationBuilder entry : deviationBuilders) {
             deviations.add(entry.build());
         }
-        instance.setDeviations(deviations);
 
         // EXTENSIONS
         for (ExtensionBuilder eb : addedExtensions) {
             extensions.add(eb.build());
         }
         Collections.sort(extensions, Comparators.SCHEMA_NODE_COMP);
-        instance.setExtensionSchemaNodes(extensions);
+
 
         // IDENTITIES
         for (IdentitySchemaNodeBuilder id : addedIdentities) {
             identities.add(id.build());
         }
-        instance.setIdentities(identities);
 
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder unb : addedUnknownNodes) {
             unknownNodes.add(unb.build());
         }
         Collections.sort(unknownNodes, Comparators.SCHEMA_NODE_COMP);
-        instance.setUnknownSchemaNodes(unknownNodes);
 
-        instance.setSource(source);
-
+        instance = new ModuleImpl(name, sourcePath, this);
         return instance;
     }
 
@@ -341,6 +333,14 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         return revision;
     }
 
+    protected Set<ModuleImport> getImports() {
+        return imports;
+    }
+
+    protected String getSource() {
+        return source;
+    }
+
     public boolean isSubmodule() {
         return submodule;
     }
@@ -379,6 +379,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public boolean addModuleImport(final String moduleName, final Date revision, final String prefix) {
+        checkNotSealed();
         final ModuleImport moduleImport = createModuleImport(moduleName, revision, prefix);
         return imports.add(moduleImport);
     }
@@ -388,6 +389,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public ExtensionBuilder addExtension(final QName qname, final int line, final SchemaPath path) {
+        checkNotSealed();
         Builder parent = getActualNode();
         if (!(parent.equals(this))) {
             throw new YangParseException(name, line, "extension can be defined only in module or submodule");
@@ -406,6 +408,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public ContainerSchemaNodeBuilder addContainerNode(final int line, final QName qname, final SchemaPath schemaPath) {
+        checkNotSealed();
         final ContainerSchemaNodeBuilder builder = new ContainerSchemaNodeBuilder(name, line, qname, schemaPath);
 
         Builder parent = getActualNode();
@@ -416,6 +419,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public ListSchemaNodeBuilder addListNode(final int line, final QName qname, final SchemaPath schemaPath) {
+        checkNotSealed();
         final ListSchemaNodeBuilder builder = new ListSchemaNodeBuilder(name, line, qname, schemaPath);
 
         Builder parent = getActualNode();
@@ -427,6 +431,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public LeafSchemaNodeBuilder addLeafNode(final int line, final QName qname, final SchemaPath schemaPath) {
+        checkNotSealed();
         final LeafSchemaNodeBuilder builder = new LeafSchemaNodeBuilder(name, line, qname, schemaPath);
 
         Builder parent = getActualNode();
@@ -437,6 +442,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public LeafListSchemaNodeBuilder addLeafListNode(final int line, final QName qname, final SchemaPath schemaPath) {
+        checkNotSealed();
         final LeafListSchemaNodeBuilder builder = new LeafListSchemaNodeBuilder(name, line, qname, schemaPath);
 
         Builder parent = getActualNode();
@@ -447,6 +453,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public GroupingBuilder addGrouping(final int line, final QName qname, final SchemaPath path) {
+        checkNotSealed();
         final GroupingBuilder builder = new GroupingBuilderImpl(name, line, qname, path);
 
         Builder parent = getActualNode();
@@ -487,6 +494,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public AugmentationSchemaBuilder addAugment(final int line, final String augmentTargetStr, final int order) {
+        checkNotSealed();
         final AugmentationSchemaBuilder builder = new AugmentationSchemaBuilderImpl(name, line, augmentTargetStr, order);
 
         Builder parent = getActualNode();
@@ -520,6 +528,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public UsesNodeBuilder addUsesNode(final int line, final String groupingPathStr) {
+        checkNotSealed();
         final UsesNodeBuilder usesBuilder = new UsesNodeBuilderImpl(name, line, groupingPathStr);
 
         Builder parent = getActualNode();
@@ -542,6 +551,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void addRefine(final RefineHolderImpl refine) {
+        checkNotSealed();
         final Builder parent = getActualNode();
         if (!(parent instanceof UsesNodeBuilder)) {
             throw new YangParseException(name, refine.getLine(), "refine can be defined only in uses statement");
@@ -551,6 +561,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public RpcDefinitionBuilder addRpc(final int line, final QName qname, final SchemaPath path) {
+        checkNotSealed();
         Builder parent = getActualNode();
         if (!(parent.equals(this))) {
             throw new YangParseException(name, line, "rpc can be defined only in module or submodule");
@@ -584,6 +595,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public ContainerSchemaNodeBuilder addRpcInput(final int line, final QName qname, final SchemaPath schemaPath) {
+        checkNotSealed();
         final Builder parent = getActualNode();
         if (!(parent instanceof RpcDefinitionBuilder)) {
             throw new YangParseException(name, line, "input can be defined only in rpc statement");
@@ -598,6 +610,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public ContainerSchemaNodeBuilder addRpcOutput(final SchemaPath schemaPath, final QName qname, final int line) {
+        checkNotSealed();
         final Builder parent = getActualNode();
         if (!(parent instanceof RpcDefinitionBuilder)) {
             throw new YangParseException(name, line, "output can be defined only in rpc statement");
@@ -612,10 +625,12 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void addNotification(final NotificationDefinition notification) {
+        checkNotSealed();
         notifications.add(notification);
     }
 
     public NotificationBuilder addNotification(final int line, final QName qname, final SchemaPath path) {
+        checkNotSealed();
         final Builder parent = getActualNode();
         if (!(parent.equals(this))) {
             throw new YangParseException(name, line, "notification can be defined only in module or submodule");
@@ -689,9 +704,6 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
         return builder;
     }
-
-
-
 
     @Override
     public void addTypedef(final TypeDefinitionBuilder typedefBuilder) {
@@ -862,249 +874,6 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     public void setSource(final String source) {
         this.source = source;
-    }
-
-    public static final class ModuleImpl extends AbstractDocumentedDataNodeContainer implements Module {
-        private final URI namespace;
-        private final String name;
-        private final String sourcePath;
-        private final Date revision;
-        private final String prefix;
-        private final String yangVersion;
-        private final String organization;
-        private final String contact;
-        private final Set<ModuleImport> imports;
-        private final Set<FeatureDefinition> features = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-        private final Set<NotificationDefinition> notifications = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-        private final Set<AugmentationSchema> augmentations = new HashSet<>();
-        private final Set<RpcDefinition> rpcs = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-        private final Set<Deviation> deviations = new HashSet<>();
-        private final List<ExtensionDefinition> extensionNodes = new ArrayList<>();
-        private final Set<IdentitySchemaNode> identities = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-        private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
-        private String source;
-
-        private ModuleImpl(final String name, final String sourcePath, final ModuleBuilder builder) {
-            super(builder);
-            this.name = name;
-            this.sourcePath = sourcePath;
-            this.imports = ImmutableSet.<ModuleImport>copyOf(builder.imports);
-            this.namespace = builder.getNamespace();
-            this.prefix = builder.getPrefix();
-            this.revision = builder.getRevision();
-            this.yangVersion = builder.getYangVersion();
-            this.organization = builder.getOrganization();
-            this.contact = builder.getContact();
-        }
-
-        @Override
-        public String getModuleSourcePath() {
-            return sourcePath;
-        }
-
-        @Override
-        public URI getNamespace() {
-            return namespace;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public Date getRevision() {
-            return revision;
-        }
-
-        @Override
-        public String getPrefix() {
-            return prefix;
-        }
-
-        @Override
-        public String getYangVersion() {
-            return yangVersion;
-        }
-
-        @Override
-        public String getOrganization() {
-            return organization;
-        }
-
-        @Override
-        public String getContact() {
-            return contact;
-        }
-
-        @Override
-        public Set<ModuleImport> getImports() {
-            return imports;
-        }
-
-        @Override
-        public Set<FeatureDefinition> getFeatures() {
-            return features;
-        }
-
-        private void setFeatures(final Set<FeatureDefinition> features) {
-            if (features != null) {
-                this.features.addAll(features);
-            }
-        }
-
-        @Override
-        public Set<NotificationDefinition> getNotifications() {
-            return notifications;
-        }
-
-        private void setNotifications(final Set<NotificationDefinition> notifications) {
-            if (notifications != null) {
-                this.notifications.addAll(notifications);
-            }
-        }
-
-        @Override
-        public Set<AugmentationSchema> getAugmentations() {
-            return augmentations;
-        }
-
-        private void setAugmentations(final Set<AugmentationSchema> augmentations) {
-            if (augmentations != null) {
-                this.augmentations.addAll(augmentations);
-            }
-        }
-
-        @Override
-        public Set<RpcDefinition> getRpcs() {
-            return rpcs;
-        }
-
-        private void setRpcs(final Set<RpcDefinition> rpcs) {
-            if (rpcs != null) {
-                this.rpcs.addAll(rpcs);
-            }
-        }
-
-        @Override
-        public Set<Deviation> getDeviations() {
-            return deviations;
-        }
-
-        private void setDeviations(final Set<Deviation> deviations) {
-            if (deviations != null) {
-                this.deviations.addAll(deviations);
-            }
-        }
-
-        @Override
-        public List<ExtensionDefinition> getExtensionSchemaNodes() {
-            Collections.sort(extensionNodes, Comparators.SCHEMA_NODE_COMP);
-            return extensionNodes;
-        }
-
-        private void setExtensionSchemaNodes(final List<ExtensionDefinition> extensionNodes) {
-            if (extensionNodes != null) {
-                this.extensionNodes.addAll(extensionNodes);
-            }
-        }
-
-        @Override
-        public Set<IdentitySchemaNode> getIdentities() {
-            return identities;
-        }
-
-        private void setIdentities(final Set<IdentitySchemaNode> identities) {
-            if (identities != null) {
-                this.identities.addAll(identities);
-            }
-        }
-
-        @Override
-        public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return unknownNodes;
-        }
-
-        private void setUnknownSchemaNodes(final List<UnknownSchemaNode> unknownNodes) {
-            if (unknownNodes != null) {
-                this.unknownNodes.addAll(unknownNodes);
-            }
-        }
-
-        void setSource(final String source) {
-            this.source = source;
-        }
-
-        public String getSource() {
-            return source;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-            result = prime * result + ((name == null) ? 0 : name.hashCode());
-            result = prime * result + ((revision == null) ? 0 : revision.hashCode());
-            result = prime * result + ((yangVersion == null) ? 0 : yangVersion.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            ModuleImpl other = (ModuleImpl) obj;
-            if (namespace == null) {
-                if (other.namespace != null) {
-                    return false;
-                }
-            } else if (!namespace.equals(other.namespace)) {
-                return false;
-            }
-            if (name == null) {
-                if (other.name != null) {
-                    return false;
-                }
-            } else if (!name.equals(other.name)) {
-                return false;
-            }
-            if (revision == null) {
-                if (other.revision != null) {
-                    return false;
-                }
-            } else if (!revision.equals(other.revision)) {
-                return false;
-            }
-            if (yangVersion == null) {
-                if (other.yangVersion != null) {
-                    return false;
-                }
-            } else if (!yangVersion.equals(other.yangVersion)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder(ModuleImpl.class.getSimpleName());
-            sb.append("[");
-            sb.append("name=" + name);
-            sb.append(", namespace=" + namespace);
-            sb.append(", revision=" + revision);
-            sb.append(", prefix=" + prefix);
-            sb.append(", yangVersion=" + yangVersion);
-            sb.append("]");
-            return sb.toString();
-        }
     }
 
     /**
@@ -1292,5 +1061,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
             return false;
         }
         return true;
+    }
+
+    public List<UnknownSchemaNode> getExtensionInstances() {
+        return unknownNodes;
     }
 }
