@@ -83,7 +83,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder.ModuleImpl;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
