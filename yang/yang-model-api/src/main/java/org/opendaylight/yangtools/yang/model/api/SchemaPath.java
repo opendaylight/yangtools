@@ -57,23 +57,6 @@ public class SchemaPath implements Immutable {
      */
     private ImmutableList<QName> legacyPath;
 
-    /**
-     * Constructs new instance of this class with the concrete path.
-     *
-     * @param path
-     *            list of QName instances which specifies exact path to the
-     *            module node
-     * @param absolute
-     *            boolean value which specifies if the path is absolute or
-     *            relative
-     *
-     * @deprecated Use {@link #create(Iterable, boolean)} instead.
-     */
-    @Deprecated
-    public SchemaPath(final List<QName> path, final boolean absolute) {
-        this(ImmutableList.copyOf(path), absolute, Boolean.valueOf(absolute).hashCode());
-    }
-
     private ImmutableList<QName> getLegacyPath() {
         if (legacyPath == null) {
             legacyPath = ImmutableList.copyOf(path);
