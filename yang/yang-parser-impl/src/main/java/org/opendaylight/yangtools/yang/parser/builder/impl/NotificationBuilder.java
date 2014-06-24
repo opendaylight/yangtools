@@ -15,37 +15,26 @@ import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-public final class NotificationBuilder extends AbstractDataNodeContainerBuilder implements SchemaNodeBuilder,
+public final class NotificationBuilder extends AbstractDocumentedDataNodeContainerBuilder implements SchemaNodeBuilder,
         AugmentationTargetBuilder {
     private NotificationDefinitionImpl instance;
     // SchemaNode args
     private SchemaPath schemaPath;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
     // AugmentationTarget args
     private final List<AugmentationSchema> augmentations = new ArrayList<>();
     private final List<AugmentationSchemaBuilder> augmentationBuilders = new ArrayList<>();
@@ -55,65 +44,33 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
     }
 
-    NotificationBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final NotificationDefinition base) {
-        super(moduleName, line, qname);
+    NotificationBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
+            final NotificationDefinition base) {
+        super(moduleName, line, qname, path, base);
         this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
-
-        description = base.getDescription();
-        reference = base.getReference();
-        status = base.getStatus();
 
         URI ns = qname.getNamespace();
         Date rev = qname.getRevision();
         String pref = qname.getPrefix();
-        addedChildNodes.addAll(BuilderUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
-        addedGroupings.addAll(BuilderUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
-        addedTypedefs.addAll(BuilderUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
-        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
-                rev, pref));
+        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path,
+                ns, rev, pref));
 
         augmentations.addAll(base.getAvailableAugmentations());
-        usesNodes.addAll(base.getUses());
+
     }
 
     @Override
     public NotificationDefinition build() {
         if (!(getParent() instanceof ModuleBuilder)) {
-            throw new YangParseException(getModuleName(), getLine(), "Notification can be defined only under module (was " + getParent() + ")");
+            throw new YangParseException(getModuleName(), getLine(),
+                    "Notification can be defined only under module (was " + getParent() + ")");
         }
         if (instance != null) {
             return instance;
         }
+        buildChildren();
 
-        instance = new NotificationDefinitionImpl(qname, schemaPath);
-
-        instance.description = description;
-        instance.reference = reference;
-        instance.status = status;
-
-        // CHILD NODES
-        for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.put(node.getQName(), node.build());
-        }
-        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
-
-        // GROUPINGS
-        for (GroupingBuilder builder : addedGroupings) {
-            groupings.add(builder.build());
-        }
-        instance.groupings = ImmutableSet.copyOf(groupings);
-
-        // TYPEDEFS
-        for (TypeDefinitionBuilder entry : addedTypedefs) {
-            typedefs.add(entry.build());
-        }
-        instance.typeDefinitions = ImmutableSet.copyOf(typedefs);
-
-        // USES
-        for (UsesNodeBuilder builder : addedUsesNodes) {
-            usesNodes.add(builder.build());
-        }
-        instance.uses = ImmutableSet.copyOf(usesNodes);
+        instance = new NotificationDefinitionImpl(qname, schemaPath, this);
 
         // AUGMENTATIONS
         for (AugmentationSchemaBuilder builder : augmentationBuilders) {
@@ -130,17 +87,6 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         return instance;
     }
 
-
-    @Override
-    public Set<TypeDefinitionBuilder> getTypeDefinitionBuilders() {
-        return addedTypedefs;
-    }
-
-    @Override
-    public void addTypedef(final TypeDefinitionBuilder type) {
-        addedTypedefs.add(type);
-    }
-
     @Override
     public SchemaPath getPath() {
         return schemaPath;
@@ -149,36 +95,6 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
     @Override
     public void setPath(final SchemaPath path) {
         this.schemaPath = path;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        this.reference = reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
-    }
-
-    @Override
-    public void setStatus(final Status status) {
-        this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
     @Override
@@ -191,20 +107,21 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         return "notification " + getQName().getLocalName();
     }
 
-    private static final class NotificationDefinitionImpl implements NotificationDefinition {
+    @Override
+    protected String getStatementName() {
+        return "notification";
+    }
+
+    private static final class NotificationDefinitionImpl extends AbstractDocumentedDataNodeContainer implements
+            NotificationDefinition {
         private final QName qname;
         private final SchemaPath path;
-        private String description;
-        private String reference;
-        private Status status;
         private ImmutableSet<AugmentationSchema> augmentations;
-        private ImmutableSet<DataSchemaNode> childNodes;
-        private ImmutableSet<GroupingDefinition> groupings;
-        private ImmutableSet<TypeDefinition<?>> typeDefinitions;
-        private ImmutableSet<UsesNode> uses;
         private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-        private NotificationDefinitionImpl(final QName qname, final SchemaPath path) {
+        NotificationDefinitionImpl(final QName qname, final SchemaPath path, final NotificationBuilder builder) {
+            super(builder);
+            // TODO Auto-generated constructor stub
             this.qname = qname;
             this.path = path;
         }
@@ -220,41 +137,6 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         }
 
         @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String getReference() {
-            return reference;
-        }
-
-        @Override
-        public Status getStatus() {
-            return status;
-        }
-
-        @Override
-        public Set<DataSchemaNode> getChildNodes() {
-            return childNodes;
-        }
-
-        @Override
-        public Set<GroupingDefinition> getGroupings() {
-            return groupings;
-        }
-
-        @Override
-        public Set<UsesNode> getUses() {
-            return uses;
-        }
-
-        @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return typeDefinitions;
-        }
-
-        @Override
         public Set<AugmentationSchema> getAvailableAugmentations() {
             return augmentations;
         }
@@ -262,16 +144,6 @@ public final class NotificationBuilder extends AbstractDataNodeContainerBuilder 
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
             return unknownNodes;
-        }
-
-        @Override
-        public DataSchemaNode getDataChildByName(final QName name) {
-            return getChildNode(childNodes, name);
-        }
-
-        @Override
-        public DataSchemaNode getDataChildByName(final String name) {
-            return getChildNode(childNodes, name);
         }
 
         @Override

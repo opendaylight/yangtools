@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -18,28 +17,24 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder implements DataSchemaNodeBuilder,
+public final class ChoiceCaseBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DataSchemaNodeBuilder,
         AugmentationTargetBuilder {
     private ChoiceCaseNodeImpl instance;
     // SchemaNode args
@@ -63,6 +58,7 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
 
     public ChoiceCaseBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final ChoiceCaseNode base) {
+
         super(moduleName, line, qname);
         this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
         constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
@@ -76,13 +72,9 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         URI ns = qname.getNamespace();
         Date rev = qname.getRevision();
         String pref = qname.getPrefix();
-        addedChildNodes.addAll(BuilderUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
-        addedGroupings.addAll(BuilderUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
         addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
                 rev, pref));
-
         augmentations.addAll(base.getAvailableAugmentations());
-        usesNodes.addAll(base.getUses());
     }
 
     @Override
@@ -90,28 +82,13 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         if (instance != null) {
             return instance;
         }
+        buildChildren();
+        instance = new ChoiceCaseNodeImpl(qname, schemaPath,this);
 
-        instance = new ChoiceCaseNodeImpl(qname, schemaPath);
-
-        instance.description = description;
-        instance.reference = reference;
-        instance.status = status;
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
 
         instance.constraints = constraints.toInstance();
-
-        // CHILD NODES
-        for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.put(node.getQName(), node.build());
-        }
-        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
-
-        // USES
-        for (UsesNodeBuilder builder : addedUsesNodes) {
-            usesNodes.add(builder.build());
-        }
-        instance.uses = ImmutableSet.copyOf(usesNodes);
 
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
@@ -137,37 +114,6 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     public void setPath(final SchemaPath path) {
         this.schemaPath = path;
     }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        this.reference = reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
-    }
-
-    @Override
-    public void setStatus(final Status status) {
-        this.status = Preconditions.checkNotNull(status, "status cannot be null");
-    }
-
     @Override
     public boolean isAugmenting() {
         return augmenting;
@@ -186,11 +132,6 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
     @Override
     public void setAddedByUses(final boolean addedByUses) {
         this.addedByUses = addedByUses;
-    }
-
-    @Override
-    public Set<TypeDefinitionBuilder> getTypeDefinitionBuilders() {
-        return Collections.emptySet();
     }
 
     @Override
@@ -260,21 +201,22 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         return "case " + getQName().getLocalName();
     }
 
-    private static final class ChoiceCaseNodeImpl implements ChoiceCaseNode {
+    @Override
+    protected String getStatementName() {
+        return "choice";
+    }
+
+    private static final class ChoiceCaseNodeImpl extends AbstractDocumentedDataNodeContainer implements ChoiceCaseNode {
         private final QName qname;
         private final SchemaPath path;
-        private String description;
-        private String reference;
-        private Status status = Status.CURRENT;
         private boolean augmenting;
         private boolean addedByUses;
         private ConstraintDefinition constraints;
-        private ImmutableSet<DataSchemaNode> childNodes;
         private ImmutableSet<AugmentationSchema> augmentations;
-        private ImmutableSet<UsesNode> uses;
         private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-        private ChoiceCaseNodeImpl(final QName qname, final SchemaPath path) {
+        private ChoiceCaseNodeImpl(final QName qname, final SchemaPath path,final ChoiceCaseBuilder builder) {
+            super(builder);
             this.qname = qname;
             this.path = path;
         }
@@ -287,21 +229,6 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         @Override
         public SchemaPath getPath() {
             return path;
-        }
-
-        @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String getReference() {
-            return reference;
-        }
-
-        @Override
-        public Status getStatus() {
-            return status;
         }
 
         @Override
@@ -327,40 +254,6 @@ public final class ChoiceCaseBuilder extends AbstractDataNodeContainerBuilder im
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
             return unknownNodes;
-        }
-
-        /**
-         * Always returns an empty set, because case node can not contains type
-         * definitions.
-         */
-        @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public Set<DataSchemaNode> getChildNodes() {
-            return childNodes;
-        }
-
-        @Override
-        public Set<GroupingDefinition> getGroupings() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public DataSchemaNode getDataChildByName(final QName name) {
-            return getChildNode(childNodes, name);
-        }
-
-        @Override
-        public DataSchemaNode getDataChildByName(final String name) {
-            return getChildNode(childNodes, name);
-        }
-
-        @Override
-        public Set<UsesNode> getUses() {
-            return uses;
         }
 
         @Override
