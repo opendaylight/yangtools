@@ -17,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QNameModule implements Immutable, Serializable {
-	private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
-	private static final long serialVersionUID = 1L;
+    private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
+    private static final long serialVersionUID = 1L;
 
     //Nullable
     private final URI namespace;
@@ -27,39 +27,46 @@ public final class QNameModule implements Immutable, Serializable {
     private final Date revision;
 
     //Nullable
-    private final String formattedRevision;
+    private String formattedRevision;
 
     private QNameModule(final URI namespace, final Date revision) {
         this.namespace = namespace;
         this.revision = revision;
-        if(revision != null) {
-            this.formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
-        } else {
-            this.formattedRevision = null;
-        }
     }
 
-	public static QNameModule create(final URI namespace, final Date revision) {
-		return new QNameModule(namespace, revision);
-	}
+    public static QNameModule create(final URI namespace, final Date revision) {
+        return new QNameModule(namespace, revision);
+    }
 
-	public String getFormattedRevision() {
-		return formattedRevision;
-	}
+    public String getFormattedRevision() {
+        if (revision == null) {
+            return null;
+        }
 
-	public URI getNamespace() {
-		return namespace;
-	}
+        if (formattedRevision == null) {
+            synchronized (this) {
+                if (formattedRevision == null) {
+                    formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
+                }
+            }
+        }
 
-	public Date getRevision() {
-		return revision;
-	}
+        return formattedRevision;
+    }
+
+    public URI getNamespace() {
+        return namespace;
+    }
+
+    public Date getRevision() {
+        return revision;
+    }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = (namespace == null) ? 0 : namespace.hashCode();
-        result = prime * result + ((formattedRevision == null) ? 0 : formattedRevision.hashCode());
+        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
         return result;
     }
 
@@ -79,8 +86,8 @@ public final class QNameModule implements Immutable, Serializable {
         } else if (!namespace.equals(other.namespace)) {
             return false;
         }
-        if (formattedRevision == null) {
-            if (other.formattedRevision != null) {
+        if (revision == null) {
+            if (other.revision != null) {
                 return false;
             }
         } else if (!revision.equals(other.revision)) {
@@ -108,7 +115,7 @@ public final class QNameModule implements Immutable, Serializable {
 
         String query = "";
         if (revision != null) {
-            query = "revision=" + formattedRevision;
+            query = "revision=" + getFormattedRevision();
         }
 
         URI compositeURI = null;
