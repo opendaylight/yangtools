@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_1be57737",
+        "filename": "model/ietf/netconf-notifications/src/main/yang/notifications.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-24T07:04:42Z",
+      "side": 1,
+      "message": "This module deals with notification streams, should not it be named as ietf-netconf-notification-stream?",
+      "revId": "85f098b4e21cac8ea84ebcac8f89713e7ff7b988",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3b8b9b69",
+        "filename": "model/ietf/netconf-notifications/src/main/yang/notifications.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-24T07:04:42Z",
+      "side": 1,
+      "message": "Trailing whitespace, please remove.",
+      "revId": "85f098b4e21cac8ea84ebcac8f89713e7ff7b988",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_dbeb8f11",
+        "filename": "model/ietf/netconf-notifications/src/main/yang/notifications.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-24T07:04:42Z",
+      "side": 1,
+      "message": "Trailing whitespace, please remove.",
+      "revId": "85f098b4e21cac8ea84ebcac8f89713e7ff7b988",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7b95a385",
+        "filename": "model/ietf/netconf-notifications/src/main/yang/notifications.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-24T07:04:42Z",
+      "side": 1,
+      "message": "You do not need to model this, this structure is implied by notification statement.",
+      "revId": "85f098b4e21cac8ea84ebcac8f89713e7ff7b988",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1b8ed779",
+        "filename": "model/ietf/netconf-notifications/src/main/yang/notifications.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-06-24T07:04:42Z",
+      "side": 1,
+      "message": "This seems as private extension, which should not be available in this general model.",
+      "revId": "85f098b4e21cac8ea84ebcac8f89713e7ff7b988",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
