@@ -27,6 +27,7 @@ public abstract class AbstractBuilder implements Builder {
 
     protected final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
     protected final List<UnknownSchemaNodeBuilder> addedUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
+    private boolean sealed;
 
     protected AbstractBuilder(final String moduleName, final int line) {
         this.moduleName = Preconditions.checkNotNull(moduleName,"moduleName must not be null");
@@ -56,6 +57,7 @@ public abstract class AbstractBuilder implements Builder {
 
     @Override
     public void setParent(final Builder parentBuilder) {
+        checkNotSealed();
         this.parentBuilder = parentBuilder;
     }
 
@@ -67,6 +69,19 @@ public abstract class AbstractBuilder implements Builder {
     @Override
     public void addUnknownNodeBuilder(final UnknownSchemaNodeBuilder unknownNode) {
         addedUnknownNodes.add(unknownNode);
+    }
+
+    protected void seal() {
+        checkNotSealed();
+        sealed  = true;
+    }
+
+    protected final void checkNotSealed() {
+        Preconditions.checkState(!sealed, "Builder is sealed. No further modifications allowed");
+    }
+
+    protected boolean isSealed() {
+        return sealed;
     }
 
 }

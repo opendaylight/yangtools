@@ -2,7 +2,8 @@ package org.opendaylight.yangtools.yang.parser.builder.util;
 
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.parser.builder.api.DocumentedNodeBuilder;
+
+import com.google.common.base.Preconditions;
 
 public abstract class AbstractDocumentedNode implements DocumentedNode {
 
@@ -10,7 +11,8 @@ public abstract class AbstractDocumentedNode implements DocumentedNode {
     private final String reference;
     private final Status status;
 
-    protected AbstractDocumentedNode(final DocumentedNodeBuilder builder) {
+    protected AbstractDocumentedNode(final AbstractDocumentedNodeBuilder builder) {
+        Preconditions.checkArgument(builder.isSealed(), "Builder must be sealed.");
         this.description = builder.getDescription();
         this.reference = builder.getReference();
         this.status = builder.getStatus();
