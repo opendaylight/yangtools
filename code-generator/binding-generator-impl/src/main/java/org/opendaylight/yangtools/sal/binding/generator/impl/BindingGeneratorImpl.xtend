@@ -80,6 +80,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 
 import com.google.common.collect.Sets
 import java.util.TreeSet
+import org.opendaylight.yangtools.yang.binding.BaseIdentity
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -604,7 +605,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
         val newType = new GeneratedTOBuilderImpl(packageName, genTypeName);
         val baseIdentity = identity.baseIdentity;
         if (baseIdentity === null) {
-            newType.setExtendsType(Types.baseIdentityTO);
+            val GeneratedTOBuilderImpl gto = new GeneratedTOBuilderImpl(BaseIdentity.package.name,
+                BaseIdentity.simpleName);
+            newType.setExtendsType(gto.toInstance);
         } else {
             val baseIdentityParentModule = SchemaContextUtil.findParentModule(context, baseIdentity);
             val returnTypePkgName = moduleNamespaceToPackageName(baseIdentityParentModule);

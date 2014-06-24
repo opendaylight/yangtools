@@ -11,17 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
-
-import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 
 public final class Types {
     private static final Type SET_TYPE = typeForClass(Set.class);
@@ -118,19 +114,6 @@ public final class Types {
      */
     public static ParameterizedType listTypeFor(Type valueType) {
         return parameterizedTypeFor(LIST_TYPE, valueType);
-    }
-
-    /**
-     * Creates generated transfer object for
-     * {@link org.opendaylight.yangtools.yang.binding.BaseIdentity BaseIdentity}
-     *
-     * @return generated transfer object which is used as extension when YANG
-     *         <code>identity</code> is mapped to generated TO
-     */
-    public static GeneratedTransferObject getBaseIdentityTO() {
-        Class<BaseIdentity> cls = BaseIdentity.class;
-        GeneratedTOBuilderImpl gto = new GeneratedTOBuilderImpl(cls.getPackage().getName(), cls.getSimpleName());
-        return gto.toInstance();
     }
 
     /**
