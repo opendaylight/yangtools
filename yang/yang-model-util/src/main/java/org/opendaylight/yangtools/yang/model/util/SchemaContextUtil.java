@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -497,7 +500,7 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(m != null, "Failed to find module for node {} in context {}", node, ctx);
 
         for (final UsesNode u : m.getUses()) {
-            final SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPath());
+            final SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPathFromRoot());
             Preconditions.checkArgument(targetGrouping instanceof GroupingDefinition,
                     "Failed to generate code for augment in %s", u);
 
@@ -624,7 +627,7 @@ public final class SchemaContextUtil {
     }
 
     private static DataSchemaNode getResultFromUses(final UsesNode u, final String currentName, final SchemaContext ctx) {
-        SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPath());
+        SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPathFromRoot());
 
         Preconditions.checkArgument(targetGrouping instanceof GroupingDefinition,
                 "Failed to generate code for augment in %s", u);
@@ -866,16 +869,14 @@ public final class SchemaContextUtil {
             ++colCount;
         }
 
-        final List<QName> absolutePath = new LinkedList<QName>();
-        final List<QName> path = leafrefParentNode.getPath().getPath();
-        if (path != null) {
-            int lenght = path.size() - colCount;
-            absolutePath.addAll(path.subList(0, lenght));
-            while (it.hasNext()) {
-                absolutePath.add(stringPathPartToQName(context, module, it.next()));
-            }
-        }
-
-        return absolutePath;
+        final ImmutableList<QName> relative = ImmutableList.copyOf(
+                Iterators.transform(it, new Function<String, QName>() {
+                    @Override
+                    public QName apply(final String input) {
+                        return stringPathPartToQName(context, module, input);
+                    }
+                }));
+        final Iterable<QName> parent = leafrefParentNode.getPath().getPathFromRoot();
+        return Iterables.concat(Iterables.limit(parent, Iterables.size(parent) - colCount), relative);
     }
 }
