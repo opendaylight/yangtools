@@ -7,6 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,17 +43,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 /**
  * @author michal.rehak
  *
  */
 public abstract class NodeUtils {
-
+    private static final Joiner DOT_JOINER = Joiner.on(".");
     private static final Logger LOG = LoggerFactory.getLogger(NodeUtils.class);
+    private static final Function<QName, String> LOCALNAME_FUNCTION = new Function<QName, String>() {
+        @Override
+        public String apply(final QName input) {
+            return input.getLocalName();
+        }
+    };
 
     /**
      *
@@ -66,7 +74,7 @@ public abstract class NodeUtils {
             tmpNode = tmpNode.getParent();
         }
 
-        return Joiner.on(".").join(breadCrumbs);
+        return DOT_JOINER.join(breadCrumbs);
     }
 
     /**
@@ -177,7 +185,7 @@ public abstract class NodeUtils {
         while (!jobQueue.isEmpty()) {
             DataSchemaNode dataSchema = jobQueue.pop();
             if (dataSchema instanceof ListSchemaNode) {
-                mapOfLists.put(schemaPathToPath(dataSchema.getPath().getPath()), (ListSchemaNode) dataSchema);
+                mapOfLists.put(schemaPathToPath(dataSchema.getPath().getPathFromRoot()), (ListSchemaNode) dataSchema);
             }
 
             if (dataSchema instanceof DataNodeContainer) {
@@ -192,12 +200,8 @@ public abstract class NodeUtils {
      * @param qNamesPath
      * @return path
      */
-    private static String schemaPathToPath(final List<QName> qNamesPath) {
-        List<String> pathSeed = new ArrayList<>();
-        for (QName qNameItem : qNamesPath) {
-            pathSeed.add(qNameItem.getLocalName());
-        }
-        return Joiner.on(".").join(pathSeed);
+    private static String schemaPathToPath(final Iterable<QName> qNamesPath) {
+        return DOT_JOINER.join(Iterables.transform(qNamesPath, LOCALNAME_FUNCTION));
     }
 
     /**
