@@ -453,7 +453,7 @@ class LazyGeneratedCodecRegistry implements //
     private void resetDispatchCodecsAdaptation() {
         synchronized (dispatchCodecs) {
             for (LocationAwareDispatchCodec<?> codec : dispatchCodecs.values()) {
-                codec.resetAdaptation();
+                codec.resetCodec(currentSchema, instanceIdentifierCodec, classLoadingStrategy);
             }
         }
     }
@@ -603,10 +603,13 @@ class LazyGeneratedCodecRegistry implements //
     }
 
     @SuppressWarnings("rawtypes")
-    private abstract class LocationAwareDispatchCodec<T extends LocationAwareBindingCodec> implements BindingCodec {
+    private static abstract class LocationAwareDispatchCodec<T extends LocationAwareBindingCodec> implements BindingCodec {
 
         private final Map<Class, T> implementations = Collections.synchronizedMap(new WeakHashMap<Class, T>());
         private final Set<InstanceIdentifier<?>> adaptedForPaths = new HashSet<>();
+        private SchemaContext currentSchema;
+        private InstanceIdentifierCodec instanceIdentifierCodec;
+        private ClassLoadingStrategy classLoadingStrategy;
 
         protected Map<Class, T> getImplementations() {
             return implementations;
@@ -621,8 +624,12 @@ class LazyGeneratedCodecRegistry implements //
          * of new codecs and/or removal of existing ones.
          *
          */
-        public synchronized void resetAdaptation() {
+        public synchronized void resetCodec(SchemaContext currentSchema, InstanceIdentifierCodec instanceIdentifierCodec,
+                                            ClassLoadingStrategy classLoadingStrategy) {
             adaptedForPaths.clear();
+            this.currentSchema = currentSchema;
+            this.instanceIdentifierCodec = instanceIdentifierCodec;
+            this.classLoadingStrategy = classLoadingStrategy;
             resetAdaptationImpl();
         }
 
@@ -1010,7 +1017,7 @@ class LazyGeneratedCodecRegistry implements //
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    class AugmentableDispatchCodec extends LocationAwareDispatchCodec<AugmentationCodecWrapper> {
+    static class AugmentableDispatchCodec extends LocationAwareDispatchCodec<AugmentationCodecWrapper> {
 
         private final Class augmentableType;
 

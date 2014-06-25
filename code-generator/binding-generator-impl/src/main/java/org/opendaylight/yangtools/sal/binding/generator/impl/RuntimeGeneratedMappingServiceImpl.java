@@ -112,7 +112,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     public RuntimeGeneratedMappingServiceImpl(final ClassPool pool, final ClassLoadingStrategy strat) {
         this.pool = Preconditions.checkNotNull(pool);
         this.classLoadingStrategy = Preconditions.checkNotNull(strat);
-
+        // FIXME: this escapes constructor
         binding = new TransformerGenerator(this, pool);
         registry = new LazyGeneratedCodecRegistry(this, binding, classLoadingStrategy);
         binding.setListener(registry);
