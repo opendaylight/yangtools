@@ -6,8 +6,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
+import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -134,5 +134,7 @@ public interface DataNodeContainerBuilder extends Builder {
      */
     @Override
     DataNodeContainer build();
+
+    Map<QName, DataSchemaNode> getChildNodes();
 
 }
