@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +51,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
+    private static final Splitter COLON_SPLITTER = Splitter.on(':');
+    private static final Splitter SLASH_SPLITTER = Splitter.on('/');
 
     private SchemaContextUtil() {
     }
@@ -738,8 +742,7 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
 
         List<QName> path = new LinkedList<QName>();
-        String[] prefixedPath = xpath.split("/");
-        for (String pathComponent : prefixedPath) {
+        for (String pathComponent : SLASH_SPLITTER.split(xpath)) {
             if (!pathComponent.isEmpty()) {
                 path.add(stringPathPartToQName(context, parentModule, pathComponent));
             }
@@ -773,14 +776,18 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(prefixedPathPart != null, "Prefixed Path Part cannot be NULL!");
 
-        if (prefixedPathPart.contains(":")) {
-            String[] prefixedName = prefixedPathPart.split(":");
-            Module module = resolveModuleForPrefix(context, parentModule, prefixedName[0]);
+        if (prefixedPathPart.indexOf(':') != -1) {
+            final Iterator<String> prefixedName = COLON_SPLITTER.split(prefixedPathPart).iterator();
+            final String modulePrefix = prefixedName.next();
+
+            Module module = resolveModuleForPrefix(context, parentModule, modulePrefix);
             Preconditions.checkArgument(module != null, "Failed to resolve xpath: no module found for prefix %s in module %s",
-                    prefixedName[0], parentModule.getName());
-            return new QName(module.getNamespace(), module.getRevision(), prefixedName[1]);
+                    modulePrefix, parentModule.getName());
+
+            // FIXME: Module should have a QNameModule handle
+            return QName.create(module.getNamespace(), module.getRevision(), prefixedName.next());
         } else {
-            return new QName(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
+            return QName.create(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
         }
     }
 
@@ -850,25 +857,23 @@ public final class SchemaContextUtil {
         Preconditions.checkState(leafrefParentNode.getPath() != null,
                 "Schema Path reference for Leafref cannot be NULL");
 
-        List<QName> absolutePath = new LinkedList<QName>();
-        String strXPath = relativeXPath.toString();
-        String[] xpaths = strXPath.split("/");
+        final Iterator<String> it = SLASH_SPLITTER.split(relativeXPath.toString()).iterator();
 
+        // Find out how many "parent" components there are
+        // FIXME: is .contains() the right check here?
         int colCount = 0;
-        while (xpaths[colCount].contains("..")) {
-            colCount = colCount + 1;
+        while (it.hasNext() && it.next().contains("..")) {
+            ++colCount;
         }
+
+        final List<QName> absolutePath = new LinkedList<QName>();
         List<QName> path = leafrefParentNode.getPath().getPath();
         if (path != null) {
             int lenght = path.size() - colCount;
             absolutePath.addAll(path.subList(0, lenght));
-            List<String> xpathsList = Arrays.asList(xpaths);
-            List<String> sublistedXPath = xpathsList.subList(colCount, xpaths.length);
-            List<QName> sublist = new ArrayList<>();
-            for (String pathPart : sublistedXPath) {
-                sublist.add(stringPathPartToQName(context, module, pathPart));
+            while (it.hasNext()) {
+                absolutePath.add(stringPathPartToQName(context, module, it.next()));
             }
-            absolutePath.addAll(sublist);
         }
 
         return absolutePath;
