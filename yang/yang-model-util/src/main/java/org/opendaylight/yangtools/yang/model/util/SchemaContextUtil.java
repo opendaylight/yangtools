@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +19,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -215,13 +218,10 @@ public final class SchemaContextUtil {
         Preconditions.checkState(schemaNode.getPath() != null, "Schema Path for Schema Node is not "
                 + "set properly (Schema Path is NULL)");
 
-        List<QName> qnamedPath = schemaNode.getPath().getPath();
-        if (qnamedPath == null || qnamedPath.isEmpty()) {
-            throw new IllegalStateException("Schema Path contains invalid state of path parts."
-                    + "The Schema Path MUST contain at least ONE QName which defines namespace and Local name"
-                    + "of path.");
-        }
-        QName qname = qnamedPath.get(qnamedPath.size() - 1);
+        final QName qname = Iterables.getFirst(schemaNode.getPath().getPathTowardsRoot(), null);
+        Preconditions.checkState(qname != null,
+                "Schema Path contains invalid state of path parts. " +
+                "The Schema Path MUST contain at least ONE QName which defines namespace and Local name of path.");
         return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
     }
 
@@ -521,13 +521,8 @@ public final class SchemaContextUtil {
             Object parent = null;
 
             // create schema path of parent node
-            SchemaPath sp = node.getPath();
-            List<QName> newNames = new ArrayList<>(sp.getPath());
-            // parentPath = nodePath - lastQName
-            newNames.remove(newNames.size() - 1);
-            SchemaPath newSp = SchemaPath.create(newNames, sp.isAbsolute());
-            // find parent node by its schema path
-            parent = findDataSchemaNode(ctx, newSp);
+            SchemaPath sp = node.getPath().getParent();
+            parent = findDataSchemaNode(ctx, sp);
 
             do {
                 tmpPath.add(currentName);
@@ -587,11 +582,7 @@ public final class SchemaContextUtil {
         AugmentationSchema augment = null;
         do {
             SchemaPath sp = ((SchemaNode) parent).getPath();
-            List<QName> names = sp.getPath();
-            List<QName> newNames = new ArrayList<>(names);
-            newNames.remove(newNames.size() - 1);
-            SchemaPath newSp = SchemaPath.create(newNames, sp.isAbsolute());
-            parent = findDataSchemaNode(ctx, newSp);
+            parent = findDataSchemaNode(ctx, sp.getParent());
             if (parent instanceof AugmentationTarget) {
                 tmpPath.add(currentName);
                 tmpTree.add((SchemaNode) currentNode);
@@ -640,7 +631,7 @@ public final class SchemaContextUtil {
     }
 
     private static Module getParentModule(final SchemaNode node, final SchemaContext ctx) {
-        QName qname = node.getPath().getPath().get(0);
+        QName qname = node.getPath().getPathFromRoot().iterator().next();
         URI namespace = qname.getNamespace();
         Date revision = qname.getRevision();
         return ctx.findModuleByNamespaceAndRevision(namespace, revision);
