@@ -16,30 +16,22 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDataNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
+import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilder implements DataSchemaNodeBuilder,
+public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DataSchemaNodeBuilder,
         AugmentationTargetBuilder {
     private ListSchemaNodeImpl instance;
     private boolean userOrdered;
@@ -47,9 +39,6 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     private List<QName> keyDefinition;
     // SchemaNode args
     private SchemaPath schemaPath;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
     // DataSchemaNode args
     private boolean augmenting;
     private boolean addedByUses;
@@ -67,16 +56,13 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
 
     public ListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final ListSchemaNode base) {
-        super(moduleName, line, qname);
+        super(moduleName, line, qname,path,base);
         this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
         constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
         keyDefinition = ImmutableList.copyOf(base.getKeyDefinition());
         userOrdered = base.isUserOrdered();
 
-        description = base.getDescription();
-        reference = base.getReference();
-        status = base.getStatus();
         augmenting = base.isAugmenting();
         addedByUses = base.isAddedByUses();
         configuration = base.isConfiguration();
@@ -84,14 +70,10 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         URI ns = qname.getNamespace();
         Date rev = qname.getRevision();
         String pref = qname.getPrefix();
-        addedChildNodes.addAll(BuilderUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
-        addedGroupings.addAll(BuilderUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
-        addedTypedefs.addAll(BuilderUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
         addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
                 rev, pref));
 
         augmentations.addAll(base.getAvailableAugmentations());
-        usesNodes.addAll(base.getUses());
     }
 
     @Override
@@ -99,23 +81,14 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         if (instance != null) {
             return instance;
         }
+        buildChildren();
+        instance = new ListSchemaNodeImpl(qname, schemaPath,this);
 
-        instance = new ListSchemaNodeImpl(qname, schemaPath);
-
-        instance.description = description;
-        instance.reference = reference;
-        instance.status = status;
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
         instance.constraints = constraints.toInstance();
         instance.userOrdered = userOrdered;
-
-        // CHILD NODES
-        for (DataSchemaNodeBuilder node : addedChildNodes) {
-            childNodes.put(node.getQName(), node.build());
-        }
-        instance.childNodes = ImmutableSet.copyOf(childNodes.values());
 
         // KEY
         if (keys == null) {
@@ -127,24 +100,6 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
             }
             instance.keyDefinition = ImmutableList.copyOf(keyDefinition);
         }
-
-        // GROUPINGS
-        for (GroupingBuilder builder : addedGroupings) {
-            groupings.add(builder.build());
-        }
-        instance.groupings = ImmutableSet.copyOf(groupings);
-
-        // TYPEDEFS
-        for (TypeDefinitionBuilder entry : addedTypedefs) {
-            typedefs.add(entry.build());
-        }
-        instance.typeDefinitions = ImmutableSet.copyOf(typedefs);
-
-        // USES
-        for (UsesNodeBuilder builder : addedUsesNodes) {
-            usesNodes.add(builder.build());
-        }
-        instance.uses = ImmutableSet.copyOf(usesNodes);
 
         // AUGMENTATIONS
         for (AugmentationSchemaBuilder builder : augmentationBuilders) {
@@ -162,20 +117,8 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     }
 
     @Override
-    public Set<TypeDefinitionBuilder> getTypeDefinitionBuilders() {
-        return addedTypedefs;
-    }
-
-    @Override
-    public void addTypedef(final TypeDefinitionBuilder type) {
-        String typeName = type.getQName().getLocalName();
-        for (TypeDefinitionBuilder addedTypedef : addedTypedefs) {
-            if (addedTypedef.getQName().getLocalName().equals(typeName)) {
-                throw new YangParseException(getModuleName(), type.getLine(), "Can not add typedef '" + typeName
-                        + "': typedef with same name already declared at line " + addedTypedef.getLine());
-            }
-        }
-        addedTypedefs.add(type);
+    protected String getStatementName() {
+        return "list";
     }
 
     @Override
@@ -186,36 +129,6 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
     @Override
     public void setPath(final SchemaPath path) {
         this.schemaPath = path;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        this.reference = reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
-    }
-
-    @Override
-    public void setStatus(final Status status) {
-        this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
     @Override
@@ -320,26 +233,20 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         return "list " + qname.getLocalName();
     }
 
-    private static final class ListSchemaNodeImpl implements ListSchemaNode {
+    private static final class ListSchemaNodeImpl extends AbstractDocumentedDataNodeContainer implements ListSchemaNode {
         private final QName qname;
         private final SchemaPath path;
-        private String description;
-        private String reference;
-        private Status status;
         private ImmutableList<QName> keyDefinition;
         private boolean augmenting;
         private boolean addedByUses;
         private boolean configuration;
         private ConstraintDefinition constraints;
         private ImmutableSet<AugmentationSchema> augmentations;
-        private ImmutableSet<DataSchemaNode> childNodes;
-        private ImmutableSet<GroupingDefinition> groupings;
-        private ImmutableSet<TypeDefinition<?>> typeDefinitions;
-        private ImmutableSet<UsesNode> uses;
         private ImmutableList<UnknownSchemaNode> unknownNodes;
         private boolean userOrdered;
 
-        private ListSchemaNodeImpl(final QName qname, final SchemaPath path) {
+        private ListSchemaNodeImpl(final QName qname, final SchemaPath path, final ListSchemaNodeBuilder builder) {
+            super(builder);
             this.qname = qname;
             this.path = path;
         }
@@ -352,21 +259,6 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         @Override
         public SchemaPath getPath() {
             return path;
-        }
-
-        @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String getReference() {
-            return reference;
-        }
-
-        @Override
-        public Status getStatus() {
-            return status;
         }
 
         @Override
@@ -397,36 +289,6 @@ public final class ListSchemaNodeBuilder extends AbstractDataNodeContainerBuilde
         @Override
         public Set<AugmentationSchema> getAvailableAugmentations() {
             return augmentations;
-        }
-
-        @Override
-        public Set<DataSchemaNode> getChildNodes() {
-            return childNodes;
-        }
-
-        @Override
-        public Set<GroupingDefinition> getGroupings() {
-            return groupings;
-        }
-
-        @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
-            return typeDefinitions;
-        }
-
-        @Override
-        public Set<UsesNode> getUses() {
-            return uses;
-        }
-
-        @Override
-        public DataSchemaNode getDataChildByName(final QName name) {
-            return getChildNode(childNodes, name);
-        }
-
-        @Override
-        public DataSchemaNode getDataChildByName(final String name) {
-            return getChildNode(childNodes, name);
         }
 
         @Override
