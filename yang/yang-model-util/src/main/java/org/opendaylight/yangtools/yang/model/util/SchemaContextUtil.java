@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -187,7 +188,7 @@ public final class SchemaContextUtil {
 
         SchemaPath actualNodePath = actualSchemaNode.getPath();
         if (actualNodePath != null) {
-            List<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
+            Iterable<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
 
             if (qnamePath != null) {
                 return findNodeInSchemaContext(context, qnamePath);
@@ -226,8 +227,8 @@ public final class SchemaContextUtil {
         return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
     }
 
-    public static SchemaNode findNodeInSchemaContext(final SchemaContext context, final List<QName> path) {
-        final QName current = path.get(0);
+    public static SchemaNode findNodeInSchemaContext(final SchemaContext context, final Iterable<QName> path) {
+        final QName current = path.iterator().next();
 
         LOG.trace("Looking up module {} in context {}", current, path);
         final Module module = context.findModuleByNamespaceAndRevision(current.getNamespace(), current.getRevision());
@@ -265,8 +266,8 @@ public final class SchemaContextUtil {
         return (GroupingDefinition) currentParent;
     }
 
-    private static SchemaNode findNodeInModule(final Module module, final List<QName> path) {
-        final QName current = path.get(0);
+    private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {
+        final QName current = path.iterator().next();
 
         LOG.trace("Looking for data container {} in module {}", current, module);
         SchemaNode parent = module.getDataChildByName(current);
@@ -308,14 +309,14 @@ public final class SchemaContextUtil {
         return null;
     }
 
-    private static SchemaNode findNodeInGrouping(final GroupingDefinition grouping, final List<QName> path) {
-        if (path.isEmpty()) {
+    private static SchemaNode findNodeInGrouping(final GroupingDefinition grouping, final Iterable<QName> path) {
+        final QName current = Iterables.getFirst(path, null);
+        if (current == null) {
             LOG.debug("Found grouping {}", grouping);
             return grouping;
         }
 
         LOG.trace("Looking for path {} in grouping {}", path, grouping);
-        final QName current = path.get(0);
         final DataSchemaNode node = grouping.getDataChildByName(current);
         if (node == null) {
             LOG.debug("No node matching {} found in grouping {}", current, grouping);
@@ -325,14 +326,14 @@ public final class SchemaContextUtil {
         return findNode(node, nextLevel(path));
     }
 
-    private static SchemaNode findNodeInRpc(final RpcDefinition rpc, final List<QName> path) {
-        if (path.isEmpty()) {
+    private static SchemaNode findNodeInRpc(final RpcDefinition rpc, final Iterable<QName> path) {
+        final QName current = Iterables.getFirst(path, null);
+        if (current == null) {
             LOG.debug("Found RPC {}", rpc);
             return rpc;
         }
 
         LOG.trace("Looking for path {} in rpc {}", path, rpc);
-        final QName current = path.get(0);
         switch (current.getLocalName()) {
         case "input":
             return findNode(rpc.getInput(), nextLevel(path));
@@ -344,14 +345,14 @@ public final class SchemaContextUtil {
         }
     }
 
-    private static SchemaNode findNodeInNotification(final NotificationDefinition ntf, final List<QName> path) {
-        if (path.isEmpty()) {
+    private static SchemaNode findNodeInNotification(final NotificationDefinition ntf, final Iterable<QName> path) {
+        final QName current = Iterables.getFirst(path, null);
+        if (current == null) {
             LOG.debug("Found notification {}", ntf);
             return ntf;
         }
 
         LOG.trace("Looking for path {} in notification {}", path, ntf);
-        final QName current = path.get(0);
         DataSchemaNode node = ntf.getDataChildByName(current);
         if (node == null) {
             LOG.debug("No node matching {} found in notification {}", current, ntf);
@@ -361,11 +362,11 @@ public final class SchemaContextUtil {
         return findNode(node, nextLevel(path));
     }
 
-    private static SchemaNode findNode(final ChoiceNode parent, final List<QName> path) {
-        if (path.isEmpty()) {
+    private static SchemaNode findNode(final ChoiceNode parent, final Iterable<QName> path) {
+        final QName current = Iterables.getFirst(path, null);
+        if (current == null) {
             return parent;
         }
-        QName current = path.get(0);
         ChoiceCaseNode node = parent.getCaseNodeByName(current);
         if (node != null) {
             return findNodeInCase(node, nextLevel(path));
@@ -373,12 +374,12 @@ public final class SchemaContextUtil {
         return null;
     }
 
-    private static SchemaNode findNode(final ContainerSchemaNode parent, final List<QName> path) {
-        if (path.isEmpty()) {
+    private static SchemaNode findNode(final ContainerSchemaNode parent, final Iterable<QName> path) {
+        final QName current = Iterables.getFirst(path, null);
+        if (current == null) {
             return parent;
         }
 
-        final QName current = path.get(0);
         final DataSchemaNode node = parent.getDataChildByName(current);
         if (node == null) {
             LOG.debug("Failed to find {} in parent {}", path, parent);
@@ -388,12 +389,12 @@ public final class SchemaContextUtil {
         return findNode(node, nextLevel(path));
     }
 
-    private static SchemaNode findNode(final ListSchemaNode parent, final List<QName> path) {
-        if (path.isEmpty()) {
+    private static SchemaNode findNode(final ListSchemaNode parent, final Iterable<QName> path) {
+        final QName current = Iterables.getFirst(path, null);
+        if (current == null) {
             return parent;
         }
 
-        QName current = path.get(0);
         DataSchemaNode node = parent.getDataChildByName(current);
         if (node == null) {
             LOG.debug("Failed to find {} in parent {}", path, parent);
@@ -402,9 +403,9 @@ public final class SchemaContextUtil {
         return findNode(node, nextLevel(path));
     }
 
-    private static SchemaNode findNode(final DataSchemaNode parent, final List<QName> path) {
+    private static SchemaNode findNode(final DataSchemaNode parent, final Iterable<QName> path) {
         final SchemaNode node;
-        if (!path.isEmpty()) {
+        if (!Iterables.isEmpty(path)) {
             if (parent instanceof ContainerSchemaNode) {
                 node = findNode((ContainerSchemaNode) parent, path);
             } else if (parent instanceof ListSchemaNode) {
@@ -426,12 +427,12 @@ public final class SchemaContextUtil {
         return node;
     }
 
-    public static SchemaNode findNodeInCase(final ChoiceCaseNode parent, final List<QName> path) {
-        if (path.isEmpty()) {
+    public static SchemaNode findNodeInCase(final ChoiceCaseNode parent, final Iterable<QName> path) {
+        final QName current = Iterables.getFirst(path, null);
+        if (current == null) {
             return parent;
         }
 
-        QName current = path.get(0);
         DataSchemaNode node = parent.getDataChildByName(current);
         if (node == null) {
             LOG.debug("Failed to find {} in parent {}", path, parent);
@@ -449,8 +450,8 @@ public final class SchemaContextUtil {
         return null;
     }
 
-    private static List<QName> nextLevel(final List<QName> path) {
-        return path.subList(1, path.size());
+    private static Iterable<QName> nextLevel(final Iterable<QName> path) {
+        return Iterables.skip(path, 1);
     }
 
     public static NotificationDefinition getNotificationByName(final Module module, final QName name) {
@@ -845,7 +846,7 @@ public final class SchemaContextUtil {
      *            Schema Path for Leafref
      * @return list of QName
      */
-    private static List<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
+    private static Iterable<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
             final RevisionAwareXPath relativeXPath, final SchemaNode leafrefParentNode) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
@@ -866,7 +867,7 @@ public final class SchemaContextUtil {
         }
 
         final List<QName> absolutePath = new LinkedList<QName>();
-        List<QName> path = leafrefParentNode.getPath().getPath();
+        final List<QName> path = leafrefParentNode.getPath().getPath();
         if (path != null) {
             int lenght = path.size() - colCount;
             absolutePath.addAll(path.subList(0, lenght));
