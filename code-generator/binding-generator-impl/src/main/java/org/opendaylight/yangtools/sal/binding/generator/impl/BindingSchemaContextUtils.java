@@ -161,4 +161,33 @@ public class BindingSchemaContextUtils {
         return augmentations;
     }
 
+    public static Optional<ChoiceNode> findInstantiatedChoice(final DataNodeContainer parent, final Class<?> choiceClass) {
+        return findInstantiatedChoice(parent, BindingReflections.findQName(choiceClass));
+    }
+
+    public static Optional<ChoiceNode> findInstantiatedChoice(final DataNodeContainer ctxNode, final QName choiceName) {
+        DataSchemaNode potential = ctxNode.getDataChildByName(choiceName);
+        if (potential == null) {
+            potential = ctxNode.getDataChildByName(choiceName.getLocalName());
+        }
+
+        if (potential instanceof ChoiceNode) {
+            return Optional.of((ChoiceNode) potential);
+        }
+
+        return Optional.absent();
+    }
+
+    public static Optional<ChoiceCaseNode> findInstantiatedCase(final ChoiceNode instantiatedChoice, final ChoiceCaseNode schema) {
+        ChoiceCaseNode potential = instantiatedChoice.getCaseNodeByName(schema.getQName());
+        if (potential != null) {
+            return Optional.of(potential);
+        }
+        // FIXME: Probably requires more extensive check
+        // e.g. we have one choice and two augmentations from different
+        // modules using same local name
+        // but different namespace / contents
+        return Optional.fromNullable(instantiatedChoice.getCaseNodeByName(schema.getQName().getLocalName()));
+    }
+
 }

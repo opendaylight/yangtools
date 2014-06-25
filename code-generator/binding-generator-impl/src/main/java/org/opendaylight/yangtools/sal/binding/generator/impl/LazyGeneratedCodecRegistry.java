@@ -100,6 +100,10 @@ class LazyGeneratedCodecRegistry implements //
             .synchronizedMap(new WeakHashMap<Class<?>, AugmentableDispatchCodec>());
     private static final Map<Class<?>, AugmentationCodecWrapper<?>> augmentationCodecs = Collections
             .synchronizedMap(new WeakHashMap<Class<?>, AugmentationCodecWrapper<?>>());
+
+    private static final Map<Class<?>, LocationAwareDispatchCodec<?>> dispatchCodecs = Collections
+            .synchronizedMap(new WeakHashMap<Class<?>, LocationAwareDispatchCodec<?>>());
+
     private static final Map<Class<?>, QName> identityQNames = Collections
             .synchronizedMap(new WeakHashMap<Class<?>, QName>());
     private static final Map<QName, Type> qnamesToIdentityMap = new ConcurrentHashMap<>();
@@ -433,6 +437,25 @@ class LazyGeneratedCodecRegistry implements //
     @Override
     public void onGlobalContextUpdated(final SchemaContext context) {
         currentSchema = context;
+        resetDispatchCodecsAdaptation();
+
+    }
+
+    /**
+     * Resets / clears adaptation for all schema context sensitive codecs in
+     * order for them to adapt to new schema context and maybe newly discovered
+     * augmentations This ensure correct behaviour for augmentations and
+     * augmented cases for preexisting codecs, which augmentations were
+     * introduced at later point in time.
+     *
+     * This also makes removed augmentations unavailable.
+     */
+    private void resetDispatchCodecsAdaptation() {
+        synchronized (dispatchCodecs) {
+            for (LocationAwareDispatchCodec<?> codec : dispatchCodecs.values()) {
+                codec.resetAdaptation();
+            }
+        }
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -445,6 +468,9 @@ class LazyGeneratedCodecRegistry implements //
         PublicChoiceCodecImpl<?> newCodec = new PublicChoiceCodecImpl(delegate);
         DispatchChoiceCodecImpl dispatchCodec = new DispatchChoiceCodecImpl(choiceClass);
         choiceCodecs.put(choiceClass, newCodec);
+        synchronized (dispatchCodecs) {
+            dispatchCodecs.put(choiceClass, dispatchCodec);
+        }
         CodecMapping.setDispatchCodec(choiceCodec, dispatchCodec);
     }
 
@@ -473,6 +499,9 @@ class LazyGeneratedCodecRegistry implements //
         }
         ret = new AugmentableDispatchCodec(dataClass);
         augmentableCodecs.put(dataClass, ret);
+        synchronized (dispatchCodecs) {
+            dispatchCodecs.put(dataClass, ret);
+        }
         ret.tryToLoadImplementations();
         return ret;
     }
@@ -567,7 +596,7 @@ class LazyGeneratedCodecRegistry implements //
 
     private interface LocationAwareBindingCodec<P, I> extends BindingCodec<P, I> {
 
-        boolean isApplicable(InstanceIdentifier<?> location);
+        boolean isApplicable(InstanceIdentifier<?> parentPath, CompositeNode data);
 
         public Class<?> getDataType();
 
@@ -583,6 +612,25 @@ class LazyGeneratedCodecRegistry implements //
             return implementations;
         }
 
+        /**
+         * Resets codec adaptation based on location and schema context.
+         *
+         * This is required if new cases / augmentations were introduced or
+         * removed and first use of codec is triggered by invocation from DOM to
+         * Java, so the implementations may change and this may require loading
+         * of new codecs and/or removal of existing ones.
+         *
+         */
+        public synchronized void resetAdaptation() {
+            adaptedForPaths.clear();
+            resetAdaptationImpl();
+        }
+
+        protected void resetAdaptationImpl() {
+            // Intentionally NOOP, subclasses may specify their custom
+            // behaviour.
+        }
+
         protected void addImplementation(final T implementation) {
             implementations.put(implementation.getDataType(), implementation);
         }
@@ -591,6 +639,40 @@ class LazyGeneratedCodecRegistry implements //
         public final Object deserialize(final Object input) {
             throw new UnsupportedOperationException("Invocation of deserialize without Tree location is unsupported");
         }
+
+        @Override
+        public final Object deserialize(final Object parent, final InstanceIdentifier parentPath) {
+            adaptForPath(parentPath);
+            Preconditions.checkArgument(parent instanceof CompositeNode, "node must be of CompositeNode type.");
+            CompositeNode parentData = (CompositeNode) parent;
+            ArrayList<T> applicable = new ArrayList<>(implementations.size());
+
+            /*
+             * Codecs are filtered to only ones, which
+             * are applicable in supplied parent context.
+             *
+             */
+            for (T impl : getImplementations().values()) {
+                @SuppressWarnings("unchecked")
+                boolean codecApplicable = impl.isApplicable(parentPath, parentData);
+                if (codecApplicable) {
+                    applicable.add(impl);
+                }
+            }
+            LOG.trace("{}: Deserializing mixins from {}, Schema Location {}, Applicable Codecs: {}, All Codecs: {}",this,parent,parentPath,applicable,getImplementations().values());
+
+            /* In case of none is applicable, we return
+             * null. Since there is no mixin which
+             * is applicable in this location.
+            */
+            if(applicable.isEmpty()) {
+                return null;
+            }
+            return deserializeImpl(parentData, parentPath, applicable);
+        }
+
+        protected abstract Object deserializeImpl(final CompositeNode input, final InstanceIdentifier<?> parentPath,
+                Iterable<T> applicableCodecs);
 
         @Override
         public Object serialize(final Object input) {
@@ -615,6 +697,7 @@ class LazyGeneratedCodecRegistry implements //
             if (adaptedForPaths.contains(path)) {
                 return;
             }
+            LOG.info("Adapting mixin codec {} for path {}",this,path);
             /**
              * We search in schema context if the use of this location aware
              * codec (augmentable codec, case codec) makes sense on provided
@@ -671,11 +754,6 @@ class LazyGeneratedCodecRegistry implements //
         private final ChoiceCaseNode schema;
         private final Map<InstanceIdentifier<?>, ChoiceCaseNode> instantiatedLocations;
         private final Class<?> dataType;
-
-        @Override
-        public boolean isApplicable(final InstanceIdentifier location) {
-            return instantiatedLocations.containsKey(location);
-        }
 
         public ChoiceCaseCodecImpl(final Class<?> caseClass, final ChoiceCaseNode caseNode,
                 final BindingCodec newInstance) {
@@ -751,7 +829,8 @@ class LazyGeneratedCodecRegistry implements //
             }
         }
 
-        public boolean isAcceptable(final InstanceIdentifier path, final CompositeNode input) {
+        @Override
+        public boolean isApplicable(final InstanceIdentifier path, final CompositeNode input) {
             ChoiceCaseNode instantiatedSchema = null;
             synchronized (instantiatedLocations) {
                 instantiatedSchema = instantiatedLocations.get(path);
@@ -762,7 +841,7 @@ class LazyGeneratedCodecRegistry implements //
             return checkAgainstSchema(instantiatedSchema, input);
         }
 
-        protected boolean isAugmenting(final QName choiceName,final QName proposedQName) {
+        protected boolean isAugmenting(final QName choiceName, final QName proposedQName) {
             if (schema.isAugmenting()) {
                 return true;
             }
@@ -772,11 +851,13 @@ class LazyGeneratedCodecRegistry implements //
                 return true;
             }
             if (!parentQName.equals(choiceName)) {
-                // This item is instantiation of choice via uses in other YANG module
-                if(choiceName.getNamespace().equals(schema.getQName())) {
+                // This item is instantiation of choice via uses in other YANG
+                // module
+                if (choiceName.getNamespace().equals(schema.getQName())) {
                     // Original definition of grouping is in same namespace
                     // as original definition of case
-                    // so for sure case is introduced via instantiation of grouping
+                    // so for sure case is introduced via instantiation of
+                    // grouping
                     return false;
                 }
                 // Since we are still here, that means case has same namespace
@@ -786,6 +867,12 @@ class LazyGeneratedCodecRegistry implements //
                 return true;
             }
             return false;
+        }
+
+        @Override
+        public String toString() {
+            return "ChoiceCaseCodec [case=" + dataType
+                    + ", knownLocations=" + instantiatedLocations.keySet() + "]";
         }
     }
 
@@ -830,21 +917,12 @@ class LazyGeneratedCodecRegistry implements //
         }
 
         @Override
-        public Object deserialize(final Object input, @SuppressWarnings("rawtypes") final InstanceIdentifier path) {
-            adaptForPath(path);
-
-            if (input instanceof CompositeNode) {
-                List<Entry<Class, ChoiceCaseCodecImpl<?>>> codecs = new ArrayList<>(getImplementations().entrySet());
-                for (Entry<Class, ChoiceCaseCodecImpl<?>> codec : codecs) {
-                    ChoiceCaseCodecImpl<?> caseCodec = codec.getValue();
-                    if (caseCodec.isAcceptable(path, (CompositeNode) input)) {
-                        ValueWithQName<?> value = caseCodec.deserialize((CompositeNode) input, path);
-                        if (value != null) {
-                            return value.getValue();
-                        }
-                        return null;
-                    }
-                }
+        public Object deserializeImpl(final CompositeNode input, final InstanceIdentifier<?> path,
+                final Iterable<ChoiceCaseCodecImpl<?>> codecs) {
+            ChoiceCaseCodecImpl<?> caseCodec = Iterables.getOnlyElement(codecs);
+            ValueWithQName<?> value = caseCodec.deserialize(input, path);
+            if (value != null) {
+                return value.getValue();
             }
             return null;
         }
@@ -854,22 +932,20 @@ class LazyGeneratedCodecRegistry implements //
         public Object serialize(final Object input) {
             Preconditions.checkArgument(input instanceof Map.Entry<?, ?>, "Input must be QName, Value");
             @SuppressWarnings("rawtypes")
-            QName derivedQName =  (QName) ((Map.Entry) input).getKey();
-                    @SuppressWarnings("rawtypes")
+            QName derivedQName = (QName) ((Map.Entry) input).getKey();
+            @SuppressWarnings("rawtypes")
             Object inputValue = ((Map.Entry) input).getValue();
             Preconditions.checkArgument(inputValue instanceof DataObject);
             Class<? extends DataContainer> inputType = ((DataObject) inputValue).getImplementedInterface();
             ChoiceCaseCodecImpl<?> codec = tryToLoadImplementation(inputType);
             Preconditions.checkState(codec != null, "Unable to get codec for %s", inputType);
-            if (codec.isAugmenting(choiceName,derivedQName)) {
+            if (codec.isAugmenting(choiceName, derivedQName)) {
                 // If choice is augmenting we use QName which defined this
                 // augmentation
                 return codec.getDelegate().serialize(new ValueWithQName<>(codec.getSchema().getQName(), inputValue));
             }
             return codec.getDelegate().serialize(input);
         }
-
-
 
         @SuppressWarnings("rawtypes")
         protected Optional<ChoiceCaseCodecImpl> tryToLoadImplementation(final Type potential) {
@@ -911,13 +987,13 @@ class LazyGeneratedCodecRegistry implements //
 
         @Override
         protected void adaptForPathImpl(final InstanceIdentifier<?> augTarget, final DataNodeContainer ctxNode) {
-            Optional<ChoiceNode> newChoice = findInstantiatedChoice(ctxNode, choiceName);
+            Optional<ChoiceNode> newChoice = BindingSchemaContextUtils.findInstantiatedChoice(ctxNode, choiceType);
             tryToLoadImplementations();
             Preconditions.checkState(newChoice.isPresent(), "BUG: Unable to find instantiated choice node in schema.");
             for (@SuppressWarnings("rawtypes")
             Entry<Class, ChoiceCaseCodecImpl<?>> codec : getImplementations().entrySet()) {
                 ChoiceCaseCodecImpl<?> caseCodec = codec.getValue();
-                Optional<ChoiceCaseNode> instantiatedSchema = findInstantiatedCase(newChoice.get(),
+                Optional<ChoiceCaseNode> instantiatedSchema = BindingSchemaContextUtils.findInstantiatedCase(newChoice.get(),
                         caseCodec.getSchema());
                 if (instantiatedSchema.isPresent()) {
                     caseCodec.adaptForPath(augTarget, instantiatedSchema.get());
@@ -925,29 +1001,11 @@ class LazyGeneratedCodecRegistry implements //
             }
         }
 
-        private Optional<ChoiceNode> findInstantiatedChoice(final DataNodeContainer ctxNode, final QName choiceName) {
-            DataSchemaNode potential = ctxNode.getDataChildByName(choiceName);
-            if (potential == null) {
-                potential = ctxNode.getDataChildByName(choiceName.getLocalName());
-            }
 
-            if (potential instanceof ChoiceNode) {
-                return Optional.of((ChoiceNode) potential);
-            }
 
-            return Optional.absent();
-        }
-
-        private Optional<ChoiceCaseNode> findInstantiatedCase(final ChoiceNode newChoice, final ChoiceCaseNode schema) {
-            ChoiceCaseNode potential = newChoice.getCaseNodeByName(schema.getQName());
-            if (potential != null) {
-                return Optional.of(potential);
-            }
-            // FIXME: Probably requires more extensive check
-            // e.g. we have one choice and two augmentations from different
-            // modules using same local name
-            // but different namespace / contents
-            return Optional.fromNullable(newChoice.getCaseNodeByName(schema.getQName().getLocalName()));
+        @Override
+        public String toString() {
+            return "DispatchChoiceCodecImpl [choiceType=" + choiceType + "]";
         }
     }
 
@@ -996,24 +1054,19 @@ class LazyGeneratedCodecRegistry implements //
         }
 
         @Override
-        public Map<Class, Augmentation> deserialize(final Object input, final InstanceIdentifier path) {
-            adaptForPath(path);
+        public Map<Class, Augmentation> deserializeImpl(final CompositeNode input, final InstanceIdentifier<?> path,
+                final Iterable<AugmentationCodecWrapper> codecs) {
+            LOG.trace("{}: Going to deserialize augmentations from {} in location {}. Available codecs {}",this,input,path,codecs);
             Map<Class, Augmentation> ret = new HashMap<>();
-
-            if (input instanceof CompositeNode) {
-                List<Entry<Class, AugmentationCodecWrapper>> codecs = new ArrayList<>(getImplementations().entrySet());
-                for (Entry<Class, AugmentationCodecWrapper> codec : codecs) {
-                    AugmentationCodec<?> ac = codec.getValue();
-                    if (ac.isAcceptable(path)) {
-                        // We add Augmentation Identifier to path, in order to
-                        // correctly identify children.
-                        InstanceIdentifier augmentPath = path.builder().augmentation(codec.getKey()).build();
-                        ValueWithQName<?> value = codec.getValue().deserialize((CompositeNode) input, augmentPath);
-                        if (value != null && value.getValue() != null) {
-                            ret.put(codec.getKey(), (Augmentation) value.getValue());
-                        }
+            for (AugmentationCodecWrapper codec : codecs) {
+                    // We add Augmentation Identifier to path, in order to
+                    // correctly identify children.
+                    Class type = codec.getDataType();
+                    final InstanceIdentifier augmentPath = path.augmentation(type);
+                    ValueWithQName<?> value = codec.deserialize(input, augmentPath);
+                    if (value != null && value.getValue() != null) {
+                        ret.put(type, (Augmentation) value.getValue());
                     }
-                }
             }
             return ret;
         }
@@ -1126,6 +1179,12 @@ class LazyGeneratedCodecRegistry implements //
             }
             return null;
         }
+
+        @Override
+        public String toString() {
+            return "AugmentableDispatchCodec [augmentable=" + augmentableType + "]";
+        }
+
     }
 
     @SuppressWarnings("rawtypes")
@@ -1177,9 +1236,6 @@ class LazyGeneratedCodecRegistry implements //
         @Override
         @SuppressWarnings("unchecked")
         public ValueWithQName<T> deserialize(final Node<?> input, final InstanceIdentifier<?> bindingIdentifier) {
-            // if (!isAcceptable(bindingIdentifier)) {
-            // return null;
-            // }
             Object rawCodecValue = getDelegate().deserialize(input, bindingIdentifier);
             return new ValueWithQName<T>(input.getNodeType(), (T) rawCodecValue);
         }
@@ -1198,13 +1254,19 @@ class LazyGeneratedCodecRegistry implements //
         }
 
         @Override
-        public boolean isApplicable(final InstanceIdentifier location) {
-            return isAcceptable(location);
+        public boolean isApplicable(final InstanceIdentifier parentPath,final CompositeNode parentData) {
+            return isAcceptable(parentPath);
         }
 
         @Override
         public Class<?> getDataType() {
             return augmentationType;
+        }
+
+        @Override
+        public String toString() {
+            return "AugmentationCodecWrapper [augmentation=" + augmentationType
+                    + ", knownLocations=" + validAugmentationTargets.keySet() + "]";
         }
     }
 
