@@ -549,21 +549,17 @@ public final class SchemaContextUtil {
                 // groupings => parent is added by grouping too, so repeat same
                 // process for parent
                 if (result == null) {
+                    final SchemaNode sn = (SchemaNode) parent;
+
                     // set current name to name of parent node
-                    currentName = ((SchemaNode) parent).getQName();
+                    currentName = sn.getQName();
                     Preconditions.checkArgument(parent instanceof SchemaNode,
                             "Failed to generate code for augmend node {} at parent {}", node, parent);
+
                     // create schema path for parent of current parent
-                    SchemaPath nodeSp = ((SchemaNode) parent).getPath();
-                    List<QName> nodeNewNames = new ArrayList<>(nodeSp.getPath());
-                    nodeNewNames.remove(nodeNewNames.size() - 1);
-                    // set new parent based on path
-                    if (nodeNewNames.isEmpty()) {
-                        parent = getParentModule((SchemaNode) parent, ctx);
-                    } else {
-                        SchemaPath nodeNewSp = new SchemaPath(nodeNewNames, nodeSp.isAbsolute());
-                        parent = findDataSchemaNode(ctx, nodeNewSp);
-                    }
+                    final SchemaPath parentSp = sn.getPath().getParent();
+                    parent = parentSp.getPathFromRoot().iterator().hasNext() ? findDataSchemaNode(ctx, parentSp)
+                            : getParentModule(sn, ctx);
                 } else {
                     // if wanted node was found in grouping, traverse this node
                     // based on level of nesting
