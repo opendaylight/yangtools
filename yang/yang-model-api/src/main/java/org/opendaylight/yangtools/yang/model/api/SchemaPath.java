@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -202,6 +204,21 @@ public class SchemaPath implements Immutable {
      */
     public Iterable<QName> getPathTowardsRoot() {
         return getLegacyPath().reverse();
+    }
+
+    /**
+     * Returns the immediate parent SchemaPath.
+     *
+     * @return Parent path, null if this SchemaPath is already toplevel.
+     */
+    public SchemaPath getParent() {
+        final int size = Iterables.size(path);
+        if (size != 0) {
+            final SchemaPath parent = isAbsolute() ? ROOT : SAME;
+            return parent.trustedCreateChild(Iterables.limit(path, size - 1));
+        } else {
+            return null;
+        }
     }
 
     /**
