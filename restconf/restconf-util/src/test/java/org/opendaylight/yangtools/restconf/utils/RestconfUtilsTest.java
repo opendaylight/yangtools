@@ -18,7 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.isis.topology.rev131021.IgpNodeAttributes1;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.TopologyId;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.Topology;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.TopologyKey;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.nt.l3.unicast.igp.topology.rev131021.Node1;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
@@ -38,6 +40,15 @@ public class RestconfUtilsTest {
         final ModuleInfoBackedContext moduleInfo = ModuleInfoBackedContext.create();
         moduleInfo.addModuleInfos(BindingReflections.loadModuleInfos());
         this.mappingService.onGlobalContextUpdated(moduleInfo.tryToCreateSchemaContext().get());
+    }
+
+    @Test
+    public void firstTest() { // test static state collisions with the other test
+        final InstanceIdentifier<Topology> instanceIdentifier = InstanceIdentifier.builder(NetworkTopology.class)
+                .child(Topology.class, new TopologyKey(new TopologyId("example-pcep-topology"))).toInstance();
+        final InputStream is = this.getClass().getClassLoader().getResourceAsStream("topology-bug1196-linux.xml");
+        RestconfUtils.toRestconfIdentifier(instanceIdentifier, this.mappingService,
+                this.mappingService.getSchemaContext()).getValue();
     }
 
     @Test
