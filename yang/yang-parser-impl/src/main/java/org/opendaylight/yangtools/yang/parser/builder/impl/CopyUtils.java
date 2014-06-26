@@ -8,17 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
@@ -437,48 +435,41 @@ public final class CopyUtils {
     }
 
     private static DataBean getdata(final SchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
-        List<QName> newPath = null;
+        final SchemaPath newSchemaPath;
         QName newQName = null;
         if (newParent instanceof ModuleBuilder) {
             ModuleBuilder parent = (ModuleBuilder) newParent;
             if (updateQName) {
                 newQName = new QName(parent.getNamespace(), parent.getRevision(), parent.getPrefix(), old.getQName()
                         .getLocalName());
-                newPath = Collections.singletonList(newQName);
             } else {
                 newQName = old.getQName();
-                newPath = Collections.singletonList(newQName);
             }
+            newSchemaPath = SchemaPath.create(true, newQName);
         } else if (newParent instanceof AugmentationSchemaBuilder) {
             AugmentationSchemaBuilder augment = (AugmentationSchemaBuilder) newParent;
             ModuleBuilder parent = BuilderUtils.getParentModule(newParent);
             if (updateQName) {
                 newQName = new QName(parent.getNamespace(), parent.getRevision(), parent.getPrefix(), old.getQName()
                         .getLocalName());
-                newPath = new ArrayList<>(augment.getTargetNodeSchemaPath().getPath());
-                newPath.add(newQName);
             } else {
                 newQName = old.getQName();
-                newPath = new ArrayList<>(augment.getTargetNodeSchemaPath().getPath());
-                newPath.add(newQName);
             }
-
+            newSchemaPath = augment.getTargetNodeSchemaPath().createChild(newQName);
         } else if (newParent instanceof SchemaNodeBuilder) {
             SchemaNodeBuilder parent = (SchemaNodeBuilder) newParent;
             QName parentQName = parent.getQName();
             if (updateQName) {
                 newQName = new QName(parentQName.getNamespace(), parentQName.getRevision(), parentQName.getPrefix(),
                         old.getQName().getLocalName());
-                newPath = new ArrayList<>(parent.getPath().getPath());
-                newPath.add(newQName);
             } else {
                 newQName = old.getQName();
-                newPath = new ArrayList<>(parent.getPath().getPath());
-                newPath.add(newQName);
             }
+            newSchemaPath = parent.getPath().createChild(newQName);
+        } else {
+            newSchemaPath = SchemaPath.ROOT;
         }
 
-        SchemaPath newSchemaPath = SchemaPath.create(newPath, true);
         return new DataBean(newQName, newSchemaPath);
     }
 
