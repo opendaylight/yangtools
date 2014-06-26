@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_5cbf72aa",
+        "filename": "common/features/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1788
+      },
+      "writtenOn": "2014-06-26T14:40:56Z",
+      "side": 1,
+      "message": "Thanks missed these too.. ! They make sure the build order is ok ...",
+      "revId": "31ae1fc9f40e5f741a930fd08310e07888e8fe03",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9cc97a5b",
+        "filename": "common/parent/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1788
+      },
+      "writtenOn": "2014-06-26T14:40:56Z",
+      "side": 1,
+      "message": "I knew that one was required ;)",
+      "revId": "31ae1fc9f40e5f741a930fd08310e07888e8fe03",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3cc2ae34",
+        "filename": "common/parent/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 1788
+      },
+      "writtenOn": "2014-06-26T14:40:56Z",
+      "side": 1,
+      "message": "Thanks for these additions",
+      "revId": "31ae1fc9f40e5f741a930fd08310e07888e8fe03",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
