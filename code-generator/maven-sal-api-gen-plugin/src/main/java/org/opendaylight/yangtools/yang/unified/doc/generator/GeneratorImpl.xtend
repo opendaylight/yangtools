@@ -766,7 +766,7 @@ class GeneratorImpl {
 
     def CharSequence printUses(UsesNode usesNode) {
         return '''
-            «strong(listItem("uses", typeAnchorLink(usesNode.groupingPath, usesNode.groupingPath.path.last.localName)))»
+            «strong(listItem("uses", typeAnchorLink(usesNode.groupingPath, usesNode.groupingPath.pathTowardsRoot.iterator.next.localName)))»
             <ul>
             <li>refines:
                 <ul>
