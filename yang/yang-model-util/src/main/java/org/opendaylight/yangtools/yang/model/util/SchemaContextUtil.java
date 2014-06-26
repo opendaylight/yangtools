@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import java.net.URI;
@@ -868,13 +869,14 @@ public final class SchemaContextUtil {
             ++colCount;
         }
 
-        final Iterable<QName> parent = leafrefParentNode.getPath().getPathFromRoot();
-        return Iterables.concat(Iterables.limit(parent, Iterables.size(parent) - colCount),
+        final ImmutableList<QName> relative = ImmutableList.copyOf(
                 Iterables.transform(Iterables.skip(xpaths, colCount), new Function<String, QName>() {
                     @Override
                     public QName apply(final String input) {
                         return stringPathPartToQName(context, module, input);
                     }
                 }));
+        final Iterable<QName> parent = leafrefParentNode.getPath().getPathFromRoot();
+        return Iterables.concat(Iterables.limit(parent, Iterables.size(parent) - colCount), relative);
     }
 }
