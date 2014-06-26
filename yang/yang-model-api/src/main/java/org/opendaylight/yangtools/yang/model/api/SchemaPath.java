@@ -277,6 +277,15 @@ public abstract class SchemaPath implements Immutable {
     }
 
     /**
+     * Get the last component of this path.
+     *
+     * @return The last component of this path.
+     */
+    public final QName getLastComponent() {
+        return qname;
+    }
+
+    /**
      * Describes whether schema path is|isn't absolute.
      *
      * @return boolean value which is <code>true</code> if schema path is
