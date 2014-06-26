@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.io.ByteSource;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -120,9 +120,7 @@ public final class BuilderUtils {
      */
     @Deprecated
     public static SchemaPath createSchemaPath(final SchemaPath schemaPath, final QName... qname) {
-        List<QName> path = new ArrayList<>(schemaPath.getPath());
-        path.addAll(Arrays.asList(qname));
-        return SchemaPath.create(path, schemaPath.isAbsolute());
+        return schemaPath.createChild(qname);
     }
 
     /**
