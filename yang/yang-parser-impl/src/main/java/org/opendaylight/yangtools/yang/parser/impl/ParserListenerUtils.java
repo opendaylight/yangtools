@@ -400,7 +400,7 @@ public final class ParserListenerUtils {
         }
 
         EnumPairImpl result = new EnumPairImpl();
-        result.qname = path.getPath().get(path.getPath().size() - 1);
+        result.qname = path.getPathTowardsRoot().iterator().next();
         result.path = path;
         result.description = description;
         result.reference = reference;
@@ -913,7 +913,7 @@ public final class ParserListenerUtils {
         }
 
         final List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
-        return new BitImpl(position, schemaPath.getPath().get(schemaPath.getPath().size() - 1), schemaPath,
+        return new BitImpl(position, schemaPath.getPathTowardsRoot().iterator().next(), schemaPath,
                 description, reference, status, unknownNodes);
     }
 
