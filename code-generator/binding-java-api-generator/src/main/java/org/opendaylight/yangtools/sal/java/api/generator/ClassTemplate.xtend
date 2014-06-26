@@ -68,7 +68,9 @@ class ClassTemplate extends BaseTemplate {
         var List<GeneratedProperty> sorted = new ArrayList<GeneratedProperty>();
         sorted.addAll(properties);
         sorted.addAll(parentProperties);
-        Collections.sort(sorted, new PropertyComparator());
+        Collections.sort(sorted, [p1, p2|
+            p1.name.compareTo(p2.name)
+        ]);
 
         this.allProperties = sorted
         this.enums = genType.enumerations
