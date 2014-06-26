@@ -14,6 +14,7 @@
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
         <version>1.4.2-SNAPSHOT</version>
+        <relativePath></relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -524,6 +525,26 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>util</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.yangtools.model</groupId>
+              <artifactId>opendaylight-l2-types</artifactId>
+              <version>${opendaylight.l2.types.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.yangtools.model</groupId>
+              <artifactId>yang-ext</artifactId>
+              <version>${yang.ext.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.yangtools</groupId>
+              <artifactId>binding-type-provider</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.yangtools</groupId>
+              <artifactId>yang-data-operations</artifactId>
+              <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
