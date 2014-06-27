@@ -255,7 +255,8 @@ class LazyGeneratedCodecRegistry implements //
         if (Augmentation.class.isAssignableFrom(cls)) {
 
         } else if (DataObject.class.isAssignableFrom(cls)) {
-            getCodecForDataObject((Class<? extends DataObject>) cls);
+            @SuppressWarnings({ "unchecked", "unused" })
+            Object cdc = getCodecForDataObject((Class<? extends DataObject>) cls);
         }
     }
 
@@ -452,7 +453,7 @@ class LazyGeneratedCodecRegistry implements //
     private void resetDispatchCodecsAdaptation() {
         synchronized (dispatchCodecs) {
             for (LocationAwareDispatchCodec<?> codec : dispatchCodecs.values()) {
-                codec.resetCodec(this);
+                codec.resetAdaptation();
             }
         }
     }
@@ -465,7 +466,7 @@ class LazyGeneratedCodecRegistry implements //
         Preconditions.checkState(oldCodec == null);
         BindingCodec<Map<QName, Object>, Object> delegate = newInstanceOf(choiceCodec);
         PublicChoiceCodecImpl<?> newCodec = new PublicChoiceCodecImpl(delegate);
-        DispatchChoiceCodecImpl dispatchCodec = new DispatchChoiceCodecImpl(choiceClass,this);
+        DispatchChoiceCodecImpl dispatchCodec = new DispatchChoiceCodecImpl(choiceClass);
         choiceCodecs.put(choiceClass, newCodec);
         synchronized (dispatchCodecs) {
             dispatchCodecs.put(choiceClass, dispatchCodec);
@@ -496,7 +497,7 @@ class LazyGeneratedCodecRegistry implements //
         if (ret != null) {
             return ret;
         }
-        ret = new AugmentableDispatchCodec(dataClass,this);
+        ret = new AugmentableDispatchCodec(dataClass);
         augmentableCodecs.put(dataClass, ret);
         synchronized (dispatchCodecs) {
             dispatchCodecs.put(dataClass, ret);
@@ -602,16 +603,10 @@ class LazyGeneratedCodecRegistry implements //
     }
 
     @SuppressWarnings("rawtypes")
-    private static abstract class LocationAwareDispatchCodec<T extends LocationAwareBindingCodec> implements BindingCodec {
+    private abstract class LocationAwareDispatchCodec<T extends LocationAwareBindingCodec> implements BindingCodec {
 
         private final Map<Class, T> implementations = Collections.synchronizedMap(new WeakHashMap<Class, T>());
         private final Set<InstanceIdentifier<?>> adaptedForPaths = new HashSet<>();
-        private LazyGeneratedCodecRegistry registry;
-
-
-        protected LocationAwareDispatchCodec(final LazyGeneratedCodecRegistry registry) {
-            this.registry = registry;
-        }
 
         protected Map<Class, T> getImplementations() {
             return implementations;
@@ -626,8 +621,7 @@ class LazyGeneratedCodecRegistry implements //
          * of new codecs and/or removal of existing ones.
          *
          */
-        public synchronized void resetCodec(final LazyGeneratedCodecRegistry currentRegistry) {
-            registry = currentRegistry;
+        public synchronized void resetAdaptation() {
             adaptedForPaths.clear();
             resetAdaptationImpl();
         }
@@ -637,9 +631,6 @@ class LazyGeneratedCodecRegistry implements //
             // behaviour.
         }
 
-        protected final LazyGeneratedCodecRegistry getRegistry() {
-            return registry;
-        }
         protected void addImplementation(final T implementation) {
             implementations.put(implementation.getDataType(), implementation);
         }
@@ -713,7 +704,7 @@ class LazyGeneratedCodecRegistry implements //
              * location (path)
              *
              */
-            Optional<DataNodeContainer> contextNode = BindingSchemaContextUtils.findDataNodeContainer(getRegistry().currentSchema,
+            Optional<DataNodeContainer> contextNode = BindingSchemaContextUtils.findDataNodeContainer(currentSchema,
                     path);
             /**
              * If context node is present, this codec makes sense on provided
@@ -738,7 +729,7 @@ class LazyGeneratedCodecRegistry implements //
                          * make sure instance identifier codec is aware of
                          * combination of this path / augmentation / case
                          */
-                        getRegistry().getInstanceIdentifierCodec().serialize(path);
+                        instanceIdentifierCodec.serialize(path);
                     } catch (Exception e) {
                         LOG.warn("Exception during preparation of instance identifier codec for  path {}.", path, e);
                     }
@@ -920,8 +911,7 @@ class LazyGeneratedCodecRegistry implements //
         private final Class<?> choiceType;
         private final QName choiceName;
 
-        private DispatchChoiceCodecImpl(final Class<?> type, final LazyGeneratedCodecRegistry registry) {
-            super(registry);
+        private DispatchChoiceCodecImpl(final Class<?> type) {
             choiceType = type;
             choiceName = BindingReflections.findQName(type);
         }
@@ -1020,12 +1010,11 @@ class LazyGeneratedCodecRegistry implements //
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    static class AugmentableDispatchCodec extends LocationAwareDispatchCodec<AugmentationCodecWrapper> {
+    class AugmentableDispatchCodec extends LocationAwareDispatchCodec<AugmentationCodecWrapper> {
 
         private final Class augmentableType;
 
-        public AugmentableDispatchCodec(final Class type, final LazyGeneratedCodecRegistry registry) {
-            super(registry);
+        public AugmentableDispatchCodec(final Class type) {
             Preconditions.checkArgument(Augmentable.class.isAssignableFrom(type));
             augmentableType = type;
         }
@@ -1057,7 +1046,7 @@ class LazyGeneratedCodecRegistry implements //
         private List serializeImpl(final Map<Class, Augmentation> input) {
             List ret = new ArrayList<>();
             for (Entry<Class, Augmentation> entry : input.entrySet()) {
-                AugmentationCodec codec = getRegistry().getCodecForAugmentation(entry.getKey());
+                AugmentationCodec codec = getCodecForAugmentation(entry.getKey());
                 CompositeNode node = codec.serialize(new ValueWithQName(null, entry.getValue()));
                 ret.addAll(node.getChildren());
             }
@@ -1084,7 +1073,7 @@ class LazyGeneratedCodecRegistry implements //
 
         protected Optional<AugmentationCodecWrapper> tryToLoadImplementation(final Type potential) {
             try {
-                Class<? extends Augmentation<?>> clazz = (Class<? extends Augmentation<?>>) getRegistry().classLoadingStrategy
+                Class<? extends Augmentation<?>> clazz = (Class<? extends Augmentation<?>>) classLoadingStrategy
                         .loadClass(potential);
                 return Optional.of(tryToLoadImplementation(clazz));
             } catch (ClassNotFoundException e) {
@@ -1095,7 +1084,7 @@ class LazyGeneratedCodecRegistry implements //
 
         @Override
         protected AugmentationCodecWrapper tryToLoadImplementation(final Class inputType) {
-            AugmentationCodecWrapper<? extends Augmentation<?>> potentialImpl = getRegistry().getCodecForAugmentation(inputType);
+            AugmentationCodecWrapper<? extends Augmentation<?>> potentialImpl = getCodecForAugmentation(inputType);
             addImplementation(potentialImpl);
             return potentialImpl;
         }
@@ -1158,7 +1147,7 @@ class LazyGeneratedCodecRegistry implements //
                         InstanceIdentifier augPath = augTarget.augmentation(augType);
                         try {
 
-                            org.opendaylight.yangtools.yang.data.api.InstanceIdentifier domPath = getRegistry().getInstanceIdentifierCodec()
+                            org.opendaylight.yangtools.yang.data.api.InstanceIdentifier domPath = getInstanceIdentifierCodec()
                                     .serialize(augPath);
                             if (domPath == null) {
                                 LOG.error("Unable to serialize instance identifier for {}", augPath);
