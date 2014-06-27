@@ -13,12 +13,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
@@ -26,31 +22,18 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.yang.types.BaseYangTypes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class ExtendedTypedefTest {
 
-    private final static List<File> testModels = new ArrayList<File>();
-    private final static URL testFolderPath = AugmentedTypeTest.class.getResource("/typedef-of-typedef");
-
-    @BeforeClass
-    public static void loadTestResources() throws URISyntaxException {
-        final File testFolder = new File(testFolderPath.toURI());
-
-        for (final File fileEntry : testFolder.listFiles()) {
-            if (fileEntry.isFile()) {
-                testModels.add(fileEntry);
-            }
-        }
-    }
-
     @Test
-    public void constantGenerationTest() throws IOException {
-        final YangContextParser parser = new YangParserImpl();
-        final SchemaContext context = parser.parseFiles(testModels);
+    public void constantGenerationTest() throws Exception {
+        File abstractTopology = new File(getClass().getResource("/typedef-of-typedef/typedef_of_typedef.yang").toURI());
+        File ietfInetTypes = new File(getClass().getResource("/ietf/ietf-inet-types.yang").toURI());
 
-        assertNotNull(context);
+        final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInetTypes));
+        assertNotNull("Schema Context is null", context);
+
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
 

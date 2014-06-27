@@ -11,7 +11,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -21,21 +22,27 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
-public class AugmentedTypeTest extends AbstractTypesTest {
-
-    public AugmentedTypeTest() {
-        super(AugmentedTypeTest.class.getResource("/augment-test-models"));
-    }
+public class AugmentedTypeTest {
 
     @Test
-    public void augmentedAbstractTopologyTest() throws IOException {
-        final YangContextParser parser = new YangParserImpl();
-        final SchemaContext context = parser.parseFiles(testModels);
+    public void augmentedAbstractTopologyTest() throws Exception {
+        File abstractTopology = new File(getClass().getResource(
+                "/augment-test-models/abstract-topology@2013-02-08.yang").toURI());
+        File augmentTopology = new File(getClass().getResource(
+                "/augment-test-models/augment-abstract-topology@2013-05-03.yang").toURI());
+        File augmentNetworkLink = new File(getClass().getResource(
+                "/augment-test-models/augment-network-link-attributes@2013-05-03.yang").toURI());
+        File augmentTopologyTunnels = new File(getClass().getResource(
+                "/augment-test-models/augment-topology-tunnels@2013-05-03.yang").toURI());
+        File ietfInterfaces = new File(getClass().getResource("/augment-test-models/ietf-interfaces@2012-11-15.yang")
+                .toURI());
 
-        assertNotNull("context is null", context);
+        final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, augmentTopology,
+                augmentNetworkLink, augmentTopologyTunnels, ietfInterfaces));
+        assertNotNull("Schema Context is null", context);
+
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
 

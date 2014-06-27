@@ -12,12 +12,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 
+import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
@@ -25,11 +30,22 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GeneratedTypesLeafrefTest {
+
+    public static Set<Module> loadModules(final Collection<InputStream> input) throws IOException,
+            YangSyntaxErrorException {
+        Collection<ByteSource> sources = BuilderUtils.streamsToByteSources(input);
+        final YangContextParser parser = new YangParserImpl();
+        SchemaContext ctx = parser.parseSources(sources);
+        return ctx.getModules();
+    }
 
     private SchemaContext resolveSchemaContextFromFiles(final URI... yangFiles) throws IOException {
         final YangContextParser parser = new YangParserImpl();
@@ -44,22 +60,14 @@ public class GeneratedTypesLeafrefTest {
 
     @Test
     public void testLeafrefResolving() throws URISyntaxException, IOException {
-        final URI topologyPath = getClass().getResource("/leafref-test-models/abstract-topology@2013-02-08.yang")
-                .toURI();
-        final URI interfacesPath = getClass().getResource("/leafref-test-models/ietf-interfaces@2012-11-15.yang")
-                .toURI();
-        final URI inetTypesPath = getClass().getResource("/leafref-test-models/ietf-inet-types@2010-09-24.yang")
-                .toURI();
-        final URI yangTypesPath = getClass().getResource("/leafref-test-models/ietf-yang-types@2010-09-24.yang")
-                .toURI();
+        File abstractTopology = new File(getClass().getResource(
+                "/leafref-test-models/abstract-topology@2013-02-08.yang").toURI());
+        File ietfInterfaces = new File(getClass().getResource("/ietf/ietf-interfaces.yang").toURI());
+        File ietfInetTypes = new File(getClass().getResource("/ietf/ietf-inet-types.yang").toURI());
+        File ietfYangTypes = new File(getClass().getResource("/ietf/ietf-yang-types.yang").toURI());
 
-        assertNotNull(topologyPath);
-        assertNotNull(interfacesPath);
-        assertNotNull(inetTypesPath);
-        assertNotNull(yangTypesPath);
-
-        final SchemaContext context = resolveSchemaContextFromFiles(topologyPath, interfacesPath, inetTypesPath,
-                yangTypesPath);
+        final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInterfaces,
+                ietfInetTypes, ietfYangTypes));
         assertNotNull(context);
         assertEquals(4, context.getModules().size());
 

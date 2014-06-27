@@ -12,43 +12,29 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GenTypesSubSetTest {
 
-    private final static List<File> yangModels = new ArrayList<>();
-    private final static URL yangModelsFolder = AugmentedTypeTest.class
-            .getResource("/leafref-test-models");
-
-    @BeforeClass
-    public static void loadTestResources() throws URISyntaxException {
-        final File augFolder = new File(yangModelsFolder.toURI());
-
-        for (final File fileEntry : augFolder.listFiles()) {
-            if (fileEntry.isFile()) {
-                yangModels.add(fileEntry);
-            }
-        }
-    }
-
     @Test
-    public void genTypesFromSubsetOfTwoModulesTest() throws IOException {
-        final YangContextParser parser = new YangParserImpl();
-        final SchemaContext context = parser.parseFiles(yangModels);
+    public void genTypesFromSubsetOfTwoModulesTest() throws Exception {
+        File abstractTopology = new File(getClass().getResource(
+                "/leafref-test-models/abstract-topology@2013-02-08.yang").toURI());
+        File ietfInterfaces = new File(getClass().getResource("/ietf/ietf-interfaces.yang").toURI());
+        File ietfInetTypes = new File(getClass().getResource("/ietf/ietf-inet-types.yang").toURI());
+        File ietfYangTypes = new File(getClass().getResource("/ietf/ietf-yang-types.yang").toURI());
+
+        final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInterfaces,
+                ietfInetTypes, ietfYangTypes));
         Set<Module> modules = context.getModules();
 
         final Set<Module> toGenModules = new HashSet<>();
@@ -60,22 +46,28 @@ public class GenTypesSubSetTest {
             }
         }
 
-        assertEquals("Set of to Generate Modules must contain 2 modules", 2,
-                toGenModules.size());
+        assertEquals("Set of to Generate Modules must contain 2 modules", 2, toGenModules.size());
         assertNotNull("Schema Context is null", context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
         assertFalse("genTypes is empty", genTypes.isEmpty());
-        assertEquals("Expected Generated Types from provided sub set of " +
-                "modules should be 23!", 23,
+        assertEquals("Expected Generated Types from provided sub set of " + "modules should be 23!", 23,
                 genTypes.size());
     }
 
     @Test
-    public void genTypesFromSubsetOfThreeModulesTest() throws IOException {
-        final YangContextParser parser = new YangParserImpl();
-        final SchemaContext context = parser.parseFiles(yangModels);
+    public void genTypesFromSubsetOfThreeModulesTest() throws Exception {
+        File abstractTopology = new File(getClass().getResource(
+                "/leafref-test-models/abstract-topology@2013-02-08.yang").toURI());
+        File ietfInterfaces = new File(getClass().getResource("/ietf/ietf-interfaces.yang").toURI());
+        File ietfInetTypes = new File(getClass().getResource("/ietf/ietf-inet-types.yang").toURI());
+        File ietfYangTypes = new File(getClass().getResource("/ietf/ietf-yang-types.yang").toURI());
+        File ianaIfType = new File(getClass().getResource("/ietf/iana-if-type.yang").toURI());
+
+        final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInterfaces,
+                ietfInetTypes, ietfYangTypes, ianaIfType));
+        assertNotNull("Schema Context is null", context);
         final Set<Module> modules = context.getModules();
 
         final Set<Module> toGenModules = new HashSet<>();
@@ -88,11 +80,8 @@ public class GenTypesSubSetTest {
                 toGenModules.add(module);
             }
         }
+        assertEquals("Set of to Generate Modules must contain 3 modules", 3, toGenModules.size());
 
-        assertEquals("Set of to Generate Modules must contain 3 modules", 3,
-                toGenModules.size());
-
-        assertNotNull("Schema Context is null", context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
