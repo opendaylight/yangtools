@@ -12,9 +12,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -24,27 +24,16 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GeneratedTypesTest {
 
-    private SchemaContext resolveSchemaContextFromFiles(final URI... yangFiles) throws IOException {
-        final YangContextParser parser = new YangParserImpl();
-
-        final List<File> inputFiles = new ArrayList<File>();
-        for (int i = 0; i < yangFiles.length; ++i) {
-            inputFiles.add(new File(yangFiles[i]));
-        }
-
-        return parser.parseFiles(inputFiles);
-    }
-
     @Test
     public void testMultipleModulesResolving() throws URISyntaxException, IOException {
-        final URI topologyPath = getClass().getResource("/abstract-topology.yang").toURI();
-        final URI typesPath = getClass().getResource("/ietf-inet-types@2010-09-24.yang").toURI();
-        final SchemaContext context = resolveSchemaContextFromFiles(topologyPath, typesPath);
+        File abstractTopology = new File(getClass().getResource("/abstract-topology.yang").toURI());
+        File ietfInetTypes = new File(getClass().getResource("/ietf/ietf-inet-types.yang").toURI());
+
+        final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInetTypes));
         assertNotNull(context);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
@@ -56,9 +45,9 @@ public class GeneratedTypesTest {
 
     @Test
     public void testContainerResolving() throws URISyntaxException, IOException {
-        final URI filePath = getClass().getResource("/simple-container-demo.yang").toURI();
-        final SchemaContext context = resolveSchemaContextFromFiles(filePath);
-        assert (context != null);
+        final File testFile = new File(getClass().getResource("/simple-container-demo.yang").toURI());
+        final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
+        assertNotNull(context);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
@@ -70,9 +59,9 @@ public class GeneratedTypesTest {
         GeneratedType nestedContainer = (GeneratedType) genTypes.get(2);
         for (Type t : genTypes) {
             if ("SimpleContainer".equals(t.getName())) {
-                simpleContainer = (GeneratedType)t;
+                simpleContainer = (GeneratedType) t;
             } else if ("NestedContainer".equals(t.getName())) {
-                nestedContainer = (GeneratedType)t;
+                nestedContainer = (GeneratedType) t;
             }
         }
         assertNotNull(simpleContainer);
@@ -141,8 +130,8 @@ public class GeneratedTypesTest {
 
     @Test
     public void testLeafListResolving() throws URISyntaxException, IOException {
-        final URI filePath = getClass().getResource("/simple-leaf-list-demo.yang").toURI();
-        final SchemaContext context = resolveSchemaContextFromFiles(filePath);
+        final File testFile = new File(getClass().getResource("/simple-leaf-list-demo.yang").toURI());
+        final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
@@ -155,9 +144,9 @@ public class GeneratedTypesTest {
         GeneratedType nestedContainer = (GeneratedType) genTypes.get(2);
         for (Type t : genTypes) {
             if ("SimpleContainer".equals(t.getName())) {
-                simpleContainer = (GeneratedType)t;
+                simpleContainer = (GeneratedType) t;
             } else if ("NestedContainer".equals(t.getName())) {
-                nestedContainer = (GeneratedType)t;
+                nestedContainer = (GeneratedType) t;
             }
         }
         assertNotNull(simpleContainer);
@@ -225,8 +214,8 @@ public class GeneratedTypesTest {
 
     @Test
     public void testListResolving() throws URISyntaxException, IOException {
-        final URI filePath = getClass().getResource("/simple-list-demo.yang").toURI();
-        final SchemaContext context = resolveSchemaContextFromFiles(filePath);
+        final File testFile = new File(getClass().getResource("/simple-list-demo.yang").toURI());
+        final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
@@ -348,9 +337,8 @@ public class GeneratedTypesTest {
 
     @Test
     public void testListCompositeKeyResolving() throws URISyntaxException, IOException {
-        final URI filePath = getClass().getResource("/list-composite-key.yang").toURI();
-        final SchemaContext context = resolveSchemaContextFromFiles(filePath);
-
+        final File testFile = new File(getClass().getResource("/list-composite-key.yang").toURI());
+        final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
@@ -401,8 +389,8 @@ public class GeneratedTypesTest {
 
     @Test
     public void testGeneratedTypes() throws URISyntaxException, IOException {
-        final URI filePath = getClass().getResource("/demo-topology.yang").toURI();
-        final SchemaContext context = resolveSchemaContextFromFiles(filePath);
+        final File testFile = new File(getClass().getResource("/demo-topology.yang").toURI());
+        final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();

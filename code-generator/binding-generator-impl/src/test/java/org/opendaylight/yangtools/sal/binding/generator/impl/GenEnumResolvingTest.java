@@ -13,9 +13,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -24,37 +24,24 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class GenEnumResolvingTest {
 
-    private SchemaContext resolveSchemaContextFromFiles(final URI... yangFiles) throws IOException {
-        final YangContextParser parser = new YangParserImpl();
-
-        final List<File> inputFiles = new ArrayList<File>();
-        for (int i = 0; i < yangFiles.length; ++i) {
-            inputFiles.add(new File(yangFiles[i]));
-        }
-
-        return parser.parseFiles(inputFiles);
-    }
-
     @Test
     public void testLeafEnumResolving() throws URISyntaxException, IOException {
-        final URI ietfInterfacesPath = getClass().getResource("/enum-test-models/ietf-interfaces@2012-11-15.yang")
-                .toURI();
-        final URI ifTypePath = getClass().getResource("/enum-test-models/iana-if-type@2012-06-05.yang").toURI();
-        final URI yangTypesPath = getClass().getResource("/enum-test-models/ietf-yang-types@2010-09-24.yang").toURI();
+        File ietfInterfaces = new File(getClass().getResource("/enum-test-models/ietf-interfaces@2012-11-15.yang")
+                .toURI());
+        File ianaIfTypeModel = new File(getClass().getResource("/ietf/iana-if-type.yang").toURI());
 
-        final SchemaContext context = resolveSchemaContextFromFiles(ietfInterfacesPath, ifTypePath, yangTypesPath);
+        final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(ietfInterfaces, ianaIfTypeModel));
         assertTrue(context != null);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
         assertTrue(genTypes != null);
 
-        assertEquals("Expected count of all Generated Types", 20, genTypes.size());
+        assertEquals("Expected count of all Generated Types", 6, genTypes.size());
 
         GeneratedType genInterface = null;
         for (final Type type : genTypes) {
@@ -108,9 +95,8 @@ public class GenEnumResolvingTest {
 
     @Test
     public void testTypedefEnumResolving() throws URISyntaxException, IOException {
-        final URI ianaIfTypePath = getClass().getResource("/leafref-test-models/iana-if-type@2012-06-05.yang").toURI();
-
-        final SchemaContext context = resolveSchemaContextFromFiles(ianaIfTypePath);
+        File ianaIfType = new File(getClass().getResource("/ietf/iana-if-type.yang").toURI());
+        final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(ianaIfType));
         assertTrue(context != null);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
@@ -126,15 +112,14 @@ public class GenEnumResolvingTest {
 
     @Test
     public void testLeafrefEnumResolving() throws URISyntaxException, IOException {
-        final URI ietfInterfacesPath = getClass().getResource("/enum-test-models/ietf-interfaces@2012-11-15.yang")
-                .toURI();
-        final URI ifTypePath = getClass().getResource("/enum-test-models/iana-if-type@2012-06-05.yang").toURI();
-        final URI yangTypesPath = getClass().getResource("/enum-test-models/ietf-yang-types@2010-09-24.yang").toURI();
-        final URI topologyPath = getClass().getResource("/enum-test-models/abstract-topology@2013-02-08.yang").toURI();
-        final URI inetTypesPath = getClass().getResource("/enum-test-models/ietf-inet-types@2010-09-24.yang").toURI();
-        final SchemaContext context = resolveSchemaContextFromFiles(ietfInterfacesPath, ifTypePath, yangTypesPath,
-                topologyPath, inetTypesPath);
+        File abstractTopology = new File(getClass().getResource("/enum-test-models/abstract-topology@2013-02-08.yang")
+                .toURI());
+        File ietfInterfaces = new File(getClass().getResource("/enum-test-models/ietf-interfaces@2012-11-15.yang")
+                .toURI());
+        File ianaIfType = new File(getClass().getResource("/ietf/iana-if-type.yang").toURI());
 
+        final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInterfaces,
+                ianaIfType));
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
