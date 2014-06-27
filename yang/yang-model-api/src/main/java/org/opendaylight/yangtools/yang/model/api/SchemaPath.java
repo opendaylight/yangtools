@@ -14,11 +14,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -29,8 +29,8 @@ public abstract class SchemaPath implements Immutable {
      * An absolute SchemaPath.
      */
     private static final class AbsoluteSchemaPath extends SchemaPath {
-        private AbsoluteSchemaPath(final SchemaPath parent, final QName qname) {
-            super(parent, qname);
+        private AbsoluteSchemaPath(final Iterable<QName> path, final int hash) {
+            super(path, hash);
         }
 
         @Override
@@ -39,8 +39,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         @Override
-        protected SchemaPath createInstance(final SchemaPath parent, final QName qname) {
-            return new AbsoluteSchemaPath(parent, qname);
+        protected SchemaPath createInstance(final Iterable<QName> path, final int hash) {
+            return new AbsoluteSchemaPath(path, hash);
         }
     }
 
@@ -48,8 +48,8 @@ public abstract class SchemaPath implements Immutable {
      * A relative SchemaPath.
      */
     private static final class RelativeSchemaPath extends SchemaPath {
-        private RelativeSchemaPath(final SchemaPath parent, final QName qname) {
-            super(parent, qname);
+        private RelativeSchemaPath(final Iterable<QName> path, final int hash) {
+            super(path, hash);
         }
 
         @Override
@@ -58,30 +58,25 @@ public abstract class SchemaPath implements Immutable {
         }
 
         @Override
-        protected SchemaPath createInstance(final SchemaPath parent, final QName qname) {
-            return new RelativeSchemaPath(parent, qname);
+        protected SchemaPath createInstance(final Iterable<QName> path, final int hash) {
+            return new RelativeSchemaPath(path, hash);
         }
     }
 
     /**
      * Shared instance of the conceptual root schema node.
      */
-    public static final SchemaPath ROOT = new AbsoluteSchemaPath(null, null);
+    public static final SchemaPath ROOT = new AbsoluteSchemaPath(Collections.<QName>emptyList(), Boolean.TRUE.hashCode());
 
     /**
      * Shared instance of the "same" relative schema node.
      */
-    public static final SchemaPath SAME = new RelativeSchemaPath(null, null);
+    public static final SchemaPath SAME = new RelativeSchemaPath(Collections.<QName>emptyList(), Boolean.FALSE.hashCode());
 
     /**
-     * Parent path.
+     * List of QName instances which represents complete path to the node.
      */
-    private final SchemaPath parent;
-
-    /**
-     * This component.
-     */
-    private final QName qname;
+    private final Iterable<QName> path;
 
     /**
      * Cached hash code. We can use this since we are immutable.
@@ -96,7 +91,7 @@ public abstract class SchemaPath implements Immutable {
 
     private ImmutableList<QName> getLegacyPath() {
         if (legacyPath == null) {
-            legacyPath = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
+            legacyPath = ImmutableList.copyOf(path);
         }
 
         return legacyPath;
@@ -115,16 +110,9 @@ public abstract class SchemaPath implements Immutable {
         return getLegacyPath();
     }
 
-    protected SchemaPath(final SchemaPath parent, final QName qname) {
-        this.parent = parent;
-        this.qname = qname;
-
-        int h = parent == null ? 0 : parent.hashCode();
-        if (qname != null) {
-            h = h * 31 + qname.hashCode();
-        }
-
-        hash = h;
+    protected SchemaPath(final Iterable<QName> path, final int hash) {
+        this.path = Preconditions.checkNotNull(path);
+        this.hash = hash;
     }
 
     /**
@@ -167,7 +155,20 @@ public abstract class SchemaPath implements Immutable {
      * @param hash intended hash code
      * @return A new SchemaPath instance
      */
-    protected abstract SchemaPath createInstance(SchemaPath parent, QName qname);
+    protected abstract SchemaPath createInstance(Iterable<QName> path, int hash);
+
+    private SchemaPath trustedCreateChild(final Iterable<QName> relative) {
+        if (Iterables.isEmpty(relative)) {
+            return this;
+        }
+
+        final HashCodeBuilder<QName> b = new HashCodeBuilder<>(hash);
+        for (QName p : relative) {
+            b.addArgument(p);
+        }
+
+        return createInstance(Iterables.concat(path, relative), b.toInstance());
+    }
 
     /**
      * Create a child path based on concatenation of this path and a relative path.
@@ -180,12 +181,7 @@ public abstract class SchemaPath implements Immutable {
             return this;
         }
 
-        SchemaPath parent = this;
-        for (QName qname : relative) {
-            parent = parent.createInstance(parent, qname);
-        }
-
-        return parent;
+        return trustedCreateChild(ImmutableList.copyOf(relative));
     }
 
     /**
@@ -196,13 +192,7 @@ public abstract class SchemaPath implements Immutable {
      */
     public SchemaPath createChild(final SchemaPath relative) {
         Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
-
-        SchemaPath parent = this;
-        for (QName qname : relative.getPathFromRoot()) {
-            parent = parent.createInstance(parent, qname);
-        }
-
-        return parent;
+        return trustedCreateChild(relative.path);
     }
 
     /**
@@ -225,7 +215,7 @@ public abstract class SchemaPath implements Immutable {
      *         path from the root to the schema node.
      */
     public Iterable<QName> getPathFromRoot() {
-        return getLegacyPath();
+        return path;
     }
 
     /**
@@ -236,35 +226,7 @@ public abstract class SchemaPath implements Immutable {
      *         path from the schema node towards the root.
      */
     public Iterable<QName> getPathTowardsRoot() {
-        return new Iterable<QName>() {
-            @Override
-            public Iterator<QName> iterator() {
-                return new Iterator<QName>() {
-                    private SchemaPath current = SchemaPath.this;
-
-                    @Override
-                    public boolean hasNext() {
-                        return current.parent != null;
-                    }
-
-                    @Override
-                    public QName next() {
-                        if (current.parent != null) {
-                            final QName ret = current.qname;
-                            current = current.parent;
-                            return ret;
-                        } else {
-                            throw new NoSuchElementException("No more elements available");
-                        }
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException("Component removal not supported");
-                    }
-                };
-            }
-        };
+        return getLegacyPath().reverse();
     }
 
     /**
@@ -273,7 +235,13 @@ public abstract class SchemaPath implements Immutable {
      * @return Parent path, null if this SchemaPath is already toplevel.
      */
     public SchemaPath getParent() {
-        return parent;
+        final int size = Iterables.size(path);
+        if (size != 0) {
+            final SchemaPath parent = isAbsolute() ? ROOT : SAME;
+            return parent.trustedCreateChild(Iterables.limit(path, size - 1));
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -300,22 +268,8 @@ public abstract class SchemaPath implements Immutable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SchemaPath other = (SchemaPath) obj;
-
-        if (qname != null) {
-            if (!qname.equals(other.qname)) {
-                return false;
-            }
-        } else {
-            if (other.qname != null) {
-                return false;
-            }
-        }
-
-        if (parent == null) {
-            return other.parent == null;
-        }
-        return parent.equals(other.parent);
+        SchemaPath other = (SchemaPath) obj;
+        return Iterables.elementsEqual(path, other.path);
     }
 
     @Override
@@ -324,6 +278,6 @@ public abstract class SchemaPath implements Immutable {
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("path", getPathFromRoot());
+        return toStringHelper.add("path", path);
     }
 }
