@@ -45,16 +45,15 @@ public class GenEnumResolvingTest {
         final URI ietfInterfacesPath = getClass().getResource("/enum-test-models/ietf-interfaces@2012-11-15.yang")
                 .toURI();
         final URI ifTypePath = getClass().getResource("/enum-test-models/iana-if-type@2012-06-05.yang").toURI();
-        final URI yangTypesPath = getClass().getResource("/enum-test-models/ietf-yang-types@2010-09-24.yang").toURI();
 
-        final SchemaContext context = resolveSchemaContextFromFiles(ietfInterfacesPath, ifTypePath, yangTypesPath);
+        final SchemaContext context = resolveSchemaContextFromFiles(ietfInterfacesPath, ifTypePath);
         assertTrue(context != null);
 
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
         final List<Type> genTypes = bindingGen.generateTypes(context);
         assertTrue(genTypes != null);
 
-        assertEquals("Expected count of all Generated Types", 20, genTypes.size());
+        assertEquals("Expected count of all Generated Types", 6, genTypes.size());
 
         GeneratedType genInterface = null;
         for (final Type type : genTypes) {
@@ -129,11 +128,8 @@ public class GenEnumResolvingTest {
         final URI ietfInterfacesPath = getClass().getResource("/enum-test-models/ietf-interfaces@2012-11-15.yang")
                 .toURI();
         final URI ifTypePath = getClass().getResource("/enum-test-models/iana-if-type@2012-06-05.yang").toURI();
-        final URI yangTypesPath = getClass().getResource("/enum-test-models/ietf-yang-types@2010-09-24.yang").toURI();
         final URI topologyPath = getClass().getResource("/enum-test-models/abstract-topology@2013-02-08.yang").toURI();
-        final URI inetTypesPath = getClass().getResource("/enum-test-models/ietf-inet-types@2010-09-24.yang").toURI();
-        final SchemaContext context = resolveSchemaContextFromFiles(ietfInterfacesPath, ifTypePath, yangTypesPath,
-                topologyPath, inetTypesPath);
+        final SchemaContext context = resolveSchemaContextFromFiles(ietfInterfacesPath, ifTypePath, topologyPath);
 
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl();
