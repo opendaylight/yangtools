@@ -54,6 +54,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.sonatype.plexus.build.incremental.BuildContext
 import org.sonatype.plexus.build.incremental.DefaultBuildContext
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.InstanceIdentifierBuilder
 
 class GeneratorImpl {
 
@@ -64,6 +65,12 @@ class GeneratorImpl {
     var Module currentModule;
     val Map<String, String> imports = new HashMap();
     var SchemaContext ctx;
+    
+    InstanceIdentifierBuilder builder
+    
+    StringBuilder augmentChildNodesAsString
+    
+    QName lastNodeTargetPathQName = null
 
     def generate(SchemaContext context, File targetPath, Set<Module> modulesToGen) throws IOException {
         path = targetPath;
@@ -299,7 +306,7 @@ class GeneratorImpl {
         }
         return '''
             <h2>Augmentations</h2>
-
+            
             <ul>
             «FOR augment : module.augmentations»
                 <li>
@@ -316,9 +323,165 @@ class GeneratorImpl {
                     «FOR childNode : augment.childNodes»
                         «childNode.printSchemaNodeInfo»
                     «ENDFOR»
+                    
+                    <h3>Example</h3>
+                    «augmentChildNodesAsString(new ArrayList(augment.childNodes))»
+                    «printNodeChildren(parseTargetPath(augment.targetPath))»
                 </li>
             «ENDFOR»
             </ul>
+        '''
+    }
+    
+    private def augmentChildNodesAsString(List<DataSchemaNode> childNodes) {
+        augmentChildNodesAsString = new StringBuilder();
+        augmentChildNodesAsString.append(printNodeChildren(childNodes))
+    }
+    
+    private def parseTargetPath(SchemaPath path) {
+        val List<DataSchemaNode> nodes = new ArrayList<DataSchemaNode>();
+        for (QName pathElement : path.pathFromRoot) {
+            val prefix = pathElement.prefix
+            val moduleName = imports.get(prefix)
+            if(moduleName != null) {
+                val revision = pathElement.revision
+                val module = ctx.findModuleByName(moduleName, revision)
+                var foundNode = module.getDataChildByName(pathElement)
+                if(foundNode == null) {
+                    val child = nodes.last
+                    if (child instanceof DataNodeContainer) {
+                        val dataContNode = child as DataNodeContainer
+                        foundNode = findNodeInChildNodes(pathElement, dataContNode.childNodes)
+                    }
+                }
+                if(foundNode != null) {
+                    nodes.add(foundNode);
+                }
+            }
+        }
+        if(! nodes.empty) {
+            lastNodeTargetPathQName = nodes.get(nodes.size() - 1).QName;
+        }
+        
+        return nodes;
+    }
+    
+    private def DataSchemaNode findNodeInChildNodes(QName findingNode, Set<DataSchemaNode> childNodes) {
+        for(child : childNodes) {
+            if (child.QName.equals(findingNode))
+                return child;
+        }
+        // find recursively
+        for(child : childNodes) {
+            if(child instanceof ContainerSchemaNode) {
+                val contChild = child as ContainerSchemaNode
+                val foundChild = findNodeInChildNodes(findingNode, contChild.childNodes)
+                if (foundChild != null)
+                    return foundChild;
+            }
+            else if(child instanceof ListSchemaNode) {
+                val listChild = child as ListSchemaNode
+                val foundChild = findNodeInChildNodes(findingNode, listChild.childNodes)
+                if (foundChild != null)
+                    return foundChild;
+            }
+        }
+    }
+    
+    private def printNodeChildren(List<DataSchemaNode> childNodes) {
+        if (childNodes.empty) {
+            return ''
+        }
+        
+        return '''
+        <pre>
+            «printAugmentedNode(childNodes.get(0))»
+        </pre>
+        '''
+    }
+    
+    private def printAugmentedNode(DataSchemaNode child) {
+        
+        if(child instanceof ChoiceCaseNode)
+            return ''
+            
+        return
+        '''
+            «IF child instanceof ContainerSchemaNode»
+                «printContainerNode(child as ContainerSchemaNode)»
+            «ENDIF»
+            «IF child instanceof AnyXmlSchemaNode»
+                «printAnyXmlNode(child as AnyXmlSchemaNode)»
+            «ENDIF»
+            «IF child instanceof LeafSchemaNode»
+                «printLeafNode(child as LeafSchemaNode)»
+            «ENDIF»
+            «IF child instanceof LeafListSchemaNode»
+                «printLeafListNode(child as LeafListSchemaNode)»
+            «ENDIF»
+            «IF child instanceof ListSchemaNode»
+                «printListNode(child as ListSchemaNode)»
+            «ENDIF»
+           «IF child instanceof ChoiceNode»
+                «printChoiceNode(child as ChoiceNode)»
+           «ENDIF»
+        '''
+    }
+    
+    private def printChoiceNode(ChoiceNode child) {
+        val List<ChoiceCaseNode> cases = new ArrayList(child.cases);
+        if(!cases.empty) {
+            val ChoiceCaseNode aCase = cases.get(0)
+            printNodeChildren(new ArrayList(aCase.childNodes))
+        }
+        return ''
+    }
+    
+    private def printListNode(ListSchemaNode listNode) {
+        return
+        '''
+            &lt;«listNode.QName.localName»«IF !listNode.QName.namespace.equals(currentModule.namespace)» xmlns="«listNode.QName.namespace»"«ENDIF»&gt;
+                «FOR child : listNode.childNodes»
+                    «printAugmentedNode(child)»
+                «ENDFOR»
+            &lt;/«listNode.QName.localName»&gt;
+        '''
+    }
+    
+    private def printLeafListNode(LeafListSchemaNode leafListNode) {
+        return
+        '''
+            &lt;«leafListNode.QName.localName»&gt;some value&lt;/«leafListNode.QName.localName»&gt;
+            &lt;«leafListNode.QName.localName»&gt;some value&lt;/«leafListNode.QName.localName»&gt;
+            &lt;«leafListNode.QName.localName»&gt;some value&lt;/«leafListNode.QName.localName»&gt;
+        '''
+    }
+    
+    private def printAnyXmlNode(AnyXmlSchemaNode anyXmlNode) {
+        return 
+        '''
+            &lt;«anyXmlNode.QName.localName»&gt;some value&lt;/«anyXmlNode.QName.localName»&gt;
+        '''
+    }
+    
+    private def printContainerNode(ContainerSchemaNode containerNode) {
+        return
+        '''
+            &lt;«containerNode.QName.localName»«IF !containerNode.QName.namespace.equals(currentModule.namespace)» xmlns="«containerNode.QName.namespace»"«ENDIF»&gt;
+                «IF lastNodeTargetPathQName != null && containerNode.QName.equals(lastNodeTargetPathQName)»
+                    «augmentChildNodesAsString»
+                «ENDIF»
+                «FOR child : containerNode.childNodes»
+                    «printAugmentedNode(child)»
+                «ENDFOR»
+            &lt;/«containerNode.QName.localName»&gt;
+        '''
+    }
+    
+    private def printLeafNode(LeafSchemaNode leafNode) {
+        return 
+        '''
+            &lt;«leafNode.QName.localName»&gt;some value&lt;/«leafNode.QName.localName»&gt;
         '''
     }
 
@@ -940,7 +1103,6 @@ class GeneratorImpl {
             <li>«strong(localLink(newPath,node.QName.localName))» (container)
             <ul>
                 <li>configuration data: «strong(String.valueOf(node.configuration))»</li>
-                <li>mandatory: «strong(String.valueOf(node.constraints.mandatory))»</li>
             </ul>
             </li>
         '''
@@ -952,7 +1114,6 @@ class GeneratorImpl {
             <li>«strong(localLink(newPath,node.QName.localName))» (list)
             <ul>
                 <li>configuration data: «strong(String.valueOf(node.configuration))»</li>
-                <li>mandatory: «strong(String.valueOf(node.constraints.mandatory))»</li>
             </ul>
             </li>
         '''
@@ -985,7 +1146,6 @@ class GeneratorImpl {
             <li>«strong((node.QName.localName))» (leaf-list)
             <ul>
                 <li>configuration data: «strong(String.valueOf(node.configuration))»</li>
-                <li>mandatory: «strong(String.valueOf(node.constraints.mandatory))»</li>
             </ul>
             </li>
         '''
