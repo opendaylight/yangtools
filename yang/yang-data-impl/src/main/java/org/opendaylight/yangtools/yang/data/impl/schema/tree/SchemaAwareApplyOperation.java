@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+
+import java.util.List;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
@@ -33,8 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
@@ -189,7 +190,8 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         case MERGE:
             if(currentMeta.isPresent()) {
                 return modification.storeSnapshot(Optional.of(applyMerge(modification,currentMeta.get(), version)));
-            } // Fallback to write is intentional - if node is not preexisting merge is same as write
+            }
+            // intentional fall-through: if the node does not exist a merge is same as a write
         case WRITE:
             return modification.storeSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
         case UNMODIFIED:
@@ -246,6 +248,11 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         @Override
         protected TreeNode applyWrite(final ModifiedNode modification,
                 final Optional<TreeNode> currentMeta, final Version version) {
+            /*
+             * FIXME: BUG-1258: This is inefficient: it needlessly creates index nodes for the entire subtree.
+             *        We can determine the depth into which metadata need to be created from the modification
+	     *        -- if it does not have children, no need to bother with metadata.
+             */
             return TreeNodeFactory.createTreeNode(modification.getWrittenValue(), version);
         }
 
