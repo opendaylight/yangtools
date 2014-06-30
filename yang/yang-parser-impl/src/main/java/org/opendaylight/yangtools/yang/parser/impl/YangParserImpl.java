@@ -25,6 +25,10 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.reso
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnionWithContext;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeWithContext;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.HashBiMap;
+import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -94,11 +97,6 @@ import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBiMap;
-import com.google.common.io.ByteSource;
 
 public final class YangParserImpl implements YangContextParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
@@ -827,7 +825,6 @@ public final class YangParserImpl implements YangContextParser {
             final AugmentationSchemaBuilder augment, final SchemaContext context) {
         ModuleBuilder module = BuilderUtils.getParentModule(augment);
         SchemaPath oldSchemaPath = augment.getTargetPath();
-        List<QName> oldPath = oldSchemaPath.getPath();
         List<QName> newPath = new ArrayList<>();
 
         Builder parent = augment.getParent();
@@ -851,10 +848,11 @@ public final class YangParserImpl implements YangContextParser {
             }
 
             final QNameModule qm = QNameModule.create(ns, revision);
-            for (QName qn : oldSchemaPath.getPath()) {
+            for (QName qn : oldSchemaPath.getPathFromRoot()) {
                 newPath.add(QName.create(qm, prefix, qn.getLocalName()));
             }
         } else {
+            Iterable<QName> oldPath = oldSchemaPath.getPathFromRoot();
             for (QName qn : oldPath) {
                 URI ns = module.getNamespace();
                 Date rev = module.getRevision();

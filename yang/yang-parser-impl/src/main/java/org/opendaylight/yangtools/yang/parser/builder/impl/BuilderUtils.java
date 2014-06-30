@@ -7,6 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Collections2;
+import com.google.common.io.ByteSource;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -58,13 +63,6 @@ import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Collections2;
-import com.google.common.io.ByteSource;
 
 public final class BuilderUtils {
 
@@ -800,9 +798,7 @@ public final class BuilderUtils {
         Set<TypeDefinitionBuilder> result = new HashSet<>();
         for (TypeDefinition<?> node : nodes) {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
-            List<QName> path = new ArrayList<>(parentPath.getPath());
-            path.add(qname);
-            SchemaPath schemaPath = SchemaPath.create(path, parentPath.isAbsolute());
+            SchemaPath schemaPath = parentPath.createChild(qname);
             result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, ((ExtendedType) node)));
         }
         return result;
@@ -814,9 +810,7 @@ public final class BuilderUtils {
         List<UnknownSchemaNodeBuilderImpl> result = new ArrayList<>();
         for (UnknownSchemaNode node : nodes) {
             QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
-            List<QName> path = new ArrayList<>(parentPath.getPath());
-            path.add(qname);
-            SchemaPath schemaPath = SchemaPath.create(path, parentPath.isAbsolute());
+            SchemaPath schemaPath = parentPath.createChild(qname);
             result.add(new UnknownSchemaNodeBuilderImpl(moduleName, line, qname, schemaPath, node));
         }
         return result;
