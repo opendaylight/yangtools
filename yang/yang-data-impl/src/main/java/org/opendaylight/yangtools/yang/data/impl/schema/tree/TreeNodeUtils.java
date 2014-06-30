@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,11 +20,6 @@ import java.util.Map;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
@@ -39,7 +39,7 @@ public final class TreeNodeUtils {
      */
     public static <T extends StoreTreeNode<T>> Optional<T> findNode(final T tree, final InstanceIdentifier path) {
         Optional<T> current = Optional.<T> of(tree);
-        Iterator<PathArgument> pathIter = path.getPath().iterator();
+        Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
         while (current.isPresent() && pathIter.hasNext()) {
             current = current.get().getChild(pathIter.next());
         }
@@ -49,7 +49,7 @@ public final class TreeNodeUtils {
     public static <T extends StoreTreeNode<T>> T findNodeChecked(final T tree, final InstanceIdentifier path) {
         T current = tree;
         List<PathArgument> nested = new ArrayList<>(path.getPath().size());
-        for(PathArgument pathArg : path.getPath()) {
+        for(PathArgument pathArg : path.getPathArguments()) {
             Optional<T> potential = current.getChild(pathArg);
             nested.add(pathArg);
             Preconditions.checkArgument(potential.isPresent(),"Child %s is not present in tree.",nested);
@@ -75,7 +75,7 @@ public final class TreeNodeUtils {
         Optional<T> current = Optional.<T> of(tree);
 
         int nesting = 0;
-        Iterator<PathArgument> pathIter = path.getPath().iterator();
+        Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
         while (current.isPresent() && pathIter.hasNext() && !predicate.apply(current.get())) {
             parent = current;
             current = current.get().getChild(pathIter.next());

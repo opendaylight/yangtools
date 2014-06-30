@@ -9,6 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+
+import java.util.Map.Entry;
+
+import javax.annotation.concurrent.GuardedBy;
+
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -19,9 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.concurrent.GuardedBy;
-import java.util.Map.Entry;
 
 final class InMemoryDataTreeModification implements DataTreeModification {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
@@ -122,7 +124,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         ModifiedNode modification = rootNode;
         // We ensure strategy is present.
         ModificationApplyOperation operation = resolveModificationStrategy(path);
-        for (PathArgument pathArg : path.getPath()) {
+        for (PathArgument pathArg : path.getPathArguments()) {
             modification = modification.modifyChild(pathArg);
         }
         return OperationWithModification.from(operation, modification);
