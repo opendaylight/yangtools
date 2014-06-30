@@ -8,17 +8,21 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+public abstract class AbstractImmutableNormalizedValueNode<K extends InstanceIdentifier.PathArgument, V> extends
+        AbstractImmutableNormalizedNode<K, V> {
 
-public abstract class AbstractImmutableNormalizedValueNode<K extends InstanceIdentifier.PathArgument,V>
-        extends AbstractImmutableNormalizedNode<K, V> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractImmutableNormalizedValueNode.class);
     private final V value;
 
     protected AbstractImmutableNormalizedValueNode(final K nodeIdentifier, final V value) {
-    	super(nodeIdentifier);
-        this.value = Preconditions.checkNotNull(value, "value");
+        super(nodeIdentifier);
+        if (value == null) {
+            LOGGER.warn("The value of node " + nodeIdentifier.getNodeType() + " is null");
+        }
+        this.value = value;
     }
 
     @Override
