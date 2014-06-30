@@ -54,7 +54,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.sonatype.plexus.build.incremental.BuildContext
 import org.sonatype.plexus.build.incremental.DefaultBuildContext
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.InstanceIdentifierBuilder
 
 class GeneratorImpl {
 
@@ -66,11 +65,9 @@ class GeneratorImpl {
     val Map<String, String> imports = new HashMap();
     var SchemaContext ctx;
     
-    InstanceIdentifierBuilder builder
-    
     StringBuilder augmentChildNodesAsString
     
-    QName lastNodeTargetPathQName = null
+    DataSchemaNode lastNodeInTargetPath = null
 
     def generate(SchemaContext context, File targetPath, Set<Module> modulesToGen) throws IOException {
         path = targetPath;
@@ -325,7 +322,7 @@ class GeneratorImpl {
                     «ENDFOR»
                     
                     <h3>Example</h3>
-                    «augmentChildNodesAsString(new ArrayList(augment.childNodes))»
+                    «createAugmentChildNodesAsString(new ArrayList(augment.childNodes))»
                     «printNodeChildren(parseTargetPath(augment.targetPath))»
                 </li>
             «ENDFOR»
@@ -333,9 +330,10 @@ class GeneratorImpl {
         '''
     }
     
-    private def augmentChildNodesAsString(List<DataSchemaNode> childNodes) {
+    private def createAugmentChildNodesAsString(List<DataSchemaNode> childNodes) {
         augmentChildNodesAsString = new StringBuilder();
         augmentChildNodesAsString.append(printNodeChildren(childNodes))
+        return ''
     }
     
     private def parseTargetPath(SchemaPath path) {
@@ -360,10 +358,13 @@ class GeneratorImpl {
             }
         }
         if(! nodes.empty) {
-            lastNodeTargetPathQName = nodes.get(nodes.size() - 1).QName;
+            lastNodeInTargetPath = nodes.get(nodes.size() - 1)
         }
         
-        return nodes;
+        val List<DataSchemaNode> targetPathNodes = new ArrayList<DataSchemaNode>();
+        targetPathNodes.add(lastNodeInTargetPath)
+        
+        return targetPathNodes
     }
     
     private def DataSchemaNode findNodeInChildNodes(QName findingNode, Set<DataSchemaNode> childNodes) {
@@ -393,9 +394,10 @@ class GeneratorImpl {
             return ''
         }
         
-        return '''
+        return 
+        '''
         <pre>
-            «printAugmentedNode(childNodes.get(0))»
+        «printAugmentedNode(childNodes.get(0))»
         </pre>
         '''
     }
@@ -407,24 +409,24 @@ class GeneratorImpl {
             
         return
         '''
-            «IF child instanceof ContainerSchemaNode»
-                «printContainerNode(child as ContainerSchemaNode)»
-            «ENDIF»
-            «IF child instanceof AnyXmlSchemaNode»
-                «printAnyXmlNode(child as AnyXmlSchemaNode)»
-            «ENDIF»
-            «IF child instanceof LeafSchemaNode»
-                «printLeafNode(child as LeafSchemaNode)»
-            «ENDIF»
-            «IF child instanceof LeafListSchemaNode»
-                «printLeafListNode(child as LeafListSchemaNode)»
-            «ENDIF»
-            «IF child instanceof ListSchemaNode»
-                «printListNode(child as ListSchemaNode)»
-            «ENDIF»
-           «IF child instanceof ChoiceNode»
-                «printChoiceNode(child as ChoiceNode)»
-           «ENDIF»
+        «IF child instanceof ContainerSchemaNode»
+            «printContainerNode(child as ContainerSchemaNode)»
+        «ENDIF»
+        «IF child instanceof AnyXmlSchemaNode»
+            «printAnyXmlNode(child as AnyXmlSchemaNode)»
+        «ENDIF»
+        «IF child instanceof LeafSchemaNode»
+            «printLeafNode(child as LeafSchemaNode)»
+        «ENDIF»
+        «IF child instanceof LeafListSchemaNode»
+            «printLeafListNode(child as LeafListSchemaNode)»
+        «ENDIF»
+        «IF child instanceof ListSchemaNode»
+            «printListNode(child as ListSchemaNode)»
+        «ENDIF»
+        «IF child instanceof ChoiceNode»
+            «printChoiceNode(child as ChoiceNode)»
+        «ENDIF»
         '''
     }
     
@@ -432,9 +434,9 @@ class GeneratorImpl {
         val List<ChoiceCaseNode> cases = new ArrayList(child.cases);
         if(!cases.empty) {
             val ChoiceCaseNode aCase = cases.get(0)
-            printNodeChildren(new ArrayList(aCase.childNodes))
+            for(caseChildNode : aCase.childNodes)
+                printAugmentedNode(caseChildNode)
         }
-        return ''
     }
     
     private def printListNode(ListSchemaNode listNode) {
@@ -448,29 +450,10 @@ class GeneratorImpl {
         '''
     }
     
-    private def printLeafListNode(LeafListSchemaNode leafListNode) {
-        return
-        '''
-            &lt;«leafListNode.QName.localName»&gt;some value&lt;/«leafListNode.QName.localName»&gt;
-            &lt;«leafListNode.QName.localName»&gt;some value&lt;/«leafListNode.QName.localName»&gt;
-            &lt;«leafListNode.QName.localName»&gt;some value&lt;/«leafListNode.QName.localName»&gt;
-        '''
-    }
-    
-    private def printAnyXmlNode(AnyXmlSchemaNode anyXmlNode) {
-        return 
-        '''
-            &lt;«anyXmlNode.QName.localName»&gt;some value&lt;/«anyXmlNode.QName.localName»&gt;
-        '''
-    }
-    
     private def printContainerNode(ContainerSchemaNode containerNode) {
         return
         '''
             &lt;«containerNode.QName.localName»«IF !containerNode.QName.namespace.equals(currentModule.namespace)» xmlns="«containerNode.QName.namespace»"«ENDIF»&gt;
-                «IF lastNodeTargetPathQName != null && containerNode.QName.equals(lastNodeTargetPathQName)»
-                    «augmentChildNodesAsString»
-                «ENDIF»
                 «FOR child : containerNode.childNodes»
                     «printAugmentedNode(child)»
                 «ENDFOR»
@@ -478,10 +461,26 @@ class GeneratorImpl {
         '''
     }
     
+    private def printLeafListNode(LeafListSchemaNode leafListNode) {
+        return
+        '''
+            &lt;«leafListNode.QName.localName»&gt;. . .&lt;/«leafListNode.QName.localName»&gt;
+            &lt;«leafListNode.QName.localName»&gt;. . .&lt;/«leafListNode.QName.localName»&gt;
+            &lt;«leafListNode.QName.localName»&gt;. . .&lt;/«leafListNode.QName.localName»&gt;
+        '''
+    }
+    
+    private def printAnyXmlNode(AnyXmlSchemaNode anyXmlNode) {
+        return 
+        '''
+            &lt;«anyXmlNode.QName.localName»&gt;. . .&lt;/«anyXmlNode.QName.localName»&gt;
+        '''
+    }
+    
     private def printLeafNode(LeafSchemaNode leafNode) {
         return 
         '''
-            &lt;«leafNode.QName.localName»&gt;some value&lt;/«leafNode.QName.localName»&gt;
+            &lt;«leafNode.QName.localName»&gt;. . .&lt;/«leafNode.QName.localName»&gt;
         '''
     }
 
