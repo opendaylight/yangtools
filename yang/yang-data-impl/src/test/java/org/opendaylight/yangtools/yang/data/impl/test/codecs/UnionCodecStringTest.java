@@ -9,14 +9,12 @@
 package org.opendaylight.yangtools.yang.data.impl.test.codecs;
 
 import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
-import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
+import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.toUnionTypeDefinition;
 
+import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.util.EmptyType;
 import org.opendaylight.yangtools.yang.model.util.Int32;
@@ -57,10 +55,10 @@ public class UnionCodecStringTest {
                       UnionCodec.class);
 
         assertEquals( "deserialize", "enum1", codec.deserialize( "enum1" ) );
-        assertEquals( "deserialize", Integer.valueOf( 123 ), codec.deserialize( "123" ) );
-        assertEquals( "deserialize", Integer.valueOf( -123 ), codec.deserialize( "-123" ) );
-        assertEquals( "deserialize", Long.valueOf( 41234567890L ), codec.deserialize( "41234567890" ) );
-        assertEquals( "deserialize", null, codec.deserialize( "" ) );
+        assertEquals( "deserialize", "123", codec.deserialize( "123" ) );
+        assertEquals( "deserialize", "-123", codec.deserialize( "-123" ) );
+        assertEquals( "deserialize", "41234567890", codec.deserialize( "41234567890" ) );
+        assertEquals( "deserialize", "", codec.deserialize( "" ) );
         assertEquals( "deserialize", null, codec.deserialize( null ) );
 
         deserializeWithExpectedIllegalArgEx( codec, "enum3" );
