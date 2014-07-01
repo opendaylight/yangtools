@@ -15,8 +15,6 @@
         <version>0.6.2-SNAPSHOT</version>
         <relativePath>../common/parent</relativePath>
     </parent>
-    <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.6.2-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>binding-generator</artifactId>
     <packaging>pom</packaging>

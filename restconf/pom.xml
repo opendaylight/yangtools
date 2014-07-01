@@ -15,7 +15,6 @@
         <version>0.6.2-SNAPSHOT</version>
         <relativePath>../common/parent</relativePath>
     </parent>
-    <groupId>org.opendaylight.yangtools</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>restconf-parent</artifactId>
     <packaging>pom</packaging>
