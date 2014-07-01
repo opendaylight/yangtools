@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -25,10 +27,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public final class NotificationBuilder extends AbstractDocumentedDataNodeContainerBuilder implements SchemaNodeBuilder,
         AugmentationTargetBuilder {
@@ -187,7 +185,7 @@ public final class NotificationBuilder extends AbstractDocumentedDataNodeContain
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(NotificationDefinitionImpl.class.getSimpleName());
-            sb.append("[qname=" + qname + ", path=" + path + "]");
+            sb.append("[qname=").append(qname).append(", path=").append(path).append("]");
             return sb.toString();
         }
     }

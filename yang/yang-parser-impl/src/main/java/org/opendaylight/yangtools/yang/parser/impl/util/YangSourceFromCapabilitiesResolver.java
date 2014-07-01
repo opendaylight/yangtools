@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
+import com.google.common.base.Optional;
 import java.io.InputStream;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProviders;
 import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
-
-import com.google.common.base.Optional;
 
 /**
  *

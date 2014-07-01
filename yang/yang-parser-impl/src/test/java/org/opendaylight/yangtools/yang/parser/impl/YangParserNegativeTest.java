@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;

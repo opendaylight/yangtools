@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -29,10 +31,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public final class ChoiceCaseBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DataSchemaNodeBuilder,
         AugmentationTargetBuilder {

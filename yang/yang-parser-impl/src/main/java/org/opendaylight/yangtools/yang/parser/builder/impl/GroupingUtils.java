@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -61,10 +60,10 @@ public final class GroupingUtils {
         }
 
         ModuleBuilder dependentModule;
+
         if(groupingPrefix == null) {
             dependentModule = module;
-        }
-        if (groupingPrefix.equals(module.getPrefix())) {
+        } else if (groupingPrefix.equals(module.getPrefix())) {
             dependentModule = module;
         } else {
             dependentModule = BuilderUtils.findModuleFromBuilders(modules, module, groupingPrefix, line);
@@ -147,7 +146,7 @@ public final class GroupingUtils {
      *            name of grouping
      * @return grouping with given name if present in collection, null otherwise
      */
-    public static GroupingBuilder findGroupingBuilder(final Set<GroupingBuilder> groupings, final String name) {
+    private static GroupingBuilder findGroupingBuilder(final Set<GroupingBuilder> groupings, final String name) {
         for (GroupingBuilder grouping : groupings) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;
@@ -165,7 +164,7 @@ public final class GroupingUtils {
      *            name of grouping
      * @return grouping with given name if present in collection, null otherwise
      */
-    public static GroupingDefinition findGroupingDefinition(final Set<GroupingDefinition> groupings, final String name) {
+    private static GroupingDefinition findGroupingDefinition(final Set<GroupingDefinition> groupings, final String name) {
         for (GroupingDefinition grouping : groupings) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;

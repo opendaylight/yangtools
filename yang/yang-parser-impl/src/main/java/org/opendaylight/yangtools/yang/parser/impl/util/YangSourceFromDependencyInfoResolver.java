@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Resolver for YANG Schema Source which is based on DependencyInfo

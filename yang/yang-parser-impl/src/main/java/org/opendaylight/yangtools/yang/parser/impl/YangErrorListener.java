@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;

@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtContext;
@@ -34,8 +33,8 @@ final class ValidationUtil {
     }
 
     static Set<String> getDuplicates(Collection<String> keyList) {
-        Set<String> all = new HashSet<String>();
-        Set<String> duplicates = new HashSet<String>();
+        Set<String> all = new HashSet<>();
+        Set<String> duplicates = new HashSet<>();
 
         for (String key : keyList) {
             if (!all.add(key)) {

@@ -14,15 +14,16 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import com.google.common.collect.Sets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -30,8 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort.ModuleNodeImpl;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Edge;
-
-import com.google.common.collect.Sets;
 
 public class ModuleDependencySortTest {
     private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,7 +50,8 @@ public class ModuleDependencySortTest {
 
         List<ModuleBuilder> l = ModuleDependencySort.sort(builders);
 
-        assertDependencyGraph(ModuleDependencySort.createModuleGraph(Arrays.asList(builders)));
+        assertDependencyGraph(ModuleDependencySort.createModuleGraph(ModuleOrModuleBuilder.fromAll(
+                Collections.<Module>emptySet(), Arrays.asList(builders))));
 
         @SuppressWarnings("unchecked")
         Matcher<String> cOrD = anyOf(is(c.getName()), is(d.getName()));

@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Base helper implementation of Builders for Yang Model elements.
@@ -26,7 +24,7 @@ public abstract class AbstractBuilder implements Builder {
     private Builder parentBuilder;
 
     protected final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
-    protected final List<UnknownSchemaNodeBuilder> addedUnknownNodes = new ArrayList<UnknownSchemaNodeBuilder>();
+    protected final List<UnknownSchemaNodeBuilder> addedUnknownNodes = new ArrayList<>();
     private boolean sealed;
 
     protected AbstractBuilder(final String moduleName, final int line) {
@@ -71,7 +69,7 @@ public abstract class AbstractBuilder implements Builder {
         addedUnknownNodes.add(unknownNode);
     }
 
-    protected void seal() {
+    void seal() {
         checkNotSealed();
         sealed  = true;
     }
@@ -80,7 +78,7 @@ public abstract class AbstractBuilder implements Builder {
         Preconditions.checkState(!sealed, "Builder is sealed. No further modifications allowed");
     }
 
-    protected boolean isSealed() {
+    boolean isSealed() {
         return sealed;
     }
 

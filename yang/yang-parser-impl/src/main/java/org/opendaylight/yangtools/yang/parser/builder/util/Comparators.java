@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
 import java.util.Comparator;
-
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 

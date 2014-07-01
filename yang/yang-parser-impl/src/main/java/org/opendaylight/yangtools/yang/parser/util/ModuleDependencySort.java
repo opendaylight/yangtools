@@ -6,9 +6,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import static java.util.Arrays.asList;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -16,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -25,12 +31,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Creates a module dependency graph from provided {@link ModuleBuilder}s and
@@ -49,6 +49,7 @@ public final class ModuleDependencySort {
     private ModuleDependencySort() {
     }
 
+
     /**
      * Extracts {@link ModuleBuilder} from a {@link ModuleNodeImpl}.
      */
@@ -56,7 +57,8 @@ public final class ModuleDependencySort {
         @Override
         public ModuleBuilder apply(final TopologicalSort.Node input) {
             // Cast to ModuleBuilder from Node and return
-            return (ModuleBuilder) ((ModuleNodeImpl) input).getReference();
+            ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
+            return moduleOrModuleBuilder.getModuleBuilder();
         }
     };
 
@@ -67,27 +69,27 @@ public final class ModuleDependencySort {
      *         in returned order.
      */
     public static List<ModuleBuilder> sort(final ModuleBuilder... builders) {
-        return sort(Arrays.asList(builders));
+        return sort(asList(builders));
     }
 
     public static List<ModuleBuilder> sort(final Collection<ModuleBuilder> builders) {
-        List<TopologicalSort.Node> sorted = sortInternal(builders);
+        List<TopologicalSort.Node> sorted = sortInternal(ModuleOrModuleBuilder.fromAll(
+                Collections.<Module>emptySet(),builders));
         return Lists.transform(sorted, NODE_TO_MODULEBUILDER);
     }
 
     public static List<ModuleBuilder> sortWithContext(final SchemaContext context, final ModuleBuilder... builders) {
-        List<Object> modules = new ArrayList<Object>();
-        Collections.addAll(modules, builders);
-        modules.addAll(context.getModules());
+        List<ModuleOrModuleBuilder> all = ModuleOrModuleBuilder.fromAll(context.getModules(), asList(builders));
 
-        List<TopologicalSort.Node> sorted = sortInternal(modules);
+        List<TopologicalSort.Node> sorted = sortInternal(all);
         // Cast to ModuleBuilder from Node if possible and return
         return Lists.transform(sorted, new Function<TopologicalSort.Node, ModuleBuilder>() {
 
             @Override
             public ModuleBuilder apply(final TopologicalSort.Node input) {
-                if (((ModuleNodeImpl) input).getReference() instanceof ModuleBuilder) {
-                    return (ModuleBuilder) ((ModuleNodeImpl) input).getReference();
+                ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
+                if (moduleOrModuleBuilder.isModuleBuilder()) {
+                    return moduleOrModuleBuilder.getModuleBuilder();
                 } else {
                     return null;
                 }
@@ -102,18 +104,20 @@ public final class ModuleDependencySort {
      *         returned order.
      */
     public static List<Module> sort(final Module... modules) {
-        List<TopologicalSort.Node> sorted = sortInternal(Arrays.asList(modules));
+        List<TopologicalSort.Node> sorted = sortInternal(ModuleOrModuleBuilder.fromAll(asList(modules),
+                Collections.<ModuleBuilder>emptyList()));
         // Cast to Module from Node and return
         return Lists.transform(sorted, new Function<TopologicalSort.Node, Module>() {
 
             @Override
             public Module apply(final TopologicalSort.Node input) {
-                return (Module) ((ModuleNodeImpl) input).getReference();
+                ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
+                return moduleOrModuleBuilder.getModule();
             }
         });
     }
 
-    private static List<TopologicalSort.Node> sortInternal(final Iterable<?> modules) {
+    private static List<TopologicalSort.Node> sortInternal(final Iterable<ModuleOrModuleBuilder> modules) {
         Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = createModuleGraph(modules);
 
         Set<TopologicalSort.Node> nodes = Sets.newHashSet();
@@ -127,7 +131,7 @@ public final class ModuleDependencySort {
     }
 
     @VisibleForTesting
-    static Map<String, Map<Date, ModuleNodeImpl>> createModuleGraph(final Iterable<?> builders) {
+    static Map<String, Map<Date, ModuleNodeImpl>> createModuleGraph(final Iterable<ModuleOrModuleBuilder> builders) {
         Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = Maps.newHashMap();
 
         processModules(moduleGraph, builders);
@@ -140,28 +144,30 @@ public final class ModuleDependencySort {
      * Extract module:revision from module builders
      */
     private static void processDependencies(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
-            final Iterable<?> builders) {
+            final Iterable<ModuleOrModuleBuilder> mmbs) {
         Map<URI, Object> allNS = new HashMap<>();
 
         // Create edges in graph
-        for (Object mb : builders) {
+        for (ModuleOrModuleBuilder mmb : mmbs) {
             Map<String, Date> imported = Maps.newHashMap();
 
-            String fromName = null;
-            Date fromRevision = null;
-            Set<ModuleImport> imports = null;
-            URI ns = null;
+            String fromName;
+            Date fromRevision;
+            Set<ModuleImport> imports;
+            URI ns;
 
-            if (mb instanceof Module) {
-                fromName = ((Module) mb).getName();
-                fromRevision = ((Module) mb).getRevision();
-                imports = ((Module) mb).getImports();
-                ns = ((Module) mb).getNamespace();
-            } else if (mb instanceof ModuleBuilder) {
-                fromName = ((ModuleBuilder) mb).getName();
-                fromRevision = ((ModuleBuilder) mb).getRevision();
-                imports = ((ModuleBuilder) mb).getModuleImports();
-                ns = ((ModuleBuilder) mb).getNamespace();
+            if (mmb.isModule()) {
+                Module module = mmb.getModule();
+                fromName = module.getName();
+                fromRevision = module.getRevision();
+                imports = module.getImports();
+                ns = module.getNamespace();
+            } else {
+                ModuleBuilder moduleBuilder = mmb.getModuleBuilder();
+                fromName = moduleBuilder.getName();
+                fromRevision = moduleBuilder.getRevision();
+                imports = moduleBuilder.getModuleImports();
+                ns = moduleBuilder.getNamespace();
             }
 
             // check for existence of module with same namespace
@@ -182,7 +188,7 @@ public final class ModuleDependencySort {
                             fromName, fromRevision, ns, name, revision);
                 }
             } else {
-                allNS.put(ns, mb);
+                allNS.put(ns, mmb);
             }
 
             // no need to check if other Type of object, check is performed in
@@ -256,24 +262,20 @@ public final class ModuleDependencySort {
      * graph
      */
     private static void processModules(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
-            final Iterable<?> builders) {
+            final Iterable<ModuleOrModuleBuilder> builders) {
 
         // Process nodes
-        for (Object mb : builders) {
+        for (ModuleOrModuleBuilder momb : builders) {
 
-            String name = null;
-            Date rev = null;
+            String name;
+            Date rev;
 
-            if (mb instanceof Module) {
-                name = ((Module) mb).getName();
-                rev = ((Module) mb).getRevision();
-            } else if (mb instanceof ModuleBuilder) {
-                name = ((ModuleBuilder) mb).getName();
-                rev = ((ModuleBuilder) mb).getRevision();
+            if (momb.isModule()) {
+                name = momb.getModule().getName();
+                rev = momb.getModule().getRevision();
             } else {
-                throw new IllegalStateException(String.format(
-                        "Unexpected type of node for sort, expected only:%s, %s, got:%s", Module.class,
-                        ModuleBuilder.class, mb.getClass()));
+                name = momb.getModuleBuilder().getName();
+                rev = momb.getModuleBuilder().getRevision();
             }
 
             if (rev == null) {
@@ -288,7 +290,7 @@ public final class ModuleDependencySort {
                 ex(String.format("Module:%s with revision:%s declared twice", name, formatRevDate(rev)));
             }
 
-            moduleGraph.get(name).put(rev, new ModuleNodeImpl(name, rev, mb));
+            moduleGraph.get(name).put(rev, new ModuleNodeImpl(name, rev, momb));
         }
     }
 
@@ -300,9 +302,9 @@ public final class ModuleDependencySort {
     static class ModuleNodeImpl extends NodeImpl {
         private final String name;
         private final Date revision;
-        private final Object originalObject;
+        private final ModuleOrModuleBuilder originalObject;
 
-        public ModuleNodeImpl(final String name, final Date revision, final Object builder) {
+        public ModuleNodeImpl(final String name, final Date revision, final ModuleOrModuleBuilder builder) {
             this.name = name;
             this.revision = revision;
             this.originalObject = builder;
@@ -359,10 +361,47 @@ public final class ModuleDependencySort {
             return "Module [name=" + name + ", revision=" + formatRevDate(revision) + "]";
         }
 
-        public Object getReference() {
+        public ModuleOrModuleBuilder getReference() {
             return originalObject;
         }
 
     }
 
+}
+class ModuleOrModuleBuilder {
+    private final Optional<Module> maybeModule;
+    private final Optional<ModuleBuilder> maybeModuleBuilder;
+
+    ModuleOrModuleBuilder(Module module) {
+        maybeModule = Optional.of(module);
+        maybeModuleBuilder = Optional.absent();
+    }
+
+    ModuleOrModuleBuilder(ModuleBuilder moduleBuilder) {
+        maybeModule = Optional.absent();
+        maybeModuleBuilder = Optional.of(moduleBuilder);
+    }
+    boolean isModule(){
+        return maybeModule.isPresent();
+    }
+    boolean isModuleBuilder(){
+        return maybeModuleBuilder.isPresent();
+    }
+    Module getModule(){
+        return maybeModule.get();
+    }
+    ModuleBuilder getModuleBuilder(){
+        return maybeModuleBuilder.get();
+    }
+
+    static List<ModuleOrModuleBuilder> fromAll(Collection<Module> modules, Collection<ModuleBuilder> moduleBuilders) {
+        List<ModuleOrModuleBuilder> result = new ArrayList<>(modules.size() + moduleBuilders.size());
+        for(Module m: modules){
+            result.add(new ModuleOrModuleBuilder(m));
+        }
+        for (ModuleBuilder mb : moduleBuilders) {
+            result.add(new ModuleOrModuleBuilder(mb));
+        }
+        return result;
+    }
 }

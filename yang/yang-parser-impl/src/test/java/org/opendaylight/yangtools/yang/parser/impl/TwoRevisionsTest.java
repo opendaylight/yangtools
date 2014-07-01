@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
-
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
 
 public class TwoRevisionsTest {
 

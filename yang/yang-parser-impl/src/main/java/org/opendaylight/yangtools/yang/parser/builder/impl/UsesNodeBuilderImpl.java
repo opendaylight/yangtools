@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -31,10 +33,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNodeBuilder {
     private UsesNodeImpl instance;

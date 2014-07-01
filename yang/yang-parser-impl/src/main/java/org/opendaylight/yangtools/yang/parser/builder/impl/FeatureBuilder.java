@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -16,9 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
     private FeatureDefinitionImpl instance;
@@ -134,7 +132,7 @@ public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder(FeatureDefinitionImpl.class.getSimpleName());
-            sb.append("[name=" + qname + "]");
+            sb.append("[name=").append(qname).append("]");
             return sb.toString();
         }
     }

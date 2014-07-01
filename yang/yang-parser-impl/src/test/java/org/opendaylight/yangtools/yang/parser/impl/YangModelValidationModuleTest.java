@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +20,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Namespace_stmtCont
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtsContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
-import org.opendaylight.yangtools.yang.parser.impl.BasicValidations;
-import org.opendaylight.yangtools.yang.parser.impl.YangModelBasicValidationListener;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 public class YangModelValidationModuleTest {

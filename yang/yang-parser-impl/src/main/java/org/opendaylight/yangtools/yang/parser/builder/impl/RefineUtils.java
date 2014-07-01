@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -30,7 +29,7 @@ public final class RefineUtils {
     private RefineUtils() {
     }
 
-    public static void refineLeaf(final LeafSchemaNodeBuilder leaf, final RefineBuilder refine) {
+    private static void refineLeaf(final LeafSchemaNodeBuilder leaf, final RefineBuilder refine) {
         String defaultStr = refine.getDefaultStr();
         Boolean mandatory = refine.isMandatory();
         MustDefinition must = refine.getMust();
@@ -53,7 +52,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineContainer(final ContainerSchemaNodeBuilder container, final RefineBuilder refine) {
+    private static void refineContainer(final ContainerSchemaNodeBuilder container, final RefineBuilder refine) {
         Boolean presence = refine.isPresence();
         MustDefinition must = refine.getMust();
         List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
@@ -72,7 +71,7 @@ public final class RefineUtils {
         }
     }
 
-    public static void refineList(final ListSchemaNodeBuilder list, final RefineBuilder refine) {
+    private static void refineList(final ListSchemaNodeBuilder list, final RefineBuilder refine) {
         MustDefinition must = refine.getMust();
         Integer min = refine.getMinElements();
         Integer max = refine.getMaxElements();
@@ -259,7 +258,6 @@ public final class RefineUtils {
     private static void refineDefault(final Builder node, final RefineBuilder refine) {
         final String moduleName = refine.getModuleName();
         final int line = refine.getLine();
-        Class<? extends Builder> cls = node.getClass();
 
 
         final DocumentedNodeBuilder documentedNode;

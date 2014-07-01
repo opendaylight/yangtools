@@ -195,8 +195,7 @@ public final class YangParserImpl implements YangContextParser {
         }
 
         Collection<ByteSource> sources = BuilderUtils.filesToByteSources(yangFiles);
-        SchemaContext result = parseSources(sources, context);
-        return result;
+        return parseSources(sources, context);
     }
 
     @Override
@@ -359,8 +358,7 @@ public final class YangParserImpl implements YangContextParser {
     private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams)
             throws IOException, YangSyntaxErrorException {
         Map<ByteSource, ModuleBuilder> builders = parseSourcesToBuilders(streams);
-        Map<ByteSource, ModuleBuilder> result = resolveSubmodules(builders);
-        return result;
+        return resolveSubmodules(builders);
     }
 
     private Map<ByteSource, ModuleBuilder> parseSourcesToBuilders(final Collection<ByteSource> sources)
@@ -1088,7 +1086,7 @@ public final class YangParserImpl implements YangContextParser {
      */
     private ModuleBuilder findTargetModule(final QName qname, final ModuleBuilder module,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context, final int line) {
-        ModuleBuilder targetModule = null;
+        ModuleBuilder targetModule;
 
         String prefix = qname.getPrefix();
         if (prefix == null || prefix.equals("")) {
@@ -1115,7 +1113,7 @@ public final class YangParserImpl implements YangContextParser {
 
     private ModuleBuilder findTargetModule(final String prefix, final ModuleBuilder module,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final SchemaContext context, final int line) {
-        ModuleBuilder targetModule = null;
+        ModuleBuilder targetModule;
 
         if (prefix == null || prefix.equals("")) {
             targetModule = module;
@@ -1352,9 +1350,9 @@ public final class YangParserImpl implements YangContextParser {
         DataNodeContainerBuilder parent = usesNode.getParent();
         ModuleBuilder module = BuilderUtils.getParentModule(parent);
         SchemaPath parentPath;
-        URI ns = null;
-        Date rev = null;
-        String pref = null;
+        URI ns;
+        Date rev;
+        String pref;
         if (parent instanceof AugmentationSchemaBuilder || parent instanceof ModuleBuilder) {
             ns = module.getNamespace();
             rev = module.getRevision();
@@ -1362,13 +1360,13 @@ public final class YangParserImpl implements YangContextParser {
             if (parent instanceof AugmentationSchemaBuilder) {
                 parentPath = ((AugmentationSchemaBuilder) parent).getTargetNodeSchemaPath();
             } else {
-                parentPath = ((ModuleBuilder) parent).getPath();
+                parentPath = parent.getPath();
             }
         } else {
-            ns = ((DataSchemaNodeBuilder) parent).getQName().getNamespace();
-            rev = ((DataSchemaNodeBuilder) parent).getQName().getRevision();
-            pref = ((DataSchemaNodeBuilder) parent).getQName().getPrefix();
-            parentPath = ((DataSchemaNodeBuilder) parent).getPath();
+            ns = parent.getQName().getNamespace();
+            rev = parent.getQName().getRevision();
+            pref = parent.getQName().getPrefix();
+            parentPath = parent.getPath();
         }
 
         GroupingDefinition gd = usesNode.getGroupingDefinition();

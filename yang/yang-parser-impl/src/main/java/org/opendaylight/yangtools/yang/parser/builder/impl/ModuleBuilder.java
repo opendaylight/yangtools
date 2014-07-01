@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
@@ -21,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -75,7 +73,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     private final Deque<Builder> actualPath = new LinkedList<>();
     private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<>();
 
-    final Set<ModuleImport> imports = new HashSet<ModuleImport>();
+    final Set<ModuleImport> imports = new HashSet<>();
 
     private final Set<AugmentationSchema> augments = new LinkedHashSet<>();
     private final List<AugmentationSchemaBuilder> augmentBuilders = new ArrayList<>();
@@ -842,11 +840,11 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
             addedUnknownNodes.add(builder);
         } else {
             if (parent instanceof SchemaNodeBuilder) {
-                ((SchemaNodeBuilder) parent).addUnknownNodeBuilder(builder);
+                parent.addUnknownNodeBuilder(builder);
             } else if (parent instanceof DataNodeContainerBuilder) {
-                ((DataNodeContainerBuilder) parent).addUnknownNodeBuilder(builder);
+                parent.addUnknownNodeBuilder(builder);
             } else if (parent instanceof RefineHolderImpl) {
-                ((RefineHolderImpl) parent).addUnknownNodeBuilder(builder);
+                parent.addUnknownNodeBuilder(builder);
             } else {
                 throw new YangParseException(name, line, "Unresolved parent of unknown node '" + qname.getLocalName()
                         + "'");
@@ -1000,8 +998,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     private ModuleImport createModuleImport(final String moduleName, final Date revision, final String prefix) {
-        final ModuleImport moduleImport = new ModuleImportImpl(moduleName, revision, prefix);
-        return moduleImport;
+        return new ModuleImportImpl(moduleName, revision, prefix);
     }
 
     private void raiseYangParserException(final String cantAddType, final String type, final String name,

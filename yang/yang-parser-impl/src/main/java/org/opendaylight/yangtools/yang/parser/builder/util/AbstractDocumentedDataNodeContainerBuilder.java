@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 public abstract class AbstractDocumentedDataNodeContainerBuilder extends AbstractDocumentedNodeBuilder implements DataNodeContainerBuilder {
     protected final QName qname;
 
-    protected final Map<QName, DataSchemaNode> childNodes = new TreeMap<>();
+    private final Map<QName, DataSchemaNode> childNodes = new TreeMap<>();
     private final Set<DataSchemaNodeBuilder> addedChildNodes = new HashSet<>();
 
     private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
@@ -51,7 +51,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
         this.qname = qname;
     }
 
-    public AbstractDocumentedDataNodeContainerBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final DataNodeContainer base) {
+    protected AbstractDocumentedDataNodeContainerBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final DataNodeContainer base) {
         super(moduleName, line);
         this.qname = qname;
 

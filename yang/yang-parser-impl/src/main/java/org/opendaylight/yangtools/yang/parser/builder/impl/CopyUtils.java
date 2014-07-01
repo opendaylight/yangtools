@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.ArrayList;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -213,7 +212,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static LeafListSchemaNodeBuilder copy(final LeafListSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
+    private static LeafListSchemaNodeBuilder copy(final LeafListSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;

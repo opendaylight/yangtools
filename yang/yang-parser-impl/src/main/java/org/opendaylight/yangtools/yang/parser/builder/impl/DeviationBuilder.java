@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.collect.ImmutableList;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -16,8 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.collect.ImmutableList;
 
 public final class DeviationBuilder extends AbstractBuilder {
     private DeviationImpl instance;
@@ -170,9 +168,9 @@ public final class DeviationBuilder extends AbstractBuilder {
         public String toString() {
             StringBuilder sb = new StringBuilder(DeviationImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("targetPath=" + targetPath);
-            sb.append(", deviate=" + deviate);
-            sb.append(", reference=" + reference);
+            sb.append("targetPath=").append(targetPath);
+            sb.append(", deviate=").append(deviate);
+            sb.append(", reference=").append(reference);
             sb.append("]");
             return sb.toString();
         }

@@ -7,7 +7,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import java.util.Set;
-
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;

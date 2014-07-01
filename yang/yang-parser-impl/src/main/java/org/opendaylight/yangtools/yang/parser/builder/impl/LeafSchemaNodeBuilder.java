@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -21,9 +22,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder {
     private LeafSchemaNodeImpl instance;
@@ -362,8 +360,8 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         public String toString() {
             StringBuilder sb = new StringBuilder(LeafSchemaNodeImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("qname=" + qname);
-            sb.append(", path=" + path);
+            sb.append("qname=").append(qname);
+            sb.append(", path=").append(path);
             sb.append("]");
             return sb.toString();
         }

@@ -61,7 +61,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         super(builder);
         this.name = checkNotNull(name, "Missing name");
         this.sourcePath = sourcePath; //TODO: can this be nullable?
-        this.imports = ImmutableSet.<ModuleImport> copyOf(builder.imports);
+        this.imports = ImmutableSet.copyOf(builder.imports);
         this.namespace = builder.getNamespace();
         this.prefix = builder.getPrefix();
         this.revision = builder.getRevision() == null ? Optional.<Date>absent():
@@ -238,11 +238,11 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
     public String toString() {
         StringBuilder sb = new StringBuilder(ModuleImpl.class.getSimpleName());
         sb.append("[");
-        sb.append("name=" + name);
-        sb.append(", namespace=" + namespace);
-        sb.append(", revision=" + revision);
-        sb.append(", prefix=" + prefix);
-        sb.append(", yangVersion=" + yangVersion);
+        sb.append("name=").append(name);
+        sb.append(", namespace=").append(namespace);
+        sb.append(", revision=").append(revision);
+        sb.append(", prefix=").append(prefix);
+        sb.append(", yangVersion=").append(yangVersion);
         sb.append("]");
         return sb.toString();
     }
