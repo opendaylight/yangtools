@@ -59,10 +59,24 @@ public final class QNameModule implements Immutable, Serializable {
         return formattedRevision;
     }
 
+    /**
+     * Returns the namespace of the module which is specified as argument of
+     * YANG {@link Module <b><font color="#00FF00">namespace</font></b>}
+     * keyword.
+     *
+     * @return URI format of the namespace of the module
+     */
     public URI getNamespace() {
         return namespace;
     }
 
+    /**
+     * Returns the revision date for the module.
+     *
+     * @return date of the module revision which is specified as argument of
+     *         YANG {@link Module <b><font color="#339900">revison</font></b>}
+     *         keyword
+     */
     public Date getRevision() {
         return revision;
     }
