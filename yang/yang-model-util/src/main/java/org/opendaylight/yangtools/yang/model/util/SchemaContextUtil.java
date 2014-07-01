@@ -81,7 +81,7 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(schemaPath != null, "Schema Path reference cannot be NULL");
 
-        final List<QName> prefixedPath = (schemaPath.getPath());
+        final Iterable<QName> prefixedPath = schemaPath.getPathFromRoot();
         if (prefixedPath == null) {
             LOG.debug("Schema path {} has null path", schemaPath);
             return null;
@@ -518,7 +518,7 @@ public final class SchemaContextUtil {
     }
 
     private static DataSchemaNode findCorrectTargetFromGrouping(final DataSchemaNode node, final SchemaContext ctx) {
-        if (node.getPath().getPath().size() != 1) {
+        if (Iterables.size(node.getPath().getPathTowardsRoot()) != 1) {
             QName currentName = node.getQName();
             // tmpPath is used to track level of nesting
             List<QName> tmpPath = new ArrayList<>();
