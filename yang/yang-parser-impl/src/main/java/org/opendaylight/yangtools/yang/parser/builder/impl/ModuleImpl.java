@@ -4,14 +4,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -62,7 +60,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         super(builder);
         this.name = checkNotNull(name, "Missing name");
         this.sourcePath = sourcePath; //TODO: can this be nullable?
-        this.imports = ImmutableSet.copyOf(builder.imports);
+        this.imports = ImmutableSet.<ModuleImport> copyOf(builder.imports.values());
         this.prefix = builder.getPrefix();
 
         this.qnameModule = QNameModule.create(builder.getNamespace(),

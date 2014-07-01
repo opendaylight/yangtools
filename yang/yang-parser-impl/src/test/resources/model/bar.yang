@@ -97,4 +97,10 @@ module bar {
         }
     }
 
+    extension opendaylight {
+        argument "name" {
+            yin-element "true";
+        }
+    }
+
 }
