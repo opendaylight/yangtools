@@ -61,7 +61,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         super(builder);
         this.name = checkNotNull(name, "Missing name");
         this.sourcePath = sourcePath; //TODO: can this be nullable?
-        this.imports = ImmutableSet.<ModuleImport> copyOf(builder.imports);
+        this.imports = ImmutableSet.<ModuleImport> copyOf(builder.imports.values());
         this.namespace = builder.getNamespace();
         this.prefix = builder.getPrefix();
         this.revision = builder.getRevision() == null ? Optional.<Date>absent():

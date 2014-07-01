@@ -126,25 +126,6 @@ public final class BuilderUtils {
     }
 
     /**
-     * Get module import referenced by given prefix.
-     *
-     * @param builder
-     *            module to search
-     * @param prefix
-     *            prefix associated with import
-     * @return ModuleImport based on given prefix
-     */
-    public static ModuleImport getModuleImport(final ModuleBuilder builder, final String prefix) {
-        for (ModuleImport mi : builder.getModuleImports()) {
-            if (mi.getPrefix().equals(prefix)) {
-                return mi;
-
-            }
-        }
-        return null;
-    }
-
-    /**
      * Find dependent module based on given prefix
      *
      * @param modules
@@ -167,7 +148,7 @@ public final class BuilderUtils {
         } else if (prefix.equals(module.getPrefix())) {
             dependentModule = module;
         } else {
-            ModuleImport dependentModuleImport = getModuleImport(module, prefix);
+            ModuleImport dependentModuleImport = module.getImport(prefix);
             if (dependentModuleImport == null) {
                 throw new YangParseException(module.getName(), line, "No import found with prefix '" + prefix + "'.");
             }
@@ -195,20 +176,19 @@ public final class BuilderUtils {
      * @param currentModule
      *            current module
      * @param prefix
-     *            current prefix used to reference dependent module
+     *            prefix used to reference dependent module
      * @param line
      *            current line in yang model
-     * @return module based on given prefix if found in context, null otherwise
+     * @return module based on import with given prefix if found in context,
+     *         null otherwise
+     * @throws YangParseException
+     *             if no import found with given prefix
      */
     public static Module findModuleFromContext(final SchemaContext context, final ModuleBuilder currentModule,
             final String prefix, final int line) {
-        if (context == null) {
-            throw new YangParseException(currentModule.getName(), line, "Cannot find module with prefix '" + prefix
-                    + "'.");
-        }
         TreeMap<Date, Module> modulesByRevision = new TreeMap<>();
 
-        ModuleImport dependentModuleImport = BuilderUtils.getModuleImport(currentModule, prefix);
+        ModuleImport dependentModuleImport = currentModule.getImport(prefix);
         if (dependentModuleImport == null) {
             throw new YangParseException(currentModule.getName(), line, "No import found with prefix '" + prefix + "'.");
         }
@@ -231,7 +211,41 @@ public final class BuilderUtils {
         } else {
             result = modulesByRevision.get(dependentModuleRevision);
         }
+
         return result;
+    }
+
+    /**
+     * Search for module in context based on prefix. If found, wrap it in
+     * ModuleBuilder and add to collection of loaded modules.
+     *
+     * @param context
+     *            schema context
+     * @param modules
+     *            all loaded modules
+     * @param currentModule
+     *            current module
+     * @param prefix
+     *            prefix used to reference dependent module
+     * @param line
+     *            current line in yang model
+     * @return ModuleBuilder of module from context
+     * @throws YangParseException
+     *             if no import was found with given prefix or if no module with
+     *             specified revision was found
+     */
+    public static ModuleBuilder getModuleFromContext(final SchemaContext context,
+            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder currentModule,
+            final String prefix, final int line) {
+        Module result = findModuleFromContext(context, currentModule, prefix, line);
+        if (result == null) {
+            throw new YangParseException(currentModule.getName(), line, "Module not found for prefix " + prefix);
+        }
+        ModuleBuilder targetModule = new ModuleBuilder(result);
+        TreeMap<Date, ModuleBuilder> map = new TreeMap<>();
+        map.put(targetModule.getRevision(), targetModule);
+        modules.put(targetModule.getModuleName(), map);
+        return targetModule;
     }
 
     /**
@@ -664,7 +678,7 @@ public final class BuilderUtils {
                 throw new YangParseException(module.getName(), line, "Failed to parse identityref base: " + baseString);
             }
 
-            ModuleBuilder dependentModule = findModuleFromBuilders(modules, module, prefix, line);
+            ModuleBuilder dependentModule = module.getImportedModule(prefix);
             if (dependentModule == null) {
                 return null;
             }

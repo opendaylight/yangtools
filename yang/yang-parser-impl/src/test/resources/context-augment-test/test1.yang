@@ -24,7 +24,7 @@ module test1 {
         revision 2013-06-18 {
     }
 
-    augment "/t4:interfaces/t4:ifEntry/t2:augment-holder/t3:schemas" {
+    augment "/t4:interfaces/t4:ifEntry/t3:augment-holder/t2:schemas" {
         when "if:ifType='ds0'";
         leaf id {
             type string;
