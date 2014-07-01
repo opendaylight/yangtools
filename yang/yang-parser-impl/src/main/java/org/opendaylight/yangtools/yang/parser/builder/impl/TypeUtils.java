@@ -7,18 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromBuilders;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromContext;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
-import org.opendaylight.yangtools.yang.parser.builder.impl.*;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.util.TypeConstraints;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
@@ -43,12 +55,13 @@ public final class TypeUtils {
      */
     public static void resolveType(final TypeAwareBuilder nodeToResolve,
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
-        final int line = nodeToResolve.getLine();
         final TypeDefinition<?> nodeToResolveType = nodeToResolve.getType();
         final QName unknownTypeQName = nodeToResolveType.getBaseType().getQName();
-        final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module,
-                unknownTypeQName.getPrefix(), line);
-
+        final ModuleBuilder dependentModuleBuilder = module.getImportedModule(unknownTypeQName.getPrefix());
+        if (dependentModuleBuilder == null) {
+            throw new YangParseException(module.getName(), nodeToResolve.getLine(), "No module found for import "
+                    + unknownTypeQName.getPrefix());
+        }
         TypeDefinitionBuilder resolvedType = findUnknownTypeDefinition(nodeToResolve, dependentModuleBuilder, modules,
                 module);
         nodeToResolve.setTypedef(resolvedType);
@@ -73,8 +86,7 @@ public final class TypeUtils {
         final int line = nodeToResolve.getLine();
         final TypeDefinition<?> nodeToResolveType = nodeToResolve.getType();
         final QName unknownTypeQName = nodeToResolveType.getBaseType().getQName();
-        final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module,
-                unknownTypeQName.getPrefix(), line);
+        final ModuleBuilder dependentModuleBuilder = module.getImportedModule(unknownTypeQName.getPrefix());
 
         if (dependentModuleBuilder == null) {
             final Module dependentModule = findModuleFromContext(context, module, unknownTypeQName.getPrefix(), line);
@@ -113,16 +125,14 @@ public final class TypeUtils {
         final List<TypeDefinition<?>> toRemove = new ArrayList<>();
         for (TypeDefinition<?> unionType : unionTypes) {
             if (unionType instanceof UnknownType) {
-                final ModuleBuilder dependentModule = findModuleFromBuilders(modules, builder, unionType.getQName()
-                        .getPrefix(), union.getLine());
+                final ModuleBuilder dependentModule = builder.getImportedModule(unionType.getQName().getPrefix());
                 final TypeDefinitionBuilder resolvedType = findTypeDefinitionBuilder(union, dependentModule, unionType
                         .getQName().getLocalName(), builder.getName(), union.getLine());
                 union.setTypedef(resolvedType);
                 toRemove.add(unionType);
             } else if (unionType instanceof ExtendedType && unionType.getBaseType() instanceof UnknownType) {
                 final UnknownType ut = (UnknownType) unionType.getBaseType();
-                final ModuleBuilder dependentModule = findModuleFromBuilders(modules, builder, ut.getQName()
-                        .getPrefix(), union.getLine());
+                final ModuleBuilder dependentModule = builder.getImportedModule(ut.getQName().getPrefix());
                 final TypeDefinitionBuilder targetTypeBuilder = findTypeDefinitionBuilder(union, dependentModule, ut
                         .getQName().getLocalName(), builder.getName(), union.getLine());
                 final TypeDefinitionBuilder newType = extendedTypeWithNewBase(targetTypeBuilder, null,
@@ -168,7 +178,7 @@ public final class TypeUtils {
             final SchemaContext context) {
         final int line = union.getLine();
         final QName utQName = ut.getQName();
-        final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module, utQName.getPrefix(), line);
+        final ModuleBuilder dependentModuleBuilder = module.getImportedModule(utQName.getPrefix());
 
         if (dependentModuleBuilder == null) {
             Module dependentModule = findModuleFromContext(context, module, utQName.getPrefix(), line);
@@ -189,7 +199,7 @@ public final class TypeUtils {
         final TypeDefinition<?> extTypeBase = extType.getBaseType();
         final UnknownType ut = (UnknownType) extTypeBase;
         final QName utQName = ut.getQName();
-        final ModuleBuilder dependentModuleBuilder = findModuleFromBuilders(modules, module, utQName.getPrefix(), line);
+        final ModuleBuilder dependentModuleBuilder = module.getImportedModule(utQName.getPrefix());
 
         if (dependentModuleBuilder == null) {
             final Module dependentModule = findModuleFromContext(context, module, utQName.getPrefix(), line);
@@ -418,8 +428,7 @@ public final class TypeUtils {
         } else {
             QName qname = type.getQName();
             if (type instanceof UnknownType) {
-                ModuleBuilder dependentModuleBuilder = BuilderUtils.findModuleFromBuilders(modules, builder,
-                        qname.getPrefix(), nodeToResolve.getLine());
+                ModuleBuilder dependentModuleBuilder = builder.getImportedModule(qname.getPrefix());
                 if (dependentModuleBuilder == null) {
                     if (context == null) {
                         throw new YangParseException(builder.getName(), nodeToResolve.getLine(),
@@ -440,8 +449,7 @@ public final class TypeUtils {
 
                 TypeDefinition<?> base = ((ExtendedType) type).getBaseType();
                 if (base instanceof UnknownType) {
-                    ModuleBuilder dependentModule = BuilderUtils.findModuleFromBuilders(modules, builder, base
-                            .getQName().getPrefix(), nodeToResolve.getLine());
+                    ModuleBuilder dependentModule = builder.getImportedModule(base.getQName().getPrefix());
                     TypeDefinitionBuilder tdb = findTypeDefinitionBuilder(nodeToResolve, dependentModule, base
                             .getQName().getLocalName(), builder.getName(), nodeToResolve.getLine());
                     return findConstraintsFromTypeBuilder(tdb, constraints, modules, dependentModule, context);

@@ -14,15 +14,16 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import com.google.common.collect.Sets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -30,8 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort.ModuleNodeImpl;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Edge;
-
-import com.google.common.collect.Sets;
 
 public class ModuleDependencySortTest {
     private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -169,8 +168,9 @@ public class ModuleDependencySortTest {
     private void mockDependency(final ModuleBuilder a, final ModuleBuilder b) {
         ModuleImport imprt = mock(ModuleImport.class);
         doReturn(b.getName()).when(imprt).getModuleName();
+        doReturn(b.getName()).when(imprt).getPrefix();
         doReturn(b.getRevision()).when(imprt).getRevision();
-        a.getModuleImports().add(imprt);
+        a.getImports().put(b.getName(), imprt);
     }
 
     private void mockDependency(final Module a, final Module b) {
@@ -183,8 +183,8 @@ public class ModuleDependencySortTest {
     private ModuleBuilder mockModuleBuilder(final String name, final Date rev) {
         ModuleBuilder a = mock(ModuleBuilder.class);
         doReturn(name).when(a).getName();
-        Set<ModuleImport> set = Sets.newHashSet();
-        doReturn(set).when(a).getModuleImports();
+        Map<String, ModuleImport> map = new HashMap<>();
+        doReturn(map).when(a).getImports();
         if (rev != null) {
             doReturn(rev).when(a).getRevision();
         }

@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -60,29 +59,18 @@ public final class GroupingUtils {
             groupingName = groupingString;
         }
 
-        ModuleBuilder dependentModule;
-        if(groupingPrefix == null) {
-            dependentModule = module;
-        }
-        if (groupingPrefix.equals(module.getPrefix())) {
-            dependentModule = module;
-        } else {
-            dependentModule = BuilderUtils.findModuleFromBuilders(modules, module, groupingPrefix, line);
-        }
-
+        ModuleBuilder dependentModule = module.getImportedModule(groupingPrefix);
         if (dependentModule == null) {
             return null;
         }
 
-        GroupingBuilder result;
         Set<GroupingBuilder> groupings = dependentModule.getGroupingBuilders();
-        result = findGroupingBuilder(groupings, groupingName);
+        GroupingBuilder result = findGroupingBuilder(groupings, groupingName);
         if (result != null) {
             return result;
         }
 
         Builder parent = usesBuilder.getParent();
-
         while (parent != null) {
             if (parent instanceof DataNodeContainerBuilder) {
                 groupings = ((DataNodeContainerBuilder) parent).getGroupingBuilders();
@@ -98,8 +86,7 @@ public final class GroupingUtils {
         }
 
         if (result == null) {
-            throw new YangParseException(module.getName(), line, "Referenced grouping '" + groupingName
-                    + "' not found.");
+            throw new YangParseException(module.getName(), line, "Grouping '" + groupingName + "' not found.");
         }
         return result;
     }
