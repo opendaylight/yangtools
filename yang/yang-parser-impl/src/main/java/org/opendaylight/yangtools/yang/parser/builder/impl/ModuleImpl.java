@@ -2,16 +2,18 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -28,10 +30,9 @@ import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 
 public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implements Module, Immutable {
 
-    private final URI namespace;
+    private final QNameModule namespaceAndRevision;
     private final String name;
     private final String sourcePath;
-    private final Optional<Date> revision;
     private final String prefix;
     private final String yangVersion;
     private final String organization;
@@ -62,10 +63,10 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         this.name = checkNotNull(name, "Missing name");
         this.sourcePath = sourcePath; //TODO: can this be nullable?
         this.imports = ImmutableSet.<ModuleImport> copyOf(builder.imports);
-        this.namespace = builder.getNamespace();
         this.prefix = builder.getPrefix();
-        this.revision = builder.getRevision() == null ? Optional.<Date>absent():
-                Optional.of(new Date(builder.getRevision().getTime()));
+
+        this.namespaceAndRevision = QNameModule.create(builder.getNamespace(),
+                builder.getRevision() == null ? null : new Date(builder.getRevision().getTime()));
         this.yangVersion = builder.getYangVersion();
         this.organization = builder.getOrganization();
         this.contact = builder.getContact();
@@ -88,7 +89,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
 
     @Override
     public URI getNamespace() {
-        return namespace;
+        return namespaceAndRevision.getNamespace();
     }
 
     @Override
@@ -98,11 +99,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
 
     @Override
     public Date getRevision() {
-        if (revision.isPresent()) {
-            return new Date(revision.get().getTime());
-        } else {
-            return null;
-        }
+        return namespaceAndRevision.getRevision();
     }
 
     @Override
@@ -170,6 +167,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         return unknownNodes;
     }
 
+    @Override
     public String getSource() {
         return source;
     }
@@ -178,10 +176,9 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
         result = prime * result + ((yangVersion == null) ? 0 : yangVersion.hashCode());
+        result = prime * result + namespaceAndRevision.hashCode();
         return result;
     }
 
@@ -197,13 +194,6 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
             return false;
         }
         ModuleImpl other = (ModuleImpl) obj;
-        if (namespace == null) {
-            if (other.namespace != null) {
-                return false;
-            }
-        } else if (!namespace.equals(other.namespace)) {
-            return false;
-        }
         if (name == null) {
             if (other.name != null) {
                 return false;
@@ -211,11 +201,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (revision == null) {
-            if (other.revision != null) {
-                return false;
-            }
-        } else if (!revision.equals(other.revision)) {
+        if (!namespaceAndRevision.equals(other.namespaceAndRevision)) {
             return false;
         }
         if (yangVersion == null) {
@@ -239,11 +225,16 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         StringBuilder sb = new StringBuilder(ModuleImpl.class.getSimpleName());
         sb.append("[");
         sb.append("name=" + name);
-        sb.append(", namespace=" + namespace);
-        sb.append(", revision=" + revision);
+        sb.append(", namespace=" + getNamespace());
+        sb.append(", revision=" + getRevision());
         sb.append(", prefix=" + prefix);
         sb.append(", yangVersion=" + yangVersion);
         sb.append("]");
         return sb.toString();
+    }
+
+    @Override
+    public QNameModule getNamespaceAndRevision() {
+        return namespaceAndRevision;
     }
 }

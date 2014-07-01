@@ -7,11 +7,11 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.io.ByteSource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
@@ -877,7 +877,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         return "module " + name;
     }
 
-    public void setSource(ByteSource byteSource) throws IOException {
+    public void setSource(final ByteSource byteSource) throws IOException {
         try (InputStream stream = byteSource.openStream()) {
             setSource(IOUtils.toString(stream));
         }
