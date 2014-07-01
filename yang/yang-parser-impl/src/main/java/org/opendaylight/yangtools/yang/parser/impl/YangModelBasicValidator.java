@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.util.Collection;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;

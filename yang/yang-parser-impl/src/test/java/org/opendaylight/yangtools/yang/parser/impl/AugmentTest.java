@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;

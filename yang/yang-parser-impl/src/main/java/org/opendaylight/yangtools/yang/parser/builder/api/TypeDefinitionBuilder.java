@@ -7,7 +7,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;

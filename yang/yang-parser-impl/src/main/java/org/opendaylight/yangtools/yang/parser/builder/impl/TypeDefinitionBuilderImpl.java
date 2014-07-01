@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -24,8 +24,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.base.Preconditions;
 
 public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
     private SchemaPath schemaPath;
@@ -57,19 +55,18 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
         this.units = base.getUnits();
         this.defaultValue = base.getDefaultValue();
 
-        ExtendedType ext = base;
-        this.addedByUses = ext.isAddedByUses();
-        this.ranges = ext.getRangeConstraints();
-        this.lengths = ext.getLengthConstraints();
-        this.patterns = ext.getPatternConstraints();
-        this.fractionDigits = ext.getFractionDigits();
+        this.addedByUses = base.isAddedByUses();
+        this.ranges = base.getRangeConstraints();
+        this.lengths = base.getLengthConstraints();
+        this.patterns = base.getPatternConstraints();
+        this.fractionDigits = base.getFractionDigits();
         this.unknownNodes.addAll(base.getUnknownSchemaNodes());
     }
 
     @Override
     public TypeDefinition<? extends TypeDefinition<?>> build() {
-        TypeDefinition<?> result = null;
-        ExtendedType.Builder typeBuilder = null;
+        TypeDefinition<?> result;
+        ExtendedType.Builder typeBuilder;
         if ((type == null || type instanceof UnknownType) && typedef == null) {
             throw new YangParseException("Unresolved type: '" + qname.getLocalName() + "'.");
         }

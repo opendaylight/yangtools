@@ -8,13 +8,12 @@
 
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 /**
  * ModuleIdentifier that can be used for indexing/searching by name.

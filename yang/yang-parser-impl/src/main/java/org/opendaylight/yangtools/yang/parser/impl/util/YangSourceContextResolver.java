@@ -8,9 +8,11 @@ package org.opendaylight.yangtools.yang.parser.impl.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import java.io.InputStream;
 import java.util.HashMap;
-
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -19,10 +21,6 @@ import org.opendaylight.yangtools.yang.model.util.repo.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  *

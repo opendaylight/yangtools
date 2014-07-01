@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -25,9 +26,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContainerBuilder implements GroupingBuilder {
     private GroupingDefinitionImpl instance;
@@ -272,7 +270,7 @@ public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContain
         public String toString() {
             StringBuilder sb = new StringBuilder(GroupingDefinitionImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("qname=" + qname);
+            sb.append("qname=").append(qname);
             sb.append("]");
             return sb.toString();
         }

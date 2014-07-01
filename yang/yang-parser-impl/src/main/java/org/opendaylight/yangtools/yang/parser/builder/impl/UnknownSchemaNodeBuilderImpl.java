@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -20,8 +20,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
-
-import com.google.common.base.Preconditions;
 
 public final class UnknownSchemaNodeBuilderImpl extends AbstractSchemaNodeBuilder implements UnknownSchemaNodeBuilder {
     private boolean isBuilt;

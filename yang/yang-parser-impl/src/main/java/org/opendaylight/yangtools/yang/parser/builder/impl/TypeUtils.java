@@ -10,15 +10,28 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromBuilders;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromContext;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
-import org.opendaylight.yangtools.yang.parser.builder.impl.*;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.util.TypeConstraints;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 

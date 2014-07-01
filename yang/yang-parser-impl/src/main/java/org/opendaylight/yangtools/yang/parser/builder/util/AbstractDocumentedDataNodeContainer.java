@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocumentedNode implements DataNodeContainer {
 
-    protected final Map<QName, DataSchemaNode> childNodes;
+    private final Map<QName, DataSchemaNode> childNodes;
     private final Set<GroupingDefinition> groupings;
     private final Set<UsesNode> uses;
     private final Set<TypeDefinition<?>> typeDefinitions;

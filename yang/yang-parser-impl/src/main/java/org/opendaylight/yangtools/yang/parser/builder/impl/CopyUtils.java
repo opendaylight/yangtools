@@ -10,15 +10,14 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
@@ -215,7 +214,7 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static LeafListSchemaNodeBuilder copy(final LeafListSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
+    private static LeafListSchemaNodeBuilder copy(final LeafListSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;

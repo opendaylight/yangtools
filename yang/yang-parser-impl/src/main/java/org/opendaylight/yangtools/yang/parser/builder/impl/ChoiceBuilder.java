@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -26,15 +27,12 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder,
         AugmentationTargetBuilder {
@@ -434,7 +432,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         public String toString() {
             StringBuilder sb = new StringBuilder(ChoiceNodeImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("qname=" + qname);
+            sb.append("qname=").append(qname);
             sb.append("]");
             return sb.toString();
         }

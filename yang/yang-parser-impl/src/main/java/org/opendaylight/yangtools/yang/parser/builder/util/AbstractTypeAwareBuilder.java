@@ -20,7 +20,7 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
     protected TypeDefinition<?> type;
     protected TypeDefinitionBuilder typedef;
 
-    public AbstractTypeAwareBuilder(final String moduleName, final int line, final QName qname) {
+    protected AbstractTypeAwareBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line);
         this.qname = qname;
     }

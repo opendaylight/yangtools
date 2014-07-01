@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -25,10 +27,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     private RpcDefinitionImpl instance;

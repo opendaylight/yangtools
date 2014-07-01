@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -27,9 +30,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 
 public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataNodeContainerBuilder implements
         AugmentationSchemaBuilder {
@@ -192,11 +192,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
         } else if (!whenCondition.equals(other.whenCondition)) {
             return false;
         }
-        if (other.getChildNodeBuilders() == null) {
-            if (other.getChildNodeBuilders() != null) {
-                return false;
-            }
-        } else if (!getChildNodeBuilders().equals(other.getChildNodeBuilders())) {
+        if (!getChildNodeBuilders().equals(other.getChildNodeBuilders())) {
             return false;
         }
         return true;
@@ -268,7 +264,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
             int result = 1;
             result = prime * result + ((targetPath == null) ? 0 : targetPath.hashCode());
             result = prime * result + ((whenCondition == null) ? 0 : whenCondition.hashCode());
-            result = getChildNodes().hashCode();
+            result = prime * result + getChildNodes().hashCode();
             return result;
         }
 
@@ -308,14 +304,15 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
         public String toString() {
             StringBuilder sb = new StringBuilder(AugmentationSchemaImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("targetPath=" + targetPath);
-            sb.append(", when=" + whenCondition);
+            sb.append("targetPath=").append(targetPath);
+            sb.append(", when=").append(whenCondition);
             sb.append("]");
             return sb.toString();
         }
 
         @Override
         public int compareTo(final AugmentationSchemaImpl o) {
+            checkNotNull(o);
             Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
             Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();
             while (thisIt.hasNext()) {

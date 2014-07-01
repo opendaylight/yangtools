@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.Optional;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -118,8 +118,8 @@ import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
-import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
@@ -131,8 +131,6 @@ import org.opendaylight.yangtools.yang.parser.util.UnknownBoundaryNumber;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 public final class ParserListenerUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ParserListenerUtils.class);
@@ -161,7 +159,7 @@ public final class ParserListenerUtils {
         return result;
     }
 
-    public static String stringFromStringContext(final StringContext context) {
+    private static String stringFromStringContext(final StringContext context) {
         StringBuilder str = new StringBuilder();
         for (TerminalNode stringNode : context.STRING()) {
             String result = stringNode.getText();
@@ -182,7 +180,7 @@ public final class ParserListenerUtils {
         while (current != null && !(current instanceof Module_stmtContext)) {
             current = current.getParent();
         }
-        if (current instanceof Module_stmtContext) {
+        if (current != null) {
             Module_stmtContext module = (Module_stmtContext) current;
             for (int i = 0; i < module.getChildCount(); i++) {
                 if (module.getChild(i) instanceof StringContext) {
@@ -995,7 +993,7 @@ public final class ParserListenerUtils {
 
     private static boolean getParentConfig(final Builder node) {
         Builder parent = node.getParent();
-        boolean config = false;
+        boolean config;
 
         if (parent instanceof ChoiceCaseBuilder) {
             parent = parent.getParent();
@@ -1348,7 +1346,7 @@ public final class ParserListenerUtils {
      *            Must_stmtContext
      * @return MustDefinition object based on parsed context
      */
-    public static MustDefinition parseMust(final YangParser.Must_stmtContext ctx) {
+    private static MustDefinition parseMust(final YangParser.Must_stmtContext ctx) {
         StringBuilder mustText = new StringBuilder();
         String description = null;
         String reference = null;

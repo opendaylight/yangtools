@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
-
-import com.google.common.collect.ImmutableSet;
 
 public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
     private static final ConstraintDefinitionImpl EMPTY_CONSTRAINT = new ConstraintDefinitionImpl();
@@ -43,13 +41,13 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
     public ConstraintsBuilderImpl(final String moduleName, final int line) {
         this.moduleName = moduleName;
         this.line = line;
-        mustDefinitions = new HashSet<MustDefinition>();
+        mustDefinitions = new HashSet<>();
     }
 
     ConstraintsBuilderImpl(final ConstraintsBuilder b) {
         this.moduleName = b.getModuleName();
         this.line = b.getLine();
-        mustDefinitions = new HashSet<MustDefinition>(b.getMustDefinitions());
+        mustDefinitions = new HashSet<>(b.getMustDefinitions());
         whenCondition = b.getWhenCondition();
         mandatory = b.isMandatory();
         min = b.getMinElements();
@@ -60,7 +58,7 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
         this.moduleName = moduleName;
         this.line = line;
         whenStmt = base.getWhenCondition();
-        mustDefinitions = new HashSet<MustDefinition>(base.getMustConstraints());
+        mustDefinitions = new HashSet<>(base.getMustConstraints());
         mandatory = base.isMandatory();
         min = base.getMinElements();
         max = base.getMaxElements();
@@ -314,11 +312,11 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
         public String toString() {
             StringBuilder sb = new StringBuilder(ConstraintDefinitionImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("whenCondition=" + whenCondition);
-            sb.append(", mustConstraints=" + mustConstraints);
-            sb.append(", mandatory=" + mandatory);
-            sb.append(", minElements=" + minElements);
-            sb.append(", maxElements=" + maxElements);
+            sb.append("whenCondition=").append(whenCondition);
+            sb.append(", mustConstraints=").append(mustConstraints);
+            sb.append(", mandatory=").append(mandatory);
+            sb.append(", minElements=").append(minElements);
+            sb.append(", maxElements=").append(maxElements);
             sb.append("]");
             return sb.toString();
         }

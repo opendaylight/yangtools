@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -17,9 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public final class ExtensionBuilderImpl extends AbstractSchemaNodeBuilder implements ExtensionBuilder {
     private ExtensionDefinitionImpl instance;
@@ -162,11 +160,11 @@ public final class ExtensionBuilderImpl extends AbstractSchemaNodeBuilder implem
         public String toString() {
             StringBuilder sb = new StringBuilder(ExtensionDefinitionImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("argument=" + argument);
-            sb.append(", qname=" + qname);
-            sb.append(", schemaPath=" + schemaPath);
-            sb.append(", extensionSchemaNodes=" + unknownNodes);
-            sb.append(", yin=" + yin);
+            sb.append("argument=").append(argument);
+            sb.append(", qname=").append(qname);
+            sb.append(", schemaPath=").append(schemaPath);
+            sb.append(", extensionSchemaNodes=").append(unknownNodes);
+            sb.append(", yin=").append(yin);
             sb.append("]");
             return sb.toString();
         }

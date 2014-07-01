@@ -24,6 +24,7 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.pa
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseYinValue;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.stringFromNode;
 
+import com.google.common.base.Strings;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,7 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
@@ -95,8 +95,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuil
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
     private static final String AUGMENT_STR = "augment";
@@ -153,7 +151,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override
     public void exitModule_stmt(final YangParser.Module_stmtContext ctx) {
-        exitLog("module", "");
+        exitLog("module");
         actualPath.pop();
     }
 
@@ -184,7 +182,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override public void exitSubmodule_stmt(final YangParser.Submodule_stmtContext ctx) {
-        exitLog("submodule", "");
+        exitLog("submodule");
         actualPath.pop();
     }
 
@@ -221,7 +219,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override
     public void exitModule_header_stmts(final Module_header_stmtsContext ctx) {
-        exitLog("module_header", "");
+        exitLog("module_header");
     }
 
     @Override
@@ -251,7 +249,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override
     public void exitMeta_stmts(final YangParser.Meta_stmtsContext ctx) {
-        exitLog("meta_stmt", "");
+        exitLog("meta_stmt");
     }
 
     @Override
@@ -267,7 +265,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override
     public void exitRevision_stmts(final Revision_stmtsContext ctx) {
-        exitLog("revisions", "");
+        exitLog("revisions");
     }
 
     private void updateRevisionForRevisionStatement(final ParseTree treeNode) {
@@ -320,7 +318,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override
     public void exitImport_stmt(final Import_stmtContext ctx) {
-        exitLog("import", "");
+        exitLog("import");
     }
 
     @Override
@@ -351,7 +349,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitAugment_stmt(final YangParser.Augment_stmtContext ctx) {
         moduleBuilder.exitNode();
-        exitLog(AUGMENT_STR, "");
+        exitLog(AUGMENT_STR);
         actualPath.pop();
     }
 
@@ -420,7 +418,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         final QName typeQName = parseQName(typeName);
 
-        TypeDefinition<?> type = null;
+        TypeDefinition<?> type;
         Type_body_stmtsContext typeBody = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
             if (ctx.getChild(i) instanceof Type_body_stmtsContext) {
@@ -603,7 +601,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitUses_stmt(final YangParser.Uses_stmtContext ctx) {
         moduleBuilder.exitNode();
-        exitLog("uses", "");
+        exitLog("uses");
     }
 
     @Override
@@ -634,7 +632,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitUses_augment_stmt(final YangParser.Uses_augment_stmtContext ctx) {
         moduleBuilder.exitNode();
-        exitLog(AUGMENT_STR, "");
+        exitLog(AUGMENT_STR);
         actualPath.pop();
     }
 
@@ -651,7 +649,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitRefine_stmt(final YangParser.Refine_stmtContext ctx) {
         moduleBuilder.exitNode();
-        exitLog("refine", "");
+        exitLog("refine");
     }
 
     @Override
@@ -990,7 +988,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitDeviation_stmt(final YangParser.Deviation_stmtContext ctx) {
         moduleBuilder.exitNode();
-        exitLog("deviation", "");
+        exitLog("deviation");
     }
 
     @Override
@@ -1032,8 +1030,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         LOGGER.trace("entering {} {} ({})", p1, p2, line);
     }
 
-    private void exitLog(final String p1, final String p2) {
-        LOGGER.trace("exiting {} {}", p1, p2);
+    private void exitLog(final String p1) {
+        LOGGER.trace("exiting {}", p1);
     }
 
     private void exitLog(final String p1, final QName p2) {
@@ -1057,7 +1055,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             nodeType = new QName(namespace, revision, splittedElement[0], splittedElement[1]);
         }
 
-        QName qname = null;
+        QName qname;
         try {
             if (!Strings.isNullOrEmpty(nodeParameter)) {
                 String[] splittedName = nodeParameter.split(":");

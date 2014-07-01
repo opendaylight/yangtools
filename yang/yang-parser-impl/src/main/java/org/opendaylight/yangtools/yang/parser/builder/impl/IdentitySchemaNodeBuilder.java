@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -19,9 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
     private IdentitySchemaNodeImpl instance;
@@ -81,7 +79,7 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         this.baseIdentityBuilder = baseType;
     }
 
-    public void addDerivedIdentity(final IdentitySchemaNode derivedIdentity) {
+    void addDerivedIdentity(final IdentitySchemaNode derivedIdentity) {
         if (derivedIdentity != null) {
             derivedIdentities.add(derivedIdentity);
         }
@@ -191,8 +189,8 @@ public final class IdentitySchemaNodeBuilder extends AbstractSchemaNodeBuilder {
         public String toString() {
             StringBuilder sb = new StringBuilder(IdentitySchemaNodeImpl.class.getSimpleName());
             sb.append("[");
-            sb.append("base=" + baseIdentity);
-            sb.append(", qname=" + qname);
+            sb.append("base=").append(baseIdentity);
+            sb.append(", qname=").append(qname);
             sb.append("]");
             return sb.toString();
         }

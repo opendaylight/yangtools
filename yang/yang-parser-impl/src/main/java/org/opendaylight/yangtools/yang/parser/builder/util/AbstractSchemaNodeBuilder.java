@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Basic implementation of SchemaNodeBuilder.

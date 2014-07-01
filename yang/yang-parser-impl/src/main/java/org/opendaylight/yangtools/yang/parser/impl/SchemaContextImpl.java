@@ -7,7 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -38,13 +43,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.SetMultimap;
 
 @Immutable
 final class SchemaContextImpl implements SchemaContext {
@@ -83,7 +81,7 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Set<DataSchemaNode> getDataDefinitions() {
-        final Set<DataSchemaNode> dataDefs = new HashSet<DataSchemaNode>();
+        final Set<DataSchemaNode> dataDefs = new HashSet<>();
         for (Module m : modules) {
             dataDefs.addAll(m.getChildNodes());
         }
@@ -97,7 +95,7 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Set<NotificationDefinition> getNotifications() {
-        final Set<NotificationDefinition> notifications = new HashSet<NotificationDefinition>();
+        final Set<NotificationDefinition> notifications = new HashSet<>();
         for (Module m : modules) {
             notifications.addAll(m.getNotifications());
         }
@@ -106,7 +104,7 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Set<RpcDefinition> getOperations() {
-        final Set<RpcDefinition> rpcs = new HashSet<RpcDefinition>();
+        final Set<RpcDefinition> rpcs = new HashSet<>();
         for (Module m : modules) {
             rpcs.addAll(m.getRpcs());
         }
@@ -115,7 +113,7 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Set<ExtensionDefinition> getExtensions() {
-        final Set<ExtensionDefinition> extensions = new HashSet<ExtensionDefinition>();
+        final Set<ExtensionDefinition> extensions = new HashSet<>();
         for (Module m : modules) {
             extensions.addAll(m.getExtensionSchemaNodes());
         }
@@ -156,7 +154,7 @@ final class SchemaContextImpl implements SchemaContext {
 
         if (revision == null) {
             // FIXME: The ordering of modules in Multimap could just guarantee this...
-            TreeMap<Date, Module> map = new TreeMap<Date, Module>();
+            TreeMap<Date, Module> map = new TreeMap<>();
             for (Module module : modules) {
                 map.put(module.getRevision(), module);
             }
@@ -304,5 +302,12 @@ final class SchemaContextImpl implements SchemaContext {
     public Optional<String> getModuleSource(final ModuleIdentifier moduleIdentifier) {
         String maybeSource = identifiersToSources.get(moduleIdentifier);
         return Optional.fromNullable(maybeSource);
+    }
+
+    @Override
+    public String toString() {
+        return "SchemaContextImpl{" +
+                "modules=" + modules +
+                '}';
     }
 }

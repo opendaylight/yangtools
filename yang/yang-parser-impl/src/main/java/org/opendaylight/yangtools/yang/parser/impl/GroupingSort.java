@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
@@ -25,9 +26,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
 import org.opendaylight.yangtools.yang.parser.util.NodeWrappedType;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public final class GroupingSort {
     private GroupingSort() {
@@ -67,7 +65,7 @@ public final class GroupingSort {
             throw new IllegalArgumentException("Set of Type Definitions " + "cannot be NULL!");
         }
 
-        final List<GroupingBuilder> resultGroupingDefinitions = new ArrayList<GroupingBuilder>();
+        final List<GroupingBuilder> resultGroupingDefinitions = new ArrayList<>();
         final Set<Node> unsorted = groupingDefinitionsToNodes(groupingDefinitions);
         final List<Node> sortedNodes = TopologicalSort.sort(unsorted);
         for (Node node : sortedNodes) {

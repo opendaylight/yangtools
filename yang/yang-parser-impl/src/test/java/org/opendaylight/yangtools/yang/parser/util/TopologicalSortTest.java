@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.parser.util;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
-
-import com.google.common.collect.Sets;
 
 public class TopologicalSortTest {
 

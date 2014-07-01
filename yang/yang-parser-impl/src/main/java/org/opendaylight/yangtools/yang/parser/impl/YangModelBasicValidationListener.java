@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import com.google.common.collect.Sets;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Anyxml_stmtContext;
@@ -61,8 +61,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParserBaseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
-
 /**
  * Validation listener that validates yang statements according to RFC-6020.
  * This validator expects only one module or submodule per file and performs
@@ -93,7 +91,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
         BasicValidations.checkPresentChildOfType(ctx, Module_header_stmtsContext.class, true);
 
         String moduleName = ValidationUtil.getName(ctx);
-        BasicValidations.checkOnlyOneModulePresent(moduleName, globalModuleId);
+        BasicValidations.checkIsModuleIdNull(globalModuleId);
         globalModuleId = moduleName;
     }
 
@@ -114,7 +112,7 @@ final class YangModelBasicValidationListener extends YangParserBaseListener {
         BasicValidations.checkPresentChildOfType(ctx, Submodule_header_stmtsContext.class, true);
 
         String submoduleName = ValidationUtil.getName(ctx);
-        BasicValidations.checkOnlyOneModulePresent(submoduleName, globalModuleId);
+        BasicValidations.checkIsModuleIdNull(globalModuleId);
         globalModuleId = submoduleName;
 
     }

@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static java.lang.String.format;
+
+import com.google.common.collect.Sets;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
-
-import com.google.common.collect.Sets;
 
 /**
  * Reusable checks of basic constraints on yang statements
@@ -73,7 +73,7 @@ final class BasicValidations {
      * Check if only one module or submodule is present in session(one yang
      * file)
      */
-    static void checkOnlyOneModulePresent(final String moduleName, final String globalId) {
+    static void checkIsModuleIdNull(final String globalId) {
         if (globalId != null) {
             ValidationUtil.ex(ValidationUtil.f("Multiple (sub)modules per file"));
         }
@@ -121,7 +121,7 @@ final class BasicValidations {
         }
     }
 
-    private static Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
+    private static final Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
 
     static void checkPrefixedIdentifier(final ParseTree statement) {
         checkPrefixedIdentifierInternal(statement, ValidationUtil.getName(statement));
@@ -165,8 +165,8 @@ final class BasicValidations {
         String getMessage();
     }
 
-    static void checkPresentChildOfTypeInternal(final ParseTree parent, final Set<Class<? extends ParseTree>> expectedChildType,
-            final MessageProvider message, final boolean atMostOne) {
+    private static void checkPresentChildOfTypeInternal(final ParseTree parent, final Set<Class<? extends ParseTree>> expectedChildType,
+                                                        final MessageProvider message, final boolean atMostOne) {
         if (!checkPresentChildOfTypeSafe(parent, expectedChildType, atMostOne)) {
             String str = atMostOne ? "(Expected exactly one statement) " + message.getMessage() : message.getMessage();
             ValidationUtil.ex(str);
@@ -177,7 +177,7 @@ final class BasicValidations {
             final boolean atMostOne) {
 
         // Construct message in checkPresentChildOfTypeInternal only if
-        // validaiton fails, not in advance
+        // validation fails, not in advance
         MessageProvider message = new MessageProvider() {
 
             @Override
@@ -187,8 +187,7 @@ final class BasicValidations {
                         ValidationUtil.getSimpleStatementName(parent.getClass()), ValidationUtil.getName(parent));
 
                 String root = ValidationUtil.getRootParentName(parent);
-                message = parent.equals(ValidationUtil.getRootParentName(parent)) ? message : ValidationUtil.f(
-                        "(In (sub)module:%s) %s", root, message);
+                message = format("(In (sub)module:%s) %s", root, message);
                 return message;
             }
         };
@@ -227,35 +226,34 @@ final class BasicValidations {
                     ValidationUtil.getSimpleStatementName(parent.getClass()), ValidationUtil.getName(parent));
 
             String root = ValidationUtil.getRootParentName(parent);
-            message = parent.equals(ValidationUtil.getRootParentName(parent)) ? message : ValidationUtil.f(
-                    "(In (sub)module:%s) %s", root, message);
+            message = format("(In (sub)module:%s) %s", root, message);
             return message;
         }
-    };
+    }
 
     static void checkPresentChildOfTypes(final ParseTree parent,
             final Set<Class<? extends ParseTree>> expectedChildTypes, final boolean atMostOne) {
 
         // Construct message in checkPresentChildOfTypeInternal only if
-        // validaiton fails, not in advance
+        // validation fails, not in advance
         MessageProvider message = new MessageProviderForSetOfChildTypes(expectedChildTypes, parent);
         checkPresentChildOfTypeInternal(parent, expectedChildTypes, message, atMostOne);
     }
 
-    static boolean checkPresentChildOfTypeSafe(final ParseTree parent, final Set<Class<? extends ParseTree>> expectedChildType,
-            final boolean atMostOne) {
+    private static boolean checkPresentChildOfTypeSafe(final ParseTree parent, final Set<Class<? extends ParseTree>> expectedChildType,
+                                                       final boolean atMostOne) {
 
         int foundChildrenOfType = ValidationUtil.countPresentChildrenOfType(parent, expectedChildType);
 
-        return atMostOne ? foundChildrenOfType == 1 ? true : false : foundChildrenOfType != 0 ? true : false;
+        return atMostOne ? foundChildrenOfType == 1 : foundChildrenOfType != 0;
     }
 
-    static boolean checkPresentChildOfTypeSafe(final ParseTree parent, final Class<? extends ParseTree> expectedChildType,
-            final boolean atMostOne) {
+    private static boolean checkPresentChildOfTypeSafe(final ParseTree parent, final Class<? extends ParseTree> expectedChildType,
+                                                       final boolean atMostOne) {
 
         int foundChildrenOfType = ValidationUtil.countPresentChildrenOfType(parent, expectedChildType);
 
-        return atMostOne ? foundChildrenOfType == 1 ? true : false : foundChildrenOfType != 0 ? true : false;
+        return atMostOne ? foundChildrenOfType == 1 : foundChildrenOfType != 0;
     }
 
     static List<String> getAndCheckUniqueKeys(final ParseTree ctx) {

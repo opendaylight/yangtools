@@ -11,15 +11,17 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.google.common.collect.Sets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -37,12 +39,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Prefix_stmtContext
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_date_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Status_argContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.StringContext;
-import org.opendaylight.yangtools.yang.parser.impl.BasicValidations;
-import org.opendaylight.yangtools.yang.parser.impl.ValidationUtil;
-import org.opendaylight.yangtools.yang.parser.impl.YangModelBasicValidationListener;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
-
-import com.google.common.collect.Sets;
 
 public class YangModelValidationTest {
 

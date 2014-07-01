@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.yang.parser.impl.util;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getArgumentString;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getFirstContext;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Import_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Include_stmtContext;
@@ -25,9 +26,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Helper transfer object which holds basic and dependency information for YANG
@@ -54,8 +52,8 @@ public abstract class YangModelDependencyInfo {
     private final ImmutableSet<ModuleImport> moduleImports;
     private final ImmutableSet<ModuleImport> dependencies;
 
-    protected YangModelDependencyInfo(final String name, final String formattedRevision,
-            final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
+    YangModelDependencyInfo(final String name, final String formattedRevision,
+                            final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
         this.name = name;
         this.formattedRevision = formattedRevision;
         this.revision = QName.parseRevision(formattedRevision);
@@ -102,7 +100,7 @@ public abstract class YangModelDependencyInfo {
      *
      * @return revision
      */
-    public Date getRevision() {
+    Date getRevision() {
         return revision;
     }
 

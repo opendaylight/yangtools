@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import java.util.List;
-
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**

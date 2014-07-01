@@ -134,7 +134,7 @@ public final class BuilderUtils {
      *            prefix associated with import
      * @return ModuleImport based on given prefix
      */
-    public static ModuleImport getModuleImport(final ModuleBuilder builder, final String prefix) {
+    private static ModuleImport getModuleImport(final ModuleBuilder builder, final String prefix) {
         for (ModuleImport mi : builder.getModuleImports()) {
             if (mi.getPrefix().equals(prefix)) {
                 return mi;
@@ -159,8 +159,8 @@ public final class BuilderUtils {
      */
     public static ModuleBuilder findModuleFromBuilders(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder module, final String prefix, final int line) {
-        ModuleBuilder dependentModule = null;
-        Date dependentModuleRevision = null;
+        ModuleBuilder dependentModule;
+        Date dependentModuleRevision;
 
         if (prefix == null) {
             dependentModule = module;
@@ -225,7 +225,7 @@ public final class BuilderUtils {
             }
         }
 
-        Module result = null;
+        Module result;
         if (dependentModuleRevision == null) {
             result = modulesByRevision.get(modulesByRevision.firstKey());
         } else {
@@ -244,7 +244,7 @@ public final class BuilderUtils {
     public static SchemaPath parseXPathString(final String xpathString) {
         final boolean absolute = xpathString.indexOf('/') == 0;
 
-        final List<QName> path = new ArrayList<QName>();
+        final List<QName> path = new ArrayList<>();
         for (String pathElement : SLASH_SPLITTER.split(xpathString)) {
             if (pathElement.length() > 0) {
                 final Iterator<String> it = COLON_SPLITTER.split(pathElement).iterator();
@@ -382,7 +382,7 @@ public final class BuilderUtils {
      * @param config
      *            new config value
      */
-    public static void setNodeConfig(final DataSchemaNodeBuilder node, final Boolean config) {
+    private static void setNodeConfig(final DataSchemaNodeBuilder node, final Boolean config) {
         if (node instanceof ContainerSchemaNodeBuilder || node instanceof LeafSchemaNodeBuilder
                 || node instanceof LeafListSchemaNodeBuilder || node instanceof ListSchemaNodeBuilder
                 || node instanceof ChoiceBuilder || node instanceof AnyXmlBuilder) {
@@ -699,7 +699,6 @@ public final class BuilderUtils {
         while (!(parent instanceof ModuleBuilder)) {
             parent = parent.getParent();
         }
-        Preconditions.checkState(parent instanceof ModuleBuilder);
         ModuleBuilder parentModule = (ModuleBuilder) parent;
         if (parentModule.isSubmodule()) {
             parentModule = parentModule.getParent();
