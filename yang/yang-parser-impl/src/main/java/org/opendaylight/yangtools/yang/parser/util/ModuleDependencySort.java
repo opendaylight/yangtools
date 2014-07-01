@@ -153,7 +153,7 @@ public final class ModuleDependencySort {
 
             String fromName;
             Date fromRevision;
-            Set<ModuleImport> imports;
+            Collection<ModuleImport> imports;
             URI ns;
 
             if (mmb.isModule()) {
@@ -166,7 +166,7 @@ public final class ModuleDependencySort {
                 ModuleBuilder moduleBuilder = mmb.getModuleBuilder();
                 fromName = moduleBuilder.getName();
                 fromRevision = moduleBuilder.getRevision();
-                imports = moduleBuilder.getModuleImports();
+                imports = moduleBuilder.getImports().values();
                 ns = moduleBuilder.getNamespace();
             }
 

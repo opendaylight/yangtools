@@ -8,17 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Splitter;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -35,13 +30,17 @@ public final class GroupingUtils {
     }
 
     /**
-     * Common string splitter. Given a string representation of a grouping's name, it creates a prefix/name
-     * pair and returns it.
+     * Common string splitter. Given a string representation of a grouping's
+     * name, it creates a prefix/name pair and returns it.
      *
-     * @param groupingString Grouping string reference
-     * @param module Module which we are processing
-     * @param line Module line which we are processing
-     * @return An array of two strings, first one is the module prefix, the second is the grouping name.
+     * @param groupingString
+     *            Grouping string reference
+     * @param module
+     *            Module which we are processing
+     * @param line
+     *            Module line which we are processing
+     * @return An array of two strings, first one is the module prefix, the
+     *         second is the grouping name.
      */
     private static String[] getPrefixAndName(final String groupingString, final ModuleBuilder module, final int line) {
         final String[] ret = new String[2];
@@ -97,15 +96,13 @@ public final class GroupingUtils {
             return null;
         }
 
-        GroupingBuilder result;
         Set<GroupingBuilder> groupings = dependentModule.getGroupingBuilders();
-        result = findGroupingBuilder(groupings, groupingName);
+        GroupingBuilder result = findGroupingBuilder(groupings, groupingName);
         if (result != null) {
             return result;
         }
 
         Builder parent = usesBuilder.getParent();
-
         while (parent != null) {
             if (parent instanceof DataNodeContainerBuilder) {
                 groupings = ((DataNodeContainerBuilder) parent).getGroupingBuilders();
@@ -121,29 +118,9 @@ public final class GroupingUtils {
         }
 
         if (result == null) {
-            throw new YangParseException(module.getName(), line, "Referenced grouping '" + groupingName
-                    + "' not found.");
+            throw new YangParseException(module.getName(), line, "Grouping '" + groupingName + "' not found.");
         }
         return result;
-    }
-
-    /**
-     * Search context for grouping by name defined in uses node.
-     *
-     * @param usesBuilder
-     *            builder of uses statement
-     * @param module
-     *            current module
-     * @param context
-     *            SchemaContext containing already resolved modules
-     * @return grouping with given name if found, null otherwise
-     */
-    public static GroupingDefinition getTargetGroupingFromContext(final UsesNodeBuilder usesBuilder,
-            final ModuleBuilder module, final SchemaContext context) {
-        final int line = usesBuilder.getLine();
-        final String[] split = getPrefixAndName(usesBuilder.getGroupingPathAsString(), module, line);
-        Module dependentModule = BuilderUtils.findModuleFromContext(context, module, split[0], line);
-        return findGroupingDefinition(dependentModule.getGroupings(), split[1]);
     }
 
     /**
@@ -157,24 +134,6 @@ public final class GroupingUtils {
      */
     private static GroupingBuilder findGroupingBuilder(final Set<GroupingBuilder> groupings, final String name) {
         for (GroupingBuilder grouping : groupings) {
-            if (grouping.getQName().getLocalName().equals(name)) {
-                return grouping;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Find grouping by name.
-     *
-     * @param groupings
-     *            collection of grouping definitions to search
-     * @param name
-     *            name of grouping
-     * @return grouping with given name if present in collection, null otherwise
-     */
-    private static GroupingDefinition findGroupingDefinition(final Set<GroupingDefinition> groupings, final String name) {
-        for (GroupingDefinition grouping : groupings) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;
             }

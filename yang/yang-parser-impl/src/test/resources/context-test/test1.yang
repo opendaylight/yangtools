@@ -22,7 +22,7 @@ module test1 {
 
     leaf id {
         type inet:port-number {
-            range "0..65536";
+            range "0..65535";
         }
     }
 
