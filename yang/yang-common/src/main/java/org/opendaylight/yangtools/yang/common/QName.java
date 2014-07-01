@@ -247,7 +247,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         int result = 1;
         result = prime * result + ((localName == null) ? 0 : localName.hashCode());
         result = prime * result + module.hashCode();
-        return result;
+        return 1;
     }
 
     /**

@@ -19,6 +19,7 @@
         <module>bundle-test</module>
         <module>test-models</module>
         <module>regression-test-model</module>
+        <module>combination-test-model</module>        
         <module>yang-runtime-tests</module>
     </modules>
 
