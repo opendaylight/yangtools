@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.io.IOUtils;
@@ -73,7 +75,8 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     private final Deque<Builder> actualPath = new LinkedList<>();
     private final Set<TypeAwareBuilder> dirtyNodes = new HashSet<>();
 
-    final Set<ModuleImport> imports = new HashSet<>();
+    final Map<String, ModuleImport> imports = new HashMap<>();
+    final Map<String, ModuleBuilder> importedModules = new HashMap<>();
 
     private final Set<AugmentationSchema> augments = new LinkedHashSet<>();
     private final List<AugmentationSchemaBuilder> augmentBuilders = new ArrayList<>();
@@ -336,8 +339,23 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         return revision;
     }
 
-    protected Set<ModuleImport> getImports() {
+    public ModuleImport getImport(final String prefix) {
+        return imports.get(prefix);
+    }
+
+    public Map<String, ModuleImport> getImports() {
         return imports;
+    }
+
+    public ModuleBuilder getImportedModule(final String prefix) {
+        if (prefix == null || prefix.isEmpty() || prefix.equals(this.prefix)) {
+            return this;
+        }
+        return importedModules.get(prefix);
+    }
+
+    public void addImportedModule(final String prefix, final ModuleBuilder module) {
+        importedModules.put(prefix,  module);
     }
 
     protected String getSource() {
@@ -381,14 +399,10 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         this.contact = contact;
     }
 
-    public boolean addModuleImport(final String moduleName, final Date revision, final String prefix) {
+    public void addModuleImport(final String moduleName, final Date revision, final String prefix) {
         checkNotSealed();
         final ModuleImport moduleImport = createModuleImport(moduleName, revision, prefix);
-        return imports.add(moduleImport);
-    }
-
-    public Set<ModuleImport> getModuleImports() {
-        return imports;
+        imports.put(prefix, moduleImport);
     }
 
     public ExtensionBuilder addExtension(final QName qname, final int line, final SchemaPath path) {
