@@ -185,8 +185,9 @@ class ClassTemplate extends BaseTemplate {
     def protected genUnionConstructor() '''
     «FOR p : allProperties»
         «val List<GeneratedProperty> other = new ArrayList(properties)»
-        «val added = other.remove(p)»
-        «genConstructor(p, other)»
+        «IF other.remove(p)»
+            «genConstructor(p, other)»
+        «ENDIF»
     «ENDFOR»
 
     '''

@@ -37,11 +37,9 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -61,8 +59,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
         final List<File> sourceFiles = getSourceFiles("/compilation/typedef");
-        final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
-        final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
+        final SchemaContext context = parser.parseFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
         generator.generateToFile(sourcesOutputDir);
