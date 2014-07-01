@@ -18,7 +18,6 @@
 
     <packaging>bundle</packaging>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>concepts</artifactId>
     <name>${project.artifactId}</name>
     <description>Common concepts</description>
