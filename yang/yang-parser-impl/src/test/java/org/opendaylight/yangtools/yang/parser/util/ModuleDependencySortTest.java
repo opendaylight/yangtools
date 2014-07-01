@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -169,8 +170,9 @@ public class ModuleDependencySortTest {
     private void mockDependency(final ModuleBuilder a, final ModuleBuilder b) {
         ModuleImport imprt = mock(ModuleImport.class);
         doReturn(b.getName()).when(imprt).getModuleName();
+        doReturn(b.getName()).when(imprt).getPrefix();
         doReturn(b.getRevision()).when(imprt).getRevision();
-        a.getModuleImports().add(imprt);
+        a.getImports().put(b.getName(), imprt);
     }
 
     private void mockDependency(final Module a, final Module b) {
@@ -183,8 +185,8 @@ public class ModuleDependencySortTest {
     private ModuleBuilder mockModuleBuilder(final String name, final Date rev) {
         ModuleBuilder a = mock(ModuleBuilder.class);
         doReturn(name).when(a).getName();
-        Set<ModuleImport> set = Sets.newHashSet();
-        doReturn(set).when(a).getModuleImports();
+        Map<String, ModuleImport> map = new HashMap<>();
+        doReturn(map).when(a).getImports();
         if (rev != null) {
             doReturn(rev).when(a).getRevision();
         }

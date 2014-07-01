@@ -20,11 +20,12 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -331,32 +332,22 @@ public class YangParserWithContextTest {
         assertNotNull(un.getExtensionDefinition());
     }
 
-    @Ignore
     @Test
     public void testAugment() throws Exception {
         // load first module
-        SchemaContext context;
         String resource = "/context-augment-test/test4.yang";
-
-        try (InputStream stream = new FileInputStream(new File(getClass().getResource(resource).toURI()))) {
-            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
-        }
+        SchemaContext context = parser.parseFiles(Collections.singleton(new File(getClass().getResource(resource)
+                .toURI())));
 
         // load another modules and parse them against already existing context
-        Set<Module> modules;
-        try (InputStream stream1 = new FileInputStream(new File(getClass().getResource(
-                "/context-augment-test/test1.yang").toURI()));
-                InputStream stream2 = new FileInputStream(new File(getClass().getResource(
-                        "/context-augment-test/test2.yang").toURI()));
-                InputStream stream3 = new FileInputStream(new File(getClass().getResource(
-                        "/context-augment-test/test3.yang").toURI()))) {
-            List<InputStream> input = Lists.newArrayList(stream1, stream2, stream3);
-            modules = TestUtils.loadModulesWithContext(input, context);
-        }
+        File test1 = new File(getClass().getResource("/context-augment-test/test1.yang").toURI());
+        File test2 = new File(getClass().getResource("/context-augment-test/test2.yang").toURI());
+        File test3 = new File(getClass().getResource("/context-augment-test/test3.yang").toURI());
+        Set<Module> modules = parser.parseFiles(Arrays.asList(test1, test2, test3), context).getModules();
         assertNotNull(modules);
 
-        Module t3 = TestUtils.findModule(modules, "test4");
-        ContainerSchemaNode interfaces = (ContainerSchemaNode) t3.getDataChildByName("interfaces");
+        Module t4 = TestUtils.findModule(modules, "test4");
+        ContainerSchemaNode interfaces = (ContainerSchemaNode) t4.getDataChildByName("interfaces");
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
 
         // test augmentation process

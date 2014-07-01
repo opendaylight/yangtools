@@ -13,7 +13,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.io.ByteSource;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -124,25 +123,6 @@ public final class BuilderUtils {
     }
 
     /**
-     * Get module import referenced by given prefix.
-     *
-     * @param builder
-     *            module to search
-     * @param prefix
-     *            prefix associated with import
-     * @return ModuleImport based on given prefix
-     */
-    private static ModuleImport getModuleImport(final ModuleBuilder builder, final String prefix) {
-        for (ModuleImport mi : builder.getModuleImports()) {
-            if (mi.getPrefix().equals(prefix)) {
-                return mi;
-
-            }
-        }
-        return null;
-    }
-
-    /**
      * Find dependent module based on given prefix
      *
      * @param modules
@@ -165,7 +145,7 @@ public final class BuilderUtils {
         } else if (prefix.equals(module.getPrefix())) {
             dependentModule = module;
         } else {
-            ModuleImport dependentModuleImport = getModuleImport(module, prefix);
+            ModuleImport dependentModuleImport = module.getImport(prefix);
             if (dependentModuleImport == null) {
                 throw new YangParseException(module.getName(), line, "No import found with prefix '" + prefix + "'.");
             }
@@ -193,20 +173,19 @@ public final class BuilderUtils {
      * @param currentModule
      *            current module
      * @param prefix
-     *            current prefix used to reference dependent module
+     *            prefix used to reference dependent module
      * @param line
      *            current line in yang model
-     * @return module based on given prefix if found in context, null otherwise
+     * @return module based on import with given prefix if found in context,
+     *         null otherwise
+     * @throws YangParseException
+     *             if no import found with given prefix
      */
     public static Module findModuleFromContext(final SchemaContext context, final ModuleBuilder currentModule,
             final String prefix, final int line) {
-        if (context == null) {
-            throw new YangParseException(currentModule.getName(), line, "Cannot find module with prefix '" + prefix
-                    + "'.");
-        }
         TreeMap<Date, Module> modulesByRevision = new TreeMap<>();
 
-        ModuleImport dependentModuleImport = BuilderUtils.getModuleImport(currentModule, prefix);
+        ModuleImport dependentModuleImport = currentModule.getImport(prefix);
         if (dependentModuleImport == null) {
             throw new YangParseException(currentModule.getName(), line, "No import found with prefix '" + prefix + "'.");
         }
@@ -229,6 +208,10 @@ public final class BuilderUtils {
         } else {
             result = modulesByRevision.get(dependentModuleRevision);
         }
+        if (result == null) {
+            throw new YangParseException(currentModule.getName(), line, "Module not found for prefix " + prefix);
+        }
+
         return result;
     }
 
@@ -368,33 +351,6 @@ public final class BuilderUtils {
             ChoiceBuilder choiceChild = (ChoiceBuilder) node;
             for (ChoiceCaseBuilder inner : choiceChild.getCases()) {
                 setNodeAddedByUses(inner);
-            }
-        }
-    }
-
-    /**
-     * Set config flag to new value.
-     *
-     * @param node
-     *            node to update
-     * @param config
-     *            new config value
-     */
-    private static void setNodeConfig(final DataSchemaNodeBuilder node, final Boolean config) {
-        if (node instanceof ContainerSchemaNodeBuilder || node instanceof LeafSchemaNodeBuilder
-                || node instanceof LeafListSchemaNodeBuilder || node instanceof ListSchemaNodeBuilder
-                || node instanceof ChoiceBuilder || node instanceof AnyXmlBuilder) {
-            node.setConfiguration(config);
-        }
-        if (node instanceof DataNodeContainerBuilder) {
-            DataNodeContainerBuilder dataNodeChild = (DataNodeContainerBuilder) node;
-            for (DataSchemaNodeBuilder inner : dataNodeChild.getChildNodeBuilders()) {
-                setNodeConfig(inner, config);
-            }
-        } else if (node instanceof ChoiceBuilder) {
-            ChoiceBuilder choiceChild = (ChoiceBuilder) node;
-            for (ChoiceCaseBuilder inner : choiceChild.getCases()) {
-                setNodeConfig(inner, config);
             }
         }
     }
@@ -662,7 +618,7 @@ public final class BuilderUtils {
                 throw new YangParseException(module.getName(), line, "Failed to parse identityref base: " + baseString);
             }
 
-            ModuleBuilder dependentModule = findModuleFromBuilders(modules, module, prefix, line);
+            ModuleBuilder dependentModule = getModuleByPrefix(module, prefix);
             if (dependentModule == null) {
                 return null;
             }
@@ -791,6 +747,14 @@ public final class BuilderUtils {
         @Override
         public InputStream openStream() throws IOException {
             return new NamedByteArrayInputStream(output.toByteArray(), toString);
+        }
+    }
+
+    public static ModuleBuilder getModuleByPrefix(ModuleBuilder module, String prefix) {
+        if (prefix == null || prefix.isEmpty() || prefix.equals(module.getPrefix())) {
+            return module;
+        } else {
+            return module.getImportedModule(prefix);
         }
     }
 
