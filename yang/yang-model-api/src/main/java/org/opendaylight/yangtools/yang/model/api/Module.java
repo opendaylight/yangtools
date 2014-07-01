@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.List;
 import java.util.Set;
+
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -57,8 +58,6 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIdentifier {
-
-
     /**
      * Returns the prefix of the module
      *

@@ -11,17 +11,17 @@ package org.opendaylight.yangtools.yang.model.api;
 import java.net.URI;
 import java.util.Date;
 
+import org.opendaylight.yangtools.yang.common.QNameModule;
+
 
 public interface ModuleIdentifier {
-
     /**
-     * Returns the namespace of the module which is specified as argument of
-     * YANG {@link Module <b><font color="#00FF00">namespace</font></b>}
-     * keyword.
+     * Returns a {@link QNameModule}, which contains the namespace and
+     * the revision of the module.
      *
-     * @return URI format of the namespace of the module
+     * @return QNameModule identifier.
      */
-    URI getNamespace();
+    QNameModule getNamespaceAndRevision();
 
     /**
      * Returns the name of the module which is specified as argument of YANG
@@ -32,11 +32,24 @@ public interface ModuleIdentifier {
     String getName();
 
     /**
+     * Returns the namespace of the module which is specified as argument of
+     * YANG {@link Module <b><font color="#00FF00">namespace</font></b>}
+     * keyword.
+     *
+     * @return URI format of the namespace of the module
+     * @deprecated Use {@link getNamespaceAndRevision().getNamespace()} instead.
+     */
+    @Deprecated
+    URI getNamespace();
+
+    /**
      * Returns the revision date for the module.
      *
      * @return date of the module revision which is specified as argument of
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
      *         keyword
+     * @deprecated Use {@link getNamespaceAndRevision().getRevision()} instead.
      */
+    @Deprecated
     Date getRevision();
 }
