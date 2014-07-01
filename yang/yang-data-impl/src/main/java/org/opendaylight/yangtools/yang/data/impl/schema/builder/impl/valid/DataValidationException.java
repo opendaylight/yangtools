@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -14,43 +17,41 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-import java.util.Map;
-import java.util.Set;
-
 public class DataValidationException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-    public DataValidationException(String message) {
+    public DataValidationException(final String message) {
         super(message);
     }
 
-    public static void checkLegalChild(boolean isLegal, InstanceIdentifier.PathArgument child, DataNodeContainer schema,
-            Set<QName> childNodes, Set<InstanceIdentifier.AugmentationIdentifier> augments) {
+    public static void checkLegalChild(final boolean isLegal, final InstanceIdentifier.PathArgument child, final DataNodeContainer schema,
+            final Set<QName> childNodes, final Set<InstanceIdentifier.AugmentationIdentifier> augments) {
         if (isLegal == false) {
             throw new IllegalChildException(child, schema, childNodes, augments);
         }
     }
 
-    public static void checkLegalChild(boolean isLegal, InstanceIdentifier.PathArgument child, DataSchemaNode schema,
-            Set<QName> childNodes) {
+    public static void checkLegalChild(final boolean isLegal, final InstanceIdentifier.PathArgument child, final DataSchemaNode schema,
+            final Set<QName> childNodes) {
         if (isLegal == false) {
             throw new IllegalChildException(child, schema, childNodes);
         }
     }
 
-    public static void checkLegalChild(boolean isLegal, InstanceIdentifier.PathArgument child, ChoiceNode schema) {
+    public static void checkLegalChild(final boolean isLegal, final InstanceIdentifier.PathArgument child, final ChoiceNode schema) {
         if (isLegal == false) {
             throw new IllegalChildException(child, schema);
         }
     }
 
-    public static void checkLegalData(boolean isLegal, String messageTemplate, Object... messageAttrs) {
+    public static void checkLegalData(final boolean isLegal, final String messageTemplate, final Object... messageAttrs) {
         if (isLegal == false) {
             throw new DataValidationException(String.format(messageTemplate, messageAttrs));
         }
     }
 
-    public static void checkListKey(DataContainerChild<?, ?> childNode, Map<QName, Object> keyValues, QName keyQName,
-            InstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
+    public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues, final QName keyQName,
+            final InstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
         checkListKey(childNode, keyQName, nodeId);
 
         Object expectedValue = nodeId.getKeyValues().get(keyQName);
@@ -60,37 +61,39 @@ public class DataValidationException extends RuntimeException {
         }
     }
 
-    public static void checkListKey(DataContainerChild<?, ?> childNode, QName keyQName, InstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
+    public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final InstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
         if (childNode == null) {
             throw new IllegalListKeyException(keyQName, nodeId);
         }
     }
 
     static final class IllegalChildException extends DataValidationException {
+        private static final long serialVersionUID = 1L;
 
-        public IllegalChildException(InstanceIdentifier.PathArgument child, DataNodeContainer schema,
-                Set<QName> childNodes, Set<InstanceIdentifier.AugmentationIdentifier> augments) {
+        public IllegalChildException(final InstanceIdentifier.PathArgument child, final DataNodeContainer schema,
+                final Set<QName> childNodes, final Set<InstanceIdentifier.AugmentationIdentifier> augments) {
             super(String.format("Unknown child node: %s, does not belong to: %s as a direct child. "
                     + "Direct child nodes: %s, augmented child nodes: %s", child, schema, childNodes, augments));
         }
 
-        public IllegalChildException(InstanceIdentifier.PathArgument child, ChoiceNode schema) {
+        public IllegalChildException(final InstanceIdentifier.PathArgument child, final ChoiceNode schema) {
             super(String.format("Unknown child node: %s, not detected in choice: %s", child, schema));
         }
 
-        public IllegalChildException(InstanceIdentifier.PathArgument child, DataSchemaNode schema, Set<QName> childNodes) {
+        public IllegalChildException(final InstanceIdentifier.PathArgument child, final DataSchemaNode schema, final Set<QName> childNodes) {
             super(String.format("Unknown child node: %s, does not belong to: %s as a child. "
                     + "Child nodes: %s", child, schema, childNodes));
         }
     }
 
     static final class IllegalListKeyException extends DataValidationException {
+        private static final long serialVersionUID = 1L;
 
-        public IllegalListKeyException(QName keyQName, InstanceIdentifier.NodeIdentifierWithPredicates id) {
+        public IllegalListKeyException(final QName keyQName, final InstanceIdentifier.NodeIdentifierWithPredicates id) {
             super(String.format("Key value not present for key: %s, in: %s", keyQName, id));
         }
 
-        public IllegalListKeyException(QName keyQName, InstanceIdentifier.NodeIdentifierWithPredicates id, Object actualValue, Object expectedValue) {
+        public IllegalListKeyException(final QName keyQName, final InstanceIdentifier.NodeIdentifierWithPredicates id, final Object actualValue, final Object expectedValue) {
             super(String.format("Illegal value for key: %s, in: %s, actual value: %s, expected value from key: %s", keyQName, id, actualValue, expectedValue));
         }
     }
