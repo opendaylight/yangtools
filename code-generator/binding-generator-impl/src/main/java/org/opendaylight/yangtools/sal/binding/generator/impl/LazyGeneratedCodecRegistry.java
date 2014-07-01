@@ -706,7 +706,7 @@ class LazyGeneratedCodecRegistry implements //
             if (adaptedForPaths.contains(path)) {
                 return;
             }
-            LOG.info("Adapting mixin codec {} for path {}",this,path);
+            LOG.debug("Adapting mixin codec {} for path {}",this,path);
             /**
              * We search in schema context if the use of this location aware
              * codec (augmentable codec, case codec) makes sense on provided
