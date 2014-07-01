@@ -12,9 +12,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -59,29 +56,18 @@ public final class GroupingUtils {
             groupingName = groupingString;
         }
 
-        ModuleBuilder dependentModule;
-
-        if(groupingPrefix == null) {
-            dependentModule = module;
-        } else if (groupingPrefix.equals(module.getPrefix())) {
-            dependentModule = module;
-        } else {
-            dependentModule = BuilderUtils.findModuleFromBuilders(modules, module, groupingPrefix, line);
-        }
-
+        ModuleBuilder dependentModule = BuilderUtils.getModuleByPrefix(module, groupingPrefix);
         if (dependentModule == null) {
             return null;
         }
 
-        GroupingBuilder result;
         Set<GroupingBuilder> groupings = dependentModule.getGroupingBuilders();
-        result = findGroupingBuilder(groupings, groupingName);
+        GroupingBuilder result = findGroupingBuilder(groupings, groupingName);
         if (result != null) {
             return result;
         }
 
         Builder parent = usesBuilder.getParent();
-
         while (parent != null) {
             if (parent instanceof DataNodeContainerBuilder) {
                 groupings = ((DataNodeContainerBuilder) parent).getGroupingBuilders();
@@ -97,44 +83,9 @@ public final class GroupingUtils {
         }
 
         if (result == null) {
-            throw new YangParseException(module.getName(), line, "Referenced grouping '" + groupingName
-                    + "' not found.");
+            throw new YangParseException(module.getName(), line, "Grouping '" + groupingName + "' not found.");
         }
         return result;
-    }
-
-    /**
-     * Search context for grouping by name defined in uses node.
-     *
-     * @param usesBuilder
-     *            builder of uses statement
-     * @param module
-     *            current module
-     * @param context
-     *            SchemaContext containing already resolved modules
-     * @return grouping with given name if found, null otherwise
-     */
-    public static GroupingDefinition getTargetGroupingFromContext(final UsesNodeBuilder usesBuilder,
-            final ModuleBuilder module, final SchemaContext context) {
-        final int line = usesBuilder.getLine();
-        String groupingString = usesBuilder.getGroupingPathAsString();
-        String groupingPrefix;
-        String groupingName;
-
-        if (groupingString.contains(":")) {
-            String[] splitted = groupingString.split(":");
-            if (splitted.length != 2 || groupingString.contains("/")) {
-                throw new YangParseException(module.getName(), line, "Invalid name of target grouping");
-            }
-            groupingPrefix = splitted[0];
-            groupingName = splitted[1];
-        } else {
-            groupingPrefix = module.getPrefix();
-            groupingName = groupingString;
-        }
-
-        Module dependentModule = BuilderUtils.findModuleFromContext(context, module, groupingPrefix, line);
-        return findGroupingDefinition(dependentModule.getGroupings(), groupingName);
     }
 
     /**
@@ -148,24 +99,6 @@ public final class GroupingUtils {
      */
     private static GroupingBuilder findGroupingBuilder(final Set<GroupingBuilder> groupings, final String name) {
         for (GroupingBuilder grouping : groupings) {
-            if (grouping.getQName().getLocalName().equals(name)) {
-                return grouping;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Find grouping by name.
-     *
-     * @param groupings
-     *            collection of grouping definitions to search
-     * @param name
-     *            name of grouping
-     * @return grouping with given name if present in collection, null otherwise
-     */
-    private static GroupingDefinition findGroupingDefinition(final Set<GroupingDefinition> groupings, final String name) {
-        for (GroupingDefinition grouping : groupings) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;
             }

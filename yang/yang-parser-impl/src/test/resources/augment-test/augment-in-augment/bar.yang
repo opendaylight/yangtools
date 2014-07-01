@@ -10,6 +10,12 @@ module bar {
         reference " WILL BE DEFINED LATER";
     }
 
+    extension opendaylight {
+        argument "name" {
+            yin-element "true";
+        }
+    }
+
     container interfaces {
         grouping ifEntry {
             container augment-holder;
