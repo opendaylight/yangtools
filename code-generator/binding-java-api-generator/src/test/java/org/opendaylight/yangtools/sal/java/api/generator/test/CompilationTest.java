@@ -537,6 +537,18 @@ public class CompilationTest extends BaseCompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
+    @Test
+    public void classNamesColisionTest() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "class-name-collision");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "class-name-collision");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        generateTestSources("/compilation/class-name-collision", sourcesOutputDir);
+        testCompilation(sourcesOutputDir, compiledOutputDir);
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
     private void generateTestSources(String resourceDirPath, File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = getSourceFiles(resourceDirPath);
         final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);

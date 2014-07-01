@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
@@ -258,15 +257,11 @@ public final class GeneratorUtil {
             }
         } else {
             builder = new StringBuilder();
-            if (typePackageName.startsWith("java.lang")) {
-                builder.append(type.getName());
-            } else {
                 if (!typePackageName.isEmpty()) {
                     builder.append(typePackageName + Constants.DOT + type.getName());
                 } else {
                     builder.append(type.getName());
                 }
-            }
             if (type.equals(Types.voidType())) {
                 return "void";
             }
