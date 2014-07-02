@@ -8,7 +8,13 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierForXmlCodec.INSTANCE_IDENTIFIER_FOR_XML_CODEC;
+
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 import java.net.URI;
 import java.util.List;
@@ -51,13 +57,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 public class XmlDocumentUtils {
 
@@ -239,7 +238,7 @@ public class XmlDocumentUtils {
             }
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             if (nodeValue instanceof InstanceIdentifier) {
-                INSTANCE_IDENTIFIER_FOR_XML_CODEC.serialize((InstanceIdentifier)nodeValue,element);
+                InstanceIdentifierForXmlCodec.serialize((InstanceIdentifier)nodeValue,element);
             } else {
                 Object value = nodeValue;
                 logger.debug("Value of {}:{} is not instance of InstanceIdentifier but is {}", baseType.getQName()
@@ -323,9 +322,9 @@ public class XmlDocumentUtils {
         }
 
         if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
-            value = INSTANCE_IDENTIFIER_FOR_XML_CODEC.deserialize(xmlElement,schemaCtx);
+            value = InstanceIdentifierForXmlCodec.deserialize(xmlElement,schemaCtx);
         } else if(schema.getType() instanceof IdentityrefTypeDefinition){
-            value = INSTANCE_IDENTIFIER_FOR_XML_CODEC.toIdentity(xmlElement.getTextContent(), xmlElement, schemaCtx);
+            value = InstanceIdentifierForXmlCodec.toIdentity(xmlElement.getTextContent(), xmlElement, schemaCtx);
         }
 
         if (value == null) {
@@ -345,7 +344,7 @@ public class XmlDocumentUtils {
             value = codec.deserialize(text);
         }
         if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
-            value = INSTANCE_IDENTIFIER_FOR_XML_CODEC.deserialize(xmlElement,schemaCtx);
+            value = InstanceIdentifierForXmlCodec.deserialize(xmlElement,schemaCtx);
         }
         if (value == null) {
             value = xmlElement.getTextContent();
