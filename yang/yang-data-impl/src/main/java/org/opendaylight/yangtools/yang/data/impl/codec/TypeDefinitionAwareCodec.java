@@ -16,6 +16,16 @@ import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import com.google.common.io.BaseEncoding;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
@@ -51,20 +61,14 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import com.google.common.io.BaseEncoding;
-
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
 
     private static final Pattern intPattern = Pattern.compile("[+-]?[1-9][0-9]*$");
     private static final Pattern hexPattern = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
     private static final Pattern octalPattern = Pattern.compile("[+-]?0[1-7][0-7]*$");
+
+    // For up to two characters, this is very fast
+    private static final CharMatcher X_MATCHER = CharMatcher.anyOf("xX");
 
     private final Optional<T> typeDefinition;
     private final Class<J> inputClass;
@@ -107,15 +111,8 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
             throw new IllegalArgumentException(
                     "String representing integer number in Hexadecimal format cannot be NULL!");
         }
-        final String normalizedString;
-        if (hexInt.contains("x")) {
-            normalizedString = hexInt.replace("x", "");
-        } else if (hexInt.contains("X")) {
-            normalizedString = hexInt.replace("X", "");
-        } else {
-            normalizedString = hexInt;
-        }
-        return normalizedString;
+
+        return X_MATCHER.removeFrom(hexInt);
     }
 
     private static final BinaryCodecStringImpl BINARY_DEFAULT_CODEC = new BinaryCodecStringImpl(
