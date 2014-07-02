@@ -35,11 +35,9 @@ public final class InstanceIdentifierForXmlCodec {
     private static final Pattern PREDICATE_PATTERN = Pattern.compile("\\[(.*?)\\]");
     private static final Splitter SLASH_SPLITTER = Splitter.on('/');
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
-    private static final String SQUOTE = "'";
-    private static final String DQUOTE = "\"";
 
     private InstanceIdentifierForXmlCodec() {
-
+        throw new UnsupportedOperationException("Utility class");
     }
 
     public static InstanceIdentifier deserialize(final Element element, final SchemaContext schemaContext) {
@@ -191,13 +189,29 @@ public final class InstanceIdentifierForXmlCodec {
         return result;
     }
 
-    private static String toPredicateValue(final String predicatedValue) {
-        String predicatedValueTrimmed = predicatedValue.trim();
-        if ((predicatedValueTrimmed.startsWith(DQUOTE) || predicatedValueTrimmed.startsWith(SQUOTE))
-                && (predicatedValueTrimmed.endsWith(DQUOTE) || predicatedValueTrimmed.endsWith(SQUOTE))) {
-            return predicatedValueTrimmed.substring(1, predicatedValueTrimmed.length() - 1);
+    private static String trimIfEndIs(final String str, final char end) {
+        final int l = str.length() - 1;
+        if (str.charAt(l) != end) {
+            return null;
         }
-        return null;
+
+        return str.substring(1, l);
+    }
+
+    private static String toPredicateValue(final String predicatedValue) {
+        final String predicatedValueTrimmed = predicatedValue.trim();
+        if (predicatedValue.isEmpty()) {
+            return null;
+        }
+
+        switch (predicatedValueTrimmed.charAt(0)) {
+        case '"':
+            return trimIfEndIs(predicatedValueTrimmed, '"');
+        case '\'':
+            return trimIfEndIs(predicatedValueTrimmed, '\'');
+        default:
+            return null;
+        }
     }
 
     private static void writeIdentifierWithNamespacePrefix(final Element element, final StringBuilder textContent, final QName qName,
