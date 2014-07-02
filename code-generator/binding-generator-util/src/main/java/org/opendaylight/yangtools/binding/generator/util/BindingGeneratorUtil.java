@@ -343,7 +343,7 @@ public final class BindingGeneratorUtil {
     }
 
     /**
-     * Replaces all the occurances of the <code>removalChar</code> in the
+     * Replaces all the occurrences of the <code>removalChar</code> in the
      * <code>text</code> with empty string and converts following character to
      * upper case.
      *
