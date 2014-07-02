@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,8 +41,6 @@ import org.opendaylight.yangtools.yang.data.impl.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableList;
 
 public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     private static final Logger LOG = LoggerFactory.getLogger(InstanceIdentifierCodecImpl.class);
@@ -148,8 +148,8 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
                 ensureAugmentation(qnamePath,previousQName,baArg.getType());
             }
         }
-        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier ret = new org.opendaylight.yangtools.yang.data.api.InstanceIdentifier(
-                components);
+        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier ret =
+                org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.create(components);
         LOG.debug("Binding Instance Identifier {} serialized to DOM InstanceIdentifier {}", input, ret);
         return ret;
     }
