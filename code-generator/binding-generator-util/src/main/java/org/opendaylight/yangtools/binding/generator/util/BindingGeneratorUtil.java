@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -23,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
@@ -78,6 +81,7 @@ public final class BindingGeneratorUtil {
     private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
     private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
     private static final Splitter DOT = Splitter.on('.');
+    private static final CharMatcher DOT_MATCHER = CharMatcher.is('.');
 
     /**
      * Converts string <code>packageName</code> to valid JAVA package name.
@@ -319,9 +323,7 @@ public final class BindingGeneratorUtil {
             throw new IllegalArgumentException("Name can not be null");
         }
 
-        String correctStr = token.trim();
-        correctStr = correctStr.replace(".", "");
-
+        String correctStr = DOT_MATCHER.removeFrom(token.trim());
         if (correctStr.isEmpty()) {
             throw new IllegalArgumentException("Name can not be emty");
         }
@@ -384,7 +386,7 @@ public final class BindingGeneratorUtil {
      * @param gto
      *            transfer object which needs to be serializable
      */
-    public static void makeSerializable(GeneratedTOBuilderImpl gto) {
+    public static void makeSerializable(final GeneratedTOBuilderImpl gto) {
         gto.addImplementsType(Types.typeForClass(Serializable.class));
         GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
         prop.setValue(Long.toString(computeDefaultSUID(gto)));
