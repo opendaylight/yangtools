@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,9 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
-
 /**
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
  */
@@ -37,10 +39,12 @@ public final class AugmentationSchemaProxy implements AugmentationSchema {
         this.delegate = augmentSchema;
         this.realChildSchemas = realChildSchemas;
 
-        this.mappedChildSchemas = Maps.newHashMap();
+        final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());
         for (DataSchemaNode realChildSchema : realChildSchemas) {
-            mappedChildSchemas.put(realChildSchema.getQName(), realChildSchema);
+            m.put(realChildSchema.getQName(), realChildSchema);
         }
+
+        this.mappedChildSchemas = ImmutableMap.copyOf(m);
     }
 
     @Override
@@ -90,11 +94,9 @@ public final class AugmentationSchemaProxy implements AugmentationSchema {
 
     @Override
     public DataSchemaNode getDataChildByName(final QName name) {
-        if(mappedChildSchemas.containsKey(name)) {
-            return mappedChildSchemas.get(name);
-        }
-
-        throw new IllegalArgumentException("Unknown child: " + name + " in: " + delegate);
+        final DataSchemaNode ret = mappedChildSchemas.get(name);
+        Preconditions.checkArgument(ret != null, "Unknown child: %s in: %s", name, delegate);
+        return ret;
     }
 
     @Override
