@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Optional;
+
 import java.util.Iterator;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
@@ -21,8 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-
-import com.google.common.base.Optional;
 
 public final class NormalizedNodeUtils {
     private NormalizedNodeUtils() {
@@ -43,7 +43,7 @@ public final class NormalizedNodeUtils {
         checkNotNull(path, "Path must not be null");
 
         Optional<NormalizedNode<?, ?>> currentNode = Optional.<NormalizedNode<?, ?>> of(tree);
-        final Iterator<PathArgument> pathIterator = path.getPath().iterator();
+        final Iterator<PathArgument> pathIterator = path.getPathArguments().iterator();
         while (currentNode.isPresent() && pathIterator.hasNext()) {
             currentNode = getDirectChild(currentNode.get(), pathIterator.next());
         }
