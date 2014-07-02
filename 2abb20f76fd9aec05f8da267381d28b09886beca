@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_e9555bfa",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/BuilderUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-07-02T13:00:00Z",
+      "side": 1,
+      "message": "Modifying method arguments is discouraged unless it\u0027s really necessary and the reason should be documented, not just \u0027all loaded modules\u0027",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c93977d8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-07-02T13:00:00Z",
+      "side": 1,
+      "message": "doesn\u0027t this indicate illegal argument? what\u0027s the use case?",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_09243fad",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-07-02T13:00:00Z",
+      "side": 1,
+      "message": "check that prefix !\u003d this.prefix and is not null or empty - comment is based on current impl of getImportedModule..",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a93c33c9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-07-02T13:00:00Z",
+      "side": 1,
+      "message": "check prefix as above",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_2977c3a1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-07-02T13:00:00Z",
+      "side": 1,
+      "message": "this class is too complex and poorly documented so I cannot review it",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
