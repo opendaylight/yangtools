@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.json.schema.cnsn.serializer;
 
-import java.util.ArrayList;
+import com.google.common.base.Preconditions;
+
+import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
@@ -18,8 +20,6 @@ import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.ContainerNodeBaseSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-
-import com.google.common.base.Preconditions;
 
 public class ContainerNodeCnSnSerializer extends ContainerNodeBaseSerializer<Node<?>> {
 
@@ -42,9 +42,7 @@ public class ContainerNodeCnSnSerializer extends ContainerNodeBaseSerializer<Nod
             mutCompNode.getValue().add(element);
         }
 
-        List<Node<?>> lst = new ArrayList<>();
-        lst.add(mutCompNode);
-        return lst;
+        return Collections.<Node<?>>singletonList(mutCompNode);
     }
 
     @Override

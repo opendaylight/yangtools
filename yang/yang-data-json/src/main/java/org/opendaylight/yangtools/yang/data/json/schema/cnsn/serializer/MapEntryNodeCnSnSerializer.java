@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.json.schema.cnsn.serializer;
 
-import java.util.ArrayList;
+import com.google.common.base.Preconditions;
+
+import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
@@ -19,17 +21,16 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serialize
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-import com.google.common.base.Preconditions;
-
 public class MapEntryNodeCnSnSerializer extends MapEntryNodeBaseSerializer<Node<?>> {
 
-    private NodeSerializerDispatcher<Node<?>> dispatcher;
+    private final NodeSerializerDispatcher<Node<?>> dispatcher;
 
     MapEntryNodeCnSnSerializer(final NodeSerializerDispatcher<Node<?>> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
-    public List<Node<?>> serialize(ListSchemaNode schema, MapEntryNode node) {
+    @Override
+    public List<Node<?>> serialize(final ListSchemaNode schema, final MapEntryNode node) {
 
         MutableCompositeNode mutCompNode = NodeFactory.createMutableCompositeNode(node.getNodeType(), null, null, null,
                 null);
@@ -41,9 +42,7 @@ public class MapEntryNodeCnSnSerializer extends MapEntryNodeBaseSerializer<Node<
             mutCompNode.getValue().add(element);
         }
 
-        List<Node<?>> lst = new ArrayList<>();
-        lst.add(mutCompNode);
-        return lst;
+        return Collections.<Node<?>>singletonList(mutCompNode);
     }
 
     @Override
