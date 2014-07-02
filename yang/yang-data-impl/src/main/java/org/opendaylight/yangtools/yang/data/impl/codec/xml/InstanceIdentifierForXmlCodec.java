@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.codec;
+package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -31,19 +31,18 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
-public class InstanceIdentifierForXmlCodec {
+public final class InstanceIdentifierForXmlCodec {
     private static final Pattern PREDICATE_PATTERN = Pattern.compile("\\[(.*?)\\]");
     private static final Splitter SLASH_SPLITTER = Splitter.on('/');
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final String SQUOTE = "'";
     private static final String DQUOTE = "\"";
 
-    public static final InstanceIdentifierForXmlCodec INSTANCE_IDENTIFIER_FOR_XML_CODEC = new InstanceIdentifierForXmlCodec();
+    private InstanceIdentifierForXmlCodec() {
 
-    protected InstanceIdentifierForXmlCodec() {
     }
 
-    public InstanceIdentifier deserialize(final Element element, final SchemaContext schemaContext) {
+    public static InstanceIdentifier deserialize(final Element element, final SchemaContext schemaContext) {
         Preconditions.checkNotNull(element, "Value of element for deserialization can't be null");
         Preconditions.checkNotNull(schemaContext,
                 "Schema context for deserialization of instance identifier type can't be null");
@@ -74,7 +73,7 @@ public class InstanceIdentifierForXmlCodec {
         return InstanceIdentifier.create(result);
     }
 
-    public Element serialize(final InstanceIdentifier data, final Element element) {
+    public static Element serialize(final InstanceIdentifier data, final Element element) {
         Preconditions.checkNotNull(data, "Variable should contain instance of instance identifier and can't be null");
         Preconditions.checkNotNull(element, "DOM element can't be null");
         Map<String, String> prefixes = new HashMap<>();
@@ -108,7 +107,7 @@ public class InstanceIdentifierForXmlCodec {
         return predicateStartIndex == -1 ? pathPart : pathPart.substring(0, predicateStartIndex);
     }
 
-    private PathArgument toPathArgument(final String xPathArgument, final Element element, final SchemaContext schemaContext) {
+    private static PathArgument toPathArgument(final String xPathArgument, final Element element, final SchemaContext schemaContext) {
         final QName mainQName = toIdentity(xPathArgument, element, schemaContext);
 
         // predicates
@@ -144,7 +143,7 @@ public class InstanceIdentifierForXmlCodec {
 
     }
 
-    public QName toIdentity(final String xPathArgument, final Element element, final SchemaContext schemaContext) {
+    public static QName toIdentity(final String xPathArgument, final Element element, final SchemaContext schemaContext) {
         final String xPathPartTrimmed = getIdAndPrefixAsStr(xPathArgument).trim();
         final Iterator<String> it = COLON_SPLITTER.split(xPathPartTrimmed).iterator();
 
