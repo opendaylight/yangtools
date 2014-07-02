@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_095c3fec",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/InstanceIdentifierForXmlCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-07-02T14:14:02Z",
+      "side": 1,
+      "message": "Does this works also for Instance Identifier input in form \"nodes/node/foo\"\nThis seems string will be splitted in\nnodes\nnode\nfoo\n\nwhile we discard first nodes, then we check for next (we get nodes) and then we continue.",
+      "revId": "ccf644d528dc5dc1b548bc5a86ffb041db5e62cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
