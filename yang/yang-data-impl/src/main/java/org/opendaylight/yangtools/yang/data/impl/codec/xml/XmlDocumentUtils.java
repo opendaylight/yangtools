@@ -17,6 +17,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -514,17 +515,22 @@ public class XmlDocumentUtils {
     }
 
     private static final <T> List<T> forEachChild(final NodeList nodes, final SchemaContext schemaContext, final Function<ElementWithSchemaContext, Optional<T>> forBody) {
-        ImmutableList.Builder<T> ret = ImmutableList.<T> builder();
-        for (int i = 0; i < nodes.getLength(); i++) {
+        final int l = nodes.getLength();
+        if (l == 0) {
+            return ImmutableList.of();
+        }
+
+        final List<T> list = new ArrayList<>(l);
+        for (int i = 0; i < l; i++) {
             org.w3c.dom.Node child = nodes.item(i);
             if (child instanceof Element) {
                 Optional<T> result = forBody.apply(new ElementWithSchemaContext((Element) child,schemaContext));
                 if (result.isPresent()) {
-                    ret.add(result.get());
+                    list.add(result.get());
                 }
             }
         }
-        return ret.build();
+        return ImmutableList.copyOf(list);
     }
 
     public static final XmlCodecProvider defaultValueCodecProvider() {
