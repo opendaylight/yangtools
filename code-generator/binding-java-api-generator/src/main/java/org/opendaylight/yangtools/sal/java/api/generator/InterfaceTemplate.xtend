@@ -66,7 +66,7 @@ class InterfaceTemplate extends BaseTemplate {
      * @return string with code for interface body in JAVA format
      */
     override body() '''
-        «type.comment.asJavadoc»
+        «javaDocFor(type)»
         public interface «type.name»
             «superInterfaces»
         {
