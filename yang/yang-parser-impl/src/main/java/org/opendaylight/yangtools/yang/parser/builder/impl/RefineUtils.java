@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -35,7 +36,7 @@ public final class RefineUtils {
         MustDefinition must = refine.getMust();
         List<UnknownSchemaNodeBuilder> unknownNodes = refine.getUnknownNodes();
 
-        if (defaultStr != null && !("".equals(defaultStr))) {
+        if (defaultStr != null && !defaultStr.isEmpty()) {
             leaf.setDefaultStr(defaultStr);
         }
         if (mandatory != null) {

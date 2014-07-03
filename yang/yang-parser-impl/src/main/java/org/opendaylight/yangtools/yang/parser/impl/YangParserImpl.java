@@ -864,7 +864,7 @@ public final class YangParserImpl implements YangContextParser {
                 URI ns = module.getNamespace();
                 Date rev = module.getRevision();
                 String localPrefix = qn.getPrefix();
-                if (localPrefix != null && !("".equals(localPrefix))) {
+                if (localPrefix != null && !localPrefix.isEmpty()) {
                     ModuleBuilder currentModule = BuilderUtils.findModuleFromBuilders(modules, module, localPrefix,
                             augment.getLine());
                     if (currentModule == null) {

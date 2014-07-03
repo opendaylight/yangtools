@@ -1207,7 +1207,7 @@ class GeneratorImpl {
             val List<QName> path = schemaPath.path
         val StringBuilder pathString = new StringBuilder()
         if (schemaPath.absolute) {
-            pathString.append("/")
+            pathString.append('/')
         }
 
         val QName qname = path.get(0)
@@ -1235,15 +1235,15 @@ class GeneratorImpl {
 
                 var String prefix = name.prefix
                 var String moduleName
-                if (prefix == null || "".equals(prefix) || prefix.equals(module.prefix)) {
+                if (prefix == null || prefix.empty || prefix.equals(module.prefix)) {
                     moduleName = module.name
                 } else {
                     moduleName = imports.get(prefix)
                 }
                 pathString.append(moduleName)
-                pathString.append(":")
+                pathString.append(':')
                 pathString.append(name.localName)
-                pathString.append("/")
+                pathString.append('/')
                 if(node instanceof ChoiceNode && dataNode !== null) {
                     val DataSchemaNode caseNode = dataNode.childNodes.findFirst[DataSchemaNode e | e instanceof ChoiceCaseNode];
                     if(caseNode !== null) {
