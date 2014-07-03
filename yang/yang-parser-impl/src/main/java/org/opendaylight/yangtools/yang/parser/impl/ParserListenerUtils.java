@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Optional;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -705,7 +706,7 @@ public final class ParserListenerUtils {
                 if (value.contains(".")) {
                     result = new BigDecimal(value);
                 } else {
-                    result = Long.valueOf(value);
+                    result = new BigInteger(value);
                 }
             } catch (NumberFormatException e) {
                 throw new YangParseException(moduleName, line, "Unable to parse range value '" + value + "'.", e);

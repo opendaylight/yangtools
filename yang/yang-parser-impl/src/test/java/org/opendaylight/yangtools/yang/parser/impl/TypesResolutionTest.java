@@ -14,6 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -153,8 +154,8 @@ public class TypesResolutionTest {
         List<LengthConstraint> lengths = type.getLengthConstraints();
         assertEquals(1, lengths.size());
         LengthConstraint length = type.getLengthConstraints().get(0);
-        assertEquals(1L, length.getMin());
-        assertEquals(253L, length.getMax());
+        assertEquals(BigInteger.ONE, length.getMin());
+        assertEquals(BigInteger.valueOf(253), length.getMax());
     }
 
     @Test
