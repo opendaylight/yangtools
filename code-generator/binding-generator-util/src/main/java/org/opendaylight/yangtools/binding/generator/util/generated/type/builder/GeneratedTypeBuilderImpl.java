@@ -10,10 +10,16 @@ package org.opendaylight.yangtools.binding.generator.util.generated.type.builder
 
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.yang.common.QName;
 
 public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder> implements GeneratedTypeBuilder {
 
-    public GeneratedTypeBuilderImpl(String packageName, String name) {
+    private String description;
+    private String reference;
+    private String moduleName;
+    private Iterable<QName> schemaPath;
+    
+    public GeneratedTypeBuilderImpl(final String packageName, final String name) {
         super(packageName, name);
         setAbstract(true);
     }
@@ -21,6 +27,22 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
     @Override
     public GeneratedType toInstance() {
         return new GeneratedTypeImpl(this);
+    }
+    
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+    
+    public void setReference(final String reference) {
+        this.reference = reference;
+    }
+    
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
+    
+    public void setSchemaPath(final Iterable<QName> schemaPath) {
+        this.schemaPath = schemaPath;
     }
 
     @Override
@@ -56,8 +78,38 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
 
     private static final class GeneratedTypeImpl extends AbstractGeneratedType {
 
+        private String description;
+        private String reference;
+        private String moduleName;
+        private Iterable<QName> schemaPath;
+        
         public GeneratedTypeImpl(GeneratedTypeBuilderImpl builder) {
             super(builder);
+            
+            this.description = builder.description;
+            this.reference = builder.reference;
+            this.moduleName = builder.moduleName;
+            this.schemaPath = builder.schemaPath;
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public String getReference() {
+            return reference;
+        }
+
+        @Override
+        public Iterable<QName> getSchemaPath() {
+            return schemaPath;
+        }
+
+        @Override
+        public String getModuleName() {
+            return moduleName;
         }
     }
 }
