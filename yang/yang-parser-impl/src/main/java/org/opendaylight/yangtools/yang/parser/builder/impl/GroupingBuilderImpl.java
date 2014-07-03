@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
-import java.util.Date;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -52,11 +52,8 @@ public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContain
         status = base.getStatus();
         addedByUses = base.isAddedByUses();
 
-        URI ns = qname.getNamespace();
-        Date rev = qname.getRevision();
-        String pref = qname.getPrefix();
         addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path,
-                ns, rev, pref));
+                qname));
     }
 
     @Override
@@ -195,7 +192,7 @@ public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContain
     }
 
     private static final class GroupingDefinitionImpl extends AbstractDocumentedDataNodeContainer implements
-            GroupingDefinition {
+    GroupingDefinition {
         private final QName qname;
         private final SchemaPath path;
 

@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -704,12 +704,11 @@ public final class BuilderUtils {
     }
 
     public static Set<DataSchemaNodeBuilder> wrapChildNodes(final String moduleName, final int line,
-            final Set<DataSchemaNode> nodes, final SchemaPath parentPath, final URI ns, final Date rev,
-            final String pref) {
+            final Set<DataSchemaNode> nodes, final SchemaPath parentPath, final QName parentQName) {
         Set<DataSchemaNodeBuilder> result = new HashSet<>();
 
         for (DataSchemaNode node : nodes) {
-            QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
+            QName qname = QName.create(parentQName, node.getQName().getLocalName());
             DataSchemaNodeBuilder wrapped = wrapChildNode(moduleName, line, node, parentPath, qname);
             result.add(wrapped);
         }
@@ -742,11 +741,10 @@ public final class BuilderUtils {
     }
 
     public static Set<GroupingBuilder> wrapGroupings(final String moduleName, final int line,
-            final Set<GroupingDefinition> nodes, final SchemaPath parentPath, final URI ns, final Date rev,
-            final String pref) {
+            final Set<GroupingDefinition> nodes, final SchemaPath parentPath, final QName parentQName) {
         Set<GroupingBuilder> result = new HashSet<>();
         for (GroupingDefinition node : nodes) {
-            QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
+            QName qname = QName.create(parentQName, node.getQName().getLocalName());
             SchemaPath schemaPath = parentPath.createChild(qname);
             result.add(new GroupingBuilderImpl(moduleName, line, qname, schemaPath, node));
         }
@@ -754,12 +752,11 @@ public final class BuilderUtils {
     }
 
     public static Set<TypeDefinitionBuilder> wrapTypedefs(final String moduleName, final int line,
-            final DataNodeContainer dataNode, final SchemaPath parentPath, final URI ns, final Date rev,
-            final String pref) {
+            final DataNodeContainer dataNode, final SchemaPath parentPath, final QName parentQName) {
         Set<TypeDefinition<?>> nodes = dataNode.getTypeDefinitions();
         Set<TypeDefinitionBuilder> result = new HashSet<>();
         for (TypeDefinition<?> node : nodes) {
-            QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
+            QName qname = QName.create(parentQName, node.getQName().getLocalName());
             SchemaPath schemaPath = parentPath.createChild(qname);
             result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, ((ExtendedType) node)));
         }
@@ -767,11 +764,10 @@ public final class BuilderUtils {
     }
 
     public static List<UnknownSchemaNodeBuilderImpl> wrapUnknownNodes(final String moduleName, final int line,
-            final List<UnknownSchemaNode> nodes, final SchemaPath parentPath, final URI ns, final Date rev,
-            final String pref) {
+            final List<UnknownSchemaNode> nodes, final SchemaPath parentPath, final QName parentQName) {
         List<UnknownSchemaNodeBuilderImpl> result = new ArrayList<>();
         for (UnknownSchemaNode node : nodes) {
-            QName qname = new QName(ns, rev, pref, node.getQName().getLocalName());
+            QName qname = QName.create(parentQName, node.getQName().getLocalName());
             SchemaPath schemaPath = parentPath.createChild(qname);
             result.add(new UnknownSchemaNodeBuilderImpl(moduleName, line, qname, schemaPath, node));
         }

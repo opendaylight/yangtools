@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder,
-        AugmentationTargetBuilder {
+AugmentationTargetBuilder {
     private ChoiceNodeImpl instance;
 
     // DataSchemaNode args
@@ -70,19 +70,16 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         configuration = base.isConfiguration();
         augmentations.addAll(base.getAvailableAugmentations());
 
-        URI ns = qname.getNamespace();
-        Date rev = qname.getRevision();
-        String pref = qname.getPrefix();
         Set<DataSchemaNodeBuilder> wrapped = BuilderUtils.wrapChildNodes(moduleName, line, new HashSet<DataSchemaNode>(
-                base.getCases()), path, ns, rev, pref);
+                base.getCases()), path, qname);
         for (DataSchemaNodeBuilder wrap : wrapped) {
             if (wrap instanceof ChoiceCaseBuilder) {
                 caseBuilders.add((ChoiceCaseBuilder) wrap);
             }
         }
 
-        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
-                rev, pref));
+        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path,
+                qname));
     }
 
     @Override

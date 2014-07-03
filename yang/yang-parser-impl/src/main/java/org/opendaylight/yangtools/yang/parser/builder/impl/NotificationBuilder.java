@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDat
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class NotificationBuilder extends AbstractDocumentedDataNodeContainerBuilder implements SchemaNodeBuilder,
-        AugmentationTargetBuilder {
+AugmentationTargetBuilder {
     private NotificationDefinitionImpl instance;
     // SchemaNode args
     private SchemaPath schemaPath;
@@ -47,12 +47,8 @@ public final class NotificationBuilder extends AbstractDocumentedDataNodeContain
         super(moduleName, line, qname, path, base);
         this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
 
-        URI ns = qname.getNamespace();
-        Date rev = qname.getRevision();
-        String pref = qname.getPrefix();
         addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path,
-                ns, rev, pref));
-
+                qname));
         augmentations.addAll(base.getAvailableAugmentations());
 
     }
@@ -111,7 +107,7 @@ public final class NotificationBuilder extends AbstractDocumentedDataNodeContain
     }
 
     private static final class NotificationDefinitionImpl extends AbstractDocumentedDataNodeContainer implements
-            NotificationDefinition {
+    NotificationDefinition {
         private final QName qname;
         private final SchemaPath path;
         private ImmutableSet<AugmentationSchema> augmentations;

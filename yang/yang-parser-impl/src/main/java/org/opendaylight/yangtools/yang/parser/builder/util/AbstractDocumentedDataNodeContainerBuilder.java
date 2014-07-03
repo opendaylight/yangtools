@@ -6,13 +6,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
-import java.net.URI;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -55,19 +54,15 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
         super(moduleName, line);
         this.qname = qname;
 
-        URI ns = qname.getNamespace();
-        Date rev = qname.getRevision();
-        String pref = qname.getPrefix();
-
         // We do copy of child nodes with namespace change
         // FIXME: Copy should be part of builder API so impl we prevent
         // cyclic dependencies and each builder carries its own semantic for copy.
-        addedChildNodes.addAll(BuilderUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, ns, rev, pref));
-        addedGroupings.addAll(BuilderUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, ns, rev, pref));
-        addedTypedefs.addAll(BuilderUtils.wrapTypedefs(moduleName, line, base, path, ns, rev, pref));
+        addedChildNodes.addAll(BuilderUtils.wrapChildNodes(moduleName, line, base.getChildNodes(), path, qname));
+        addedGroupings.addAll(BuilderUtils.wrapGroupings(moduleName, line, base.getGroupings(), path, qname));
+        addedTypedefs.addAll(BuilderUtils.wrapTypedefs(moduleName, line, base, path, qname));
         // FIXME: unkownSchemaNodes should be available in DataNodeContainer
-//        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
-//                rev, pref));
+        // addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName,
+        // line, base.getUnknownSchemaNodes(), path, qname));
         usesNodes.addAll(base.getUses());
     }
 
