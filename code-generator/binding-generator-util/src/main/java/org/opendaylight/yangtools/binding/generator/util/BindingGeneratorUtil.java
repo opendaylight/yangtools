@@ -81,8 +81,9 @@ public final class BindingGeneratorUtil {
      */
     private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
     private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
-    private static final Splitter DOT = Splitter.on('.');
+    private static final Splitter DOT_SPLITTER = Splitter.on('.');
     private static final CharMatcher DOT_MATCHER = CharMatcher.is('.');
+    private static final CharMatcher DASH_COLON_MATCHER = CharMatcher.anyOf("-:");
 
     /**
      * Converts string <code>packageName</code> to valid JAVA package name.
@@ -102,7 +103,7 @@ public final class BindingGeneratorUtil {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
 
-        for (String p : DOT.split(packageName.toLowerCase())) {
+        for (String p : DOT_SPLITTER.split(packageName.toLowerCase())) {
             if (first) {
                 first = false;
             } else {
@@ -235,9 +236,7 @@ public final class BindingGeneratorUtil {
             builder.append('.');
             String nodeLocalName = iterator.next().getLocalName();
 
-            nodeLocalName = nodeLocalName.replace(':', '.');
-            nodeLocalName = nodeLocalName.replace('-', '.');
-            builder.append(nodeLocalName);
+            builder.append(DASH_COLON_MATCHER.replaceFrom(nodeLocalName, '.'));
         }
         return validateJavaPackage(builder.toString());
     }
@@ -326,7 +325,7 @@ public final class BindingGeneratorUtil {
 
         String correctStr = DOT_MATCHER.removeFrom(token.trim());
         if (correctStr.isEmpty()) {
-            throw new IllegalArgumentException("Name can not be emty");
+            throw new IllegalArgumentException("Name can not be empty");
         }
 
         correctStr = replaceWithCamelCase(correctStr, ' ');
