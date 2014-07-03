@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public final class QNameModule implements Immutable, Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
+    private static final QNameModule NULL_INSTANCE = new QNameModule(null, null);
     private static final long serialVersionUID = 1L;
 
     //Nullable
@@ -35,6 +36,10 @@ public final class QNameModule implements Immutable, Serializable {
     }
 
     public static QNameModule create(final URI namespace, final Date revision) {
+        if (namespace == null && revision == null) {
+            return NULL_INSTANCE;
+        }
+
         return new QNameModule(namespace, revision);
     }
 
