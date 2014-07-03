@@ -1856,8 +1856,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
             resultTOBuilder.addToStringProperty(genPropBuilder);
 
         } else if (typeDef instanceof BitsTypeDefinition) {
-            genTOBuilders.add((((TypeProviderImpl) typeProvider)).provideGeneratedTOBuilderForBitsTypeDefinition(
-                    packageName, typeDef, classNameFromLeaf));
+            final Module module = findParentModule(schemaContext, typeDef);
+            genTOBuilders.add((((TypeProviderImpl) typeProvider)).provideGeneratedTOBuilderForBitsTypeDefinition(packageName, typeDef, classNameFromLeaf, module.getName()));
         }
         if (genTOBuilders != null && !genTOBuilders.isEmpty()) {
             for (GeneratedTOBuilder genTOBuilder : genTOBuilders) {
