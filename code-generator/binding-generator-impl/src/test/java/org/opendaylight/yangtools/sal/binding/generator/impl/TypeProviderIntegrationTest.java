@@ -10,9 +10,10 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.URI;
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class TypeProviderIntegrationTest {
     private final String PKG = "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.";
@@ -32,10 +34,11 @@ public class TypeProviderIntegrationTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        final URI path1 = TypeProviderIntegrationTest.class.getResource("/type-provider/test.yang").toURI();
-        final URI path2 = TypeProviderIntegrationTest.class.getResource(
-                "/type-provider/ietf-inet-types@2010-09-24.yang").toURI();
-        context = SupportTestUtil.resolveSchemaContextFromFiles(path1, path2);
+        File abstractTopology = new File(TypeProviderIntegrationTest.class.getResource("/type-provider/test.yang")
+                .toURI());
+        File ietfInetTypes = new File(TypeProviderIntegrationTest.class.getResource("/ietf/ietf-inet-types.yang")
+                .toURI());
+        context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInetTypes));
         assertNotNull(context);
     }
 
@@ -255,9 +258,9 @@ public class TypeProviderIntegrationTest {
 
     @Test
     public void testGetTypeDefaultConstructionUnionNested() throws ParseException {
-        ContainerSchemaNode c1 = (ContainerSchemaNode)m.getDataChildByName("c1");
-        ContainerSchemaNode c2 = (ContainerSchemaNode)c1.getDataChildByName("c2");
-        ContainerSchemaNode c3 = (ContainerSchemaNode)c2.getDataChildByName("c3");
+        ContainerSchemaNode c1 = (ContainerSchemaNode) m.getDataChildByName("c1");
+        ContainerSchemaNode c2 = (ContainerSchemaNode) c1.getDataChildByName("c2");
+        ContainerSchemaNode c3 = (ContainerSchemaNode) c2.getDataChildByName("c3");
         LeafSchemaNode leaf = (LeafSchemaNode) c3.getDataChildByName("id");
 
         String actual = provider.getTypeDefaultConstruction(leaf);
