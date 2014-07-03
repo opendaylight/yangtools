@@ -617,6 +617,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         newType.setAbstract(true);
         newType.addComment(identity.getDescription());
+        newType.setDescription(identity.description)
+        newType.setReference(identity.getReference)
+        newType.setModuleName(module.name)
+        newType.setSchemaPath(identity.getPath.pathFromRoot)
         val qname = identity.QName;
         
         newType.qnameConstant(BindingMapping.QNAME_STATIC_FIELD_NAME,qname);
@@ -718,6 +722,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             (enumTypeDef.QName.localName !== null)) {
             val enumerationName = BindingMapping.getClassName(enumName);
             val enumBuilder = typeBuilder.addEnumeration(enumerationName);
+           
             enumBuilder.updateEnumPairsFromEnumTypeDef(enumTypeDef);
             return enumBuilder;
         }
@@ -742,7 +747,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
         checkArgument(module !== null, "Module reference cannot be NULL.");
         val packageName = moduleNamespaceToPackageName(module);
         val moduleName = BindingMapping.getClassName(module.name) + postfix;
-        return new GeneratedTypeBuilderImpl(packageName, moduleName);
+        
+        val GeneratedTypeBuilderImpl moduleBuilder = new GeneratedTypeBuilderImpl(packageName, moduleName);
+        moduleBuilder.setDescription(module.description)
+        moduleBuilder.setReference(module.reference)
+        moduleBuilder.setModuleName(module.name)
+        
+        return moduleBuilder;
     }
 
     /**
@@ -1518,6 +1529,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def Type createReturnTypeForUnion(GeneratedTOBuilder genTOBuilder, TypeDefinition<?> typeDef,
         GeneratedTypeBuilder typeBuilder, Module parentModule) {
         val GeneratedTOBuilderImpl returnType = new GeneratedTOBuilderImpl(genTOBuilder.packageName, genTOBuilder.name)
+        
+        returnType.setDescription(typeDef.description)
+        returnType.setReference(typeDef.reference)
+        returnType.setModuleName(parentModule.name)
+        returnType.setSchemaPath(typeDef.path.pathFromRoot)
+        
         genTOBuilder.setTypedef(true);
         genTOBuilder.setIsUnion(true);
         (typeProvider as TypeProviderImpl).addUnitsToGenTO(genTOBuilder, typeDef.getUnits());
@@ -1643,7 +1660,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
         //FIXME: Validation of name conflict
         val newType = new GeneratedTypeBuilderImpl(packageName, genTypeName);
         qnameConstant(newType,BindingMapping.QNAME_STATIC_FIELD_NAME,schemaNode.QName);
-        newType.addComment(schemaNode.getDescription());
+        newType.addComment(schemaNode.description);
+        newType.setDescription(schemaNode.description);
+        newType.setReference(schemaNode.reference);
+        newType.setSchemaPath(schemaNode.path.pathFromRoot);
+        
+        val Module module = findParentModule(schemaContext, schemaNode);
+        newType.setModuleName(module.name);
+        
         if (!genTypeBuilders.containsKey(packageName)) {
             val Map<String, GeneratedTypeBuilder> builders = new HashMap();
             builders.put(genTypeName, newType);
@@ -1864,7 +1888,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
         } else if (typeDef instanceof BitsTypeDefinition) {
             genTOBuilders.add(
                 ((typeProvider as TypeProviderImpl) ).
-                    provideGeneratedTOBuilderForBitsTypeDefinition(packageName, typeDef, classNameFromLeaf));
+                    provideGeneratedTOBuilderForBitsTypeDefinition(packageName, typeDef, classNameFromLeaf,
+                        parentModule.name
+                    ));
         }
         if (genTOBuilders !== null && !genTOBuilders.isEmpty()) {
             for (genTOBuilder : genTOBuilders) {
