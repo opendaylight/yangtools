@@ -9,12 +9,13 @@ package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
 
 public final class BindingMapping {
 
@@ -33,7 +34,8 @@ public final class BindingMapping {
     public static final String QNAME_STATIC_FIELD_NAME = "QNAME";
     public static final String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
 
-    private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
+    private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-").precomputed())
+            .omitEmptyStrings().trimResults();
 
     public static final String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
     public static final String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
@@ -75,8 +77,7 @@ public final class BindingMapping {
 
     private static final String toCamelCase(final String rawString) {
         checkArgument(rawString != null, "String should not be null");
-        Iterable<String> components = SPACE_SPLITTER.split(rawString.replace('-', ' ').replace('_', ' ')
-                .replace('.', ' '));
+        Iterable<String> components = CAMEL_SPLITTER.split(rawString);
         StringBuilder builder = new StringBuilder();
         for (String comp : components) {
             builder.append(toFirstUpper(comp));
