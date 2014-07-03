@@ -12,10 +12,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +29,12 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
+import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 
 /**
  * Unique identifier of a partical node instance in the data tree.
- *
  *
  * <p>
  * Java representation of YANG Built-in type <code>instance-identifier</code>,
@@ -61,19 +64,30 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  *
  * @see http://tools.ietf.org/html/rfc6020#section-9.13
- *
- *
  */
-public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
+public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
+    private static final InstanceIdentifier EMPTY = trustedCreate(Collections.<PathArgument>emptyList());
 
-    private static final long serialVersionUID = 8467409862384206193L;
-    private final ImmutableList<PathArgument> path;
+    private static final long serialVersionUID = 2L;
+    private final Iterable<PathArgument> pathArguments;
+    private final int hash;
 
+    private transient ImmutableList<PathArgument> legacyPath = null;
     private transient String toStringCache = null;
-    private transient Integer hashCodeCache = null;
+
+    private final ImmutableList<PathArgument> getLegacyPath() {
+        if (legacyPath == null) {
+            synchronized (this) {
+                if (legacyPath == null) {
+                    legacyPath = ImmutableList.copyOf(pathArguments);
+                }
+            }
+        }
+
+        return legacyPath;
+    }
 
     /**
-     *
      * Returns a list of path arguments.
      *
      * @deprecated Use {@link #getPathArguments()} instead.
@@ -81,7 +95,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      */
     @Deprecated
     public List<PathArgument> getPath() {
-        return path;
+        return getLegacyPath();
     }
 
     /**
@@ -90,7 +104,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return Immutable iteration of path arguments.
      */
     public Iterable<PathArgument> getPathArguments() {
-        return path;
+        return pathArguments;
     }
 
     /**
@@ -100,7 +114,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return Immutable iterable of path arguments in reverse order.
      */
     public Iterable<PathArgument> getReversePathArguments() {
-        return path.reverse();
+        return getLegacyPath().reverse();
     }
 
     /**
@@ -110,55 +124,46 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return The last past argument, or null if there are no PathArguments.
      */
     public PathArgument getLastPathArgument() {
-        return Iterables.getFirst(path.reverse(), null);
+        return Iterables.getFirst(getReversePathArguments(), null);
     }
 
-    /**
-     *
-     *
-     * @deprecated Use {@link #create(Iterable)} instead.
-     * @param path
-     */
-    @Deprecated
-    public InstanceIdentifier(final List<? extends PathArgument> path) {
-        this.path = ImmutableList.copyOf(path);
+    private InstanceIdentifier(final Iterable<PathArgument> path, final int hash) {
+        this.pathArguments = Preconditions.checkNotNull(path, "path must not be null.");
+        this.hash = hash;
     }
 
-    private InstanceIdentifier(final Iterable<? extends PathArgument> path) {
-        Preconditions.checkNotNull(path, "path must not be null.");
-        this.path = ImmutableList.copyOf(path);
-    }
+    private static final InstanceIdentifier trustedCreate(final Iterable<PathArgument> path) {
+        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
+        for (PathArgument a : path) {
+            hash.addArgument(a);
+        }
 
-    private InstanceIdentifier(final NodeIdentifier nodeIdentifier) {
-        this.path = ImmutableList.<PathArgument> of(nodeIdentifier);
+        return new InstanceIdentifier(path, hash.toInstance());
     }
 
     public static final InstanceIdentifier create(final Iterable<? extends PathArgument> path) {
-        return new InstanceIdentifier(path);
+        if (Iterables.isEmpty(path)) {
+            return EMPTY;
+        }
+
+        return trustedCreate(ImmutableList.copyOf(path));
     }
 
     public static final InstanceIdentifier create(final PathArgument... path) {
+        // We are forcing a copy, since we cannot trust the user
         return create(Arrays.asList(path));
     }
 
     @Override
     public int hashCode() {
         /*
-         * The hashCodeCache is safe, since the object contract requires
+         * The caching is safe, since the object contract requires
          * immutability of the object and all objects referenced from this
          * object.
          * Used lists, maps are immutable. Path Arguments (elements) are also
          * immutable, since the PathArgument contract requires immutability.
-         * The cache is thread-safe - if multiple computations occurs at the
-         * same time, cache will be overwritten with same result.
          */
-        if (hashCodeCache == null) {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + path.hashCode();
-            hashCodeCache = result;
-        }
-        return hashCodeCache;
+        return hash;
     }
 
     @Override
@@ -176,18 +181,10 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         if (this.hashCode() != obj.hashCode()) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Iterables.elementsEqual(pathArguments, other.pathArguments);
     }
 
     /**
-     *
      * Constructs a new Instance Identifier with new {@link NodeIdentifier} added to the end of path arguments
      *
      * @param name QName of {@link NodeIdentifier}
@@ -205,7 +202,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return Instance Identifier with additional path argument added to the end.
      */
     public InstanceIdentifier node(final PathArgument arg) {
-        return create(ImmutableList.<PathArgument> builder().addAll(path).add(arg).build());
+        return new InstanceIdentifier(Iterables.concat(pathArguments, Collections.singleton(arg)), HashCodeBuilder.nextHashCode(hash, arg));
     }
 
     /**
@@ -218,15 +215,29 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      *         the specified parent is not in fact an ancestor of this object.
      */
     public Optional<InstanceIdentifier> relativeTo(final InstanceIdentifier ancestor) {
-        if (ancestor.contains(this)) {
-            final int common = ancestor.path.size();
-            return Optional.of(new InstanceIdentifier(Iterables.skip(path, common)));
-        } else {
-            return Optional.absent();
+        final Iterator<?> lit = pathArguments.iterator();
+        final Iterator<?> oit = ancestor.pathArguments.iterator();
+        int common = 0;
+
+        while (oit.hasNext()) {
+            // Ancestor is not really an ancestor
+            if (!lit.hasNext() || !lit.next().equals(oit.next())) {
+                return Optional.absent();
+            }
+
+            ++common;
         }
+
+        if (common == 0) {
+            return Optional.of(this);
+        }
+        if (!lit.hasNext()) {
+            return Optional.of(EMPTY);
+        }
+        return Optional.of(trustedCreate(Iterables.skip(pathArguments, common)));
     }
 
-    static int hashCode(final Object value) {
+    private static int hashCode(final Object value) {
         if (value == null) {
             return 0;
         }
@@ -258,7 +269,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return Instance Identifier with only one path argument of type {@link NodeIdentifier}
      */
     public static InstanceIdentifier of(final QName name) {
-        return new InstanceIdentifier(new NodeIdentifier(name));
+        return create(new NodeIdentifier(name));
     }
 
     /**
@@ -279,21 +290,23 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
     static public InstanceIdentifierBuilder builder(final InstanceIdentifier origin) {
-        return new BuilderImpl(origin.getPath());
+        return new BuilderImpl(origin.getPathArguments(), origin.hashCode());
     }
+
     /**
-     *
      * Returns new builder for InstanceIdentifier with first path argument set to {@link NodeIdentifier}.
      *
      * @param node QName of first {@link NodeIdentifier} path argument.
      * @return  new builder for InstanceIdentifier with first path argument set to {@link NodeIdentifier}.
+     *
+     * @deprecated Either use {@link #node(QName)} or instantiate an intermediate builder.
      */
+    @Deprecated
     public static InstanceIdentifierBuilder builder(final QName node) {
         return builder().node(node);
     }
 
     /**
-     *
      * Path argument / component of InstanceIdentifier
      *
      * Path argument uniquelly identifies node in data tree on particular
@@ -312,12 +325,8 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * <li>{@link AugmentationIdentifier} - Identifier of augmentation
      * <li>{@link NodeWithValue} - Identifier of leaf-list entry
      * </ul>
-     *
-     *
-     *
      */
     public interface PathArgument extends Comparable<PathArgument>, Immutable, Serializable {
-
         /**
          * If applicable returns unique QName of data node as defined in YANG
          * Schema.
@@ -325,22 +334,21 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
          * This method may return null, if the corresponding schema node, does
          * not have QName associated, such as in cases of augmentations.
          *
-         * @return
+         * @return Node type
          */
         QName getNodeType();
-
     }
 
     private static abstract class AbstractPathArgument implements PathArgument {
         private static final long serialVersionUID = -4546547994250849340L;
-        protected final QName nodeType;
+        private final QName nodeType;
 
         protected AbstractPathArgument(final QName nodeType) {
             this.nodeType = Preconditions.checkNotNull(nodeType);
         }
 
         @Override
-        public QName getNodeType() {
+        public final QName getNodeType() {
             return nodeType;
         }
 
@@ -349,6 +357,27 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             return nodeType.compareTo(o.getNodeType());
         }
 
+        @Override
+        public int hashCode() {
+            return 31 + getNodeType().hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || this.getClass() != obj.getClass()) {
+                return false;
+            }
+
+            return getNodeType().equals(((AbstractPathArgument)obj).getNodeType());
+        }
+
+        @Override
+        public String toString() {
+            return getNodeType().toString();
+        }
     }
 
     /**
@@ -359,9 +388,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      *
      */
     public interface InstanceIdentifierBuilder extends Builder<InstanceIdentifier> {
-
         /**
-         *
          * Adds {@link NodeIdentifier} with supplied QName to path arguments of resulting instance identifier.
          *
          * @param nodeType QName of {@link NodeIdentifier} which will be added
@@ -370,7 +397,6 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         InstanceIdentifierBuilder node(QName nodeType);
 
         /**
-         *
          * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting instance identifier.
          *
          * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
@@ -380,7 +406,6 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues);
 
         /**
-         *
          * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key, value.
          *
          * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
@@ -391,7 +416,6 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
 
         /**
-         *
          * @return
          * @deprecated use {@link #build()}
          *
@@ -418,29 +442,6 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         public NodeIdentifier(final QName node) {
             super(node);
         }
-
-        @Override
-        public int hashCode() {
-            return 31 + nodeType.hashCode();
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof NodeIdentifier)) {
-                return false;
-            }
-            final NodeIdentifier other = (NodeIdentifier) obj;
-            return nodeType.equals(other.nodeType);
-        }
-
-        @Override
-        public String toString() {
-            return nodeType.toString();
-        }
-
     }
 
     /**
@@ -461,11 +462,6 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             this(node, ImmutableMap.of(key, value));
         }
 
-        @Override
-        public QName getNodeType() {
-            return nodeType;
-        }
-
         public Map<QName, Object> getKeyValues() {
             return keyValues;
         }
@@ -473,71 +469,40 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         @Override
         public int hashCode() {
             final int prime = 31;
-            int result = 1;
-            result = prime * result + ((keyValues == null) ? 0 : hashKeyValues());
-            result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
-            return result;
-        }
+            int result = super.hashCode();
+            result = prime * result;
 
-        private int hashKeyValues() {
-            int hash = 0;
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
-                hash += Objects.hashCode(entry.getKey()) + InstanceIdentifier.hashCode(entry.getValue());
+                result += Objects.hashCode(entry.getKey()) + InstanceIdentifier.hashCode(entry.getValue());
             }
-
-            return hash;
+            return result;
         }
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            NodeIdentifierWithPredicates other = (NodeIdentifierWithPredicates) obj;
-            if (keyValues == null) {
-                if (other.keyValues != null) {
-                    return false;
-                }
-            } else if (!keyValuesEquals(other.keyValues)) {
-                return false;
-            }
-            if (nodeType == null) {
-                if (other.nodeType != null) {
-                    return false;
-                }
-            } else if (!nodeType.equals(other.nodeType)) {
-                return false;
-            }
-            return true;
-        }
-
-        private boolean keyValuesEquals(final Map<QName, Object> otherKeyValues) {
-            if (otherKeyValues == null || keyValues.size() != otherKeyValues.size()) {
+            if (!super.equals(obj)) {
                 return false;
             }
 
-            boolean result = true;
+            final Map<QName, Object> otherKeyValues = ((NodeIdentifierWithPredicates) obj).keyValues;
+            if (keyValues.size() != otherKeyValues.size()) {
+                return false;
+            }
+
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
                 if (!otherKeyValues.containsKey(entry.getKey())
                         || !Objects.deepEquals(entry.getValue(), otherKeyValues.get(entry.getKey()))) {
 
-                    result = false;
-                    break;
+                    return false;
                 }
             }
 
-            return result;
+            return true;
         }
 
         @Override
         public String toString() {
-            return nodeType + "[" + keyValues + "]";
+            return super.toString() + '[' + keyValues + ']';
         }
     }
 
@@ -555,11 +520,6 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             this.value = value;
         }
 
-        @Override
-        public QName getNodeType() {
-            return nodeType;
-        }
-
         public Object getValue() {
             return value;
         }
@@ -567,32 +527,24 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         @Override
         public int hashCode() {
             final int prime = 31;
-            int result = 1;
+            int result = super.hashCode();
             result = prime * result + ((value == null) ? 0 : InstanceIdentifier.hashCode(value));
-            result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
             return result;
         }
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
+            if (!super.equals(obj)) {
                 return false;
             }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            NodeWithValue other = (NodeWithValue) obj;
-            return Objects.deepEquals(value, other.value) && Objects.equals(nodeType, other.nodeType);
+            final NodeWithValue other = (NodeWithValue) obj;
+            return Objects.deepEquals(value, other.value);
         }
 
         @Override
         public String toString() {
-            return nodeType + "[" + value + "]";
+            return super.toString() + '[' + value + ']';
         }
-
     }
 
     /**
@@ -656,8 +608,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         @Override
         public String toString() {
             final StringBuffer sb = new StringBuffer("AugmentationIdentifier{");
-            sb.append("childNames=").append(childNames);
-            sb.append('}');
+            sb.append("childNames=").append(childNames).append('}');
             return sb.toString();
         }
 
@@ -671,12 +622,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
             }
 
             AugmentationIdentifier that = (AugmentationIdentifier) o;
-
-            if (!childNames.equals(that.childNames)) {
-                return false;
-            }
-
-            return true;
+            return childNames.equals(that.childNames);
         }
 
         @Override
@@ -711,33 +657,40 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     private static class BuilderImpl implements InstanceIdentifierBuilder {
-
-        private final ImmutableList.Builder<PathArgument> path;
+        private final HashCodeBuilder<PathArgument> hash;
+        private final List<PathArgument> path;
 
         public BuilderImpl() {
-            path = ImmutableList.<PathArgument> builder();
+            this.hash = new HashCodeBuilder<>();
+            this.path = new ArrayList<>();
         }
 
-        public BuilderImpl(final List<? extends PathArgument> prefix) {
-            path = ImmutableList.<PathArgument> builder();
-            path.addAll(prefix);
+        public BuilderImpl(final Iterable<PathArgument> prefix, final int hash) {
+            this.path = Lists.newArrayList(prefix);
+            this.hash = new HashCodeBuilder<>(hash);
         }
 
         @Override
         public InstanceIdentifierBuilder node(final QName nodeType) {
-            path.add(new NodeIdentifier(nodeType));
+            final PathArgument arg = new NodeIdentifier(nodeType);
+            path.add(arg);
+            hash.addArgument(arg);
             return this;
         }
 
         @Override
         public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final QName key, final Object value) {
-            path.add(new NodeIdentifierWithPredicates(nodeType, key, value));
+            final PathArgument arg = new NodeIdentifierWithPredicates(nodeType, key, value);
+            path.add(arg);
+            hash.addArgument(arg);
             return this;
         }
 
         @Override
         public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final Map<QName, Object> keyValues) {
-            path.add(new NodeIdentifierWithPredicates(nodeType, keyValues));
+            final PathArgument arg = new NodeIdentifierWithPredicates(nodeType, keyValues);
+            path.add(arg);
+            hash.addArgument(arg);
             return this;
         }
 
@@ -749,7 +702,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
         @Override
         public InstanceIdentifier build() {
-            return new InstanceIdentifier(path.build());
+            return new InstanceIdentifier(ImmutableList.copyOf(path), hash.toInstance());
         }
 
         @Override
@@ -761,19 +714,21 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     @Override
     public boolean contains(final InstanceIdentifier other) {
-        if (other == null) {
-            throw new IllegalArgumentException("other should not be null");
-        }
-        final int localSize = this.path.size();
-        final List<PathArgument> otherPath = other.getPath();
-        if (localSize > other.path.size()) {
-            return false;
-        }
-        for (int i = 0; i < localSize; i++) {
-            if (!path.get(i).equals(otherPath.get(i))) {
+        Preconditions.checkArgument(other != null, "other should not be null");
+
+        final Iterator<?> lit = pathArguments.iterator();
+        final Iterator<?> oit = other.pathArguments.iterator();
+
+        while (lit.hasNext()) {
+            if (!oit.hasNext()) {
+                return false;
+            }
+
+            if (!lit.next().equals(oit.next())) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -794,7 +749,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
         final StringBuilder builder = new StringBuilder('/');
         boolean first = true;
-        for (PathArgument argument : path) {
+        for (PathArgument argument : getPathArguments()) {
             if (first) {
                 first = false;
             } else {
