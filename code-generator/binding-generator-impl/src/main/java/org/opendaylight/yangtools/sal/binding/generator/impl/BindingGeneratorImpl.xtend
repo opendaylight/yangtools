@@ -1518,6 +1518,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private def Type createReturnTypeForUnion(GeneratedTOBuilder genTOBuilder, TypeDefinition<?> typeDef,
         GeneratedTypeBuilder typeBuilder, Module parentModule) {
         val GeneratedTOBuilderImpl returnType = new GeneratedTOBuilderImpl(genTOBuilder.packageName, genTOBuilder.name)
+        
+        returnType.setDescription(typeDef.description)
+        returnType.setReference(typeDef.reference)
+        returnType.setModuleName(parentModule.name)
+        returnType.setSchemaPath(typeDef.path.pathFromRoot)
+        
         genTOBuilder.setTypedef(true);
         genTOBuilder.setIsUnion(true);
         (typeProvider as TypeProviderImpl).addUnitsToGenTO(genTOBuilder, typeDef.getUnits());
@@ -1864,7 +1870,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
         } else if (typeDef instanceof BitsTypeDefinition) {
             genTOBuilders.add(
                 ((typeProvider as TypeProviderImpl) ).
-                    provideGeneratedTOBuilderForBitsTypeDefinition(packageName, typeDef, classNameFromLeaf));
+                    provideGeneratedTOBuilderForBitsTypeDefinition(packageName, typeDef, classNameFromLeaf,
+                        parentModule.name
+                    ));
         }
         if (genTOBuilders !== null && !genTOBuilders.isEmpty()) {
             for (genTOBuilder : genTOBuilders) {
