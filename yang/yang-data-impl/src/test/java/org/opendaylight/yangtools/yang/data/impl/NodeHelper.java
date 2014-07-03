@@ -56,78 +56,78 @@ public abstract class NodeHelper {
 
     /** xml source of example network configuration */
     public static final String NETWORK_XML =
-      "<network xmlns=\"urn:opendaylight:controller:network\">\n" +
-      //"<network>\n" +
-      "    <topologies>\n" +
-      "        <topology>\n" +
-      "            <topology-id>topId_01</topology-id>\n" +
-      "            <nodes>\n" +
-      "                <node>\n" +
-      "                    <node-id>nodeId_02</node-id>\n" +
-      "                    <supporting-ne>networkId_02</supporting-ne>\n" +
-      "                    <termination-points>\n" +
-      "                        <termination-point>\n" +
-      "                            <tp-id>tpId_03</tp-id>\n" +
-      "                        </termination-point>\n" +
-      "                    </termination-points>\n" +
-      "                </node>\n" +
-      "                <node>\n" +
-      "                    <node-id>nodeId_16</node-id>\n" +
-      "                    <supporting-ne>networkId_17</supporting-ne>\n" +
-      "                    <termination-points>\n" +
-      "                        <termination-point>\n" +
-      "                            <tp-id>tpId_18</tp-id>\n" +
-      "                        </termination-point>\n" +
-      "                    </termination-points>\n" +
-      "                </node>\n" +
-      "                <node>\n" +
-      "                    <node-id>nodeId_19</node-id>\n" +
-      "                    <supporting-ne>networkId_20</supporting-ne>\n" +
-      "                    <termination-points>\n" +
-      "                        <termination-point>\n" +
-      "                            <tp-id>tpId_18</tp-id>\n" +
-      "                        </termination-point>\n" +
-      "                        <termination-point>\n" +
-      "                            <tp-id>tpId_19</tp-id>\n" +
-      "                        </termination-point>\n" +
-      "                    </termination-points>\n" +
-      "                </node>\n" +
-      "            </nodes>\n" +
-      "            <links>\n" +
-      "                <link>\n" +
-      "                    <link-id>linkId_04</link-id>\n" +
-      "                    <source>\n" +
-      "                        <source-node>nodeId_05</source-node>\n" +
-      "                        <source-tp>tpId_06</source-tp>\n" +
-      "                    </source>\n" +
-      "                    <destination>\n" +
-      "                        <dest-node>nodeId_07</dest-node>\n" +
-      "                        <dest-tp>tpId_08</dest-tp>\n" +
-      "                    </destination>\n" +
-      "                </link>\n" +
-      "                <link>\n" +
-      "                    <link-id>linkId_11</link-id>\n" +
-      "                    <source>\n" +
-      "                        <source-node>nodeId_12</source-node>\n" +
-      "                        <source-tp>tpId_13</source-tp>\n" +
-      "                    </source>\n" +
-      "                    <destination>\n" +
-      "                        <dest-node>nodeId_14</dest-node>\n" +
-      "                        <dest-tp>tpId_15</dest-tp>\n" +
-      "                    </destination>\n" +
-      "                </link>\n" +
-      "            </links>\n" +
-      "        </topology>\n" +
-      "    </topologies>\n" +
-      "    <network-elements>\n" +
-      "        <network-element>\n" +
-      "            <element-id>ntElementId_09</element-id>\n" +
-      "        </network-element>\n" +
-      "        <network-element>\n" +
-      "            <element-id>ntElementId_10</element-id>\n" +
-      "        </network-element>\n" +
-      "    </network-elements>\n" +
-      "</network>";
+            "<network xmlns=\"urn:opendaylight:controller:network\">\n" +
+                    //"<network>\n" +
+                    "    <topologies>\n" +
+                    "        <topology>\n" +
+                    "            <topology-id>topId_01</topology-id>\n" +
+                    "            <nodes>\n" +
+                    "                <node>\n" +
+                    "                    <node-id>nodeId_02</node-id>\n" +
+                    "                    <supporting-ne>networkId_02</supporting-ne>\n" +
+                    "                    <termination-points>\n" +
+                    "                        <termination-point>\n" +
+                    "                            <tp-id>tpId_03</tp-id>\n" +
+                    "                        </termination-point>\n" +
+                    "                    </termination-points>\n" +
+                    "                </node>\n" +
+                    "                <node>\n" +
+                    "                    <node-id>nodeId_16</node-id>\n" +
+                    "                    <supporting-ne>networkId_17</supporting-ne>\n" +
+                    "                    <termination-points>\n" +
+                    "                        <termination-point>\n" +
+                    "                            <tp-id>tpId_18</tp-id>\n" +
+                    "                        </termination-point>\n" +
+                    "                    </termination-points>\n" +
+                    "                </node>\n" +
+                    "                <node>\n" +
+                    "                    <node-id>nodeId_19</node-id>\n" +
+                    "                    <supporting-ne>networkId_20</supporting-ne>\n" +
+                    "                    <termination-points>\n" +
+                    "                        <termination-point>\n" +
+                    "                            <tp-id>tpId_18</tp-id>\n" +
+                    "                        </termination-point>\n" +
+                    "                        <termination-point>\n" +
+                    "                            <tp-id>tpId_19</tp-id>\n" +
+                    "                        </termination-point>\n" +
+                    "                    </termination-points>\n" +
+                    "                </node>\n" +
+                    "            </nodes>\n" +
+                    "            <links>\n" +
+                    "                <link>\n" +
+                    "                    <link-id>linkId_04</link-id>\n" +
+                    "                    <source>\n" +
+                    "                        <source-node>nodeId_05</source-node>\n" +
+                    "                        <source-tp>tpId_06</source-tp>\n" +
+                    "                    </source>\n" +
+                    "                    <destination>\n" +
+                    "                        <dest-node>nodeId_07</dest-node>\n" +
+                    "                        <dest-tp>tpId_08</dest-tp>\n" +
+                    "                    </destination>\n" +
+                    "                </link>\n" +
+                    "                <link>\n" +
+                    "                    <link-id>linkId_11</link-id>\n" +
+                    "                    <source>\n" +
+                    "                        <source-node>nodeId_12</source-node>\n" +
+                    "                        <source-tp>tpId_13</source-tp>\n" +
+                    "                    </source>\n" +
+                    "                    <destination>\n" +
+                    "                        <dest-node>nodeId_14</dest-node>\n" +
+                    "                        <dest-tp>tpId_15</dest-tp>\n" +
+                    "                    </destination>\n" +
+                    "                </link>\n" +
+                    "            </links>\n" +
+                    "        </topology>\n" +
+                    "    </topologies>\n" +
+                    "    <network-elements>\n" +
+                    "        <network-element>\n" +
+                    "            <element-id>ntElementId_09</element-id>\n" +
+                    "        </network-element>\n" +
+                    "        <network-element>\n" +
+                    "            <element-id>ntElementId_10</element-id>\n" +
+                    "        </network-element>\n" +
+                    "    </network-elements>\n" +
+                    "</network>";
 
     private static String domTreeString(final Document domTree) throws TransformerException {
         TransformerFactory transformerFact = TransformerFactory.newInstance();
@@ -147,12 +147,12 @@ public abstract class NodeHelper {
      * @throws Exception
      */
     private static void dumpDoc(final Document domTree, final PrintStream out) throws Exception {
-      out.println(domTreeString(domTree));
+        out.println(domTreeString(domTree));
     }
 
-	public static void dumpDoc(final Document domTree, final Logger logger) throws TransformerException {
-		logger.info("{}", domTreeString(domTree));
-	}
+    public static void dumpDoc(final Document domTree, final Logger logger) throws TransformerException {
+        logger.info("{}", domTreeString(domTree));
+    }
 
     /**
      * @param qName
@@ -160,139 +160,146 @@ public abstract class NodeHelper {
      */
     public static CompositeNode buildTestConfigTree(final QName qName) {
         List<Node<?>> value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "element-id"), null, "ntElementId_09"));
-        CompositeNode ntElementNode1 = NodeFactory.createImmutableCompositeNode(new QName(qName, "network-element"), null, value);
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "element-id"), null, "ntElementId_09"));
+        CompositeNode ntElementNode1 = NodeFactory.createImmutableCompositeNode(QName.create(qName, "network-element"),
+                null, value);
         assignParentToChildren(ntElementNode1);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "element-id"), null, "ntElementId_10"));
-        CompositeNode ntElementNode2 = NodeFactory.createImmutableCompositeNode(new QName(qName, "network-element"), null, value);
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "element-id"), null, "ntElementId_10"));
+        CompositeNode ntElementNode2 = NodeFactory.createImmutableCompositeNode(QName.create(qName, "network-element"),
+                null, value);
         assignParentToChildren(ntElementNode2);
 
         value = new ArrayList<Node<?>>();
         value.add(ntElementNode1);
         value.add(ntElementNode2);
         CompositeNode ntElementsNode = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "network-elements"), null, value);
+                QName.create(qName, "network-elements"), null, value);
         assignParentToChildren(ntElementsNode);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "dest-node"), null, "nodeId_07"));
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "dest-tp"), null, "tpId_08"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "dest-node"), null, "nodeId_07"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "dest-tp"), null, "tpId_08"));
         CompositeNode destination = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "destination"), null, value);
+                QName.create(qName, "destination"), null,
+                value);
         assignParentToChildren(destination);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "source-node"), null, "nodeId_05"));
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "source-tp"), null, "tpId_06"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "source-node"), null, "nodeId_05"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "source-tp"), null, "tpId_06"));
         CompositeNode source = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "source"), null, value);
+                QName.create(qName, "source"), null, value);
         assignParentToChildren(source);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "link-id"), null, "linkId_04"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "link-id"), null, "linkId_04"));
         value.add(source);
         value.add(destination);
         CompositeNode link1 = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "link"), null, value);
+                QName.create(qName, "link"), null, value);
         assignParentToChildren(link1);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "dest-node"), null, "nodeId_14"));
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "dest-tp"), null, "tpId_15"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "dest-node"), null, "nodeId_14"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "dest-tp"), null, "tpId_15"));
         destination = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "destination"), null, value);
+                QName.create(qName, "destination"), null, value);
         assignParentToChildren(destination);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "source-node"), null, "nodeId_12"));
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "source-tp"), null, "tpId_13"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "source-node"), null, "nodeId_12"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "source-tp"), null, "tpId_13"));
         source = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "source"), null, value);
+                QName.create(qName, "source"), null, value);
         assignParentToChildren(source);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "link-id"), null, "linkId_11"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "link-id"), null, "linkId_11"));
         value.add(source);
         value.add(destination);
         CompositeNode link2 = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "link"), null, value);
+                QName.create(qName, "link"), null, value);
         assignParentToChildren(link2);
 
         value = new ArrayList<Node<?>>();
         value.add(link1);
         value.add(link2);
         CompositeNode links = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "links"), null, value);
+                QName.create(qName, "links"), null, value);
         assignParentToChildren(links);
 
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "tp-id"), null, "tpId_03"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "tp-id"), null, "tpId_03"));
         CompositeNode terminationPointNode1 = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "termination-point"), null, value);
+                QName.create(qName, "termination-point"), null, value);
         assignParentToChildren(terminationPointNode1);
 
         value = new ArrayList<Node<?>>();
         value.add(terminationPointNode1);
         CompositeNode terminationPointsNode = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "termination-points"), null, value);
+                QName.create(qName, "termination-points"), null, value);
         assignParentToChildren(terminationPointsNode);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "node-id"), null, "nodeId_02"));
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "supporting-ne"), null, "networkId_02"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "node-id"), null, "nodeId_02"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "supporting-ne"), null, "networkId_02"));
         value.add(terminationPointsNode);
         CompositeNode node1Node = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "node"), null, value);
+                QName.create(qName, "node"), null, value);
         assignParentToChildren(node1Node);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "tp-id"), null, "tpId_18"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "tp-id"), null, "tpId_18"));
         terminationPointNode1 = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "termination-point"), null, value);
+                QName.create(qName, "termination-point"),
+                null, value);
         assignParentToChildren(terminationPointNode1);
 
         value = new ArrayList<Node<?>>();
         value.add(terminationPointNode1);
         terminationPointsNode = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "termination-points"), null, value);
+                QName.create(qName, "termination-points"),
+                null, value);
         assignParentToChildren(terminationPointsNode);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "node-id"), null, "nodeId_16"));
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "supporting-ne"), null, "networkId_17"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "node-id"), null, "nodeId_16"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "supporting-ne"), null, "networkId_17"));
         value.add(terminationPointsNode);
         CompositeNode node2Node = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "node"), null, value);
+                QName.create(qName, "node"), null, value);
         assignParentToChildren(node2Node);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "tp-id"), null, "tpId_18"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "tp-id"), null, "tpId_18"));
         terminationPointNode1 = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "termination-point"), null, value);
+                QName.create(qName, "termination-point"),
+                null, value);
         assignParentToChildren(terminationPointNode1);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "tp-id"), null, "tpId_19"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "tp-id"), null, "tpId_19"));
         CompositeNode terminationPointNode2 = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "termination-point"), null, value);
+                QName.create(qName, "termination-point"), null, value);
         assignParentToChildren(terminationPointNode2);
 
         value = new ArrayList<Node<?>>();
         value.add(terminationPointNode1);
         value.add(terminationPointNode2);
         terminationPointsNode = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "termination-points"), null, value);
+                QName.create(qName, "termination-points"),
+                null, value);
         assignParentToChildren(terminationPointsNode);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "node-id"), null, "nodeId_19"));
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "supporting-ne"), null, "networkId_20"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "node-id"), null, "nodeId_19"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "supporting-ne"), null, "networkId_20"));
         value.add(terminationPointsNode);
         CompositeNode node3Node = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "node"), null, value);
+                QName.create(qName, "node"), null, value);
         assignParentToChildren(node3Node);
 
         value = new ArrayList<Node<?>>();
@@ -300,28 +307,29 @@ public abstract class NodeHelper {
         value.add(node2Node);
         value.add(node3Node);
         CompositeNode nodesNode = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "nodes"), null, value);
+                QName.create(qName, "nodes"), null, value);
         assignParentToChildren(nodesNode);
 
         value = new ArrayList<Node<?>>();
         value.add(links);
         value.add(nodesNode);
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "topology-id"), null, "topId_01"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "topology-id"), null, "topId_01"));
         CompositeNode topology = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "topology"), null, value);
+                QName.create(qName, "topology"), null, value);
         assignParentToChildren(topology);
 
         value = new ArrayList<Node<?>>();
         value.add(topology);
         CompositeNode topologies = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "topologies"), null, value);
+                QName.create(qName, "topologies"), null,
+                value);
         assignParentToChildren(topologies);
 
         value = new ArrayList<Node<?>>();
         value.add(topologies);
         value.add(ntElementsNode);
         CompositeNode network = NodeFactory.createImmutableCompositeNode(
-                new QName(qName, "network"), null, value);
+                QName.create(qName, "network"), null, value);
         assignParentToChildren(network);
 
         return network;
@@ -357,20 +365,20 @@ public abstract class NodeHelper {
      * @throws Exception
      */
     public static CompositeNode loadConfigByGroovy(final String scriptName) throws Exception {
-    	InputStream configStream = NodeHelper.class.getResourceAsStream(scriptName);
-    	Binding binding = new Binding();
-    	GroovyShell gShell = new GroovyShell(binding);
-    	LOG.debug("groovy: starting script parse..  " + scriptName);
-		Script configScript = gShell.parse(new InputStreamReader(configStream));
-		LOG.debug("groovy: starting script..  " + scriptName);
-		configScript.run();
-		LOG.debug("groovy: digging result");
-    	Object xmlGen = binding.getVariable("xmlGen");
-    	LOG.debug("xmlGen = " + xmlGen);
-    	Method getter = xmlGen.getClass().getDeclaredMethod("getBuilder", new Class[0]);
-    	MyNodeBuilder builder = (MyNodeBuilder) getter.invoke(xmlGen, new Object[0]);
+        InputStream configStream = NodeHelper.class.getResourceAsStream(scriptName);
+        Binding binding = new Binding();
+        GroovyShell gShell = new GroovyShell(binding);
+        LOG.debug("groovy: starting script parse..  {}", scriptName);
+        Script configScript = gShell.parse(new InputStreamReader(configStream));
+        LOG.debug("groovy: starting script..  {}", scriptName);
+        configScript.run();
+        LOG.debug("groovy: digging result");
+        Object xmlGen = binding.getVariable("xmlGen");
+        LOG.debug("xmlGen = {}", xmlGen);
+        Method getter = xmlGen.getClass().getDeclaredMethod("getBuilder", new Class[0]);
+        MyNodeBuilder builder = (MyNodeBuilder) getter.invoke(xmlGen, new Object[0]);
 
-    	return builder.getRootNode();
+        return builder.getRootNode();
     }
 
     /**
@@ -400,7 +408,7 @@ public abstract class NodeHelper {
      * @throws IOException
      */
     public static void compareXmlTree(final Document tree, final String xmlFile, final Class<?> clazz) throws Exception,
-            SAXException, IOException {
+    SAXException, IOException {
         ByteArrayOutputStream actualRaw = new ByteArrayOutputStream();
         dumpDoc(tree, new PrintStream(actualRaw));
         Reader actualReader = new InputStreamReader(new ByteArrayInputStream(actualRaw.toByteArray()));

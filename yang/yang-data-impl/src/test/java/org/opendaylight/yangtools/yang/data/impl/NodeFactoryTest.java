@@ -45,7 +45,7 @@ public class NodeFactoryTest {
     @Before
     public void setUp() throws Exception {
         ns = "urn:ietf:params:xml:ns:netconf:base:1.0";
-        qName = new QName(
+        qName = QName.create(
                 new URI(ns),
                 new Date(42), "node");
         network = NodeHelper.buildTestConfigTree(qName);
@@ -92,31 +92,32 @@ public class NodeFactoryTest {
 
 
         List<Node<?>> value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "name"), null, "Ethernet0/0"));
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "mtu"), null, 1500));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "name"), null, "Ethernet0/0"));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "mtu"), null, 1500));
 
         MutableCompositeNode ifNode = NodeFactory.createMutableCompositeNode(
-                new QName(qName, "interface"), null, value, ModifyAction.DELETE, null);
+                QName.create(qName, "interface"), null,
+                value, ModifyAction.DELETE, null);
         ifNode.init();
         NodeHelper.assignParentToChildren(ifNode);
 
         value = new ArrayList<Node<?>>();
-        value.add(NodeFactory.createImmutableSimpleNode(new QName(qName, "name"), null, "Ethernet1/0"));
-        value.add(NodeFactory.createMutableSimpleNode(new QName(qName, "mtu"), null, 1501, ModifyAction.REMOVE, null));
+        value.add(NodeFactory.createImmutableSimpleNode(QName.create(qName, "name"), null, "Ethernet1/0"));
+        value.add(NodeFactory.createMutableSimpleNode(QName.create(qName, "mtu"), null, 1501, ModifyAction.REMOVE, null));
 
-        CompositeNode ifNode2 = NodeFactory.createImmutableCompositeNode(new QName(qName, "interface"), null, value);
+        CompositeNode ifNode2 = NodeFactory.createImmutableCompositeNode(QName.create(qName, "interface"), null, value);
         NodeHelper.assignParentToChildren(ifNode2);
 
         value = new ArrayList<Node<?>>();
         value.add(ifNode);
         value.add(ifNode2);
 
-        CompositeNode topNode = NodeFactory.createImmutableCompositeNode(new QName(qName, "top"), null, value);
+        CompositeNode topNode = NodeFactory.createImmutableCompositeNode(QName.create(qName, "top"), null, value);
         NodeHelper.assignParentToChildren(topNode);
         value = new ArrayList<Node<?>>();
         value.add(topNode);
 
-        CompositeNode root = NodeFactory.createImmutableCompositeNode(new QName(qName, "config"), null, value);
+        CompositeNode root = NodeFactory.createImmutableCompositeNode(QName.create(qName, "config"), null, value);
         Document shadowConfig = NodeUtils.buildShadowDomTree(root);
         NodeHelper.compareXmlTree(shadowConfig, "./mutableNodesConfig.xml", getClass());
 

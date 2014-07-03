@@ -48,7 +48,7 @@ public class NodeUtilsTest {
     @Before
     public void setUp() throws Exception {
         ns = "urn:ietf:params:xml:ns:netconf:base:1.0";
-        qName = new QName(
+        qName = QName.create(
                 new URI(ns),
                 new Date(42), "yang-data-impl-mutableTest");
         network = NodeHelper.buildTestConfigTree(qName);
@@ -61,8 +61,8 @@ public class NodeUtilsTest {
     @Test
     public void testBuildPath() throws Exception {
         SimpleNode<?> needle = network.getCompositesByName("topologies").iterator().next()
-            .getCompositesByName("topology").iterator().next()
-            .getSimpleNodesByName("topology-id").iterator().next();
+                .getCompositesByName("topology").iterator().next()
+                .getSimpleNodesByName("topology-id").iterator().next();
         String breadCrumbs = NodeUtils.buildPath(needle);
 
         Assert.assertEquals("network.topologies.topology.topology-id", breadCrumbs);
@@ -109,7 +109,7 @@ public class NodeUtilsTest {
     @Test
     public void testBuildNodeMap() {
         CompositeNode topology = network.getCompositesByName("topologies").iterator().next()
-            .getCompositesByName("topology").iterator().next();
+                .getCompositesByName("topology").iterator().next();
 
         Map<QName, List<Node<?>>> nodeMap = NodeUtils.buildNodeMap(topology.getValue());
         Assert.assertEquals(3, nodeMap.size());
@@ -132,16 +132,16 @@ public class NodeUtilsTest {
      */
     @Test
     public void testLoadConfigByGroovy() throws IOException, Exception {
-    	CompositeNode treeRoot = NodeHelper.loadConfigByGroovy("./config02.groovy");
-    	Document shadowTree = NodeUtils.buildShadowDomTree(treeRoot);
-    	try {
+        CompositeNode treeRoot = NodeHelper.loadConfigByGroovy("./config02.groovy");
+        Document shadowTree = NodeUtils.buildShadowDomTree(treeRoot);
+        try {
             checkFamilyBinding(treeRoot);
         } catch (Exception e) {
             LOG.error(e.getMessage());
             throw e;
         }
 
-    	NodeHelper.compareXmlTree(shadowTree, "./config02g-shadow.xml", getClass());
+        NodeHelper.compareXmlTree(shadowTree, "./config02g-shadow.xml", getClass());
     }
 
     private static void checkFamilyBinding(final CompositeNode treeRoot) throws Exception {
