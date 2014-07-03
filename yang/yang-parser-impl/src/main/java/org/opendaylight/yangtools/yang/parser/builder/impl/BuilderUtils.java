@@ -67,8 +67,9 @@ import org.slf4j.LoggerFactory;
 public final class BuilderUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(BuilderUtils.class);
-    private static final Splitter SLASH_SPLITTER = Splitter.on('/');
+    private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
+    private static final Date NULL_DATE = new Date(0L);
     private static final String INPUT = "input";
     private static final String OUTPUT = "output";
 
@@ -217,7 +218,7 @@ public final class BuilderUtils {
             if (contextModule.getName().equals(dependentModuleName)) {
                 Date revision = contextModule.getRevision();
                 if (revision == null) {
-                    revision = new Date(0L);
+                    revision = NULL_DATE;
                 }
                 modulesByRevision.put(revision, contextModule);
             }
@@ -240,22 +241,20 @@ public final class BuilderUtils {
      * @return SchemaPath from given String
      */
     public static SchemaPath parseXPathString(final String xpathString) {
-        final boolean absolute = xpathString.indexOf('/') == 0;
+        final boolean absolute = !xpathString.isEmpty() && xpathString.charAt(0) == '/';
 
         final List<QName> path = new ArrayList<>();
         for (String pathElement : SLASH_SPLITTER.split(xpathString)) {
-            if (pathElement.length() > 0) {
-                final Iterator<String> it = COLON_SPLITTER.split(pathElement).iterator();
-                final String s = it.next();
+            final Iterator<String> it = COLON_SPLITTER.split(pathElement).iterator();
+            final String s = it.next();
 
-                final QName name;
-                if (it.hasNext()) {
-                    name = new QName(null, null, s, it.next());
-                } else {
-                    name = new QName(null, null, null, s);
-                }
-                path.add(name);
+            final QName name;
+            if (it.hasNext()) {
+                name = new QName(null, null, s, it.next());
+            } else {
+                name = new QName(null, null, null, s);
             }
+            path.add(name);
         }
         return SchemaPath.create(path, absolute);
     }
