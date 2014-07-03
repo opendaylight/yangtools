@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_6fbf0bab",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 283
+      },
+      "writtenOn": "2014-07-03T11:37:07Z",
+      "side": 1,
+      "message": "\u003e \"check prefix as above\"\n\nI am missing response. Please indicate your response to all my comments using Done or a comment.",
+      "revId": "6ab32ff7dce53dcb49af7c1ad204fc434de8b72a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
