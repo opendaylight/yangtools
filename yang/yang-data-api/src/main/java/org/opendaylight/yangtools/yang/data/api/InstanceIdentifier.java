@@ -6,11 +6,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -20,11 +15,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Unique identifier of a partical node instance in the data tree.
@@ -64,7 +67,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
 
     private static final long serialVersionUID = 8467409862384206193L;
-    private final List<PathArgument> path;
+    private final ImmutableList<PathArgument> path;
 
     private transient String toStringCache = null;
     private transient Integer hashCodeCache = null;
@@ -82,13 +85,32 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     /**
-     *
-     * Returns a ordered iteration of path arguments.
+     * Returns an ordered iteration of path arguments.
      *
      * @return Immutable iteration of path arguments.
      */
     public Iterable<PathArgument> getPathArguments() {
         return path;
+    }
+
+    /**
+     * Returns an iterable of path arguments in reverse order. This is useful
+     * when walking up a tree organized this way.
+     *
+     * @return Immutable iterable of path arguments in reverse order.
+     */
+    public Iterable<PathArgument> getReversePathArguments() {
+        return path.reverse();
+    }
+
+    /**
+     * Returns the last PathArgument. This is equivalent of iterating
+     * to the last element of the iterable returned by {@link #getPathArguments()}.
+     *
+     * @return The last past argument, or null if there are no PathArguments.
+     */
+    public PathArgument getLastPathArgument() {
+        return Iterables.getFirst(path.reverse(), null);
     }
 
     /**
@@ -184,19 +206,17 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     /**
      * Get the relative path from an ancestor. This method attempts to perform
-     * the reverse
-     * of concatenating a base (ancestor) and a path.
+     * the reverse of concatenating a base (ancestor) and a path.
      *
      * @param ancestor
      *            Ancestor against which the relative path should be calculated
      * @return This object's relative path from parent, or Optional.absent() if
-     *         the
-     *         specified parent is not in fact an ancestor of this object.
+     *         the specified parent is not in fact an ancestor of this object.
      */
     public Optional<InstanceIdentifier> relativeTo(final InstanceIdentifier ancestor) {
         if (ancestor.contains(this)) {
             final int common = ancestor.path.size();
-            return Optional.of(new InstanceIdentifier(path.subList(common, path.size())));
+            return Optional.of(new InstanceIdentifier(Iterables.skip(path, common)));
         } else {
             return Optional.absent();
         }
@@ -661,7 +681,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         }
 
         @Override
-        public int compareTo(PathArgument o) {
+        public int compareTo(final PathArgument o) {
             if (!(o instanceof AugmentationIdentifier)) {
                 return -1;
             }
