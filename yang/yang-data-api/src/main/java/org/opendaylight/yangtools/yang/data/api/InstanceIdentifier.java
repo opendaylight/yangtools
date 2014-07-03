@@ -66,14 +66,26 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  */
 public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
 
-    private static final long serialVersionUID = 8467409862384206193L;
-    private final ImmutableList<PathArgument> path;
+    private static final long serialVersionUID = 1L;
+    private final Iterable<PathArgument> pathArguments;
 
     private transient String toStringCache = null;
     private transient Integer hashCodeCache = null;
+    private transient ImmutableList<PathArgument> legacyPath = null;
+
+    private final ImmutableList<PathArgument> getLegacyPath() {
+        if (legacyPath == null) {
+            synchronized (this) {
+                if (legacyPath == null) {
+                    legacyPath = ImmutableList.copyOf(pathArguments);
+                }
+            }
+        }
+
+        return legacyPath;
+    }
 
     /**
-     *
      * Returns a list of path arguments.
      *
      * @deprecated Use {@link #getPathArguments()} instead.
@@ -81,7 +93,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      */
     @Deprecated
     public List<PathArgument> getPath() {
-        return path;
+        return getLegacyPath();
     }
 
     /**
@@ -90,7 +102,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return Immutable iteration of path arguments.
      */
     public Iterable<PathArgument> getPathArguments() {
-        return path;
+        return pathArguments;
     }
 
     /**
@@ -100,7 +112,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return Immutable iterable of path arguments in reverse order.
      */
     public Iterable<PathArgument> getReversePathArguments() {
-        return path.reverse();
+        return getLegacyPath().reverse();
     }
 
     /**
@@ -110,7 +122,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
      * @return The last past argument, or null if there are no PathArguments.
      */
     public PathArgument getLastPathArgument() {
-        return Iterables.getFirst(path.reverse(), null);
+        return Iterables.getFirst(getReversePathArguments(), null);
     }
 
     /**
@@ -176,14 +188,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
         if (this.hashCode() != obj.hashCode()) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Iterables.elementsEqual(pathArguments, other.pathArguments);
     }
 
     /**
@@ -220,7 +225,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     public Optional<InstanceIdentifier> relativeTo(final InstanceIdentifier ancestor) {
         if (ancestor.contains(this)) {
             final int common = ancestor.path.size();
-            return Optional.of(new InstanceIdentifier(Iterables.skip(path, common)));
+            return Optional.of(new InstanceIdentifier(Iterables.skip(pathArguments, common)));
         } else {
             return Optional.absent();
         }
@@ -794,7 +799,7 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
         final StringBuilder builder = new StringBuilder('/');
         boolean first = true;
-        for (PathArgument argument : path) {
+        for (PathArgument argument : getPathArguments()) {
             if (first) {
                 first = false;
             } else {
