@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.sal.binding.model.api;
 
 import java.util.List;
 
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+
 /**
  * Interface provide methods for reading data of enumeration class.
  */
@@ -43,7 +45,7 @@ public interface Enumeration extends GeneratedType {
      * Interface is used for reading enumeration item. It means item's name and
      * its value.
      */
-    interface Pair {
+    interface Pair extends DocumentedNode{
 
         /**
          * Returns the name of the enumeration item.
