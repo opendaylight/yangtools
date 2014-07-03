@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.binding.model.api.type.builder;
 
+import java.util.List;
 import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
@@ -22,7 +23,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * enclosing type will simply overwrite the older definition. <br>
      * If the name of enclosing type is <code>null</code> the method SHOULD
      * throw {@link IllegalArgumentException}
-     * 
+     *
      * @param name
      *            Name of Enclosing Type
      * @return <code>new</code> Instance of Generated Type Builder.
@@ -32,7 +33,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
     /**
      * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into
      * definition of Generated Type
-     * 
+     *
      * <br>
      * There is no need of specifying of Package Name because enclosing Type is
      * already defined inside Generated Type with specific package name. <br>
@@ -42,7 +43,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * If the parameter <code>genTOBuilder</code> of enclosing type is
      * <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}
-     * 
+     *
      * @param genTOBuilder
      *            Name of Enclosing Type
      */
@@ -52,7 +53,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * Adds String definition of comment into Method Signature definition. <br>
      * The comment String MUST NOT contain anny comment specific chars (i.e.
      * "/**" or "//") just plain String text description.
-     * 
+     *
      * @param comment
      *            Comment String.
      */
@@ -64,7 +65,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * Neither the package name or annotation name can contain <code>null</code>
      * references. In case that any of parameters contains <code>null</code> the
      * method SHOULD thrown {@link IllegalArgumentException}
-     * 
+     *
      * @param packageName
      *            Package Name of Annotation Type
      * @param name
@@ -73,18 +74,22 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      */
     AnnotationTypeBuilder addAnnotation(final String packageName, final String name);
 
+    boolean isAbstract();
+
     /**
      * Sets the <code>abstract</code> flag to define Generated Type as
      * <i>abstract</i> type.
-     * 
+     *
      * @param isAbstract
      *            abstract flag
      */
     T setAbstract(boolean isAbstract);
 
+    List<Type> getImplementsTypes();
+
     /**
      * Add Type to implements.
-     * 
+     *
      * @param genType
      *            Type to implement
      * @return <code>true</code> if the addition of type is successful.
@@ -97,7 +102,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * value. The name SHOULD be defined with capital letters. Neither of method
      * parameters can be <code>null</code> and the method SHOULD throw
      * {@link IllegalArgumentException} if the contract is broken.
-     * 
+     *
      * @param type
      *            Constant Type
      * @param name
@@ -116,12 +121,14 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * Name of Enumeration cannot be <code>null</code>, if it is
      * <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}
-     * 
+     *
      * @param name
      *            Enumeration Name
      * @return <code>new</code> instance of Enumeration Builder.
      */
     EnumBuilder addEnumeration(final String name);
+
+    List<MethodSignatureBuilder> getMethodDefinitions();
 
     /**
      * Add new Method Signature definition for Generated Type Builder and
@@ -132,7 +139,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * {@link MethodSignatureBuilder#setAbstract(boolean)},
      * {TypeMemberBuilder#setFinal(boolean)} and
      * {TypeMemberBuilder#setAccessModifier(boolean)}
-     * 
+     *
      * @param name
      *            Name of Method
      * @return <code>new</code> instance of Method Signature Builder.
@@ -142,18 +149,20 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
     /**
      * Checks if GeneratedTypeBuilder contains method with name
      * <code>methodName</code>
-     * 
+     *
      * @param methodName
      *            is method name
      */
     boolean containsMethod(final String methodName);
+
+    List<GeneratedPropertyBuilder> getProperties();
 
     /**
      * Add new Generated Property definition for Generated Transfer Object
      * Builder and returns Generated Property Builder for specifying Property. <br>
      * Name of Property cannot be <code>null</code>, if it is <code>null</code>
      * the method SHOULD throw {@link IllegalArgumentException}
-     * 
+     *
      * @param name
      *            Name of Property
      * @return <code>new</code> instance of Generated Property Builder.
@@ -163,7 +172,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
     /**
      * Check whether GeneratedTOBuilder contains property with name
      * <code>name</code>
-     * 
+     *
      * @param name
      *            of property which existance is checked
      * @return true if property <code>name</code> exists in list of properties.
