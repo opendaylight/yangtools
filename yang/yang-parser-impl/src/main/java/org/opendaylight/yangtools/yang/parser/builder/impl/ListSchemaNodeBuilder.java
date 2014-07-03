@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDat
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 
 public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DataSchemaNodeBuilder,
-        AugmentationTargetBuilder {
+AugmentationTargetBuilder {
     private ListSchemaNodeImpl instance;
     private boolean userOrdered;
     private List<String> keys;
@@ -65,12 +65,8 @@ public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeConta
         addedByUses = base.isAddedByUses();
         configuration = base.isConfiguration();
 
-        URI ns = qname.getNamespace();
-        Date rev = qname.getRevision();
-        String pref = qname.getPrefix();
-        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path, ns,
-                rev, pref));
-
+        addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path,
+                qname));
         augmentations.addAll(base.getAvailableAugmentations());
     }
 

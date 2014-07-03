@@ -33,7 +33,6 @@ import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1346,49 +1345,44 @@ public final class YangParserImpl implements YangContextParser {
         DataNodeContainerBuilder parent = usesNode.getParent();
         ModuleBuilder module = BuilderUtils.getParentModule(parent);
         SchemaPath parentPath;
-        URI ns;
-        Date rev;
-        String pref;
+
+        final QName parentQName;
         if (parent instanceof AugmentationSchemaBuilder || parent instanceof ModuleBuilder) {
-            ns = module.getNamespace();
-            rev = module.getRevision();
-            pref = module.getPrefix();
+            parentQName = QName.create(module.getQNameModule(), module.getPrefix(), "dummy");
             if (parent instanceof AugmentationSchemaBuilder) {
                 parentPath = ((AugmentationSchemaBuilder) parent).getTargetNodeSchemaPath();
             } else {
                 parentPath = parent.getPath();
             }
         } else {
-            ns = parent.getQName().getNamespace();
-            rev = parent.getQName().getRevision();
-            pref = parent.getQName().getPrefix();
+            parentQName = parent.getQName();
             parentPath = parent.getPath();
         }
 
         GroupingDefinition gd = usesNode.getGroupingDefinition();
 
         Set<DataSchemaNodeBuilder> childNodes = wrapChildNodes(module.getModuleName(), line, gd.getChildNodes(),
-                parentPath, ns, rev, pref);
+                parentPath, parentQName);
         parent.getChildNodeBuilders().addAll(childNodes);
         for (DataSchemaNodeBuilder childNode : childNodes) {
             setNodeAddedByUses(childNode);
         }
 
-        Set<TypeDefinitionBuilder> typedefs = wrapTypedefs(module.getModuleName(), line, gd, parentPath, ns, rev, pref);
+        Set<TypeDefinitionBuilder> typedefs = wrapTypedefs(module.getModuleName(), line, gd, parentPath, parentQName);
         parent.getTypeDefinitionBuilders().addAll(typedefs);
         for (TypeDefinitionBuilder typedef : typedefs) {
             setNodeAddedByUses(typedef);
         }
 
         Set<GroupingBuilder> groupings = wrapGroupings(module.getModuleName(), line, usesNode.getGroupingDefinition()
-                .getGroupings(), parentPath, ns, rev, pref);
+                .getGroupings(), parentPath, parentQName);
         parent.getGroupingBuilders().addAll(groupings);
         for (GroupingBuilder gb : groupings) {
             setNodeAddedByUses(gb);
         }
 
         List<UnknownSchemaNodeBuilderImpl> unknownNodes = wrapUnknownNodes(module.getModuleName(), line,
-                gd.getUnknownSchemaNodes(), parentPath, ns, rev, pref);
+                gd.getUnknownSchemaNodes(), parentPath, parentQName);
         parent.getUnknownNodes().addAll(unknownNodes);
         for (UnknownSchemaNodeBuilder un : unknownNodes) {
             un.setAddedByUses(true);
