@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_cf9df70b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/BuilderUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-03T12:25:11Z",
+      "side": 1,
+      "message": "Method deleted.",
+      "parentUuid": "fa82b9bf_e9555bfa",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_c93977d8",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-02T13:00:00Z",
       "side": 1,
       "message": "doesn\u0027t this indicate illegal argument? what\u0027s the use case?",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_af88b3c5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-03T12:25:11Z",
+      "side": 1,
+      "message": "if statement removed",
+      "parentUuid": "fa82b9bf_c93977d8",
       "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_4f91e7ef",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-03T12:25:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_09243fad",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_a93c33c9",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-07-02T13:00:00Z",
       "side": 1,
       "message": "check prefix as above",
+      "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_6fa5cb45",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ModuleBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-03T12:25:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_a93c33c9",
       "revId": "2abb20f76fd9aec05f8da267381d28b09886beca",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
