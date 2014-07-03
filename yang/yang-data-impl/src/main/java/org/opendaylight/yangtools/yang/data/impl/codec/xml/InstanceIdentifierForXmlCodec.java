@@ -170,23 +170,8 @@ public final class InstanceIdentifierForXmlCodec {
             throw new IllegalArgumentException("I wasn't possible to get namespace for prefix " + prefix);
         }
 
-        Module youngestModule = findYoungestModuleByNamespace(schemaContext, namespace);
-        return QName.create(namespace, youngestModule.getRevision(), identifier);
-    }
-
-    // FIXME: this method should be provided by SchemaContext
-    private static Module findYoungestModuleByNamespace(final SchemaContext schemaContext, final URI namespace) {
-        Module result = null;
-        for (Module module : schemaContext.findModuleByNamespace(namespace)) {
-            if (result != null) {
-                if (module.getRevision().after(result.getRevision())) {
-                    result = module;
-                }
-            } else {
-                result = module;
-            }
-        }
-        return result;
+        Module module = schemaContext.findModuleByNamespaceAndRevision(namespace, null);
+        return QName.create(module.getQNameModule(), identifier);
     }
 
     private static String trimIfEndIs(final String str, final char end) {

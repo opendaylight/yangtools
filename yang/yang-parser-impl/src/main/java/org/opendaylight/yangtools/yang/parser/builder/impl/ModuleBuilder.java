@@ -6,6 +6,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import java.io.IOException;
@@ -21,8 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -63,9 +66,8 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     private final String name;
     private final String sourcePath;
     private static final SchemaPath SCHEMA_PATH = SchemaPath.create(Collections.<QName> emptyList(), true);
-    private URI namespace;
     private String prefix;
-    private Date revision;
+    private QNameModule qnameModule = QNameModule.create(null, null);
 
     private final boolean submodule;
     private String belongsTo;
@@ -132,9 +134,8 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         submodule = false;
         yangVersion = base.getYangVersion();
         actualPath.push(this);//FIXME: this escapes constructor
-        namespace = base.getNamespace();
         prefix = base.getPrefix();
-        revision = base.getRevision();
+        qnameModule = base.getQNameModule();
 
         augments.addAll(base.getAugmentations());
         rpcs.addAll(base.getRpcs());
@@ -322,11 +323,19 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public URI getNamespace() {
-        return namespace;
+        return qnameModule.getNamespace();
+    }
+
+    public QNameModule getQNameModule() {
+        return qnameModule;
+    }
+
+    public void setQNameModule(final QNameModule qnameModule) {
+        this.qnameModule = Preconditions.checkNotNull(qnameModule);
     }
 
     public void setNamespace(final URI namespace) {
-        this.namespace = namespace;
+        this.qnameModule = QNameModule.create(namespace, qnameModule.getRevision());
     }
 
     public String getPrefix() {
@@ -334,7 +343,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public Date getRevision() {
-        return revision;
+        return qnameModule.getRevision();
     }
 
     protected Set<ModuleImport> getImports() {
@@ -363,7 +372,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void setRevision(final Date revision) {
-        this.revision = revision;
+        this.qnameModule = QNameModule.create(qnameModule.getNamespace(), revision);
     }
 
     public void setPrefix(final String prefix) {
@@ -1022,8 +1031,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+        result = prime * result + qnameModule.hashCode();
         result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
 
         return result;
@@ -1048,11 +1056,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (namespace == null) {
-            if (other.namespace != null) {
-                return false;
-            }
-        } else if (!namespace.equals(other.namespace)) {
+        if (!qnameModule.equals(other.qnameModule)) {
             return false;
         }
         if (prefix == null) {
@@ -1060,13 +1064,6 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
                 return false;
             }
         } else if (!prefix.equals(other.prefix)) {
-            return false;
-        }
-        if (revision == null) {
-            if (other.revision != null) {
-                return false;
-            }
-        } else if (!revision.equals(other.revision)) {
             return false;
         }
         return true;
