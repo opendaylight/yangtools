@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
@@ -30,12 +32,32 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
     private final String name;
     private final List<Enumeration.Pair> values;
     private final List<AnnotationTypeBuilder> annotationBuilders = new ArrayList<>();
+    private String description;
+    private String reference;
+    private String moduleName;
+    private Iterable<QName> schemaPath;
 
     public EnumerationBuilderImpl(final String packageName, final String name) {
         super(packageName, name);
         this.packageName = packageName;
         this.name = name;
         values = new ArrayList<>();
+    }
+    
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+    
+    public void setReference(final String reference) {
+        this.reference = reference;
+    }
+    
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
+    
+    public void setSchemaPath(final Iterable<QName> schemaPath) {
+        this.schemaPath = schemaPath;
     }
 
     @Override
@@ -50,13 +72,37 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
     }
 
     @Override
-    public void addValue(final String name, final Integer value) {
-        values.add(new EnumPairImpl(name, value));
+    public void addValue(final String name, final Integer value, final String description) {
+        values.add(new EnumPairImpl(name, value, description));
     }
 
     @Override
     public Enumeration toInstance(final Type definingType) {
-        return new EnumerationImpl(definingType, annotationBuilders, packageName, name, values);
+        return new EnumerationImpl(definingType, annotationBuilders, packageName, name, values, 
+                description, reference, moduleName, schemaPath);
+    }
+    
+    @Override
+    public void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef) {
+        final List<EnumPair> enums = enumTypeDef.getValues();
+        if (enums != null) {
+            int listIndex = 0;
+            for (final EnumPair enumPair : enums) {
+                if (enumPair != null) {
+                    final String enumPairName = BindingMapping.getClassName(enumPair.getName());
+                    Integer enumPairValue = enumPair.getValue();
+
+                    if (enumPairValue == null) {
+                        enumPairValue = listIndex;
+                    }
+                    
+                    String description = enumPair.getDescription();                    
+                    
+                    this.addValue(enumPairName, enumPairValue, description);
+                    listIndex++;
+                }
+            }
+        }
     }
 
     /*
@@ -125,36 +171,17 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         return builder.toString();
     }
 
-    @Override
-    public void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef) {
-        final List<EnumPair> enums = enumTypeDef.getValues();
-        if (enums != null) {
-            int listIndex = 0;
-            for (final EnumPair enumPair : enums) {
-                if (enumPair != null) {
-                    final String enumPairName = BindingMapping.getClassName(enumPair.getName());
-                    Integer enumPairValue = enumPair.getValue();
-
-                    if (enumPairValue == null) {
-                        enumPairValue = listIndex;
-                    }
-                    this.addValue(enumPairName, enumPairValue);
-                    listIndex++;
-                }
-            }
-        }
-
-    }
-
     private static final class EnumPairImpl implements Enumeration.Pair {
 
         private final String name;
         private final Integer value;
+        private final String description;
 
-        public EnumPairImpl(String name, Integer value) {
+        public EnumPairImpl(String name, Integer value, String description) {
             super();
             this.name = name;
             this.value = value;
+            this.description = description;
         }
 
         @Override
@@ -230,6 +257,22 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
             builder.append("]");
             return builder.toString();
         }
+
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public String getReference() {
+            return null;
+        }
+
+        @Override
+        public Status getStatus() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     private static final class EnumerationImpl implements Enumeration {
@@ -237,11 +280,16 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         private final Type definingType;
         private final String packageName;
         private final String name;
+        private final String description;
+        private final String reference;
+        private final String moduleName;
+        private final Iterable<QName> schemaPath;
         private final List<Pair> values;
         private List<AnnotationType> annotations = new ArrayList<>();
 
         public EnumerationImpl(final Type definingType, final List<AnnotationTypeBuilder> annotationBuilders,
-                final String packageName, final String name, final List<Pair> values) {
+                final String packageName, final String name, final List<Pair> values, final String description,
+                final String reference, final String moduleName, final Iterable<QName> schemaPath) {
             super();
             this.definingType = definingType;
             for (final AnnotationTypeBuilder builder : annotationBuilders) {
@@ -251,6 +299,10 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
             this.packageName = packageName;
             this.name = name;
             this.values = Collections.unmodifiableList(values);
+            this.description = description;
+            this.reference = reference;
+            this.moduleName = moduleName;
+            this.schemaPath = schemaPath;
         }
 
         @Override
@@ -433,6 +485,26 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         @Override
         public List<GeneratedProperty> getProperties() {
             return Collections.emptyList();
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public String getReference() {
+            return reference;
+        }
+
+        @Override
+        public Iterable<QName> getSchemaPath() {
+            return schemaPath;
+        }
+
+        @Override
+        public String getModuleName() {
+            return moduleName;
         }
     }
 }

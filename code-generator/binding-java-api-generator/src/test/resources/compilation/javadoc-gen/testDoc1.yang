@@ -5,28 +5,28 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-module bar {
+module testDoc1 {
     yang-version 1;
-    namespace "urn:opendaylight.bar";
-    prefix "bar";
+    namespace "urn:opendaylight.testDoc1";
+    prefix "testDoc1";
 	
-	description "bar - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+	description "TestDoc1 - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
 	reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
 
     revision "2013-10-08" {
     }
 
     container network-topology {
-		description "network-topology - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+		description "Network-topology - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
 		reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
 		
         list topology {
-			description "topology - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+			description "Topology - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
 			reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
 			
             key "topology-id";
             leaf topology-id {
-				description "topology-id - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+				description "Topology-id - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
 				reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
                 type int32;
             }
@@ -53,7 +53,7 @@ module bar {
 	
 	leaf inclusion-rulez {
 		description "Specified rulez description.";
-		reference "RFC 6020 http://technet.com";
+		reference "RFC 6020 http://tools.ietf.org/html/rfc6020";
 		
 		type string;
 	}
