@@ -292,12 +292,27 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
-     *
      * Creates new QName.
      *
-     * @param namespace Namespace of QName or null if namespace is undefined.
-     * @param revision Revision of namespace or null if revision is unspecified.
-     * @param localName Local name part of QName. MUST NOT BE null.
+     * @param qnameModule
+     *            Namespace and revision enclosed as a QNameModule
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @return Instance of QName
+     */
+    public static QName create(final QNameModule qnameModule, final String localName) {
+        return new QName(qnameModule, null, localName);
+    }
+
+    /**
+     * Creates new QName.
+     *
+     * @param namespace
+     *            Namespace of QName or null if namespace is undefined.
+     * @param revision
+     *            Revision of namespace or null if revision is unspecified.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
     public static QName create(final URI namespace, final Date revision, final String localName) {
