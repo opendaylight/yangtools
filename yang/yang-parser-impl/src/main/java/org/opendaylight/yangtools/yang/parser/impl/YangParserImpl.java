@@ -29,10 +29,10 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,7 +45,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import javax.annotation.concurrent.Immutable;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -839,30 +841,25 @@ public final class YangParserImpl implements YangContextParser {
             DataNodeContainerBuilder usesParent = ((UsesNodeBuilder) parent).getParent();
             newPath.addAll(usesParent.getPath().getPath());
 
-            URI ns;
-            Date revision;
-            String prefix;
-            QName baseQName = usesParent.getQName();
+            final QName baseQName = usesParent.getQName();
+            final QNameModule qnm;
+            final String prefix;
             if (baseQName == null) {
                 ModuleBuilder m = BuilderUtils.getParentModule(usesParent);
-                ns = m.getNamespace();
-                revision = m.getRevision();
+                qnm = m.getQNameModule();
                 prefix = m.getPrefix();
             } else {
-                ns = baseQName.getNamespace();
-                revision = baseQName.getRevision();
+                qnm = baseQName.getModule();
                 prefix = baseQName.getPrefix();
             }
 
-            final QNameModule qm = QNameModule.create(ns, revision);
             for (QName qn : oldSchemaPath.getPathFromRoot()) {
-                newPath.add(QName.create(qm, prefix, qn.getLocalName()));
+                newPath.add(QName.create(qnm, prefix, qn.getLocalName()));
             }
         } else {
             Iterable<QName> oldPath = oldSchemaPath.getPathFromRoot();
             for (QName qn : oldPath) {
-                URI ns = module.getNamespace();
-                Date rev = module.getRevision();
+                QNameModule qnm = module.getQNameModule();
                 String localPrefix = qn.getPrefix();
                 if (localPrefix != null && !localPrefix.isEmpty()) {
                     ModuleBuilder currentModule = BuilderUtils.findModuleFromBuilders(modules, module, localPrefix,
@@ -873,14 +870,12 @@ public final class YangParserImpl implements YangContextParser {
                             throw new YangParseException(module.getName(), augment.getLine(), "Module with prefix "
                                     + localPrefix + " not found.");
                         }
-                        ns = m.getNamespace();
-                        rev = m.getRevision();
+                        qnm = m.getQNameModule();
                     } else {
-                        ns = currentModule.getNamespace();
-                        rev = currentModule.getRevision();
+                        qnm = currentModule.getQNameModule();
                     }
                 }
-                newPath.add(new QName(ns, rev, localPrefix, qn.getLocalName()));
+                newPath.add(new QName(qnm.getNamespace(), qnm.getRevision(), localPrefix, qn.getLocalName()));
             }
         }
         augment.setTargetNodeSchemaPath(SchemaPath.create(newPath, true));

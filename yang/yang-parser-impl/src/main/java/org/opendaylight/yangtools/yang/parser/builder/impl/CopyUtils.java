@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -459,8 +458,7 @@ public final class CopyUtils {
             SchemaNodeBuilder parent = (SchemaNodeBuilder) newParent;
             QName parentQName = parent.getQName();
             if (updateQName) {
-                newQName = new QName(parentQName.getNamespace(), parentQName.getRevision(), parentQName.getPrefix(),
-                        old.getQName().getLocalName());
+                newQName = QName.create(parentQName, old.getQName().getLocalName());
             } else {
                 newQName = old.getQName();
             }
