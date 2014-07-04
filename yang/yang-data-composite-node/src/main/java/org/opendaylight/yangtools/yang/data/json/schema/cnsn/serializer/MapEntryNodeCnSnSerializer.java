@@ -8,17 +8,14 @@
 package org.opendaylight.yangtools.yang.data.json.schema.cnsn.serializer;
 
 import com.google.common.base.Preconditions;
-
 import java.util.Collections;
 import java.util.List;
-
-import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.api.MutableNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
+import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.MapEntryNodeBaseSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
+import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 public class MapEntryNodeCnSnSerializer extends MapEntryNodeBaseSerializer<Node<?>> {
@@ -30,19 +27,11 @@ public class MapEntryNodeCnSnSerializer extends MapEntryNodeBaseSerializer<Node<
     }
 
     @Override
-    public List<Node<?>> serialize(final ListSchemaNode schema, final MapEntryNode node) {
-
-        MutableCompositeNode mutCompNode = NodeFactory.createMutableCompositeNode(node.getNodeType(), null, null, null,
-                null);
-
-        for (Node<?> element : super.serialize(schema, node)) {
-            if (element instanceof MutableNode<?>) {
-                ((MutableNode<?>) element).setParent(mutCompNode);
-            }
-            mutCompNode.getValue().add(element);
-        }
-
-        return Collections.<Node<?>>singletonList(mutCompNode);
+    public List<Node<?>> serialize(ListSchemaNode schema, MapEntryNode node) {
+        CompositeNodeBuilder<ImmutableCompositeNode> compNodeBuilder = ImmutableCompositeNode.builder();
+        compNodeBuilder.setQName(node.getNodeType());
+        compNodeBuilder.addAll(super.serialize(schema, node));
+        return Collections.<Node<?>> singletonList(compNodeBuilder.toInstance());        
     }
 
     @Override

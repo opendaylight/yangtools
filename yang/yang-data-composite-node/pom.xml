@@ -15,7 +15,7 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>yang-data-json</artifactId>
+	<artifactId>yang-data-composite-node</artifactId>
 	<name>${project.artifactId}</name>
 	<description>${project.artifactId}</description>
 

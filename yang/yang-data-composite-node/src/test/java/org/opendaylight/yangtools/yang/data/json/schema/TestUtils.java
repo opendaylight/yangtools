@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.json.schema;
 
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.data.impl.NodeFactory.createMutableCompositeNode;
 import static org.opendaylight.yangtools.yang.data.impl.NodeFactory.createMutableSimpleNode;
 
 import java.io.File;
@@ -25,23 +24,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
@@ -125,69 +124,62 @@ public class TestUtils {
      * /cnsn-to-normalized-node/simple-conainer.json
      */
     public static CompositeNode prepareCompositeNodeStruct() {
-        MutableCompositeNode cont = createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base,
-                "cont"), null, null, null, null);
+        CompositeNodeBuilder<ImmutableCompositeNode> contBuilder = ImmutableCompositeNode.builder();
+        contBuilder.setQName(QName.create(URI.create(NAMESPACE_BASE), revision_base, "cont"));
 
         // cont1
-        List<Node<?>> contChilds = new ArrayList<>();
-        contChilds.add(createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "cont1"), cont,
-                Collections.<Node<?>> emptyList(), null, null));
+        contBuilder.add(ImmutableCompositeNode.builder()
+                .setQName(QName.create(URI.create(NAMESPACE_BASE), revision_base, "cont1")).toInstance());
 
         // cont2
-        MutableCompositeNode cont2 = createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base,
-                "cont2"), cont, null, null, null);
+        CompositeNodeBuilder<ImmutableCompositeNode> cont2 = ImmutableCompositeNode.builder().setQName(
+                QName.create(URI.create(NAMESPACE_BASE), revision_base, "cont2"));
         List<Node<?>> cont2Childs = new ArrayList<>();
-        cont2Childs.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf21"), cont2,
+        cont2.add(createMutableSimpleNode(QName.create(URI.create(NAMESPACE_BASE), revision_base, "lf21"), null,
                 "value in cont2/lf21", null, null));
-        cont2.setValue(cont2Childs);
-        contChilds.add(cont2);
+        contBuilder.add(cont2.toInstance());
 
         // lst1
-        contChilds.add(createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lst1"), cont,
-                Collections.<Node<?>> emptyList(), null, null));
+        contBuilder.add(ImmutableCompositeNode.builder()
+                .setQName(QName.create(URI.create(NAMESPACE_BASE), revision_base, "lst1")).toInstance());
 
         // lst2
-        MutableCompositeNode lst2_1 = createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base,
-                "lst2"), cont, null, null, null);
-        List<Node<?>> lst2_1Childs = new ArrayList<>();
-        lst2_1Childs.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf21"), lst2_1,
-                "some value21", null, null));
-        lst2_1.setValue(lst2_1Childs);
-        contChilds.add(lst2_1);
+         CompositeNodeBuilder<ImmutableCompositeNode> lst2_1Builder = ImmutableCompositeNode.builder().setQName(QName.create(URI.create(NAMESPACE_BASE), revision_base,
+                "lst2"));
+         lst2_1Builder.add(createMutableSimpleNode(QName.create(URI.create(NAMESPACE_BASE), revision_base, "lf21"), null,
+                 "some value21", null, null));
+         contBuilder.add(lst2_1Builder.toInstance());
+         
+         CompositeNodeBuilder<ImmutableCompositeNode> lst2_2Builder = ImmutableCompositeNode.builder().setQName(QName.create(URI.create(NAMESPACE_BASE), revision_base,
+                 "lst2"));
+         lst2_2Builder.add(createMutableSimpleNode(QName.create(URI.create(NAMESPACE_BASE), revision_base, "lf22"), null,
+                 "some value22", null, null));
+         contBuilder.add(lst2_2Builder.toInstance());
 
-        MutableCompositeNode lst2_2 = createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base,
-                "lst2"), cont, null, null, null);
-        List<Node<?>> lst2_2Childs = new ArrayList<>();
-        lst2_2Childs.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf22"), lst2_2,
-                "some value22", null, null));
-        lst2_2.setValue(lst2_2Childs);
-        contChilds.add(lst2_2);
 
         // lflst1
-        contChilds.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lflst1"), cont,
+        contBuilder.add(createMutableSimpleNode(QName.create(URI.create(NAMESPACE_BASE), revision_base, "lflst1"), null,
                 "lflst1_1", null, null));
-        contChilds.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lflst1"), cont,
+        contBuilder.add(createMutableSimpleNode(QName.create(URI.create(NAMESPACE_BASE), revision_base, "lflst1"), null,
                 "lflst1_2", null, null));
 
         // lf1
-        contChilds.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf1"), cont,
+        contBuilder.add(createMutableSimpleNode(QName.create(URI.create(NAMESPACE_BASE), revision_base, "lf1"), null,
                 "lf1", null, null));
 
         // lf11
-        contChilds.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf11"), cont,
+        contBuilder.add(createMutableSimpleNode(QName.create(URI.create(NAMESPACE_BASE), revision_base, "lf11"), null,
                 "value from case (cs1)", null, null));
 
         // cont3
-        MutableCompositeNode cont3 = createMutableCompositeNode(new QName(URI.create(NAMESPACE_AUGMENT),
-                revision_augment, "cont3"), cont, null, null, null);
-        List<Node<?>> cont3Childs = new ArrayList<>();
-        cont3Childs.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_AUGMENT), revision_augment, "lf31"),
-                cont3, "value in leaf in augment", null, null));
-        cont3.setValue(cont3Childs);
-        contChilds.add(cont3);
+        CompositeNodeBuilder<ImmutableCompositeNode> cont3Builder = ImmutableCompositeNode.builder().setQName(QName.create(URI.create(NAMESPACE_AUGMENT),
+                revision_augment, "cont3"));
 
-        cont.setValue(contChilds);
-        return cont;
+        cont3Builder.add(createMutableSimpleNode(QName.create(URI.create(NAMESPACE_AUGMENT), revision_augment, "lf31"),
+                null, "value in leaf in augment", null, null));        
+        contBuilder.add(cont3Builder.toInstance());
+
+        return contBuilder.toInstance();
     }
 
     /**
