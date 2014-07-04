@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findP
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -227,7 +228,7 @@ public final class TypeProviderImpl implements TypeProvider {
         return returnType;
     }
 
-    private GeneratedTransferObject shadedTOWithRestrictions(GeneratedTransferObject gto, Restrictions r) {
+    private GeneratedTransferObject shadedTOWithRestrictions(final GeneratedTransferObject gto, final Restrictions r) {
         GeneratedTOBuilder gtob = new GeneratedTOBuilderImpl(gto.getPackageName(), gto.getName());
         GeneratedTransferObject parent = gto.getSuperType();
         if (parent != null) {
