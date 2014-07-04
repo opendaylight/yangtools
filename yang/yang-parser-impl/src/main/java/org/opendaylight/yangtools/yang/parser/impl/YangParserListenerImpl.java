@@ -24,14 +24,19 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.pa
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseYinValue;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.stringFromNode;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
@@ -97,17 +102,17 @@ import org.slf4j.LoggerFactory;
 
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
+    private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final String AUGMENT_STR = "augment";
 
+    private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private final Stack<Stack<QName>> actualPath = new Stack<>();
     private final String sourcePath;
     private ModuleBuilder moduleBuilder;
     private String moduleName;
     private URI namespace;
     private String yangModelPrefix;
     private Date revision = new Date(0L);
-
-    private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private final Stack<Stack<QName>> actualPath = new Stack<>();
     private int augmentOrder;
 
     private void addNodeToPath(final QName name) {
@@ -125,7 +130,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void enterModule_stmt(final YangParser.Module_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
-        LOGGER.trace("entering module " + moduleName);
+        LOGGER.trace("entering module {}", moduleName);
         enterLog("module", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
@@ -157,7 +162,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override public void enterSubmodule_stmt(final YangParser.Submodule_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
-        LOGGER.trace("entering submodule " + moduleName);
+        LOGGER.trace("entering submodule {}", moduleName);
         enterLog("submodule", moduleName, 0);
         actualPath.push(new Stack<QName>());
 
@@ -181,12 +186,14 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         moduleBuilder.setReference(reference);
     }
 
-    @Override public void exitSubmodule_stmt(final YangParser.Submodule_stmtContext ctx) {
+    @Override
+    public void exitSubmodule_stmt(final YangParser.Submodule_stmtContext ctx) {
         exitLog("submodule");
         actualPath.pop();
     }
 
-    @Override public void enterBelongs_to_stmt(final YangParser.Belongs_to_stmtContext ctx) {
+    @Override
+    public void enterBelongs_to_stmt(final YangParser.Belongs_to_stmtContext ctx) {
         moduleBuilder.setBelongsTo(stringFromNode(ctx));
     }
 
@@ -439,25 +446,25 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             } else {
                 QName qname;
                 switch (typeName) {
-                    case "union":
-                        qname = BaseTypes.constructQName("union");
-                        addNodeToPath(qname);
-                        UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
-                        Builder parent = moduleBuilder.getActualNode();
-                        unionBuilder.setParent(parent);
-                        moduleBuilder.enterNode(unionBuilder);
-                        break;
-                    case "identityref":
-                        qname = BaseTypes.constructQName("identityref");
-                        addNodeToPath(qname);
-                        SchemaPath path = createActualSchemaPath(actualPath.peek());
-                        moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
-                        break;
-                    default:
-                        type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
-                                yangModelPrefix, moduleBuilder.getActualNode());
-                        moduleBuilder.setType(type);
-                        addNodeToPath(type.getQName());
+                case "union":
+                    qname = BaseTypes.constructQName("union");
+                    addNodeToPath(qname);
+                    UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
+                    Builder parent = moduleBuilder.getActualNode();
+                    unionBuilder.setParent(parent);
+                    moduleBuilder.enterNode(unionBuilder);
+                    break;
+                case "identityref":
+                    qname = BaseTypes.constructQName("identityref");
+                    addNodeToPath(qname);
+                    SchemaPath path = createActualSchemaPath(actualPath.peek());
+                    moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
+                    break;
+                default:
+                    type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
+                            yangModelPrefix, moduleBuilder.getActualNode());
+                    moduleBuilder.setType(type);
+                    addNodeToPath(type.getQName());
                 }
             }
         } else {
@@ -472,11 +479,11 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     private QName parseQName(final String typeName) {
-        QName typeQName;
-        if (typeName.contains(":")) {
-            String[] splittedName = typeName.split(":");
-            String prefix = splittedName[0];
-            String name = splittedName[1];
+        final QName typeQName;
+        if (typeName.indexOf(':') != -1) {
+            final Iterator<String> split = COLON_SPLITTER.split(typeName).iterator();
+            final String prefix = split.next();
+            final String name = split.next();
             if (prefix.equals(yangModelPrefix)) {
                 typeQName = new QName(namespace, revision, prefix, name);
             } else {
@@ -1046,30 +1053,32 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String nodeParameter = stringFromNode(ctx);
         enterLog("unknown-node", nodeParameter, line);
 
-        QName nodeType;
         final String nodeTypeStr = ctx.getChild(0).getText();
-        final String[] splittedElement = nodeTypeStr.split(":");
-        if (splittedElement.length == 1) {
-            nodeType = new QName(namespace, revision, yangModelPrefix, splittedElement[0]);
+        final Iterator<String> splittedElement = COLON_SPLITTER.split(nodeTypeStr).iterator();
+        final String e0 = splittedElement.next();
+        final QName nodeType;
+        if (splittedElement.hasNext()) {
+            nodeType = new QName(namespace, revision, e0, splittedElement.next());
         } else {
-            nodeType = new QName(namespace, revision, splittedElement[0], splittedElement[1]);
+            nodeType = new QName(namespace, revision, yangModelPrefix, e0);
         }
 
         QName qname;
         try {
             if (!Strings.isNullOrEmpty(nodeParameter)) {
-                String[] splittedName = nodeParameter.split(":");
-                if (splittedName.length == 2) {
-                    qname = new QName(null, null, splittedName[0], splittedName[1]);
+                final Iterable<String> splittedName = COLON_SPLITTER.split(nodeParameter);
+                final Iterator<String> it = splittedName.iterator();
+
+                if (Iterables.size(splittedName) == 2) {
+                    qname = new QName(null, null, it.next(), it.next());
                 } else {
-                    qname = new QName(namespace, revision, yangModelPrefix, splittedName[0]);
+                    qname = new QName(namespace, revision, yangModelPrefix, it.next());
                 }
             } else {
                 qname = nodeType;
             }
         } catch (IllegalArgumentException e) {
             qname = nodeType;
-
         }
         addNodeToPath(qname);
         SchemaPath path = createActualSchemaPath(actualPath.peek());

@@ -27,6 +27,7 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.reso
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
 
@@ -39,6 +40,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -104,15 +106,13 @@ import org.slf4j.LoggerFactory;
 @Immutable
 public final class YangParserImpl implements YangContextParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
-
     private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
+    private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final YangParserImpl INSTANCE = new YangParserImpl();
 
     public static YangParserImpl getInstance() {
         return INSTANCE;
     }
-
-
 
     @Override
     @Deprecated
@@ -1084,7 +1084,7 @@ public final class YangParserImpl implements YangContextParser {
         ModuleBuilder targetModule;
 
         String prefix = qname.getPrefix();
-        if (prefix == null || prefix.equals("")) {
+        if (prefix == null || prefix.isEmpty()) {
             targetModule = module;
         } else {
             targetModule = findModuleFromBuilders(modules, module, qname.getPrefix(), line);
@@ -1186,14 +1186,15 @@ public final class YangParserImpl implements YangContextParser {
                     if (baseIdentityName != null) {
 
                         IdentitySchemaNodeBuilder result = null;
-                        if (baseIdentityName.contains(":")) {
-                            String[] splittedBase = baseIdentityName.split(":");
-                            if (splittedBase.length > 2) {
+                        if (baseIdentityName.indexOf(':') != -1) {
+                            final Iterator<String> split = COLON_SPLITTER.split(baseIdentityName).iterator();
+                            final String prefix = split.next();
+                            final String name = split.next();
+                            if (split.hasNext()) {
                                 throw new YangParseException(module.getName(), line,
                                         "Failed to parse identityref base: " + baseIdentityName);
                             }
-                            String prefix = splittedBase[0];
-                            String name = splittedBase[1];
+
                             ModuleBuilder dependentModule = findTargetModule(prefix, module, modules, context, line);
                             if (dependentModule != null) {
                                 result = BuilderUtils.findIdentity(dependentModule.getAddedIdentities(), name);

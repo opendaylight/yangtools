@@ -9,13 +9,15 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static java.lang.String.format;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
+
 import java.text.ParseException;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
@@ -28,6 +30,9 @@ import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 final class BasicValidations {
 
     static final String SUPPORTED_YANG_VERSION = "1";
+    private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
+    private static final Pattern identifierPattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
+    private static final Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
 
     /**
      * It isn't desirable to create instance of this class.
@@ -99,8 +104,6 @@ final class BasicValidations {
         }
     }
 
-    private static final Pattern identifierPattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
-
     static void checkIdentifier(final ParseTree statement) {
         checkIdentifierInternal(statement, ValidationUtil.getName(statement));
     }
@@ -120,8 +123,6 @@ final class BasicValidations {
             ValidationUtil.ex(message);
         }
     }
-
-    private static final Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
 
     static void checkPrefixedIdentifier(final ParseTree statement) {
         checkPrefixedIdentifierInternal(statement, ValidationUtil.getName(statement));
@@ -149,10 +150,7 @@ final class BasicValidations {
         String id = ValidationUtil.getName(statement);
 
         try {
-            for (String oneOfId : id.split("/")) {
-                if (oneOfId.isEmpty()) {
-                    continue;
-                }
+            for (String oneOfId : SLASH_SPLITTER.split(id)) {
                 checkPrefixedIdentifierInternal(statement, oneOfId);
             }
         } catch (YangValidationException e) {
@@ -166,7 +164,7 @@ final class BasicValidations {
     }
 
     private static void checkPresentChildOfTypeInternal(final ParseTree parent, final Set<Class<? extends ParseTree>> expectedChildType,
-                                                        final MessageProvider message, final boolean atMostOne) {
+            final MessageProvider message, final boolean atMostOne) {
         if (!checkPresentChildOfTypeSafe(parent, expectedChildType, atMostOne)) {
             String str = atMostOne ? "(Expected exactly one statement) " + message.getMessage() : message.getMessage();
             ValidationUtil.ex(str);
@@ -217,10 +215,9 @@ final class BasicValidations {
         @Override
         public String getMessage() {
             StringBuilder childTypes = new StringBuilder();
-            String orStr = " OR ";
             for (Class<? extends ParseTree> type : expectedChildTypes) {
                 childTypes.append(ValidationUtil.getSimpleStatementName(type));
-                childTypes.append(orStr);
+                childTypes.append(" OR ");
             }
             String message = ValidationUtil.f("Missing %s statement in %s:%s", childTypes.toString(),
                     ValidationUtil.getSimpleStatementName(parent.getClass()), ValidationUtil.getName(parent));
@@ -241,7 +238,7 @@ final class BasicValidations {
     }
 
     private static boolean checkPresentChildOfTypeSafe(final ParseTree parent, final Set<Class<? extends ParseTree>> expectedChildType,
-                                                       final boolean atMostOne) {
+            final boolean atMostOne) {
 
         int foundChildrenOfType = ValidationUtil.countPresentChildrenOfType(parent, expectedChildType);
 
@@ -249,19 +246,19 @@ final class BasicValidations {
     }
 
     private static boolean checkPresentChildOfTypeSafe(final ParseTree parent, final Class<? extends ParseTree> expectedChildType,
-                                                       final boolean atMostOne) {
+            final boolean atMostOne) {
 
         int foundChildrenOfType = ValidationUtil.countPresentChildrenOfType(parent, expectedChildType);
 
         return atMostOne ? foundChildrenOfType == 1 : foundChildrenOfType != 0;
     }
 
-    static List<String> getAndCheckUniqueKeys(final ParseTree ctx) {
+    static Iterable<String> getAndCheckUniqueKeys(final ParseTree ctx) {
         String key = ValidationUtil.getName(ctx);
         ParseTree parent = ctx.getParent();
         String rootParentName = ValidationUtil.getRootParentName(ctx);
 
-        List<String> keyList = ValidationUtil.listKeysFromId(key);
+        Iterable<String> keyList = ValidationUtil.listKeysFromId(key);
         Set<String> duplicates = ValidationUtil.getDuplicates(keyList);
 
         if (duplicates.size() != 0) {
