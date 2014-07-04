@@ -61,7 +61,7 @@ public class NodeModificationBuilderImplTest {
         schemaCtx = NodeHelper.loadSchemaContext();
 
         ns = "urn:opendaylight:controller:network";
-        qName = new QName(new URI(ns), new Date(1369000800000L), "topos");
+        qName = QName.create(new URI(ns), new Date(1369000800000L), "topos");
         network = NodeHelper.buildTestConfigTree(qName);
 
         nodeModificationBuilder = new NodeModificationBuilderImpl(schemaCtx);
@@ -100,8 +100,9 @@ public class NodeModificationBuilderImplTest {
         MutableCompositeNode mutableParent = (MutableCompositeNode) nodeModificationBuilder
                 .getMutableEquivalent(needle);
 
-        MutableSimpleNode<String> newMutable = NodeFactory.createMutableSimpleNode(new QName(needle.getNodeType(),
-                "anySubNode"), mutableParent, "42", null, null);
+        MutableSimpleNode<String> newMutable = NodeFactory.createMutableSimpleNode(
+                QName.create(needle.getNodeType(),
+                        "anySubNode"), mutableParent, "42", null, null);
 
         nodeModificationBuilder.addNode(newMutable);
         dumpResult();
@@ -124,11 +125,13 @@ public class NodeModificationBuilderImplTest {
         MutableCompositeNode mutableParent = (MutableCompositeNode) nodeModificationBuilder
                 .getMutableEquivalent(needle);
 
-        MutableSimpleNode<String> newMutable = NodeFactory.createMutableSimpleNode(new QName(needle.getNodeType(),
-                "anySubNode"), null, "42", null, null);
+        MutableSimpleNode<String> newMutable = NodeFactory.createMutableSimpleNode(
+                QName.create(needle.getNodeType(),
+                        "anySubNode"), null, "42", null, null);
 
-        MutableCompositeNode newMutableCom = NodeFactory.createMutableCompositeNode(new QName(needle.getNodeType(),
-                "anySubNode"), mutableParent, NodeUtils.buildChildrenList(newMutable), null, null);
+        MutableCompositeNode newMutableCom = NodeFactory.createMutableCompositeNode(
+                QName.create(needle.getNodeType(),
+                        "anySubNode"), mutableParent, NodeUtils.buildChildrenList(newMutable), null, null);
         NodeUtils.fixChildrenRelation(newMutableCom);
         newMutableCom.init();
 
@@ -152,7 +155,7 @@ public class NodeModificationBuilderImplTest {
 
         @SuppressWarnings("unchecked")
         MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) nodeModificationBuilder
-                .getMutableEquivalent(needle);
+        .getMutableEquivalent(needle);
 
         nodeModificationBuilder.deleteNode(mutableNeedle.getParent().asMutable());
         dumpResult();
@@ -174,7 +177,7 @@ public class NodeModificationBuilderImplTest {
 
         @SuppressWarnings("unchecked")
         MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) nodeModificationBuilder
-                .getMutableEquivalent(needle);
+        .getMutableEquivalent(needle);
 
         nodeModificationBuilder.deleteNode(mutableNeedle);
         dumpResult();
@@ -196,7 +199,7 @@ public class NodeModificationBuilderImplTest {
 
         @SuppressWarnings("unchecked")
         MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) nodeModificationBuilder
-                .getMutableEquivalent(needle);
+        .getMutableEquivalent(needle);
 
         mutableNeedle.setValue("tpId_18x");
         nodeModificationBuilder.mergeNode(mutableNeedle.getParent().asMutable());
@@ -219,7 +222,7 @@ public class NodeModificationBuilderImplTest {
 
         @SuppressWarnings("unchecked")
         MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) nodeModificationBuilder
-                .getMutableEquivalent(needle);
+        .getMutableEquivalent(needle);
 
         nodeModificationBuilder.removeNode(mutableNeedle.getParent().asMutable());
         dumpResult();
@@ -241,7 +244,7 @@ public class NodeModificationBuilderImplTest {
 
         @SuppressWarnings("unchecked")
         MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) nodeModificationBuilder
-                .getMutableEquivalent(needle);
+        .getMutableEquivalent(needle);
 
         nodeModificationBuilder.removeNode(mutableNeedle);
         dumpResult();
@@ -263,7 +266,7 @@ public class NodeModificationBuilderImplTest {
 
         @SuppressWarnings("unchecked")
         MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) nodeModificationBuilder
-                .getMutableEquivalent(needle);
+        .getMutableEquivalent(needle);
 
         mutableNeedle.setValue("tpId_18x");
         nodeModificationBuilder.replaceNode(mutableNeedle.getParent().asMutable());
@@ -286,7 +289,7 @@ public class NodeModificationBuilderImplTest {
 
         @SuppressWarnings("unchecked")
         MutableSimpleNode<String> mutableNeedle = (MutableSimpleNode<String>) nodeModificationBuilder
-                .getMutableEquivalent(needle);
+        .getMutableEquivalent(needle);
 
         mutableNeedle.setValue("tpId_18x");
         nodeModificationBuilder.replaceNode(mutableNeedle);

@@ -154,12 +154,12 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
 
     @Override
     public List<CompositeNode> getCompositesByName(final String children) {
-        return getCompositesByName(new QName(getNodeType(), children));
+        return getCompositesByName(QName.create(getNodeType(), children));
     }
 
     @Override
     public List<SimpleNode<?>> getSimpleNodesByName(final String children) {
-        return getSimpleNodesByName(new QName(getNodeType(), children));
+        return getSimpleNodesByName(QName.create(getNodeType(), children));
     }
 
     @Override
@@ -227,7 +227,7 @@ public class MutableCompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> im
         return nodeMap.values();
     }
 
-  // Serialization related
+    // Serialization related
 
     private void readObject(final ObjectInputStream aStream) throws IOException, ClassNotFoundException {
         aStream.defaultReadObject();

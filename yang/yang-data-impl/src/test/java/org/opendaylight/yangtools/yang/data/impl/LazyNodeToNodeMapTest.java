@@ -35,7 +35,7 @@ public class LazyNodeToNodeMapTest {
     public void setUp() throws Exception {
         lazyN2N = new LazyNodeToNodeMap();
 
-        QName qName = new QName(
+        QName qName = QName.create(
                 new URI("urn:ietf:params:xml:ns:netconf:base:1.0"),
                 new Date(42), "yang-data-impl-mutableTest");
 
