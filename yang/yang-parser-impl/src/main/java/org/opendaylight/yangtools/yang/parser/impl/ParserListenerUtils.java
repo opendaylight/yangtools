@@ -159,11 +159,9 @@ public final class ParserListenerUtils {
     public static String stringFromNode(final ParseTree treeNode) {
         String result = "";
         for (int i = 0; i < treeNode.getChildCount(); ++i) {
-            if (treeNode.getChild(i) instanceof StringContext) {
-                final StringContext context = (StringContext) treeNode.getChild(i);
-                if (context != null) {
-                    return stringFromStringContext(context);
-                }
+            final ParseTree child = treeNode.getChild(i);
+            if (child instanceof StringContext) {
+                return stringFromStringContext((StringContext)child);
             }
         }
         return result;
@@ -286,15 +284,13 @@ public final class ParserListenerUtils {
      *         statement
      */
     public static String parseUnits(final ParseTree ctx) {
-        String units = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Units_stmtContext) {
-                units = stringFromNode(child);
-                break;
+                return stringFromNode(child);
             }
         }
-        return units;
+        return null;
     }
 
     /**
@@ -306,15 +302,13 @@ public final class ParserListenerUtils {
      *         default statement
      */
     public static String parseDefault(final ParseTree ctx) {
-        String defaultValue = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Default_stmtContext) {
-                defaultValue = stringFromNode(child);
-                break;
+                return stringFromNode(child);
             }
         }
-        return defaultValue;
+        return null;
     }
 
     /**
@@ -561,16 +555,14 @@ public final class ParserListenerUtils {
      * @return List of RangeConstraint created from this context
      */
     private static List<RangeConstraint> getRangeConstraints(final Type_body_stmtsContext ctx, final String moduleName) {
-        List<RangeConstraint> rangeConstraints = Collections.emptyList();
-        outer: for (int i = 0; i < ctx.getChildCount(); i++) {
+        for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree numRestrChild = ctx.getChild(i);
 
             if (numRestrChild instanceof Numerical_restrictionsContext) {
                 for (int j = 0; j < numRestrChild.getChildCount(); j++) {
                     ParseTree rangeChild = numRestrChild.getChild(j);
                     if (rangeChild instanceof Range_stmtContext) {
-                        rangeConstraints = parseRangeConstraints((Range_stmtContext) rangeChild, moduleName);
-                        break outer;
+                        return parseRangeConstraints((Range_stmtContext) rangeChild, moduleName);
                     }
                 }
             }
@@ -582,16 +574,14 @@ public final class ParserListenerUtils {
                         for (int k = 0; k < decRestr.getChildCount(); k++) {
                             ParseTree rangeChild = decRestr.getChild(k);
                             if (rangeChild instanceof Range_stmtContext) {
-                                rangeConstraints = parseRangeConstraints((Range_stmtContext) rangeChild, moduleName);
-                                break outer;
+                                return parseRangeConstraints((Range_stmtContext) rangeChild, moduleName);
                             }
                         }
-
                     }
                 }
             }
         }
-        return rangeConstraints;
+        return Collections.emptyList();
     }
 
     /**
@@ -649,20 +639,18 @@ public final class ParserListenerUtils {
      * @return List of LengthConstraint created from this context
      */
     private static List<LengthConstraint> getLengthConstraints(final Type_body_stmtsContext ctx, final String moduleName) {
-        List<LengthConstraint> lengthConstraints = Collections.emptyList();
-        outer: for (int i = 0; i < ctx.getChildCount(); i++) {
+        for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree stringRestrChild = ctx.getChild(i);
             if (stringRestrChild instanceof String_restrictionsContext) {
                 for (int j = 0; j < stringRestrChild.getChildCount(); j++) {
                     ParseTree lengthChild = stringRestrChild.getChild(j);
                     if (lengthChild instanceof Length_stmtContext) {
-                        lengthConstraints = parseLengthConstraints((Length_stmtContext) lengthChild, moduleName);
-                        break outer;
+                        return parseLengthConstraints((Length_stmtContext) lengthChild, moduleName);
                     }
                 }
             }
         }
-        return lengthConstraints;
+        return Collections.emptyList();
     }
 
     /**
