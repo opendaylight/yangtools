@@ -28,14 +28,15 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.reso
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterables;
 import com.google.common.io.ByteSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,9 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.annotation.concurrent.Immutable;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -92,7 +91,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilderImpl;
-import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
@@ -964,7 +962,14 @@ public final class YangParserImpl implements YangContextParser {
             if (mb != null) {
                 List<AugmentationSchemaBuilder> augments = mb.getAllAugments();
                 checkAugmentMandatoryNodes(augments);
-                Collections.sort(augments, Comparators.AUGMENT_COMP);
+                Collections.sort(augments, new Comparator<AugmentationSchemaBuilder>() {
+                    @Override
+                    public int compare(AugmentationSchemaBuilder o1, AugmentationSchemaBuilder o2) {
+                        int length1 = Iterables.size(o1.getTargetPath().getPathFromRoot());
+                        int length2 = Iterables.size(o2.getTargetPath().getPathFromRoot());
+                        return length1 - length2;
+                    }
+                });
                 for (AugmentationSchemaBuilder augment : augments) {
                     if (!(augment.isResolved())) {
                         boolean resolved = resolveAugment(augment, mb, modules, context);
