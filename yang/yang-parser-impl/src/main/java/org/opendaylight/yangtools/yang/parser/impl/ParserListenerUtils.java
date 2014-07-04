@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Optional;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Stack;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -1198,13 +1200,13 @@ public final class ParserListenerUtils {
             baseType = uintType;
         } else if ("enumeration".equals(typeName)) {
             List<EnumTypeDefinition.EnumPair> enumConstants = getEnumConstants(typeBody, actualPath, moduleName);
-            return new EnumerationType(baseTypePath, enumConstants);
+            return EnumerationType.create(baseTypePath, enumConstants, Optional.<EnumPair> absent());
         } else if ("string".equals(typeName)) {
             StringTypeDefinition stringType = StringType.getInstance();
             constraints.addLengths(stringType.getLengthConstraints());
             baseType = stringType;
         } else if ("bits".equals(typeName)) {
-            return new BitsType(baseTypePath, getBits(typeBody, actualPath, moduleName));
+            return BitsType.create(baseTypePath, getBits(typeBody, actualPath, moduleName));
         } else if ("leafref".equals(typeName)) {
             final String path = parseLeafrefPath(typeBody);
             final boolean absolute = path.startsWith("/");
@@ -1215,8 +1217,7 @@ public final class ParserListenerUtils {
             constraints.addLengths(binaryType.getLengthConstraints());
             baseType = binaryType;
         } else if ("instance-identifier".equals(typeName)) {
-            boolean requireInstance = isRequireInstance(typeBody);
-            return new InstanceIdentifier(null, requireInstance);
+            return InstanceIdentifier.create(isRequireInstance(typeBody));
         }
 
         if (parent instanceof TypeDefinitionBuilder && !(parent instanceof UnionTypeBuilder)) {
