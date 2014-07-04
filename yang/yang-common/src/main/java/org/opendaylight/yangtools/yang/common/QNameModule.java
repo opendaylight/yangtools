@@ -51,7 +51,7 @@ public final class QNameModule implements Immutable, Serializable {
         if (formattedRevision == null) {
             synchronized (this) {
                 if (formattedRevision == null) {
-                    formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
+                    formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision).intern();
                 }
             }
         }
