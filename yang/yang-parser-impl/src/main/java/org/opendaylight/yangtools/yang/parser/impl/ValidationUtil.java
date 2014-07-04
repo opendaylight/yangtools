@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
+import com.google.common.base.Splitter;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtContext;
@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
  * Validation utilities
  */
 final class ValidationUtil {
+    private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
 
     /**
      * It isn't desirable to create instance of this class
@@ -28,11 +29,11 @@ final class ValidationUtil {
     private ValidationUtil() {
     }
 
-    static void ex(String message) {
+    static void ex(final String message) {
         throw new YangValidationException(message);
     }
 
-    static Set<String> getDuplicates(Collection<String> keyList) {
+    static Set<String> getDuplicates(final Iterable<String> keyList) {
         Set<String> all = new HashSet<>();
         Set<String> duplicates = new HashSet<>();
 
@@ -44,16 +45,16 @@ final class ValidationUtil {
         return duplicates;
     }
 
-    static List<String> listKeysFromId(String keys) {
-        return Arrays.asList(keys.split(" "));
+    static Iterable<String> listKeysFromId(final String keys) {
+        return SPACE_SPLITTER.split(keys);
     }
 
-    static String getRootParentName(ParseTree ctx) {
+    static String getRootParentName(final ParseTree ctx) {
         ParseTree root = getRootParent(ctx);
         return ValidationUtil.getName(root);
     }
 
-    private static ParseTree getRootParent(ParseTree ctx) {
+    private static ParseTree getRootParent(final ParseTree ctx) {
         ParseTree root = ctx;
         while (root.getParent() != null) {
             if (root.getClass().equals(Module_stmtContext.class) || root.getClass().equals(Submodule_stmtContext.class)) {
@@ -64,18 +65,18 @@ final class ValidationUtil {
         return root;
     }
 
-    static String getName(ParseTree child) {
+    static String getName(final ParseTree child) {
         return ParserListenerUtils.stringFromNode(child);
     }
 
-    static String f(String base, Object... args) {
+    static String f(final String base, final Object... args) {
         return String.format(base, args);
     }
 
     /**
      * Get simple name from statement class e.g. Module from Module_stmt_context
      */
-    static String getSimpleStatementName(Class<? extends ParseTree> typeOfStatement) {
+    static String getSimpleStatementName(final Class<? extends ParseTree> typeOfStatement) {
 
         String className = typeOfStatement.getSimpleName();
         int lastIndexOf = className.indexOf('$');
@@ -85,7 +86,7 @@ final class ValidationUtil {
         return className.substring(0, index).replace('_', '-');
     }
 
-    static int countPresentChildrenOfType(ParseTree parent, Set<Class<? extends ParseTree>> expectedChildTypes) {
+    static int countPresentChildrenOfType(final ParseTree parent, final Set<Class<? extends ParseTree>> expectedChildTypes) {
         int foundChildrenOfType = 0;
 
         for (Class<? extends ParseTree> type : expectedChildTypes) {
@@ -94,7 +95,7 @@ final class ValidationUtil {
         return foundChildrenOfType;
     }
 
-    static int countPresentChildrenOfType(ParseTree parent, Class<? extends ParseTree> expectedChildType) {
+    static int countPresentChildrenOfType(final ParseTree parent, final Class<? extends ParseTree> expectedChildType) {
         int foundChildrenOfType = 0;
 
         for (int i = 0; i < parent.getChildCount(); i++) {
