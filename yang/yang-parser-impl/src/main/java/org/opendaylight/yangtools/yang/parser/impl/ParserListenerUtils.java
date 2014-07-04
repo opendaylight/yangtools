@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -137,6 +141,10 @@ import org.slf4j.LoggerFactory;
 
 public final class ParserListenerUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ParserListenerUtils.class);
+    private static final Splitter KEYDEF_SPLITTER = Splitter.on(' ').omitEmptyStrings();
+    private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
+    private static final Splitter DOT_DOT_SPLITTER = Splitter.on("..").trimResults();
+    private static final CharMatcher QUOTE_MATCHER = CharMatcher.is('"');
 
     private ParserListenerUtils() {
     }
@@ -155,7 +163,6 @@ public final class ParserListenerUtils {
                 final StringContext context = (StringContext) treeNode.getChild(i);
                 if (context != null) {
                     return stringFromStringContext(context);
-
                 }
             }
         }
@@ -163,19 +170,38 @@ public final class ParserListenerUtils {
     }
 
     private static String stringFromStringContext(final StringContext context) {
-        StringBuilder str = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         for (TerminalNode stringNode : context.STRING()) {
-            String result = stringNode.getText();
-            if(!result.contains("\"")){
-                str.append(result);
-            } else if (!(result.startsWith("\"")) && result.endsWith("\"")) {
+            final String str = stringNode.getText();
+            final int i = str.indexOf('"');
+
+            if (i == -1) {
+                sb.append(str);
+                continue;
+            }
+
+            /*
+             * The string contains quotes, so we have to tread carefully.
+             *
+             * FIXME: I think this code is broken, but proving that requires
+             *        making sense of the parser/lexer and how they tie into
+             *        this method. Especially what format 'str' can have and
+             *        how we need to handle it. The original check was:
+             *
+             *        if (!(result.startsWith("\"")) && result.endsWith("\""))
+             *
+             *        Looking at the parentheses it is hard to justify the
+             *        pair right after negation -- the intent may have been
+             *        to negate the entire expression.
+             */
+            if (i != 0 && str.endsWith("\"")) {
                 LOG.error("Syntax error in module {} at line {}: missing '\"'.", getParentModule(context),
                         context.getStart().getLine());
             } else {
-                str.append(result.replace("\"", ""));
+                sb.append(QUOTE_MATCHER.removeFrom(str));
             }
         }
-        return str.toString();
+        return sb.toString();
     }
 
     private static String getParentModule(final ParseTree ctx) {
@@ -311,14 +337,7 @@ public final class ParserListenerUtils {
      */
     public static List<String> createListKey(final Key_stmtContext ctx) {
         String keyDefinition = stringFromNode(ctx);
-        List<String> keys = new ArrayList<>();
-        String[] splittedKey = keyDefinition.split(" ");
-        for (String keyElement : splittedKey) {
-            if (!keyElement.isEmpty()) {
-                keys.add(keyElement);
-            }
-        }
-        return keys;
+        return Lists.newArrayList(KEYDEF_SPLITTER.split(keyDefinition));
     }
 
     /**
@@ -586,33 +605,34 @@ public final class ParserListenerUtils {
      */
     private static List<RangeConstraint> parseRangeConstraints(final Range_stmtContext ctx, final String moduleName) {
         final int line = ctx.getStart().getLine();
-        List<RangeConstraint> rangeConstraints = new ArrayList<>();
-        String description = null;
-        String reference = null;
+        Optional<String> description = Optional.absent();
+        Optional<String> reference = Optional.absent();
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Description_stmtContext) {
-                description = stringFromNode(child);
+                description = Optional.fromNullable(stringFromNode(child));
             } else if (child instanceof Reference_stmtContext) {
-                reference = stringFromNode(child);
+                reference = Optional.fromNullable(stringFromNode(child));
             }
         }
 
-        String rangeStr = stringFromNode(ctx);
-        String trimmed = rangeStr.replace(" ", "");
-        String[] splittedRange = trimmed.split("\\|");
-        for (String rangeDef : splittedRange) {
-            String[] splittedRangeDef = rangeDef.split("\\.\\.");
-            Number min;
-            Number max;
-            if (splittedRangeDef.length == 1) {
-                min = max = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
+        List<RangeConstraint> rangeConstraints = new ArrayList<>();
+        for (String def : PIPE_SPLITTER.split(stringFromNode(ctx))) {
+            final Iterator<String> split = DOT_DOT_SPLITTER.split(def).iterator();
+            final Number min = parseNumberConstraintValue(split.next(), moduleName, line);
+
+            final Number max;
+            if (split.hasNext()) {
+                max = parseNumberConstraintValue(split.next(), moduleName, line);
+                if (split.hasNext()) {
+                    throw new YangParseException(moduleName, ctx.getStart().getLine(), "Malformed length constraint \"" + def + "\".");
+                }
             } else {
-                min = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
-                max = parseNumberConstraintValue(splittedRangeDef[1], moduleName, line);
+                max = min;
             }
-            RangeConstraint range = BaseConstraints.rangeConstraint(min, max, description, reference);
+
+            RangeConstraint range = BaseConstraints.newRangeConstraint(min, max, description, reference);
             rangeConstraints.add(range);
         }
 
@@ -656,33 +676,34 @@ public final class ParserListenerUtils {
      */
     private static List<LengthConstraint> parseLengthConstraints(final Length_stmtContext ctx, final String moduleName) {
         final int line = ctx.getStart().getLine();
-        List<LengthConstraint> lengthConstraints = new ArrayList<>();
-        String description = null;
-        String reference = null;
+        Optional<String> description = Optional.absent();
+        Optional<String> reference = Optional.absent();
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Description_stmtContext) {
-                description = stringFromNode(child);
+                description = Optional.fromNullable(stringFromNode(child));
             } else if (child instanceof Reference_stmtContext) {
-                reference = stringFromNode(child);
+                reference = Optional.fromNullable(stringFromNode(child));
             }
         }
 
-        String lengthStr = stringFromNode(ctx);
-        String trimmed = lengthStr.replace(" ", "");
-        String[] splittedRange = trimmed.split("\\|");
-        for (String rangeDef : splittedRange) {
-            String[] splittedRangeDef = rangeDef.split("\\.\\.");
-            Number min;
-            Number max;
-            if (splittedRangeDef.length == 1) {
-                min = max = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
+        List<LengthConstraint> lengthConstraints = new ArrayList<>();
+        for (String def : PIPE_SPLITTER.split(stringFromNode(ctx))) {
+            final Iterator<String> split = DOT_DOT_SPLITTER.split(def).iterator();
+            final Number min = parseNumberConstraintValue(split.next(), moduleName, line);
+
+            final Number max;
+            if (split.hasNext()) {
+                max = parseNumberConstraintValue(split.next(), moduleName, line);
+                if (split.hasNext()) {
+                    throw new YangParseException(moduleName, ctx.getStart().getLine(), "Malformed length constraint \"" + def + "\".");
+                }
             } else {
-                min = parseNumberConstraintValue(splittedRangeDef[0], moduleName, line);
-                max = parseNumberConstraintValue(splittedRangeDef[1], moduleName, line);
+                max = min;
             }
-            LengthConstraint range = BaseConstraints.lengthConstraint(min, max, description, reference);
+
+            LengthConstraint range = BaseConstraints.newLengthConstraint(min, max, description, reference);
             lengthConstraints.add(range);
         }
 
@@ -705,7 +726,7 @@ public final class ParserListenerUtils {
             result = new UnknownBoundaryNumber(value);
         } else {
             try {
-                if (value.contains(".")) {
+                if (value.indexOf('.') != -1) {
                     result = new BigDecimal(value);
                 } else {
                     result = new BigInteger(value);
