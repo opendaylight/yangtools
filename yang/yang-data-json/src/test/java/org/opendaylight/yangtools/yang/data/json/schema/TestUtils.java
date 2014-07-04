@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
@@ -52,22 +53,21 @@ import org.slf4j.LoggerFactory;
 public class TestUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
-
-    private static final String NAMESPACE_BASE = "simple:container:yang";
-    private static final String NAMESPACE_AUGMENT = "augment:container:yang";
-    private static Date revision_base;
-    private static Date revision_augment;
+    private static final QNameModule MODULE_AUGMENT;
+    private static final QNameModule MODULE_BASE;
 
     static {
+        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
         try {
-            revision_base = new SimpleDateFormat("yyyy-MM-dd").parse("2013-11-12");
-            revision_augment = new SimpleDateFormat("yyyy-MM-dd").parse("2014-03-19");
+            MODULE_BASE = QNameModule.create(URI.create("simple:container:yang"), df.parse("2013-11-12"));
+            MODULE_AUGMENT = QNameModule.create(URI.create("augment:container:yang"), df.parse("2014-03-19"));
         } catch (ParseException e) {
-            e.printStackTrace();
+            throw new ExceptionInInitializerError(e);
         }
     }
 
-    public static Set<Module> loadModules(URI resourceURI) throws FileNotFoundException {
+    public static Set<Module> loadModules(final URI resourceURI) throws FileNotFoundException {
         final YangModelParser parser = new YangParserImpl();
         final File testDir = new File(resourceURI);
         final String[] fileList = testDir.list();
@@ -81,7 +81,7 @@ public class TestUtils {
         return parser.parseYangModels(testFiles);
     }
 
-    public static Set<Module> loadModulesFrom(String yangPath) throws URISyntaxException {
+    public static Set<Module> loadModulesFrom(final String yangPath) throws URISyntaxException {
         try {
             return loadModules(TestUtils.class.getResource(yangPath).toURI());
         } catch (FileNotFoundException e) {
@@ -91,7 +91,7 @@ public class TestUtils {
         return null;
     }
 
-    public static DataSchemaNode resolveDataSchemaNode(String searchedDataSchemaName, Module module) {
+    public static DataSchemaNode resolveDataSchemaNode(final String searchedDataSchemaName, final Module module) {
         assertNotNull("Module can't be null", module);
 
         if (searchedDataSchemaName != null) {
@@ -106,7 +106,7 @@ public class TestUtils {
         return null;
     }
 
-    public static Module resolveModule(String searchedModuleName, Set<Module> modules) {
+    public static Module resolveModule(final String searchedModuleName, final Set<Module> modules) {
         assertNotNull("Modules can't be null.", modules);
         if (searchedModuleName != null) {
             for (Module m : modules) {
@@ -125,64 +125,64 @@ public class TestUtils {
      * /cnsn-to-normalized-node/simple-conainer.json
      */
     public static CompositeNode prepareCompositeNodeStruct() {
-        MutableCompositeNode cont = createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base,
-                "cont"), null, null, null, null);
+        MutableCompositeNode cont = createMutableCompositeNode(QName.create(MODULE_BASE, "cont"), null, null, null,
+                null);
 
         // cont1
         List<Node<?>> contChilds = new ArrayList<>();
-        contChilds.add(createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "cont1"), cont,
+        contChilds.add(createMutableCompositeNode(QName.create(MODULE_BASE, "cont1"),
+                cont,
                 Collections.<Node<?>> emptyList(), null, null));
 
         // cont2
-        MutableCompositeNode cont2 = createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base,
-                "cont2"), cont, null, null, null);
+        MutableCompositeNode cont2 = createMutableCompositeNode(QName.create(MODULE_BASE, "cont2"), cont, null, null,
+                null);
         List<Node<?>> cont2Childs = new ArrayList<>();
-        cont2Childs.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf21"), cont2,
+        cont2Childs.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lf21"), cont2,
                 "value in cont2/lf21", null, null));
         cont2.setValue(cont2Childs);
         contChilds.add(cont2);
 
         // lst1
-        contChilds.add(createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lst1"), cont,
+        contChilds.add(createMutableCompositeNode(QName.create(MODULE_BASE, "lst1"), cont,
                 Collections.<Node<?>> emptyList(), null, null));
 
         // lst2
-        MutableCompositeNode lst2_1 = createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base,
-                "lst2"), cont, null, null, null);
+        MutableCompositeNode lst2_1 = createMutableCompositeNode(QName.create(MODULE_BASE, "lst2"), cont, null, null,
+                null);
         List<Node<?>> lst2_1Childs = new ArrayList<>();
-        lst2_1Childs.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf21"), lst2_1,
+        lst2_1Childs
+        .add(createMutableSimpleNode(QName.create(MODULE_BASE, "lf21"),
+                lst2_1,
                 "some value21", null, null));
         lst2_1.setValue(lst2_1Childs);
         contChilds.add(lst2_1);
 
-        MutableCompositeNode lst2_2 = createMutableCompositeNode(new QName(URI.create(NAMESPACE_BASE), revision_base,
-                "lst2"), cont, null, null, null);
+        MutableCompositeNode lst2_2 = createMutableCompositeNode(QName.create(MODULE_BASE, "lst2"), cont, null, null,
+                null);
         List<Node<?>> lst2_2Childs = new ArrayList<>();
-        lst2_2Childs.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf22"), lst2_2,
-                "some value22", null, null));
+        lst2_2Childs
+        .add(createMutableSimpleNode(QName.create(MODULE_BASE, "lf22"), lst2_2, "some value22", null, null));
         lst2_2.setValue(lst2_2Childs);
         contChilds.add(lst2_2);
 
         // lflst1
-        contChilds.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lflst1"), cont,
-                "lflst1_1", null, null));
-        contChilds.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lflst1"), cont,
-                "lflst1_2", null, null));
+        contChilds.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lflst1"), cont, "lflst1_1", null, null));
+        contChilds.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lflst1"), cont, "lflst1_2", null, null));
 
         // lf1
-        contChilds.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf1"), cont,
-                "lf1", null, null));
+        contChilds.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lf1"), cont, "lf1", null, null));
 
         // lf11
-        contChilds.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_BASE), revision_base, "lf11"), cont,
-                "value from case (cs1)", null, null));
+        contChilds.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lf11"), cont, "value from case (cs1)", null,
+                null));
 
         // cont3
-        MutableCompositeNode cont3 = createMutableCompositeNode(new QName(URI.create(NAMESPACE_AUGMENT),
-                revision_augment, "cont3"), cont, null, null, null);
+        MutableCompositeNode cont3 = createMutableCompositeNode(QName.create(MODULE_AUGMENT, "cont3"), cont, null,
+                null, null);
         List<Node<?>> cont3Childs = new ArrayList<>();
-        cont3Childs.add(createMutableSimpleNode(new QName(URI.create(NAMESPACE_AUGMENT), revision_augment, "lf31"),
-                cont3, "value in leaf in augment", null, null));
+        cont3Childs.add(createMutableSimpleNode(QName.create(MODULE_AUGMENT, "lf31"), cont3,
+                "value in leaf in augment", null, null));
         cont3.setValue(cont3Childs);
         contChilds.add(cont3);
 
@@ -203,7 +203,7 @@ public class TestUtils {
                 .withNodeIdentifier(getNodeIdentifier("cont2"))
                 .withChild(
                         Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("lf21"))
-                                .withValue("value in cont2/lf21").build()).build());
+                        .withValue("value in cont2/lf21").build()).build());
 
         CollectionNodeBuilder<MapEntryNode, MapNode> lst1 = Builders.mapBuilder().withNodeIdentifier(
                 getNodeIdentifier("lst1"));
@@ -249,54 +249,51 @@ public class TestUtils {
                 .withNodeIdentifier(getNodeIdentifier("chc"))
                 .withChild(
                         Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("lf11"))
-                                .withValue("value from case (cs1)").build()).build());
+                        .withValue("value from case (cs1)").build()).build());
 
         Set<QName> children = new HashSet<>();
-        children.add(new QName(new URI(NAMESPACE_AUGMENT), revision_augment, "cont3"));
+        children.add(QName.create(MODULE_AUGMENT, "cont3"));
 
         containerBuilder.withChild(Builders
                 .augmentationBuilder()
                 .withNodeIdentifier(getAugmentationIdentifier(null, null, null, children))
                 .withChild(
                         Builders.containerBuilder()
-                                .withNodeIdentifier(getNodeIdentifier("cont3", NAMESPACE_AUGMENT, revision_augment))
-                                .withChild(
-                                        Builders.leafBuilder()
-                                                .withNodeIdentifier(
-                                                        getNodeIdentifier("lf31", NAMESPACE_AUGMENT, revision_augment))
-                                                .withValue("value in leaf in augment").build()).build()).build());
+                        .withNodeIdentifier(getNodeIdentifier(MODULE_AUGMENT, "cont3"))
+                        .withChild(
+                                Builders.leafBuilder()
+                                .withNodeIdentifier(getNodeIdentifier(MODULE_AUGMENT, "lf31"))
+                                .withValue("value in leaf in augment").build()).build()).build());
 
         ContainerNode build = containerBuilder.build();
         return build;
     }
 
-    private static InstanceIdentifier.NodeIdentifier getNodeIdentifier(String localName) {
-        return new InstanceIdentifier.NodeIdentifier(new QName(URI.create(NAMESPACE_BASE), revision_base, localName));
+    private static InstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
+        return getNodeIdentifier(MODULE_BASE, localName);
     }
 
-    private static InstanceIdentifier.NodeIdentifier getNodeIdentifier(String localName, String namespace, Date revision) {
-        return new InstanceIdentifier.NodeIdentifier(new QName(URI.create(namespace), revision, localName));
+    private static InstanceIdentifier.NodeIdentifier getNodeIdentifier(final QNameModule module, final String localName) {
+        return new InstanceIdentifier.NodeIdentifier(QName.create(module, localName));
     }
 
-    private static InstanceIdentifier.NodeWithValue getNodeIdentifier(String localName, Object value) {
-        return new InstanceIdentifier.NodeWithValue(new QName(URI.create(NAMESPACE_BASE), revision_base, localName),
+    private static InstanceIdentifier.NodeWithValue getNodeIdentifier(final String localName, final Object value) {
+        return new InstanceIdentifier.NodeWithValue(QName.create(MODULE_BASE, localName),
                 value);
     }
 
-    private static InstanceIdentifier.NodeIdentifierWithPredicates getNodeIdentifierPredicate(String localName,
-            Map<String, Object> keys) {
+    private static InstanceIdentifier.NodeIdentifierWithPredicates getNodeIdentifierPredicate(final String localName,
+            final Map<String, Object> keys) {
         Map<QName, Object> predicate = new HashMap<>();
         for (String key : keys.keySet()) {
-            predicate.put(new QName(URI.create(NAMESPACE_BASE), revision_base, key), keys.get(key));
+            predicate.put(QName.create(MODULE_BASE, key), keys.get(key));
         }
 
-        return new InstanceIdentifier.NodeIdentifierWithPredicates(
-
-        new QName(URI.create(NAMESPACE_BASE), revision_base, localName), predicate);
+        return new InstanceIdentifier.NodeIdentifierWithPredicates(QName.create(MODULE_BASE, localName), predicate);
     }
 
-    private static InstanceIdentifier.AugmentationIdentifier getAugmentationIdentifier(String localName,
-            String namespace, Date revision, Set<QName> children) {
+    private static InstanceIdentifier.AugmentationIdentifier getAugmentationIdentifier(final String localName,
+            final String namespace, final Date revision, final Set<QName> children) {
         return new InstanceIdentifier.AugmentationIdentifier(children);
     }
 

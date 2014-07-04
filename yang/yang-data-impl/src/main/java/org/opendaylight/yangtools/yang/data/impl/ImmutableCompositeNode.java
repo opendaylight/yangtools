@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -30,14 +33,11 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.util.AbstractCompositeNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> implements //
-        Immutable, //
-        CompositeNode, //
-        AttributesContainer, //
-        Serializable {
+Immutable, //
+CompositeNode, //
+AttributesContainer, //
+Serializable {
 
     private static final long serialVersionUID = 100L;
 
@@ -164,12 +164,12 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
 
     @Override
     public List<CompositeNode> getCompositesByName(final String children) {
-        return getCompositesByName(new QName(getNodeType(), children));
+        return getCompositesByName(QName.create(getNodeType(), children));
     }
 
     @Override
     public List<SimpleNode<?>> getSimpleNodesByName(final String children) {
-        return getSimpleNodesByName(new QName(getNodeType(), children));
+        return getSimpleNodesByName(QName.create(getNodeType(), children));
     }
 
     @Override

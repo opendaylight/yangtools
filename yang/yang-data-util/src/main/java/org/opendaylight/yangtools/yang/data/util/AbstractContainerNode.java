@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 
 public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> implements CompositeNode {
 
-    public SimpleNode<?> getFirstSimpleByName(QName leaf) {
+    @Override
+    public SimpleNode<?> getFirstSimpleByName(final QName leaf) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leaf);
         if (list.size() == 0) {
             return null;
@@ -27,18 +28,20 @@ public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> 
         return list.get(0);
     }
 
-    protected AbstractContainerNode(QName name, CompositeNode parent) {
+    protected AbstractContainerNode(final QName name, final CompositeNode parent) {
         super(name, parent);
     }
 
-    public AbstractContainerNode(QName name) {
+    public AbstractContainerNode(final QName name) {
         super(name, null);
     }
 
+    @Override
     public List<Node<?>> getChildren() {
         return getValue();
     }
 
+    @Override
     public List<Node<?>> getValue() {
         Map<QName, List<Node<?>>> map = getNodeMap();
         if (map == null) {
@@ -54,7 +57,8 @@ public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> 
 
     protected abstract Map<QName, List<Node<?>>> getNodeMap();
 
-    public List<CompositeNode> getCompositesByName(QName children) {
+    @Override
+    public List<CompositeNode> getCompositesByName(final QName children) {
         Map<QName, List<Node<?>>> map = getNodeMap();
         if (map == null) {
             throw new IllegalStateException("nodeMap should not be null");
@@ -69,7 +73,8 @@ public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> 
         return list;
     }
 
-    public List<SimpleNode<?>> getSimpleNodesByName(QName children) {
+    @Override
+    public List<SimpleNode<?>> getSimpleNodesByName(final QName children) {
         Map<QName, List<Node<?>>> map = getNodeMap();
         if (map == null) {
             throw new IllegalStateException("nodeMap should not be null");
@@ -85,7 +90,8 @@ public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> 
         return list;
     }
 
-    public CompositeNode getFirstCompositeByName(QName container) {
+    @Override
+    public CompositeNode getFirstCompositeByName(final QName container) {
         List<CompositeNode> list = getCompositesByName(container);
         if (list.size() == 0) {
             return null;
@@ -93,7 +99,7 @@ public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> 
         return list.get(0);
     }
 
-    public SimpleNode<?> getFirstLeafByName(QName leaf) {
+    public SimpleNode<?> getFirstLeafByName(final QName leaf) {
         List<SimpleNode<?>> list = getSimpleNodesByName(leaf);
         if (list.size() == 0) {
             return null;
@@ -101,15 +107,17 @@ public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> 
         return list.get(0);
     }
 
-    public List<CompositeNode> getCompositesByName(String children) {
+    @Override
+    public List<CompositeNode> getCompositesByName(final String children) {
         return getCompositesByName(localQName(children));
     }
 
-    public List<SimpleNode<?>> getSimpleNodesByName(String children) {
+    @Override
+    public List<SimpleNode<?>> getSimpleNodesByName(final String children) {
         return getSimpleNodesByName(localQName(children));
     }
 
-    private QName localQName(String str) {
-        return new QName(getNodeType(), str);
+    private QName localQName(final String str) {
+        return QName.create(getNodeType(), str);
     }
 }

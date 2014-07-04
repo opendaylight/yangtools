@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class QNameTest {
     private final String namespace = "urn:foo", revision = "2013-12-24", localName = "bar";
@@ -80,13 +82,13 @@ public class QNameTest {
         assertTrue(b.compareTo(a) > 0);
 
         // compare with 1 null namespace
-        a = new QName(null, QName.parseRevision(revision), A);
-        b = new QName(URI.create(A), QName.parseRevision(revision), A);
+        a = QName.create(null, QName.parseRevision(revision), A);
+        b = QName.create(URI.create(A), QName.parseRevision(revision), A);
         assertTrue(a.compareTo(b) < 0);
         assertTrue(b.compareTo(a) > 0);
 
         // compare with both null namespace
-        b = new QName(null, QName.parseRevision(revision), A);
+        b = QName.create(null, QName.parseRevision(revision), A);
         assertTrue(a.compareTo(b) == 0);
         assertTrue(b.compareTo(a) == 0);
 
@@ -97,18 +99,18 @@ public class QNameTest {
         assertTrue(b.compareTo(a) > 0);
 
         // compare with 1 null revision
-        a = new QName(URI.create(A), null, A);
-        b = new QName(URI.create(A), QName.parseRevision(revision), A);
+        a = QName.create(URI.create(A), null, A);
+        b = QName.create(URI.create(A), QName.parseRevision(revision), A);
         assertTrue(a.compareTo(b) < 0);
         assertTrue(b.compareTo(a) > 0);
 
         // compare with both null revision
-        b = new QName(URI.create(A), null, A);
+        b = QName.create(URI.create(A), null, A);
         assertTrue(a.compareTo(b) == 0);
         assertTrue(b.compareTo(a) == 0);
     }
 
-    private void assertLocalNameFails(String localName) {
+    private void assertLocalNameFails(final String localName) {
         try {
             new QName((URI)null, localName);
             fail("Local name should fail:" + localName);

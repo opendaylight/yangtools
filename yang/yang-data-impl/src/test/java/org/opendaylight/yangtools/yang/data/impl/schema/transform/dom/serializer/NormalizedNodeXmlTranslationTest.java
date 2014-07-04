@@ -7,6 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -63,13 +70,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 @RunWith(Parameterized.class)
 public class NormalizedNodeXmlTranslationTest {
     private static final Logger logger = LoggerFactory.getLogger(NormalizedNodeXmlTranslationTest.class);
@@ -112,7 +112,7 @@ public class NormalizedNodeXmlTranslationTest {
                         new InstanceIdentifier.NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
                                 predicates));
         NormalizedNodeBuilder<InstanceIdentifier.NodeIdentifier,Object,LeafNode<Object>> uint32InListBuilder
-                = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
+        = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
 
         list1Builder.withChild(uint32InListBuilder.withValue(3L).build());
 
@@ -120,15 +120,15 @@ public class NormalizedNodeXmlTranslationTest {
         b.withChild(listBuilder.build());
 
         NormalizedNodeBuilder<InstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> booleanBuilder
-                = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
+        = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
         booleanBuilder.withValue(false);
         b.withChild(booleanBuilder.build());
 
         ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder
-                = Builders.leafSetBuilder().withNodeIdentifier(getNodeIdentifier("leafList"));
+        = Builders.leafSetBuilder().withNodeIdentifier(getNodeIdentifier("leafList"));
 
         NormalizedNodeBuilder<InstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder
-                = Builders.leafSetEntryBuilder().withNodeIdentifier(new InstanceIdentifier.NodeWithValue(getNodeIdentifier("leafList").getNodeType(), "a"));
+        = Builders.leafSetEntryBuilder().withNodeIdentifier(new InstanceIdentifier.NodeWithValue(getNodeIdentifier("leafList").getNodeType(), "a"));
 
         leafList1Builder.withValue("a");
 
@@ -145,51 +145,51 @@ public class NormalizedNodeXmlTranslationTest {
 
         b.withChild(
                 Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch2"))
-                        .withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c2Leaf")).withValue("2").build())
-                        .withChild(
-                                Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("c2DeepChoice"))
-                                        .withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c2DeepChoiceCase1Leaf2")).withValue("2").build())
-                                        .build()
+                .withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c2Leaf")).withValue("2").build())
+                .withChild(
+                        Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("c2DeepChoice"))
+                        .withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c2DeepChoiceCase1Leaf2")).withValue("2").build())
+                        .build()
                         )
                         .build()
-        );
+                );
 
         b.withChild(
                 Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch3")).withChild(
                         Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c3Leaf")).withValue("3").build())
-                .build());
+                        .build());
 
         b.withChild(
                 Builders.augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("augLeaf")).withChild(
                         Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("augLeaf")).withValue("augment").build())
-                .build());
+                        .build());
 
         b.withChild(
                 Builders.augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("ch")).withChild(
                         Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch"))
-                                .withChild(
-                                        Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c1Leaf")).withValue("1").build())
+                        .withChild(
+                                Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c1Leaf")).withValue("1").build())
                                 .withChild(
                                         Builders.augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("c1Leaf_AnotherAugment", "deepChoice"))
-                                                .withChild(
-                                                        Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c1Leaf_AnotherAugment")).withValue("1").build())
+                                        .withChild(
+                                                Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c1Leaf_AnotherAugment")).withValue("1").build())
                                                 .withChild(
                                                         Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("deepChoice"))
-                                                                .withChild(
-                                                                        Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("deepLeafc1")).withValue("1").build()
+                                                        .withChild(
+                                                                Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("deepLeafc1")).withValue("1").build()
                                                                 ).build()
-                                                ).build()
-                                ).build()
-        ).build());
+                                                        ).build()
+                                        ).build()
+                        ).build());
 
         return b.build();
     }
 
-    private static InstanceIdentifier.NodeIdentifier getNodeIdentifier(String localName) {
-        return new InstanceIdentifier.NodeIdentifier(new QName(URI.create(NAMESPACE), revision, localName));
+    private static InstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
+        return new InstanceIdentifier.NodeIdentifier(QName.create(URI.create(NAMESPACE), revision, localName));
     }
 
-    public static InstanceIdentifier.AugmentationIdentifier getAugmentIdentifier(String... childNames) {
+    public static InstanceIdentifier.AugmentationIdentifier getAugmentIdentifier(final String... childNames) {
         Set<QName> qn = Sets.newHashSet();
 
         for (String childName : childNames) {
@@ -199,7 +199,7 @@ public class NormalizedNodeXmlTranslationTest {
         return new InstanceIdentifier.AugmentationIdentifier(qn);
     }
 
-    public NormalizedNodeXmlTranslationTest(String yangPath, String xmlPath, ContainerNode expectedNode) {
+    public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath, final ContainerNode expectedNode) {
         SchemaContext schema = parseTestSchema(yangPath);
         this.xmlPath = xmlPath;
         this.containerNode = (ContainerSchemaNode) NormalizedDataBuilderTest.getSchemaNode(schema, "test", "container");
@@ -211,23 +211,23 @@ public class NormalizedNodeXmlTranslationTest {
     private final String xmlPath;
 
 
-    SchemaContext parseTestSchema(String... yangPath) {
+    SchemaContext parseTestSchema(final String... yangPath) {
         YangParserImpl yangParserImpl = new YangParserImpl();
         Set<Module> modules = yangParserImpl.parseYangModelsFromStreams(getTestYangs(yangPath));
         return yangParserImpl.resolveSchemaContext(modules);
     }
 
-    List<InputStream> getTestYangs(String... yangPaths) {
+    List<InputStream> getTestYangs(final String... yangPaths) {
 
         return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
                 new Function<String, InputStream>() {
-                    @Override
-                    public InputStream apply(String input) {
-                        InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
-                        Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
-                        return resourceAsStream;
-                    }
-                }));
+            @Override
+            public InputStream apply(final String input) {
+                InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
+                Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
+                return resourceAsStream;
+            }
+        }));
     }
 
     @Test
@@ -236,10 +236,11 @@ public class NormalizedNodeXmlTranslationTest {
 
         ContainerNode built =
                 DomToNormalizedNodeParserFactory.getInstance(DomUtils.defaultValueCodecProvider()).getContainerNodeParser().parse(
-                Collections.singletonList(doc.getDocumentElement()), containerNode);
+                        Collections.singletonList(doc.getDocumentElement()), containerNode);
 
-        if (expectedNode != null)
+        if (expectedNode != null) {
             junit.framework.Assert.assertEquals(expectedNode, built);
+        }
 
         logger.info("{}", built);
 
@@ -257,7 +258,7 @@ public class NormalizedNodeXmlTranslationTest {
         boolean diff = new Diff(XMLUnit.buildControlDocument(toString(doc.getDocumentElement())), XMLUnit.buildTestDocument(toString(el))).similar();
     }
 
-    private Document loadDocument(String xmlPath) throws Exception {
+    private Document loadDocument(final String xmlPath) throws Exception {
         InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(xmlPath);
 
         Document currentConfigElement = readXmlToDocument(resourceAsStream);
@@ -276,7 +277,7 @@ public class NormalizedNodeXmlTranslationTest {
         BUILDERFACTORY = factory;
     }
 
-    private Document readXmlToDocument(InputStream xmlContent) throws IOException, SAXException {
+    private Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
         DocumentBuilder dBuilder;
         try {
             dBuilder = BUILDERFACTORY.newDocumentBuilder();
@@ -289,7 +290,7 @@ public class NormalizedNodeXmlTranslationTest {
         return doc;
     }
 
-    public static String toString(Element xml) {
+    public static String toString(final Element xml) {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
