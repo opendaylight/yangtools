@@ -12,9 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 
 public final class BindingMapping {
@@ -109,7 +107,7 @@ public final class BindingMapping {
      *         or <code>null</code> if the input {@link String} {@code s} was
      *         <code>null</code>.
      */
-    private static String toFirstUpper(final String s) {
+    public static String toFirstUpper(final String s) {
         if (s == null || s.length() == 0) {
             return s;
         }

@@ -8,20 +8,22 @@
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
 import java.util.Comparator;
+import java.util.Iterator;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 
 public final class Comparators {
 
     /**
-     * Comparator based on alphabetical order of local name of SchemaNode's qname.
+     * Comparator based on alphabetical order of local name of SchemaNode's
+     * qname.
      */
     public static final SchemaNodeComparator SCHEMA_NODE_COMP = new SchemaNodeComparator();
 
     /**
-     * Comparator based on augment target path length.
+     * Comparator based on augment target path.
      */
-    @Deprecated
     public static final AugmentComparator AUGMENT_COMP = new AugmentComparator();
 
     private Comparators() {
@@ -34,10 +36,26 @@ public final class Comparators {
         }
     }
 
-    private static final class AugmentComparator implements Comparator<AugmentationSchemaBuilder> {
+    private static final class AugmentComparator implements Comparator<AugmentationSchema> {
         @Override
-        public int compare(final AugmentationSchemaBuilder o1, final AugmentationSchemaBuilder o2) {
-            return o1.getTargetPath().getPath().size() - o2.getTargetPath().getPath().size();
+        public int compare(AugmentationSchema augSchema1, AugmentationSchema augSchema2) {
+            final Iterator<QName> thisIt = augSchema1.getTargetPath().getPathFromRoot().iterator();
+            final Iterator<QName> otherIt = augSchema2.getTargetPath().getPathFromRoot().iterator();
+
+            while (thisIt.hasNext()) {
+                if (otherIt.hasNext()) {
+                    final int comp = thisIt.next().compareTo(otherIt.next());
+                    if (comp != 0) {
+                        return comp;
+                    }
+                } else {
+                    return 1;
+                }
+            }
+            if (otherIt.hasNext()) {
+                return -1;
+            }
+            return 0;
         }
 
     }
