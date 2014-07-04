@@ -81,6 +81,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import com.google.common.collect.Sets
 import java.util.TreeSet
 import org.opendaylight.yangtools.yang.binding.BaseIdentity
+import java.util.regex.Pattern
 
 public class BindingGeneratorImpl implements BindingGenerator {
 
@@ -114,6 +115,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * Constant with the concrete name of identifier.
      */
     private val static String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
+
+    private val static Pattern COLON_PATTERN = Pattern.compile(":", Pattern.LITERAL);
 
     /**
      * Resolves generated types from <code>context</code> schema nodes of all
@@ -1341,7 +1344,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 val nodeParam = node.nodeParameter;
                 var IdentitySchemaNode identity = null;
                 var String basePackageName = null;
-                val String[] splittedElement = nodeParam.split(":");
+                val String[] splittedElement = COLON_PATTERN.split(nodeParam);
                 if (splittedElement.length == 1) {
                     identity = findIdentityByName(module.identities, splittedElement.get(0));
                     basePackageName = moduleNamespaceToPackageName(module);
