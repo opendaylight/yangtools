@@ -12,7 +12,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.Deque;
+import java.util.LinkedList;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -66,7 +67,7 @@ public final class XmlTreeBuilder {
     public static Node<?> buildDataTree(final InputStream inputStream) throws XMLStreamException {
         eventReader = xmlInputFactory.createXMLEventReader(inputStream);
 
-        final Stack<Node<?>> processingQueue = new Stack<>();
+        final Deque<Node<?>> processingQueue = new LinkedList<>();
         Node<?> parentNode = null;
         Node<?> root = null;
         while (eventReader.hasNext()) {

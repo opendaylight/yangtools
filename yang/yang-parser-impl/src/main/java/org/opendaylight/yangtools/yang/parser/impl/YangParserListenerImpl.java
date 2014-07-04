@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.checkMissingBody;
-import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.createActualSchemaPath;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.createListKey;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getConfig;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getIdentityrefBase;
@@ -32,10 +31,12 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.Date;
+import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
@@ -105,7 +106,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final String AUGMENT_STR = "augment";
 
     private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private final Stack<Stack<QName>> actualPath = new Stack<>();
+    private final Deque<Deque<QName>> actualPath = new LinkedList<>();
     private final String sourcePath;
     private ModuleBuilder moduleBuilder;
     private String moduleName;
@@ -131,7 +132,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         moduleName = stringFromNode(ctx);
         LOGGER.trace("entering module {}", moduleName);
         enterLog("module", moduleName, 0);
-        actualPath.push(new Stack<QName>());
+        actualPath.push(new ArrayDeque<QName>());
 
         moduleBuilder = new ModuleBuilder(moduleName, sourcePath);
 
@@ -163,7 +164,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         moduleName = stringFromNode(ctx);
         LOGGER.trace("entering submodule {}", moduleName);
         enterLog("submodule", moduleName, 0);
-        actualPath.push(new Stack<QName>());
+        actualPath.push(new ArrayDeque<QName>());
 
         moduleBuilder = new ModuleBuilder(moduleName, true, sourcePath);
 
@@ -332,7 +333,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final int line = ctx.getStart().getLine();
         final String augmentPath = stringFromNode(ctx);
         enterLog(AUGMENT_STR, augmentPath, line);
-        actualPath.push(new Stack<QName>());
+        actualPath.push(new ArrayDeque<QName>());
 
         AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, augmentOrder++);
 
@@ -612,7 +613,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override
     public void enterUses_augment_stmt(final YangParser.Uses_augment_stmtContext ctx) {
-        actualPath.push(new Stack<QName>());
+        actualPath.push(new ArrayDeque<QName>());
         final int line = ctx.getStart().getLine();
         final String augmentPath = stringFromNode(ctx);
         enterLog(AUGMENT_STR, augmentPath, line);
@@ -725,6 +726,17 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     public void exitList_stmt(final List_stmtContext ctx) {
         moduleBuilder.exitNode();
         exitLog("list", removeNodeFromPath());
+    }
+
+    /**
+     * Create SchemaPath from actualPath and new node name.
+     *
+     * @param actualPath
+     *            current position in model
+     * @return SchemaPath object
+     */
+    private static SchemaPath createActualSchemaPath(final Iterable<QName> actualPath) {
+        return SchemaPath.create(actualPath, true);
     }
 
     @Override

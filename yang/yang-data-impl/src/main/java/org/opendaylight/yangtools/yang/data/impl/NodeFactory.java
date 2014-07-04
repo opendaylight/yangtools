@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.yang.data.impl;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -53,7 +54,7 @@ public abstract class NodeFactory {
             final CompositeNode parent, final Object value, final ModifyAction modifyAction, final SimpleNode<T> original) {
         @SuppressWarnings("unchecked")
         MutableSimpleNodeTOImpl<T> simpleNodeTOImpl =
-                new MutableSimpleNodeTOImpl<T>(qName, parent, (T) value, modifyAction);
+        new MutableSimpleNodeTOImpl<T>(qName, parent, (T) value, modifyAction);
         simpleNodeTOImpl.setOriginal(original);
         return simpleNodeTOImpl;
     }
@@ -125,7 +126,7 @@ public abstract class NodeFactory {
      */
     public static <T> SimpleNode<T> copyNode(final SimpleNode<T> node) {
         SimpleNode<T> twinNode = createImmutableSimpleNode(
-                    node.getNodeType(), node.getParent(), node.getValue());
+                node.getNodeType(), node.getParent(), node.getValue());
         return twinNode;
     }
 
@@ -136,8 +137,8 @@ public abstract class NodeFactory {
      */
     public static <T> MutableSimpleNode<T> copyNodeAsMutable(final SimpleNode<T> node) {
         MutableSimpleNode<T> twinNode = createMutableSimpleNode(
-                    node.getNodeType(), node.getParent(), node.getValue(),
-                    node.getModificationAction(), null);
+                node.getNodeType(), node.getParent(), node.getValue(),
+                node.getModificationAction(), null);
         return twinNode;
     }
 
@@ -159,7 +160,7 @@ public abstract class NodeFactory {
      * have no reference to this copy
      */
     public static CompositeNode copyNode(final CompositeNode node) {
-       return copyNode(node, node.getValue().toArray(new Node<?>[0]));
+        return copyNode(node, node.getValue().toArray(new Node<?>[0]));
     }
 
     /**
@@ -178,7 +179,7 @@ public abstract class NodeFactory {
 
         MutableCompositeNode mutableRoot = createMutableCompositeNode(node.getNodeType(), null, null,
                 node.getModificationAction(), null);
-        Stack<SimpleEntry<CompositeNode, MutableCompositeNode>> jobQueue = new Stack<>();
+        final Deque<SimpleEntry<CompositeNode, MutableCompositeNode>> jobQueue = new LinkedList<>();
         jobQueue.push(new SimpleEntry<CompositeNode, MutableCompositeNode>(node, mutableRoot));
         originalToCopy.put(node, mutableRoot);
 
@@ -224,7 +225,7 @@ public abstract class NodeFactory {
      */
     public static CompositeNode copyDeepAsImmutable(final CompositeNode node,
             final Map<Node<?>, Node<?>> originalToCopyArg) {
-        Stack<CompositeNode> jobQueue = new Stack<>();
+        final Deque<CompositeNode> jobQueue = new LinkedList<>();
         jobQueue.push(node);
 
         Map<Node<?>, Node<?>> originalToCopy = originalToCopyArg;

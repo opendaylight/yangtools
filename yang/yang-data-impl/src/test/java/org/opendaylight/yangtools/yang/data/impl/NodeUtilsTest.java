@@ -10,9 +10,10 @@ package org.opendaylight.yangtools.yang.data.impl;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -145,7 +146,7 @@ public class NodeUtilsTest {
     }
 
     private static void checkFamilyBinding(final CompositeNode treeRoot) throws Exception {
-        Stack<CompositeNode> jobQueue = new Stack<>();
+        final Deque<CompositeNode> jobQueue = new LinkedList<>();
         jobQueue.push(treeRoot);
 
         while (!jobQueue.isEmpty()) {
