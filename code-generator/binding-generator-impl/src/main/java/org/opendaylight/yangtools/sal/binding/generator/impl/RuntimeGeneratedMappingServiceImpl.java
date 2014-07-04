@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -396,7 +397,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
     public synchronized Optional<Class<? extends RpcService>> getRpcServiceClassFor(final String namespace, final String revision) {
         Module module = null;
         if (schemaContext != null) {
-            module = schemaContext.findModuleByName(namespace, QName.parseRevision(revision));
+            module = schemaContext.findModuleByNamespaceAndRevision(URI.create(namespace), QName.parseRevision(revision));
         }
         if (module == null) {
             return Optional.absent();

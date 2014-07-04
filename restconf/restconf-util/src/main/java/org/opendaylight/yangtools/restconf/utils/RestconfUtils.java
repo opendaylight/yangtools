@@ -251,6 +251,9 @@ public class RestconfUtils {
                         }
 
                     }
+
+                    //FIXME: Method getRpcServiceClassFor has been modified and fixed to follow API contract. This call MUST be updated to follow
+                        // contract i.e. pass correct parameters: "NAMESPACE" and "REVISION"
                     Optional<Class<? extends RpcService>> rpcService = mappingService.getRpcServiceClassFor(icNode.get(name).get(0).getValue().toString(),icNode.get(revision).get(0).getValue().toString());
                     if (rpcService.isPresent()){
                         rpcServices.add(rpcService.get());
