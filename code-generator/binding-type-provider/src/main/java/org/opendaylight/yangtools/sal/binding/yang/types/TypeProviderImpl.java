@@ -14,6 +14,10 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findD
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import com.google.common.io.BaseEncoding;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
@@ -30,7 +34,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
@@ -88,15 +91,6 @@ import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import com.google.common.io.BaseEncoding;
-
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import com.google.common.io.BaseEncoding;
 
 public final class TypeProviderImpl implements TypeProvider {
     private static final Pattern NUMBERS_PATTERN = Pattern.compile("[0-9]+\\z");
@@ -707,7 +701,7 @@ public final class TypeProviderImpl implements TypeProvider {
                     genTOBuilder.setTypedef(true);
                     genTOBuilder.setIsUnion(true);
                     addUnitsToGenTO(genTOBuilder, typedef.getUnits());
-                    BindingGeneratorUtil.makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
+                    makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
                     returnType = genTOBuilder.toInstance();
                     // union builder
                     GeneratedTOBuilder unionBuilder = new GeneratedTOBuilderImpl(genTOBuilder.getPackageName(),
@@ -736,7 +730,7 @@ public final class TypeProviderImpl implements TypeProvider {
                             basePackageName, bitsTypeDefinition, typedefName);
                     genTOBuilder.setTypedef(true);
                     addUnitsToGenTO(genTOBuilder, typedef.getUnits());
-                    BindingGeneratorUtil.makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
+                    makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
                     returnType = genTOBuilder.toInstance();
                 } else {
                     final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(
@@ -785,7 +779,7 @@ public final class TypeProviderImpl implements TypeProvider {
         }
         addUnitsToGenTO(genTOBuilder, typedef.getUnits());
         genTOBuilder.setTypedef(true);
-        BindingGeneratorUtil.makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
+        makeSerializable((GeneratedTOBuilderImpl) genTOBuilder);
         return genTOBuilder.toInstance();
     }
 
@@ -1229,9 +1223,23 @@ public final class TypeProviderImpl implements TypeProvider {
             }
         }
         addUnitsToGenTO(genTOBuilder, typedef.getUnits());
-        BindingGeneratorUtil.makeSerializable(genTOBuilder);
+        makeSerializable(genTOBuilder);
 
         return genTOBuilder.toInstance();
+    }
+
+    /**
+     * Add {@link Serializable} to implemented interfaces of this TO. Also
+     * compute and add serialVersionUID property.
+     *
+     * @param gto
+     *            transfer object which needs to be serializable
+     */
+    private void makeSerializable(final GeneratedTOBuilderImpl gto) {
+        gto.addImplementsType(Types.typeForClass(Serializable.class));
+        GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
+        prop.setValue(Long.toString(BindingGeneratorUtil.computeDefaultSUID(gto)));
+        gto.setSUID(prop);
     }
 
     /**
