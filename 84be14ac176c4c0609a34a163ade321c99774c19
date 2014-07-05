@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_9d46464e",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-05T14:26:25Z",
+      "side": 1,
+      "message": "Make the comparator static, such that it can be reused.",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9d5de617",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-05T14:26:25Z",
+      "side": 1,
+      "message": "collapse to .append(\"\\\",\\\"\"); for speed",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3d9e1aba",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-05T14:26:25Z",
+      "side": 1,
+      "message": "NullPointerException for this? Needs explanation or another exception type",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5da3de00",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 964,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-05T14:26:25Z",
+      "side": 1,
+      "message": "if (builders !\u003d null) {\n    while (...) \n}",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fda3d2fd",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1072,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-05T14:26:25Z",
+      "side": 1,
+      "message": "LOG.warn() ?",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1da9d6de",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1338,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-05T14:26:25Z",
+      "side": 1,
+      "message": "Use a Splitter, please.",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
