@@ -121,6 +121,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         return actualPath.peek().pop();
     }
 
+    private SchemaPath currentSchemaPath() {
+        return SchemaPath.create(actualPath.peek(), true);
+    }
+
     public YangParserListenerImpl(final String sourcePath) {
         this.sourcePath = sourcePath;
     }
@@ -358,17 +362,6 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         actualPath.pop();
     }
 
-    /**
-     * Create SchemaPath from actualPath and new node name.
-     *
-     * @param actualPath
-     *            current position in model
-     * @return SchemaPath object
-     */
-    private static SchemaPath createActualSchemaPath(final Stack<QName> actualPath) {
-        return SchemaPath.create(actualPath, true);
-    }
-
     @Override
     public void enterExtension_stmt(final YangParser.Extension_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
@@ -376,7 +369,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("extension", extName, line);
         QName qname = new QName(namespace, revision, yangModelPrefix, extName);
         addNodeToPath(qname);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         ExtensionBuilder builder = moduleBuilder.addExtension(qname, line, path);
         parseSchemaNodeArgs(ctx, builder);
@@ -410,7 +403,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("typedef", typedefName, line);
         QName typedefQName = new QName(namespace, revision, yangModelPrefix, typedefName);
         addNodeToPath(typedefQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         TypeDefinitionBuilder builder = moduleBuilder.addTypedef(line, typedefQName, path);
         parseSchemaNodeArgs(ctx, builder);
@@ -466,18 +459,18 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 case "identityref":
                     qname = BaseTypes.IDENTITYREF_QNAME;
                     addNodeToPath(qname);
-                    SchemaPath path = createActualSchemaPath(actualPath.peek());
+                    SchemaPath path = currentSchemaPath();
                     moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
                     break;
                 default:
-                    type = parseTypeWithBody(typeName, typeBody, createActualSchemaPath(actualPath.peek()), namespace, revision,
+                    type = parseTypeWithBody(typeName, typeBody, currentSchemaPath(), namespace, revision,
                             yangModelPrefix, moduleBuilder.getActualNode());
                     moduleBuilder.setType(type);
                     addNodeToPath(type.getQName());
                 }
             }
         } else {
-            type = parseUnknownTypeWithBody(typeQName, typeBody, createActualSchemaPath(actualPath.peek()), namespace, revision,
+            type = parseUnknownTypeWithBody(typeQName, typeBody, currentSchemaPath(), namespace, revision,
                     yangModelPrefix, moduleBuilder.getActualNode());
             // add parent node of this type statement to dirty nodes
             moduleBuilder.markActualNodeDirty();
@@ -520,7 +513,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("grouping", groupName, line);
         QName groupQName = new QName(namespace, revision, yangModelPrefix, groupName);
         addNodeToPath(groupQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         GroupingBuilder builder = moduleBuilder.addGrouping(ctx.getStart().getLine(), groupQName, path);
         parseSchemaNodeArgs(ctx, builder);
@@ -542,7 +535,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName containerQName = new QName(namespace, revision, yangModelPrefix, containerName);
         addNodeToPath(containerQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         ContainerSchemaNodeBuilder builder = moduleBuilder.addContainerNode(line, containerQName, path);
         parseSchemaNodeArgs(ctx, builder);
@@ -574,7 +567,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName leafQName = new QName(namespace, revision, yangModelPrefix, leafName);
         addNodeToPath(leafQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         LeafSchemaNodeBuilder builder = moduleBuilder.addLeafNode(line, leafQName, path);
         parseSchemaNodeArgs(ctx, builder);
@@ -675,7 +668,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("leaf-list", leafListName, line);
         QName leafListQName = new QName(namespace, revision, yangModelPrefix, leafListName);
         addNodeToPath(leafListQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         LeafListSchemaNodeBuilder builder = moduleBuilder.addLeafListNode(line, leafListQName, path);
         moduleBuilder.enterNode(builder);
@@ -709,7 +702,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName listQName = new QName(namespace, revision, yangModelPrefix, listName);
         addNodeToPath(listQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         ListSchemaNodeBuilder builder = moduleBuilder.addListNode(line, listQName, path);
         moduleBuilder.enterNode(builder);
@@ -745,7 +738,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName anyXmlQName = new QName(namespace, revision, yangModelPrefix, anyXmlName);
         addNodeToPath(anyXmlQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         AnyXmlBuilder builder = moduleBuilder.addAnyXml(line, anyXmlQName, path);
         moduleBuilder.enterNode(builder);
@@ -769,7 +762,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName choiceQName = new QName(namespace, revision, yangModelPrefix, choiceName);
         addNodeToPath(choiceQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         ChoiceBuilder builder = moduleBuilder.addChoice(line, choiceQName, path);
         moduleBuilder.enterNode(builder);
@@ -803,7 +796,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName caseQName = new QName(namespace, revision, yangModelPrefix, caseName);
         addNodeToPath(caseQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         ChoiceCaseBuilder builder = moduleBuilder.addCase(line, caseQName, path);
         moduleBuilder.enterNode(builder);
@@ -826,7 +819,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName notificationQName = new QName(namespace, revision, yangModelPrefix, notificationName);
         addNodeToPath(notificationQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         NotificationBuilder builder = moduleBuilder.addNotification(line, notificationQName, path);
         moduleBuilder.enterNode(builder);
@@ -887,7 +880,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName rpcQName = new QName(namespace, revision, yangModelPrefix, rpcName);
         addNodeToPath(rpcQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         RpcDefinitionBuilder rpcBuilder = moduleBuilder.addRpc(line, rpcQName, path);
         moduleBuilder.enterNode(rpcBuilder);
@@ -910,7 +903,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName rpcQName = new QName(namespace, revision, yangModelPrefix, input);
         addNodeToPath(rpcQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         ContainerSchemaNodeBuilder builder = moduleBuilder.addRpcInput(line, rpcQName, path);
         moduleBuilder.enterNode(builder);
@@ -934,7 +927,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName rpcQName = new QName(namespace, revision, yangModelPrefix, output);
         addNodeToPath(rpcQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         ContainerSchemaNodeBuilder builder = moduleBuilder.addRpcOutput(path, rpcQName, line);
         moduleBuilder.enterNode(builder);
@@ -958,7 +951,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName featureQName = new QName(namespace, revision, yangModelPrefix, featureName);
         addNodeToPath(featureQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         FeatureBuilder featureBuilder = moduleBuilder.addFeature(line, featureQName, path);
         moduleBuilder.enterNode(featureBuilder);
@@ -1015,7 +1008,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         final QName identityQName = new QName(namespace, revision, yangModelPrefix, identityName);
         addNodeToPath(identityQName);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         IdentitySchemaNodeBuilder builder = moduleBuilder.addIdentity(identityQName, line, path);
         moduleBuilder.enterNode(builder);
@@ -1090,7 +1083,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             qname = nodeType;
         }
         addNodeToPath(qname);
-        SchemaPath path = createActualSchemaPath(actualPath.peek());
+        SchemaPath path = currentSchemaPath();
 
         UnknownSchemaNodeBuilderImpl builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
         builder.setNodeType(nodeType);
