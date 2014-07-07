@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.checkMissingBody;
-import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.createActualSchemaPath;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.createListKey;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getConfig;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getIdentityrefBase;
@@ -359,6 +358,17 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         actualPath.pop();
     }
 
+    /**
+     * Create SchemaPath from actualPath and new node name.
+     *
+     * @param actualPath
+     *            current position in model
+     * @return SchemaPath object
+     */
+    private static SchemaPath createActualSchemaPath(final Stack<QName> actualPath) {
+        return SchemaPath.create(actualPath, true);
+    }
+
     @Override
     public void enterExtension_stmt(final YangParser.Extension_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
@@ -460,14 +470,14 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
                     break;
                 default:
-                    type = parseTypeWithBody(typeName, typeBody, actualPath.peek(), namespace, revision,
+                    type = parseTypeWithBody(typeName, typeBody, createActualSchemaPath(actualPath.peek()), namespace, revision,
                             yangModelPrefix, moduleBuilder.getActualNode());
                     moduleBuilder.setType(type);
                     addNodeToPath(type.getQName());
                 }
             }
         } else {
-            type = parseUnknownTypeWithBody(typeQName, typeBody, actualPath.peek(), namespace, revision,
+            type = parseUnknownTypeWithBody(typeQName, typeBody, createActualSchemaPath(actualPath.peek()), namespace, revision,
                     yangModelPrefix, moduleBuilder.getActualNode());
             // add parent node of this type statement to dirty nodes
             moduleBuilder.markActualNodeDirty();

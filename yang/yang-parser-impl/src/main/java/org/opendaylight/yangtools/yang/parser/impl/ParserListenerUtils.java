@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -312,17 +311,6 @@ public final class ParserListenerUtils {
     }
 
     /**
-     * Create SchemaPath from actualPath and new node name.
-     *
-     * @param actualPath
-     *            current position in model
-     * @return SchemaPath object
-     */
-    public static SchemaPath createActualSchemaPath(final Stack<QName> actualPath) {
-        return SchemaPath.create(actualPath, true);
-    }
-
-    /**
      * Create java.util.List of key node names.
      *
      * @param ctx
@@ -346,7 +334,7 @@ public final class ParserListenerUtils {
      * @return List of EnumPair object parsed from given context
      */
     private static List<EnumTypeDefinition.EnumPair> getEnumConstants(final Type_body_stmtsContext ctx,
-            final Stack<QName> path, final String moduleName) {
+            final SchemaPath path, final String moduleName) {
         List<EnumTypeDefinition.EnumPair> enumConstants = new ArrayList<>();
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -382,7 +370,7 @@ public final class ParserListenerUtils {
      * @return EnumPair object parsed from given context
      */
     private static EnumTypeDefinition.EnumPair createEnumPair(final Enum_stmtContext ctx, final int highestValue,
-            final Stack<QName> actualPath, final String moduleName) {
+            final SchemaPath actualPath, final String moduleName) {
         final String name = stringFromNode(ctx);
         SchemaPath path = createTypePath(actualPath, name);
         Integer value = null;
@@ -854,7 +842,7 @@ public final class ParserListenerUtils {
      *            current module name
      * @return List of Bit objects created from this context
      */
-    private static List<BitsTypeDefinition.Bit> getBits(final Type_body_stmtsContext ctx, final Stack<QName> actualPath,
+    private static List<BitsTypeDefinition.Bit> getBits(final Type_body_stmtsContext ctx, final SchemaPath actualPath,
             final String moduleName) {
         final List<BitsTypeDefinition.Bit> bits = new ArrayList<>();
         for (int j = 0; j < ctx.getChildCount(); j++) {
@@ -890,7 +878,7 @@ public final class ParserListenerUtils {
      * @return Bit object parsed from this context
      */
     private static BitsTypeDefinition.Bit parseBit(final Bit_stmtContext ctx, final long highestPosition,
-            final Stack<QName> actualPath, final String moduleName) {
+            final SchemaPath actualPath, final String moduleName) {
         String name = stringFromNode(ctx);
         Long position = null;
 
@@ -1071,7 +1059,7 @@ public final class ParserListenerUtils {
      * @return UnknownType object with constraints from parsed type body
      */
     public static TypeDefinition<?> parseUnknownTypeWithBody(final QName typedefQName,
-            final Type_body_stmtsContext ctx, final Stack<QName> actualPath, final URI namespace, final Date revision,
+            final Type_body_stmtsContext ctx, final SchemaPath actualPath, final URI namespace, final Date revision,
             final String prefix, final Builder parent) {
         String moduleName = parent.getModuleName();
         String typeName = typedefQName.getLocalName();
@@ -1129,7 +1117,7 @@ public final class ParserListenerUtils {
      * @return TypeDefinition object based on parsed values.
      */
     public static TypeDefinition<?> parseTypeWithBody(final String typeName, final Type_body_stmtsContext typeBody,
-            final Stack<QName> actualPath, final URI namespace, final Date revision, final String prefix,
+            final SchemaPath actualPath, final URI namespace, final Date revision, final String prefix,
             final Builder parent) {
 
         final String moduleName = parent.getModuleName();
@@ -1238,11 +1226,8 @@ public final class ParserListenerUtils {
             return baseType;
         }
 
-        List<QName> path = new ArrayList<>(actualPath);
-        path.add(new QName(namespace, revision, prefix, typeName));
-        SchemaPath schemaPath = SchemaPath.create(path, true);
-
-        QName qname = schemaPath.getPath().get(schemaPath.getPath().size() - 1);
+        QName qname = new QName(namespace, revision, prefix, typeName);
+        SchemaPath schemaPath = actualPath.createChild(qname);
         ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, "", "", schemaPath);
 
         typeBuilder.ranges(constraints.getRange());
@@ -1253,28 +1238,20 @@ public final class ParserListenerUtils {
         return typeBuilder.build();
     }
 
-    private static SchemaPath createTypePath(final Stack<QName> actual, final String typeName) {
-        QName last = actual.peek();
-        QName typeQName = QName.create(last, typeName);
-        List<QName> path = new ArrayList<>(actual);
-        path.add(typeQName);
-        return SchemaPath.create(path, true);
+    private static SchemaPath createTypePath(final SchemaPath actual, final String typeName) {
+        QName last = actual.getLastComponent();
+        return actual.createChild(QName.create(last, typeName));
     }
 
-    private static SchemaPath createBaseTypePath(final Stack<QName> actual, final String typeName) {
-        List<QName> path = new ArrayList<>(actual);
-        path.add(BaseTypes.constructQName(typeName));
-        return SchemaPath.create(path, true);
+    private static SchemaPath createBaseTypePath(final SchemaPath actual, final String typeName) {
+        return actual.createChild(BaseTypes.constructQName(typeName));
     }
 
-    private static SchemaPath createExtendedBaseTypePath(final Stack<QName> actual, final URI namespace, final Date revision,
+    private static SchemaPath createExtendedBaseTypePath(final SchemaPath actual, final URI namespace, final Date revision,
             final String prefix, final String typeName) {
-        QName extTypeName = new QName(namespace, revision, prefix, typeName);
-        QName baseTypeName = BaseTypes.constructQName(typeName);
-        List<QName> path = new ArrayList<>(actual);
-        path.add(extTypeName);
-        path.add(baseTypeName);
-        return SchemaPath.create(path, true);
+        return actual.createChild(
+                new QName(namespace, revision, prefix, typeName),
+                BaseTypes.constructQName(typeName));
     }
 
     /**
