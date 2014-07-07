@@ -98,7 +98,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class YangParserListenerImpl extends YangParserBaseListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(YangParserListenerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(YangParserListenerImpl.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final String AUGMENT_STR = "augment";
 
@@ -117,7 +117,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void enterModule_stmt(final YangParser.Module_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
-        LOGGER.trace("entering module {}", moduleName);
+        LOG.trace("entering module {}", moduleName);
         enterLog("module", moduleName, 0);
         stack.push();
 
@@ -150,7 +150,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void enterSubmodule_stmt(final YangParser.Submodule_stmtContext ctx) {
         moduleName = stringFromNode(ctx);
-        LOGGER.trace("entering submodule {}", moduleName);
+        LOG.trace("entering submodule {}", moduleName);
         enterLog("submodule", moduleName, 0);
         stack.push();
 
@@ -281,8 +281,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 }
             }
         } catch (ParseException e) {
-            final String message = "Failed to parse revision string: " + revisionDateStr;
-            LOGGER.warn(message);
+            LOG.warn("Failed to parse revision string: {}", revisionDateStr, e);
         }
     }
 
@@ -305,12 +304,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 try {
                     importRevision = SIMPLE_DATE_FORMAT.parse(importRevisionStr);
                 } catch (ParseException e) {
-                    LOGGER.warn("Failed to parse import revision-date at line " + line + ": " + importRevisionStr);
+                    LOG.warn("Failed to parse import revision-date at line {}: {}", line, importRevisionStr, e);
                 }
             }
         }
         moduleBuilder.addModuleImport(importName, importRevision, importPrefix);
-        setLog("import", "(" + importName + "; " + importRevision + "; " + importPrefix + ")");
+        LOG.trace("setting import ({}; {}; {})", importName, importRevision, importPrefix);
     }
 
     @Override
@@ -1003,20 +1002,20 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         return moduleBuilder;
     }
 
-    private void enterLog(final String p1, final String p2, final int line) {
-        LOGGER.trace("entering {} {} ({})", p1, p2, line);
+    private static void enterLog(final String p1, final String p2, final int line) {
+        LOG.trace("entering {} {} ({})", p1, p2, line);
     }
 
-    private void exitLog(final String p1) {
-        LOGGER.trace("exiting {}", p1);
+    private static void exitLog(final String p1) {
+        LOG.trace("exiting {}", p1);
     }
 
-    private void exitLog(final String p1, final QName p2) {
-        LOGGER.trace("exiting {} {}", p1, p2.getLocalName());
+    private static void exitLog(final String p1, final QName p2) {
+        LOG.trace("exiting {} {}", p1, p2.getLocalName());
     }
 
-    private void setLog(final String p1, final String p2) {
-        LOGGER.trace("setting {} {}", p1, p2);
+    private static void setLog(final String p1, final String p2) {
+        LOG.trace("setting {} {}", p1, p2);
     }
 
     private void handleUnknownNode(final int line, final ParseTree ctx) {
