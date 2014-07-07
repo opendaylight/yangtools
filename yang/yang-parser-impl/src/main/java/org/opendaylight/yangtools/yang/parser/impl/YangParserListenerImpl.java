@@ -446,7 +446,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 QName qname;
                 switch (typeName) {
                 case "union":
-                    qname = BaseTypes.constructQName("union");
+                    qname = BaseTypes.UNION_QNAME;
                     addNodeToPath(qname);
                     UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, namespace, revision);
                     Builder parent = moduleBuilder.getActualNode();
@@ -454,7 +454,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     moduleBuilder.enterNode(unionBuilder);
                     break;
                 case "identityref":
-                    qname = BaseTypes.constructQName("identityref");
+                    qname = BaseTypes.IDENTITYREF_QNAME;
                     addNodeToPath(qname);
                     SchemaPath path = createActualSchemaPath(actualPath.peek());
                     moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
