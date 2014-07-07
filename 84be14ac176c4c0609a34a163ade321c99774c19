@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_c074e169",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-07T09:15:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_9d46464e",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_9d5de617",
         "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-05T14:26:25Z",
       "side": 1,
       "message": "collapse to .append(\"\\\",\\\"\"); for speed",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e071e576",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-07T09:15:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_9d5de617",
       "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_20134d0e",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-07T09:15:00Z",
+      "side": 1,
+      "message": "Replaced with IllegalStateException because we should always be able to find original node in grouping, otherwise this could be bug in parser.",
+      "parentUuid": "fa82b9bf_3d9e1aba",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_5da3de00",
         "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2014-07-05T14:26:25Z",
       "side": 1,
       "message": "if (builders !\u003d null) {\n    while (...) \n}",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c0fb81bf",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 964,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-07T09:15:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_5da3de00",
       "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_e0f805c5",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1072,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-07T09:15:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_fda3d2fd",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_1da9d6de",
         "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2014-07-05T14:26:25Z",
       "side": 1,
       "message": "Use a Splitter, please.",
+      "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_8001f9b0",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1338,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-07T09:15:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_1da9d6de",
       "revId": "84be14ac176c4c0609a34a163ade321c99774c19",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
