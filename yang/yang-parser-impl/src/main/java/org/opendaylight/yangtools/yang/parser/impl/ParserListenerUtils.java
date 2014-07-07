@@ -1255,7 +1255,7 @@ public final class ParserListenerUtils {
 
     private static SchemaPath createTypePath(final Stack<QName> actual, final String typeName) {
         QName last = actual.peek();
-        QName typeQName = new QName(last.getNamespace(), last.getRevision(), last.getPrefix(), typeName);
+        QName typeQName = QName.create(last, typeName);
         List<QName> path = new ArrayList<>(actual);
         path.add(typeQName);
         return SchemaPath.create(path, true);
