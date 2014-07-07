@@ -11,8 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.Deque;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -44,9 +45,7 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
  * @see Node
  */
 public final class XmlTreeBuilder {
-
-    private final static XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-    private static XMLEventReader eventReader;
+    private final static XMLInputFactory XML_INPUT_FACTORY = XMLInputFactory.newInstance();
 
     private XmlTreeBuilder() {
     }
@@ -64,9 +63,9 @@ public final class XmlTreeBuilder {
      * @throws XMLStreamException
      */
     public static Node<?> buildDataTree(final InputStream inputStream) throws XMLStreamException {
-        eventReader = xmlInputFactory.createXMLEventReader(inputStream);
+        final XMLEventReader eventReader = XML_INPUT_FACTORY.createXMLEventReader(inputStream);
 
-        final Stack<Node<?>> processingQueue = new Stack<>();
+        final Deque<Node<?>> processingQueue = new ArrayDeque<>();
         Node<?> parentNode = null;
         Node<?> root = null;
         while (eventReader.hasNext()) {
@@ -82,10 +81,10 @@ public final class XmlTreeBuilder {
                     compParentNode = (MutableCompositeNode) parentNode;
                 }
                 Node<?> newNode = null;
-                if (isCompositeNodeEvent(event)) {
+                if (isCompositeNodeEvent(eventReader, event)) {
                     newNode = resolveCompositeNodeFromStartElement(startElement, compParentNode);
-                } else if (isSimpleNodeEvent(event)) {
-                    newNode = resolveSimpleNodeFromStartElement(startElement, compParentNode);
+                } else if (isSimpleNodeEvent(eventReader, event)) {
+                    newNode = resolveSimpleNodeFromStartElement(eventReader, startElement, compParentNode);
                 }
 
                 if (newNode != null) {
@@ -119,7 +118,7 @@ public final class XmlTreeBuilder {
      *
      * @see SimpleNode
      */
-    private static boolean isSimpleNodeEvent(final XMLEvent event) throws XMLStreamException {
+    private static boolean isSimpleNodeEvent(final XMLEventReader eventReader, final XMLEvent event) throws XMLStreamException {
         checkArgument(event != null, "XML Event cannot be NULL!");
         if (event.isStartElement()) {
             if (eventReader.hasNext()) {
@@ -153,7 +152,7 @@ public final class XmlTreeBuilder {
      *
      * @see CompositeNode
      */
-    private static boolean isCompositeNodeEvent(final XMLEvent event) throws XMLStreamException {
+    private static boolean isCompositeNodeEvent(final XMLEventReader eventReader, final XMLEvent event) throws XMLStreamException {
         checkArgument(event != null, "XML Event cannot be NULL!");
         if (event.isStartElement()) {
             if (eventReader.hasNext()) {
@@ -188,8 +187,8 @@ public final class XmlTreeBuilder {
      *
      * @see SimpleNode
      */
-    private static SimpleNode<String> resolveSimpleNodeFromStartElement(final StartElement startElement,
-            final CompositeNode parent) throws XMLStreamException {
+    private static SimpleNode<String> resolveSimpleNodeFromStartElement(final XMLEventReader eventReader,
+            final StartElement startElement, final CompositeNode parent) throws XMLStreamException {
         checkArgument(startElement != null, "Start Element cannot be NULL!");
         String data = null;
 
