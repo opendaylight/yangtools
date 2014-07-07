@@ -772,7 +772,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         ((TypeAwareBuilder) parent).setType(type);
     }
 
-    public UnionTypeBuilder addUnionType(final int line, final URI namespace, final Date revision) {
+    public UnionTypeBuilder addUnionType(final int line, final QNameModule module) {
         final Builder parent = getActualNode();
         if (parent == null) {
             throw new YangParseException(name, line, "Unresolved parent of union type");

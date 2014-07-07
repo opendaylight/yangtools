@@ -16,10 +16,8 @@ import com.google.common.collect.Lists;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -1059,8 +1057,7 @@ public final class ParserListenerUtils {
      * @return UnknownType object with constraints from parsed type body
      */
     public static TypeDefinition<?> parseUnknownTypeWithBody(final QName typedefQName,
-            final Type_body_stmtsContext ctx, final SchemaPath actualPath, final URI namespace, final Date revision,
-            final String prefix, final Builder parent) {
+            final Type_body_stmtsContext ctx, final SchemaPath actualPath, final QName moduleQName, final Builder parent) {
         String moduleName = parent.getModuleName();
         String typeName = typedefQName.getLocalName();
 
@@ -1081,7 +1078,7 @@ public final class ParserListenerUtils {
                 return unknownType.build();
             } else {
                 TypeDefinition<?> baseType = unknownType.build();
-                QName qname = new QName(namespace, revision, prefix, typeName);
+                QName qname = QName.create(moduleQName, typeName);
                 SchemaPath schemaPath = createTypePath(actualPath, typeName);
 
                 ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, null, null, schemaPath);
@@ -1117,8 +1114,7 @@ public final class ParserListenerUtils {
      * @return TypeDefinition object based on parsed values.
      */
     public static TypeDefinition<?> parseTypeWithBody(final String typeName, final Type_body_stmtsContext typeBody,
-            final SchemaPath actualPath, final URI namespace, final Date revision, final String prefix,
-            final Builder parent) {
+            final SchemaPath actualPath, final QName moduleQName, final Builder parent) {
 
         final String moduleName = parent.getModuleName();
         final int line = typeBody.getStart().getLine();
@@ -1136,7 +1132,7 @@ public final class ParserListenerUtils {
         constraints.addRanges(rangeStatements);
 
         SchemaPath baseTypePath = createBaseTypePath(actualPath, typeName);
-        SchemaPath extBaseTypePath = createExtendedBaseTypePath(actualPath, namespace, revision, prefix, typeName);
+        SchemaPath extBaseTypePath = createExtendedBaseTypePath(actualPath, moduleQName, typeName);
 
         if (parent instanceof TypeDefinitionBuilder && !(parent instanceof UnionTypeBuilder)) {
             extBaseTypePath = baseTypePath;
@@ -1145,12 +1141,12 @@ public final class ParserListenerUtils {
         if ("decimal64".equals(typeName)) {
             if (rangeStatements.isEmpty()) {
                 try {
-                    return new Decimal64(baseTypePath, fractionDigits);
+                    return Decimal64.create(baseTypePath, fractionDigits);
                 } catch(Exception e) {
                     throw new YangParseException(moduleName, line, e.getMessage());
                 }
             }
-            Decimal64 decimalType = new Decimal64(extBaseTypePath, fractionDigits);
+            Decimal64 decimalType = Decimal64.create(extBaseTypePath, fractionDigits);
             constraints.addRanges(decimalType.getRangeConstraints());
             baseType = decimalType;
         } else if (typeName.startsWith("int")) {
@@ -1226,7 +1222,7 @@ public final class ParserListenerUtils {
             return baseType;
         }
 
-        QName qname = new QName(namespace, revision, prefix, typeName);
+        QName qname = QName.create(moduleQName, typeName);
         SchemaPath schemaPath = actualPath.createChild(qname);
         ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, "", "", schemaPath);
 
@@ -1247,10 +1243,9 @@ public final class ParserListenerUtils {
         return actual.createChild(BaseTypes.constructQName(typeName));
     }
 
-    private static SchemaPath createExtendedBaseTypePath(final SchemaPath actual, final URI namespace, final Date revision,
-            final String prefix, final String typeName) {
+    private static SchemaPath createExtendedBaseTypePath(final SchemaPath actual, final QName moduleQName, final String typeName) {
         return actual.createChild(
-                new QName(namespace, revision, prefix, typeName),
+                QName.create(moduleQName, typeName),
                 BaseTypes.constructQName(typeName));
     }
 
