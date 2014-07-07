@@ -7,31 +7,40 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import java.util.Stack;
+import com.google.common.base.Preconditions;
+
+import java.util.Deque;
+import java.util.LinkedList;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class SchemaPathStack {
-    private final Stack<Stack<QName>> actualPath = new Stack<>();
+    private final Deque<SchemaPath> paths = new LinkedList<>();
 
-    void addNodeToPath(final QName name) {
-        actualPath.peek().push(name);
+    SchemaPath addNodeToPath(final QName name) {
+        SchemaPath sp = paths.pop();
+        sp = sp.createChild(name);
+        paths.push(sp);
+        return sp;
     }
 
     QName removeNodeFromPath() {
-        return actualPath.peek().pop();
+        SchemaPath sp = paths.pop();
+        QName ret = sp.getLastComponent();
+        paths.push(Preconditions.checkNotNull(sp.getParent(), "Attempted to remove too many nodes from schemapath at stack {}", paths));
+        return ret;
     }
 
     SchemaPath currentSchemaPath() {
-        return SchemaPath.create(actualPath.peek(), true);
+        return paths.peek();
     }
 
     void pop() {
-        actualPath.pop();
+        paths.pop();
     }
 
     void push() {
-        actualPath.push(new Stack<QName>());
+        paths.push(SchemaPath.ROOT);
     }
 }
