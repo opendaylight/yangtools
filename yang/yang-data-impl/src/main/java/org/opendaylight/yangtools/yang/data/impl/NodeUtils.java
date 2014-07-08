@@ -14,11 +14,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -93,7 +94,7 @@ public abstract class NodeUtils {
             return null;
         }
 
-        Stack<SimpleEntry<org.w3c.dom.Node, Node<?>>> jobQueue = new Stack<>();
+        final Deque<SimpleEntry<org.w3c.dom.Node, Node<?>>> jobQueue = new ArrayDeque<>();
         jobQueue.push(new SimpleEntry<org.w3c.dom.Node, Node<?>>(doc, treeRootNode));
 
         while (!jobQueue.isEmpty()) {
@@ -179,7 +180,7 @@ public abstract class NodeUtils {
     public static Map<String, ListSchemaNode> buildMapOfListNodes(final SchemaContext context) {
         Map<String, ListSchemaNode> mapOfLists = new HashMap<>();
 
-        Stack<DataSchemaNode> jobQueue = new Stack<>();
+        final Deque<DataSchemaNode> jobQueue = new ArrayDeque<>();
         jobQueue.addAll(context.getDataDefinitions());
 
         while (!jobQueue.isEmpty()) {

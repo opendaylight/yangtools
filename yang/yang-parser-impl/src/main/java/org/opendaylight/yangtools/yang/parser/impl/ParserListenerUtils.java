@@ -744,18 +744,18 @@ public final class ParserListenerUtils {
      * @return PatternConstraint object
      */
     private static PatternConstraint parsePatternConstraint(final Pattern_stmtContext ctx) {
-        String description = null;
-        String reference = null;
+        Optional<String> description = Optional.absent();
+        Optional<String> reference = Optional.absent();
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Description_stmtContext) {
-                description = stringFromNode(child);
+                description = Optional.of(stringFromNode(child));
             } else if (child instanceof Reference_stmtContext) {
-                reference = stringFromNode(child);
+                reference = Optional.of(stringFromNode(child));
             }
         }
         String pattern = parsePatternString(ctx);
-        return BaseConstraints.patternConstraint(pattern, description, reference);
+        return BaseConstraints.newPatternConstraint(pattern, description, reference);
     }
 
     /**
@@ -1081,7 +1081,7 @@ public final class ParserListenerUtils {
                 QName qname = QName.create(moduleQName, typeName);
                 SchemaPath schemaPath = createTypePath(actualPath, typeName);
 
-                ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, null, null, schemaPath);
+                ExtendedType.Builder typeBuilder = ExtendedType.builder(qname, baseType, Optional.<String>absent(), Optional.<String>absent(), schemaPath);
                 typeBuilder.ranges(rangeStatements);
                 typeBuilder.lengths(lengthStatements);
                 typeBuilder.patterns(patternStatements);
@@ -1224,7 +1224,8 @@ public final class ParserListenerUtils {
 
         QName qname = QName.create(moduleQName, typeName);
         SchemaPath schemaPath = actualPath.createChild(qname);
-        ExtendedType.Builder typeBuilder = new ExtendedType.Builder(qname, baseType, "", "", schemaPath);
+        final Optional<String> opt = Optional.of("");
+        ExtendedType.Builder typeBuilder = ExtendedType.builder(qname, baseType, opt, opt, schemaPath);
 
         typeBuilder.ranges(constraints.getRange());
         typeBuilder.lengths(constraints.getLength());
@@ -1331,10 +1332,10 @@ public final class ParserListenerUtils {
      */
     private static MustDefinition parseMust(final YangParser.Must_stmtContext ctx) {
         StringBuilder mustText = new StringBuilder();
-        String description = null;
-        String reference = null;
-        String errorAppTag = null;
-        String errorMessage = null;
+        Optional<String> description = Optional.absent();
+        Optional<String> reference = Optional.absent();
+        Optional<String> errorAppTag = Optional.absent();
+        Optional<String> errorMessage = Optional.absent();
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof StringContext) {
@@ -1356,17 +1357,17 @@ public final class ParserListenerUtils {
                     }
                 }
             } else if (child instanceof Description_stmtContext) {
-                description = stringFromNode(child);
+                description = Optional.of(stringFromNode(child));
             } else if (child instanceof Reference_stmtContext) {
-                reference = stringFromNode(child);
+                reference = Optional.of(stringFromNode(child));
             } else if (child instanceof Error_app_tag_stmtContext) {
-                errorAppTag = stringFromNode(child);
+                errorAppTag = Optional.of(stringFromNode(child));
             } else if (child instanceof Error_message_stmtContext) {
-                errorMessage = stringFromNode(child);
+                errorMessage = Optional.of(stringFromNode(child));
             }
         }
 
-        return new MustDefinitionImpl(mustText.toString(), description, reference, errorAppTag, errorMessage);
+        return MustDefinitionImpl.create(mustText.toString(), description, reference, errorAppTag, errorMessage);
     }
 
     /**

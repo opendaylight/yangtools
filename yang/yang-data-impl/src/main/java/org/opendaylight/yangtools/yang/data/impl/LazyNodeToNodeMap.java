@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
@@ -49,7 +50,7 @@ public class LazyNodeToNodeMap {
      * @param originalNode
      */
     private void addPathMembers(final Node<?> originalNode) {
-        Stack<Node<?>> jobQueue = new Stack<>();
+        final Deque<Node<?>> jobQueue = new ArrayDeque<>();
         jobQueue.push(originalNode);
         while (!jobQueue.isEmpty()) {
             Node<?> node2add = jobQueue.pop();
@@ -77,8 +78,8 @@ public class LazyNodeToNodeMap {
                 } else {
                     CompositeNode node2addComposite = (CompositeNode) node2add;
                     nodeMutant = NodeFactory.createMutableCompositeNode(node2add.getNodeType(),
-                        null, null,
-                        ((NodeModification) node2add).getModificationAction(), node2addComposite);
+                            null, null,
+                            ((NodeModification) node2add).getModificationAction(), node2addComposite);
                 }
 
                 mutableEquivalent = nodeMutant;
@@ -104,7 +105,7 @@ public class LazyNodeToNodeMap {
                     } else {
                         if (!originalRoot.equals(node2add)) {
                             throw new IllegalStateException("Different tree root node obtained - " +
-                            		"perhaps nodes of different trees are getting mixed up.");
+                                    "perhaps nodes of different trees are getting mixed up.");
                         }
                     }
                 }
