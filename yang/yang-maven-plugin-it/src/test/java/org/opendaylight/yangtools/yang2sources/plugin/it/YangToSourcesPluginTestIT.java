@@ -11,15 +11,16 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
+import com.google.common.base.Joiner;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.junit.BeforeClass;
@@ -61,9 +62,11 @@ public class YangToSourcesPluginTestIT {
         v.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl: {c1=config}");
         v.verifyTextInLog(File.separator
                 + "files marked as resources: META-INF/yang");
-        v.verifyTextInLog("target"
-                + File.separator
-                + "generated-resources marked as resources for generator: org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
+        v.verifyTextInLog(
+                Joiner.on(File.separator).join(
+                Arrays.asList("target", "generated-sources", "spi"))
+
+                + " marked as resources for generator: org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
     }
 
     @Test

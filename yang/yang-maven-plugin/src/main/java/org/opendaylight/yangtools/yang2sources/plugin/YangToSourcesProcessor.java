@@ -41,7 +41,6 @@ class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
     static final String META_INF_YANG_STRING = "META-INF" + File.separator + "yang";
     static final String META_INF_YANG_STRING_JAR = "META-INF" + "/" + "yang";
-    static final File META_INF_YANG_DIR = new File(META_INF_YANG_STRING);
 
     private final Log log;
     private final File yangFilesRootDir;
@@ -181,16 +180,21 @@ class YangToSourcesProcessor {
 
     static class YangProvider {
 
-        private static final String YANG_RESOURCE_DIR = "target" + File.separator + "yang";
+
 
         void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir, File[] excludedFiles)
                 throws MojoFailureException {
-            File targetYangDir = new File(project.getBasedir(), YANG_RESOURCE_DIR);
+
+            // copy project's src/main/yang/*.yang to target/generated-sources/yang/META-INF/yang/*.yang
+            File generatedYangDir = new File(project.getBasedir(), CodeGeneratorArg.YANG_GENERATED_DIR);
+
+            File withMetaInf = new File(generatedYangDir, META_INF_YANG_STRING);
+            withMetaInf.mkdirs();
 
             try {
                 Collection<File> files = Util.listFiles(yangFilesRootDir, excludedFiles, null);
                 for (File file : files) {
-                    org.apache.commons.io.FileUtils.copyFile(file, new File(targetYangDir, file.getName()));
+                    org.apache.commons.io.FileUtils.copyFile(file, new File(withMetaInf, file.getName()));
                 }
             } catch (IOException e) {
                 String message = "Unable to list yang files into resource folder";
@@ -198,18 +202,15 @@ class YangToSourcesProcessor {
                 throw new MojoFailureException(message, e);
             }
 
-            setResource(targetYangDir, META_INF_YANG_STRING_JAR, project);
+            setResource(generatedYangDir, project);
 
             log.debug(Util.message("Yang files from: %s marked as resources: %s", LOG_PREFIX, yangFilesRootDir,
                     META_INF_YANG_STRING_JAR));
         }
 
-        private static void setResource(File targetYangDir, String targetPath, MavenProject project) {
+        private static void setResource(File targetYangDir, MavenProject project) {
             Resource res = new Resource();
             res.setDirectory(targetYangDir.getPath());
-            if (targetPath != null) {
-                res.setTargetPath(targetPath);
-            }
             project.addResource(res);
         }
     }
@@ -278,7 +279,7 @@ class YangToSourcesProcessor {
         g.setAdditionalConfig(codeGeneratorCfg.getAdditionalConfiguration());
         File resourceBaseDir = codeGeneratorCfg.getResourceBaseDir(project);
 
-        YangProvider.setResource(resourceBaseDir, null, project);
+        YangProvider.setResource(resourceBaseDir, project);
         g.setResourceBaseDir(resourceBaseDir);
         log.debug(Util.message("Folder: %s marked as resources for generator: %s", LOG_PREFIX, resourceBaseDir,
                 codeGeneratorCfg.getCodeGeneratorClass()));

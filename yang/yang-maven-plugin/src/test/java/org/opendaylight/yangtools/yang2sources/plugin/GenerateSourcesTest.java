@@ -74,7 +74,7 @@ public class GenerateSourcesTest {
         assertNotNull(GeneratorMock.log);
         assertTrue(GeneratorMock.additionalCfg.isEmpty());
         assertThat(GeneratorMock.resourceBaseDir.toString(), containsString("target" + File.separator
-                + "generated-resources"));
+                + "generated-sources" + File.separator + "spi"));
     }
 
     public static class GeneratorMock implements CodeGenerator {
