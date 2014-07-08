@@ -26,6 +26,9 @@ import javax.activation.UnsupportedDataTypeException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamException;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
@@ -80,7 +83,6 @@ public class XmlDocumentUtils {
     }
 
     private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
-
         @Override
         public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
             return TypeDefinitionAwareCodec.from(baseType);
@@ -88,6 +90,7 @@ public class XmlDocumentUtils {
     };
 
     private static final Logger logger = LoggerFactory.getLogger(XmlDocumentUtils.class);
+    private static final XMLEventFactory EVENTS = XMLEventFactory.newFactory();
 
     /**
      * Converts Data DOM structure to XML Document for specified XML Codec Provider and corresponding
@@ -157,6 +160,117 @@ public class XmlDocumentUtils {
         return doc;
     }
 
+    public static void writeDataDocument(final XMLEventWriter writer, final CompositeNode data, final XmlCodecProvider codecProvider) throws XMLStreamException {
+        writer.add(EVENTS.createStartDocument());
+        writeData(writer, data, null, codecProvider);
+        writer.add(EVENTS.createEndDocument());
+    }
+
+    private static void writeData(final XMLEventWriter writer, final Node<?> data, final SchemaNode schema, final XmlCodecProvider codecProvider) throws XMLStreamException {
+        final QName dataType = data.getNodeType();
+
+        final String ns;
+        if (dataType.getNamespace() != null) {
+            ns = dataType.getNamespace().toString();
+        } else {
+            ns = null;
+        }
+
+        final String pfx = dataType.getPrefix();
+        writer.add(EVENTS.createStartElement(pfx, ns, dataType.getLocalName()));
+
+        if (data instanceof AttributesContainer && ((AttributesContainer) data).getAttributes() != null) {
+            for (Entry<QName, String> attribute : ((AttributesContainer) data).getAttributes().entrySet()) {
+                writer.add(EVENTS.createAttribute(null, attribute.getKey().getNamespace().toString(), attribute.getKey().getLocalName(),
+                        attribute.getValue()));
+            }
+        }
+
+        if (data instanceof SimpleNode<?>) {
+            // Simple node
+            if (schema instanceof LeafListSchemaNode) {
+                writeValue(writer, ((LeafListSchemaNode) schema).getType(), codecProvider, data.getValue());
+            } else if (schema instanceof LeafSchemaNode) {
+                writeValue(writer, ((LeafSchemaNode) schema).getType(), codecProvider, data.getValue());
+            } else {
+                Object value = data.getValue();
+                if (value != null) {
+                    writer.add(EVENTS.createCharacters(String.valueOf(value)));
+                }
+            }
+        } else {
+            // CompositeNode
+            for (Node<?> child : ((CompositeNode) data).getValue()) {
+                DataSchemaNode childSchema = null;
+                if (schema instanceof DataNodeContainer) {
+                    childSchema = findFirstSchema(child.getNodeType(), ((DataNodeContainer) schema).getChildNodes()).orNull();
+                    if (logger.isDebugEnabled()) {
+                        if (childSchema == null) {
+                            logger.debug("Probably the data node \""
+                                    + ((child == null) ? "" : child.getNodeType().getLocalName())
+                                    + "\" does not conform to schema");
+                        }
+                    }
+                }
+
+                writeData(writer, child, childSchema, codecProvider);
+            }
+        }
+
+        writer.add(EVENTS.createEndElement(pfx, ns, dataType.getLocalName()));
+    }
+
+    public static void writeValue(final XMLEventWriter writer, final TypeDefinition<?> type, final XmlCodecProvider codecProvider, final Object nodeValue) throws XMLStreamException {
+        TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
+        if (baseType instanceof IdentityrefTypeDefinition) {
+            if (nodeValue instanceof QName) {
+                QName value = (QName) nodeValue;
+                String prefix = "x";
+                if (value.getPrefix() != null && !value.getPrefix().isEmpty()) {
+                    prefix = value.getPrefix();
+                }
+
+                writer.add(EVENTS.createNamespace(prefix, value.getNamespace().toString()));
+                writer.add(EVENTS.createCharacters(prefix + ":" + value.getLocalName()));
+            } else {
+                Object value = nodeValue;
+                logger.debug("Value of {}:{} is not instance of QName but is {}", baseType.getQName().getNamespace(),
+                        baseType.getQName().getLocalName(), value != null ? value.getClass() : "null");
+                if (value != null) {
+                    writer.add(EVENTS.createCharacters(String.valueOf(value)));
+                }
+            }
+        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
+            if (nodeValue instanceof InstanceIdentifier) {
+                InstanceIdentifierForXmlCodec.write(writer, (InstanceIdentifier)nodeValue);
+            } else {
+                Object value = nodeValue;
+                logger.debug("Value of {}:{} is not instance of InstanceIdentifier but is {}", baseType.getQName()
+                        .getNamespace(), //
+                        baseType.getQName().getLocalName(), value != null ? value.getClass() : "null");
+                if (value != null) {
+                    writer.add(EVENTS.createCharacters(String.valueOf(value)));
+                }
+            }
+        } else {
+            if (nodeValue != null) {
+                final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(baseType);
+                if (codec != null) {
+                    try {
+                        final String text = codec.serialize(nodeValue);
+                        writer.add(EVENTS.createCharacters(text));
+                    } catch (ClassCastException e) {
+                        logger.error("Provided node value {} did not have type {} required by mapping. Using stream instead.", nodeValue, baseType, e);
+                        writer.add(EVENTS.createCharacters(String.valueOf(nodeValue)));
+                    }
+                } else {
+                    logger.error("Failed to find codec for {}, falling back to using stream", baseType);
+                    writer.add(EVENTS.createCharacters(String.valueOf(nodeValue)));
+                }
+            }
+        }
+    }
+
     private static Element createXmlRootElement(final Document doc, final Node<?> data, final SchemaNode schema,
             final XmlCodecProvider codecProvider) throws UnsupportedDataTypeException {
         Element itemEl = createElementFor(doc, data);
@@ -180,9 +294,8 @@ public class XmlDocumentUtils {
                     childSchema = findFirstSchema(child.getNodeType(), ((DataNodeContainer) schema).getChildNodes()).orNull();
                     if (logger.isDebugEnabled()) {
                         if (childSchema == null) {
-                            logger.debug("Probably the data node \""
-                                    + ((child == null) ? "" : child.getNodeType().getLocalName())
-                                    + "\" is not conform to schema");
+                            logger.debug("Probably the data node \"{}\" does not conform to schema",
+                                    child == null ? "" : child.getNodeType().getLocalName());
                         }
                     }
                 }
@@ -367,8 +480,8 @@ public class XmlDocumentUtils {
     public static Optional<ModifyAction> getModifyOperationFromAttributes(final Element xmlElement) {
         Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
         if(attributeNodeNS == null) {
-			return Optional.absent();
-		}
+            return Optional.absent();
+        }
 
         ModifyAction action = ModifyAction.fromXmlValue(attributeNodeNS.getValue());
         Preconditions.checkArgument(action.isOnElementPermitted(), "Unexpected operation %s on %s", action, xmlElement);
