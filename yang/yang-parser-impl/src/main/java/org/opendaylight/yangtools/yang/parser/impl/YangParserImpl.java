@@ -880,7 +880,7 @@ public final class YangParserImpl implements YangContextParser {
             if (mb != null) {
                 List<AugmentationSchemaBuilder> augments = mb.getAllAugments();
                 checkAugmentMandatoryNodes(augments);
-                Collections.sort(augments, Comparators.AUGMENT_COMP);
+                Collections.sort(augments, Comparators.AUGMENT_BUILDER_COMP);
                 for (AugmentationSchemaBuilder augment : augments) {
                     if (!(augment.isResolved())) {
                         boolean resolved = resolveAugment(augment, mb, modules);
