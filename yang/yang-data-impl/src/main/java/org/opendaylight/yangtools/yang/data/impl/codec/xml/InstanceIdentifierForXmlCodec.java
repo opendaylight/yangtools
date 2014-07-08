@@ -13,19 +13,16 @@ import com.google.common.base.Splitter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -65,32 +62,17 @@ public final class InstanceIdentifierForXmlCodec {
         return InstanceIdentifier.create(result);
     }
 
-    public static Element serialize(final InstanceIdentifier data, final Element element) {
-        Preconditions.checkNotNull(data, "Variable should contain instance of instance identifier and can't be null");
+    public static Element serialize(final InstanceIdentifier id, final Element element) {
+        Preconditions.checkNotNull(id, "Variable should contain instance of instance identifier and can't be null");
         Preconditions.checkNotNull(element, "DOM element can't be null");
-        Map<String, String> prefixes = new HashMap<>();
-        StringBuilder textContent = new StringBuilder();
-        for (PathArgument pathArgument : data.getPathArguments()) {
-            textContent.append('/');
-            writeIdentifierWithNamespacePrefix(element, textContent, pathArgument.getNodeType(), prefixes);
-            if (pathArgument instanceof NodeIdentifierWithPredicates) {
-                Map<QName, Object> predicates = ((NodeIdentifierWithPredicates) pathArgument).getKeyValues();
 
-                for (QName keyValue : predicates.keySet()) {
-                    String predicateValue = String.valueOf(predicates.get(keyValue));
-                    textContent.append('[');
-                    writeIdentifierWithNamespacePrefix(element, textContent, keyValue, prefixes);
-                    textContent.append("='");
-                    textContent.append(predicateValue);
-                    textContent.append("']");
-                }
-            } else if (pathArgument instanceof NodeWithValue) {
-                textContent.append("[.='");
-                textContent.append(((NodeWithValue) pathArgument).getValue());
-                textContent.append("']");
-            }
+        final RandomPrefix prefixes = new RandomPrefix();
+        final String str = XmlUtils.encodeIdentifier(prefixes, id);
+
+        for (Entry<URI, String> e: prefixes.getPrefixes()) {
+            element.setAttribute("xmlns:" + e.getValue(), e.getKey().toString());
         }
-        element.setTextContent(textContent.toString());
+        element.setTextContent(str);
         return element;
     }
 
@@ -197,40 +179,5 @@ public final class InstanceIdentifierForXmlCodec {
         default:
             return null;
         }
-    }
-
-    private static void writeIdentifierWithNamespacePrefix(final Element element, final StringBuilder textContent, final QName qName,
-            final Map<String, String> prefixes) {
-        String namespace = qName.getNamespace().toString();
-        String prefix = prefixes.get(namespace);
-        if (prefix == null) {
-            prefix = qName.getPrefix();
-            if (prefix == null || prefix.isEmpty() || prefixes.containsValue(prefix)) {
-                prefix = generateNewPrefix(prefixes.values());
-            }
-        }
-
-        element.setAttribute("xmlns:" + prefix, namespace.toString());
-        textContent.append(prefix);
-        prefixes.put(namespace, prefix);
-
-        textContent.append(':');
-        textContent.append(qName.getLocalName());
-    }
-
-    private static String generateNewPrefix(final Collection<String> prefixes) {
-        String result;
-
-        final ThreadLocalRandom random = ThreadLocalRandom.current();
-        do {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 4; i++) {
-                sb.append('a' + random.nextInt(25));
-            }
-
-            result = sb.toString();
-        } while (prefixes.contains(result));
-
-        return result;
     }
 }
