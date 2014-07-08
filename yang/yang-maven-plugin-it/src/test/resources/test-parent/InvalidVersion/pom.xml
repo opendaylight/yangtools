@@ -8,13 +8,17 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.5-SNAPSHOT</version>
-    <artifactId>test</artifactId>
+    <parent>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>test-parent</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>invalid-version</artifactId>
 
     <!-- Testing dependency -->
-    <!-- yang-common dependency added here only for purpose of 'artifact version
-        check' test: version of yang-common artifact has to be different than one defined
+    <!-- yang-common dependency added here only for purpose of 'artifact version 
+        check' test: version of yang-common artifact has to be different than one defined 
         in yang-maven-plugin to make test pass -->
     <repositories>
         <repository>

@@ -13,29 +13,23 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
-
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class YangToSourcesPluginTestIT {
-    private static final String SRC_PROPERTIES = "target/it-project.properties";
-    private static final String VERSION_PROP = "it-project.version";
-    private static Properties props;
 
     // TODO Test yang files in transitive dependencies
 
     @Test
     public void testYangRootNotExist() throws URISyntaxException {
         try {
-            setUp("YangRootNotExist/", false);
+            setUp("test-parent/YangRootNotExist/", false);
         } catch (VerificationException e) {
             assertVerificationException(e,
                     "[ERROR] yang-to-sources: Unable to parse yang files from ");
@@ -50,13 +44,13 @@ public class YangToSourcesPluginTestIT {
 
     @Test
     public void testCorrect() throws Exception {
-        Verifier v = setUp("Correct/", false);
+        Verifier v = setUp("test-parent/Correct/", false);
         verifyCorrectLog(v);
     }
 
     @Test
     public void testAdditionalConfiguration() throws Exception {
-        Verifier v = setUp("AdditionalConfig/", false);
+        Verifier v = setUp("test-parent/AdditionalConfig/", false);
         v.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl: {nm1=abcd=a.b.c.d, nm2=abcd2=a.b.c.d.2}");
         v.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl: {c1=config}");
         v.verifyTextInLog(File.separator
@@ -69,7 +63,7 @@ public class YangToSourcesPluginTestIT {
     @Test
     public void testMissingYangInDep() throws Exception {
         try {
-            setUp("MissingYangInDep/", false);
+            setUp("test-parent/MissingYangInDep/", false);
         } catch (VerificationException e) {
             assertVerificationException(
                     e,
@@ -82,7 +76,7 @@ public class YangToSourcesPluginTestIT {
 
     @Test
     public void testNamingConflict() throws Exception {
-        Verifier v = setUp("NamingConflict/", false);
+        Verifier v = setUp("test-parent/NamingConflict/", false);
         v.verifyErrorFreeLog();
         String baseDir = v.getBasedir();
         String fileName = v.getLogFileName();
@@ -104,21 +98,21 @@ public class YangToSourcesPluginTestIT {
 
     @Test
     public void testNoGenerators() throws Exception {
-        Verifier v = setUp("NoGenerators/", false);
+        Verifier v = setUp("test-parent/NoGenerators/", false);
         v.verifyErrorFreeLog();
         v.verifyTextInLog("[WARNING] yang-to-sources: No code generators provided");
     }
 
     @Test
     public void testInvalidVersion() throws Exception {
-        Verifier v = setUp("InvalidVersion/", false);
+        Verifier v = setUp("test-parent/InvalidVersion/", false);
         v.verifyErrorFreeLog();
         v.verifyTextInLog("[WARNING] yang-to-sources: Dependency resolution conflict:");
     }
 
     @Test
     public void testUnknownGenerator() throws Exception {
-        Verifier v = setUp("UnknownGenerator/", true);
+        Verifier v = setUp("test-parent/UnknownGenerator/", true);
         v.verifyTextInLog("[ERROR] yang-to-sources: Unable to generate sources with unknown generator");
         v.verifyTextInLog("java.lang.ClassNotFoundException: unknown");
         v.verifyTextInLog("[INFO] yang-to-sources: Code generator instantiated from org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
@@ -128,24 +122,13 @@ public class YangToSourcesPluginTestIT {
 
     @Test
     public void testNoYangFiles() throws Exception {
-        Verifier v = setUp("NoYangFiles/", false);
+        Verifier v = setUp("test-parent/NoYangFiles/", false);
         v.verifyTextInLog("[INFO] yang-to-sources: No input files found");
     }
 
     static void assertVerificationException(VerificationException e,
             String string) {
         assertThat(e.getMessage(), containsString(string));
-    }
-
-    @BeforeClass
-    public static void generateProps() throws IOException {
-        final Properties sp = new Properties();
-        try (InputStream is = new FileInputStream(new File(SRC_PROPERTIES))) {
-             sp.load(is);
-        }
-
-        props = new Properties(System.getProperties());
-        props.put(VERSION_PROP, sp.getProperty(VERSION_PROP));
     }
 
     static Verifier setUp(String project, boolean ignoreF)
@@ -157,34 +140,48 @@ public class YangToSourcesPluginTestIT {
         if (ignoreF)
             verifier.addCliOption("-fn");
         verifier.setMavenDebug(true);
-        verifier.setSystemProperties(props);
         verifier.executeGoal("generate-sources");
         return verifier;
     }
 
     @Test
     public void testNoOutputDir() throws Exception {
-        Verifier v = YangToSourcesPluginTestIT.setUp("NoOutputDir/", false);
+        Verifier v = YangToSourcesPluginTestIT.setUp("test-parent/NoOutputDir/", false);
         verifyCorrectLog(v);
     }
 
     @Test
     public void testFindResourceOnCp() throws Exception {
         Verifier v1 = new Verifier(new File(getClass().getResource(
-                "/GenerateTest1/pom.xml").toURI()).getParent());
-        v1.setSystemProperties(props);
+                "/test-parent/GenerateTest1/pom.xml").toURI()).getParent());
         v1.executeGoal("clean");
         v1.executeGoal("package");
-        v1.assertFilePresent("target/classes/META-INF/yang/testfile1.yang");
-        v1.assertFilePresent("target/classes/META-INF/yang/testfile2.yang");
-        v1.assertFilePresent("target/classes/META-INF/yang/testfile3.yang");
 
-        Verifier v2 = YangToSourcesPluginTestIT.setUp("GenerateTest2/", false);
+        Properties sp = new Properties();
+        try (InputStream is = new FileInputStream(v1.getBasedir() + "/it-project.properties")) {
+             sp.load(is);
+        }
+        String buildDir = sp.getProperty("target.dir");
+
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
+
+        Verifier v2 = new Verifier(new File(getClass().getResource(
+                "/test-parent/GenerateTest2/pom.xml").toURI()).getParent());
         v2.executeGoal("clean");
         v2.executeGoal("package");
-        v2.assertFilePresent("target/classes/META-INF/yang/private.yang");
-        v2.assertFileNotPresent("target/classes/META-INF/yang/testfile1.yang");
-        v2.assertFileNotPresent("target/classes/META-INF/yang/testfile2.yang");
-        v2.assertFileNotPresent("target/classes/META-INF/yang/testfile3.yang");
+
+        sp = new Properties();
+        try (InputStream is = new FileInputStream(v2.getBasedir() + "/it-project.properties")) {
+             sp.load(is);
+        }
+        buildDir = sp.getProperty("target.dir");
+
+        v2.assertFilePresent(buildDir + "/classes/META-INF/yang/private.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
     }
+
 }
