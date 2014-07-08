@@ -13,14 +13,18 @@ import com.google.common.base.Splitter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamException;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
@@ -35,6 +39,7 @@ public final class InstanceIdentifierForXmlCodec {
     private static final Pattern PREDICATE_PATTERN = Pattern.compile("\\[(.*?)\\]");
     private static final Splitter SLASH_SPLITTER = Splitter.on('/');
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
+    private static final XMLEventFactory EVENTS = XMLEventFactory.newFactory();
 
     private InstanceIdentifierForXmlCodec() {
         throw new UnsupportedOperationException("Utility class");
@@ -65,21 +70,18 @@ public final class InstanceIdentifierForXmlCodec {
         return InstanceIdentifier.create(result);
     }
 
-    public static Element serialize(final InstanceIdentifier data, final Element element) {
-        Preconditions.checkNotNull(data, "Variable should contain instance of instance identifier and can't be null");
-        Preconditions.checkNotNull(element, "DOM element can't be null");
-        Map<String, String> prefixes = new HashMap<>();
+    private static String encodeIdentifier(final RandomPrefix prefixes, final InstanceIdentifier id) {
         StringBuilder textContent = new StringBuilder();
-        for (PathArgument pathArgument : data.getPathArguments()) {
+        for (PathArgument pathArgument : id.getPathArguments()) {
             textContent.append('/');
-            writeIdentifierWithNamespacePrefix(element, textContent, pathArgument.getNodeType(), prefixes);
+            textContent.append(prefixes.encodeQName(pathArgument.getNodeType()));
             if (pathArgument instanceof NodeIdentifierWithPredicates) {
                 Map<QName, Object> predicates = ((NodeIdentifierWithPredicates) pathArgument).getKeyValues();
 
                 for (QName keyValue : predicates.keySet()) {
                     String predicateValue = String.valueOf(predicates.get(keyValue));
                     textContent.append('[');
-                    writeIdentifierWithNamespacePrefix(element, textContent, keyValue, prefixes);
+                    textContent.append(prefixes.encodeQName(keyValue));
                     textContent.append("='");
                     textContent.append(predicateValue);
                     textContent.append("']");
@@ -90,8 +92,35 @@ public final class InstanceIdentifierForXmlCodec {
                 textContent.append("']");
             }
         }
-        element.setTextContent(textContent.toString());
+
+        return textContent.toString();
+    }
+
+    public static Element serialize(final InstanceIdentifier id, final Element element) {
+        Preconditions.checkNotNull(id, "Variable should contain instance of instance identifier and can't be null");
+        Preconditions.checkNotNull(element, "DOM element can't be null");
+
+        final RandomPrefix prefixes = new RandomPrefix();
+        final String str = encodeIdentifier(prefixes, id);
+
+        for (Entry<URI, String> e: prefixes.getPrefixes()) {
+            element.setAttribute("xmlns:" + e.getValue(), e.getKey().toString());
+        }
+        element.setTextContent(str);
         return element;
+    }
+
+    public static void write(final XMLEventWriter writer, final InstanceIdentifier id) throws XMLStreamException {
+        Preconditions.checkNotNull(writer, "Writer may not be null");
+        Preconditions.checkNotNull(id, "Variable should contain instance of instance identifier and can't be null");
+
+        final RandomPrefix prefixes = new RandomPrefix();
+        final String str = encodeIdentifier(prefixes, id);
+
+        for (Entry<URI, String> e: prefixes.getPrefixes()) {
+            writer.add(EVENTS.createNamespace(e.getValue(), e.getKey().toString()));
+        }
+        writer.add(EVENTS.createCharacters(str));
     }
 
     private static String getIdAndPrefixAsStr(final String pathPart) {
@@ -199,38 +228,33 @@ public final class InstanceIdentifierForXmlCodec {
         }
     }
 
-    private static void writeIdentifierWithNamespacePrefix(final Element element, final StringBuilder textContent, final QName qName,
-            final Map<String, String> prefixes) {
-        String namespace = qName.getNamespace().toString();
-        String prefix = prefixes.get(namespace);
-        if (prefix == null) {
-            prefix = qName.getPrefix();
-            if (prefix == null || prefix.isEmpty() || prefixes.containsValue(prefix)) {
-                prefix = generateNewPrefix(prefixes.values());
-            }
+    private static class RandomPrefix {
+        final Map<URI, String> prefixes = new HashMap<>();
+
+        private Iterable<Entry<URI, String>> getPrefixes() {
+            return prefixes.entrySet();
         }
 
-        element.setAttribute("xmlns:" + prefix, namespace.toString());
-        textContent.append(prefix);
-        prefixes.put(namespace, prefix);
+        private String encodeQName(final QName qname) {
+            String prefix = prefixes.get(qname.getNamespace());
+            if (prefix == null) {
+                prefix = qname.getPrefix();
+                if (prefix == null || prefix.isEmpty() || prefixes.containsValue(prefix)) {
+                    final ThreadLocalRandom random = ThreadLocalRandom.current();
+                    do {
+                        final StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < 4; i++) {
+                            sb.append('a' + random.nextInt(25));
+                        }
 
-        textContent.append(':');
-        textContent.append(qName.getLocalName());
-    }
+                        prefix = sb.toString();
+                    } while (prefixes.containsValue(prefix));
+                }
 
-    private static String generateNewPrefix(final Collection<String> prefixes) {
-        String result;
-
-        final ThreadLocalRandom random = ThreadLocalRandom.current();
-        do {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 4; i++) {
-                sb.append('a' + random.nextInt(25));
+                prefixes.put(qname.getNamespace(), prefix);
             }
 
-            result = sb.toString();
-        } while (prefixes.contains(result));
-
-        return result;
+            return prefix + ':' + qname.getLocalName();
+        }
     }
 }
