@@ -11,11 +11,10 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
@@ -48,12 +47,16 @@ public final class TreeNodeUtils {
 
     public static <T extends StoreTreeNode<T>> T findNodeChecked(final T tree, final InstanceIdentifier path) {
         T current = tree;
-        List<PathArgument> nested = new ArrayList<>(path.getPath().size());
+
+        int i = 1;
         for(PathArgument pathArg : path.getPathArguments()) {
             Optional<T> potential = current.getChild(pathArg);
-            nested.add(pathArg);
-            Preconditions.checkArgument(potential.isPresent(),"Child %s is not present in tree.",nested);
+            if (!potential.isPresent()) {
+                throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
+                        Iterables.toString(Iterables.limit(path.getPathArguments(), i))));
+            }
             current = potential.get();
+            ++i;
         }
         return current;
     }
