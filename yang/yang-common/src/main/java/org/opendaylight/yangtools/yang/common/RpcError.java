@@ -8,93 +8,111 @@
 package org.opendaylight.yangtools.yang.common;
 
 /**
- *
- * Representation of Error in YANG enabled system.
- *
- * Which may be send / received by YANG modeled / enabled systems.
+ * Representation of an error.
  *
  */
 public interface RpcError {
 
+    public enum ErrorSeverity {
+        ERROR,
+        WARNING
+    }
+
+    public enum ErrorType {
+        /**
+         * Indicates an error occurred during transport of data, eg over the network.
+         */
+        TRANSPORT,
+
+        /**
+         * Indicates an error occurred during a remote procedure call.
+         */
+        RPC,
+
+        /**
+         * Indicates an error at a protocol layer, eg if invalid data was passed by the caller.
+         */
+        PROTOCOL,
+
+        /**
+         * Indicates an error occurred during internal processing.
+         */
+        APPLICATION
+    }
+
     /**
+     * Returns the error severity, as determined by the application reporting the error.
      *
-     * Returns error severity, as determined by component reporting the error.
-     *
-     * @return error severity
+     * @return an {@link ErrorSeverity} enum.
      */
     ErrorSeverity getSeverity();
 
     /**
-     *
-     * Returns a string identifying the error condition.
-     *
-     * @return string identifying the error condition.
+     * Returns a short string that identifies the general type of error condition.
+     * <p>
+     * The following outlines suggested values as defined by netconf (<a href="https://tools.ietf.org/html/rfc6241#page-89">RFC 6241</a>):
+     * <pre>
+     *    access_denied
+     *    bad_attribute
+     *    bad_element
+     *    data_exists
+     *    data_missing
+     *    in_use
+     *    invalid_value
+     *    lock_denied
+     *    malformed_message
+     *    missing_attribute
+     *    missing_element
+     *    operation_failed
+     *    operation_not_supported
+     *    resource_denied
+     *    rollback_failed
+     *    too_big
+     *    unknown_attribute
+     *    unknown_element
+     *    unknown_namespace
+     * </pre>
+     * @return a string if available or null otherwise.
      */
     String getTag();
 
     /**
+     * Returns a short string that identifies the specific type of error condition as
+     * determined by the application reporting the error.
      *
-     * Returns a string identifying the data-model-specific or
-     * implementation-specific error condition, if one exists. This element will
-     * not be present if no appropriate application error-tag can be associated
-     * with a particular error condition. If a data-model-specific and an
-     * implementation-specific error-app-tag both exist, then the
-     * data-model-specific value MUST be used by the reporter.
-     *
-     * @return Returns a string identifying the data-model-specific or
-     *         implementation-specific error condition, or null if does not
-     *         exists.
+     * @return a string if available or null otherwise.
      */
     String getApplicationTag();
 
     /**
-     *
      * Returns a string suitable for human display that describes the error
-     * condition. This element will not be present if no appropriate message is
-     * provided for a particular error condition.
+     * condition.
      *
-     * @return returns an error description for human display.
+     * @return a message string.
      */
     String getMessage();
 
     /**
      *
-     * Contains protocol- or data-model-specific error content. This value may
-     * be not be present if no such error content is provided for a particular
-     * error condition.
+     * Returns a string contain additional information to provide extended
+     * and/or implementation-specific debugging information.
      *
-     * The list in Appendix A defines any mandatory error-info content for each
-     * error. After any protocol-mandated content, a data model definition MAY
-     * mandate that certain application-layer error information be included in
-     * the error-info container.
-     *
-     * An implementation MAY include additional information to provide extended
-     * and/or implementation- specific debugging information.
-     *
-     * @return
+     * @return a string if available or null otherwise.
      */
     String getInfo();
 
     /**
      *
-     * Return a cause if available.
+     * Returns an exception cause.
      *
-     * @return cause of this error, if error was triggered by exception.
+     * @return a Throwable if the error was triggered by exception, null otherwise.
      */
     Throwable getCause();
 
     /**
-     * Returns the conceptual layer that on which the error occurred.
+     * Returns the conceptual layer at which the error occurred.
      *
-     * @return the conceptual layer that on which the error occurred.
+     * @return an {@link ErrorType} enum.
      */
     ErrorType getErrorType();
-
-    public enum ErrorSeverity {
-        ERROR, WARNING,
-    }
-
-    public enum ErrorType {
-        TRANSPORT, RPC, PROTOCOL, APPLICATION
-    }
 }
