@@ -64,8 +64,8 @@ public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContain
     }
 
     @Override
-    public Set<DataSchemaNodeBuilder> instantiateChildNodes(final Builder newParent) {
-        final Set<DataSchemaNodeBuilder> nodes = new HashSet<>();
+    public List<DataSchemaNodeBuilder> instantiateChildNodes(final Builder newParent) {
+        final List<DataSchemaNodeBuilder> nodes = new ArrayList<>();
         for (DataSchemaNodeBuilder node : getChildNodeBuilders()) {
             DataSchemaNodeBuilder copy = CopyUtils.copy(node, newParent, true);
             BuilderUtils.setNodeAddedByUses(copy);

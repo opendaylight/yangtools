@@ -6,10 +6,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -33,8 +35,8 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 public abstract class AbstractDocumentedDataNodeContainerBuilder extends AbstractDocumentedNodeBuilder implements DataNodeContainerBuilder {
     protected final QName qname;
 
-    private final Map<QName, DataSchemaNode> childNodes = new TreeMap<>();
-    private final Set<DataSchemaNodeBuilder> addedChildNodes = new HashSet<>();
+    private final Map<QName, DataSchemaNode> childNodes = new LinkedHashMap<>();
+    private final List<DataSchemaNodeBuilder> addedChildNodes = new ArrayList<>();
 
     private final Set<GroupingDefinition> groupings = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
     private final Set<GroupingBuilder> addedGroupings = new HashSet<>();
@@ -43,7 +45,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
     private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<>();
 
     private final Set<UsesNode> usesNodes = new HashSet<>();
-    private final Set<UsesNodeBuilder> addedUsesNodes = new HashSet<>();
+    private final List<UsesNodeBuilder> addedUsesNodes = new ArrayList<>();
 
     protected AbstractDocumentedDataNodeContainerBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line);
@@ -84,7 +86,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
     }
 
     @Override
-    public final Set<DataSchemaNodeBuilder> getChildNodeBuilders() {
+    public final List<DataSchemaNodeBuilder> getChildNodeBuilders() {
         return addedChildNodes;
     }
 
@@ -100,15 +102,28 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
 
     @Override
     public final void addChildNode(final DataSchemaNodeBuilder child) {
-        QName childName = child.getQName();
+        checkIsPresent(child);
+        addedChildNodes.add(child);
+    }
+
+    @Override
+    public final void addChildNode(final int index, final DataSchemaNodeBuilder child) {
+        checkIsPresent(child);
+        if (index > addedChildNodes.size()) {
+            addedChildNodes.add(child);
+        } else {
+            addedChildNodes.add(index, child);
+        }
+    }
+
+    private void checkIsPresent(final DataSchemaNodeBuilder child) {
         for (DataSchemaNodeBuilder addedChildNode : addedChildNodes) {
-            if (addedChildNode.getQName().equals(childName)) {
+            if (addedChildNode.getQName().equals(child.getQName())) {
                 throw new YangParseException(child.getModuleName(), child.getLine(), String.format(
                         "Can not add '%s' to '%s' in module '%s': node with same name already declared at line %d",
                         child, this, getModuleName(), addedChildNode.getLine()));
             }
         }
-        addedChildNodes.add(child);
     }
 
     @Override
@@ -120,14 +135,12 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
     public final void addChildNode(final DataSchemaNode child) {
         checkNotSealed();
         QName childName = child.getQName();
-        for (DataSchemaNode childNode : childNodes.values()) {
-            if (childNode.getQName().equals(childName)) {
-                throw new YangParseException(getModuleName(), getLine(), String.format(
-                        "Can not add '%s' to '%s' in module '%s': node with same name already declared", child, this,
-                        getModuleName()));
-            }
+        if (childNodes.containsKey(childName)) {
+            throw new YangParseException(getModuleName(), getLine(), String.format(
+                    "Can not add '%s' to '%s' in module '%s': node with same name already declared", child, this,
+                    getModuleName()));
         }
-        childNodes.put(child.getQName(), child);
+        childNodes.put(childName, child);
     }
 
     @Override
@@ -164,7 +177,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
     }
 
     @Override
-    public final Set<UsesNodeBuilder> getUsesNodeBuilders() {
+    public final List<UsesNodeBuilder> getUsesNodeBuilders() {
         return addedUsesNodes;
     }
 
@@ -215,26 +228,5 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
             usesNodes.add(builder.build());
         }
     }
-
-    @Deprecated
-    protected static DataSchemaNode getChildNode(final Set<DataSchemaNode> childNodes, final QName name) {
-        for (DataSchemaNode node : childNodes) {
-            if (node.getQName().equals(name)) {
-                return node;
-            }
-        }
-        return null;
-    }
-
-    @Deprecated
-    protected static DataSchemaNode getChildNode(final Set<DataSchemaNode> childNodes, final String name) {
-        for (DataSchemaNode node : childNodes) {
-            if (node.getQName().getLocalName().equals(name)) {
-                return node;
-            }
-        }
-        return null;
-    }
-
 
 }
