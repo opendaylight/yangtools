@@ -27,6 +27,10 @@ import javax.activation.UnsupportedDataTypeException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.dom.DOMResult;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
@@ -81,6 +85,9 @@ public class XmlDocumentUtils {
         }
     }
 
+    public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "operation");
+    private static final Logger logger = LoggerFactory.getLogger(XmlDocumentUtils.class);
+    private static final XMLOutputFactory FACTORY = XMLOutputFactory.newFactory();
     private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
 
         @Override
@@ -88,8 +95,6 @@ public class XmlDocumentUtils {
             return TypeDefinitionAwareCodec.from(baseType);
         }
     };
-
-    private static final Logger logger = LoggerFactory.getLogger(XmlDocumentUtils.class);
 
     /**
      * Converts Data DOM structure to XML Document for specified XML Codec Provider and corresponding
@@ -108,14 +113,19 @@ public class XmlDocumentUtils {
         Preconditions.checkNotNull(data);
         Preconditions.checkNotNull(schema);
 
-        Document doc = getDocument();
+        if (!(schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode)) {
+            throw new UnsupportedDataTypeException("Schema can be ContainerSchemaNode or ListSchemaNode. Other types are not supported yet.");
+        }
 
-        if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode) {
-            doc.appendChild(createXmlRootElement(doc, data, (SchemaNode) schema, codecProvider));
-            return doc;
-        } else {
-            throw new UnsupportedDataTypeException(
-                    "Schema can be ContainerSchemaNode or ListSchemaNode. Other types are not supported yet.");
+        final DOMResult result = new DOMResult();
+        try {
+            final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(result);
+            XmlStreamUtils.writeDataDocument(writer, data, (SchemaNode)schema, codecProvider);
+            writer.close();
+            return (Document)result.getNode();
+        } catch (XMLStreamException e) {
+            logger.error("Failed to serialize data {}", data, e);
+            return null;
         }
     }
 
@@ -141,57 +151,17 @@ public class XmlDocumentUtils {
      * @return new instance of XML Document
      * @throws UnsupportedDataTypeException
      */
-    public static Document toDocument(final CompositeNode data, final XmlCodecProvider codecProvider)
-            throws UnsupportedDataTypeException {
-        Preconditions.checkNotNull(data);
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        Document doc = null;
+    public static Document toDocument(final CompositeNode data, final XmlCodecProvider codecProvider) {
+        final DOMResult result = new DOMResult();
         try {
-            DocumentBuilder bob = dbf.newDocumentBuilder();
-            doc = bob.newDocument();
-        } catch (ParserConfigurationException e) {
+            final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(result);
+            XmlStreamUtils.writeDataDocument(writer, data, codecProvider);
+            writer.close();
+            return (Document)result.getNode();
+        } catch (XMLStreamException e) {
+            logger.error("Failed to serialize data {}", data, e);
             return null;
         }
-
-        doc.appendChild(createXmlRootElement(doc, data, null, codecProvider));
-        return doc;
-    }
-
-    private static Element createXmlRootElement(final Document doc, final Node<?> data, final SchemaNode schema,
-            final XmlCodecProvider codecProvider) throws UnsupportedDataTypeException {
-        Element itemEl = createElementFor(doc, data);
-        if (data instanceof SimpleNode<?>) {
-            if (schema instanceof LeafListSchemaNode) {
-                writeValueByType(itemEl, (SimpleNode<?>) data, ((LeafListSchemaNode) schema).getType(),
-                        (DataSchemaNode) schema, codecProvider);
-            } else if (schema instanceof LeafSchemaNode) {
-                writeValueByType(itemEl, (SimpleNode<?>) data, ((LeafSchemaNode) schema).getType(),
-                        (DataSchemaNode) schema, codecProvider);
-            } else {
-                Object value = data.getValue();
-                if (value != null) {
-                    itemEl.setTextContent(String.valueOf(value));
-                }
-            }
-        } else { // CompositeNode
-            for (Node<?> child : ((CompositeNode) data).getValue()) {
-                DataSchemaNode childSchema = null;
-                if (schema instanceof DataNodeContainer) {
-                    childSchema = findFirstSchema(child.getNodeType(), ((DataNodeContainer) schema).getChildNodes()).orNull();
-                    if (logger.isDebugEnabled()) {
-                        if (childSchema == null) {
-                            logger.debug("Probably the data node \""
-                                    + ((child == null) ? "" : child.getNodeType().getLocalName())
-                                    + "\" is not conform to schema");
-                        }
-                    }
-                }
-                itemEl.appendChild(createXmlRootElement(doc, child, childSchema, codecProvider));
-            }
-        }
-        return itemEl;
     }
 
     private static final Element createElementFor(final Document doc, final QName qname, final Object obj) {
@@ -375,8 +345,6 @@ public class XmlDocumentUtils {
         Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
         return ImmutableCompositeNode.create(qName, values, modifyAction.orNull());
     }
-
-    public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "operation");
 
     public static Optional<ModifyAction> getModifyOperationFromAttributes(final Element xmlElement) {
         Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
