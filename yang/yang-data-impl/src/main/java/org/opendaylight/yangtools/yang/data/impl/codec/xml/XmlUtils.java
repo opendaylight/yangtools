@@ -22,10 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Common XML-related utility methods, which are not specific to a particular
  * JAXP API.
  */
-final class XmlUtils {
+public final class XmlUtils {
 
     private XmlUtils() {
-
     }
 
     public static TypeDefinition<?> resolveBaseTypeFrom(final @Nonnull TypeDefinition<?> type) {
