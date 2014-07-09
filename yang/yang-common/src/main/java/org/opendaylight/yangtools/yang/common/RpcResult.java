@@ -10,36 +10,29 @@ package org.opendaylight.yangtools.yang.common;
 import java.util.Collection;
 
 /**
+ * Represents a general result of a call, request, or operation.
  *
- * Result of call to YANG enabled system.
- *
- *
- * @param <T> Return type
+ * @param <T> the result value type
  */
 public interface RpcResult<T> {
 
     /**
-     * True if processing of request was successful
+     * Returns whether or not processing of the call was successful.
      *
-     * @return true if processing was successful.
+     * @return true if processing was successful, false otherwise.
      */
     boolean isSuccessful();
 
     /**
-     *
-     * Returns result of call or null if no result is available.
-     *
-     * @return result of call or null if no result is available.
-     *
+     * Returns the value result of the call or null if no result is available.
      */
     T getResult();
 
     /**
+     * Returns a set of errors and warnings which occurred during processing
+     * the call.
      *
-     * Returns set of errors and warnings which occured during processing
-     * the request.
-     *
-     * @return
+     * @return a Collection of {@link RpcError}
      */
     Collection<RpcError> getErrors();
 }
