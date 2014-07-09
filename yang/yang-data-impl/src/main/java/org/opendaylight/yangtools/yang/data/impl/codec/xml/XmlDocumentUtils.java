@@ -34,7 +34,6 @@ import javax.xml.transform.dom.DOMResult;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
@@ -55,7 +54,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -178,72 +176,6 @@ public class XmlDocumentUtils {
 
         }
         return ret;
-    }
-
-    public static void writeValueByType(final Element element, final SimpleNode<?> node, final TypeDefinition<?> type,
-            final DataSchemaNode schema, final XmlCodecProvider codecProvider) {
-
-        Object nodeValue = node.getValue();
-
-        writeValueByType(element, type, codecProvider, nodeValue);
-    }
-
-    public static void writeValueByType(final Element element, final TypeDefinition<?> type, final XmlCodecProvider codecProvider, final Object nodeValue) {
-        TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
-        if (baseType instanceof IdentityrefTypeDefinition) {
-            if (nodeValue instanceof QName) {
-                QName value = (QName) nodeValue;
-                String prefix = "x";
-                if (value.getPrefix() != null && !value.getPrefix().isEmpty()) {
-                    prefix = value.getPrefix();
-                }
-                element.setAttribute("xmlns:" + prefix, value.getNamespace().toString());
-                element.setTextContent(prefix + ":" + value.getLocalName());
-            } else {
-                Object value = nodeValue;
-                logger.debug("Value of {}:{} is not instance of QName but is {}", baseType.getQName().getNamespace(),
-                        baseType.getQName().getLocalName(), value != null ? value.getClass() : "null");
-                if (value != null) {
-                    element.setTextContent(String.valueOf(value));
-                }
-            }
-        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            if (nodeValue instanceof InstanceIdentifier) {
-                InstanceIdentifierForXmlCodec.serialize((InstanceIdentifier)nodeValue,element);
-            } else {
-                Object value = nodeValue;
-                logger.debug("Value of {}:{} is not instance of InstanceIdentifier but is {}", baseType.getQName()
-                        .getNamespace(), //
-                        baseType.getQName().getLocalName(), value != null ? value.getClass() : "null");
-                if (value != null) {
-                    element.setTextContent(String.valueOf(value));
-                }
-            }
-        } else {
-            if (nodeValue != null) {
-                final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(baseType);
-                if (codec != null) {
-                    try {
-                        final String text = codec.serialize(nodeValue);
-                        element.setTextContent(text);
-                    } catch (ClassCastException e) {
-                        logger.error("Provided node value {} did not have type {} required by mapping. Using stream instead.", nodeValue, baseType, e);
-                        element.setTextContent(String.valueOf(nodeValue));
-                    }
-                } else {
-                    logger.error("Failed to find codec for {}, falling back to using stream", baseType);
-                    element.setTextContent(String.valueOf(nodeValue));
-                }
-            }
-        }
-    }
-
-    public final static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
-        TypeDefinition<?> superType = type;
-        while (superType.getBaseType() != null) {
-            superType = superType.getBaseType();
-        }
-        return superType;
     }
 
     public static Node<?> toDomNode(final Element xmlElement, final Optional<DataSchemaNode> schema,
