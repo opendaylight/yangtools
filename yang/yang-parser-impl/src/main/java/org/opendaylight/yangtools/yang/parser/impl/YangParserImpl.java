@@ -14,11 +14,6 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.f
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNode;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNodeInModule;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.processAugmentation;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.setNodeAddedByUses;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapChildNodes;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapGroupings;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapTypedefs;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.wrapUnknownNodes;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveType;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnion;
 
@@ -36,7 +31,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -54,7 +48,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -71,7 +64,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
@@ -84,7 +76,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilde
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
@@ -1101,79 +1092,49 @@ public final class YangParserImpl implements YangContextParser {
             DataNodeContainerBuilder parent = usesNode.getParent();
             ModuleBuilder module = BuilderUtils.getParentModule(parent);
             GroupingBuilder target = GroupingUtils.getTargetGroupingFromModules(usesNode, modules, module);
-            if (target == null) {
-                resolveUsesWithContext(usesNode);
-                usesNode.setResolved(true);
-                for (AugmentationSchemaBuilder augment : usesNode.getAugmentations()) {
-                    resolveUsesAugment(augment, module, modules);
-                }
-            } else {
-                parent.getChildNodeBuilders().addAll(target.instantiateChildNodes(parent));
-                parent.getTypeDefinitionBuilders().addAll(target.instantiateTypedefs(parent));
-                parent.getGroupingBuilders().addAll(target.instantiateGroupings(parent));
-                parent.getUnknownNodes().addAll(target.instantiateUnknownNodes(parent));
-                usesNode.setResolved(true);
-                for (AugmentationSchemaBuilder augment : usesNode.getAugmentations()) {
-                    resolveUsesAugment(augment, module, modules);
-                }
+
+            int index = nodeAfterUsesIndex(usesNode);
+            List<DataSchemaNodeBuilder> targetNodes = target.instantiateChildNodes(parent);
+            for (DataSchemaNodeBuilder targetNode : targetNodes) {
+                parent.addChildNode(index++, targetNode);
             }
+            parent.getTypeDefinitionBuilders().addAll(target.instantiateTypedefs(parent));
+            parent.getGroupingBuilders().addAll(target.instantiateGroupings(parent));
+            parent.getUnknownNodes().addAll(target.instantiateUnknownNodes(parent));
+            usesNode.setResolved(true);
+            for (AugmentationSchemaBuilder augment : usesNode.getAugmentations()) {
+                resolveUsesAugment(augment, module, modules);
+            }
+
             GroupingUtils.performRefine(usesNode);
         }
     }
 
-    /**
-     * Copy target grouping child nodes to current location with new namespace.
-     *
-     * @param usesNode
-     *            uses node to resolve
-     */
-    private void resolveUsesWithContext(final UsesNodeBuilder usesNode) {
-        final int line = usesNode.getLine();
+    private int nodeAfterUsesIndex(final UsesNodeBuilder usesNode) {
         DataNodeContainerBuilder parent = usesNode.getParent();
-        ModuleBuilder module = BuilderUtils.getParentModule(parent);
-        SchemaPath parentPath;
+        int usesLine = usesNode.getLine();
 
-        final QName parentQName;
-        if (parent instanceof AugmentationSchemaBuilder || parent instanceof ModuleBuilder) {
-            parentQName = QName.create(module.getQNameModule(), module.getPrefix(), "dummy");
-            if (parent instanceof AugmentationSchemaBuilder) {
-                parentPath = ((AugmentationSchemaBuilder) parent).getTargetNodeSchemaPath();
-            } else {
-                parentPath = parent.getPath();
-            }
-        } else {
-            parentQName = parent.getQName();
-            parentPath = parent.getPath();
+        List<DataSchemaNodeBuilder> childNodes = parent.getChildNodeBuilders();
+        if (childNodes.isEmpty()) {
+            return 0;
         }
 
-        GroupingDefinition gd = usesNode.getGroupingDefinition();
-
-        Set<DataSchemaNodeBuilder> childNodes = wrapChildNodes(module.getModuleName(), line, gd.getChildNodes(),
-                parentPath, parentQName);
-        parent.getChildNodeBuilders().addAll(childNodes);
+        DataSchemaNodeBuilder nextNodeAfterUses = null;
         for (DataSchemaNodeBuilder childNode : childNodes) {
-            setNodeAddedByUses(childNode);
+            if (!(childNode.isAddedByUses()) && !(childNode.isAugmenting())) {
+                if (childNode.getLine() > usesLine) {
+                    nextNodeAfterUses = childNode;
+                    break;
+                }
+            }
         }
 
-        Set<TypeDefinitionBuilder> typedefs = wrapTypedefs(module.getModuleName(), line, gd, parentPath, parentQName);
-        parent.getTypeDefinitionBuilders().addAll(typedefs);
-        for (TypeDefinitionBuilder typedef : typedefs) {
-            setNodeAddedByUses(typedef);
+        // uses is declared after child nodes
+        if (nextNodeAfterUses == null) {
+            return childNodes.size();
         }
 
-        Set<GroupingBuilder> groupings = wrapGroupings(module.getModuleName(), line, usesNode.getGroupingDefinition()
-                .getGroupings(), parentPath, parentQName);
-        parent.getGroupingBuilders().addAll(groupings);
-        for (GroupingBuilder gb : groupings) {
-            setNodeAddedByUses(gb);
-        }
-
-        List<UnknownSchemaNodeBuilderImpl> unknownNodes = wrapUnknownNodes(module.getModuleName(), line,
-                gd.getUnknownSchemaNodes(), parentPath, parentQName);
-        parent.getUnknownNodes().addAll(unknownNodes);
-        for (UnknownSchemaNodeBuilder un : unknownNodes) {
-            un.setAddedByUses(true);
-        }
+        return parent.indexOf(nextNodeAfterUses);
     }
 
     /**

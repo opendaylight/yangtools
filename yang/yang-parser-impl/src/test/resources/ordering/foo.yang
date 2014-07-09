@@ -1,0 +1,49 @@
+module foo {
+    yang-version 1;
+    namespace "urn:opendaylight.foo";
+    prefix "foo";
+
+    revision "2015-07-08" {
+    }
+
+    container x {
+        leaf x15 {
+            type string;
+        }
+
+        list x10 {}
+
+        container x5 {}
+
+        leaf-list x1 {
+            type string;
+        }
+
+        uses a;
+
+        container x2 {}
+
+        uses b;
+
+        container x3 {}
+    }
+
+
+    grouping a {
+        anyxml a5;
+        anyxml a1;
+    }
+
+    grouping b {
+        anyxml b5;
+        anyxml b1;
+    }
+
+    augment /x  {
+        leaf ax15 {
+            type string;
+        }
+        container ax5 {}
+    }
+
+}

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
+import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 
@@ -35,9 +36,9 @@ public interface GroupingBuilder extends DataNodeContainerBuilder, SchemaNodeBui
      * node.
      *
      * @param newParent Parent node, under which this grouping should be instantiated.
-     * @return Set of new builders representing instantiation of this grouping.
+     * @return List of new builders representing instantiation of this grouping.
      */
-    Set<DataSchemaNodeBuilder> instantiateChildNodes(Builder newParent);
+    List<DataSchemaNodeBuilder> instantiateChildNodes(Builder newParent);
 
 
    /**
