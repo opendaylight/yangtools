@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -184,13 +183,6 @@ public class XmlDocumentUtils {
             return toNodeWithSchema(xmlElement, schema.get(), codecProvider.or(DEFAULT_XML_VALUE_CODEC_PROVIDER));
         }
         return toDomNode(xmlElement);
-    }
-
-    public static CompositeNode fromElement(final Element xmlElement) {
-        CompositeNodeBuilder<ImmutableCompositeNode> node = ImmutableCompositeNode.builder();
-        node.setQName(qNameFromElement(xmlElement));
-
-        return node.toInstance();
     }
 
     public static QName qNameFromElement(final Element xmlElement) {
