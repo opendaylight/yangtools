@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Optional;
-
 import java.util.Iterator;
 
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
@@ -23,6 +21,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+
+import com.google.common.base.Optional;
 
 public final class NormalizedNodeUtils {
     private NormalizedNodeUtils() {
