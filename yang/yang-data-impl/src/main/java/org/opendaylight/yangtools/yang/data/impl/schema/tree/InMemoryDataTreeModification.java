@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,23 +27,34 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
+
 final class InMemoryDataTreeModification implements DataTreeModification {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
+
+    private final Object initModifLock = new Object();
     private final RootModificationApplyOperation strategyTree;
     private final InMemoryDataTreeSnapshot snapshot;
-    private final ModifiedNode rootNode;
+    private NormalizedNode<?, ?> rootNode;
+    private ModifiedNode modifications;
 
     @GuardedBy("this")
     private boolean sealed = false;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
-        this.strategyTree = Preconditions.checkNotNull(resolver).snapshot();
-        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode());
+        this.strategyTree = Preconditions.checkNotNull(resolver);
     }
 
     ModifiedNode getRootModification() {
-        return rootNode;
+        if (modifications == null) {
+            synchronized (initModifLock) {
+                if (modifications == null) {
+                    final TreeNode tree = TreeNodeFactory.createTreeNode(snapshot.getRootNode(), Version.initial());
+                    this.modifications = ModifiedNode.createUnmodified(tree);
+                }
+            }
+        }
+        return this.modifications;
     }
 
     ModificationApplyOperation getStrategy() {
@@ -81,43 +94,52 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
     @Override
     public synchronized Optional<NormalizedNode<?, ?>> readNode(final InstanceIdentifier path) {
-        /*
-         * Walk the tree from the top, looking for the first node between root and
-         * the requested path which has been modified. If no such node exists,
-         * we use the node itself.
-         */
-        final Entry<InstanceIdentifier, ModifiedNode> entry = TreeNodeUtils.findClosestsOrFirstMatch(rootNode, path, ModifiedNode.IS_TERMINAL_PREDICATE);
-        final InstanceIdentifier key = entry.getKey();
-        final ModifiedNode mod = entry.getValue();
+        if (modifications != null) {
 
-        final Optional<TreeNode> result = resolveSnapshot(key, mod);
-        if (result.isPresent()) {
-            NormalizedNode<?, ?> data = result.get().getData();
-            return NormalizedNodeUtils.findNode(key, data, path);
-        } else {
-            return Optional.absent();
+            /*
+             * Walk the tree from the top, looking for the first node between root and
+             * the requested path which has been modified. If no such node exists,
+             * we use the node itself.
+             */
+            final Entry<InstanceIdentifier, ModifiedNode> entry = TreeNodeUtils.findClosestsOrFirstMatch
+                  (modifications, path, ModifiedNode.IS_TERMINAL_PREDICATE);
+
+            final InstanceIdentifier key = entry.getKey();
+            final ModifiedNode mod = entry.getValue();
+
+            final Optional<TreeNode> result = resolveSnapshot(key, mod);
+
+            if (result.isPresent()) {
+                NormalizedNode<?, ?> data = result.get().getData();
+                return NormalizedNodeUtils.findNode(key, data, path);
+            } else {
+                return Optional.absent();
+            }
+
         }
+        return NormalizedNodeUtils.findNode(snapshot.getRootNode(), path);
     }
 
     private Optional<TreeNode> resolveSnapshot(final InstanceIdentifier path,
-            final ModifiedNode modification) {
-        final Optional<Optional<TreeNode>> potentialSnapshot = modification.getSnapshotCache();
-        if(potentialSnapshot.isPresent()) {
-            return potentialSnapshot.get();
-        }
+          final ModifiedNode modification) {
 
-        try {
-            return resolveModificationStrategy(path).apply(modification, modification.getOriginal(),
-                    snapshot.getRootNode().getSubtreeVersion().next());
-        } catch (Exception e) {
-            LOG.error("Could not create snapshot for {}:{}", path,modification,e);
-            throw e;
-        }
-    }
+      final Optional<Optional<TreeNode>> potentialSnapshot = modification.getSnapshotCache();
+      if(potentialSnapshot.isPresent()) {
+          return potentialSnapshot.get();
+      }
+
+      try {
+          return resolveModificationStrategy(path).apply(modification, modification.getOriginal(),
+                  Version.initial());
+      } catch (Exception e) {
+          LOG.error("Could not create snapshot for {}:{}", path,modification,e);
+          throw e;
+       }
+  }
 
     private ModificationApplyOperation resolveModificationStrategy(final InstanceIdentifier path) {
         LOG.trace("Resolving modification apply strategy for {}", path);
-        if(rootNode.getType() == ModificationType.UNMODIFIED) {
+        if(this.getRootModification().getType() == ModificationType.UNMODIFIED) {
             strategyTree.upgradeIfPossible();
         }
 
@@ -125,7 +147,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     private OperationWithModification resolveModificationFor(final InstanceIdentifier path) {
-        ModifiedNode modification = rootNode;
+        ModifiedNode modification = this.getRootModification();
         // We ensure strategy is present.
         ModificationApplyOperation operation = resolveModificationStrategy(path);
         for (PathArgument pathArg : path.getPathArguments()) {
@@ -137,8 +159,9 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     @Override
     public synchronized void ready() {
         Preconditions.checkState(!sealed, "Attempted to seal an already-sealed Data Tree.");
+        Preconditions.checkNotNull(this.modifications, "Attempted to seal a no-resolved DataTree.");
         sealed = true;
-        rootNode.seal();
+        this.getRootModification().seal();
     }
 
     @GuardedBy("this")
@@ -146,16 +169,28 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         Preconditions.checkState(!sealed, "Data Tree is sealed. No further modifications allowed.");
     }
 
+    public synchronized NormalizedNode<?, ?> getRootNode() {
+        if (rootNode != null) {
+            return rootNode;
+        } else {
+            return snapshot.getRootNode();
+        }
+    }
+
+    public synchronized void setRootNode(NormalizedNode<?, ?> modifRootNode) {
+        this.rootNode = modifRootNode;
+    }
+
     @Override
     public String toString() {
-        return "MutableDataTree [modification=" + rootNode + "]";
+        return "Modif DataTree [modification=" + snapshot.getRootNode() + "]";
     }
 
     @Override
     public synchronized DataTreeModification newModification() {
         Preconditions.checkState(sealed, "Attempted to chain on an unsealed modification");
 
-        if(rootNode.getType() == ModificationType.UNMODIFIED) {
+        if(getRootModification().getType() == ModificationType.UNMODIFIED) {
             return snapshot.newModification();
         }
 
@@ -172,10 +207,10 @@ final class InMemoryDataTreeModification implements DataTreeModification {
          *  For deeper nodes subtree version is derived from their respective metadata
          *  nodes, so this incorrect root subtree version is not affecting us.
          */
-        TreeNode originalSnapshotRoot = snapshot.getRootNode();
-        Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), originalSnapshotRoot.getSubtreeVersion().next());
+        TreeNode originalSnapshotRoot = TreeNodeFactory.createTreeNode(snapshot.getRootNode(), Version.initial());
+        Optional<TreeNode> tempRoot = strategyTree.apply(getRootModification(), Optional.of(originalSnapshotRoot), originalSnapshotRoot.getSubtreeVersion().next());
 
-        InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(), strategyTree);
+        InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get().getData(), strategyTree);
         return tempTree.newModification();
     }
 }
