@@ -6,7 +6,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.api;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -37,14 +37,15 @@ public interface DataNodeContainerBuilder extends Builder {
     SchemaPath getPath();
 
     /**
-     * Returns set of of child node builders.
+     * Returns list of of child node builders in order they are declared in yang
+     * file.
      *
      * This child node builder are build, during invoking {@link #build()} and
      * added as children to resulting {@link DataNodeContainer}.
      *
      * @return collection child nodes builders
      */
-    Set<DataSchemaNodeBuilder> getChildNodeBuilders();
+    List<DataSchemaNodeBuilder> getChildNodeBuilders();
 
     /**
      * Retrieves child node builder by local name.
@@ -61,6 +62,13 @@ public interface DataNodeContainerBuilder extends Builder {
      * @param childNode
      */
     void addChildNode(DataSchemaNodeBuilder childNode);
+
+    /**
+     * Add builder of child node to this node at specified position.
+     *
+     * @param childNode
+     */
+    void addChildNode(int index, DataSchemaNodeBuilder childNode);
 
     void addChildNode(DataSchemaNode childNode);
 
@@ -92,7 +100,7 @@ public interface DataNodeContainerBuilder extends Builder {
      *
      * @return collection of uses builders
      */
-    Set<UsesNodeBuilder> getUsesNodeBuilders();
+    List<UsesNodeBuilder> getUsesNodeBuilders();
 
     /**
      * Add builder of uses statement to this node.
@@ -111,30 +119,36 @@ public interface DataNodeContainerBuilder extends Builder {
     /**
      * Returns builders of typedef statement defined in this node.
      *
-     * @return  builders of typedef statement defined in this node.
+     * @return builders of typedef statement defined in this node.
      */
     Set<TypeDefinitionBuilder> getTypeDefinitionBuilders();
 
     /**
      * Add typedef builder to this node.
      *
-     * @param typedefBuilder Builder to add to this node.
+     * @param typedefBuilder
+     *            Builder to add to this node.
      */
     void addTypedef(TypeDefinitionBuilder typedefBuilder);
 
     /**
      * Returns an instance of product - DataNodeContainer
      *
-     * Returns an instance of data node container with
-     * children and properties constructed as per this builder state,
-     * all nested builders are also built and their product is
-     * set to DataNodeContainer.
+     * Returns an instance of data node container with children and properties
+     * constructed as per this builder state, all nested builders are also built
+     * and their product is set to DataNodeContainer.
      *
      * @return Instance of DataNodeContainer
      */
     @Override
     DataNodeContainer build();
 
-    Map<QName, DataSchemaNode> getChildNodes();
+    /**
+     * Returns set of child nodes of this node. Child nodes should be in same
+     * order as they were defined in yang file.
+     *
+     * @return set of child nodes of this node
+     */
+    Set<DataSchemaNode> getChildNodes();
 
 }

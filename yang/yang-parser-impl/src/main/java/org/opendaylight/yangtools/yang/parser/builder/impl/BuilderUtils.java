@@ -23,11 +23,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -661,7 +661,7 @@ public final class BuilderUtils {
 
     public static Set<DataSchemaNodeBuilder> wrapChildNodes(final String moduleName, final int line,
             final Set<DataSchemaNode> nodes, final SchemaPath parentPath, final QName parentQName) {
-        Set<DataSchemaNodeBuilder> result = new HashSet<>();
+        Set<DataSchemaNodeBuilder> result = new LinkedHashSet<>();
 
         for (DataSchemaNode node : nodes) {
             QName qname = QName.create(parentQName, node.getQName().getLocalName());

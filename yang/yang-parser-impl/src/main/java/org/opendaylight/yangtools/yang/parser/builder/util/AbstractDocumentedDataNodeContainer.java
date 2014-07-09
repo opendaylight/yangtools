@@ -1,8 +1,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -13,17 +11,14 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocumentedNode implements DataNodeContainer {
 
-    private final Map<QName, DataSchemaNode> childNodes;
+    private final Set<DataSchemaNode> childNodes;
     private final Set<GroupingDefinition> groupings;
     private final Set<UsesNode> uses;
     private final Set<TypeDefinition<?>> typeDefinitions;
 
     protected AbstractDocumentedDataNodeContainer(final AbstractDocumentedDataNodeContainerBuilder data) {
         super(data);
-        // FIXME : Should be unmodifiable ordered set (ordered by QName... or appearance in YANG file).
-        // consider using new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-
-        childNodes = ImmutableMap.copyOf(data.getChildNodes());
+        childNodes = ImmutableSet.copyOf(data.getChildNodes());
         groupings = ImmutableSet.copyOf(data.getGroupings());
         uses = ImmutableSet.copyOf(data.getUsesNodes());
         typeDefinitions = ImmutableSet.copyOf(data.getTypeDefinitions());
@@ -36,7 +31,7 @@ public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocume
 
     @Override
     public final Set<DataSchemaNode> getChildNodes() {
-        return ImmutableSet.copyOf(childNodes.values());
+        return childNodes;
     }
 
     @Override
@@ -46,7 +41,7 @@ public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocume
 
     @Override
     public final DataSchemaNode getDataChildByName(final QName name) {
-        for (DataSchemaNode node : childNodes.values()) {
+        for (DataSchemaNode node : childNodes) {
             if (node.getQName().equals(name)) {
                 return node;
             }
@@ -56,7 +51,7 @@ public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocume
 
     @Override
     public final DataSchemaNode getDataChildByName(final String name) {
-        for (DataSchemaNode node : childNodes.values()) {
+        for (DataSchemaNode node : childNodes) {
             if (node.getQName().getLocalName().equals(name)) {
                 return node;
             }

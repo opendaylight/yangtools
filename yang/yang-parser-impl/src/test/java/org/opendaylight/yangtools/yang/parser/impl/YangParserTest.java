@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +44,6 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -119,83 +117,6 @@ public class YangParserTest {
         Date expectedRevision = TestUtils.createDate("2013-02-27");
         assertEquals(expectedRevision, foo.getRevision());
         assertEquals(" WILL BE DEFINED LATER", foo.getReference());
-    }
-
-    @Test
-    public void testOrderingTypedef() {
-        Module bar = TestUtils.findModule(modules, "bar");
-        Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
-        String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2", "my-decimal-type", "my-union",
-                "my-union-ext", "nested-union2", "string-ext1", "string-ext2", "string-ext3", "string-ext4" };
-        String[] actualOrder = new String[typedefs.size()];
-
-        int i = 0;
-        for (TypeDefinition<?> type : typedefs) {
-            actualOrder[i] = type.getQName().getLocalName();
-            i++;
-        }
-        assertArrayEquals(expectedOrder, actualOrder);
-    }
-
-    @Test
-    public void testOrderingChildNodes() {
-        Module foo = TestUtils.findModule(modules, "foo");
-        AugmentationSchema augment1 = null;
-        for (AugmentationSchema as : foo.getAugmentations()) {
-            if ("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
-                augment1 = as;
-                break;
-            }
-        }
-        assertNotNull(augment1);
-
-        String[] expectedOrder = new String[] { "ds0ChannelNumber", "interface-id", "my-type", "odl", "schemas" };
-        String[] actualOrder = new String[expectedOrder.length];
-
-        int i = 0;
-        for (DataSchemaNode augmentChild : augment1.getChildNodes()) {
-            actualOrder[i] = augmentChild.getQName().getLocalName();
-            i++;
-        }
-
-        assertArrayEquals(expectedOrder, actualOrder);
-    }
-
-    @Test
-    public void testOrderingNestedChildNodes1() {
-        Module foo = TestUtils.findModule(modules, "foo");
-
-        Set<DataSchemaNode> childNodes = foo.getChildNodes();
-        String[] expectedOrder = new String[] { "address", "addresses", "custom-union-leaf", "data", "datas",
-                "decimal-leaf", "decimal-leaf2", "ext", "how", "int32-leaf", "length-leaf", "mycont", "peer", "port",
-                "string-leaf", "transfer", "union-leaf" };
-        String[] actualOrder = new String[childNodes.size()];
-
-        int i = 0;
-        for (DataSchemaNode child : childNodes) {
-            actualOrder[i] = child.getQName().getLocalName();
-            i++;
-        }
-        assertArrayEquals(expectedOrder, actualOrder);
-    }
-
-    @Test
-    public void testOrderingNestedChildNodes2() {
-        Module baz = TestUtils.findModule(modules, "baz");
-        Set<GroupingDefinition> groupings = baz.getGroupings();
-        assertEquals(1, groupings.size());
-        GroupingDefinition target = groupings.iterator().next();
-
-        Set<DataSchemaNode> childNodes = target.getChildNodes();
-        String[] expectedOrder = new String[] { "address", "addresses", "data", "how", "port" };
-        String[] actualOrder = new String[childNodes.size()];
-
-        int i = 0;
-        for (DataSchemaNode child : childNodes) {
-            actualOrder[i] = child.getQName().getLocalName();
-            i++;
-        }
-        assertArrayEquals(expectedOrder, actualOrder);
     }
 
     @Test
@@ -789,7 +710,6 @@ public class YangParserTest {
         assertEquals(int32TypedefQName, typePathIt.next());
         assertFalse(typePathIt.hasNext());
 
-
         // int32-ext1/int32
         Int32 int32 = (Int32) int32ext1.getBaseType();
         assertEquals(Int32.getInstance(), int32);
@@ -857,7 +777,7 @@ public class YangParserTest {
         File dependenciesDir = new File(getClass().getResource("/sorting-test").toURI());
         YangContextParser parser = new YangParserImpl();
         modules = parser.parseFile(yangFile, dependenciesDir).getModules();
-        SchemaContext ctx = new SchemaContextImpl(modules, Collections.<ModuleIdentifier, String>emptyMap());
+        SchemaContext ctx = new SchemaContextImpl(modules, Collections.<ModuleIdentifier, String> emptyMap());
         checkOrder(modules);
         assertSetEquals(modules, ctx.getModules());
 
@@ -874,12 +794,12 @@ public class YangParserTest {
         }
         Set<Module> newModules = parser.parseFiles(testFiles).getModules();
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         newModules = parser.parseFiles(testFiles, null).getModules();
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         List<InputStream> streams = new ArrayList<>();
@@ -888,7 +808,7 @@ public class YangParserTest {
         }
         newModules = parser.parseSources(BuilderUtils.filesToByteSources(testFiles)).getModules();
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         streams.clear();
@@ -897,13 +817,13 @@ public class YangParserTest {
         }
         newModules = parser.parseSources(BuilderUtils.filesToByteSources(testFiles), null).getModules();
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         Map<File, Module> mapped = parser.parseYangModelsMapped(testFiles);
         newModules = new LinkedHashSet<>(mapped.values());
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         streams.clear();
@@ -913,7 +833,7 @@ public class YangParserTest {
         Map<InputStream, Module> mappedStreams = parser.parseYangModelsFromStreamsMapped(streams);
         newModules = new LinkedHashSet<>(mappedStreams.values());
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String>emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
         assertSetEquals(newModules, ctx.getModules());
     }
 

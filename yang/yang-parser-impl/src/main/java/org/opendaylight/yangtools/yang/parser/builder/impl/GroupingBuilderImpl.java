@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -75,8 +74,8 @@ public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContain
     }
 
     @Override
-    public Set<DataSchemaNodeBuilder> instantiateChildNodes(final Builder newParent) {
-        final Set<DataSchemaNodeBuilder> nodes = new HashSet<>();
+    public List<DataSchemaNodeBuilder> instantiateChildNodes(final Builder newParent) {
+        final List<DataSchemaNodeBuilder> nodes = new ArrayList<>();
         for (DataSchemaNodeBuilder node : getChildNodeBuilders()) {
             DataSchemaNodeBuilder copy = CopyUtils.copy(node, newParent, true);
             BuilderUtils.setNodeAddedByUses(copy);
