@@ -7,44 +7,48 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom;
 
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.dom.DOMResult;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlStreamUtils;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
-
-public class DomUtils {
-
-    private DomUtils() {
-    }
+public final class DomUtils {
 
     private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
-
         @Override
-        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(TypeDefinition<?> baseType) {
+        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
             return TypeDefinitionAwareCodec.from(baseType);
         }
     };
+
+    private DomUtils() {
+    }
 
     public static XmlCodecProvider defaultValueCodecProvider() {
         return DEFAULT_XML_VALUE_CODEC_PROVIDER;
     }
 
-    public static Object parseXmlValue(Element xml, XmlCodecProvider codecProvider, TypeDefinition<?> type) {
+    public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final TypeDefinition<?> type) {
         TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(type);
 
         String text = xml.getTextContent();
@@ -60,11 +64,16 @@ public class DomUtils {
         return value;
     }
 
-    public static void serializeXmlValue(Element itemEl, TypeDefinition<? extends TypeDefinition<?>> type, XmlCodecProvider codecProvider, Object value) {
-        XmlDocumentUtils.writeValueByType(itemEl, type, codecProvider, value);
+    public static void serializeXmlValue(final Element element, final TypeDefinition<? extends TypeDefinition<?>> type, final XmlCodecProvider codecProvider, final Object value) {
+        try {
+            XMLStreamWriter writer = XMLOutputFactory.newFactory().createXMLStreamWriter(new DOMResult(element));
+            XmlStreamUtils.create(codecProvider).writeValue(writer, type, value);
+        } catch (XMLStreamException e) {
+            throw new IllegalStateException("XML encoding failed", e);
+        }
     }
 
-    public static LinkedListMultimap<QName, Element> mapChildElementsForSingletonNode(Element node) {
+    public static LinkedListMultimap<QName, Element> mapChildElementsForSingletonNode(final Element node) {
         List<Element> childNodesCollection = Lists.newArrayList();
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -76,7 +85,7 @@ public class DomUtils {
         return mapChildElements(childNodesCollection);
     }
 
-    public static LinkedListMultimap<QName, Element> mapChildElements(Iterable<Element> childNodesCollection) {
+    public static LinkedListMultimap<QName, Element> mapChildElements(final Iterable<Element> childNodesCollection) {
         LinkedListMultimap<QName, Element> mappedChildElements = LinkedListMultimap.create();
 
         for (Element element : childNodesCollection) {
@@ -88,7 +97,7 @@ public class DomUtils {
     }
 
 
-    public static Map<QName, String> toAttributes(NamedNodeMap xmlAttributes) {
+    public static Map<QName, String> toAttributes(final NamedNodeMap xmlAttributes) {
         Map<QName, String> attributes = new HashMap<>();
 
         for (int i = 0; i < xmlAttributes.getLength(); i++) {
