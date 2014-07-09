@@ -297,6 +297,7 @@ final class Util {
                 List<String> foundFilesForReporting = new ArrayList<>();
                 // is it jar file or directory?
                 if (file.isDirectory()) {
+                    //FIXME: code duplicate
                     File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
                     if (yangDir.exists() && yangDir.isDirectory()) {
                         File[] yangFiles = yangDir.listFiles(new FilenameFilter() {
@@ -352,6 +353,7 @@ final class Util {
             for (File file : filesOnCp) {
                 // is it jar file or directory?
                 if (file.isDirectory()) {
+                    //FIXME: code duplicate
                     File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
                     if (yangDir.exists() && yangDir.isDirectory()) {
                         File[] yangFiles = yangDir.listFiles(new FilenameFilter() {

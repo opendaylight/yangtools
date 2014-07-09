@@ -43,7 +43,10 @@ public abstract class ConfigArg {
      * Configuration argument for code generator class and output directory.
      */
     public static final class CodeGeneratorArg extends ConfigArg {
-        private static final String CODE_GEN_DEFAULT_RESOURCE_DIR = "target" + File.separator + "generated-resources";
+        private static final String TARGET_GENERATED_SOURCES = "target" + File.separator + "generated-sources";
+        private static final String CODE_GEN_DEFAULT_RESOURCE_DIR = TARGET_GENERATED_SOURCES + File.separator + "spi";
+        public static final String YANG_GENERATED_DIR = TARGET_GENERATED_SOURCES + File.separator + "yang";
+
 
         private String codeGeneratorClass;
         private File resourceBaseDir = new File(CODE_GEN_DEFAULT_RESOURCE_DIR);
