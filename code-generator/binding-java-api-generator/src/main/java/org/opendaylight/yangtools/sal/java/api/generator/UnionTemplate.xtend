@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.sal.java.api.generator
 
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import java.beans.ConstructorProperties
+import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 
 /**
  * Template for generating JAVA class. 
@@ -37,14 +38,15 @@ class UnionTemplate extends ClassTemplate {
 
     private def unionConstructors() '''
         «FOR property : finalProperties SEPARATOR "\n"»
-            «val isCharArray = "char[]".equals(property.returnType.name)»
+            «val propRet = property.returnType»
+            «val isCharArray = "char[]".equals(propRet.name)»
             «IF isCharArray»
                 /**
                  * Constructor provided only for using in JMX. Don't use it for
                  * construction new object of this union type. 
                  */
                 @«ConstructorProperties.importedName»("«property.name»")
-                public «type.name»(«property.returnType.importedName» «property.fieldName») {
+                public «type.name»(«propRet.importedName» «property.fieldName») {
                     «String.importedName» defVal = new «String.importedName»(«property.fieldName»);
                     «type.name» defInst = «type.name»Builder.getDefaultInstance(defVal);
                     «FOR other : finalProperties»
@@ -61,7 +63,28 @@ class UnionTemplate extends ClassTemplate {
                     super(«parentProperties.asArguments»);
                     this.«property.fieldName» = «property.fieldName»;
                     «FOR other : finalProperties»
-                        «IF property != other»this.«other.fieldName» = null;«ENDIF»
+                        «IF property != other»
+                            «IF "value".equals(other.name)»
+                                «IF "java.lang.String".equals(propRet.fullyQualifiedName)»
+                                    ««« type string
+                                    this.«other.fieldName» = «property.fieldName».toCharArray();
+                                «ELSEIF "byte[]".equals(propRet.name)»
+                                    ««« type binary
+                                    this.«other.fieldName» = new «String.importedName»(«property.fieldName»).toCharArray();
+                                «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang") || propRet instanceof Enumeration»
+                                    ««« type int*, uint or enumeration*
+                                    this.«other.fieldName» = «property.fieldName».toString().toCharArray();
+                                «ELSEIF propRet instanceof GeneratedTransferObject && (propRet as GeneratedTransferObject).unionType»
+                                    ««« union type
+                                    this.«other.fieldName» = «property.fieldName».getValue();
+                                «ELSE»
+                                    ««« generated type
+                                    this.«other.fieldName» = «property.fieldName».getValue().toString().toCharArray();
+                                «ENDIF»
+                            «ELSE»
+                                this.«other.fieldName» = null;
+                            «ENDIF»
+                        «ENDIF»
                     «ENDFOR»
                 }
             «ENDIF»
