@@ -39,7 +39,7 @@ public interface EnumBuilder extends Type {
      * @param name
      * @param value
      */
-    void addValue(final String name, final Integer value);
+    void addValue(final String name, final Integer value, final String description);
 
     /**
      * 
@@ -57,5 +57,10 @@ public interface EnumBuilder extends Type {
      *            <code>enumBuilder</code>
      */
     void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef);
+    
+    /**
+     * @param description
+     */
+    void setDescription(final String description);
 
 }
