@@ -405,12 +405,10 @@ class BuilderTemplate extends BaseTemplate {
                 «val restrictions = f.returnType.restrictions»
                 «IF !_final && restrictions != null»
                     «IF !(restrictions.lengthConstraints.empty)»
-                        «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
-                        private static «List.importedName»<«Range.importedName»<«clazz.importedNumber»>> «f.fieldName»_length;
+                        private static «List.importedName»<«Range.importedName»<«f.returnType.importedNumber»>> «f.fieldName»_length;
                     «ENDIF»
                     «IF !(restrictions.rangeConstraints.empty)»
-                        «val clazz = restrictions.rangeConstraints.iterator.next.min.class»
-                        private static «List.importedName»<«Range.importedName»<«clazz.importedNumber»>> «f.fieldName»_range;
+                        private static «List.importedName»<«Range.importedName»<«f.returnType.importedNumber»>> «f.fieldName»_range;
                     «ENDIF»
                 «ENDIF»
             «ENDFOR»
@@ -438,7 +436,7 @@ class BuilderTemplate extends BaseTemplate {
                 return this;
             }
             «generateLengthMethod(length, field.returnType, type.name+BUILDER, length)»
-            «generateRangeMethod(range, field.returnType, type.name+BUILDER, range)»
+            «generateRangeMethod(range, field.returnType.restrictions, field.returnType, type.name+BUILDER, range)»
         «ENDFOR»
         «IF augmentField != null»
 
@@ -466,7 +464,7 @@ class BuilderTemplate extends BaseTemplate {
                 «generateLengthRestriction(type, paramName, lengthGetter, isNestedType, isArray)»
             «ENDIF»
             «IF !restrictions.rangeConstraints.empty»
-                «generateRangeRestriction(type, paramName, rangeGetter, isNestedType, isArray)»
+                «generateRangeRestriction(type, paramName, rangeGetter, isNestedType)»
             «ENDIF»
         «ENDIF»
     '''
@@ -488,13 +486,11 @@ class BuilderTemplate extends BaseTemplate {
         }
     '''
 
-    def private generateRangeRestriction(Type type, String paramName, String getterName, boolean isNestedType, boolean isArray) '''
-        «val restrictions = type.getRestrictions»
+    def private generateRangeRestriction(Type type, String paramName, String getterName, boolean isNestedType) '''
         if («paramName» != null) {
-            «val clazz = restrictions.rangeConstraints.iterator.next.min.class»
-            «printRangeConstraint(type, clazz, paramName, isNestedType)»
+            «printRangeConstraint(type, paramName, isNestedType)»
             boolean isValidRange = false;
-            for («Range.importedName»<«clazz.importedNumber»> r : «getterName»()) {
+            for («Range.importedName»<«type.importedNumber»> r : «getterName»()) {
                 if (r.contains(_constraint)) {
                     isValidRange = true;
                 }

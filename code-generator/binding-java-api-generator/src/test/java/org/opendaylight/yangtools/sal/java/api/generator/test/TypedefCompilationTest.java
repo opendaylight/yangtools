@@ -91,7 +91,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertTrue(unionExt2.exists());
         assertTrue(unionExt3.exists());
         assertTrue(unionExt4.exists());
-        assertFilesCount(parent, 30);
+        assertFilesCount(parent, 31);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -102,6 +102,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         Class<?> int32Ext1Class = Class.forName(pkg + ".Int32Ext1", true, loader);
         Class<?> int32Ext2Class = Class.forName(pkg + ".Int32Ext2", true, loader);
         Class<?> myDecimalTypeClass = Class.forName(pkg + ".MyDecimalType", true, loader);
+        Class<?> myDecimalType2Class = Class.forName(pkg + ".MyDecimalType2", true, loader);
         Class<?> stringExt1Class = Class.forName(pkg + ".StringExt1", true, loader);
         Class<?> stringExt2Class = Class.forName(pkg + ".StringExt2", true, loader);
         Class<?> stringExt3Class = Class.forName(pkg + ".StringExt3", true, loader);
@@ -263,6 +264,30 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(new BigDecimal("3.14"));
         assertEquals(obj, defInst.invoke(null, "3.14"));
+
+        // typedef my-decimal-type2
+        assertFalse(myDecimalType2Class.isInterface());
+        assertContainsField(myDecimalType2Class, VAL, BigDecimal.class);
+        assertContainsField(myDecimalType2Class, RANGE, List.class);
+        assertContainsFieldWithValue(myDecimalType2Class, "serialVersionUID", Long.TYPE, -672265764962082714L, BigDecimal.class);
+        assertEquals(3, myDecimalType2Class.getDeclaredFields().length);
+        assertContainsMethod(myDecimalType2Class, BigDecimal.class, "getValue");
+        expectedConstructor = assertContainsConstructor(myDecimalType2Class, BigDecimal.class);
+        assertContainsConstructor(myDecimalType2Class, myDecimalType2Class);
+        assertEquals(2, myDecimalType2Class.getDeclaredConstructors().length);
+        assertContainsMethod(myDecimalType2Class, BigDecimal.class, GET_VAL);
+        assertContainsDefaultMethods(myDecimalType2Class);
+        defInst = assertContainsMethod(myDecimalType2Class, myDecimalType2Class, "getDefaultInstance", String.class);
+        assertContainsGetLengthOrRange(myDecimalType2Class, false);
+        assertEquals(6, myDecimalType2Class.getDeclaredMethods().length);
+
+        List<Range<BigDecimal>> decimal2RangeConstraints = new ArrayList<>();
+        decimal2RangeConstraints.add(Range.closed(new BigDecimal("0"), new BigDecimal("1")));
+        arg = new BigDecimal("1.4");
+        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, decimal2RangeConstraints);
+        assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
+        obj = expectedConstructor.newInstance(new BigDecimal("0.14"));
+        assertEquals(obj, defInst.invoke(null, "0.14"));
 
         // typedef union-ext1
         assertFalse(unionExt1Class.isInterface());
