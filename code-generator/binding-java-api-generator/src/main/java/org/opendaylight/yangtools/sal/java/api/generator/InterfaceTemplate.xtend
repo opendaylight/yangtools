@@ -58,15 +58,13 @@ class InterfaceTemplate extends BaseTemplate {
         enclosedGeneratedTypes = genType.enclosedTypes
     }
     
-
-    
     /**
      * Template method which generate the whole body of the interface.
      * 
      * @return string with code for interface body in JAVA format
      */
     override body() '''
-        «type.comment.asJavadoc»
+        «wrapToDocumentation(formatDataForJavaDoc(type))»
         public interface «type.name»
             «superInterfaces»
         {
