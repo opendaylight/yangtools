@@ -38,10 +38,12 @@ public class RpcResultBuilderTest {
     @Test
     public void testFailed() {
         Throwable cause = new Throwable( "mock cause" );
+        Throwable cause2 = new Throwable( "mock cause2" );
         RpcResult<String> result = RpcResultBuilder.<String>failed()
                   .withError( ErrorType.PROTOCOL, "error message 1" )
                   .withError( ErrorType.APPLICATION, "lock_denied", "error message 2" )
                   .withError( ErrorType.RPC, "in-use", "error message 3", "my-app-tag", "my-info", cause )
+                  .withError( ErrorType.TRANSPORT, "error message 4", cause2 )
                   .build();
         verifyRpcResult( result, false, null );
         verifyRpcError( result, 0, ErrorSeverity.ERROR, ErrorType.PROTOCOL, "operation-failed",
@@ -50,7 +52,9 @@ public class RpcResultBuilderTest {
                         "error message 2", null, null, null );
         verifyRpcError( result, 2, ErrorSeverity.ERROR, ErrorType.RPC, "in-use",
                         "error message 3", "my-app-tag", "my-info", cause );
-        assertEquals( "getErrors size", 3, result.getErrors().size() );
+        verifyRpcError( result, 3, ErrorSeverity.ERROR, ErrorType.TRANSPORT, "operation-failed",
+                        "error message 4", null, null, cause2 );
+        assertEquals( "getErrors size", 4, result.getErrors().size() );
     }
 
     @Test
@@ -66,6 +70,41 @@ public class RpcResultBuilderTest {
         verifyRpcError( result, 1, ErrorSeverity.WARNING, ErrorType.RPC, "in-use",
                         "message 2", "my-app-tag", "my-info", cause );
         assertEquals( "getErrors size", 2, result.getErrors().size() );
+    }
+
+    @Test
+    public void testFrom() {
+        Throwable cause = new Throwable( "mock cause" );
+        RpcResult<String> result = RpcResultBuilder.<String>success()
+                .withResult( "foo" )
+                .withWarning( ErrorType.RPC, "in-use", "message", "my-app-tag", "my-info", cause )
+                .build();
+
+        RpcResult<String> copy = RpcResultBuilder.<String>from( result )
+                .withError( ErrorType.PROTOCOL, "error message" )
+                .build();
+        verifyRpcResult( copy, true, "foo" );
+        verifyRpcError( copy, 0, ErrorSeverity.WARNING, ErrorType.RPC, "in-use",
+                        "message", "my-app-tag", "my-info", cause );
+        verifyRpcError( copy, 1, ErrorSeverity.ERROR, ErrorType.PROTOCOL, "operation-failed",
+                        "error message", null, null, null );
+    }
+
+    @Test
+    public void testWithRpcErrors() {
+        Throwable cause = new Throwable( "mock cause" );
+        RpcResult<String> result = RpcResultBuilder.<String>failed()
+                .withWarning( ErrorType.RPC, "in-use", "message", "my-app-tag", "my-info", cause )
+                .withError( ErrorType.PROTOCOL, "error message" )
+                .build();
+
+        RpcResult<String> result2 = RpcResultBuilder.<String>failed()
+                .withRpcErrors( result.getErrors() )
+                .build();
+        verifyRpcError( result2, 0, ErrorSeverity.WARNING, ErrorType.RPC, "in-use",
+                        "message", "my-app-tag", "my-info", cause );
+        verifyRpcError( result2, 1, ErrorSeverity.ERROR, ErrorType.PROTOCOL, "operation-failed",
+                        "error message", null, null, null );
     }
 
     void verifyRpcError( RpcResult<?> result, int errorIndex, ErrorSeverity expSeverity,
