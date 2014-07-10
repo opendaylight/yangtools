@@ -25,7 +25,7 @@ class UnionBuilderTemplate extends ClassTemplate {
     }
 
     def override body() '''
-        «type.comment.asJavadoc»
+        «wrapToDocumentation(formatDataForJavaDoc(type))»
         public class «type.name» {
 
             «generateMethods»

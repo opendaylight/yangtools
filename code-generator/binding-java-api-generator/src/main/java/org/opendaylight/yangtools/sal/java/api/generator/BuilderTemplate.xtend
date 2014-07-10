@@ -139,12 +139,12 @@ class BuilderTemplate extends BaseTemplate {
         return if (lastDotIndex == -1) "" else fullyQualifiedName.substring(0, lastDotIndex)
     }
 
-	/**
-	 * Returns the name of tye type from <code>fullyQualifiedName</code>
-	 * 
-	 * @param fullyQualifiedName string with fully qualified type name (package + type)
-	 * @return string with the name of the type
-	 */
+    /**
+     * Returns the name of tye type from <code>fullyQualifiedName</code>
+     * 
+     * @param fullyQualifiedName string with fully qualified type name (package + type)
+     * @return string with the name of the type
+     */
     def private String getName(String fullyQualifiedName) {
         val lastDotIndex = fullyQualifiedName.lastIndexOf(Constants.DOT)
         return if (lastDotIndex == -1) fullyQualifiedName else fullyQualifiedName.substring(lastDotIndex + 1)
@@ -176,10 +176,10 @@ class BuilderTemplate extends BaseTemplate {
      * @param method method signature from which is the method name and return type obtained
      * @return generated property instance for the getter <code>method</code>
      * @throws IllegalArgumentException<ul>
-     * 	<li>if the <code>method</code> equals <code>null</code></li>
-     * 	<li>if the name of the <code>method</code> equals <code>null</code></li>
-     * 	<li>if the name of the <code>method</code> is empty</li>
-     * 	<li>if the return type of the <code>method</code> equals <code>null</code></li>
+     *  <li>if the <code>method</code> equals <code>null</code></li>
+     *  <li>if the name of the <code>method</code> equals <code>null</code></li>
+     *  <li>if the name of the <code>method</code> is empty</li>
+     *  <li>if the return type of the <code>method</code> equals <code>null</code></li>
      * </ul>
      */
     def private GeneratedProperty propertyFromGetter(MethodSignature method) {
@@ -204,7 +204,7 @@ class BuilderTemplate extends BaseTemplate {
      * @return string with JAVA source code
      */
     override body() '''
-
+        «wrapToDocumentation(formatDataForJavaDoc(type))»
         public class «type.name»«BUILDER» {
 
             «generateFields(false)»
@@ -394,7 +394,7 @@ class BuilderTemplate extends BaseTemplate {
 
     /**
      * Template method which generates class attributes.
-     *
+     * 
      * @param boolean value which specify whether field is|isn't final
      * @return string with class attributes and their types
      */

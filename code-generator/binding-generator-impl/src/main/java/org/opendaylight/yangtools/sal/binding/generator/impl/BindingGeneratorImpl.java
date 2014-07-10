@@ -584,7 +584,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         final String packageName = packageNameForGeneratedType(basePackageName, identity.getPath());
         final String genTypeName = BindingMapping.getClassName(identity.getQName());
-        final GeneratedTOBuilder newType = new GeneratedTOBuilderImpl(packageName, genTypeName);
+        final GeneratedTOBuilderImpl newType = new GeneratedTOBuilderImpl(packageName, genTypeName);
         final IdentitySchemaNode baseIdentity = identity.getBaseIdentity();
         if (baseIdentity == null) {
             final GeneratedTOBuilderImpl gto = new GeneratedTOBuilderImpl(BaseIdentity.class.getPackage().getName(),
@@ -600,6 +600,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         newType.setAbstract(true);
         newType.addComment(identity.getDescription());
+        newType.setDescription(identity.getDescription());
+        newType.setReference(identity.getReference());
+        newType.setModuleName(module.getName());
+        newType.setSchemaPath(identity.getPath().getPathFromRoot());
+        
         final QName qname = identity.getQName();
         qnameConstant(newType, BindingMapping.QNAME_STATIC_FIELD_NAME, qname);
 
@@ -688,6 +693,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 && (enumTypeDef.getQName().getLocalName() != null)) {
             final String enumerationName = BindingMapping.getClassName(enumName);
             final EnumBuilder enumBuilder = typeBuilder.addEnumeration(enumerationName);
+            enumBuilder.setDescription(enumTypeDef.getDescription());
             enumBuilder.updateEnumPairsFromEnumTypeDef(enumTypeDef);
             return enumBuilder;
         }
@@ -712,7 +718,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
         checkArgument(module != null, "Module reference cannot be NULL.");
         final String packageName = BindingMapping.getRootPackageName(module.getQNameModule());
         final String moduleName = BindingMapping.getClassName(module.getName()) + postfix;
-        return new GeneratedTypeBuilderImpl(packageName, moduleName);
+        
+        final GeneratedTypeBuilderImpl moduleBuilder = new GeneratedTypeBuilderImpl(packageName, moduleName);
+        moduleBuilder.setDescription(module.getDescription());
+        moduleBuilder.setReference(module.getReference());
+        moduleBuilder.setModuleName(moduleName);
+        
+        return moduleBuilder;
     }
 
     /**
@@ -1298,12 +1310,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     }
                     ((TypeProviderImpl) typeProvider).putReferencedType(leaf.getPath(), returnType);
                 } else if (typeDef instanceof UnionType) {
-                    genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leaf);
+                    genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leaf, parentModule);
                     if (genTOBuilder != null) {
                         returnType = createReturnTypeForUnion(genTOBuilder, typeDef, typeBuilder, parentModule);
                     }
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leaf);
+                    genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leaf, parentModule);
                     if (genTOBuilder != null) {
                         returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
                     }
@@ -1485,12 +1497,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     returnType = new ReferencedTypeImpl(enumBuilder.getPackageName(), enumBuilder.getName());
                     ((TypeProviderImpl) typeProvider).putReferencedType(node.getPath(), returnType);
                 } else if (typeDef instanceof UnionType) {
-                    final GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, node);
+                    final GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, node, parentModule);
                     if (genTOBuilder != null) {
                         returnType = createReturnTypeForUnion(genTOBuilder, typeDef, typeBuilder, parentModule);
                     }
                 } else if (typeDef instanceof BitsTypeDefinition) {
-                    final GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, node);
+                    final GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, node, parentModule);
                     returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
                 } else {
                     final Restrictions restrictions = BindingGeneratorUtil.getRestrictions(typeDef);
@@ -1509,6 +1521,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
             final GeneratedTypeBuilder typeBuilder, final Module parentModule) {
         final GeneratedTOBuilderImpl returnType = new GeneratedTOBuilderImpl(genTOBuilder.getPackageName(),
                 genTOBuilder.getName());
+        
+        returnType.setDescription(typeDef.getDescription());
+        returnType.setReference(typeDef.getReference());
+        returnType.setSchemaPath(typeDef.getPath().getPathFromRoot());
+        returnType.setModuleName(parentModule.getName());
+        
         genTOBuilder.setTypedef(true);
         genTOBuilder.setIsUnion(true);
         ((TypeProviderImpl) typeProvider).addUnitsToGenTO(genTOBuilder, typeDef.getUnits());
@@ -1635,6 +1653,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
         final GeneratedTypeBuilderImpl newType = new GeneratedTypeBuilderImpl(packageName, genTypeName);
         qnameConstant(newType, BindingMapping.QNAME_STATIC_FIELD_NAME, schemaNode.getQName());
         newType.addComment(schemaNode.getDescription());
+        newType.setDescription(schemaNode.getDescription());
+        newType.setReference(schemaNode.getReference());
+        newType.setSchemaPath(schemaNode.getPath().getPathFromRoot());
+        
+        final Module module = findParentModule(schemaContext, schemaNode);
+        newType.setModuleName(module.getName());
+        
         if (!genTypeBuilders.containsKey(packageName)) {
             final Map<String, GeneratedTypeBuilder> builders = new HashMap<>();
             builders.put(genTypeName, newType);
@@ -1830,7 +1855,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * @return generated TO builder for <code>typeDef</code>
      */
     private GeneratedTOBuilder addTOToTypeBuilder(final TypeDefinition<?> typeDef, final GeneratedTypeBuilder typeBuilder,
-            final DataSchemaNode leaf) {
+            final DataSchemaNode leaf, final Module parentModule) {
         final String classNameFromLeaf = BindingMapping.getClassName(leaf.getQName());
         final List<GeneratedTOBuilder> genTOBuilders = new ArrayList<>();
         final String packageName = typeBuilder.getFullyQualifiedName();
@@ -1855,8 +1880,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             resultTOBuilder.addToStringProperty(genPropBuilder);
 
         } else if (typeDef instanceof BitsTypeDefinition) {
-            genTOBuilders.add((((TypeProviderImpl) typeProvider)).provideGeneratedTOBuilderForBitsTypeDefinition(
-                    packageName, typeDef, classNameFromLeaf));
+            genTOBuilders.add((((TypeProviderImpl) typeProvider)).provideGeneratedTOBuilderForBitsTypeDefinition(packageName, typeDef, classNameFromLeaf, parentModule.getName()));
         }
         if (genTOBuilders != null && !genTOBuilders.isEmpty()) {
             for (GeneratedTOBuilder genTOBuilder : genTOBuilders) {

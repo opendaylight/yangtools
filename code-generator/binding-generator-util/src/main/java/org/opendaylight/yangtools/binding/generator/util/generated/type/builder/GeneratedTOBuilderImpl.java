@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder> implements
         GeneratedTOBuilder {
@@ -31,6 +33,10 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     private boolean isUnionTypeBuilder = false;
     private Restrictions restrictions;
     private GeneratedPropertyBuilder SUID;
+    private String reference;
+    private String description;
+    private String moduleName;
+    private Iterable<QName> schemaPath;
 
     public GeneratedTOBuilderImpl(final String packageName, final String name) {
         super(packageName, name);
@@ -147,6 +153,26 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     public void setIsUnionBuilder(final boolean isUnionTypeBuilder) {
         this.isUnionTypeBuilder = isUnionTypeBuilder;
     }
+    
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    @Override
+    public void setSchemaPath(Iterable<QName> schemaPath) {
+        this.schemaPath = schemaPath;
+    }
+
+    @Override
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
     private static final class GeneratedTransferObjectImpl extends AbstractGeneratedType implements
             GeneratedTransferObject {
@@ -160,6 +186,10 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         private final boolean isUnionTypeBuilder;
         private final Restrictions restrictions;
         private final GeneratedProperty SUID;
+        private final String reference;
+        private final String description;
+        private final String moduleName;
+        private final Iterable<QName> schemaPath;
 
         public GeneratedTransferObjectImpl(final GeneratedTOBuilderImpl builder) {
             super(builder);
@@ -171,6 +201,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             this.isUnionType = builder.isUnionType;
             this.isUnionTypeBuilder = builder.isUnionTypeBuilder;
             this.restrictions = builder.restrictions;
+            this.reference = builder.reference;
+            this.description = builder.description;
+            this.moduleName = builder.moduleName;
+            this.schemaPath = builder.schemaPath;
+            
             if (builder.SUID == null) {
                 this.SUID = null;
             } else {
@@ -222,7 +257,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         public GeneratedProperty getSUID() {
             return SUID;
         }
-
+        
         @Override
         public String toString() {
             if(isTypedef) {
@@ -283,5 +318,24 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             }
         }
 
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public String getReference() {
+            return reference;
+        }
+
+        @Override
+        public Iterable<QName> getSchemaPath() {
+            return schemaPath;
+        }
+
+        @Override
+        public String getModuleName() {
+            return moduleName;
+        }
     }
 }
