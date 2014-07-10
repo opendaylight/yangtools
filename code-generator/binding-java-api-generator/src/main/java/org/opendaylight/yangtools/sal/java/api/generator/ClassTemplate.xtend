@@ -100,7 +100,7 @@ class ClassTemplate extends BaseTemplate {
      * @return string with class source code in JAVA format
      */
     def protected generateBody(boolean isInnerClass) '''
-        «type.comment.asJavadoc»
+        «wrapToDocumentation(formatDataForJavaDoc(type))»
         «generateClassDeclaration(isInnerClass)» {
             «suidDeclaration»
             «innerClassesDeclarations»
