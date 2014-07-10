@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
@@ -16,12 +17,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.RootModificationApplyOperation.LatestOperationHolder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 
 /**
  * Read-only snapshot of the data tree.
@@ -31,7 +33,7 @@ final class InMemoryDataTree implements DataTree {
     private static final InstanceIdentifier PUBLIC_ROOT_PATH = InstanceIdentifier.builder().build();
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock(true);
-    private ModificationApplyOperation applyOper = new AlwaysFailOperation();
+    private final LatestOperationHolder operationHolder = new LatestOperationHolder();
     private SchemaContext currentSchemaContext;
     private TreeNode rootNode;
 
@@ -61,7 +63,7 @@ final class InMemoryDataTree implements DataTree {
         // Ready to change the context now, make sure no operations are running
         rwLock.writeLock().lock();
         try {
-            this.applyOper = newApplyOper;
+            this.operationHolder.setCurrent(newApplyOper);
             this.currentSchemaContext = newSchemaContext;
         } finally {
             rwLock.writeLock().unlock();
@@ -72,7 +74,7 @@ final class InMemoryDataTree implements DataTree {
     public InMemoryDataTreeSnapshot takeSnapshot() {
         rwLock.readLock().lock();
         try {
-            return new InMemoryDataTreeSnapshot(currentSchemaContext, rootNode, applyOper);
+            return new InMemoryDataTreeSnapshot(currentSchemaContext, rootNode, operationHolder.newSnapshot());
         } finally {
             rwLock.readLock().unlock();
         }

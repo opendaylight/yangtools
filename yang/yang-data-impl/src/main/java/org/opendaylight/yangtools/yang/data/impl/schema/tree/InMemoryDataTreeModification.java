@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-
 import java.util.Map.Entry;
 
 import javax.annotation.concurrent.GuardedBy;
@@ -25,18 +22,21 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+
 final class InMemoryDataTreeModification implements DataTreeModification {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
-    private final ModificationApplyOperation strategyTree;
+    private final RootModificationApplyOperation strategyTree;
     private final InMemoryDataTreeSnapshot snapshot;
     private final ModifiedNode rootNode;
 
     @GuardedBy("this")
     private boolean sealed = false;
 
-    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final ModificationApplyOperation resolver) {
+    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
-        this.strategyTree = Preconditions.checkNotNull(resolver);
+        this.strategyTree = Preconditions.checkNotNull(resolver).snapshot();
         this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode());
     }
 
@@ -117,7 +117,11 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
     private ModificationApplyOperation resolveModificationStrategy(final InstanceIdentifier path) {
         LOG.trace("Resolving modification apply strategy for {}", path);
-        return TreeNodeUtils.findNodeChecked(strategyTree, path);
+        if(rootNode.getType() == ModificationType.UNMODIFIED) {
+            strategyTree.upgradeIfPossible();
+        }
+
+        return TreeNodeUtils.<ModificationApplyOperation>findNodeChecked(strategyTree, path);
     }
 
     private OperationWithModification resolveModificationFor(final InstanceIdentifier path) {
