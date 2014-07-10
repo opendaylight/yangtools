@@ -7,29 +7,31 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import java.util.Map
-import org.opendaylight.yangtools.sal.binding.model.api.Type
-import org.opendaylight.yangtools.binding.generator.util.Types
-import com.google.common.base.Splitter
-import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
-import com.google.common.collect.Range
-import java.util.List
-import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
-import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
-import java.util.Collection
-import java.util.Arrays
-import java.util.HashMap
 import com.google.common.collect.ImmutableList
-import java.math.BigInteger
+import com.google.common.collect.Range
 import java.math.BigDecimal
+import java.math.BigInteger
+import java.util.Arrays
+import java.util.Collection
+import java.util.HashMap
+import java.util.List
+import java.util.Map
+import java.util.StringTokenizer
+import org.opendaylight.yangtools.binding.generator.util.Types
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
+import org.opendaylight.yangtools.sal.binding.model.api.Type
+import org.opendaylight.yangtools.yang.common.QName
 
 abstract class BaseTemplate {
     protected val GeneratedType type;
     protected val Map<String, String> importMap;
-    static val paragraphSplitter = Splitter.on("\n\n").omitEmptyStrings();
+
+    private static final String NEW_LINE = '\n'
 
     new(GeneratedType _type) {
         if (_type == null) {
@@ -50,7 +52,7 @@ abstract class BaseTemplate {
         '''
             «packageDefinition»
             «imports»
-            
+
             «_body»
         '''.toString
     }
@@ -63,7 +65,7 @@ abstract class BaseTemplate {
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
-        
+
     '''
 
     protected abstract def CharSequence body();
@@ -154,20 +156,202 @@ abstract class BaseTemplate {
      * @return string with comment in JAVA format
      */
     def protected CharSequence asJavadoc(String comment) {
-        if(comment == null) return '';
+        if(comment == null) return ''
         var txt = comment
         if (txt.contains("*/")) {
             txt = txt.replace("*/", "&#42;&#47;")
         }
-        val paragraphs = paragraphSplitter.split(txt)
+        txt = comment.trim
+        txt = formatToParagraph(txt)
 
         return '''
-            /**
-              «FOR p : paragraphs SEPARATOR "<p>"»
-                  «p»
-              «ENDFOR»
-            **/
+            «wrapToDocumentation(txt)»
         '''
+    }
+
+    def String wrapToDocumentation(String text) {
+        val StringTokenizer tokenizer = new StringTokenizer(text, "\n", false)
+        val StringBuilder sb = new StringBuilder()
+
+        if(text.empty)
+            return ""
+
+        sb.append("/**")
+        sb.append(NEW_LINE)
+
+        while(tokenizer.hasMoreTokens) {
+            sb.append(" * ")
+            sb.append(tokenizer.nextToken)
+            sb.append(NEW_LINE)
+        }
+        sb.append(" */")
+
+        return sb.toString
+    }
+
+    def protected String formatDataForJavaDoc(GeneratedType type) {
+        val typeDescription = type.description
+        val typeReference = type.reference
+        val typeModuleName = type.moduleName
+        val typeSchemaPath = type.schemaPath
+
+        return '''
+            «IF !type.isDocumentationParametersNullOrEmtpy»
+               «IF typeDescription != null && !typeDescription.empty»
+                «formatToParagraph(typeDescription)»
+               «ENDIF»
+               «IF typeReference != null && !typeReference.empty»
+                Reference:
+                    «formatReference(typeReference)»
+               «ENDIF»
+               «IF typeModuleName != null && !typeModuleName.empty»
+                Module name:
+                    «typeModuleName»
+               «ENDIF»
+               «IF typeSchemaPath != null && !typeSchemaPath.empty»
+                Schema path:
+                    «formatPath(typeSchemaPath)»
+               «ENDIF»
+            «ENDIF»
+        '''.toString
+    }
+
+    def formatPath(Iterable<QName> schemaPath) {
+        var currentElement = schemaPath.head
+        val StringBuilder sb = new StringBuilder()
+        sb.append('[')
+        sb.append(currentElement)
+
+        for(pathElement : schemaPath) {
+            if(!currentElement.namespace.equals(pathElement.namespace)) {
+                currentElement = pathElement
+                sb.append('/')
+                sb.append(pathElement)
+            }
+            else {
+                sb.append('/')
+                sb.append(pathElement.localName)
+            }
+        }
+        sb.append(']')
+        return sb.toString
+    }
+
+    def formatReference(String reference) {
+        if(reference == null || reference.isEmpty)
+            return reference
+
+        val StringTokenizer tokenizer = new StringTokenizer(reference, " ", true)
+        val StringBuilder sb = new StringBuilder();
+
+        while(tokenizer.hasMoreTokens) {
+            var String oneElement = tokenizer.nextToken
+            if (oneElement.contains("http://")) {
+                oneElement = asLink(oneElement)
+            }
+            sb.append(oneElement)
+        }
+        return sb.toString
+    }
+
+    def asLink(String text) {
+        val StringBuilder sb = new StringBuilder()
+        var tempText = text
+        var char lastChar = ' '
+        var boolean badEnding = false
+
+        if(text.endsWith(".") || text.endsWith(":") || text.endsWith(",")) {
+            tempText = text.substring(0, text.length - 1)
+            lastChar = text.charAt(text.length - 1)
+            badEnding = true
+        }
+        sb.append("<a href = \"")
+        sb.append(tempText)
+        sb.append("\">")
+        sb.append(tempText)
+        sb.append("</a>")
+
+        if(badEnding)
+            sb.append(lastChar)
+
+        return sb.toString
+    }
+
+    protected def formatToParagraph(String text) {
+        if(text == null || text.isEmpty)
+            return text
+
+        var formattedText = text
+        val StringBuilder sb = new StringBuilder();
+        var StringBuilder lineBuilder = new StringBuilder();
+        var boolean isFirstElementOnNewLineEmptyChar = false;
+
+        formattedText = formattedText.replace("*/", "&#42;&#47;")
+        formattedText = formattedText.replace(NEW_LINE, "")
+        formattedText = formattedText.replace("\t", "")
+        formattedText = formattedText.replaceAll(" +", " ");
+
+        val StringTokenizer tokenizer = new StringTokenizer(formattedText, " ", true);
+
+        while(tokenizer.hasMoreElements) {
+            val nextElement = tokenizer.nextElement.toString
+
+            if(lineBuilder.length + nextElement.length > 80) {
+                if (lineBuilder.charAt(lineBuilder.length - 1) == ' ') {
+                    lineBuilder.setLength(0)
+                    lineBuilder.append(lineBuilder.substring(0, lineBuilder.length - 1))
+                }
+                if (lineBuilder.charAt(0) == ' ') {
+                    lineBuilder.setLength(0)
+                    lineBuilder.append(lineBuilder.substring(1))
+                }
+
+                sb.append(lineBuilder);
+                lineBuilder.setLength(0)
+                sb.append(NEW_LINE)
+
+                if(nextElement.toString == ' ')
+                    isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
+            }
+
+            if(isFirstElementOnNewLineEmptyChar) {
+                isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar
+            }
+
+            else {
+                lineBuilder.append(nextElement)
+            }
+        }
+        sb.append(lineBuilder)
+        sb.append(NEW_LINE)
+
+        return sb.toString
+    }
+
+    def isDocumentationParametersNullOrEmtpy(GeneratedType type) {
+        var boolean isNullOrEmpty = true
+        val String typeDescription = type.description
+        val String typeReference = type.reference
+        val String typeModuleName = type.moduleName
+        val Iterable<QName> typeSchemaPath = type.schemaPath
+
+        if(typeDescription != null && !typeDescription.empty) {
+            isNullOrEmpty = false
+            return isNullOrEmpty
+        }
+        if(typeReference != null && !typeReference.empty) {
+            isNullOrEmpty = false
+            return isNullOrEmpty
+        }
+        if(typeModuleName != null && !typeModuleName.empty) {
+            isNullOrEmpty = false
+            return isNullOrEmpty
+        }
+        if(typeSchemaPath != null && !typeSchemaPath.empty) {
+            isNullOrEmpty = false
+            return isNullOrEmpty
+        }
+        return isNullOrEmpty
     }
 
     def generateRestrictions(Type type, String paramName, Type returnType) '''
