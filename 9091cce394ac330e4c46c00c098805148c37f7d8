@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_a2651ab6",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/util/AbstractDocumentedDataNodeContainerBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-07-11T08:01:08Z",
+      "side": 1,
+      "message": "Please do not remove map here (it is for performance of parsing),\nwe should store ordering in additional property (List probably).",
+      "revId": "9091cce394ac330e4c46c00c098805148c37f7d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
