@@ -14,39 +14,66 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
-import org.opendaylight.yangtools.yang.model.api.*;
-import java.util.*;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 public final class SchemaUtils {
 
     private SchemaUtils() {
     }
 
-    public static DataSchemaNode findSchemaForChild(DataNodeContainer schema, QName qname) {
+    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Set<DataSchemaNode> dataSchemaNode) {
+        if (dataSchemaNode != null && !dataSchemaNode.isEmpty() && qname != null) {
+            for (DataSchemaNode dsn : dataSchemaNode) {
+                if (qname.isEqualWithoutRevision(dsn.getQName())) {
+                    return Optional.<DataSchemaNode> of(dsn);
+                } else if (dsn instanceof ChoiceNode) {
+                    for (ChoiceCaseNode choiceCase : ((ChoiceNode) dsn).getCases()) {
+                        Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
+                        if (foundDsn != null && foundDsn.isPresent()) {
+                            return foundDsn;
+                        }
+                    }
+                }
+            }
+        }
+        return Optional.absent();
+    }
+
+    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
         Set<DataSchemaNode> childNodes = schema.getChildNodes();
         return findSchemaForChild(schema, qname, childNodes);
     }
 
-    public static DataSchemaNode findSchemaForChild(DataNodeContainer schema, QName qname, Set<DataSchemaNode> childNodes) {
-        Optional<DataSchemaNode> childSchema = XmlDocumentUtils.findFirstSchema(qname, childNodes);
+    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final Set<DataSchemaNode> childNodes) {
+        Optional<DataSchemaNode> childSchema = findFirstSchema(qname, childNodes);
         Preconditions.checkState(childSchema.isPresent(),
                 "Unknown child(ren) node(s) detected, identified by: %s, in: %s", qname, schema);
         return childSchema.get();
     }
 
-    public static AugmentationSchema findSchemaForAugment(AugmentationTarget schema, Set<QName> qNames) {
+    public static AugmentationSchema findSchemaForAugment(final AugmentationTarget schema, final Set<QName> qNames) {
         Optional<AugmentationSchema> schemaForAugment = findAugment(schema, qNames);
         Preconditions.checkState(schemaForAugment.isPresent(), "Unknown augmentation node detected, identified by: %s, in: %s",
                 qNames, schema);
         return schemaForAugment.get();
     }
 
-    public static AugmentationSchema findSchemaForAugment(ChoiceNode schema, Set<QName> qNames) {
+    public static AugmentationSchema findSchemaForAugment(final ChoiceNode schema, final Set<QName> qNames) {
         Optional<AugmentationSchema> schemaForAugment = Optional.absent();
 
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
@@ -61,12 +88,12 @@ public final class SchemaUtils {
         return schemaForAugment.get();
     }
 
-    private static Optional<AugmentationSchema> findAugment(AugmentationTarget schema, Set<QName> qNames) {
+    private static Optional<AugmentationSchema> findAugment(final AugmentationTarget schema, final Set<QName> qNames) {
         for (AugmentationSchema augment : schema.getAvailableAugmentations()) {
 
             HashSet<QName> qNamesFromAugment = Sets.newHashSet(Collections2.transform(augment.getChildNodes(), new Function<DataSchemaNode, QName>() {
                 @Override
-                public QName apply(DataSchemaNode input) {
+                public QName apply(final DataSchemaNode input) {
                     return input.getQName();
                 }
             }));
@@ -79,10 +106,9 @@ public final class SchemaUtils {
         return Optional.absent();
     }
 
-    public static DataSchemaNode findSchemaForChild(ChoiceNode schema, QName childPartialQName) {
+    public static DataSchemaNode findSchemaForChild(final ChoiceNode schema, final QName childPartialQName) {
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
-            Optional<DataSchemaNode> childSchema = XmlDocumentUtils.findFirstSchema(childPartialQName,
-                    choiceCaseNode.getChildNodes());
+            Optional<DataSchemaNode> childSchema = findFirstSchema(childPartialQName, choiceCaseNode.getChildNodes());
             if (childSchema.isPresent()) {
                 return childSchema.get();
             }
@@ -98,13 +124,13 @@ public final class SchemaUtils {
      *
      * @return Map with all child nodes, to their most top augmentation
      */
-    public static Map<QName, ChoiceNode> mapChildElementsFromChoices(DataNodeContainer schema) {
+    public static Map<QName, ChoiceNode> mapChildElementsFromChoices(final DataNodeContainer schema) {
         Set<DataSchemaNode> childNodes = schema.getChildNodes();
 
         return mapChildElementsFromChoices(schema, childNodes);
     }
 
-    private static Map<QName, ChoiceNode> mapChildElementsFromChoices(DataNodeContainer schema, Set<DataSchemaNode> childNodes) {
+    private static Map<QName, ChoiceNode> mapChildElementsFromChoices(final DataNodeContainer schema, final Set<DataSchemaNode> childNodes) {
         Map<QName, ChoiceNode> mappedChoices = Maps.newLinkedHashMap();
 
         for (final DataSchemaNode childSchema : childNodes) {
@@ -126,7 +152,7 @@ public final class SchemaUtils {
         return mappedChoices;
     }
 
-    private static boolean isFromAugment(DataNodeContainer schema, DataSchemaNode childSchema) {
+    private static boolean isFromAugment(final DataNodeContainer schema, final DataSchemaNode childSchema) {
         if(schema instanceof AugmentationTarget == false) {
             return false;
         }
@@ -145,7 +171,7 @@ public final class SchemaUtils {
      *
      * @return Map with all child nodes, to their most top augmentation
      */
-    public static Map<QName, AugmentationSchema> mapChildElementsFromAugments(AugmentationTarget schema) {
+    public static Map<QName, AugmentationSchema> mapChildElementsFromAugments(final AugmentationTarget schema) {
 
         Map<QName, AugmentationSchema> childNodesToAugmentation = Maps.newLinkedHashMap();
 
@@ -163,8 +189,9 @@ public final class SchemaUtils {
 
             for (DataSchemaNode child : ((DataNodeContainer) schema).getChildNodes()) {
                 // If is not augmented child, continue
-                if (augments.containsKey(child.getQName()) == false)
+                if (augments.containsKey(child.getQName()) == false) {
                     continue;
+                }
 
                 AugmentationSchema mostTopAugmentation = augments.get(child.getQName());
 
@@ -206,7 +233,7 @@ public final class SchemaUtils {
      *
      * In case of choice, augment and cases, step in.
      */
-    public static Set<QName> getChildNodesRecursive(DataNodeContainer nodeContainer) {
+    public static Set<QName> getChildNodesRecursive(final DataNodeContainer nodeContainer) {
         Set<QName> allChildNodes = Sets.newHashSet();
 
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
@@ -232,7 +259,7 @@ public final class SchemaUtils {
      * Schema of child node from augment is incomplete, therefore its useless for xml <-> normalizedNode translation.
      *
      */
-    public static Set<DataSchemaNode> getRealSchemasForAugment(AugmentationTarget targetSchema, AugmentationSchema augmentSchema) {
+    public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema, final AugmentationSchema augmentSchema) {
         if(targetSchema.getAvailableAugmentations().contains(augmentSchema) == false) {
             return Collections.emptySet();
         }
@@ -240,7 +267,7 @@ public final class SchemaUtils {
         Set<DataSchemaNode> realChildNodes = Sets.newHashSet();
 
         if(targetSchema instanceof DataNodeContainer) {
-              realChildNodes = getRealSchemasForAugment((DataNodeContainer)targetSchema, augmentSchema);
+            realChildNodes = getRealSchemasForAugment((DataNodeContainer)targetSchema, augmentSchema);
         } else if(targetSchema instanceof ChoiceNode) {
             for (DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
                 for (ChoiceCaseNode choiceCaseNode : ((ChoiceNode) targetSchema).getCases()) {
@@ -254,8 +281,8 @@ public final class SchemaUtils {
         return realChildNodes;
     }
 
-    public static Set<DataSchemaNode> getRealSchemasForAugment(DataNodeContainer targetSchema,
-            AugmentationSchema augmentSchema) {
+    public static Set<DataSchemaNode> getRealSchemasForAugment(final DataNodeContainer targetSchema,
+            final AugmentationSchema augmentSchema) {
         Set<DataSchemaNode> realChildNodes = Sets.newHashSet();
         for (DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
             DataSchemaNode realChild = targetSchema.getDataChildByName(dataSchemaNode.getQName());
@@ -264,7 +291,7 @@ public final class SchemaUtils {
         return realChildNodes;
     }
 
-    public static Optional<ChoiceCaseNode> detectCase(ChoiceNode schema, DataContainerChild<?, ?> child) {
+    public static Optional<ChoiceCaseNode> detectCase(final ChoiceNode schema, final DataContainerChild<?, ?> child) {
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             if (child instanceof AugmentationNode
                     && belongsToCaseAugment(choiceCaseNode,
@@ -278,7 +305,7 @@ public final class SchemaUtils {
         return Optional.absent();
     }
 
-    public static boolean belongsToCaseAugment(ChoiceCaseNode caseNode, InstanceIdentifier.AugmentationIdentifier childToProcess) {
+    public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode, final InstanceIdentifier.AugmentationIdentifier childToProcess) {
         for (AugmentationSchema augmentationSchema : caseNode.getAvailableAugmentations()) {
 
             Set<QName> currentAugmentChildNodes = Sets.newHashSet();
@@ -294,11 +321,11 @@ public final class SchemaUtils {
         return false;
     }
 
-    public static InstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(AugmentationSchema schema) {
+    public static InstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
         return new InstanceIdentifier.AugmentationIdentifier(getChildQNames(schema));
     }
 
-    public static Set<QName> getChildQNames(AugmentationSchema schema) {
+    public static Set<QName> getChildQNames(final AugmentationSchema schema) {
         Set<QName> qnames = Sets.newHashSet();
 
         for (DataSchemaNode dataSchemaNode : schema.getChildNodes()) {
