@@ -37,8 +37,9 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -79,6 +80,7 @@ public class XmlDocumentUtils {
     }
 
     private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
+
         @Override
         public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
             return TypeDefinitionAwareCodec.from(baseType);
@@ -175,11 +177,12 @@ public class XmlDocumentUtils {
             for (Node<?> child : ((CompositeNode) data).getValue()) {
                 DataSchemaNode childSchema = null;
                 if (schema instanceof DataNodeContainer) {
-                    childSchema = SchemaUtils.findFirstSchema(child.getNodeType(), ((DataNodeContainer) schema).getChildNodes()).orNull();
+                    childSchema = findFirstSchema(child.getNodeType(), ((DataNodeContainer) schema).getChildNodes()).orNull();
                     if (logger.isDebugEnabled()) {
                         if (childSchema == null) {
-                            logger.debug("Probably the data node \"{}\" does not conform to schema",
-                                    child == null ? "" : child.getNodeType().getLocalName());
+                            logger.debug("Probably the data node \""
+                                    + ((child == null) ? "" : child.getNodeType().getLocalName())
+                                    + "\" is not conform to schema");
                         }
                     }
                 }
@@ -216,7 +219,7 @@ public class XmlDocumentUtils {
     }
 
     public static void writeValueByType(final Element element, final TypeDefinition<?> type, final XmlCodecProvider codecProvider, final Object nodeValue) {
-        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
         if (baseType instanceof IdentityrefTypeDefinition) {
             if (nodeValue instanceof QName) {
                 QName value = (QName) nodeValue;
@@ -263,6 +266,14 @@ public class XmlDocumentUtils {
                 }
             }
         }
+    }
+
+    public final static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
+        TypeDefinition<?> superType = type;
+        while (superType.getBaseType() != null) {
+            superType = superType.getBaseType();
+        }
+        return superType;
     }
 
     public static Node<?> toDomNode(final Element xmlElement, final Optional<DataSchemaNode> schema,
@@ -356,8 +367,8 @@ public class XmlDocumentUtils {
     public static Optional<ModifyAction> getModifyOperationFromAttributes(final Element xmlElement) {
         Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
         if(attributeNodeNS == null) {
-            return Optional.absent();
-        }
+			return Optional.absent();
+		}
 
         ModifyAction action = ModifyAction.fromXmlValue(attributeNodeNS.getValue());
         Preconditions.checkArgument(action.isOnElementPermitted(), "Unexpected operation %s on %s", action, xmlElement);
@@ -368,6 +379,24 @@ public class XmlDocumentUtils {
     private static void checkQName(final Element xmlElement, final QName qName) {
         checkState(Objects.equal(xmlElement.getNamespaceURI(), qName.getNamespace().toString()));
         checkState(qName.getLocalName().equals(xmlElement.getLocalName()));
+    }
+
+    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Set<DataSchemaNode> dataSchemaNode) {
+        if (dataSchemaNode != null && !dataSchemaNode.isEmpty() && qname != null) {
+            for (DataSchemaNode dsn : dataSchemaNode) {
+                if (qname.isEqualWithoutRevision(dsn.getQName())) {
+                    return Optional.<DataSchemaNode> of(dsn);
+                } else if (dsn instanceof ChoiceNode) {
+                    for (ChoiceCaseNode choiceCase : ((ChoiceNode) dsn).getCases()) {
+                        Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
+                        if (foundDsn != null && foundDsn.isPresent()) {
+                            return foundDsn;
+                        }
+                    }
+                }
+            }
+        }
+        return Optional.absent();
     }
 
     public static Node<?> toDomNode(final Document doc) {
@@ -407,7 +436,7 @@ public class XmlDocumentUtils {
             public Optional<Node<?>> apply(final ElementWithSchemaContext input) {
                 if (context.isPresent()) {
                     QName partialQName = qNameFromElement(input.getElement());
-                    Optional<DataSchemaNode> schemaNode = SchemaUtils.findFirstSchema(partialQName, context.get());
+                    Optional<DataSchemaNode> schemaNode = findFirstSchema(partialQName, context.get());
                     if (schemaNode.isPresent()) {
                         return Optional.<Node<?>> fromNullable(//
                                 toNodeWithSchema(input.getElement(), schemaNode.get(), DEFAULT_XML_VALUE_CODEC_PROVIDER,input.getSchemaContext()));
