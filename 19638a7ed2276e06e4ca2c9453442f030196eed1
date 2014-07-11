@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_9da2bbfb",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/DomUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-07-11T14:05:04Z",
+      "side": 1,
+      "message": "This piece of code seems identical to XmlStreamUtils.writeValue(). Could this piece of code be replaced by something like this to not have same code in 2 places ? :\n\n        try {\n            XMLStreamWriter writer \u003d XMLOutputFactory.newFactory().createXMLStreamWriter(new DOMResult(element));\n            XmlStreamUtils.writeValue(writer, type, codecProvider, value);\n        } catch (XMLStreamException e) {\n            throw new RuntimeException(e);\n        }",
+      "revId": "19638a7ed2276e06e4ca2c9453442f030196eed1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
