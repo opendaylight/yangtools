@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.json.schema.cnsn.parser;
 
 import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -18,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -95,5 +97,10 @@ public class CnSnToNormalizedNodeParserFactory implements ToNormalizedNodeParser
     @Override
     public ToNormalizedNodeParser<Node<?>, MapEntryNode, ListSchemaNode> getMapEntryNodeParser() {
         return mapEntryNodeCnSnParser;
+    }
+
+    @Override
+    public ToNormalizedNodeParser<Node<?>, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser() {
+        throw new UnsupportedOperationException();
     }
 }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.json.schema.cnsn.serializer;
 
 import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializerFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -98,5 +100,11 @@ public final class CnSnFromNormalizedNodeSerializerFactory implements FromNormal
     @Override
     public FromNormalizedNodeSerializer<Node<?>, MapEntryNode, ListSchemaNode> getMapEntryNodeSerializer() {
         return mapEntryNodeSerializer;
+    }
+
+
+    @Override
+    public FromNormalizedNodeSerializer<Node<?>, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeSerializer() {
+        throw new UnsupportedOperationException();
     }
 }
