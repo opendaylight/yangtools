@@ -114,7 +114,7 @@ public interface NodeSerializerDispatcher<E> {
         }
 
         private Iterable<E> onAnyXmlNode(Object childSchema,
-                DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> dataContainerChild) {
+                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             checkSchemaCompatibility(childSchema, AnyXmlSchemaNode.class, dataContainerChild);
             Iterable<E> elements = factory.getAnyXmlNodeSerializer().serialize((AnyXmlSchemaNode) childSchema,
                     (AnyXmlNode) dataContainerChild);

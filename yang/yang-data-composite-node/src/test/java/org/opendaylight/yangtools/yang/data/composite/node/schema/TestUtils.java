@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
+import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -167,6 +168,16 @@ public class TestUtils {
                 "value in leaf in augment", null, null));
         contBuilder.add(cont3Builder.toInstance());
 
+        // anxml-composite
+        CompositeNodeBuilder<ImmutableCompositeNode> anxmlCompositeBuilder = ImmutableCompositeNode.builder().setQName(
+                QName.create(MODULE_BASE, "anxml-composite"));
+        anxmlCompositeBuilder.add(NodeFactory.createImmutableSimpleNode(QName.create(MODULE_BASE, "anxml-cont"), null,
+                null));
+        contBuilder.add(anxmlCompositeBuilder.toInstance());
+
+        // anxml-simple
+        contBuilder.add(NodeFactory.createImmutableSimpleNode(QName.create(MODULE_BASE, "anxml-simple"), null,43));
+
         return contBuilder.toInstance();
     }
 
@@ -244,6 +255,26 @@ public class TestUtils {
                                         Builders.leafBuilder()
                                                 .withNodeIdentifier(getNodeIdentifier(MODULE_AUGMENT, "lf31"))
                                                 .withValue("value in leaf in augment").build()).build()).build());
+
+        containerBuilder.withChild(Builders
+                .anyXmlBuilder()
+                .withNodeIdentifier(getNodeIdentifier("anxml-composite"))
+                .withValue(
+                        ImmutableCompositeNode
+                                .builder()
+                                .setQName(QName.create("simple:container:yang", "2013-11-12", "anxml-composite"))
+                                .add(NodeFactory.createImmutableSimpleNode(
+                                        QName.create("simple:container:yang", "2013-11-12", "anxml-cont"), null, null))
+                                .toInstance()).build());
+
+        containerBuilder
+                .withChild(Builders
+                        .anyXmlBuilder()
+                        .withNodeIdentifier(getNodeIdentifier("anxml-simple"))
+                        .withValue(
+                                NodeFactory.createImmutableSimpleNode(
+                                        QName.create("simple:container:yang", "2013-11-12", "anxml-simple"), null, 43))
+                        .build());
 
         ContainerNode build = containerBuilder.build();
         return build;

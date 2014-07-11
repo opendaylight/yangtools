@@ -43,5 +43,7 @@ module simple-container-yang {
       }
     }
     
+    anyxml anxml-composite;
+    anyxml anxml-simple;
   }
 }
