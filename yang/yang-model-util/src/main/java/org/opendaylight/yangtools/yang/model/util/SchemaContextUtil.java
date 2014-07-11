@@ -11,7 +11,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -242,8 +240,9 @@ public final class SchemaContextUtil {
         return findNodeInModule(module, path);
     }
 
-    public static GroupingDefinition findGrouping(final SchemaContext context, final Module module, final List<QName> path) {
-        QName first = path.get(0);
+    public static GroupingDefinition findGrouping(final SchemaContext context, final Module module, final Iterable<QName> path) {
+        Iterator<QName> iterator = path.iterator();
+        QName first = iterator.next();
         Module m = context.findModuleByNamespace(first.getNamespace()).iterator().next();
         DataNodeContainer currentParent = m;
         for (QName qname : path) {
@@ -626,8 +625,12 @@ public final class SchemaContextUtil {
     }
 
     private static DataSchemaNode getResultFromUses(final UsesNode u, final String currentName, final SchemaContext ctx) {
-        SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPathFromRoot());
-
+        SchemaNode targetGrouping = SchemaContextUtil.findNodeInSchemaContext(ctx, u.getGroupingPath()
+                .getPathFromRoot());
+        if (!(targetGrouping instanceof GroupingDefinition)) {
+            targetGrouping = findGrouping(ctx, getParentModule(targetGrouping, ctx), u.getGroupingPath()
+                    .getPathFromRoot());
+        }
         Preconditions.checkArgument(targetGrouping instanceof GroupingDefinition,
                 "Failed to generate code for augment in %s", u);
         GroupingDefinition gr = (GroupingDefinition) targetGrouping;
