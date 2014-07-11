@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.base.Preconditions;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-
-import com.google.common.base.Preconditions;
 
 /**
  *
@@ -57,6 +56,8 @@ public interface NodeParserDispatcher<E> {
                 return factory.getChoiceNodeParser().parse(childNodes, (ChoiceNode) schema);
             } else if (schema instanceof AugmentationSchema) {
                 return factory.getAugmentationNodeParser().parse(childNodes, (AugmentationSchema) schema);
+            } else if (schema instanceof AnyXmlSchemaNode) {
+                return factory.getAnyXmlNodeParser().parse(childNodes,(AnyXmlSchemaNode)schema);
             }
 
             throw new IllegalArgumentException("Unable to parse node, unknown schema type: " + schema.getClass());
