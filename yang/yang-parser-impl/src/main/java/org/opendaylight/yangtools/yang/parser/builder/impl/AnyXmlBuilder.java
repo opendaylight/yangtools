@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 
@@ -26,7 +28,8 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     private boolean augmenting;
     private boolean addedByUses;
     private boolean configuration;
-
+    private AnyXmlSchemaNode originalNode;
+    private AnyXmlBuilder originalBuilder;
     private final ConstraintsBuilder constraints;
 
     public AnyXmlBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
@@ -46,6 +49,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         status = base.getStatus();
         augmenting = base.isAugmenting();
         addedByUses = base.isAddedByUses();
+        originalNode = (AnyXmlSchemaNode) base.getOriginal();
         configuration = base.isConfiguration();
         unknownNodes.addAll(base.getUnknownSchemaNodes());
     }
@@ -64,8 +68,13 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
-
         instance.constraintsDef = constraints.toInstance();
+
+        // ORIGINAL NODE
+        if (originalNode == null && originalBuilder != null) {
+            originalNode = originalBuilder.build();
+        }
+        instance.original = originalNode;
 
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
@@ -99,6 +108,17 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
     @Override
     public void setAddedByUses(final boolean addedByUses) {
         this.addedByUses = addedByUses;
+    }
+
+    @Override
+    public AnyXmlBuilder getOriginal() {
+        return originalBuilder;
+    }
+
+    @Override
+    public void setOriginal(SchemaNodeBuilder builder) {
+        Preconditions.checkArgument(builder instanceof AnyXmlBuilder, "Original of anyxml cannot be " + builder);
+        this.originalBuilder = (AnyXmlBuilder) builder;
     }
 
     @Override
@@ -160,6 +180,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         private String reference;
         private Status status;
         private boolean configuration;
+        private AnyXmlSchemaNode original;
         private ConstraintDefinition constraintsDef;
         private boolean augmenting;
         private boolean addedByUses;
@@ -203,6 +224,11 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
+        }
+
+        @Override
+        public AnyXmlSchemaNode getOriginal() {
+            return original;
         }
 
         @Override
@@ -267,6 +293,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
             sb.append("]");
             return sb.toString();
         }
+
     }
 
 }

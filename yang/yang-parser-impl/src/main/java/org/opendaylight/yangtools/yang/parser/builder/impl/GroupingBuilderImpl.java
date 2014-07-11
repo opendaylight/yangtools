@@ -9,15 +9,12 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -31,9 +28,6 @@ public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContain
     private GroupingDefinitionImpl instance;
     // SchemaNode args
     private SchemaPath schemaPath;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
     // DataSchemaNode args
     private boolean addedByUses;
 
@@ -44,14 +38,9 @@ public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContain
 
     public GroupingBuilderImpl(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final GroupingDefinition base) {
-        super(moduleName, line, base.getQName(), path, base);
+        super(moduleName, line, base.getQName(), Preconditions.checkNotNull(path, "Schema Path must not be null"), base);
         schemaPath = path;
-
-        description = base.getDescription();
-        reference = base.getReference();
-        status = base.getStatus();
         addedByUses = base.isAddedByUses();
-
         addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path,
                 qname));
     }

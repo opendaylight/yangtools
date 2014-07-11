@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -64,6 +64,13 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
         // addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName,
         // line, base.getUnknownSchemaNodes(), path, qname));
         usesNodes.addAll(base.getUses());
+
+        if (base instanceof DocumentedNode) {
+            DocumentedNode node = (DocumentedNode) base;
+            setDescription(node.getDescription());
+            setReference(node.getReference());
+            setStatus(node.getStatus());
+        }
     }
 
     @Override

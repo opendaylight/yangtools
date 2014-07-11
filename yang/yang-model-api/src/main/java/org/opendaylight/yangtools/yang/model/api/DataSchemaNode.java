@@ -46,6 +46,15 @@ public interface DataSchemaNode extends SchemaNode {
     boolean isAddedByUses();
 
     /**
+     * If this node is added by uses, returns original node definition from
+     * grouping where it was defined.
+     *
+     * @return original node definition from grouping if this node is added by
+     *         uses, null otherwise
+     */
+    DataSchemaNode getOriginal();
+
+    /**
      * Returns <code>true</code> if the data represents configuration data,
      * otherwise returns <code>false</code>
      *

@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 
@@ -33,6 +34,8 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     // DataSchemaNode args
     private boolean augmenting;
     private boolean addedByUses;
+    private LeafListSchemaNode originalNode;
+    private LeafListSchemaNodeBuilder originalBuilder;
     private boolean configuration;
     private final ConstraintsBuilder constraints;
 
@@ -53,6 +56,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         status = base.getStatus();
         augmenting = base.isAugmenting();
         addedByUses = base.isAddedByUses();
+        originalNode = (LeafListSchemaNode) base.getOriginal();
         configuration = base.isConfiguration();
         this.type = base.getType();
         userOrdered = base.isUserOrdered();
@@ -81,6 +85,12 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         } else {
             instance.type = type;
         }
+
+        // ORIGINAL NODE
+        if (originalNode == null && originalBuilder != null) {
+            originalNode = originalBuilder.build();
+        }
+        instance.original = originalNode;
 
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
@@ -149,6 +159,18 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     @Override
     public void setAddedByUses(final boolean addedByUses) {
         this.addedByUses = addedByUses;
+    }
+
+    @Override
+    public LeafListSchemaNodeBuilder getOriginal() {
+        return originalBuilder;
+    }
+
+    @Override
+    public void setOriginal(SchemaNodeBuilder builder) {
+        Preconditions.checkArgument(builder instanceof LeafListSchemaNodeBuilder, "Original of leaf-list cannot be "
+                + builder);
+        this.originalBuilder = (LeafListSchemaNodeBuilder) builder;
     }
 
     @Override
@@ -224,6 +246,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         private Status status;
         private boolean augmenting;
         private boolean addedByUses;
+        private LeafListSchemaNode original;
         private boolean configuration;
         private ConstraintDefinition constraintsDef;
         private TypeDefinition<?> type;
@@ -268,6 +291,11 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
+        }
+
+        @Override
+        public LeafListSchemaNode getOriginal() {
+            return original;
         }
 
         @Override

@@ -310,4 +310,10 @@ final class SchemaContextImpl implements SchemaContext {
                 "modules=" + modules +
                 '}';
     }
+
+    @Override
+    public DataSchemaNode getOriginal() {
+        return null;
+    }
+
 }
