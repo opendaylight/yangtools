@@ -36,6 +36,7 @@ public final class CnSnFromNormalizedNodeSerializerFactory implements FromNormal
     private final MapNodeCnSnSerializer mapNodeSerializer;
     private final LeafSetEntryNodeCnSnSerializer leafSetEntryNodeSerializer;
     private final MapEntryNodeCnSnSerializer mapEntryNodeSerializer;
+    private final AnyXmlNodeCnSnSerializer anyXmlNodeSerializer;
 
     private CnSnFromNormalizedNodeSerializerFactory() {
         final NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Node<?>> dispatcher = new NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Node<?>>(
@@ -47,6 +48,7 @@ public final class CnSnFromNormalizedNodeSerializerFactory implements FromNormal
         choiceSerializer = new ChoiceNodeCnSnSerializer(dispatcher);
         augmentSerializer = new AugmentationNodeCnSnSerializer(dispatcher);
         leafNodeSerializer = new LeafNodeCnSnSerializer();
+        anyXmlNodeSerializer = new AnyXmlNodeCnSnSerializer();
 
         leafSetEntryNodeSerializer = new LeafSetEntryNodeCnSnSerializer();
         leafSetSerializer = new LeafSetNodeCnSnSerializer(leafSetEntryNodeSerializer);
@@ -102,9 +104,8 @@ public final class CnSnFromNormalizedNodeSerializerFactory implements FromNormal
         return mapEntryNodeSerializer;
     }
 
-
     @Override
     public FromNormalizedNodeSerializer<Node<?>, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeSerializer() {
-        throw new UnsupportedOperationException();
+        return anyXmlNodeSerializer;
     }
 }

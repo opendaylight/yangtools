@@ -37,11 +37,13 @@ public class CnSnToNormalizedNodeParserFactory implements ToNormalizedNodeParser
     private final MapEntryNodeCnSnParser mapEntryNodeCnSnParser;
     private final ChoiceNodeCnSnParser choiceNodeCnSnParser;
     private final AugmentationNodeCnSnParser augmentationNodeCnSnParser;
+    private final AnyXmlNodeCnSnParser anyXmlNodeCnSnParser;
 
     private CnSnToNormalizedNodeParserFactory() {
         leafNodeCnSnParser = new LeafNodeCnSnParser();
         leafSetEntryNodeCnSnParser = new LeafSetEntryNodeCnSnParser();
         leafSetNodeCnSnParser = new LeafSetNodeCnSnParser(leafSetEntryNodeCnSnParser);
+        anyXmlNodeCnSnParser = new AnyXmlNodeCnSnParser();
 
         final NodeParserDispatcher<Node<?>> dispatcher = new NodeParserDispatcher.BaseNodeParserDispatcher<Node<?>>(
                 this) {
@@ -53,6 +55,7 @@ public class CnSnToNormalizedNodeParserFactory implements ToNormalizedNodeParser
         mapNodeCnSnParser = new MapNodeCnSnParser(mapEntryNodeCnSnParser);
         choiceNodeCnSnParser = new ChoiceNodeCnSnParser(dispatcher);
         augmentationNodeCnSnParser = new AugmentationNodeCnSnParser(dispatcher);
+
     }
 
     public static CnSnToNormalizedNodeParserFactory getInstance() {
@@ -101,6 +104,6 @@ public class CnSnToNormalizedNodeParserFactory implements ToNormalizedNodeParser
 
     @Override
     public ToNormalizedNodeParser<Node<?>, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser() {
-        throw new UnsupportedOperationException();
+        return anyXmlNodeCnSnParser;
     }
 }
