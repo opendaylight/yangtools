@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +14,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -25,9 +22,15 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuil
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DataSchemaNodeBuilder,
 AugmentationTargetBuilder {
@@ -40,6 +43,8 @@ AugmentationTargetBuilder {
     // DataSchemaNode args
     private boolean augmenting;
     private boolean addedByUses;
+    private ListSchemaNodeBuilder originalBuilder;
+    private ListSchemaNode originalNode;
     private boolean configuration;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
@@ -63,6 +68,7 @@ AugmentationTargetBuilder {
 
         augmenting = base.isAugmenting();
         addedByUses = base.isAddedByUses();
+        originalNode = base;
         configuration = base.isConfiguration();
 
         addedUnknownNodes.addAll(BuilderUtils.wrapUnknownNodes(moduleName, line, base.getUnknownSchemaNodes(), path,
@@ -94,6 +100,12 @@ AugmentationTargetBuilder {
             }
             instance.keyDefinition = ImmutableList.copyOf(keyDefinition);
         }
+
+        // ORIGINAL NODE
+        if (originalNode == null && originalBuilder != null) {
+            originalNode = originalBuilder.build();
+        }
+        instance.original = originalNode;
 
         // AUGMENTATIONS
         for (AugmentationSchemaBuilder builder : augmentationBuilders) {
@@ -163,6 +175,17 @@ AugmentationTargetBuilder {
     }
 
     @Override
+    public ListSchemaNodeBuilder getOriginal() {
+        return originalBuilder;
+    }
+
+    @Override
+    public void setOriginal(final SchemaNodeBuilder builder) {
+        Preconditions.checkArgument(builder instanceof ListSchemaNodeBuilder, "Original of list cannot be " + builder);
+        this.originalBuilder = (ListSchemaNodeBuilder) builder;
+    }
+
+    @Override
     public boolean isConfiguration() {
         return configuration;
     }
@@ -227,12 +250,13 @@ AugmentationTargetBuilder {
         return "list " + qname.getLocalName();
     }
 
-    private static final class ListSchemaNodeImpl extends AbstractDocumentedDataNodeContainer implements ListSchemaNode {
+    private static final class ListSchemaNodeImpl extends AbstractDocumentedDataNodeContainer implements ListSchemaNode, DerivableSchemaNode {
         private final QName qname;
         private final SchemaPath path;
         private ImmutableList<QName> keyDefinition;
         private boolean augmenting;
         private boolean addedByUses;
+        private ListSchemaNode original;
         private boolean configuration;
         private ConstraintDefinition constraints;
         private ImmutableSet<AugmentationSchema> augmentations;
@@ -268,6 +292,11 @@ AugmentationTargetBuilder {
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
+        }
+
+        @Override
+        public Optional<ListSchemaNode> getOriginal() {
+            return Optional.fromNullable(original);
         }
 
         @Override

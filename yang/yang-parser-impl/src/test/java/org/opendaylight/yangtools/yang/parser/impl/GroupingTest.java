@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -41,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
+import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
 public class GroupingTest {
     private Set<Module> modules;
@@ -155,6 +157,7 @@ public class GroupingTest {
         assertNotNull(data_g);
         assertFalse(data_g.isAddedByUses());
         assertFalse(data_u.equals(data_g));
+        assertEquals(data_g,  SchemaNodeUtils.getRootOriginalIfPossible(data_u));
 
         ChoiceNode how_u = (ChoiceNode) destination.getDataChildByName("how");
         assertNotNull(how_u);
@@ -166,6 +169,7 @@ public class GroupingTest {
         TestUtils.checkIsAddedByUses(how_g, false);
         assertEquals(2, how_g.getCases().size());
         assertFalse(how_u.equals(how_g));
+        assertEquals(how_g, SchemaNodeUtils.getRootOriginalIfPossible(how_u));
 
         LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName("address");
         assertNotNull(address_u);
@@ -185,6 +189,7 @@ public class GroupingTest {
         assertTrue(address_g.isConfiguration());
         assertFalse(address_u.equals(address_g));
         assertTrue(address_g.getConstraints().isMandatory());
+        assertEquals(address_g, SchemaNodeUtils.getRootOriginalIfPossible(address_u));
 
         ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName("port");
         assertNotNull(port_u);
@@ -194,6 +199,7 @@ public class GroupingTest {
         assertNotNull(port_g);
         TestUtils.checkIsAddedByUses(port_g, false);
         assertFalse(port_u.equals(port_g));
+        assertEquals(port_g, SchemaNodeUtils.getRootOriginalIfPossible(port_u));
 
         ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName("addresses");
         assertNotNull(addresses_u);
@@ -203,6 +209,7 @@ public class GroupingTest {
         assertNotNull(addresses_g);
         TestUtils.checkIsAddedByUses(addresses_g, false);
         assertFalse(addresses_u.equals(addresses_g));
+        assertEquals(addresses_g, SchemaNodeUtils.getRootOriginalIfPossible(addresses_u));
 
         // grouping defined by 'uses'
         Set<GroupingDefinition> groupings_u = destination.getGroupings();
@@ -257,6 +264,7 @@ public class GroupingTest {
         assertNotNull(data_g);
         assertFalse(data_g.isAddedByUses());
         assertFalse(data_u.equals(data_g));
+        assertEquals(data_g, SchemaNodeUtils.getRootOriginalIfPossible(data_u));
 
         ChoiceNode how_u = (ChoiceNode) foo.getDataChildByName("how");
         assertNotNull(how_u);
@@ -275,6 +283,7 @@ public class GroupingTest {
         assertNotNull(how_g);
         TestUtils.checkIsAddedByUses(how_g, false);
         assertFalse(how_u.equals(how_g));
+        assertEquals(how_g, SchemaNodeUtils.getRootOriginalIfPossible(how_u));
 
         LeafSchemaNode address_u = (LeafSchemaNode) foo.getDataChildByName("address");
         assertNotNull(address_u);
@@ -292,6 +301,7 @@ public class GroupingTest {
         assertNull(address_g.getReference());
         assertTrue(address_g.isConfiguration());
         assertFalse(address_u.equals(address_g));
+        assertEquals(address_g, SchemaNodeUtils.getRootOriginalIfPossible(address_u));
 
         ContainerSchemaNode port_u = (ContainerSchemaNode) foo.getDataChildByName("port");
         assertNotNull(port_u);
@@ -301,6 +311,7 @@ public class GroupingTest {
         assertNotNull(port_g);
         TestUtils.checkIsAddedByUses(port_g, false);
         assertFalse(port_u.equals(port_g));
+        assertEquals(port_g, SchemaNodeUtils.getRootOriginalIfPossible(port_u));
 
         ListSchemaNode addresses_u = (ListSchemaNode) foo.getDataChildByName("addresses");
         assertNotNull(addresses_u);
@@ -310,6 +321,7 @@ public class GroupingTest {
         assertNotNull(addresses_g);
         TestUtils.checkIsAddedByUses(addresses_g, false);
         assertFalse(addresses_u.equals(addresses_g));
+        assertEquals(addresses_g, SchemaNodeUtils.getRootOriginalIfPossible(addresses_u));
 
         // grouping defined by 'uses'
         Set<GroupingDefinition> groupings_u = foo.getGroupings();
@@ -401,16 +413,17 @@ public class GroupingTest {
         // grouping-U
         Set<DataSchemaNode> childNodes = gu.getChildNodes();
         assertEquals(7, childNodes.size());
-        LeafSchemaNode leafGroupingU = null;
+
+        LeafSchemaNode leafGroupingU = (LeafSchemaNode) gu.getDataChildByName("leaf-grouping-U");
+        assertNotNull(leafGroupingU);
+        assertFalse(leafGroupingU.isAddedByUses());
+        assertFalse(SchemaNodeUtils.getOriginalIfPossible(leafGroupingU).isPresent());
+
         for (DataSchemaNode childNode : childNodes) {
-            if ("leaf-grouping-U".equals(childNode.getQName().getLocalName())) {
-                leafGroupingU = (LeafSchemaNode) childNode;
-            } else {
+            if (!(childNode.getQName().equals(leafGroupingU.getQName()))) {
                 TestUtils.checkIsAddedByUses(childNode, true);
             }
         }
-        assertNotNull(leafGroupingU);
-        assertFalse(leafGroupingU.isAddedByUses());
 
         // grouping-V
         childNodes = gv.getChildNodes();
@@ -509,6 +522,27 @@ public class GroupingTest {
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-ZZ",
                 "leaf-grouping-ZZ");
         assertEquals(expectedPath, leafZZinGZZ.getPath());
+
+        // TEST getOriginal from grouping-U
+        assertEquals(gv.getDataChildByName("leaf-grouping-V"), SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName("leaf-grouping-V")));
+        containerGroupingV = (ContainerSchemaNode) gu.getDataChildByName("container-grouping-V");
+        assertEquals(gv.getDataChildByName("container-grouping-V"), SchemaNodeUtils.getRootOriginalIfPossible(containerGroupingV));
+        assertEquals(gx.getDataChildByName("leaf-grouping-X"), SchemaNodeUtils.getRootOriginalIfPossible(containerGroupingV.getDataChildByName("leaf-grouping-X")
+                ));
+        assertEquals(gy.getDataChildByName("leaf-grouping-Y"), SchemaNodeUtils.getRootOriginalIfPossible(containerGroupingV.getDataChildByName("leaf-grouping-Y")
+                ));
+
+        assertEquals(gz.getDataChildByName("leaf-grouping-Z"), SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName("leaf-grouping-Z")));
+        assertEquals(gzz.getDataChildByName("leaf-grouping-ZZ"), SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName("leaf-grouping-ZZ")
+                ));
+
+        // TEST getOriginal from grouping-V
+        assertEquals(gz.getDataChildByName("leaf-grouping-Z"), SchemaNodeUtils.getRootOriginalIfPossible(gv.getDataChildByName("leaf-grouping-Z")));
+        assertEquals(gzz.getDataChildByName("leaf-grouping-ZZ"), SchemaNodeUtils.getRootOriginalIfPossible(gv.getDataChildByName("leaf-grouping-ZZ")
+                ));
+
+        // TEST getOriginal from grouping-X
+        assertEquals(gy.getDataChildByName("leaf-grouping-Y"),SchemaNodeUtils.getRootOriginalIfPossible( gx.getDataChildByName("leaf-grouping-Y")));
     }
 
 }

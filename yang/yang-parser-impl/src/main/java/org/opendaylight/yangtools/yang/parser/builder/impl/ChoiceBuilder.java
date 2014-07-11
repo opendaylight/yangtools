@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -29,10 +27,16 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuil
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder,
 AugmentationTargetBuilder {
@@ -42,6 +46,8 @@ AugmentationTargetBuilder {
     private boolean augmenting;
     private boolean addedByUses;
     private boolean configuration;
+    private ChoiceNode originalNode;
+    private ChoiceBuilder originalBuilder;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
     private final Set<AugmentationSchema> augmentations = new HashSet<>();
@@ -67,6 +73,7 @@ AugmentationTargetBuilder {
         status = base.getStatus();
         augmenting = base.isAugmenting();
         addedByUses = base.isAddedByUses();
+        originalNode =  base;
         configuration = base.isConfiguration();
         augmentations.addAll(base.getAvailableAugmentations());
 
@@ -99,6 +106,12 @@ AugmentationTargetBuilder {
 
         instance.constraints = constraints.toInstance();
         instance.defaultCase = defaultCase;
+
+        // ORIGINAL NODE
+        if (originalNode == null && originalBuilder != null) {
+            originalNode = originalBuilder.build();
+        }
+        instance.original = originalNode;
 
         // CASES
         final Set<ChoiceCaseNode> cases = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
@@ -202,6 +215,17 @@ AugmentationTargetBuilder {
     }
 
     @Override
+    public ChoiceBuilder getOriginal() {
+        return originalBuilder;
+    }
+
+    @Override
+    public void setOriginal(final SchemaNodeBuilder builder) {
+        Preconditions.checkArgument(builder instanceof ChoiceBuilder, "Original of choice cannot be " + builder);
+        this.originalBuilder = (ChoiceBuilder) builder;
+    }
+
+    @Override
     public boolean isConfiguration() {
         return configuration;
     }
@@ -275,7 +299,7 @@ AugmentationTargetBuilder {
         return "choice " + qname.getLocalName();
     }
 
-    private static final class ChoiceNodeImpl implements ChoiceNode {
+    private static final class ChoiceNodeImpl implements ChoiceNode, DerivableSchemaNode {
         private final QName qname;
         private final SchemaPath path;
         private String description;
@@ -283,6 +307,7 @@ AugmentationTargetBuilder {
         private Status status;
         private boolean augmenting;
         private boolean addedByUses;
+        private ChoiceNode original;
         private boolean configuration;
         private ConstraintDefinition constraints;
         private ImmutableSet<ChoiceCaseNode> cases;
@@ -328,6 +353,11 @@ AugmentationTargetBuilder {
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
+        }
+
+        @Override
+        public Optional<ChoiceNode> getOriginal() {
+            return Optional.fromNullable(original);
         }
 
         @Override
@@ -433,6 +463,7 @@ AugmentationTargetBuilder {
             sb.append("]");
             return sb.toString();
         }
+
     }
 
 }

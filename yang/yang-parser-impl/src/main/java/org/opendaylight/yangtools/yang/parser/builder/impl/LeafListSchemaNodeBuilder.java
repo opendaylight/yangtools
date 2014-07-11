@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -19,8 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder {
     private LeafListSchemaNodeImpl instance;
@@ -33,6 +38,8 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     // DataSchemaNode args
     private boolean augmenting;
     private boolean addedByUses;
+    private LeafListSchemaNode originalNode;
+    private LeafListSchemaNodeBuilder originalBuilder;
     private boolean configuration;
     private final ConstraintsBuilder constraints;
 
@@ -53,6 +60,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         status = base.getStatus();
         augmenting = base.isAugmenting();
         addedByUses = base.isAddedByUses();
+        originalNode = base;
         configuration = base.isConfiguration();
         this.type = base.getType();
         userOrdered = base.isUserOrdered();
@@ -81,6 +89,12 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         } else {
             instance.type = type;
         }
+
+        // ORIGINAL NODE
+        if (originalNode == null && originalBuilder != null) {
+            originalNode = originalBuilder.build();
+        }
+        instance.original = originalNode;
 
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
@@ -152,6 +166,18 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     }
 
     @Override
+    public LeafListSchemaNodeBuilder getOriginal() {
+        return originalBuilder;
+    }
+
+    @Override
+    public void setOriginal(final SchemaNodeBuilder builder) {
+        Preconditions.checkArgument(builder instanceof LeafListSchemaNodeBuilder, "Original of leaf-list cannot be "
+                + builder);
+        this.originalBuilder = (LeafListSchemaNodeBuilder) builder;
+    }
+
+    @Override
     public boolean isConfiguration() {
         return configuration;
     }
@@ -216,7 +242,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         return "leaf-list " + qname.getLocalName();
     }
 
-    private static final class LeafListSchemaNodeImpl implements LeafListSchemaNode {
+    private static final class LeafListSchemaNodeImpl implements LeafListSchemaNode, DerivableSchemaNode {
         private final QName qname;
         private final SchemaPath path;
         private String description;
@@ -224,6 +250,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         private Status status;
         private boolean augmenting;
         private boolean addedByUses;
+        private LeafListSchemaNode original;
         private boolean configuration;
         private ConstraintDefinition constraintsDef;
         private TypeDefinition<?> type;
@@ -268,6 +295,11 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
+        }
+
+        @Override
+        public Optional<LeafListSchemaNode> getOriginal() {
+            return Optional.fromNullable(original);
         }
 
         @Override

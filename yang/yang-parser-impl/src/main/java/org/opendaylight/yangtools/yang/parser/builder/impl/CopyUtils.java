@@ -39,7 +39,8 @@ public final class CopyUtils {
      *            parent location
      * @return copy of given builder
      */
-    public static DataSchemaNodeBuilder copy(final DataSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
+    public static DataSchemaNodeBuilder copy(final DataSchemaNodeBuilder old, final Builder newParent,
+            final boolean updateQName) {
         if (old instanceof AnyXmlBuilder) {
             return copy((AnyXmlBuilder) old, newParent, updateQName);
         } else if (old instanceof ChoiceBuilder) {
@@ -66,6 +67,7 @@ public final class CopyUtils {
         SchemaPath newSchemaPath = data.schemaPath;
 
         AnyXmlBuilder copy = new AnyXmlBuilder(newParent.getModuleName(), newParent.getLine(), newQName, newSchemaPath);
+        copy.setOriginal(old.getOriginal() == null ? old : old.getOriginal());
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setDescription(old.getDescription());
@@ -87,6 +89,7 @@ public final class CopyUtils {
         SchemaPath newSchemaPath = data.schemaPath;
 
         ChoiceBuilder copy = new ChoiceBuilder(newParent.getModuleName(), newParent.getLine(), newQName, newSchemaPath);
+        copy.setOriginal(old.getOriginal() == null ? old : old.getOriginal());
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setDescription(old.getDescription());
@@ -108,12 +111,15 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static ChoiceCaseBuilder copy(final ChoiceCaseBuilder old, final Builder newParent, final boolean updateQName) {
+    private static ChoiceCaseBuilder copy(final ChoiceCaseBuilder old, final Builder newParent,
+            final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        ChoiceCaseBuilder copy = new ChoiceCaseBuilder(newParent.getModuleName(), newParent.getLine(), newQName, newSchemaPath);
+        ChoiceCaseBuilder copy = new ChoiceCaseBuilder(newParent.getModuleName(), newParent.getLine(), newQName,
+                newSchemaPath);
+        copy.setOriginal(old.getOriginal() == null ? old : old.getOriginal());
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setDescription(old.getDescription());
@@ -148,6 +154,7 @@ public final class CopyUtils {
 
         ContainerSchemaNodeBuilder copy = new ContainerSchemaNodeBuilder(newParent.getModuleName(),
                 newParent.getLine(), newQName, newSchemaPath);
+        copy.setOriginal(old.getOriginal() == null ? old : old.getOriginal());
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setDescription(old.getDescription());
@@ -180,13 +187,15 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static LeafSchemaNodeBuilder copy(final LeafSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
+    private static LeafSchemaNodeBuilder copy(final LeafSchemaNodeBuilder old, final Builder newParent,
+            final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
         LeafSchemaNodeBuilder copy = new LeafSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
                 newQName, newSchemaPath);
+        copy.setOriginal(old.getOriginal() == null ? old : old.getOriginal());
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setDescription(old.getDescription());
@@ -211,13 +220,15 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static LeafListSchemaNodeBuilder copy(final LeafListSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
+    private static LeafListSchemaNodeBuilder copy(final LeafListSchemaNodeBuilder old, final Builder newParent,
+            final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
         LeafListSchemaNodeBuilder copy = new LeafListSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
                 newQName, newSchemaPath);
+        copy.setOriginal(old.getOriginal() == null ? old : old.getOriginal());
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setDescription(old.getDescription());
@@ -241,13 +252,15 @@ public final class CopyUtils {
         return copy;
     }
 
-    private static ListSchemaNodeBuilder copy(final ListSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
+    private static ListSchemaNodeBuilder copy(final ListSchemaNodeBuilder old, final Builder newParent,
+            final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
         ListSchemaNodeBuilder copy = new ListSchemaNodeBuilder(newParent.getModuleName(), newParent.getLine(),
                 newQName, newSchemaPath);
+        copy.setOriginal(old.getOriginal() == null ? old : old.getOriginal());
         copyConstraints(copy.getConstraints(), old.getConstraints());
         copy.setParent(newParent);
         copy.setDescription(old.getDescription());
@@ -287,7 +300,8 @@ public final class CopyUtils {
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        GroupingBuilderImpl copy = new GroupingBuilderImpl(newParent.getModuleName(), newParent.getLine(), newQName, newSchemaPath);
+        GroupingBuilderImpl copy = new GroupingBuilderImpl(newParent.getModuleName(), newParent.getLine(), newQName,
+                newSchemaPath);
         copy.setParent(newParent);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
@@ -313,7 +327,8 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static TypeDefinitionBuilder copy(final TypeDefinitionBuilder old, final Builder newParent, final boolean updateQName) {
+    public static TypeDefinitionBuilder copy(final TypeDefinitionBuilder old, final Builder newParent,
+            final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
@@ -362,7 +377,8 @@ public final class CopyUtils {
         return type;
     }
 
-    private static ConstraintsBuilder copyConstraints(final ConstraintsBuilder newConstraints, final ConstraintsBuilder old) {
+    private static ConstraintsBuilder copyConstraints(final ConstraintsBuilder newConstraints,
+            final ConstraintsBuilder old) {
         newConstraints.getMustDefinitions().addAll(old.getMustDefinitions());
         newConstraints.addWhenCondition(old.getWhenCondition());
         newConstraints.setMandatory(old.isMandatory());
@@ -408,13 +424,14 @@ public final class CopyUtils {
         return copy;
     }
 
-    public static UnknownSchemaNodeBuilderImpl copy(final UnknownSchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
+    public static UnknownSchemaNodeBuilderImpl copy(final UnknownSchemaNodeBuilder old, final Builder newParent,
+            final boolean updateQName) {
         DataBean data = getdata(old, newParent, updateQName);
         QName newQName = data.qname;
         SchemaPath newSchemaPath = data.schemaPath;
 
-        UnknownSchemaNodeBuilderImpl c = new UnknownSchemaNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
-                newQName, newSchemaPath);
+        UnknownSchemaNodeBuilderImpl c = new UnknownSchemaNodeBuilderImpl(newParent.getModuleName(),
+                newParent.getLine(), newQName, newSchemaPath);
 
         c.setNodeType(old.getNodeType());
         c.setNodeParameter(old.getNodeParameter());
