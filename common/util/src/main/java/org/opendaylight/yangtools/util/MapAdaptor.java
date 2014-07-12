@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.romix.scala.collection.concurrent.TrieMap;
 
-/*
+/**
  * A simple layer on top of maps, which performs snapshot mediation and optimization of
  * what the underlying implementation is.
  */
