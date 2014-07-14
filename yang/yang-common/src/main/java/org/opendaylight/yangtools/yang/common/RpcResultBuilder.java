@@ -188,7 +188,8 @@ public final class RpcResultBuilder<T> {
      * @return an RpcError
      */
     public static RpcError newError( ErrorType errorType, String tag, String message ) {
-        return new RpcErrorImpl( ErrorSeverity.ERROR, errorType, tag, message, null, null, null );
+        return new RpcErrorImpl( ErrorSeverity.ERROR, errorType,
+                tag != null ? tag : "operation-failed", message, null, null, null );
     }
 
     /**
@@ -207,8 +208,8 @@ public final class RpcResultBuilder<T> {
      */
     public static RpcError newError(  ErrorType errorType, String tag, String message,
             String applicationTag, String info, Throwable cause ) {
-        return new RpcErrorImpl( ErrorSeverity.ERROR, errorType, tag, message,
-                                 applicationTag, info, cause );
+        return new RpcErrorImpl( ErrorSeverity.ERROR, errorType,
+                tag != null ? tag : "operation-failed", message, applicationTag, info, cause );
     }
 
     /**
