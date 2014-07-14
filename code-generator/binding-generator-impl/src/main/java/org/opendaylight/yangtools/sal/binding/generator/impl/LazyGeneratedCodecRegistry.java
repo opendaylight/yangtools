@@ -68,7 +68,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextListener;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,7 +196,12 @@ class LazyGeneratedCodecRegistry implements //
 
     @Override
     public Class<?> getClassForPath(final List<QName> names) {
-        final DataSchemaNode node = getSchemaNode(names);
+        DataSchemaNode node = getSchemaNode(names);
+        Preconditions.checkArgument(node != null, "Path %s points to invalid schema location",names);
+        SchemaNode originalDefinition = SchemaNodeUtils.getRootOriginalIfPossible(node);
+        if(originalDefinition instanceof DataSchemaNode) {
+            node =(DataSchemaNode) originalDefinition;
+        }
         final SchemaPath path = node.getPath();
         final Type t = pathToType.get(path);
 
@@ -208,9 +215,14 @@ class LazyGeneratedCodecRegistry implements //
 
         @SuppressWarnings("rawtypes")
         final WeakReference<Class> weakRef = typeToClass.get(type);
-        Preconditions.checkState(weakRef != null, "Could not find loaded class for path: %s and type: %s", path,
-                type.getFullyQualifiedName());
-        return weakRef.get();
+        if(weakRef != null) {
+            return weakRef.get();
+        }
+        try {
+            return classLoadingStrategy.loadClass(type);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(String.format("Could not find loaded class for path: %s and type: %s", path,type.getFullyQualifiedName()));
+        }
     }
 
     @Override
@@ -254,7 +266,7 @@ class LazyGeneratedCodecRegistry implements //
         WeakReference<Class> weakRef = new WeakReference<>(cls);
         typeToClass.put(typeRef, weakRef);
         if (Augmentation.class.isAssignableFrom(cls)) {
-
+            // Intentionally NOOP
         } else if (DataObject.class.isAssignableFrom(cls)) {
             getCodecForDataObject((Class<? extends DataObject>) cls);
         }
