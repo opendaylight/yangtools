@@ -69,6 +69,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.When_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParserBaseListener;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
@@ -199,7 +200,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 setLog("namespace", namespaceStr);
             } else if (treeNode instanceof Prefix_stmtContext) {
                 final String yangModelPrefix = stringFromNode(treeNode);
-                this.moduleQName = new QName(moduleQName.getNamespace(), moduleQName.getRevision(), yangModelPrefix, moduleQName.getLocalName());
+                this.moduleQName = QName.create(moduleQName.getModule(), yangModelPrefix, moduleQName.getLocalName());
                 moduleBuilder.setPrefix(yangModelPrefix);
                 setLog("prefix", yangModelPrefix);
             } else if (treeNode instanceof Yang_version_stmtContext) {
@@ -471,7 +472,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             if (prefix.equals(moduleQName.getPrefix())) {
                 typeQName = QName.create(moduleQName, name);
             } else {
-                typeQName = new QName(null, null, prefix, name);
+                typeQName = QName.create(QNameModule.create(null, null), prefix, name);
             }
         } else {
             typeQName = QName.create(moduleQName, typeName);
@@ -1027,7 +1028,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String e0 = splittedElement.next();
         final QName nodeType;
         if (splittedElement.hasNext()) {
-            nodeType = new QName(moduleQName.getNamespace(), moduleQName.getRevision(), e0, splittedElement.next());
+            nodeType = QName.create(moduleQName.getModule(), e0, splittedElement.next());
         } else {
             nodeType = QName.create(moduleQName, e0);
         }
@@ -1039,7 +1040,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 final Iterator<String> it = splittedName.iterator();
 
                 if (Iterables.size(splittedName) == 2) {
-                    qname = new QName(null, null, it.next(), it.next());
+                    qname = QName.create(QNameModule.create(null, null), it.next(), it.next());
                 } else {
                     qname = QName.create(moduleQName, it.next());
                 }

@@ -129,7 +129,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public ModuleBuilder(final Module base) {
-        super(base.getName(), 0, new QName(base.getNamespace(), base.getRevision(), base.getPrefix(), base.getName()),
+        super(base.getName(), 0, QName.create(base.getQNameModule(), base.getPrefix(), base.getName()),
                 SCHEMA_PATH, base);
         this.name = base.getName();
         this.sourcePath = base.getModuleSourcePath();

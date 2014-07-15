@@ -455,7 +455,7 @@ public final class CopyUtils {
         if (newParent instanceof ModuleBuilder) {
             ModuleBuilder parent = (ModuleBuilder) newParent;
             if (updateQName) {
-                newQName = new QName(parent.getNamespace(), parent.getRevision(), parent.getPrefix(), old.getQName()
+                newQName = QName.create(parent.getQNameModule(), parent.getPrefix(), old.getQName()
                         .getLocalName());
             } else {
                 newQName = old.getQName();
@@ -465,7 +465,7 @@ public final class CopyUtils {
             AugmentationSchemaBuilder augment = (AugmentationSchemaBuilder) newParent;
             ModuleBuilder parent = BuilderUtils.getParentModule(newParent);
             if (updateQName) {
-                newQName = new QName(parent.getNamespace(), parent.getRevision(), parent.getPrefix(), old.getQName()
+                newQName = QName.create(parent.getQNameModule(), parent.getPrefix(), old.getQName()
                         .getLocalName());
             } else {
                 newQName = old.getQName();

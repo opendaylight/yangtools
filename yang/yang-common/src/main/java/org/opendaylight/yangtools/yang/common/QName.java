@@ -284,6 +284,17 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return new QName(base, localName);
     }
 
+    /**
+     * Creates new QName.
+     *
+     * @param qnameModule
+     *            Namespace and revision enclosed as a QNameModule
+     * @param prefix
+     *            Namespace prefix
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @return Instance of QName
+     */
     public static QName create(final QNameModule module, final String prefix, final String localName) {
         if (module == null) {
             throw new NullPointerException("module may not be null");

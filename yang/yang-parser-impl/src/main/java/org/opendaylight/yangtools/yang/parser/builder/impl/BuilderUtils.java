@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.io.ByteSource;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,6 +31,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -233,9 +235,9 @@ public final class BuilderUtils {
 
             final QName name;
             if (it.hasNext()) {
-                name = new QName(null, null, s, it.next());
+                name = QName.create(QNameModule.create(null, null), s, it.next());
             } else {
-                name = new QName(null, null, null, s);
+                name = QName.create(QNameModule.create(null, null), s);
             }
             path.add(name);
         }
@@ -745,7 +747,7 @@ public final class BuilderUtils {
         }
     }
 
-    public static ModuleBuilder getModuleByPrefix(ModuleBuilder module, String prefix) {
+    public static ModuleBuilder getModuleByPrefix(final ModuleBuilder module, final String prefix) {
         if (prefix == null || prefix.isEmpty() || prefix.equals(module.getPrefix())) {
             return module;
         } else {
