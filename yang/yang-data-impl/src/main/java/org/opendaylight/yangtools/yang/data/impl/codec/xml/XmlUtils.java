@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
@@ -26,7 +28,7 @@ final class XmlUtils {
 
     }
 
-    public static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
+    public static TypeDefinition<?> resolveBaseTypeFrom(final @Nonnull TypeDefinition<?> type) {
         TypeDefinition<?> superType = type;
         while (superType.getBaseType() != null) {
             superType = superType.getBaseType();
