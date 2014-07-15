@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlStreamUtils;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlUtils;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -34,18 +35,11 @@ import org.w3c.dom.NodeList;
 
 public final class DomUtils {
 
-    private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
-        @Override
-        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
-            return TypeDefinitionAwareCodec.from(baseType);
-        }
-    };
-
     private DomUtils() {
     }
 
     public static XmlCodecProvider defaultValueCodecProvider() {
-        return DEFAULT_XML_VALUE_CODEC_PROVIDER;
+        return XmlUtils.DEFAULT_XML_CODEC_PROVIDER;
     }
 
     public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final TypeDefinition<?> type) {

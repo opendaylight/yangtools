@@ -84,12 +84,6 @@ public class XmlDocumentUtils {
     public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "operation");
     private static final Logger logger = LoggerFactory.getLogger(XmlDocumentUtils.class);
     private static final XMLOutputFactory FACTORY = XMLOutputFactory.newFactory();
-    private static final XmlCodecProvider DEFAULT_XML_VALUE_CODEC_PROVIDER = new XmlCodecProvider() {
-        @Override
-        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
-            return TypeDefinitionAwareCodec.from(baseType);
-        }
-    };
 
     /**
      * Converts Data DOM structure to XML Document for specified XML Codec Provider and corresponding
@@ -193,7 +187,7 @@ public class XmlDocumentUtils {
     public static Node<?> toDomNode(final Element xmlElement, final Optional<DataSchemaNode> schema,
             final Optional<XmlCodecProvider> codecProvider) {
         if (schema.isPresent()) {
-            return toNodeWithSchema(xmlElement, schema.get(), codecProvider.or(DEFAULT_XML_VALUE_CODEC_PROVIDER));
+            return toNodeWithSchema(xmlElement, schema.get(), codecProvider.or(XmlUtils.DEFAULT_XML_CODEC_PROVIDER));
         }
         return toDomNode(xmlElement);
     }
@@ -351,7 +345,7 @@ public class XmlDocumentUtils {
                     Optional<DataSchemaNode> schemaNode = findFirstSchema(partialQName, context.get());
                     if (schemaNode.isPresent()) {
                         return Optional.<Node<?>> fromNullable(//
-                                toNodeWithSchema(input.getElement(), schemaNode.get(), DEFAULT_XML_VALUE_CODEC_PROVIDER,input.getSchemaContext()));
+                                toNodeWithSchema(input.getElement(), schemaNode.get(), XmlUtils.DEFAULT_XML_CODEC_PROVIDER, input.getSchemaContext()));
                     }
                 }
                 return Optional.<Node<?>> fromNullable(toDomNode(input.getElement()));
@@ -446,6 +440,6 @@ public class XmlDocumentUtils {
     }
 
     public static final XmlCodecProvider defaultValueCodecProvider() {
-        return DEFAULT_XML_VALUE_CODEC_PROVIDER;
+        return XmlUtils.DEFAULT_XML_CODEC_PROVIDER;
     }
 }
