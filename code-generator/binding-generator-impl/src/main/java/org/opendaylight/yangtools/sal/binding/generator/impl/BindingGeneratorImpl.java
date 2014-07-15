@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.computeDefaultSUID;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.moduleNamespaceToPackageName;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.packageNameForGeneratedType;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToValidParamName;
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.DATA_OBJECT;
@@ -240,7 +239,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         if (!m.getChildNodes().isEmpty()) {
             final GeneratedTypeBuilder moduleType = moduleToDataType(m);
             genCtx.get(m).addModuleNode(moduleType);
-            final String basePackageName = moduleNamespaceToPackageName(m);
+            final String basePackageName = BindingMapping.getRootPackageName(m.getQNameModule());
             resolveDataSchemaNodes(m, basePackageName, moduleType, moduleType, m.getChildNodes());
         }
     }
@@ -336,7 +335,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
     }
 
     private void processUsesAugments(final DataNodeContainer node, final Module module) {
-        final String basePackageName = moduleNamespaceToPackageName(module);
+        final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
         for (UsesNode usesNode : node.getUses()) {
             for (AugmentationSchema augment : usesNode.getAugmentations()) {
                 usesAugmentationToGenTypes(basePackageName, augment, module, usesNode, node);
@@ -365,7 +364,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         checkArgument(module.getName() != null, "Module name cannot be NULL.");
         checkState(module.getAugmentations() != null, "Augmentations Set cannot be NULL.");
 
-        final String basePackageName = moduleNamespaceToPackageName(module);
+        final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
         final List<AugmentationSchema> augmentations = resolveAugmentations(module);
         for (AugmentationSchema augment : augmentations) {
             augmentationToGenTypes(basePackageName, augment, module);
@@ -442,7 +441,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             return;
         }
 
-        final String basePackageName = moduleNamespaceToPackageName(module);
+        final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
         final GeneratedTypeBuilder interfaceBuilder = moduleTypeBuilder(module, "Service");
         interfaceBuilder.addImplementsType(Types.typeForClass(RpcService.class));
         for (RpcDefinition rpc : rpcDefinitions) {
@@ -512,7 +511,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         final GeneratedTypeBuilder listenerInterface = moduleTypeBuilder(module, "Listener");
         listenerInterface.addImplementsType(BindingTypes.NOTIFICATION_LISTENER);
-        final String basePackageName = moduleNamespaceToPackageName(module);
+        final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
 
         for (NotificationDefinition notification : notifications) {
             if (notification != null) {
@@ -550,7 +549,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private void allIdentitiesToGenTypes(final Module module, final SchemaContext context) {
         final Set<IdentitySchemaNode> schemaIdentities = module.getIdentities();
-        final String basePackageName = moduleNamespaceToPackageName(module);
+        final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
 
         if (schemaIdentities != null && !schemaIdentities.isEmpty()) {
             for (IdentitySchemaNode identity : schemaIdentities) {
@@ -593,7 +592,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             newType.setExtendsType(gto.toInstance());
         } else {
             final Module baseIdentityParentModule = SchemaContextUtil.findParentModule(context, baseIdentity);
-            final String returnTypePkgName = moduleNamespaceToPackageName(baseIdentityParentModule);
+            final String returnTypePkgName = BindingMapping.getRootPackageName(module.getQNameModule());
             final String returnTypeName = BindingMapping.getClassName(baseIdentity.getQName());
             final GeneratedTransferObject gto = new GeneratedTOBuilderImpl(returnTypePkgName, returnTypeName)
                     .toInstance();
@@ -635,7 +634,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *
      */
     private void groupingsToGenTypes(final Module module, final Collection<GroupingDefinition> groupings) {
-        final String basePackageName = moduleNamespaceToPackageName(module);
+        final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
         final List<GroupingDefinition> groupingsSortedByDependencies = new GroupingDefinitionDependencySort()
                 .sort(groupings);
         for (GroupingDefinition grouping : groupingsSortedByDependencies) {
@@ -711,7 +710,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private GeneratedTypeBuilder moduleTypeBuilder(final Module module, final String postfix) {
         checkArgument(module != null, "Module reference cannot be NULL.");
-        final String packageName = moduleNamespaceToPackageName(module);
+        final String packageName = BindingMapping.getRootPackageName(module.getQNameModule());
         final String moduleName = BindingMapping.getClassName(module.getName()) + postfix;
         return new GeneratedTypeBuilderImpl(packageName, moduleName);
     }
@@ -1333,7 +1332,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 final int length = Iterables.size(splittedElement);
                 if (length == 1) {
                     identity = findIdentityByName(module.getIdentities(), iterator.next());
-                    basePackageName = moduleNamespaceToPackageName(module);
+                    basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
                 } else if (length == 2) {
                     String prefix = iterator.next();
                     final Module dependentModule = findModuleFromImports(module.getImports(), prefix);
@@ -1342,7 +1341,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                                 + prefix);
                     }
                     identity = findIdentityByName(dependentModule.getIdentities(), iterator.next());
-                    basePackageName = moduleNamespaceToPackageName(dependentModule);
+                    basePackageName = BindingMapping.getRootPackageName(dependentModule.getQNameModule());
                 } else {
                     throw new IllegalArgumentException("Failed to process context-reference: unknown identity "
                             + nodeParam);
