@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
@@ -20,9 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 /**
  * Extended Type represents YANG type derived from other type.
  *
@@ -52,15 +52,15 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
     private final boolean addedByUses;
 
     /**
-    *
-    * Creates Builder for extended / derived type.
-    *
-    * @param typeName QName of derived type
-    * @param baseType Base type of derived type
-    * @param description Description of type
-    * @param reference Reference of Type
-    * @param path Schema path to type definition.
-    */
+     *
+     * Creates Builder for extended / derived type.
+     *
+     * @param typeName QName of derived type
+     * @param baseType Base type of derived type
+     * @param description Description of type
+     * @param reference Reference of Type
+     * @param path Schema path to type definition.
+     */
     public static final Builder builder(final QName typeName,final TypeDefinition<?> baseType,final Optional<String> description,final Optional<String> reference,final SchemaPath path) {
         return new Builder(typeName, baseType, description.or(""), reference.or(""), path);
     }
@@ -150,7 +150,11 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
 
         public Builder unknownSchemaNodes(
                 final List<UnknownSchemaNode> unknownSchemaNodes) {
-            this.unknownSchemaNodes = unknownSchemaNodes;
+            if (unknownSchemaNodes.isEmpty()) {
+                this.unknownSchemaNodes = Collections.emptyList();
+            } else {
+                this.unknownSchemaNodes = unknownSchemaNodes;
+            }
             return this;
         }
 
@@ -265,8 +269,9 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
         if (path != null ? !path.equals(that.path) : that.path != null) {
             return false;
         }
-        if (typeName != null ? !typeName.equals(that.typeName) : that.typeName != null)
+        if (typeName != null ? !typeName.equals(that.typeName) : that.typeName != null) {
             return false;
+        }
 
         return true;
     }
