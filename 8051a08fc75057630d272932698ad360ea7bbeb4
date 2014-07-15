@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_63d4f4bc",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "These methods should be part of API (GeneratedTypeBuilderBase)",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a3ce7c2c",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "These methods should be part of API (GeneratedTypeBuilderBase)",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c31dc0bf",
+        "filename": "code-generator/binding-generator-util/src/main/java/org/opendaylight/yangtools/binding/generator/util/generated/type/builder/EnumerationBuilderImpl.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "else {\n    listIndex \u003d enumPairValue;\n}\n\nbased on http://tools.ietf.org/html/rfc6020#section-9.6.4\nsection 9.6.4.2",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_23882cc4",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 9
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "typo",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_236cac34",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 9
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "sb.append(\u0027[\u0027);\n\njust a small performance improvement :-)",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_638634dd",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 9
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "same as above",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_036f282c",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 9
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "same as above",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c374e0ff",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 9
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "same as above",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_63a2b44c",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 9
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "why lineBuilder.toString ?",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e3f6c45c",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 9
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "same as above",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_038ba8c3",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 9
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-07-15T09:10:37Z",
+      "side": 1,
+      "message": "same as above",
+      "revId": "8051a08fc75057630d272932698ad360ea7bbeb4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
