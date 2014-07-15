@@ -16,6 +16,24 @@
       "revId": "19638a7ed2276e06e4ca2c9453442f030196eed1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b548f3b3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/DomUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-15T14:55:09Z",
+      "side": 1,
+      "message": "Yeah, the intent was to move it first, then do a cleanup pass. Added the equivalent code instead.",
+      "parentUuid": "fa82b9bf_9da2bbfb",
+      "revId": "19638a7ed2276e06e4ca2c9453442f030196eed1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
