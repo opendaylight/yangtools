@@ -7,19 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
 
-public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifier.PathArgument,V>
-        implements NormalizedNode<K, V>, Immutable {
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
+public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifier.PathArgument,V> implements NormalizedNode<K, V>, Immutable {
     private final K nodeIdentifier;
 
     protected AbstractImmutableNormalizedNode(final K nodeIdentifier) {
@@ -34,21 +31,6 @@ public abstract class AbstractImmutableNormalizedNode<K extends InstanceIdentifi
     @Override
     public final K getIdentifier() {
         return nodeIdentifier;
-    }
-
-    @Override
-    public final CompositeNode getParent() {
-        throw new UnsupportedOperationException("Deprecated");
-    }
-
-    @Override
-    public final QName getKey() {
-        return getNodeType();
-    }
-
-    @Override
-    public final V setValue(final V value) {
-        throw new UnsupportedOperationException("Immutable");
     }
 
     @Override
