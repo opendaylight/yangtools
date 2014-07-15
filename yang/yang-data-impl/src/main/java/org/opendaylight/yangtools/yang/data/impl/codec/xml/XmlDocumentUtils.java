@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
@@ -192,22 +194,34 @@ public class XmlDocumentUtils {
         return itemEl;
     }
 
-    public static Element createElementFor(final Document doc, final Node<?> data) {
-        QName dataType = data.getNodeType();
-        Element ret;
-        if (dataType.getNamespace() != null) {
-            ret = doc.createElementNS(dataType.getNamespace().toString(), dataType.getLocalName());
+    private static final Element createElementFor(final Document doc, final QName qname, final Object obj) {
+        final Element ret;
+        if (qname.getNamespace() != null) {
+            ret = doc.createElementNS(qname.getNamespace().toString(), qname.getLocalName());
         } else {
-            ret = doc.createElementNS(null, dataType.getLocalName());
+            ret = doc.createElementNS(null, qname.getLocalName());
         }
-        if (data instanceof AttributesContainer && ((AttributesContainer) data).getAttributes() != null) {
-            for (Entry<QName, String> attribute : ((AttributesContainer) data).getAttributes().entrySet()) {
-                ret.setAttributeNS(attribute.getKey().getNamespace().toString(), attribute.getKey().getLocalName(),
-                        attribute.getValue());
-            }
 
+        if (obj instanceof AttributesContainer) {
+            final Map<QName, String> attrs = ((AttributesContainer)obj).getAttributes();
+
+            if (attrs != null) {
+                for (Entry<QName, String> attribute : attrs.entrySet()) {
+                    ret.setAttributeNS(attribute.getKey().getNamespace().toString(), attribute.getKey().getLocalName(),
+                            attribute.getValue());
+                }
+            }
         }
+
         return ret;
+    }
+
+    public static Element createElementFor(final Document doc, final Node<?> data) {
+        return createElementFor(doc, data.getNodeType(), data);
+    }
+
+    public static Element createElementFor(final Document doc, final NormalizedNode<?, ?> data) {
+        return createElementFor(doc, data.getNodeType(), data);
     }
 
     public static void writeValueByType(final Element element, final SimpleNode<?> node, final TypeDefinition<?> type,
@@ -367,8 +381,8 @@ public class XmlDocumentUtils {
     public static Optional<ModifyAction> getModifyOperationFromAttributes(final Element xmlElement) {
         Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
         if(attributeNodeNS == null) {
-			return Optional.absent();
-		}
+            return Optional.absent();
+        }
 
         ModifyAction action = ModifyAction.fromXmlValue(attributeNodeNS.getValue());
         Preconditions.checkArgument(action.isOnElementPermitted(), "Unexpected operation %s on %s", action, xmlElement);
