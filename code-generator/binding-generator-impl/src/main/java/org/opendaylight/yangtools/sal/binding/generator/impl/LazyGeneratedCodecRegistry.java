@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BindingCodec;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifier;
@@ -1292,9 +1293,14 @@ class LazyGeneratedCodecRegistry implements //
 
         @Override
         public Class<?> deserialize(final QName input) {
+            if(input == null) {
+                return null;
+            }
             Type type = qnamesToIdentityMap.get(input);
             if (type == null) {
-                throw new IllegalArgumentException( "Invalid value \"" + input + "\"." );
+                String packageName = BindingMapping.getRootPackageName(input);
+                String className = BindingMapping.getClassName(input);
+                type = new ReferencedTypeImpl(packageName, className);
             }
             ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
             WeakReference<Class> softref = typeToClass.get(typeref);
@@ -1348,8 +1354,7 @@ class LazyGeneratedCodecRegistry implements //
             if (qname != null) {
                 return qname;
             }
-            ConcreteType typeref = Types.typeForClass(input);
-            qname = typeToQname.get(typeref);
+            qname = BindingReflections.findQName(input);
             if (qname != null) {
                 identityQNames.put(input, qname);
             }
