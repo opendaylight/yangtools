@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.Node;
 
 /**
  *
@@ -23,31 +22,26 @@ import org.opendaylight.yangtools.yang.data.api.Node;
  * @param <K> Local identifier of node
  * @param <V> Value of node
  */
-public interface NormalizedNode<K extends InstanceIdentifier.PathArgument,V> extends
-    Identifiable<K>, //
-    Node<V> {
-
+public interface NormalizedNode<K extends InstanceIdentifier.PathArgument, V> extends Identifiable<K> {
     /**
-     *
      * QName of the node as defined in YANG schema.
      *
+     * @return QName of this node, non-null.
      */
-    @Override
     QName getNodeType();
 
     /**
+     * Locally unique identifier of the node.
      *
-     * Locally unique identifier of nodes
-     *
+     * @return Node identifier, non-null.
      */
     @Override
     K getIdentifier();
 
     /**
+     * Value of node.
      *
-     * Value of node
-     *
+     * @return Value of the node, may be null.
      */
-    @Override
     V getValue();
 }
