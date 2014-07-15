@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.collect.Iterables;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -39,9 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.collect.Iterables;
-
 /**
  * Contains the methods for converting strings to valid JAVA language strings
  * (package names, class names, attribute names).
@@ -62,6 +61,28 @@ public final class BindingGeneratorUtil {
      */
     private static final CharMatcher DOT_MATCHER = CharMatcher.is('.');
     private static final CharMatcher DASH_COLON_MATCHER = CharMatcher.anyOf("-:");
+
+    private static final Restrictions EMPTY_RESTRICTIONS = new Restrictions() {
+        @Override
+        public List<LengthConstraint> getLengthConstraints() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<PatternConstraint> getPatternConstraints() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<RangeConstraint> getRangeConstraints() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+    };
 
     /**
      * Converts <code>parameterName</code> to valid JAVA parameter name.
@@ -349,27 +370,35 @@ public final class BindingGeneratorUtil {
     }
 
     public static Restrictions getRestrictions(final TypeDefinition<?> type) {
-        final List<LengthConstraint> length = new ArrayList<>();
-        final List<PatternConstraint> pattern = new ArrayList<>();
-        final List<RangeConstraint> range = new ArrayList<>();
-
-        if (type instanceof ExtendedType) {
-            ExtendedType ext = (ExtendedType)type;
-            TypeDefinition<?> base = ext.getBaseType();
-            length.addAll(ext.getLengthConstraints());
-            pattern.addAll(ext.getPatternConstraints());
-            range.addAll(ext.getRangeConstraints());
-
-            if (base instanceof IntegerTypeDefinition && range.isEmpty()) {
-                range.addAll(((IntegerTypeDefinition)base).getRangeConstraints());
-            } else if (base instanceof UnsignedIntegerTypeDefinition && range.isEmpty()) {
-                range.addAll(((UnsignedIntegerTypeDefinition)base).getRangeConstraints());
-            } else if (base instanceof DecimalTypeDefinition && range.isEmpty()) {
-                range.addAll(((DecimalTypeDefinition)base).getRangeConstraints());
-            }
-
+        // Base types have no constraints, so get over it quickly
+        if (!(type instanceof ExtendedType)) {
+            return EMPTY_RESTRICTIONS;
         }
 
+        // Take care of the extended types ...
+        final ExtendedType ext = (ExtendedType)type;
+        final List<LengthConstraint> length = ext.getLengthConstraints();
+        final List<PatternConstraint> pattern = ext.getPatternConstraints();
+
+        List<RangeConstraint> tmp = ext.getRangeConstraints();
+        if (tmp.isEmpty()) {
+            final TypeDefinition<?> base = ext.getBaseType();
+            if (base instanceof IntegerTypeDefinition) {
+                tmp = ((IntegerTypeDefinition)base).getRangeConstraints();
+            } else if (base instanceof UnsignedIntegerTypeDefinition) {
+                tmp = ((UnsignedIntegerTypeDefinition)base).getRangeConstraints();
+            } else if (base instanceof DecimalTypeDefinition) {
+                tmp = ((DecimalTypeDefinition)base).getRangeConstraints();
+            }
+        }
+
+        // Now, this may have ended up being empty, too...
+        if (length.isEmpty() && pattern.isEmpty() && tmp.isEmpty()) {
+            return EMPTY_RESTRICTIONS;
+        }
+
+        // Nope, not empty allocate a holder
+        final List<RangeConstraint> range = tmp;
         return new Restrictions() {
             @Override
             public List<RangeConstraint> getRangeConstraints() {
@@ -385,7 +414,7 @@ public final class BindingGeneratorUtil {
             }
             @Override
             public boolean isEmpty() {
-                return range.isEmpty() && pattern.isEmpty() && length.isEmpty();
+                return false;
             }
         };
     }
