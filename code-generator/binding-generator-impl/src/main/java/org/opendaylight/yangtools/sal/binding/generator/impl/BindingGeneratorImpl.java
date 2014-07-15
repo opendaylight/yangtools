@@ -592,7 +592,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             newType.setExtendsType(gto.toInstance());
         } else {
             final Module baseIdentityParentModule = SchemaContextUtil.findParentModule(context, baseIdentity);
-            final String returnTypePkgName = BindingMapping.getRootPackageName(module.getQNameModule());
+            final String returnTypePkgName = BindingMapping.getRootPackageName(baseIdentityParentModule.getQNameModule());
             final String returnTypeName = BindingMapping.getClassName(baseIdentity.getQName());
             final GeneratedTransferObject gto = new GeneratedTOBuilderImpl(returnTypePkgName, returnTypeName)
                     .toInstance();
