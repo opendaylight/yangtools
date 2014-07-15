@@ -95,6 +95,13 @@ module foo {
         }
     }
 
+    typedef my-decimal-type2 {
+        type decimal64 {
+            fraction-digits 18;
+            range "0..1";
+        }
+    }
+
     typedef union-ext1 {
         type union {
             type int16 {

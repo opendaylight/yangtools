@@ -178,7 +178,7 @@ abstract class BaseTemplate {
                 «generateLengthRestriction(returnType, restrictions, paramName, isNestedType)»
             «ENDIF»
             «IF !restrictions.rangeConstraints.empty»
-                «generateRangeRestriction(returnType, restrictions, paramName, isNestedType)»
+                «generateRangeRestriction(returnType, paramName, isNestedType)»
             «ENDIF»
         «ENDIF»
     '''
@@ -199,12 +199,11 @@ abstract class BaseTemplate {
         }
     '''
 
-    def private generateRangeRestriction(Type returnType, Restrictions restrictions, String paramName, boolean isNestedType) '''
-        «val clazz = restrictions.rangeConstraints.iterator.next.min.class»
+    def private generateRangeRestriction(Type returnType, String paramName, boolean isNestedType) '''
         if («paramName» != null) {
-            «printRangeConstraint(returnType, clazz, paramName, isNestedType)»
+            «printRangeConstraint(returnType, paramName, isNestedType)»
             boolean isValidRange = false;
-            for («Range.importedName»<«clazz.importedNumber»> r : «IF isNestedType»«returnType.importedName».«ENDIF»range()) {
+            for («Range.importedName»<«returnType.importedNumber»> r : «IF isNestedType»«returnType.importedName».«ENDIF»range()) {
                 if (r.contains(_constraint)) {
                     isValidRange = true;
                 }
@@ -223,22 +222,22 @@ abstract class BaseTemplate {
         «clazz.importedNumber» _constraint = «clazz.importedNumber».valueOf(«paramName»«IF isNestedType».getValue()«ENDIF».length«IF !isArray»()«ENDIF»);
     '''
 
-    def printRangeConstraint(Type returnType, Class<? extends Number> clazz, String paramName, boolean isNestedType) '''
-        «IF clazz.canonicalName.equals(BigDecimal.canonicalName)»
-            «clazz.importedNumber» _constraint = new «clazz.importedNumber»(«paramName»«IF isNestedType».getValue()«ENDIF».toString());
+    def printRangeConstraint(Type returnType, String paramName, boolean isNestedType) '''
+        «IF BigDecimal.canonicalName.equals(returnType.fullyQualifiedName)»
+            «BigDecimal.importedName» _constraint = new «BigDecimal.importedName»(«paramName»«IF isNestedType».getValue()«ENDIF».toString());
         «ELSE»
             «IF isNestedType»
                 «val propReturnType = findProperty(returnType as GeneratedTransferObject, "value").returnType»
                 «IF propReturnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
-                    «clazz.importedNumber» _constraint = «paramName».getValue();
+                    «BigInteger.importedName» _constraint = «paramName».getValue();
                 «ELSE»
-                    «clazz.importedNumber» _constraint = «clazz.importedNumber».valueOf(«paramName».getValue());
+                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName».getValue());
                 «ENDIF»
             «ELSE»
                 «IF returnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
-                    «clazz.importedNumber» _constraint = «paramName»;
+                    «BigInteger.importedName» _constraint = «paramName»;
                 «ELSE»
-                    «clazz.importedNumber» _constraint = «clazz.importedNumber».valueOf(«paramName»);
+                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName»);
                 «ENDIF»
             «ENDIF»
         «ENDIF»
@@ -270,15 +269,6 @@ abstract class BaseTemplate {
             }
         «ENDIF»
     '''
-
-    def GeneratedProperty getPropByName(GeneratedType gt, String name) {
-        for (GeneratedProperty prop : gt.properties) {
-            if (prop.name.equals(name)) {
-                return prop;
-            }
-        }
-        return null;
-    }
 
     def getRestrictions(Type type) {
         var Restrictions restrictions = null
@@ -347,15 +337,27 @@ abstract class BaseTemplate {
         return «varName»;
     '''
 
-    def protected generateRangeMethod(String methodName, Type type, String className, String varName) '''
-        «val Restrictions restrictions = type.restrictions»
+    def protected generateRangeMethod(String methodName, Restrictions restrictions, Type returnType, String className, String varName) '''
         «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
-            «val numberClass = restrictions.rangeConstraints.iterator.next.min.class»
-            public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
-                «IF numberClass.equals(typeof(BigDecimal))»
-                    «rangeMethodBody(restrictions, numberClass, className, varName)»
+            «val number = returnType.importedNumber»
+            public static «List.importedName»<«Range.importedName»<«number»>> «methodName»() {
+                «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
+                    «rangeMethodBody(restrictions, BigDecimal, className, varName)»
                 «ELSE»
-                    «rangeMethodBody(restrictions, typeof(BigInteger), className, varName)»
+                    «rangeMethodBody(restrictions, BigInteger, className, varName)»
+                «ENDIF»
+            }
+        «ENDIF»
+    '''
+
+    def protected generateRangeMethod(String methodName, Restrictions restrictions, String className, String varName, Iterable<GeneratedProperty> properties) '''
+        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
+            «val returnType = properties.iterator.next.returnType»
+            public static «List.importedName»<«Range.importedName»<«returnType.importedNumber»>> «methodName»() {
+                «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
+                    «rangeMethodBody(restrictions, BigDecimal, className, varName)»
+                «ELSE»
+                    «rangeMethodBody(restrictions, BigInteger, className, varName)»
                 «ENDIF»
             }
         «ENDIF»
@@ -378,6 +380,13 @@ abstract class BaseTemplate {
 
     def protected String importedNumber(Class<? extends Number> clazz) {
         if (clazz.equals(typeof(BigDecimal))) {
+            return BigDecimal.importedName
+        }
+        return BigInteger.importedName
+    }
+
+    def protected String importedNumber(Type clazz) {
+        if (clazz.fullyQualifiedName.equals(BigDecimal.canonicalName)) {
             return BigDecimal.importedName
         }
         return BigInteger.importedName

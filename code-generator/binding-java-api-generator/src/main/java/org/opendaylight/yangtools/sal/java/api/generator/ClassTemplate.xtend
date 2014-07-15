@@ -127,7 +127,7 @@ class ClassTemplate extends BaseTemplate {
 
             «generateLengthMethod("length", genTO, genTO.importedName, "_length")»
 
-            «generateRangeMethod("range", genTO, genTO.importedName, "_range")»
+            «generateRangeMethod("range", genTO.restrictions, genTO.importedName, "_range", allProperties)»
 
         }
     '''
@@ -366,13 +366,15 @@ class ClassTemplate extends BaseTemplate {
      */
     def protected generateFields() '''
         «IF restrictions != null»
-            «IF !(restrictions.lengthConstraints.empty)»
-                «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
-                private static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> _length;
-            «ENDIF»
-            «IF !(restrictions.rangeConstraints.empty)»
-                «val numberClass = restrictions.rangeConstraints.iterator.next.min.class»
-                private static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> _range;
+            «val prop = getPropByName("value")»
+            «IF prop != null»
+                «val numberClass = prop.returnType.importedNumber»
+                «IF !(restrictions.lengthConstraints.empty)»
+                    private static «List.importedName»<«Range.importedName»<«numberClass»>> _length;
+                «ENDIF»
+                «IF !(restrictions.rangeConstraints.empty)»
+                    private static «List.importedName»<«Range.importedName»<«numberClass»>> _range;
+                «ENDIF»
             «ENDIF»
         «ENDIF»
         «IF !properties.empty»
@@ -443,5 +445,14 @@ class ClassTemplate extends BaseTemplate {
             }
         «ENDIF»
     '''
+
+    def GeneratedProperty getPropByName(String name) {
+        for (GeneratedProperty prop : allProperties) {
+            if (prop.name.equals(name)) {
+                return prop;
+            }
+        }
+        return null;
+    }
 
 }
