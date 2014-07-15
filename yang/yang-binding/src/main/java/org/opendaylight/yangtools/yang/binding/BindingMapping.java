@@ -9,11 +9,17 @@ package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.text.SimpleDateFormat;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
-import org.opendaylight.yangtools.yang.common.QName;
 
 public final class BindingMapping {
 
@@ -34,6 +40,9 @@ public final class BindingMapping {
 
     private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-").precomputed())
             .omitEmptyStrings().trimResults();
+    private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
+    private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
+    private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     public static final String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
     public static final String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
@@ -41,8 +50,87 @@ public final class BindingMapping {
     public static final String RPC_INPUT_SUFFIX = "Input";
     public static final String RPC_OUTPUT_SUFFIX = "Output";
 
+    private static final ThreadLocal<SimpleDateFormat> PACKAGE_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyMMdd");
+        }
+
+        @Override
+        public void set(final SimpleDateFormat value) {
+            throw new UnsupportedOperationException();
+        }
+    };
+
     private BindingMapping() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
+
+    public static final String getRootPackageName(final QName module) {
+        return getRootPackageName(module.getModule());
+    }
+
+    public static final String getRootPackageName(final QNameModule module) {
+        checkArgument(module != null, "Module must not be null");
+        checkArgument(module.getRevision() != null, "Revision must not be null");
+        checkArgument(module.getNamespace() != null, "Namespace must not be null");
+        final StringBuilder packageNameBuilder = new StringBuilder();
+
+        packageNameBuilder.append(BindingMapping.PACKAGE_PREFIX);
+        packageNameBuilder.append('.');
+
+        String namespace = module.getNamespace().toString();
+        namespace = COLON_SLASH_SLASH.matcher(namespace).replaceAll(QUOTED_DOT);
+
+        final char[] chars = namespace.toCharArray();
+        for (int i = 0; i < chars.length; ++i) {
+            switch (chars[i]) {
+            case '/':
+            case ':':
+            case '-':
+            case '@':
+            case '$':
+            case '#':
+            case '\'':
+            case '*':
+            case '+':
+            case ',':
+            case ';':
+            case '=':
+                chars[i] = '.';
+            }
+        }
+
+        packageNameBuilder.append(chars);
+        packageNameBuilder.append(".rev");
+        packageNameBuilder.append(PACKAGE_DATE_FORMAT.get().format(module.getRevision()));
+        return normalizePackageName(packageNameBuilder.toString());
+
+    }
+
+    public static String normalizePackageName(final String packageName) {
+        if (packageName == null) {
+            return null;
+        }
+
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+
+        for (String p : DOT_SPLITTER.split(packageName.toLowerCase())) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append('.');
+            }
+
+            if (Character.isDigit(p.charAt(0)) || BindingMapping.JAVA_RESERVED_WORDS.contains(p)) {
+                builder.append('_');
+            }
+            builder.append(p);
+        }
+
+        return builder.toString();
     }
 
     public static final String getMethodName(final QName name) {

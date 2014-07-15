@@ -7,22 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -32,6 +27,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSigna
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -43,6 +39,9 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.collect.Iterables;
+
 /**
  * Contains the methods for converting strings to valid JAVA language strings
  * (package names, class names, attribute names).
@@ -50,19 +49,6 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
  *
  */
 public final class BindingGeneratorUtil {
-
-    private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyMMdd");
-        }
-
-        @Override
-        public void set(final SimpleDateFormat value) {
-            throw new UnsupportedOperationException();
-        }
-    };
 
     /**
      * Impossible to instantiate this class. All of the methods or attributes
@@ -74,45 +60,8 @@ public final class BindingGeneratorUtil {
     /**
      * Pre-compiled replacement pattern.
      */
-    private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
-    private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
-    private static final Splitter DOT_SPLITTER = Splitter.on('.');
     private static final CharMatcher DOT_MATCHER = CharMatcher.is('.');
     private static final CharMatcher DASH_COLON_MATCHER = CharMatcher.anyOf("-:");
-
-    /**
-     * Converts string <code>packageName</code> to valid JAVA package name.
-     *
-     * If some words of package name are digits of JAVA reserved words they are
-     * prefixed with underscore character.
-     *
-     * @param packageName
-     *            string which contains words separated by point.
-     * @return package name which contains words separated by point.
-     */
-    private static String validateJavaPackage(final String packageName) {
-        if (packageName == null) {
-            return null;
-        }
-
-        final StringBuilder builder = new StringBuilder();
-        boolean first = true;
-
-        for (String p : DOT_SPLITTER.split(packageName.toLowerCase())) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append('.');
-            }
-
-            if (Character.isDigit(p.charAt(0)) || BindingMapping.JAVA_RESERVED_WORDS.contains(p)) {
-                builder.append('_');
-            }
-            builder.append(p);
-        }
-
-        return builder.toString();
-    }
 
     /**
      * Converts <code>parameterName</code> to valid JAVA parameter name.
@@ -149,43 +98,11 @@ public final class BindingGeneratorUtil {
      * @throws IllegalArgumentException
      *             if the revision date of the <code>module</code> equals
      *             <code>null</code>
+     * @deprecated USe {@link BindingMapping#getRootPackageName(QNameModule)} with {@link Module#getQNameModule()}.
      */
+    @Deprecated
     public static String moduleNamespaceToPackageName(final Module module) {
-        final StringBuilder packageNameBuilder = new StringBuilder();
-
-        if (module.getRevision() == null) {
-            throw new IllegalArgumentException("Module " + module.getName() + " does not specify revision date!");
-        }
-        packageNameBuilder.append(BindingMapping.PACKAGE_PREFIX);
-        packageNameBuilder.append('.');
-
-        String namespace = module.getNamespace().toString();
-        namespace = COLON_SLASH_SLASH.matcher(namespace).replaceAll(QUOTED_DOT);
-
-        final char[] chars = namespace.toCharArray();
-        for (int i = 0; i < chars.length; ++i) {
-            switch (chars[i]) {
-            case '/':
-            case ':':
-            case '-':
-            case '@':
-            case '$':
-            case '#':
-            case '\'':
-            case '*':
-            case '+':
-            case ',':
-            case ';':
-            case '=':
-                chars[i] = '.';
-            }
-        }
-
-        packageNameBuilder.append(chars);
-        packageNameBuilder.append(".rev");
-        packageNameBuilder.append(DATE_FORMAT.get().format(module.getRevision()));
-
-        return validateJavaPackage(packageNameBuilder.toString());
+        return BindingMapping.getRootPackageName(module.getQNameModule());
     }
 
     public static String packageNameForGeneratedType(final String basePackageName, final SchemaPath schemaPath) {
@@ -230,10 +147,10 @@ public final class BindingGeneratorUtil {
         for (int i = 0; i < traversalSteps; ++i) {
             builder.append('.');
             String nodeLocalName = iterator.next().getLocalName();
-
+            // FIXME: Collon ":" is invalid in node local name as per RFC6020, identifier statement.
             builder.append(DASH_COLON_MATCHER.replaceFrom(nodeLocalName, '.'));
         }
-        return validateJavaPackage(builder.toString());
+        return BindingMapping.normalizePackageName(builder.toString());
     }
 
     /**
@@ -262,7 +179,7 @@ public final class BindingGeneratorUtil {
 
         final StringBuilder builder = new StringBuilder();
         builder.append(basePackageName);
-        return validateJavaPackage(builder.toString());
+        return BindingMapping.normalizePackageName(builder.toString());
     }
 
     /**
