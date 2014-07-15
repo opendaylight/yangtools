@@ -7,25 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNodeContainerBuilder implements
         AugmentationTargetBuilder, DataSchemaNodeBuilder {
@@ -37,6 +42,8 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
     private boolean augmenting;
     private boolean addedByUses;
     private boolean configuration;
+    private ContainerSchemaNode originalNode;
+    private ContainerSchemaNodeBuilder originalBuilder;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
     private final List<AugmentationSchema> augmentations = new ArrayList<>();
@@ -58,6 +65,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
 
         augmenting = base.isAugmenting();
         addedByUses = base.isAddedByUses();
+        originalNode = base;
         configuration = base.isConfiguration();
         presence = base.isPresenceContainer();
 
@@ -84,6 +92,12 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
         instance.configuration = configuration;
         instance.constraints = constraints.toInstance();
         instance.presence = presence;
+
+        // ORIGINAL NODE
+        if (originalNode == null && originalBuilder != null) {
+            originalNode = originalBuilder.build();
+        }
+        instance.original = originalNode;
 
         // AUGMENTATIONS
         for (AugmentationSchemaBuilder builder : augmentationBuilders) {
@@ -140,6 +154,18 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
     }
 
     @Override
+    public ContainerSchemaNodeBuilder getOriginal() {
+        return originalBuilder;
+    }
+
+    @Override
+    public void setOriginal(final SchemaNodeBuilder builder) {
+        Preconditions.checkArgument(builder instanceof ContainerSchemaNodeBuilder, "Original of container cannot be "
+                + builder);
+        this.originalBuilder = (ContainerSchemaNodeBuilder) builder;
+    }
+
+    @Override
     public boolean isConfiguration() {
         return configuration;
     }
@@ -189,8 +215,6 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
         } else if (!path.equals(other.path)) {
             return false;
         }
-        // FIXME: Do we really need this? This actually triggers equals
-        // up to the root builder.
         if (getParent() == null) {
             if (other.getParent() != null) {
                 return false;
@@ -207,13 +231,14 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
     }
 
     private static final class ContainerSchemaNodeImpl extends AbstractDocumentedDataNodeContainer implements
-            ContainerSchemaNode {
+            ContainerSchemaNode, DerivableSchemaNode {
         private final QName qname;
         private final SchemaPath path;
 
         private boolean augmenting;
         private boolean addedByUses;
         private boolean configuration;
+        private ContainerSchemaNode original;
         private ConstraintDefinition constraints;
 
         private ImmutableSet<AugmentationSchema> augmentations;
@@ -245,6 +270,11 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
+        }
+
+        @Override
+        public Optional<ContainerSchemaNode> getOriginal() {
+            return Optional.fromNullable(original);
         }
 
         @Override
@@ -314,6 +344,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
         public String toString() {
             return "container " + qname.getLocalName();
         }
+
     }
 
 }

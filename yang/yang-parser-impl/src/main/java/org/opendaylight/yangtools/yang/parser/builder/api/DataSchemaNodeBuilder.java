@@ -15,7 +15,21 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  */
 public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember {
 
+    /**
+     * Get original builder definition from grouping, where it is defined.
+     *
+     * @return original builder definition from grouping if this node is added
+     *         by uses, null otherwise
+     */
+    SchemaNodeBuilder getOriginal();
 
+    /**
+     * Set original builder definition from grouping
+     *
+     * @param original
+     *            original builder definition from grouping
+     */
+    void setOriginal(SchemaNodeBuilder original);
 
     /**
      *

@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -19,9 +19,14 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder {
     private LeafSchemaNodeImpl instance;
@@ -35,6 +40,8 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     // DataSchemaNode args
     private boolean augmenting;
     private boolean addedByUses;
+    private LeafSchemaNode originalNode;
+    private LeafSchemaNodeBuilder originalBuilder;
     private boolean configuration;
     private final ConstraintsBuilder constraints;
 
@@ -54,6 +61,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         status = base.getStatus();
         augmenting = base.isAugmenting();
         addedByUses = base.isAddedByUses();
+        originalNode =base;
         configuration = base.isConfiguration();
         this.type = base.getType();
         unknownNodes.addAll(base.getUnknownSchemaNodes());
@@ -90,6 +98,12 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         } else {
             instance.type = type;
         }
+
+        // ORIGINAL NODE
+        if (originalNode == null && originalBuilder != null) {
+            originalNode = originalBuilder.build();
+        }
+        instance.original = originalNode;
 
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
@@ -166,6 +180,17 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     }
 
     @Override
+    public LeafSchemaNodeBuilder getOriginal() {
+        return originalBuilder;
+    }
+
+    @Override
+    public void setOriginal(final SchemaNodeBuilder builder) {
+        Preconditions.checkArgument(builder instanceof LeafSchemaNodeBuilder, "Original of leaf cannot be " + builder);
+        this.originalBuilder = (LeafSchemaNodeBuilder) builder;
+    }
+
+    @Override
     public boolean isConfiguration() {
         return configuration;
     }
@@ -233,7 +258,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         return "leaf " + qname.getLocalName();
     }
 
-    private static final class LeafSchemaNodeImpl implements LeafSchemaNode {
+    private static final class LeafSchemaNodeImpl implements LeafSchemaNode, DerivableSchemaNode {
         private final QName qname;
         private final SchemaPath path;
         private String description;
@@ -241,6 +266,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         private Status status;
         private boolean augmenting;
         private boolean addedByUses;
+        private LeafSchemaNode original;
         private boolean configuration;
         private ConstraintDefinition constraintsDef;
         private TypeDefinition<?> type;
@@ -286,6 +312,11 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
         @Override
         public boolean isAddedByUses() {
             return addedByUses;
+        }
+
+        @Override
+        public Optional<LeafSchemaNode> getOriginal() {
+            return Optional.fromNullable(original);
         }
 
         @Override
