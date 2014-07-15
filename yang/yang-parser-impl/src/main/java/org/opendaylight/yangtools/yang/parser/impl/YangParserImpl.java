@@ -766,13 +766,11 @@ public final class YangParserImpl implements YangContextParser {
     private void setCorrectAugmentTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
             final AugmentationSchemaBuilder augment) {
         ModuleBuilder module = BuilderUtils.getParentModule(augment);
-        Iterable<QName> oldPath = augment.getTargetPath().getPathFromRoot();
-        List<QName> newPath = new ArrayList<>();
+        final SchemaPath newSchemaPath;
 
         Builder parent = augment.getParent();
         if (parent instanceof UsesNodeBuilder) {
             DataNodeContainerBuilder usesParent = ((UsesNodeBuilder) parent).getParent();
-            newPath.addAll(usesParent.getPath().getPath());
 
             QName baseQName = usesParent.getQName();
             final QNameModule qnm;
@@ -786,11 +784,16 @@ public final class YangParserImpl implements YangContextParser {
                 prefix = baseQName.getPrefix();
             }
 
-            for (QName qn : oldPath) {
-                newPath.add(QName.create(qnm, prefix, qn.getLocalName()));
+            SchemaPath s = usesParent.getPath();
+            for (QName qn : augment.getTargetPath().getPathFromRoot()) {
+                s = s.createChild(QName.create(qnm, prefix, qn.getLocalName()));
             }
+
+            newSchemaPath = s;
         } else {
-            for (QName qn : oldPath) {
+            final List<QName> newPath = new ArrayList<>();
+
+            for (QName qn : augment.getTargetPath().getPathFromRoot()) {
                 QNameModule qnm = module.getQNameModule();
                 String localPrefix = qn.getPrefix();
                 if (localPrefix != null && !localPrefix.isEmpty()) {
@@ -803,8 +806,16 @@ public final class YangParserImpl implements YangContextParser {
                 }
                 newPath.add(QName.create(qnm, localPrefix, qn.getLocalName()));
             }
+
+            /*
+             * FIXME: this method of SchemaPath construction is highly ineffective.
+             *        It would be great if we could actually dive into the context,
+             *        find the actual target node and reuse its SchemaPath. Can we
+             *        do that?
+             */
+            newSchemaPath = SchemaPath.create(newPath, true);
         }
-        augment.setTargetNodeSchemaPath(SchemaPath.create(newPath, true));
+        augment.setTargetNodeSchemaPath(newSchemaPath);
 
         for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
             correctPathForAugmentNodes(childNode, augment.getTargetNodeSchemaPath());
