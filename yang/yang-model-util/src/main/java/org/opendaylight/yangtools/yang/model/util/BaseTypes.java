@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,12 +19,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Utility methods and constants to work with built-in YANG types
@@ -33,6 +34,7 @@ public final class BaseTypes {
     }
 
     public static final URI BASE_TYPES_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:1");
+    public static final QNameModule BASE_TYPES_MODULE = QNameModule.create(BASE_TYPES_NAMESPACE, null);
 
     public static final QName BINARY_QNAME = constructQName("binary");
     public static final QName BITS_QNAME = constructQName("bits");
@@ -84,7 +86,7 @@ public final class BaseTypes {
      * @return built-in base yang type QName.
      */
     public static QName constructQName(final String typeName) {
-        return new QName(BASE_TYPES_NAMESPACE, typeName);
+        return QName.create(BASE_TYPES_MODULE, "", typeName);
     }
 
     /**
