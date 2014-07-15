@@ -11,13 +11,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -31,8 +32,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 
-public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataNodeContainerBuilder implements
-        AugmentationSchemaBuilder {
+public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataNodeContainerBuilder implements AugmentationSchemaBuilder {
     private final int order;
     private AugmentationSchemaImpl instance;
     private String whenCondition;
@@ -79,11 +79,10 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
 
         if (parent instanceof UsesNodeBuilder) {
             final ModuleBuilder mb = BuilderUtils.getParentModule(this);
-            final QNameModule qm = QNameModule.create(mb.getNamespace(), mb.getRevision());
 
             List<QName> newPath = new ArrayList<>();
             for (QName name : targetPath.getPathFromRoot()) {
-                newPath.add(QName.create(qm, name.getPrefix(), name.getLocalName()));
+                newPath.add(QName.create(mb.getQNameModule(), name.getPrefix(), name.getLocalName()));
             }
             instance.targetPath = SchemaPath.create(newPath, false);
         } else {
@@ -207,8 +206,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
         copyOf = old;
     }
 
-    private static final class AugmentationSchemaImpl extends AbstractDocumentedDataNodeContainer implements AugmentationSchema, NamespaceRevisionAware,
-            Comparable<AugmentationSchemaImpl> {
+    private static final class AugmentationSchemaImpl extends AbstractDocumentedDataNodeContainer implements AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentationSchemaImpl> {
         private final int order;
         private SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
