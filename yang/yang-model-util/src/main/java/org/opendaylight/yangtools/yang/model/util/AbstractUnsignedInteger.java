@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -16,8 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
-
-import com.google.common.base.Optional;
 
 /**
  * The Abstract Integer class defines implementation of IntegerTypeDefinition
@@ -54,7 +54,7 @@ abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition 
      */
     public AbstractUnsignedInteger(final QName name, final String description, final Number maxRange, final String units) {
         this.name = name;
-        this.path = SchemaPath.create(Collections.singletonList(name), true);
+        this.path = SchemaPath.create(true, name);
         this.description = description;
         this.units = units;
         final String rangeDescription = "Integer values between " + MIN_VALUE + " and " + maxRange + ", inclusively.";

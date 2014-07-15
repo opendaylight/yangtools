@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableSet;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -99,7 +98,7 @@ public final class BaseTypes {
      */
     @Deprecated
     public static SchemaPath schemaPath(final QName typeName) {
-        return SchemaPath.create(Collections.singletonList(typeName), true);
+        return SchemaPath.create(true, typeName);
     }
 
     /**

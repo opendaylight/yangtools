@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -16,8 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-
-import com.google.common.base.Optional;
 
 /**
  * The Abstract Integer class defines implementation of IntegerTypeDefinition
@@ -49,13 +49,13 @@ abstract class AbstractSignedInteger implements IntegerTypeDefinition {
      * @param name Name of type
      * @param description Description of type
      * @param minRange Minimal range
-     * @param maxRange Maxium range
+     * @param maxRange Maximum range
      * @param units Units
      */
     protected AbstractSignedInteger(final QName name, final String description, final Number minRange,
             final Number maxRange, final String units) {
         this.name = name;
-        this.path = SchemaPath.create(Collections.singletonList(name), true);
+        this.path = SchemaPath.create(true, name);
         this.description = description;
         this.units = units;
         final String rangeDescription = "Integer values between " + minRange + " and " + maxRange + ", inclusively.";

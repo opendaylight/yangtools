@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 public final class InstanceIdentifier implements InstanceIdentifierTypeDefinition, Immutable {
 
     private static final QName NAME = BaseTypes.INSTANCE_IDENTIFIER_QNAME;
-    private static final SchemaPath PATH = SchemaPath.create(Collections.singletonList(NAME), true);
+    private static final SchemaPath PATH = SchemaPath.create(true, NAME);
     private static final String DESCRIPTION = "The instance-identifier built-in type is used to "
             + "uniquely identify a particular instance node in the data tree.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.13";

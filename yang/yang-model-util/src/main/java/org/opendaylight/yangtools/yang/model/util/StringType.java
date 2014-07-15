@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -19,8 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-import com.google.common.base.Optional;
-
 /**
  * The <code>default</code> implementation of String Type Definition interface.
  *
@@ -28,7 +28,7 @@ import com.google.common.base.Optional;
  */
 public final class StringType implements StringTypeDefinition, Immutable {
     private static final QName NAME = BaseTypes.STRING_QNAME;
-    private static final SchemaPath PATH = SchemaPath.create(Collections.singletonList(NAME), true);
+    private static final SchemaPath PATH = SchemaPath.create(true, NAME);
     private static final String DEFAULT_VALUE = "";
     private static final String DESCRIPTION = "";
     private static final String REFERENCE = "";

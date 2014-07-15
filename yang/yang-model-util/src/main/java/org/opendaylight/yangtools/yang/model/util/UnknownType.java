@@ -25,9 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  * Unknown type definition is derived type, for
  * which base built-in type is not yet known. This types
  * are possible during parsing and resolving of YANG model
- * without all requisites allready processed.
- *
- *
+ * without all requisites already processed.
  */
 public final class UnknownType implements UnknownTypeDefinition {
 
@@ -66,14 +64,14 @@ public final class UnknownType implements UnknownTypeDefinition {
 
         public Builder(final QName name, final String description, final String reference) {
             this.name = name;
-            this.path = BaseTypes.schemaPath(name);
+            this.path = SchemaPath.create(true, name);
             this.description = description;
             this.reference = reference;
         }
 
         public Builder(final QName name) {
             this.name = name;
-            this.path = BaseTypes.schemaPath(name);
+            this.path = SchemaPath.create(true, name);
         }
 
         public Builder description(final String description) {

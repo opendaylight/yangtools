@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
  */
 public final class BooleanType implements BooleanTypeDefinition {
     private static final BooleanType INSTANCE = new BooleanType();
-    private static final SchemaPath PATH = SchemaPath.create(Collections.singletonList(BaseTypes.BOOLEAN_QNAME), true);
+    private static final SchemaPath PATH = SchemaPath.create(true, BaseTypes.BOOLEAN_QNAME);
     private static final String DESCRIPTION = "The boolean built-in type represents a boolean value.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.5";
     private static final String UNITS = "";

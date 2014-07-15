@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -31,8 +32,8 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * types.
  */
 public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
+    private static final SchemaPath SCHEMA_PATH = SchemaPath.create(true, BaseTypes.UNION_QNAME);
     private static final String NAME = "union";
-    private static final QName QNAME = BaseTypes.constructQName(NAME);
 
     private final List<TypeDefinition<?>> types;
     private final List<TypeDefinitionBuilder> typedefs;
@@ -40,7 +41,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     private boolean isBuilt;
 
     public UnionTypeBuilder(final String moduleName, final int line) {
-        super(moduleName, line, BaseTypes.constructQName(NAME));
+        super(moduleName, line, BaseTypes.UNION_QNAME);
         types = new ArrayList<>();
         typedefs = new ArrayList<>();
     }
@@ -122,7 +123,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
 
     @Override
     public SchemaPath getPath() {
-        return SchemaPath.create(true,  QNAME);
+        return SCHEMA_PATH;
     }
 
     @Override

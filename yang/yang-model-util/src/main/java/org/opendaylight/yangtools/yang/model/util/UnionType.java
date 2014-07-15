@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -17,11 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-
 public final class UnionType implements UnionTypeDefinition {
-    private final SchemaPath path = SchemaPath.create(Collections.singletonList(BaseTypes.UNION_QNAME),true);
+    private static final SchemaPath PATH = SchemaPath.create(true, BaseTypes.UNION_QNAME);
     private static final String DESCRIPTION = "The union built-in type represents a value that corresponds to one of its member types.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.12";
     private final List<TypeDefinition<?>> types;
@@ -58,7 +58,7 @@ public final class UnionType implements UnionTypeDefinition {
 
     @Override
     public SchemaPath getPath() {
-        return path;
+        return PATH;
     }
 
     @Override
