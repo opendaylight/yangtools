@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -23,6 +24,12 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * JAXP API.
  */
 public final class XmlUtils {
+    static final XmlCodecProvider DEFAULT_XML_CODEC_PROVIDER = new XmlCodecProvider() {
+        @Override
+        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
+            return TypeDefinitionAwareCodec.from(baseType);
+        }
+    };
 
     private XmlUtils() {
     }
