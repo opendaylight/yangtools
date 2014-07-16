@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -25,8 +27,6 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 public final class JavassistUtils {
     private static final Logger LOG = LoggerFactory.getLogger(JavassistUtils.class);
@@ -70,6 +70,14 @@ public final class JavassistUtils {
         return ret;
     }
 
+    /**
+     * Get reference to the internal lock.
+     *
+     * @return Lock object
+     *
+     * @deprecated Synchronize on an instance of this class instead.
+     */
+    @Deprecated
     public Lock getLock() {
         return lock;
     }
