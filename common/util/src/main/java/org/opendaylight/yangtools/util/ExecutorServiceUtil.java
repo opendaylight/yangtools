@@ -28,8 +28,8 @@ public final class ExecutorServiceUtil {
             try {
                 executor.getQueue().put(r);
             } catch (InterruptedException e) {
-                LOG.debug("Intterupted while waiting for queue", e);
-                throw new RejectedExecutionException("Interrupted while waiting for queue", e);
+                LOG.debug("Interrupted while attempting to put to the queue", e);
+                throw new RejectedExecutionException("Interrupted while attempting to put to the queue", e);
             }
         }
     }
@@ -42,7 +42,7 @@ public final class ExecutorServiceUtil {
     }
 
     /**
-     * Create a {@link BlockingQueue} which does not allow for non-blocking addition to the queue.
+     * Creates a {@link BlockingQueue} which does not allow for non-blocking addition to the queue.
      * This is useful with {@link #waitInQueueExecutionHandler()} to turn force a
      * {@link ThreadPoolExecutor} to create as many threads as it is configured to before starting
      * to fill the queue.
@@ -50,7 +50,7 @@ public final class ExecutorServiceUtil {
      * @param delegate Backing blocking queue.
      * @return A new blocking queue backed by the delegate
      */
-    public <E> BlockingQueue<E> offerFailingBlockingQueue(final BlockingQueue<E> delegate) {
+    public static <E> BlockingQueue<E> offerFailingBlockingQueue(final BlockingQueue<E> delegate) {
         return new ForwardingBlockingQueue<E>() {
             @Override
             public boolean offer(final E o) {
@@ -65,12 +65,12 @@ public final class ExecutorServiceUtil {
     }
 
     /**
-     * Return a {@link RejectedExecutionHandler} which blocks on the {@link ThreadPoolExecutor}'s
+     * Returns a {@link RejectedExecutionHandler} which blocks on the {@link ThreadPoolExecutor}'s
      * backing queue if a new thread cannot be spawned.
      *
      * @return A shared RejectedExecutionHandler instance.
      */
-    public RejectedExecutionHandler waitInQueueExecutionHandler() {
+    public static RejectedExecutionHandler waitInQueueExecutionHandler() {
         return WAIT_IN_QUEUE_HANDLER;
     }
 }
