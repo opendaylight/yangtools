@@ -15,6 +15,7 @@
         <feature version='${project.version}'>yangtools-common</feature>
         <feature version='${project.version}'>yangtools-concepts</feature>
         <feature version='${project.version}'>yangtools-binding-generator</feature>
+        <feature version='${project.version}'>yangtools-restconf</feature>
     </feature>
 
     <feature name='yangtools-models' version='${project.version}'>
@@ -75,5 +76,11 @@
         <bundle>mvn:org.opendaylight.yangtools/yang-model-util/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/${project.version}</bundle>
     </feature>
+    <feature name="yangtools-restconf" version='${project.version}'>
+        <bundle>mvn:org.opendaylight.yangtools/restconf-client-api/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/restconf-client-impl/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/restconf-common/${project.version}</bundle>
+     </feature>
+
 
 </features>
