@@ -8,12 +8,13 @@
 
 package org.opendaylight.yangtools.yang.common;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * A builder for creating RpcResult instances.
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
  *
  * @param <T> the result value type
  */
-public class RpcResultBuilder<T> {
+public final class RpcResultBuilder<T> {
 
     private static class RpcResultImpl<T> implements RpcResult<T> {
 
@@ -125,7 +126,7 @@ public class RpcResultBuilder<T> {
         }
     }
 
-    private Collection<RpcError> errors;
+    private ImmutableList.Builder<RpcError> errors;
     private T result;
     private final boolean successful;
 
@@ -158,6 +159,93 @@ public class RpcResultBuilder<T> {
     }
 
     /**
+     * Returns a builder based on the given status.
+     *
+     * @param success true if successful, false otherwise.
+     */
+    public static <T> RpcResultBuilder<T> status( boolean success ) {
+        return new RpcResultBuilder<T>( success, null );
+    }
+
+    /**
+     * Returns a builder from another RpcResult.
+     *
+     * @param other the other RpcResult.
+     */
+    public static <T> RpcResultBuilder<T> from( RpcResult<T> other ) {
+        return new RpcResultBuilder<T>( other.isSuccessful(), other.getResult() )
+                                                      .withRpcErrors( other.getErrors() );
+    }
+
+    /**
+     * Creates an RpcError with severity ERROR for reuse.
+     *
+     * @param errorType the conceptual layer at which the error occurred.
+     * @param tag a short string that identifies the general type of error condition. See
+     *        {@link RpcError#getTag} for a list of suggested values.
+     * @param message a string suitable for human display that describes the error condition.
+     *
+     * @return an RpcError
+     */
+    public static RpcError newError( ErrorType errorType, String tag, String message ) {
+        return new RpcErrorImpl( ErrorSeverity.ERROR, errorType, tag, message, null, null, null );
+    }
+
+    /**
+     * Creates an RpcError with severity ERROR for reuse.
+     *
+     * @param errorType the conceptual layer at which the error occurred.
+     * @param tag a short string that identifies the general type of error condition. See
+     *        {@link RpcError#getTag} for a list of suggested values.
+     * @param message a string suitable for human display that describes the error condition.
+     * * @param applicationTag a short string that identifies the specific type of error condition.
+     * @param info a string containing additional information to provide extended
+     *        and/or implementation-specific debugging information.
+     * @param cause the exception that triggered the error.
+     *
+     * @return an RpcError
+     */
+    public static RpcError newError(  ErrorType errorType, String tag, String message,
+            String applicationTag, String info, Throwable cause ) {
+        return new RpcErrorImpl( ErrorSeverity.ERROR, errorType, tag, message,
+                                 applicationTag, info, cause );
+    }
+
+    /**
+     * Creates an RpcError with severity WARNING for reuse.
+     *
+     * @param errorType the conceptual layer at which the warning occurred.
+     * @param tag a short string that identifies the general type of warning condition. See
+     *        {@link RpcError#getTag} for a list of suggested values.
+     * @param message a string suitable for human display that describes the warning condition.
+     *
+     * @return an RpcError
+     */
+    public static RpcError newWarning( ErrorType errorType, String tag, String message ) {
+        return new RpcErrorImpl( ErrorSeverity.WARNING, errorType, tag, message, null, null, null );
+    }
+
+    /**
+     * Creates an RpcError with severity WARNING for reuse.
+     *
+     * @param errorType the conceptual layer at which the warning occurred.
+     * @param tag a short string that identifies the general type of warning condition. See
+     *        {@link RpcError#getTag} for a list of suggested values.
+     * @param message a string suitable for human display that describes the warning condition.
+     * * @param applicationTag a short string that identifies the specific type of warning condition.
+     * @param info a string containing additional information to provide extended
+     *        and/or implementation-specific debugging information.
+     * @param cause the exception that triggered the warning.
+     *
+     * @return an RpcError
+     */
+    public static RpcError newWarning(  ErrorType errorType, String tag, String message,
+            String applicationTag, String info, Throwable cause ) {
+        return new RpcErrorImpl( ErrorSeverity.WARNING, errorType, tag, message,
+                                 applicationTag, info, cause );
+    }
+
+    /**
      * Sets the value of the result.
      *
      * @param result the result value
@@ -171,12 +259,18 @@ public class RpcResultBuilder<T> {
             String tag, String message, String applicationTag, String info,
             Throwable cause ) {
 
+        addError( new RpcErrorImpl( severity, errorType,
+                                    tag != null ? tag : "operation-failed", message,
+                                    applicationTag, info, cause ) );
+    }
+
+    private void addError( RpcError error ) {
+
         if( errors == null ) {
-            errors = new ArrayList<>();
+            errors = new ImmutableList.Builder<RpcError>();
         }
 
-        errors.add( new RpcErrorImpl( severity, errorType, tag, message,
-                                      applicationTag, info, cause ) );
+        errors.add( error );
     }
 
     /**
@@ -217,7 +311,7 @@ public class RpcResultBuilder<T> {
      * @param message a string suitable for human display that describes the error condition.
      */
     public RpcResultBuilder<T> withError( ErrorType errorType, String message ) {
-        addError( ErrorSeverity.ERROR, errorType, "operation-failed", message, null, null, null );
+        addError( ErrorSeverity.ERROR, errorType, null, message, null, null, null );
         return this;
     }
 
@@ -231,6 +325,19 @@ public class RpcResultBuilder<T> {
      */
     public RpcResultBuilder<T> withError( ErrorType errorType, String tag, String message ) {
         addError( ErrorSeverity.ERROR, errorType, tag, message, null, null, null );
+        return this;
+    }
+
+    /**
+     * Adds an error to the result. The general error tag defaults to "operation-failed".
+     *
+     * @param errorType the conceptual layer at which the error occurred.
+     * @param message a string suitable for human display that describes the error condition.
+     * @param cause the exception that triggered the error.
+     */
+    public RpcResultBuilder<T> withError( ErrorType errorType, String message,
+                                          Throwable cause ) {
+        addError( ErrorSeverity.ERROR, errorType, null, message, null, null, cause );
         return this;
     }
 
@@ -252,9 +359,33 @@ public class RpcResultBuilder<T> {
         return this;
     }
 
+    /**
+     * Adds an RpcError.
+     *
+     * @param error the RpcError
+     */
+    public RpcResultBuilder<T> withRpcError( RpcError error ) {
+        addError( error );
+        return this;
+    }
+
+    /**
+     * Adds RpcErrors.
+     *
+     * @param errors the list of RpcErrors
+     */
+    public RpcResultBuilder<T> withRpcErrors( Collection<RpcError> errors ) {
+        if( errors != null ) {
+            for( RpcError error: errors ) {
+                addError( error );
+            }
+        }
+        return this;
+    }
+
     public RpcResult<T> build() {
 
         return new RpcResultImpl<T>( successful, result,
-                errors != null ? errors : Collections.<RpcError>emptyList() );
+                errors != null ? errors.build() : Collections.<RpcError>emptyList() );
     }
 }

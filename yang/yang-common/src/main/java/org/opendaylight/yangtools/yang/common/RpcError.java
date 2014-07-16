@@ -52,25 +52,25 @@ public interface RpcError {
      * <p>
      * The following outlines suggested values as defined by netconf (<a href="https://tools.ietf.org/html/rfc6241#page-89">RFC 6241</a>):
      * <pre>
-     *    access_denied
-     *    bad_attribute
-     *    bad_element
-     *    data_exists
-     *    data_missing
-     *    in_use
-     *    invalid_value
-     *    lock_denied
-     *    malformed_message
-     *    missing_attribute
-     *    missing_element
-     *    operation_failed
-     *    operation_not_supported
-     *    resource_denied
-     *    rollback_failed
-     *    too_big
-     *    unknown_attribute
-     *    unknown_element
-     *    unknown_namespace
+     *    access-denied
+     *    bad-attribute
+     *    bad-element
+     *    data-exists
+     *    data-missing
+     *    in-use
+     *    invalid-value
+     *    lock-denied
+     *    malformed-message
+     *    missing-attribute
+     *    missing-element
+     *    operation-failed
+     *    operation-not-supported
+     *    resource-denied
+     *    rollback-failed
+     *    too-big
+     *    unknown-attribute
+     *    unknown-element
+     *    unknown-namespace
      * </pre>
      * @return a string if available or null otherwise.
      */
