@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.base.Optional;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -130,13 +131,17 @@ public class RefineHolderTest {
     @Test
     public void testMustEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
-        rh1.setMust(new MustDefinitionImpl("mustStr1", "description1", "reference1", "errorAppTag1", "errorMessage1"));
+        rh1.setMust(MustDefinitionImpl.create("mustStr1", Optional.of("description1"), Optional.of("reference1"),
+                Optional.of("errorAppTag1"), Optional.of("errorMessage1")));
         assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
-        rh.setMust(new MustDefinitionImpl("mustStr1", "description1", "reference1", "errorAppTag1", "errorMessage1"));
+        rh.setMust(MustDefinitionImpl.create("mustStr1", Optional.of("description1"), Optional.of("reference1"),
+                Optional.of("errorAppTag1"), Optional.of("errorMessage1")));
         assertEquals("rh should equal to rh1", rh, rh1);
-        rh.setMust(new MustDefinitionImpl("mustStr", "description", "reference", "errorAppTag", "errorMessage"));
+        rh.setMust(MustDefinitionImpl.create("mustStr", Optional.of("description"), Optional.of("reference"),
+                Optional.of("errorAppTag"), Optional.of("errorMessage")));
         assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
-        rh1.setMust(new MustDefinitionImpl("mustStr", "description", "reference", "errorAppTag", "errorMessage"));
+        rh1.setMust(MustDefinitionImpl.create("mustStr", Optional.of("description"), Optional.of("reference"),
+                Optional.of("errorAppTag"), Optional.of("errorMessage")));
     }
 
     @Test
