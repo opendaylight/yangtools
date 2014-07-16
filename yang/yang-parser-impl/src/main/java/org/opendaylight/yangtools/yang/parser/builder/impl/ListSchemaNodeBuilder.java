@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -26,14 +30,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DataSchemaNodeBuilder,
-AugmentationTargetBuilder {
+public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeContainerBuilder implements
+        DataSchemaNodeBuilder, AugmentationTargetBuilder {
     private ListSchemaNodeImpl instance;
     private boolean userOrdered;
     private List<String> keys;
@@ -59,7 +59,7 @@ AugmentationTargetBuilder {
 
     public ListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final ListSchemaNode base) {
-        super(moduleName, line, qname,path,base);
+        super(moduleName, line, qname, path, base);
         this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
         constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
 
@@ -82,7 +82,7 @@ AugmentationTargetBuilder {
             return instance;
         }
         buildChildren();
-        instance = new ListSchemaNodeImpl(qname, schemaPath,this);
+        instance = new ListSchemaNodeImpl(qname, schemaPath, this);
 
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
@@ -96,7 +96,12 @@ AugmentationTargetBuilder {
         } else {
             keyDefinition = new ArrayList<>();
             for (String key : keys) {
-                keyDefinition.add(instance.getDataChildByName(key).getQName());
+                DataSchemaNode keyPart = instance.getDataChildByName(key);
+                if (keyPart == null) {
+                    throw new YangParseException(getModuleName(), getLine(), "Failed to resolve list key for name "
+                            + key);
+                }
+                keyDefinition.add(keyPart.getQName());
             }
             instance.keyDefinition = ImmutableList.copyOf(keyDefinition);
         }
@@ -250,7 +255,8 @@ AugmentationTargetBuilder {
         return "list " + qname.getLocalName();
     }
 
-    private static final class ListSchemaNodeImpl extends AbstractDocumentedDataNodeContainer implements ListSchemaNode, DerivableSchemaNode {
+    private static final class ListSchemaNodeImpl extends AbstractDocumentedDataNodeContainer implements
+            ListSchemaNode, DerivableSchemaNode {
         private final QName qname;
         private final SchemaPath path;
         private ImmutableList<QName> keyDefinition;

@@ -163,7 +163,7 @@ public class YangParserNegativeTest {
             }
         } catch (YangParseException e) {
             String expected = "Error in module 'typedef' at line 10: typedef with same name 'int-ext' already declared at line 6.";
-            assertTrue(e.getMessage().contains("'typedef' at line 10: typedef with same name 'int-ext' already declared at line 6."));
+            assertEquals(expected, e.getMessage());
         }
     }
 
@@ -238,6 +238,20 @@ public class YangParserNegativeTest {
         } catch (YangValidationException e) {
             String expected = "Not existing module imported";
             assertTrue(e.getMessage().contains(expected));
+        }
+    }
+
+    @Test
+    public void testInvalidListKeyDefinition() throws Exception {
+        File yang1 = new File(getClass().getResource("/negative-scenario/invalid-list-key-def.yang").toURI());
+        try {
+            try (InputStream stream1 = new FileInputStream(yang1)) {
+                TestUtils.loadModule(stream1);
+                fail("YangParseException should by thrown");
+            }
+        } catch (YangParseException e) {
+            String expected = "Error in module 'invalid-list-key-def' at line 6: Failed to resolve list key for name rib-id";
+            assertEquals(expected, e.getMessage());
         }
     }
 

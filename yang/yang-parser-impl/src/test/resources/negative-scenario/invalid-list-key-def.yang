@@ -1,0 +1,14 @@
+module invalid-list-key-def {
+    yang-version 1;
+    namespace "invalid:list:key:def";
+    prefix "p";
+
+    list application-map {
+        key "rib-id";
+
+        leaf bgp-id {
+            type string;
+        }
+    }
+
+}
