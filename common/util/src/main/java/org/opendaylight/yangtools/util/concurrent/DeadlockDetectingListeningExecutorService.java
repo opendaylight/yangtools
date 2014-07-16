@@ -10,18 +10,18 @@ package org.opendaylight.yangtools.util.concurrent;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Function;
-import com.google.common.util.concurrent.AbstractListeningExecutorService;
 import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListenableFutureTask;
 
 /**
  * An implementation of ListeningExecutorService that attempts to detect deadlock scenarios that
@@ -45,9 +45,8 @@ import com.google.common.util.concurrent.ListenableFutureTask;
  *
  * @author Thomas Pantelis
  */
-public class DeadlockDetectingListeningExecutorService extends AbstractListeningExecutorService {
+public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingListeningExecutorService {
 
-    private final ExecutorService delegate;
     private final ThreadLocal<Boolean> DEADLOCK_DETECTOR_TL = new ThreadLocal<>();
     private final Function<Void, Exception> deadlockExceptionFunction;
 
@@ -60,59 +59,43 @@ public class DeadlockDetectingListeningExecutorService extends AbstractListening
      */
     public DeadlockDetectingListeningExecutorService( ExecutorService delegate,
                                           Function<Void,Exception> deadlockExceptionFunction ) {
-        this.delegate = checkNotNull( delegate );
+        this( delegate, deadlockExceptionFunction, null );
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param delegate the backing ExecutorService.
+     * @param deadlockExceptionFunction Function that returns an Exception instance to set as the
+     *             cause of the ExecutionException when a deadlock is detected.
+     * @param listenableFutureExecutor the executor used to run listener callbacks asynchronously.
+     *             If null, no executor is used.
+     */
+    public DeadlockDetectingListeningExecutorService( ExecutorService delegate,
+                                          Function<Void,Exception> deadlockExceptionFunction,
+                                          @Nullable Executor listenableFutureExecutor ) {
+        super( delegate, listenableFutureExecutor );
         this.deadlockExceptionFunction = checkNotNull( deadlockExceptionFunction );
     }
 
     @Override
-    public boolean awaitTermination( long timeout, TimeUnit unit ) throws InterruptedException {
-        return delegate.awaitTermination( timeout, unit );
-    }
-
-    @Override
-    public boolean isShutdown() {
-        return delegate.isShutdown();
-    }
-
-    @Override
-    public boolean isTerminated() {
-        return delegate.isTerminated();
-    }
-
-    @Override
-    public void shutdown() {
-        delegate.shutdown();
-    }
-
-    @Override
-    public List<Runnable> shutdownNow() {
-        return delegate.shutdownNow();
-    }
-
-    @Override
     public void execute( Runnable command ) {
-        delegate.execute( wrapRunnable( command ) );
+        getDelegate().execute( wrapRunnable( command ) );
     }
 
     @Override
     public <T> ListenableFuture<T> submit( Callable<T> task ) {
-       ListenableFutureTask<T> futureTask = ListenableFutureTask.create( wrapCallable( task ) );
-       delegate.execute( futureTask );
-       return wrapListenableFuture( futureTask );
+       return wrapListenableFuture( super.submit( wrapCallable( task ) ) );
     }
 
     @Override
     public ListenableFuture<?> submit( Runnable task ) {
-        ListenableFutureTask<Void> futureTask = ListenableFutureTask.create( wrapRunnable( task ), null );
-        delegate.execute( futureTask );
-        return wrapListenableFuture( futureTask );
+        return wrapListenableFuture( super.submit( wrapRunnable( task ) ) );
     }
 
     @Override
     public <T> ListenableFuture<T> submit( Runnable task, T result ) {
-        ListenableFutureTask<T> futureTask = ListenableFutureTask.create( wrapRunnable( task ), result );
-        delegate.execute( futureTask );
-        return wrapListenableFuture( futureTask );
+        return wrapListenableFuture( super.submit( wrapRunnable( task ), result ) );
     }
 
     private Runnable wrapRunnable( final Runnable task ) {
