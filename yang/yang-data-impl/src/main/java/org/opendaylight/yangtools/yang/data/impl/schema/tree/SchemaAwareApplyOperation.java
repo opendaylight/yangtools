@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -17,14 +14,19 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -36,6 +38,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 
 abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
@@ -248,12 +254,37 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         @Override
         protected TreeNode applyWrite(final ModifiedNode modification,
                 final Optional<TreeNode> currentMeta, final Version version) {
-            /*
-             * FIXME: BUG-1258: This is inefficient: it needlessly creates index nodes for the entire subtree.
-             *        We can determine the depth into which metadata need to be created from the modification
-	     *        -- if it does not have children, no need to bother with metadata.
-             */
-            return TreeNodeFactory.createTreeNode(modification.getWrittenValue(), version);
+
+            final NormalizedNode<?, ?> modifVal = modification.getWrittenValue();
+            final TreeNode newMeta = TreeNodeFactory.createTreeNode(modifVal, version);
+
+            if (Iterables.isEmpty(modification.getChildren())) {
+                return newMeta;
+            }
+
+            final MutableTreeNode modifMeta = newMeta.mutable();
+            modifMeta.setSubtreeVersion(version);
+
+            final DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> modifData =
+                ImmutableUnkeyedListEntryNodeBuilder.create((UnkeyedListEntryNode) modifVal);
+
+            for (ModifiedNode mod : modification.getChildren()) {
+                final PathArgument id = mod.getIdentifier();
+                final Optional<TreeNode> cm = modifMeta.getChild(id);
+
+                Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, version);
+                if (result.isPresent()) {
+                    final TreeNode tn = result.get();
+                    modifMeta.addChild(tn);
+                    modifData.addChild((DataContainerChild<? extends PathArgument, ?>) tn.getData());
+                } else {
+                    modifMeta.removeChild(id);
+                    modifData.removeChild(id);
+                }
+            }
+
+            modifMeta.setData(modifData.build());
+            return modifMeta.seal();
         }
 
         @Override
