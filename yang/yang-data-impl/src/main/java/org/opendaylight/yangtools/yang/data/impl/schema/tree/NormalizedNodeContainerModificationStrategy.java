@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
+import static com.google.common.base.Preconditions.checkArgument;
+
+import java.util.Map;
+
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
@@ -23,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
@@ -40,9 +42,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareApplyOperation {
 
@@ -164,8 +166,15 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     @Override
     protected void checkSubtreeModificationApplicable(final InstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException {
+        checkDoesNotExists(path, modification.getOriginal().isPresent() || current.isPresent(), "Node does not exist. Could not modify its children.");
         SchemaAwareApplyOperation.checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
         checkChildPreconditions(path, modification, current);
+    }
+
+    private static void checkDoesNotExists(final InstanceIdentifier path, final boolean condition, final String message) throws DataValidationFailedException {
+        if(!condition) {
+            throw new ModifiedNodeDoesNotExistException(path,message);
+        }
     }
 
     private void checkChildPreconditions(final InstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
