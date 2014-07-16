@@ -24,13 +24,15 @@ import com.google.common.base.Preconditions;
  * changed is tracked by the subtree version.
  */
 final class ContainerNode extends AbstractTreeNode {
-    private final Map<PathArgument, TreeNode> children;
+
+    private final Map<PathArgument, Optional<TreeNode>> modifChildren;
     private final Version subtreeVersion;
 
     protected ContainerNode(final NormalizedNode<?, ?> data, final Version version,
-            final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
+            final Map<PathArgument, Optional<TreeNode>> modifiedChildren, final Version subtreeVersion) {
+
         super(data, version);
-        this.children = Preconditions.checkNotNull(children);
+        this.modifChildren = Preconditions.checkNotNull(modifiedChildren);
         this.subtreeVersion = Preconditions.checkNotNull(subtreeVersion);
     }
 
@@ -41,7 +43,8 @@ final class ContainerNode extends AbstractTreeNode {
 
     @Override
     public Optional<TreeNode> getChild(final PathArgument key) {
-        return Optional.fromNullable(children.get(key));
+        Optional<TreeNode> foundChild = modifChildren.get(key);
+        return (foundChild != null ? foundChild : Optional.<TreeNode> of(this));
     }
 
     @Override
@@ -51,20 +54,24 @@ final class ContainerNode extends AbstractTreeNode {
 
     private static final class Mutable implements MutableTreeNode {
         private final Version version;
-        private Map<PathArgument, TreeNode> children;
+        private final Map<PathArgument, Optional<TreeNode>> modifChildren;
         private NormalizedNode<?, ?> data;
         private Version subtreeVersion;
 
         private Mutable(final ContainerNode parent) {
             this.data = parent.getData();
-            this.children = MapAdaptor.getDefaultInstance().takeSnapshot(parent.children);
+            this.modifChildren = MapAdaptor.getDefaultInstance().takeSnapshot(parent.modifChildren);
             this.subtreeVersion = parent.getSubtreeVersion();
             this.version = parent.getVersion();
         }
 
         @Override
-        public Optional<TreeNode> getChild(final PathArgument child) {
-            return Optional.fromNullable(children.get(child));
+        public Optional<TreeNode> getChild(final PathArgument childPath) {
+            Optional<TreeNode> foundModifChild = modifChildren.get(childPath);
+            if (foundModifChild == null) {
+                return Optional.of(TreeNodeFactory.createTreeNode(data, version));
+            }
+            return foundModifChild;
         }
 
         @Override
@@ -74,21 +81,18 @@ final class ContainerNode extends AbstractTreeNode {
 
         @Override
         public void addChild(final TreeNode child) {
-            children.put(child.getIdentifier(), child);
+            modifChildren.put(child.getIdentifier(), Optional.of(child));
         }
 
         @Override
-        public void removeChild(final PathArgument id) {
-            children.remove(id);
+        public void removeChild(final PathArgument childPath) {
+            modifChildren.put(childPath, Optional.<TreeNode>absent());
         }
 
         @Override
         public TreeNode seal() {
-            final TreeNode ret = new ContainerNode(data, version, MapAdaptor.getDefaultInstance().optimize(children), subtreeVersion);
-
-            // This forces a NPE if this class is accessed again. Better than corruption.
-            children = null;
-            return ret;
+            return new ContainerNode(data, version,
+                    MapAdaptor.getDefaultInstance().optimize(modifChildren), subtreeVersion);
         }
 
         @Override
@@ -97,22 +101,22 @@ final class ContainerNode extends AbstractTreeNode {
         }
     }
 
-    private static ContainerNode create(final Version version, final NormalizedNode<?, ?> data,
-            final Iterable<NormalizedNode<?, ?>> children) {
+    private static ContainerNode createParentContainerNode(
+            final Version version, final NormalizedNode<?, ?> data) {
 
-        final Map<PathArgument, TreeNode> map = new HashMap<>();
-        for (NormalizedNode<?, ?> child : children) {
-            map.put(child.getIdentifier(), TreeNodeFactory.createTreeNode(child, version));
-        }
-
+        final Map<PathArgument, Optional<TreeNode>> map = new HashMap<>();
         return new ContainerNode(data, version, map, version);
     }
 
-    public static ContainerNode create(final Version version, final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
-        return create(version, container, container.getValue());
+    public static ContainerNode create(final Version version,
+            final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
+
+        return createParentContainerNode(version, container);
     }
 
-    public static ContainerNode create(final Version version, final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
-        return create(version, container, container.getValue());
+    public static ContainerNode create(final Version version,
+            final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
+
+        return createParentContainerNode(version, container);
     }
 }
