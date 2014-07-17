@@ -420,24 +420,29 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-              <groupId>org.opendaylight.yangtools.model</groupId>
-              <artifactId>opendaylight-l2-types</artifactId>
-              <version>${opendaylight.l2.types.version}</version>
+                <groupId>org.opendaylight.yangtools.model</groupId>
+                <artifactId>opendaylight-l2-types</artifactId>
+                <version>${opendaylight.l2.types.version}</version>
             </dependency>
             <dependency>
-              <groupId>org.opendaylight.yangtools.model</groupId>
-              <artifactId>yang-ext</artifactId>
-              <version>${yang.ext.version}</version>
+                <groupId>org.opendaylight.yangtools.model</groupId>
+                <artifactId>yang-ext</artifactId>
+                <version>${yang.ext.version}</version>
             </dependency>
             <dependency>
-              <groupId>org.opendaylight.yangtools</groupId>
-              <artifactId>binding-type-provider</artifactId>
-              <version>${project.version}</version>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>binding-type-provider</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-              <groupId>org.opendaylight.yangtools</groupId>
-              <artifactId>yang-data-operations</artifactId>
-              <version>${project.version}</version>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-data-operations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.txw2</groupId>
+                <artifactId>txw2</artifactId>
+                <version>20110809</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
