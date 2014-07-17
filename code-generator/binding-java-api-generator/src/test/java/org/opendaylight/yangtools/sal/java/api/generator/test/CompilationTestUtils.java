@@ -40,6 +40,8 @@ public class CompilationTestUtils {
     static final String COMPILER_OUTPUT_PATH = TEST_PATH + FS + "bin";
     static final File COMPILER_OUTPUT_DIR = new File(COMPILER_OUTPUT_PATH);
 
+    static final String AUGMENTATION = "interface org.opendaylight.yangtools.yang.binding.Augmentation";
+
     static final String BASE_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1";
     static final String NS_TEST = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
     static final String NS_FOO = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
@@ -322,8 +324,7 @@ public class CompilationTestUtils {
      *            fully qualified name of expected parameter type
      */
     static void testAugmentation(Class<?> clazz, String genericTypeName) {
-        final String ifcName = "interface org.opendaylight.yangtools.yang.binding.Augmentation";
-        assertImplementsParameterizedIfc(clazz, ifcName, genericTypeName);
+        assertImplementsParameterizedIfc(clazz, AUGMENTATION, genericTypeName);
     }
 
     /**
