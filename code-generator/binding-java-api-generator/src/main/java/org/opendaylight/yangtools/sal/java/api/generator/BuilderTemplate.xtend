@@ -539,7 +539,15 @@ class BuilderTemplate extends BaseTemplate {
                 }
             «ENDIF»
             «FOR field : allProps»
-                this.«field.fieldName» = builder.«field.getterMethodName»();
+                «IF List.canonicalName.equals(field.returnType.fullyQualifiedName)»
+                    if (builder.«field.getterMethodName»() == null || builder.«field.getterMethodName»().isEmpty()) {
+                        this.«field.fieldName» = «Collections.importedName».emptyList();
+                    } else {
+                        this.«field.fieldName» = builder.«field.getterMethodName»();
+                    }
+                «ELSE»
+                    this.«field.fieldName» = builder.«field.getterMethodName»();
+                «ENDIF»
             «ENDFOR»
             «IF augmentField != null»
                switch (builder.«augmentField.name».size()) {
@@ -733,4 +741,3 @@ class BuilderTemplate extends BaseTemplate {
     '''
 
 }
-
