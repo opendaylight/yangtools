@@ -46,6 +46,7 @@ public class BundleStartTest {
         options.add(mavenBundle("org.sonatype.plexus", "plexus-build-api").versionAsInProject());
         options.add(mavenBundle("org.codehaus.plexus", "plexus-slf4j-logging").versionAsInProject());
         options.add(mavenBundle("org.javassist", "javassist").versionAsInProject());
+        options.add(mavenBundle("com.sun.xml.txw2", "txw2").versionAsInProject());
 
         options.add(mavenBundle(GROUP, "concepts").versionAsInProject());
         options.add(mavenBundle(GROUP, "util").versionAsInProject());

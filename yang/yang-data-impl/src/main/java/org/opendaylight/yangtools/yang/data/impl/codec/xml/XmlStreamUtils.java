@@ -3,6 +3,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import java.net.URI;
 import java.util.Map;
@@ -43,6 +44,19 @@ public class XmlStreamUtils {
 
     protected XmlStreamUtils(final XmlCodecProvider codecProvider) {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
+    }
+
+    /**
+     * Decorate the specified XML stream writer with a writer which add the specified indent.
+     *
+     * @param writer writer to be decorated
+     * @param indent decorator string
+     * @return Decorated writer
+     */
+    public static XMLStreamWriter prettyPrintingStreamWriter(final XMLStreamWriter writer, final String indent) {
+        final IndentingXMLStreamWriter ret = new IndentingXMLStreamWriter(writer);
+        ret.setIndentStep(indent);
+        return ret;
     }
 
     /**
