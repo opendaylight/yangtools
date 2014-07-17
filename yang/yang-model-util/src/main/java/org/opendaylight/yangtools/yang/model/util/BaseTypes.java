@@ -123,7 +123,7 @@ public final class BaseTypes {
         }
         final List<QName> pathList = new ArrayList<QName>();
         for (final String path : actualPath) {
-            final QName qname = new QName(namespace, revision, path);
+            final QName qname = QName.create(namespace, revision, path);
             if (qname != null) {
                 pathList.add(qname);
             }

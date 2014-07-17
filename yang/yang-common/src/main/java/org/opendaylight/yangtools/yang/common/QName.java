@@ -117,59 +117,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return localName;
     }
 
-    /**
-     * QName Constructor.
-     *
-     * @param namespace
-     *            the namespace assigned to the YANG module
-     * @param revision
-     *            the revision of the YANG module
-     * @param localName
-     *            YANG schema identifier
-     *
-     * @deprecated Use {@link #create(URI, Date, String)} instead.
-     */
-    @Deprecated
-    public QName(final URI namespace, final Date revision, final String localName) {
-        this(QNameModule.create(namespace, revision), null, localName);
-    }
-
-    /**
-     * Construct new QName which reuses namespace, revision and prefix from
-     * base.
-     *
-     * @param base
-     * @param localName
-     * @deprecated Use {@link #create(QName, String)} instead.
-     */
-    @Deprecated
-    public QName(final QName base, final String localName) {
-        this(base.getModule(), base.getPrefix(), localName);
-    }
-
-    /**
-     * @deprecated Use {@link #create(String)} instead. This implementation is
-     *             broken.
-     */
-    @Deprecated
-    public QName(final String input) throws ParseException {
-        final String nsAndRev = input.substring(input.indexOf("(") + 1, input.indexOf(")"));
-        final Date revision;
-        final URI namespace;
-        if (nsAndRev.contains("?")) {
-            String[] splitted = nsAndRev.split("\\?");
-            namespace = URI.create(splitted[0]);
-            revision = getRevisionFormat().parse(splitted[1]);
-        } else {
-            namespace = URI.create(nsAndRev);
-            revision = null;
-        }
-
-        this.localName = checkLocalName(input.substring(input.indexOf(")") + 1));
-        this.prefix = null;
-        this.module = QNameModule.create(namespace, revision);
-    }
-
     public static QName create(final String input) {
         Matcher matcher = QNAME_PATTERN_FULL.matcher(input);
         if (matcher.matches()) {
