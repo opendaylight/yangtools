@@ -144,7 +144,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     @Deprecated
     public QName(final QName base, final String localName) {
-        this(base.getNamespace(), base.getRevision(), base.getPrefix(), localName);
+        this(base.getModule(), base.getPrefix(), localName);
     }
 
     /**
@@ -281,7 +281,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     public static QName create(final QName base, final String localName) {
-        return new QName(base, localName);
+        return new QName(base.getModule(), base.getPrefix(), localName);
     }
 
     /**
