@@ -31,6 +31,7 @@ import java.util.Collection
 import org.opendaylight.yangtools.yang.binding.Identifiable
 import com.google.common.collect.Range
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
+import com.google.common.collect.ImmutableList
 
 /**
  * Template for generating JAVA builder classes. 
@@ -539,7 +540,15 @@ class BuilderTemplate extends BaseTemplate {
                 }
             «ENDIF»
             «FOR field : allProps»
-                this.«field.fieldName» = builder.«field.getterMethodName»();
+                «IF List.canonicalName.equals(field.returnType.fullyQualifiedName)»
+                    if (builder.«field.getterMethodName»() == null || builder.«field.getterMethodName»().isEmpty()) {
+                        this.«field.fieldName» = «Collections.importedName».emptyList();
+                    } else {
+                        this.«field.fieldName» = «ImmutableList.importedName».copyOf(builder.«field.getterMethodName»());
+                    }
+                «ELSE»
+                    this.«field.fieldName» = builder.«field.getterMethodName»();
+                «ENDIF»
             «ENDFOR»
             «IF augmentField != null»
                switch (builder.«augmentField.name».size()) {
@@ -733,4 +742,3 @@ class BuilderTemplate extends BaseTemplate {
     '''
 
 }
-
