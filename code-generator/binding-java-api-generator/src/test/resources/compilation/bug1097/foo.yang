@@ -1,0 +1,17 @@
+module foo {
+  namespace "urn:test:foo";
+  prefix foo;
+
+  revision 2014-07-17 {
+  }
+
+
+    container link {
+        list node {
+            leaf id {
+                type string;
+            }
+        }
+    }
+
+}

@@ -28,6 +28,8 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -40,9 +42,11 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
@@ -562,6 +566,51 @@ public class CompilationTest extends BaseCompilationTest {
         // Test generated 'container output-action'
         assertTrue(outputActionClass.isInterface());
         assertImplementsParameterizedIfc(outputActionClass, ChildOf.class.toString(), actionClass.getCanonicalName());
+
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    @Test
+    public void testBug1097() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "bug1097");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "bug1097");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        generateTestSources("/compilation/bug1097", sourcesOutputDir);
+
+        // Test if sources are compilable
+        testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        Class<?> linkClass = Class.forName(BASE_PKG + ".urn.test.foo.rev140717.Link", true, loader);
+        Class<?> linkBuilderClass = Class.forName(BASE_PKG + ".urn.test.foo.rev140717.LinkBuilder", true, loader);
+        Class<?> nodeClass = Class.forName(BASE_PKG + ".urn.test.foo.rev140717.link.Node", true, loader);
+
+        // Test LinkBuilder without setting any value
+        Object linkBuilder = linkBuilderClass.newInstance();
+        Method build = linkBuilderClass.getDeclaredMethod("build");
+        Object link = build.invoke(linkBuilder);
+        Method getNodes = linkClass.getDeclaredMethod("getNode");
+        Object node = getNodes.invoke(link);
+        assertEquals(Collections.emptyList(), node);
+
+        // Test LinkBuilder with setting an empty list
+        linkBuilder = linkBuilderClass.newInstance();
+        Method setNode = linkBuilderClass.getDeclaredMethod("setNode", List.class);
+        setNode.invoke(linkBuilder, Collections.emptyList());
+        link = build.invoke(linkBuilder);
+        node = getNodes.invoke(link);
+        assertEquals(Collections.emptyList(), node);
+
+        // Test LinkBuilder with setting list with values
+        linkBuilder = linkBuilderClass.newInstance();
+        List<?> testList = Lists.newArrayList(Mockito.mock(nodeClass), Mockito.mock(nodeClass));
+        setNode.invoke(linkBuilder, testList);
+        link = build.invoke(linkBuilder);
+        node = getNodes.invoke(link);
+        assertEquals(testList, node);
+        assertTrue(node instanceof ImmutableList);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
