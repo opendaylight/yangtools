@@ -94,7 +94,7 @@ public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeConta
         if (keys == null) {
             instance.keyDefinition = ImmutableList.of();
         } else {
-            keyDefinition = new ArrayList<>();
+            keyDefinition = new ArrayList<QName>();
             for (String key : keys) {
                 DataSchemaNode keyPart = instance.getDataChildByName(key);
                 if (keyPart == null) {

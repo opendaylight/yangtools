@@ -402,12 +402,15 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     public static Date parseRevision(final String formatedDate) {
+        if(formatedDate !=null){
         try {
             return getRevisionFormat().parse(formatedDate);
         } catch (ParseException | RuntimeException e) {
             throw new IllegalArgumentException(
                     String.format("Revision '%s'is not in a supported format", formatedDate), e);
         }
+      }
+    return null;
     }
 
     /**
