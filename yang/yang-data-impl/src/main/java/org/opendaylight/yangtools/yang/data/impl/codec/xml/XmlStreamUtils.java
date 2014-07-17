@@ -148,6 +148,20 @@ public class XmlStreamUtils {
         }
 
         writer.writeStartElement(pfx, qname.getLocalName(), ns);
+        writeValue(writer, data, schema);
+        writer.writeEndElement();
+    }
+
+    /**
+     * Write a value into a XML stream writer. This method assumes the start and end of element is
+     * emitted by the caller.
+     *
+     * @param writer XML Stream writer
+     * @param data data node
+     * @param schema Schema node
+     * @throws XMLStreamException if an encoding problem occurs
+     */
+    public void writeValue(final XMLStreamWriter writer, final @Nonnull Node<?> data, final SchemaNode schema) throws XMLStreamException {
         if (data instanceof AttributesContainer && ((AttributesContainer) data).getAttributes() != null) {
             for (Entry<QName, String> attribute : ((AttributesContainer) data).getAttributes().entrySet()) {
                 writer.writeAttribute(attribute.getKey().getNamespace().toString(), attribute.getKey().getLocalName(), attribute.getValue());
@@ -182,8 +196,6 @@ public class XmlStreamUtils {
                 writeElement(writer, child, childSchema);
             }
         }
-
-        writer.writeEndElement();
     }
 
     /**
@@ -191,8 +203,8 @@ public class XmlStreamUtils {
      * emitted by the caller.
      *
      * @param writer XML Stream writer
-     * @param data data node
-     * @param schema Schema node
+     * @param type data type
+     * @param value data value
      * @throws XMLStreamException if an encoding problem occurs
      */
     public void writeValue(final @Nonnull XMLStreamWriter writer, final @Nonnull TypeDefinition<?> type, final Object value) throws XMLStreamException {
