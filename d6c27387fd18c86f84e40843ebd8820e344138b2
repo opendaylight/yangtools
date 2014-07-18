@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_c45ce31b",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BuilderTemplate.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-07-18T13:14:00Z",
+      "side": 1,
+      "message": "Could we change this to ImmutableList.copyOf( ) , which will return optimized list?",
+      "revId": "d6c27387fd18c86f84e40843ebd8820e344138b2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
