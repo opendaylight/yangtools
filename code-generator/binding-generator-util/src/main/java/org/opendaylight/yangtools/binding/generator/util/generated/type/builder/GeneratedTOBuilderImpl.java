@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import java.util.ArrayList;
+import com.google.common.base.Preconditions;
+import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
@@ -18,15 +18,15 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder> implements
-        GeneratedTOBuilder {
+public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder> implements GeneratedTOBuilder {
 
     private GeneratedTransferObject extendsType;
-    private final ArrayList<GeneratedPropertyBuilder> equalsProperties = new ArrayList<>();
-    private final ArrayList<GeneratedPropertyBuilder> hashProperties = new ArrayList<>();
-    private final ArrayList<GeneratedPropertyBuilder> toStringProperties = new ArrayList<>();
+    private List<GeneratedPropertyBuilder> equalsProperties = Collections.emptyList();
+    private List<GeneratedPropertyBuilder> hashProperties = Collections.emptyList();
+    private List<GeneratedPropertyBuilder> toStringProperties = Collections.emptyList();
     private boolean isTypedef = false;
     private boolean isUnionType = false;
     private boolean isUnionTypeBuilder = false;
@@ -44,9 +44,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
 
     @Override
     public GeneratedTOBuilder setExtendsType(final GeneratedTransferObject genTransObj) {
-        if (genTransObj == null) {
-            throw new IllegalArgumentException("Generated Transfer Object cannot be null!");
-        }
+        Preconditions.checkArgument(genTransObj != null, "Generated Transfer Object cannot be null!");
         extendsType = genTransObj;
         return this;
     }
@@ -74,19 +72,19 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
 
     @Override
     public GeneratedTOBuilder addEqualsIdentity(final GeneratedPropertyBuilder property) {
-        equalsProperties.add(property);
+        equalsProperties = LazyCollections.lazyAdd(equalsProperties, property);
         return this;
     }
 
     @Override
     public GeneratedTOBuilder addHashIdentity(final GeneratedPropertyBuilder property) {
-        hashProperties.add(property);
+        hashProperties = LazyCollections.lazyAdd(hashProperties, property);
         return this;
     }
 
     @Override
     public GeneratedTOBuilder addToStringProperty(final GeneratedPropertyBuilder property) {
-        toStringProperties.add(property);
+        toStringProperties = LazyCollections.lazyAdd(toStringProperties, property);
         return this;
     }
 
@@ -107,8 +105,6 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
 
     @Override
     public GeneratedTransferObject toInstance() {
-        // FIXME: can we compact the arrays now? It needs to be thread-safe,
-        // though
         return new GeneratedTransferObjectImpl(this);
     }
 
@@ -175,7 +171,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     }
 
     private static final class GeneratedTransferObjectImpl extends AbstractGeneratedType implements
-            GeneratedTransferObject {
+    GeneratedTransferObject {
 
         private final List<GeneratedProperty> equalsProperties;
         private final List<GeneratedProperty> hashCodeProperties;
@@ -194,9 +190,13 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         public GeneratedTransferObjectImpl(final GeneratedTOBuilderImpl builder) {
             super(builder);
             this.extendsType = builder.extendsType;
+
+            // FIXME: if these fields were guaranteed to be constant, we could perhaps
+            //        cache and reuse them between instances...
             this.equalsProperties = toUnmodifiableProperties(builder.equalsProperties);
             this.hashCodeProperties = toUnmodifiableProperties(builder.hashProperties);
             this.stringProperties = toUnmodifiableProperties(builder.toStringProperties);
+
             this.isTypedef = builder.isTypedef;
             this.isUnionType = builder.isUnionType;
             this.isUnionTypeBuilder = builder.isUnionTypeBuilder;

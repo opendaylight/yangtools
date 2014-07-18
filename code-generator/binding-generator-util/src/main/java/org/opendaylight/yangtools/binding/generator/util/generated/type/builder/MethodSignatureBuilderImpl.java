@@ -7,46 +7,48 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.util.LazyCollections;
 
 final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodSignatureBuilder> implements MethodSignatureBuilder {
 
-    private final List<MethodSignature.Parameter> parameters;
+    private List<MethodSignature.Parameter> parameters = Collections.emptyList();
+    private List<MethodSignature.Parameter> unmodifiableParams  = Collections.emptyList();
     private boolean isAbstract;
 
     public MethodSignatureBuilderImpl(final String name) {
         super(name);
-        this.parameters = new ArrayList<>();
     }
 
     @Override
-    public MethodSignatureBuilder setAbstract(boolean isAbstract) {
+    public MethodSignatureBuilder setAbstract(final boolean isAbstract) {
         this.isAbstract = isAbstract;
         return this;
     }
 
     @Override
-    public MethodSignatureBuilder addParameter(Type type, String name) {
-        parameters.add(new MethodParameterImpl(name, type));
+    public MethodSignatureBuilder addParameter(final Type type, final String name) {
+        parameters = LazyCollections.lazyAdd(parameters, new MethodParameterImpl(name, type));
+        unmodifiableParams = Collections.unmodifiableList(parameters);
         return this;
     }
 
-@Override
+    @Override
     protected MethodSignatureBuilder thisInstance() {
         return this;
     }
 
     @Override
-    public MethodSignature toInstance(Type definingType) {
+    public MethodSignature toInstance(final Type definingType) {
         final List<AnnotationType> annotations = toAnnotationTypes();
         return new MethodSignatureImpl(definingType, getName(), annotations, getComment(), getAccessModifier(),
-                getReturnType(), parameters, isFinal(), isAbstract, isStatic());
+                getReturnType(), unmodifiableParams, isFinal(), isAbstract, isStatic());
     }
 
     @Override
@@ -60,7 +62,7 @@ final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodS
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
