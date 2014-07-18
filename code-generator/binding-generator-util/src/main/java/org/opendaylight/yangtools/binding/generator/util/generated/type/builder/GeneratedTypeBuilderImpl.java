@@ -25,24 +25,28 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
     }
 
     @Override
-    public GeneratedType toInstance() {
-        return new GeneratedTypeImpl(this);
-    }
-    
-    public void setDescription(final String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
-    
-    public void setReference(final String reference) {
+
+    @Override
+    public void setReference(String reference) {
         this.reference = reference;
     }
-    
-    public void setModuleName(final String moduleName) {
+
+    @Override
+    public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
-    
-    public void setSchemaPath(final Iterable<QName> schemaPath) {
+
+    @Override
+    public void setSchemaPath(Iterable<QName> schemaPath) {
         this.schemaPath = schemaPath;
+    }
+
+    @Override
+    public GeneratedType toInstance() {
+        return new GeneratedTypeImpl(this);
     }
 
     @Override

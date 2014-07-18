@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPr
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder> implements
         GeneratedTOBuilder {
@@ -111,22 +110,6 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         // FIXME: can we compact the arrays now? It needs to be thread-safe, though
         return new GeneratedTransferObjectImpl(this);
     }
-    
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-    }
-    
-    public void setSchemaPath(Iterable<QName> schemaPath) {
-        this.schemaPath = schemaPath;
-    }
 
     @Override
     public String toString() {
@@ -168,6 +151,26 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     @Override
     public void setIsUnionBuilder(final boolean isUnionTypeBuilder) {
         this.isUnionTypeBuilder = isUnionTypeBuilder;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    @Override
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    @Override
+    public void setSchemaPath(Iterable<QName> schemaPath) {
+        this.schemaPath = schemaPath;
     }
 
     private static final class GeneratedTransferObjectImpl extends AbstractGeneratedType implements
