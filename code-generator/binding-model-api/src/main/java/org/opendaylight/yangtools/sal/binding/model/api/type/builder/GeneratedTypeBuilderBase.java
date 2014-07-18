@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.sal.binding.model.api.type.builder;
 
 import java.util.List;
+
 import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.common.QName;
 
 public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>> extends Type {
 
@@ -23,7 +25,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * enclosing type will simply overwrite the older definition. <br>
      * If the name of enclosing type is <code>null</code> the method SHOULD
      * throw {@link IllegalArgumentException}
-     *
+     * 
      * @param name
      *            Name of Enclosing Type
      * @return <code>new</code> Instance of Generated Type Builder.
@@ -33,7 +35,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
     /**
      * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into
      * definition of Generated Type
-     *
+     * 
      * <br>
      * There is no need of specifying of Package Name because enclosing Type is
      * already defined inside Generated Type with specific package name. <br>
@@ -43,7 +45,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * If the parameter <code>genTOBuilder</code> of enclosing type is
      * <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}
-     *
+     * 
      * @param genTOBuilder
      *            Name of Enclosing Type
      */
@@ -53,7 +55,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * Adds String definition of comment into Method Signature definition. <br>
      * The comment String MUST NOT contain anny comment specific chars (i.e.
      * "/**" or "//") just plain String text description.
-     *
+     * 
      * @param comment
      *            Comment String.
      */
@@ -65,7 +67,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * Neither the package name or annotation name can contain <code>null</code>
      * references. In case that any of parameters contains <code>null</code> the
      * method SHOULD thrown {@link IllegalArgumentException}
-     *
+     * 
      * @param packageName
      *            Package Name of Annotation Type
      * @param name
@@ -79,7 +81,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
     /**
      * Sets the <code>abstract</code> flag to define Generated Type as
      * <i>abstract</i> type.
-     *
+     * 
      * @param isAbstract
      *            abstract flag
      */
@@ -89,7 +91,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
 
     /**
      * Add Type to implements.
-     *
+     * 
      * @param genType
      *            Type to implement
      * @return <code>true</code> if the addition of type is successful.
@@ -102,7 +104,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * value. The name SHOULD be defined with capital letters. Neither of method
      * parameters can be <code>null</code> and the method SHOULD throw
      * {@link IllegalArgumentException} if the contract is broken.
-     *
+     * 
      * @param type
      *            Constant Type
      * @param name
@@ -121,7 +123,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * Name of Enumeration cannot be <code>null</code>, if it is
      * <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}
-     *
+     * 
      * @param name
      *            Enumeration Name
      * @return <code>new</code> instance of Enumeration Builder.
@@ -139,7 +141,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * {@link MethodSignatureBuilder#setAbstract(boolean)},
      * {TypeMemberBuilder#setFinal(boolean)} and
      * {TypeMemberBuilder#setAccessModifier(boolean)}
-     *
+     * 
      * @param name
      *            Name of Method
      * @return <code>new</code> instance of Method Signature Builder.
@@ -149,7 +151,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
     /**
      * Checks if GeneratedTypeBuilder contains method with name
      * <code>methodName</code>
-     *
+     * 
      * @param methodName
      *            is method name
      */
@@ -162,7 +164,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * Builder and returns Generated Property Builder for specifying Property. <br>
      * Name of Property cannot be <code>null</code>, if it is <code>null</code>
      * the method SHOULD throw {@link IllegalArgumentException}
-     *
+     * 
      * @param name
      *            Name of Property
      * @return <code>new</code> instance of Generated Property Builder.
@@ -172,11 +174,48 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
     /**
      * Check whether GeneratedTOBuilder contains property with name
      * <code>name</code>
-     *
+     * 
      * @param name
      *            of property which existance is checked
      * @return true if property <code>name</code> exists in list of properties.
      */
     boolean containsProperty(final String name);
 
+    /**
+     * Set a string that contains a human-readable textual description of type
+     * definition.
+     * 
+     * @param description
+     *            a string that contains a human-readable textual description of
+     *            type definition.
+     */
+    public void setDescription(String description);
+
+    /**
+     * Set the name of the module, in which generated type was specified.
+     * 
+     * @param moduleName
+     *            the name of the module
+     */
+    public void setModuleName(String moduleName);
+
+    /**
+     * Set a list of QNames which represent schema path in schema tree from
+     * actual concrete type to the root.
+     * 
+     * @param schemaPath
+     *            a list of QNames which represent schema path in schema tree
+     */
+    public void setSchemaPath(Iterable<QName> schemaPath);
+
+    /**
+     * Set a string that is used to specify a textual cross-reference to an
+     * external document, either another module that defines related management
+     * information, or a document that provides additional information relevant
+     * to this definition.
+     * 
+     * @param reference
+     *            a textual cross-reference to an external document.
+     */
+    public void setReference(String reference);
 }
