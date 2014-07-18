@@ -1,0 +1,44 @@
+module rpc-test-model {
+yang-version 1;
+    namespace "org:opendaylight:rpc-reply:test:ns:yang";
+    prefix "user";
+
+    organization "Cisco Systems";
+    contact "Lukas Sedlak";
+    description "Test model for testing rpc input message translation to DOM Nodes.";
+
+    revision "2014-07-17" {
+        description "Initial revision";
+    }
+
+    rpc rock-the-house {
+        output {
+            leaf zip-code {
+                type string;
+            }
+        }
+    }
+
+    rpc activate-software-image {
+        input {
+            leaf image-name {
+                type string;
+            }
+        }
+        output {
+            container image-properties {
+                list image-property {
+                    key "image-id";
+
+                    leaf image-id {
+                        type string;
+                    }
+                }
+            }
+
+            leaf status {
+                type string;
+            }
+        }
+    }
+}
