@@ -368,12 +368,11 @@ class ClassTemplate extends BaseTemplate {
         «IF restrictions != null»
             «val prop = getPropByName("value")»
             «IF prop != null»
-                «val numberClass = prop.returnType.importedNumber»
                 «IF !(restrictions.lengthConstraints.empty)»
-                    private static «List.importedName»<«Range.importedName»<«numberClass»>> _length;
+                    private static «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _length;
                 «ENDIF»
                 «IF !(restrictions.rangeConstraints.empty)»
-                    private static «List.importedName»<«Range.importedName»<«numberClass»>> _range;
+                    private static «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _range;
                 «ENDIF»
             «ENDIF»
         «ENDIF»
@@ -383,7 +382,6 @@ class ClassTemplate extends BaseTemplate {
             «ENDFOR»
         «ENDIF»
     '''
-
 
     /**
      * Template method which generates the method <code>hashCode()</code>.
