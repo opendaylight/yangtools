@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
@@ -15,11 +19,12 @@ import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.TypeMemberBuilder;
+import org.opendaylight.yangtools.util.LazyCollections;
 
 abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> implements TypeMemberBuilder<T> {
     private final String name;
     private Type returnType;
-    private final List<AnnotationTypeBuilder> annotationBuilders;
+    private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
     private String comment = "";
     private boolean isFinal;
     private boolean isStatic;
@@ -27,20 +32,15 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
 
     public AbstractTypeMemberBuilder(final String name) {
         this.name = name;
-        this.annotationBuilders = new ArrayList<>();
     }
 
     @Override
-    public AnnotationTypeBuilder addAnnotation(String packageName, String name) {
-        if (packageName == null) {
-            throw new IllegalArgumentException("Annotation Type cannot have package name null!");
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("Annotation Type cannot have name as null!");
-        }
-        final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(
-                    packageName, name);
-        annotationBuilders.add(builder);
+    public AnnotationTypeBuilder addAnnotation(final String packageName, final String name) {
+        Preconditions.checkArgument(packageName != null, "Annotation Type cannot have package name null!");
+        Preconditions.checkArgument(name != null, "Annotation Type cannot have name as null!");
+
+        final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(packageName, name);
+        annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
         return builder;
     }
 
@@ -48,7 +48,7 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
         return returnType;
     }
 
-    protected List<AnnotationTypeBuilder> getAnnotationBuilders() {
+    protected Iterable<AnnotationTypeBuilder> getAnnotationBuilders() {
         return annotationBuilders;
     }
 
@@ -77,25 +77,21 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
     protected abstract T thisInstance();
 
     @Override
-    public T setReturnType(Type returnType) {
-        if (returnType == null) {
-            throw new IllegalArgumentException("Return Type of member cannot be null!");
-        }
+    public T setReturnType(final Type returnType) {
+        Preconditions.checkArgument(returnType != null, "Return Type of member cannot be null!");
         this.returnType = returnType;
         return thisInstance();
     }
 
     @Override
-    public T setAccessModifier(AccessModifier modifier) {
-        if (modifier == null) {
-            throw new IllegalArgumentException("Access Modifier for member type cannot be null!");
-        }
+    public T setAccessModifier(final AccessModifier modifier) {
+        Preconditions.checkArgument(modifier != null, "Access Modifier for member type cannot be null!");
         this.accessModifier = modifier;
         return thisInstance();
     }
 
     @Override
-    public T setComment(String comment) {
+    public T setComment(final String comment) {
         if (comment == null) {
             this.comment = "";
         }
@@ -104,13 +100,13 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
     }
 
     @Override
-    public T setFinal(boolean isFinal) {
+    public T setFinal(final boolean isFinal) {
         this.isFinal = isFinal;
         return thisInstance();
     }
 
     @Override
-    public T setStatic(boolean isStatic) {
+    public T setStatic(final boolean isStatic) {
         this.isStatic = isStatic;
         return thisInstance();
     }
@@ -122,7 +118,8 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
                 annotations.add(annotBuilder.toInstance());
             }
         }
-        return annotations;
+
+        return ImmutableList.copyOf(annotations);
     }
 
     @Override
@@ -136,7 +133,7 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

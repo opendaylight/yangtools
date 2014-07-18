@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
@@ -21,12 +20,12 @@ class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature 
     private final boolean isAbstract;
 
     public MethodSignatureImpl(final Type definingType, final String name,
-                               final List<AnnotationType> annotations,
-                               final String comment, final AccessModifier accessModifier,
-                               final Type returnType, final List<Parameter> params, boolean isFinal,
-                               boolean isAbstract, boolean isStatic) {
+            final List<AnnotationType> annotations,
+            final String comment, final AccessModifier accessModifier,
+            final Type returnType, final List<Parameter> params, final boolean isFinal,
+            final boolean isAbstract, final boolean isStatic) {
         super(definingType, name, annotations, comment, accessModifier, returnType, isFinal, isStatic);
-        this.params = Collections.unmodifiableList(params);
+        this.params = params;
         this.isAbstract = isAbstract;
     }
 
@@ -53,7 +52,7 @@ class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature 
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
