@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import java.util.ArrayList;
+import com.google.common.base.Preconditions;
+
+import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.binding.generator.util.AbstractBaseType;
@@ -21,23 +23,22 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTO
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.util.LazyCollections;
 
-abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractBaseType implements
-        GeneratedTypeBuilderBase<T> {
+abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractBaseType implements GeneratedTypeBuilderBase<T> {
 
+    private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
+    private List<Type> implementsTypes = Collections.emptyList();
+    private List<EnumBuilder> enumDefinitions = Collections.emptyList();
+    private List<Constant> constants = Collections.emptyList();
+    private List<MethodSignatureBuilder> methodDefinitions = Collections.emptyList();
+    private final List<GeneratedTypeBuilder> enclosedTypes = Collections.emptyList();
+    private List<GeneratedTOBuilder> enclosedTransferObjects = Collections.emptyList();
+    private List<GeneratedPropertyBuilder> properties = Collections.emptyList();
     private String comment = "";
-
-    private final List<AnnotationTypeBuilder> annotationBuilders = new ArrayList<>();
-    private final List<Type> implementsTypes = new ArrayList<>();
-    private final List<EnumBuilder> enumDefinitions = new ArrayList<>();
-    private final List<Constant> constants = new ArrayList<>();
-    private final List<MethodSignatureBuilder> methodDefinitions = new ArrayList<>();
-    private final List<GeneratedTypeBuilder> enclosedTypes = new ArrayList<>();
-    private final List<GeneratedTOBuilder> enclosedTransferObjects = new ArrayList<>();
-    private final List<GeneratedPropertyBuilder> properties = new ArrayList<>();
     private boolean isAbstract;
 
-    public AbstractGeneratedTypeBuilder(final String packageName, final String name) {
+    protected AbstractGeneratedTypeBuilder(final String packageName, final String name) {
         super(packageName, name);
     }
 
@@ -49,10 +50,12 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         return annotationBuilders;
     }
 
+    @Override
     public boolean isAbstract() {
         return isAbstract;
     }
 
+    @Override
     public List<Type> getImplementsTypes() {
         return implementsTypes;
     }
@@ -65,6 +68,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         return constants;
     }
 
+    @Override
     public List<MethodSignatureBuilder> getMethodDefinitions() {
         return methodDefinitions;
     }
@@ -81,20 +85,17 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public GeneratedTOBuilder addEnclosingTransferObject(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Name for Enclosing Generated Transfer Object cannot be null!");
-        }
+        Preconditions.checkArgument(name != null, "Name for Enclosing Generated Transfer Object cannot be null!");
         GeneratedTOBuilder builder = new GeneratedTOBuilderImpl(getFullyQualifiedName(), name);
-        enclosedTransferObjects.add(builder);
+
+        enclosedTransferObjects = LazyCollections.lazyAdd(enclosedTransferObjects, builder);
         return builder;
     }
 
     @Override
     public T addEnclosingTransferObject(final GeneratedTOBuilder genTOBuilder) {
-        if (genTOBuilder == null) {
-            throw new IllegalArgumentException("Parameter genTOBuilder cannot be null!");
-        }
-        enclosedTransferObjects.add(genTOBuilder);
+        Preconditions.checkArgument(genTOBuilder != null, "Parameter genTOBuilder cannot be null!");
+        enclosedTransferObjects = LazyCollections.lazyAdd(enclosedTransferObjects, genTOBuilder);
         return thisInstance();
     }
 
@@ -106,15 +107,11 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public AnnotationTypeBuilder addAnnotation(final String packageName, final String name) {
-        if (packageName == null) {
-            throw new IllegalArgumentException("Package Name for Annotation Type cannot be null!");
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("Name of Annotation Type cannot be null!");
-        }
+        Preconditions.checkArgument(packageName != null, "Package Name for Annotation Type cannot be null!");
+        Preconditions.checkArgument(name != null, "Name of Annotation Type cannot be null!");
 
         final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(packageName, name);
-        annotationBuilders.add(builder);
+        annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
         return builder;
     }
 
@@ -126,54 +123,42 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public T addImplementsType(final Type genType) {
-        if (genType == null) {
-            throw new IllegalArgumentException("Type cannot be null");
-        }
-        implementsTypes.add(genType);
+        Preconditions.checkArgument(genType != null, "Type cannot be null");
+        implementsTypes = LazyCollections.lazyAdd(implementsTypes, genType);
         return thisInstance();
     }
 
     @Override
     public Constant addConstant(final Type type, final String name, final Object value) {
-        if (type == null) {
-            throw new IllegalArgumentException("Returning Type for Constant cannot be null!");
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("Name of constant cannot be null!");
-        }
+        Preconditions.checkArgument(type != null, "Returning Type for Constant cannot be null!");
+        Preconditions.checkArgument(name != null, "Name of constant cannot be null!");
 
         final Constant constant = new ConstantImpl(this, type, name, value);
-        constants.add(constant);
+        constants = LazyCollections.lazyAdd(constants, constant);
         return constant;
     }
 
     @Override
     public EnumBuilder addEnumeration(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Name of enumeration cannot be null!");
-        }
+        Preconditions.checkArgument(name != null, "Name of enumeration cannot be null!");
         final EnumBuilder builder = new EnumerationBuilderImpl(getFullyQualifiedName(), name);
-        enumDefinitions.add(builder);
+        enumDefinitions = LazyCollections.lazyAdd(enumDefinitions, builder);
         return builder;
     }
 
     @Override
     public MethodSignatureBuilder addMethod(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Name of method cannot be null!");
-        }
+        Preconditions.checkArgument(name != null, "Name of method cannot be null!");
         final MethodSignatureBuilder builder = new MethodSignatureBuilderImpl(name);
         builder.setAccessModifier(AccessModifier.PUBLIC);
         builder.setAbstract(true);
-        methodDefinitions.add(builder);
+        methodDefinitions = LazyCollections.lazyAdd(methodDefinitions, builder);
         return builder;
     }
 
     @Override
     public boolean containsMethod(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Parameter name can't be null");
-        }
+        Preconditions.checkArgument(name != null, "Parameter name can't be null");
         for (MethodSignatureBuilder methodDefinition : methodDefinitions) {
             if (name.equals(methodDefinition.getName())) {
                 return true;
@@ -186,15 +171,13 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     public GeneratedPropertyBuilder addProperty(final String name) {
         final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);
         builder.setAccessModifier(AccessModifier.PUBLIC);
-        properties.add(builder);
+        properties = LazyCollections.lazyAdd(properties, builder);
         return builder;
     }
 
     @Override
     public boolean containsProperty(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Parameter name can't be null");
-        }
+        Preconditions.checkArgument(name != null, "Parameter name can't be null");
         for (GeneratedPropertyBuilder property : properties) {
             if (name.equals(property.getName())) {
                 return true;
@@ -245,6 +228,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         return null;
     }
 
+    @Override
     public List<GeneratedPropertyBuilder> getProperties() {
         return properties;
     }
