@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,12 +17,14 @@ import org.opendaylight.yangtools.binding.generator.util.AbstractBaseType;
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.sal.binding.model.api.Enumeration.Pair;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
+import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
@@ -28,21 +32,22 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 public final class EnumerationBuilderImpl extends AbstractBaseType implements EnumBuilder {
     private final String packageName;
     private final String name;
-    private final List<Enumeration.Pair> values;
-    private final List<AnnotationTypeBuilder> annotationBuilders = new ArrayList<>();
+    private List<Enumeration.Pair> values = Collections.emptyList();
+    private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
+    private List<Pair> unmodifiableValues  = Collections.emptyList();
 
     public EnumerationBuilderImpl(final String packageName, final String name) {
         super(packageName, name);
         this.packageName = packageName;
         this.name = name;
-        values = new ArrayList<>();
     }
 
     @Override
     public AnnotationTypeBuilder addAnnotation(final String packageName, final String name) {
         if (packageName != null && name != null) {
             final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(packageName, name);
-            if (annotationBuilders.add(builder)) {
+            if (!annotationBuilders.contains(builder)) {
+                annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
                 return builder;
             }
         }
@@ -51,12 +56,14 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
     @Override
     public void addValue(final String name, final Integer value) {
-        values.add(new EnumPairImpl(name, value));
+        final EnumPairImpl p = new EnumPairImpl(name, value);
+        values = LazyCollections.lazyAdd(values, p);
+        unmodifiableValues = Collections.unmodifiableList(values);
     }
 
     @Override
     public Enumeration toInstance(final Type definingType) {
-        return new EnumerationImpl(definingType, annotationBuilders, packageName, name, values);
+        return new EnumerationImpl(definingType, annotationBuilders, packageName, name, unmodifiableValues);
     }
 
     /*
@@ -79,7 +86,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -151,7 +158,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         private final String name;
         private final Integer value;
 
-        public EnumPairImpl(String name, Integer value) {
+        public EnumPairImpl(final String name, final Integer value) {
             super();
             this.name = name;
             this.value = value;
@@ -187,7 +194,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -238,19 +245,21 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         private final String packageName;
         private final String name;
         private final List<Pair> values;
-        private List<AnnotationType> annotations = new ArrayList<>();
+        private final List<AnnotationType> annotations;
 
         public EnumerationImpl(final Type definingType, final List<AnnotationTypeBuilder> annotationBuilders,
                 final String packageName, final String name, final List<Pair> values) {
             super();
             this.definingType = definingType;
-            for (final AnnotationTypeBuilder builder : annotationBuilders) {
-                annotations.add(builder.toInstance());
-            }
-            this.annotations = Collections.unmodifiableList(annotations);
             this.packageName = packageName;
+            this.values = values;
             this.name = name;
-            this.values = Collections.unmodifiableList(values);
+
+            final ArrayList<AnnotationType> a = new ArrayList<>();
+            for (final AnnotationTypeBuilder builder : annotationBuilders) {
+                a.add(builder.toInstance());
+            }
+            this.annotations = ImmutableList.copyOf(a);
         }
 
         @Override
@@ -333,7 +342,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }

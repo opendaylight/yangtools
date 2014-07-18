@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-
-import java.util.Collections;
 import java.util.List;
 
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
@@ -27,13 +25,13 @@ abstract class AbstractTypeMember implements TypeMember {
     private final boolean isStatic;
     private final AccessModifier accessModifier;
 
-    public AbstractTypeMember(final Type definingType, final String name,  final List<AnnotationType> annotations,
-                              final String comment, final AccessModifier accessModifier, final Type returnType,
-                              final boolean isFinal, final boolean isStatic) {
+    protected AbstractTypeMember(final Type definingType, final String name,  final List<AnnotationType> annotations,
+            final String comment, final AccessModifier accessModifier, final Type returnType,
+            final boolean isFinal, final boolean isStatic) {
         super();
         this.definingType = definingType;
         this.name = name;
-        this.annotations = annotations.isEmpty() ? Collections.<AnnotationType>emptyList() : Collections.unmodifiableList(annotations);
+        this.annotations = annotations;
         this.comment = comment;
         this.accessModifier = accessModifier;
         this.returnType = returnType;
