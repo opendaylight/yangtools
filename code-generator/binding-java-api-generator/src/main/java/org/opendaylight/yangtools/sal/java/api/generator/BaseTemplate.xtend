@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.common.QName
 
-abstract class BaseTemplate {
+abstract class BaseTemplate { 
     protected val GeneratedType type;
     protected val Map<String, String> importMap;
     
@@ -197,17 +197,18 @@ abstract class BaseTemplate {
         
         return '''
             «IF !type.isDocumentationParametersNullOrEmtpy»
+               «IF typeModuleName != null && !typeModuleName.empty»
+                Module name:
+                    «typeModuleName»«"\n"»
+               «ENDIF»
                «IF typeDescription != null && !typeDescription.empty»
-                «formatToParagraph(typeDescription)»
+                    «typeDescription»
                «ENDIF»
                «IF typeReference != null && !typeReference.empty»
                 Reference:
                     «formatReference(typeReference)»
                «ENDIF»
-               «IF typeModuleName != null && !typeModuleName.empty»
-                Module name:
-                    «typeModuleName»
-               «ENDIF»
+               
                «IF typeSchemaPath != null && !typeSchemaPath.empty»
                 Schema path:
                     «formatPath(typeSchemaPath)»
@@ -279,56 +280,55 @@ abstract class BaseTemplate {
         return sb.toString
     }
     
-    protected def formatToParagraph(String text) {
-        if(text == null || text.isEmpty)
-            return text
+    protected def String formatToParagraph(String text) {
+        if(text == null || text.isEmpty())
+                return text;
         
-        var formattedText = text
+        var String formattedText = text;
         val StringBuilder sb = new StringBuilder();
-        var StringBuilder lineBuilder = new StringBuilder();
+        val StringBuilder lineBuilder = new StringBuilder();
         var boolean isFirstElementOnNewLineEmptyChar = false;
-        
-        formattedText = formattedText.replace("*/", "&#42;&#47;")
-        formattedText = formattedText.replace(NEW_LINE, "")
-        formattedText = formattedText.replace("\t", "")
-        formattedText = formattedText.replaceAll(" +", " ");
             
+        formattedText = formattedText.replace("*/", "&#42;&#47;");
+        formattedText = formattedText.replace("\n", "");     
+        formattedText = formattedText.replace("\t", "");
+        formattedText = formattedText.replaceAll(" +", " ");
+
         val StringTokenizer tokenizer = new StringTokenizer(formattedText, " ", true);
-        
-        while(tokenizer.hasMoreElements) {
-            val nextElement = tokenizer.nextElement.toString
-                
-            if(lineBuilder.length + nextElement.length > 80) {
-                if (lineBuilder.charAt(lineBuilder.length - 1) == ' ') {
-                    lineBuilder.setLength(0)
-                    lineBuilder.append(lineBuilder.toString.substring(0, lineBuilder.length - 1))
-                }
-                if (lineBuilder.toString.charAt(0) == ' ') {
-                    lineBuilder.setLength(0)
-                    lineBuilder.append(lineBuilder.toString.substring(1))
-                }
+            
+        while(tokenizer.hasMoreElements()) {
+            val String nextElement = tokenizer.nextElement().toString();
                     
+            if(lineBuilder.length() + nextElement.length() > 80) {
+                if (lineBuilder.charAt(lineBuilder.length() - 1) == ' ') {
+                    lineBuilder.setLength(0);
+                    lineBuilder.append(lineBuilder.substring(0, lineBuilder.length() - 1));
+                }
+                if (lineBuilder.charAt(0) == ' ') {
+                    lineBuilder.setLength(0);
+                    lineBuilder.append(lineBuilder.substring(1));
+                }
+                       
                 sb.append(lineBuilder);
-                lineBuilder.setLength(0)
-                sb.append(NEW_LINE)
-                    
-                if(nextElement.toString == ' ')
+                lineBuilder.setLength(0);
+                sb.append('\n');
+                        
+                if(nextElement.toString().equals(" "))
                     isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
             }
-                
             if(isFirstElementOnNewLineEmptyChar) {
-                isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar
+                isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
             }
-                
             else {
-                lineBuilder.append(nextElement)
+                lineBuilder.append(nextElement);
             }
         }
-        sb.append(lineBuilder)
-        sb.append(NEW_LINE)
-        
-        return sb.toString
+        sb.append(lineBuilder);
+        sb.append('\n');
+            
+        return sb.toString();
     }
+
     
     def isDocumentationParametersNullOrEmtpy(GeneratedType type) {
         var boolean isNullOrEmpty = true
