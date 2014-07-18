@@ -15,6 +15,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -81,6 +83,20 @@ public final class BindingGeneratorUtil {
         @Override
         public boolean isEmpty() {
             return true;
+        }
+    };
+
+    private static final Comparator<TypeMemberBuilder<?>> SUID_MEMBER_COMPARATOR = new Comparator<TypeMemberBuilder<?>>() {
+        @Override
+        public int compare(final TypeMemberBuilder<?> o1, final TypeMemberBuilder<?> o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    };
+
+    private static final Comparator<Type> SUID_NAME_COMPARATOR = new Comparator<Type>() {
+        @Override
+        public int compare(final Type o1, final Type o2) {
+            return o1.getFullyQualifiedName().compareTo(o2.getFullyQualifiedName());
         }
     };
 
@@ -312,6 +328,16 @@ public final class BindingGeneratorUtil {
         return sb.toString();
     }
 
+    private static <T> Iterable<T> sortedCollection(final Comparator<? super T> comparator, final Collection<T> input) {
+        if (input.size() > 1) {
+            final List<T> ret = new ArrayList<>(input);
+            Collections.sort(ret, comparator);
+            return ret;
+        } else {
+            return input;
+        }
+    }
+
     public static long computeDefaultSUID(final GeneratedTypeBuilderBase<?> to) {
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -320,33 +346,15 @@ public final class BindingGeneratorUtil {
             dout.writeUTF(to.getName());
             dout.writeInt(to.isAbstract() ? 3 : 7);
 
-            List<Type> impl = to.getImplementsTypes();
-            Collections.sort(impl, new Comparator<Type>() {
-                @Override
-                public int compare(final Type o1, final Type o2) {
-                    return o1.getFullyQualifiedName().compareTo(o2.getFullyQualifiedName());
-                }
-            });
-            for (Type ifc : impl) {
+            for (Type ifc : sortedCollection(SUID_NAME_COMPARATOR, to.getImplementsTypes())) {
                 dout.writeUTF(ifc.getFullyQualifiedName());
             }
 
-            Comparator<TypeMemberBuilder<?>> comparator = new Comparator<TypeMemberBuilder<?>>() {
-                @Override
-                public int compare(final TypeMemberBuilder<?> o1, final TypeMemberBuilder<?> o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            };
-
-            List<GeneratedPropertyBuilder> props = to.getProperties();
-            Collections.sort(props, comparator);
-            for (GeneratedPropertyBuilder gp : props) {
+            for (GeneratedPropertyBuilder gp : sortedCollection(SUID_MEMBER_COMPARATOR, to.getProperties())) {
                 dout.writeUTF(gp.getName());
             }
 
-            List<MethodSignatureBuilder> methods = to.getMethodDefinitions();
-            Collections.sort(methods, comparator);
-            for (MethodSignatureBuilder m : methods) {
+            for (MethodSignatureBuilder m : sortedCollection(SUID_MEMBER_COMPARATOR, to.getMethodDefinitions())) {
                 if (!(m.getAccessModifier().equals(AccessModifier.PRIVATE))) {
                     dout.writeUTF(m.getName());
                     dout.write(m.getAccessModifier().ordinal());
@@ -355,17 +363,19 @@ public final class BindingGeneratorUtil {
 
             dout.flush();
 
-            MessageDigest md = MessageDigest.getInstance("SHA");
-            byte[] hashBytes = md.digest(bout.toByteArray());
-            long hash = 0;
-            for (int i = Math.min(hashBytes.length, 8) - 1; i >= 0; i--) {
-                hash = (hash << 8) | (hashBytes[i] & 0xFF);
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                byte[] hashBytes = md.digest(bout.toByteArray());
+                long hash = 0;
+                for (int i = Math.min(hashBytes.length, 8) - 1; i >= 0; i--) {
+                    hash = (hash << 8) | (hashBytes[i] & 0xFF);
+                }
+                return hash;
+            } catch (NoSuchAlgorithmException ex) {
+                throw new SecurityException(ex.getMessage());
             }
-            return hash;
         } catch (IOException ex) {
             throw new InternalError();
-        } catch (NoSuchAlgorithmException ex) {
-            throw new SecurityException(ex.getMessage());
         }
     }
 
