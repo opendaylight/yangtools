@@ -31,7 +31,7 @@ final class RandomPrefix {
                 do {
                     final StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < 4; i++) {
-                        sb.append('a' + random.nextInt(25));
+                        sb.append((char)('a' + random.nextInt(25)));
                     }
 
                     prefix = sb.toString();
