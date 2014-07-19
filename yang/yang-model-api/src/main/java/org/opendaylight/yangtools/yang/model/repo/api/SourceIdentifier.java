@@ -5,13 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/eplv10.html
  */
-package org.opendaylight.yangtools.yang.model.util.repo;
+package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 
+import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
+ *
  * YANG Schema source identifier
  *
  * Simple transfer object represents identifier of source for YANG schema (module or submodule),
@@ -31,11 +34,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <p>
  * (For further reference see: http://tools.ietf.org/html/rfc6020#section-5.2 and
  * http://tools.ietf.org/html/rfc6022#section-3.1 ).
+ *
+ *
  */
-public final class SourceIdentifier implements Immutable {
-
-    private final String name;
+public final class SourceIdentifier implements Identifier, Immutable {
+    private static final long serialVersionUID = 1L;
     private final String revision;
+    private final String name;
 
     /**
      *
@@ -46,7 +51,7 @@ public final class SourceIdentifier implements Immutable {
      */
     public SourceIdentifier(final String name, final Optional<String> formattedRevision) {
         super();
-        this.name = name;
+        this.name = Preconditions.checkNotNull(name);
         this.revision = formattedRevision.orNull();
     }
 
@@ -118,8 +123,8 @@ public final class SourceIdentifier implements Immutable {
      * <p>
      * Where revision is  date in format YYYY-mm-dd.
      * <p>
-     * See
-     * http://tools.ietf.org/html/rfc6020#section-5.2
+     *
+     * @see http://tools.ietf.org/html/rfc6020#section-5.2
      *
      * @return Filename for this source identifier.
      */
@@ -149,7 +154,7 @@ public final class SourceIdentifier implements Immutable {
     public static final String toYangFileName(final String moduleName, final Optional<String> revision) {
         StringBuilder filename = new StringBuilder(moduleName);
         if (revision.isPresent()) {
-            filename.append("@");
+            filename.append('@');
             filename.append(revision.get());
         }
         filename.append(".yang");

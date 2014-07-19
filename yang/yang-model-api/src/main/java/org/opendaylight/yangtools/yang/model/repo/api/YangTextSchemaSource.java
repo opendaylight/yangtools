@@ -1,0 +1,98 @@
+/*
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/eplv10.html
+ */
+package org.opendaylight.yangtools.yang.model.repo.api;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Preconditions;
+import com.google.common.io.ByteSource;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.opendaylight.yangtools.concepts.Delegator;
+
+/**
+ * YANG text schema source representation. Exposes an RFC6020 text representation
+ * as an {@link InputStream}.
+ */
+public abstract class YangTextSchemaSource extends ByteSource implements SchemaSourceRepresentation {
+    private final SourceIdentifier identifier;
+
+    protected YangTextSchemaSource(final SourceIdentifier identifier) {
+        this.identifier = Preconditions.checkNotNull(identifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SourceIdentifier getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends YangTextSchemaSource> getType() {
+        return YangTextSchemaSource.class;
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(Objects.toStringHelper(this).add("identifier", identifier)).toString();
+    }
+
+    /**
+     * Add subclass-specific attributes to the output {@link #toString()} output. Since
+     * subclasses are prevented from overriding {@link #toString()} for consistency
+     * reasons, they can add their specific attributes to the resulting string by attaching
+     * attributes to the supplied {@link ToStringHelper}.
+     *
+     * @param toStringHelper ToStringHelper onto the attributes can be added
+     * @return ToStringHelper supplied as input argument.
+     */
+    protected abstract ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper);
+
+    /**
+     * Create a new YangTextSchemaSource with a specific source identifier and backed
+     * by ByteSource, which provides the actual InputStreams.
+     *
+     * @param identifier SourceIdentifier of the resulting schema source
+     * @param delegate Backing ByteSource instance
+     * @return A new YangTextSchemaSource
+     */
+    public static YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier, final ByteSource delegate) {
+        return new DelegatedYangTextSchemaSource(identifier, delegate);
+    }
+
+    private static final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<ByteSource> {
+        private final ByteSource delegate;
+
+        private DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
+            super(identifier);
+            this.delegate = Preconditions.checkNotNull(delegate);
+        }
+
+        @Override
+        public final ByteSource getDelegate() {
+            return delegate;
+        }
+
+        @Override
+        public InputStream openStream() throws IOException {
+            return delegate.openStream();
+        }
+
+        @Override
+        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+            return toStringHelper.add("delegate", delegate);
+        }
+    }
+}
