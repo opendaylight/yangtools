@@ -85,7 +85,7 @@ public final class TreeNodeUtils {
             nesting++;
         }
         if(current.isPresent()) {
-            final InstanceIdentifier currentPath = new InstanceIdentifier(path.getPath().subList(0, nesting));
+            final InstanceIdentifier currentPath = InstanceIdentifier.create(path.getPath().subList(0, nesting));
             return new SimpleEntry<InstanceIdentifier,T>(currentPath,current.get());
         }
 
@@ -96,7 +96,7 @@ public final class TreeNodeUtils {
          * present. At any rate we check state just to be on the safe side.
          */
         Preconditions.checkState(nesting > 0);
-        final InstanceIdentifier parentPath = new InstanceIdentifier(path.getPath().subList(0, nesting - 1));
+        final InstanceIdentifier parentPath = InstanceIdentifier.create(path.getPath().subList(0, nesting - 1));
 
         return new SimpleEntry<InstanceIdentifier,T>(parentPath,parent.get());
     }

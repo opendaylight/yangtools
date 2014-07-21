@@ -8,23 +8,26 @@
 
 package org.opendaylight.yangtools.yang.data.api;
 
-import static org.junit.Assert.*;
-import static org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Unit tests for InstanceIdentifier.
@@ -44,14 +47,10 @@ public class InstanceIdentifierTest {
     @Test
     public void testHashCodeEquals() {
 
-        InstanceIdentifier id1 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
-        InstanceIdentifier id2 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
-        InstanceIdentifier id3 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName2), new NodeIdentifier(nodeName1)));
-        InstanceIdentifier id4 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1)));
+        InstanceIdentifier id1 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        InstanceIdentifier id2 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        InstanceIdentifier id3 = InstanceIdentifier.create(new NodeIdentifier(nodeName2), new NodeIdentifier(nodeName1));
+        InstanceIdentifier id4 = InstanceIdentifier.create(new NodeIdentifier(nodeName1));
 
         assertEquals( "hashCode", id1.hashCode(), id2.hashCode() );
         assertEquals( "equals", true, id1.equals( id2 ) );
@@ -64,47 +63,50 @@ public class InstanceIdentifierTest {
     @Test
     public void testNode() {
 
-        InstanceIdentifier id = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
+        InstanceIdentifier id = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
 
         InstanceIdentifier newID = id.node( nodeName3 );
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 3, newID.getPath().size() );
-        assertEquals( "PathArg 1 node type", nodeName1, newID.getPath().get(0).getNodeType() );
-        assertEquals( "PathArg 2 node type", nodeName2, newID.getPath().get(1).getNodeType() );
-        assertEquals( "PathArg 3 node type", nodeName3, newID.getPath().get(2).getNodeType() );
+        assertEquals( "Path size", 3, Iterables.size(newID.getPathArguments()) );
+
+        Iterator<PathArgument> it = newID.getPathArguments().iterator();
+        assertEquals( "PathArg 1 node type", nodeName1, it.next().getNodeType() );
+        assertEquals( "PathArg 2 node type", nodeName2, it.next().getNodeType() );
+        assertEquals( "PathArg 3 node type", nodeName3, it.next().getNodeType() );
 
         newID = id.node( new NodeIdentifier( nodeName3 ) );
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 3, newID.getPath().size() );
-        assertEquals( "PathArg 1 node type", nodeName1, newID.getPath().get(0).getNodeType() );
-        assertEquals( "PathArg 2 node type", nodeName2, newID.getPath().get(1).getNodeType() );
-        assertEquals( "PathArg 3 node type", nodeName3, newID.getPath().get(2).getNodeType() );
+        assertEquals( "Path size", 3, Iterables.size(newID.getPathArguments()) );
+
+        it = newID.getPathArguments().iterator();
+        assertEquals( "PathArg 1 node type", nodeName1, it.next().getNodeType() );
+        assertEquals( "PathArg 2 node type", nodeName2, it.next().getNodeType() );
+        assertEquals( "PathArg 3 node type", nodeName3, it.next().getNodeType() );
     }
 
     @Test
     public void testRelativeTo() {
 
-        InstanceIdentifier id1 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2),
-                                   new NodeIdentifier(nodeName3), new NodeIdentifier(nodeName4)));
-        InstanceIdentifier id2 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
-        InstanceIdentifier id3 = new InstanceIdentifier(
+        InstanceIdentifier id1 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2),
+                new NodeIdentifier(nodeName3), new NodeIdentifier(nodeName4));
+        InstanceIdentifier id2 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        InstanceIdentifier id3 = InstanceIdentifier.create(
                 Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
 
         Optional<InstanceIdentifier> relative = id1.relativeTo( id2 );
 
         assertEquals( "isPresent", true, relative.isPresent() );
-        assertEquals( "Path size", 2, relative.get().getPath().size() );
-        assertEquals( "PathArg 1 node type", nodeName3, relative.get().getPath().get(0).getNodeType() );
-        assertEquals( "PathArg 2 node type", nodeName4, relative.get().getPath().get(1).getNodeType() );
+
+        Iterable<PathArgument> p = relative.get().getPathArguments();
+        assertEquals( "Path size", 2, Iterables.size(p) );
+        assertEquals( "PathArg 1 node type", nodeName3, Iterables.get(p, 0).getNodeType() );
+        assertEquals( "PathArg 2 node type", nodeName4, Iterables.get(p, 1).getNodeType() );
 
         relative = id2.relativeTo( id3 );
         assertEquals( "isPresent", true, relative.isPresent() );
-        assertEquals( "Path size", 0, relative.get().getPath().size() );
+        assertEquals( "Path size", 0, Iterables.size(relative.get().getPathArguments()) );
 
         relative = id2.relativeTo( id1 );
         assertEquals( "isPresent", false, relative.isPresent() );
@@ -113,15 +115,11 @@ public class InstanceIdentifierTest {
     @Test
     public void testContains() {
 
-        InstanceIdentifier id1 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2),
-                                   new NodeIdentifier(nodeName3), new NodeIdentifier(nodeName4)));
-        InstanceIdentifier id2 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
-        InstanceIdentifier id3 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
-        InstanceIdentifier id4 = new InstanceIdentifier(
-                Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName3)));
+        InstanceIdentifier id1 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2),
+                new NodeIdentifier(nodeName3), new NodeIdentifier(nodeName4));
+        InstanceIdentifier id2 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        InstanceIdentifier id3 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        InstanceIdentifier id4 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName3));
 
         assertEquals( "contains", true, id2.contains( id1 ) );
         assertEquals( "contains", true, id2.contains( id3 ) );
@@ -135,8 +133,8 @@ public class InstanceIdentifierTest {
         InstanceIdentifier newID = InstanceIdentifier.of( nodeName1 );
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 1, newID.getPath().size() );
-        assertEquals( "PathArg 1 node type", nodeName1, newID.getPath().get(0).getNodeType() );
+        assertEquals( "Path size", 1, Iterables.size(newID.getPathArguments()) );
+        assertEquals( "PathArg 1 node type", nodeName1, Iterables.get(newID.getPathArguments(), 0).getNodeType() );
 
         assertNotNull( newID.toString() ); // for code coverage
     }
@@ -150,29 +148,33 @@ public class InstanceIdentifierTest {
                 .nodeWithKey( nodeName3, key2, "bar" ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 3, newID.getPath().size() );
-        assertEquals( "PathArg 1 node type", nodeName1, newID.getPath().get(0).getNodeType() );
-        verifyNodeIdentifierWithPredicates( "PathArg 2", newID.getPath().get(1), nodeName2, key1, "foo" );
-        verifyNodeIdentifierWithPredicates( "PathArg 3", newID.getPath().get(2), nodeName3, key2, "bar" );
+        assertEquals( "Path size", 3, Iterables.size(newID.getPathArguments()) );
+
+        Iterator<PathArgument> it = newID.getPathArguments().iterator();
+        assertEquals( "PathArg 1 node type", nodeName1, it.next().getNodeType() );
+        verifyNodeIdentifierWithPredicates( "PathArg 2", it.next(), nodeName2, key1, "foo" );
+        verifyNodeIdentifierWithPredicates( "PathArg 3", it.next(), nodeName3, key2, "bar" );
 
         newID = InstanceIdentifier.builder( newID ).node( nodeName4 ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 4, newID.getPath().size() );
-        assertEquals( "PathArg 1 node type", nodeName1, newID.getPath().get(0).getNodeType() );
-        assertEquals( "PathArg 2 node type", nodeName2, newID.getPath().get(1).getNodeType() );
-        assertEquals( "PathArg 3 node type", nodeName3, newID.getPath().get(2).getNodeType() );
-        assertEquals( "PathArg 4 node type", nodeName4, newID.getPath().get(3).getNodeType() );
+        assertEquals( "Path size", 4, Iterables.size(newID.getPathArguments()) );
+
+        it = newID.getPathArguments().iterator();
+        assertEquals( "PathArg 1 node type", nodeName1, it.next().getNodeType() );
+        assertEquals( "PathArg 2 node type", nodeName2, it.next().getNodeType() );
+        assertEquals( "PathArg 3 node type", nodeName3, it.next().getNodeType() );
+        assertEquals( "PathArg 4 node type", nodeName4, it.next().getNodeType() );
 
         newID = InstanceIdentifier.builder( nodeName1 ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 1, newID.getPath().size() );
-        assertEquals( "PathArg 1 node type", nodeName1, newID.getPath().get(0).getNodeType() );
+        assertEquals( "Path size", 1, Iterables.size(newID.getPathArguments()) );
+        assertEquals( "PathArg 1 node type", nodeName1, Iterables.get(newID.getPathArguments(), 0).getNodeType() );
     }
 
-    private void verifyNodeIdentifierWithPredicates(String prefix,
-                               PathArgument arg, QName nodeName, QName key, Object value ) {
+    private void verifyNodeIdentifierWithPredicates(final String prefix,
+            final PathArgument arg, final QName nodeName, final QName key, final Object value ) {
 
         assertNotNull( prefix + " is null", arg );
         assertEquals( prefix + " class", NodeIdentifierWithPredicates.class, arg.getClass() );
@@ -196,11 +198,11 @@ public class InstanceIdentifierTest {
         assertEquals( "equals", true, node1.equals( node2 ) );
 
         assertEquals( "equals", false,
-                      node1.equals( new NodeIdentifierWithPredicates( nodeName2, key1, "foo" ) ) );
+                node1.equals( new NodeIdentifierWithPredicates( nodeName2, key1, "foo" ) ) );
         assertEquals( "equals", false,
-                      node1.equals( new NodeIdentifierWithPredicates( nodeName1, key2, "foo" ) ) );
+                node1.equals( new NodeIdentifierWithPredicates( nodeName1, key2, "foo" ) ) );
         assertEquals( "equals", false,
-                      node1.equals( new NodeIdentifierWithPredicates( nodeName1, key1, "bar" ) ) );
+                node1.equals( new NodeIdentifierWithPredicates( nodeName1, key1, "bar" ) ) );
         assertEquals( "equals", false, node1.equals( new Object() ) );
 
         assertNotNull( node1.toString() ); // for code coverage
@@ -216,8 +218,8 @@ public class InstanceIdentifierTest {
 
         assertEquals( "equals", false, node3.equals( node1 ) );
         assertEquals( "equals", false,
-                      node1.equals( new NodeIdentifierWithPredicates( nodeName1,
-                          ImmutableMap.<QName, Object>builder().put( key1, 10 ).put( key3, 20 ).build() ) ) );
+                node1.equals( new NodeIdentifierWithPredicates( nodeName1,
+                        ImmutableMap.<QName, Object>builder().put( key1, 10 ).put( key3, 20 ).build() ) ) );
 
         node1 = new NodeIdentifierWithPredicates( nodeName1, key1, new byte[]{1,2} );
         node2 = new NodeIdentifierWithPredicates( nodeName1, key1, new byte[]{1,2} );
@@ -226,11 +228,11 @@ public class InstanceIdentifierTest {
         assertEquals( "equals", true, node1.equals( node2 ) );
 
         assertEquals( "equals", false,
-                      node1.equals( new NodeIdentifierWithPredicates( nodeName1, key1, new byte[]{1,3} ) ) );
+                node1.equals( new NodeIdentifierWithPredicates( nodeName1, key1, new byte[]{1,3} ) ) );
         assertEquals( "equals", false,
-                      node1.equals( new NodeIdentifierWithPredicates( nodeName1, key1, new byte[]{1} ) ) );
+                node1.equals( new NodeIdentifierWithPredicates( nodeName1, key1, new byte[]{1} ) ) );
         assertEquals( "equals", false,
-                      node1.equals( new NodeIdentifierWithPredicates( nodeName1, key1, new byte[]{1,2,3} ) ) );
+                node1.equals( new NodeIdentifierWithPredicates( nodeName1, key1, new byte[]{1,2,3} ) ) );
     }
 
     @Test
@@ -292,9 +294,9 @@ public class InstanceIdentifierTest {
         assertEquals( "equals", true, node1.equals( node2 ) );
 
         assertEquals( "equals", false,
-                      node1.equals( new AugmentationIdentifier( Sets.newHashSet( nodeName1, nodeName3 ) ) ) );
+                node1.equals( new AugmentationIdentifier( Sets.newHashSet( nodeName1, nodeName3 ) ) ) );
         assertEquals( "equals", false,
-                      node1.equals( new AugmentationIdentifier( Sets.newHashSet( nodeName1 ) ) ) );
+                node1.equals( new AugmentationIdentifier( Sets.newHashSet( nodeName1 ) ) ) );
         assertEquals( "equals", false, node1.equals( new Object() ) );
 
         assertNotNull( node1.toString() ); // for code coverage

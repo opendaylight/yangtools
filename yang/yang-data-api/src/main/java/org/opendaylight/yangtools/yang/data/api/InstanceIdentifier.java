@@ -6,6 +6,13 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -21,13 +28,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * Unique identifier of a partical node instance in the data tree.
@@ -135,6 +135,10 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
 
     public static final InstanceIdentifier create(final Iterable<? extends PathArgument> path) {
         return new InstanceIdentifier(path);
+    }
+
+    public static final InstanceIdentifier create(final PathArgument... path) {
+        return create(Arrays.asList(path));
     }
 
     @Override
@@ -268,22 +272,22 @@ public class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, 
     }
 
     /**
-    *
-    * Returns new builder for InstanceIdentifier with path arguments copied from original instance identifier.
-    *
-    * @param origin Instace Identifier from which path arguments are copied.
-    * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
-    */
+     *
+     * Returns new builder for InstanceIdentifier with path arguments copied from original instance identifier.
+     *
+     * @param origin Instace Identifier from which path arguments are copied.
+     * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
+     */
     static public InstanceIdentifierBuilder builder(final InstanceIdentifier origin) {
         return new BuilderImpl(origin.getPath());
     }
-   /**
-    *
-    * Returns new builder for InstanceIdentifier with first path argument set to {@link NodeIdentifier}.
-    *
-    * @param node QName of first {@link NodeIdentifier} path argument.
-    * @return  new builder for InstanceIdentifier with first path argument set to {@link NodeIdentifier}.
-    */
+    /**
+     *
+     * Returns new builder for InstanceIdentifier with first path argument set to {@link NodeIdentifier}.
+     *
+     * @param node QName of first {@link NodeIdentifier} path argument.
+     * @return  new builder for InstanceIdentifier with first path argument set to {@link NodeIdentifier}.
+     */
     public static InstanceIdentifierBuilder builder(final QName node) {
         return builder().node(node);
     }

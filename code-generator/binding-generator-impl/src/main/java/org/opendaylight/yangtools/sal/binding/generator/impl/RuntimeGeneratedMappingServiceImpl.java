@@ -7,6 +7,13 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+
 import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -68,15 +75,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.SettableFuture;
-
 public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaContextListener,
-        SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
+SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(RuntimeGeneratedMappingServiceImpl.class);
 
@@ -219,7 +219,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
     private CompositeNode toCompositeNodeImpl(final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,
             final DataObject object) {
-        PathArgument last = identifier.getPath().get(identifier.getPath().size() - 1);
+        PathArgument last = identifier.getLastPathArgument();
         Class<? extends DataContainer> cls = object.getImplementedInterface();
         waitForSchema(cls);
         DataContainerCodec<DataObject> codec = (DataContainerCodec<DataObject>) registry.getCodecForDataObject(cls);
@@ -231,8 +231,7 @@ public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMap
 
         // val cls = object.implementedInterface;
         // waitForSchema(cls);
-        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument last = identifier.getPath().get(
-                identifier.getPath().size() - 1);
+        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument last = identifier.getLastPathArgument();
         AugmentationCodec codec = registry.getCodecForAugmentation((Class) object.getImplementedInterface());
         CompositeNode ret = codec.serialize(new ValueWithQName<DataObject>(last.getNodeType(), object));
         if (last instanceof NodeIdentifierWithPredicates) {
