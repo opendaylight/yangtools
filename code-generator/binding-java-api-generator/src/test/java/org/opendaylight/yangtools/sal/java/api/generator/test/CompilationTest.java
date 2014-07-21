@@ -23,6 +23,7 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsRestrictionCheck;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertFilesCount;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertImplementsIfc;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertImplementsParameterizedIfc;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
@@ -44,6 +45,7 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
+import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -531,6 +533,35 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    /**
+     * Test if class generated for node from grouping implements ChildOf.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testBug1377() throws Exception {
+        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "bug1377");
+        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
+        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "bug1377");
+        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+
+        generateTestSources("/compilation/bug1377", sourcesOutputDir);
+
+        // Test if sources are compilable
+        testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        Class<?> outputActionClass = Class.forName(BASE_PKG
+                + ".urn.test.foo.rev140717.action.action.output.action._case.OutputAction", true, loader);
+        Class<?> actionClass = Class.forName(BASE_PKG + ".urn.test.foo.rev140717.Action", true, loader);
+
+        // Test generated 'container output-action'
+        assertTrue(outputActionClass.isInterface());
+        assertImplementsParameterizedIfc(outputActionClass, ChildOf.class.toString(), actionClass.getCanonicalName());
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }

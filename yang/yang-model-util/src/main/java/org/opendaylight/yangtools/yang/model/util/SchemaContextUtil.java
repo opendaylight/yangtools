@@ -11,22 +11,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -38,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -240,33 +231,6 @@ public final class SchemaContextUtil {
         return findNodeInModule(module, path);
     }
 
-    public static GroupingDefinition findGrouping(final SchemaContext context, final Module module, final Iterable<QName> path) {
-        Iterator<QName> iterator = path.iterator();
-        QName first = iterator.next();
-        Module m = context.findModuleByNamespace(first.getNamespace()).iterator().next();
-        DataNodeContainer currentParent = m;
-        for (QName qname : path) {
-            boolean found = false;
-            DataNodeContainer node = (DataNodeContainer) currentParent.getDataChildByName(qname.getLocalName());
-            if (node == null) {
-                Set<GroupingDefinition> groupings = currentParent.getGroupings();
-                for (GroupingDefinition gr : groupings) {
-                    if (gr.getQName().getLocalName().equals(qname.getLocalName())) {
-                        currentParent = gr;
-                        found = true;
-                    }
-                }
-            } else {
-                found = true;
-                currentParent = node;
-            }
-
-            Preconditions.checkArgument(found, "Failed to find referenced grouping: %s(%s)", path, qname.getLocalName());
-        }
-
-        return (GroupingDefinition) currentParent;
-    }
-
     private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {
         final QName current = path.iterator().next();
 
@@ -428,7 +392,7 @@ public final class SchemaContextUtil {
         return node;
     }
 
-    public static SchemaNode findNodeInCase(final ChoiceCaseNode parent, final Iterable<QName> path) {
+    private static SchemaNode findNodeInCase(final ChoiceCaseNode parent, final Iterable<QName> path) {
         final QName current = Iterables.getFirst(path, null);
         if (current == null) {
             return parent;
@@ -442,7 +406,7 @@ public final class SchemaContextUtil {
         return findNode(node, nextLevel(path));
     }
 
-    public static RpcDefinition getRpcByName(final Module module, final QName name) {
+    private static RpcDefinition getRpcByName(final Module module, final QName name) {
         for (RpcDefinition rpc : module.getRpcs()) {
             if (rpc.getQName().equals(name)) {
                 return rpc;
@@ -455,7 +419,7 @@ public final class SchemaContextUtil {
         return Iterables.skip(path, 1);
     }
 
-    public static NotificationDefinition getNotificationByName(final Module module, final QName name) {
+    private static NotificationDefinition getNotificationByName(final Module module, final QName name) {
         for (NotificationDefinition notification : module.getNotifications()) {
             if (notification.getQName().equals(name)) {
                 return notification;
@@ -464,264 +428,13 @@ public final class SchemaContextUtil {
         return null;
     }
 
-    public static GroupingDefinition getGroupingByName(final Module module, final QName name) {
+    private static GroupingDefinition getGroupingByName(final Module module, final QName name) {
         for (GroupingDefinition grouping : module.getGroupings()) {
             if (grouping.getQName().equals(name)) {
                 return grouping;
             }
         }
         return null;
-    }
-
-    /**
-     * Utility method which search for original node defined in grouping.
-     *
-     * @param node
-     * @return
-     */
-    public static DataSchemaNode findOriginal(final DataSchemaNode node, final SchemaContext ctx) {
-        DataSchemaNode result = findCorrectTargetFromGrouping(node, ctx);
-        if (result == null) {
-            result = findCorrectTargetFromAugment(node, ctx);
-            if (result != null) {
-                if (result.isAddedByUses()) {
-                    result = findOriginal(result, ctx);
-                }
-            }
-        }
-        return result;
-    }
-
-    private static DataSchemaNode findCorrectImmediateTargetFromGrouping(final DataSchemaNode node, final SchemaContext ctx) {
-        // uses is under module statement
-        final Module m = findParentModule(ctx, node);
-        Preconditions.checkArgument(m != null, "Failed to find module for node {} in context {}", node, ctx);
-
-        for (final UsesNode u : m.getUses()) {
-            final SchemaNode targetGrouping = findNodeInSchemaContext(ctx, u.getGroupingPath().getPathFromRoot());
-            Preconditions.checkArgument(targetGrouping instanceof GroupingDefinition,
-                    "Failed to generate code for augment in %s", u);
-
-            LOG.trace("Checking grouping {} for node {}", targetGrouping, node);
-            final GroupingDefinition gr = (GroupingDefinition) targetGrouping;
-            final DataSchemaNode result = gr.getDataChildByName(node.getQName().getLocalName());
-            if (result != null) {
-                return result;
-            }
-
-            LOG.debug("Skipped grouping {}, no matching node found", gr);
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Failed to find uses node matching {} in context {}", node, ctx));
-    }
-
-    private static DataSchemaNode findCorrectTargetFromGrouping(final DataSchemaNode node, final SchemaContext ctx) {
-        if (Iterables.size(node.getPath().getPathTowardsRoot()) != 1) {
-            QName currentName = node.getQName();
-            // tmpPath is used to track level of nesting
-            List<QName> tmpPath = new ArrayList<>();
-            Object parent = null;
-
-            // create schema path of parent node
-            SchemaPath sp = node.getPath().getParent();
-            parent = findDataSchemaNode(ctx, sp);
-
-            do {
-                tmpPath.add(currentName);
-
-                DataSchemaNode result = null;
-                // search parent node's used groupings for presence of wanted
-                // node
-                if (parent instanceof DataNodeContainer) {
-                    DataNodeContainer dataNodeParent = (DataNodeContainer) parent;
-                    for (UsesNode u : dataNodeParent.getUses()) {
-                        result = getResultFromUses(u, currentName.getLocalName(), ctx);
-                        if (result != null) {
-                            break;
-                        }
-                    }
-                }
-
-                // if node is not found in any of current parent's used
-                // groupings => parent is added by grouping too, so repeat same
-                // process for parent
-                if (result == null) {
-                    final SchemaNode sn = (SchemaNode) parent;
-
-                    // set current name to name of parent node
-                    currentName = sn.getQName();
-                    Preconditions.checkArgument(parent instanceof SchemaNode,
-                            "Failed to generate code for augmend node {} at parent {}", node, parent);
-
-                    // create schema path for parent of current parent
-                    final SchemaPath parentSp = sn.getPath().getParent();
-                    parent = parentSp.getPathFromRoot().iterator().hasNext() ? findDataSchemaNode(ctx, parentSp)
-                            : getParentModule(sn, ctx);
-                } else {
-                    // if wanted node was found in grouping, traverse this node
-                    // based on level of nesting
-                    return getTargetNode(tmpPath, result, ctx);
-                }
-            } while (!(parent instanceof Module));
-
-            return null;
-        } else {
-            return findCorrectImmediateTargetFromGrouping(node, ctx);
-        }
-    }
-
-    private static DataSchemaNode findCorrectTargetFromAugment(final DataSchemaNode node, final SchemaContext ctx) {
-        if (!node.isAugmenting()) {
-            return null;
-        }
-
-        QName currentName = node.getQName();
-        Object currentNode = node;
-        Object parent = node;
-        List<QName> tmpPath = new ArrayList<QName>();
-        List<SchemaNode> tmpTree = new ArrayList<SchemaNode>();
-
-        AugmentationSchema augment = null;
-        do {
-            SchemaPath sp = ((SchemaNode) parent).getPath();
-            parent = findDataSchemaNode(ctx, sp.getParent());
-            if (parent instanceof AugmentationTarget) {
-                tmpPath.add(currentName);
-                tmpTree.add((SchemaNode) currentNode);
-                augment = findNodeInAugment(((AugmentationTarget) parent).getAvailableAugmentations(), currentName);
-                if (augment == null) {
-                    currentName = ((DataSchemaNode) parent).getQName();
-                    currentNode = parent;
-                }
-            }
-        } while (((DataSchemaNode) parent).isAugmenting() && augment == null);
-
-        if (augment == null) {
-            return null;
-        } else {
-            Collections.reverse(tmpPath);
-            Collections.reverse(tmpTree);
-            Object actualParent = augment;
-            DataSchemaNode result = null;
-            for (QName name : tmpPath) {
-                if (actualParent instanceof DataNodeContainer) {
-                    result = ((DataNodeContainer) actualParent).getDataChildByName(name.getLocalName());
-                    actualParent = ((DataNodeContainer) actualParent).getDataChildByName(name.getLocalName());
-                } else {
-                    if (actualParent instanceof ChoiceNode) {
-                        result = ((ChoiceNode) actualParent).getCaseNodeByName(name.getLocalName());
-                        actualParent = ((ChoiceNode) actualParent).getCaseNodeByName(name.getLocalName());
-                    }
-                }
-            }
-
-            if (result.isAddedByUses()) {
-                result = findCorrectTargetFromAugmentGrouping(result, augment, tmpTree, ctx);
-            }
-
-            return result;
-        }
-    }
-
-    private static DataSchemaNode getResultFromUses(final UsesNode u, final String currentName, final SchemaContext ctx) {
-        SchemaNode targetGrouping = SchemaContextUtil.findNodeInSchemaContext(ctx, u.getGroupingPath()
-                .getPathFromRoot());
-        if (!(targetGrouping instanceof GroupingDefinition)) {
-            targetGrouping = findGrouping(ctx, getParentModule(targetGrouping, ctx), u.getGroupingPath()
-                    .getPathFromRoot());
-        }
-        Preconditions.checkArgument(targetGrouping instanceof GroupingDefinition,
-                "Failed to generate code for augment in %s", u);
-        GroupingDefinition gr = (GroupingDefinition) targetGrouping;
-        return gr.getDataChildByName(currentName);
-    }
-
-    private static Module getParentModule(final SchemaNode node, final SchemaContext ctx) {
-        QName qname = node.getPath().getPathFromRoot().iterator().next();
-        URI namespace = qname.getNamespace();
-        Date revision = qname.getRevision();
-        return ctx.findModuleByNamespaceAndRevision(namespace, revision);
-    }
-
-    private static DataSchemaNode getTargetNode(final List<QName> tmpPath, final DataSchemaNode node, final SchemaContext ctx) {
-        DataSchemaNode result = node;
-        if (tmpPath.size() == 1) {
-            if (result != null && result.isAddedByUses()) {
-                result = findOriginal(result, ctx);
-            }
-            return result;
-        } else {
-            DataSchemaNode newParent = result;
-            Collections.reverse(tmpPath);
-
-            tmpPath.remove(0);
-            for (QName name : tmpPath) {
-                // searching by local name is must, because node has different
-                // namespace in its original location
-                if (newParent == null) {
-                    break;
-                }
-                if (newParent instanceof DataNodeContainer) {
-                    newParent = ((DataNodeContainer) newParent).getDataChildByName(name.getLocalName());
-                } else {
-                    newParent = ((ChoiceNode) newParent).getCaseNodeByName(name.getLocalName());
-                }
-            }
-            if (newParent != null && newParent.isAddedByUses()) {
-                newParent = findOriginal(newParent, ctx);
-            }
-            return newParent;
-        }
-    }
-
-    private static AugmentationSchema findNodeInAugment(final Collection<AugmentationSchema> augments, final QName name) {
-        for (AugmentationSchema augment : augments) {
-            DataSchemaNode node = augment.getDataChildByName(name);
-            if (node != null) {
-                return augment;
-            }
-        }
-        return null;
-    }
-
-    private static DataSchemaNode findCorrectTargetFromAugmentGrouping(final DataSchemaNode node,
-            final AugmentationSchema parentNode, final List<SchemaNode> dataTree, final SchemaContext ctx) {
-
-        DataSchemaNode result = null;
-        QName currentName = node.getQName();
-        List<QName> tmpPath = new ArrayList<>();
-        tmpPath.add(currentName);
-        int i = 1;
-        Object parent = null;
-
-        do {
-            if (dataTree.size() < 2 || dataTree.size() == i) {
-                parent = parentNode;
-            } else {
-                parent = dataTree.get(dataTree.size() - (i + 1));
-                tmpPath.add(((SchemaNode) parent).getQName());
-            }
-
-            if (parent instanceof DataNodeContainer) {
-                DataNodeContainer dataNodeParent = (DataNodeContainer) parent;
-                for (UsesNode u : dataNodeParent.getUses()) {
-                    if (result == null) {
-                        result = getResultFromUses(u, currentName.getLocalName(), ctx);
-                    }
-                }
-            }
-
-            if (result == null) {
-                i = i + 1;
-                currentName = ((SchemaNode) parent).getQName();
-            }
-        } while (result == null);
-
-        if (result != null) {
-            result = getTargetNode(tmpPath, result, ctx);
-        }
-        return result;
     }
 
     /**

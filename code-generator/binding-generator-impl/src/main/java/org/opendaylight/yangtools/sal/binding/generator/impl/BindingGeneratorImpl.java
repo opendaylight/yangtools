@@ -25,9 +25,11 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.VOID;
 import static org.opendaylight.yangtools.binding.generator.util.Types.typeForClass;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
-import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findOriginal;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -75,6 +76,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -100,10 +102,6 @@ import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 public class BindingGeneratorImpl implements BindingGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(BindingGeneratorImpl.class);
@@ -751,9 +749,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
         if (targetSchemaNode instanceof DataSchemaNode && ((DataSchemaNode) targetSchemaNode).isAddedByUses()) {
-            targetSchemaNode = findOriginal((DataSchemaNode) targetSchemaNode, schemaContext);
+            if (targetSchemaNode instanceof DerivableSchemaNode) {
+                targetSchemaNode = ((DerivableSchemaNode) targetSchemaNode).getOriginal().orNull();
+            }
             if (targetSchemaNode == null) {
-                throw new NullPointerException("Failed to find target node from grouping in augmentation " + augSchema
+                throw new IllegalStateException("Failed to find target node from grouping in augmentation " + augSchema
                         + " in module " + module.getName());
             }
         }
@@ -1161,9 +1161,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         SchemaNode targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
                         if (targetSchemaNode instanceof DataSchemaNode
                                 && ((DataSchemaNode) targetSchemaNode).isAddedByUses()) {
-                            targetSchemaNode = findOriginal((DataSchemaNode) targetSchemaNode, schemaContext);
+                            if (targetSchemaNode instanceof DerivableSchemaNode) {
+                                targetSchemaNode = ((DerivableSchemaNode) targetSchemaNode).getOriginal().orNull();
+                            }
                             if (targetSchemaNode == null) {
-                                throw new NullPointerException(
+                                throw new IllegalStateException(
                                         "Failed to find target node from grouping for augmentation " + augSchema
                                                 + " in module " + module.getName());
                             }
@@ -1174,6 +1176,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         parent = findDataSchemaNode(schemaContext, sp.getParent());
                     }
                     GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
+                    if (childOfType == null) {
+                        childOfType = findGroupingByPath(parent.getPath());
+                    }
                     resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
                 }
             }
