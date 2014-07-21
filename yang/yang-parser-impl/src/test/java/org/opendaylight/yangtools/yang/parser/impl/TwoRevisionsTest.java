@@ -12,21 +12,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
 
 public class TwoRevisionsTest {
 
     @Test
     public void testTwoRevisions() throws Exception {
-        YangModelParser parser = new YangParserImpl();
-
         Set<Module> modules = TestUtils.loadModules(getClass().getResource("/ietf").toURI());
         assertEquals(2, TestUtils.findModules(modules, "network-topology").size());
-
-        SchemaContext schemaContext = parser.resolveSchemaContext(modules);
-        assertEquals(2, TestUtils.findModules(schemaContext.getModules(), "network-topology").size());
-
     }
 
 }
