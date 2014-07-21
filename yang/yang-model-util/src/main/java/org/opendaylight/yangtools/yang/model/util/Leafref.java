@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Preconditions;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-
-import com.google.common.base.Preconditions;
 
 /**
  * The <code>default</code> implementation of Instance Leafref Type Definition
@@ -27,7 +25,7 @@ import com.google.common.base.Preconditions;
  */
 public final class Leafref implements LeafrefTypeDefinition {
     private static final QName NAME = BaseTypes.constructQName("leafref");
-    private static final SchemaPath PATH = BaseTypes.schemaPath(NAME);
+    private static final SchemaPath PATH = SchemaPath.create(true, NAME);
     private static final String DESCRIPTION = "The leafref type is used to reference a particular leaf instance in the data tree.";
     private static final String REF = "https://tools.ietf.org/html/rfc6020#section-9.9";
 
