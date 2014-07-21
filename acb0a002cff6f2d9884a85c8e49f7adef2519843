@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ff24140e",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-07-21T07:27:46Z",
+      "side": 1,
+      "message": "Please do not allow null values, null values should be handled by caller.",
+      "revId": "acb0a002cff6f2d9884a85c8e49f7adef2519843",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9f1dc8c0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ListSchemaNodeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-07-21T07:27:46Z",
+      "side": 1,
+      "message": "Unrelated change",
+      "revId": "acb0a002cff6f2d9884a85c8e49f7adef2519843",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
