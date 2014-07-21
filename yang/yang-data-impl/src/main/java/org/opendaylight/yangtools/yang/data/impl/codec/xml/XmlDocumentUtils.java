@@ -9,13 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +57,13 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 public class XmlDocumentUtils {
     private static class ElementWithSchemaContext {
@@ -116,6 +116,7 @@ public class XmlDocumentUtils {
         }
 
         final DOMResult result = new DOMResult();
+        result.setNode(getDocument());
         try {
             final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(result);
             XmlStreamUtils.create(codecProvider).writeDocument(writer, data, (SchemaNode)schema);
