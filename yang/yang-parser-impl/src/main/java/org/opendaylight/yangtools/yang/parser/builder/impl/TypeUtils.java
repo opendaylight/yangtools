@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findBaseIdentity;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -86,6 +88,18 @@ public final class TypeUtils {
                 toRemove.add(unionType);
             }
         }
+        // special handling for identityref types under union
+        for (TypeDefinitionBuilder unionType : union.getTypedefs()) {
+            if (unionType instanceof IdentityrefTypeBuilder) {
+                IdentityrefTypeBuilder idref = (IdentityrefTypeBuilder) unionType;
+                IdentitySchemaNodeBuilder identity = findBaseIdentity(modules, module, idref.getBaseString(),
+                        idref.getLine());
+                if (identity == null) {
+                    throw new YangParseException(module.getName(), idref.getLine(), "Failed to find base identity");
+                }
+                idref.setBaseIdentity(identity);
+            }
+        }
         unionTypes.removeAll(toRemove);
     }
 
@@ -93,6 +107,10 @@ public final class TypeUtils {
             final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         final QName utQName = ut.getQName();
         final ModuleBuilder dependentModuleBuilder = BuilderUtils.getModuleByPrefix(module, utQName.getPrefix());
+        if (dependentModuleBuilder == null) {
+            throw new YangParseException(module.getName(), union.getLine(), "No module found with prefix "
+                    + utQName.getPrefix());
+        }
         final TypeDefinitionBuilder resolvedType = findTypeDefinitionBuilder(union, dependentModuleBuilder,
                 utQName.getLocalName(), module.getName(), union.getLine());
         union.setTypedef(resolvedType);
