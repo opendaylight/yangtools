@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.sal.binding.model.api.type.builder;
 
 import java.util.List;
+
 import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.common.QName;
 
 public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>> extends Type {
 
@@ -178,5 +180,43 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @return true if property <code>name</code> exists in list of properties.
      */
     boolean containsProperty(final String name);
+
+    /**
+     * Set a string that contains a human-readable textual description of type
+     * definition.
+     *
+     * @param description
+     *            a string that contains a human-readable textual description of
+     *            type definition.
+     */
+    public void setDescription(String description);
+
+    /**
+     * Set the name of the module, in which generated type was specified.
+     *
+     * @param moduleName
+     *            the name of the module
+     */
+    public void setModuleName(String moduleName);
+
+    /**
+     * Set a list of QNames which represent schema path in schema tree from
+     * actual concrete type to the root.
+     *
+     * @param schemaPath
+     *            a list of QNames which represent schema path in schema tree
+     */
+    public void setSchemaPath(Iterable<QName> schemaPath);
+
+    /**
+     * Set a string that is used to specify a textual cross-reference to an
+     * external document, either another module that defines related management
+     * information, or a document that provides additional information relevant
+     * to this definition.
+     *
+     * @param reference
+     *            a textual cross-reference to an external document.
+     */
+    public void setReference(String reference);
 
 }

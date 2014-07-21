@@ -41,17 +41,22 @@ class EnumTemplate extends BaseTemplate {
         return body
     }
     
+    def writeEnumItem(String name, int value, String description) '''
+        «asJavadoc(formatToParagraph(description))»
+        «name»(«value»)
+    '''
+
     /**
      * Template method which generates enumeration body (declaration + enumeration items).
      * 
      * @return string with the enumeration body 
      */
     override body() '''
+        «wrapToDocumentation(formatDataForJavaDoc(enums))»
         public enum «enums.name» {
-        «FOR v : enums.values SEPARATOR ",\n"»
-            «"    "»«v.name»(«v.value»)«
-        ENDFOR»;
-        
+            «writeEnumeration(enums)»
+
+
             int value;
             static java.util.Map<java.lang.Integer, «enums.name»> valueMap;
 
@@ -82,5 +87,12 @@ class EnumTemplate extends BaseTemplate {
                 return valueMap.get(valueArg);
             }
         }
+    '''
+
+    def writeEnumeration(Enumeration enumeration)
+    '''
+    «FOR v : enumeration.values SEPARATOR ",\n" AFTER ";"»
+    «writeEnumItem(v.name, v.value, v.description)»«
+    ENDFOR»
     '''
 }
