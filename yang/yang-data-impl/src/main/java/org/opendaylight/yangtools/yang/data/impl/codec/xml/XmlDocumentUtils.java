@@ -106,8 +106,7 @@ public class XmlDocumentUtils {
             throw new UnsupportedDataTypeException("Schema can be ContainerSchemaNode or ListSchemaNode. Other types are not supported yet.");
         }
 
-        final DOMResult result = new DOMResult();
-        result.setNode(getDocument());
+        final DOMResult result = new DOMResult(getDocument());
         try {
             final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(result);
             XmlStreamUtils.create(codecProvider).writeDocument(writer, data, (SchemaNode)schema);
@@ -142,7 +141,7 @@ public class XmlDocumentUtils {
      * @throws UnsupportedDataTypeException
      */
     public static Document toDocument(final CompositeNode data, final XmlCodecProvider codecProvider) {
-        final DOMResult result = new DOMResult();
+        final DOMResult result = new DOMResult(getDocument());
         try {
             final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(result);
             XmlStreamUtils.create(codecProvider).writeDocument(writer, data);
