@@ -213,6 +213,8 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateConstructorsFromIfcs(type)»
 
+            «generateCopyConstructor(false)»
+
             «generateMethodFieldsFrom(type)»
 
             «generateGetters(false)»
@@ -231,7 +233,7 @@ class BuilderTemplate extends BaseTemplate {
 
                 «generateAugmentField(false)»
 
-                «generateConstructor»
+                «generateCopyConstructor(true)»
 
                 «generateGetters(true)»
 
@@ -501,13 +503,8 @@ class BuilderTemplate extends BaseTemplate {
         }
     '''
 
-    /**
-     * Template method which generate constructor for IMPL class.
-     * 
-     * @return string with IMPL class constructor
-     */
-    def private generateConstructor() '''
-        private «type.name»«IMPL»(«type.name»«BUILDER» builder) {
+    def private CharSequence generateCopyConstructor(boolean impl) '''
+        «IF impl»private«ELSE»public«ENDIF» «type.name»«IF impl»«IMPL»«ELSE»«BUILDER»«ENDIF»(«type.name»«IF impl»«BUILDER»«ENDIF» base) {
             «val allProps = new ArrayList(properties)»
             «val isList = implementsIfc(type, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), type))»
             «val keyType = type.getKey»
@@ -522,37 +519,41 @@ class BuilderTemplate extends BaseTemplate {
                     «removeProperty(allProps, field.name)»
                 «ENDFOR»
                 «removeProperty(allProps, "key")»
-                if (builder.getKey() == null) {
+                if (base.getKey() == null) {
                     this._key = new «keyType.importedName»(
                         «FOR keyProp : keyProps SEPARATOR ", "»
-                            builder.«keyProp.getterMethodName»()
+                            base.«keyProp.getterMethodName»()
                         «ENDFOR»
                     );
                     «FOR field : keyProps»
-                        this.«field.fieldName» = builder.«field.getterMethodName»();
+                        this.«field.fieldName» = base.«field.getterMethodName»();
                     «ENDFOR»
                 } else {
-                    this._key = builder.getKey();
+                    this._key = base.getKey();
                     «FOR field : keyProps»
                            this.«field.fieldName» = _key.«field.getterMethodName»();
                     «ENDFOR»
                 }
             «ENDIF»
             «FOR field : allProps»
-                this.«field.fieldName» = builder.«field.getterMethodName»();
+                this.«field.fieldName» = base.«field.getterMethodName»();
             «ENDFOR»
             «IF augmentField != null»
-               switch (builder.«augmentField.name».size()) {
-                case 0:
-                    this.«augmentField.name» = «Collections.importedName».emptyMap();
-                    break;
-                case 1:
-                    final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = builder.«augmentField.name».entrySet().iterator().next();
-                    this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
-                    break;
-                default :
-                    this.«augmentField.name» = new «HashMap.importedName»<>(builder.«augmentField.name»);
-                }
+                «IF !impl»if (base instanceof «type.name»«IMPL») {«ENDIF»
+                    «IF !impl»«type.name»«IMPL» _impl = («type.name»«IMPL») base;«ENDIF»
+                    «val prop = if (impl) "base" else "_impl"»
+                    switch («prop».«augmentField.name».size()) {
+                    case 0:
+                        this.«augmentField.name» = «Collections.importedName».emptyMap();
+                        break;
+                    case 1:
+                        final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = «prop».«augmentField.name».entrySet().iterator().next();
+                        this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
+                        break;
+                    default :
+                        this.«augmentField.name» = new «HashMap.importedName»<>(«prop».«augmentField.name»);
+                    }
+                «IF !impl»}«ENDIF»
             «ENDIF»
         }
     '''

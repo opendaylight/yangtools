@@ -97,7 +97,7 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
         // test generated builder for 'container nodes'
         assertFalse(nodesBuilderClass.isInterface());
         Constructor<?>[] nodesBuilderConstructors = nodesBuilderClass.getConstructors();
-        assertEquals(5, nodesBuilderConstructors.length);
+        assertEquals(6, nodesBuilderConstructors.length);
 
         // test generation of builder constructors from uses in 'container nodes'
         Constructor<?> defaultConstructor = null;
