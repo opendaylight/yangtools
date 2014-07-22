@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ffe2d19e",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/ExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-22T16:49:21Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "0658ff9dafaeeb83b7010705e5b731650aaee7e9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1fe0d594",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/ExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-22T16:49:21Z",
+      "side": 1,
+      "message": "abstract methods need to be documented just as interfaces",
+      "revId": "0658ff9dafaeeb83b7010705e5b731650aaee7e9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_bff0c967",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/ExceptionMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-22T16:49:21Z",
+      "side": 1,
+      "message": "please keep yangtools coding style consistent",
+      "revId": "0658ff9dafaeeb83b7010705e5b731650aaee7e9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_dff58d57",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/MappingCheckedFuture.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-22T16:49:21Z",
+      "side": 1,
+      "message": "can this be null?",
+      "revId": "0658ff9dafaeeb83b7010705e5b731650aaee7e9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
