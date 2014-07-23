@@ -389,7 +389,7 @@ public final class CopyUtils {
 
     private static UsesNodeBuilder copyUses(final UsesNodeBuilder old, final Builder newParent) {
         UsesNodeBuilder copy = new UsesNodeBuilderImpl(newParent.getModuleName(), newParent.getLine(),
-                old.getGroupingPathAsString());
+                old.getGroupingPath());
         copy.setParent(newParent);
         copy.setGroupingDefinition(old.getGroupingDefinition());
         copy.setGrouping(old.getGroupingBuilder());
@@ -403,14 +403,13 @@ public final class CopyUtils {
 
     private static AugmentationSchemaBuilder copyAugment(final AugmentationSchemaBuilder old, final Builder newParent) {
         AugmentationSchemaBuilderImpl copy = new AugmentationSchemaBuilderImpl(newParent.getModuleName(),
-                newParent.getLine(), old.getTargetPathAsString(), old.getOrder());
+                newParent.getLine(), old.getTargetPathAsString(), old.getTargetPath(), old.getOrder());
         copy.setParent(newParent);
         copy.setCopyOf(old);
         copy.setDescription(old.getDescription());
         copy.setReference(old.getReference());
         copy.setStatus(old.getStatus());
         copy.addWhenCondition(old.getWhenCondition());
-        copy.setTargetNodeSchemaPath(old.getTargetNodeSchemaPath());
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             copy.addChildNode(copy(childNode, copy, false));
         }
@@ -470,7 +469,7 @@ public final class CopyUtils {
             } else {
                 newQName = old.getQName();
             }
-            newSchemaPath = augment.getTargetNodeSchemaPath().createChild(newQName);
+            newSchemaPath = augment.getTargetPath().createChild(newQName);
         } else if (newParent instanceof SchemaNodeBuilder) {
             SchemaNodeBuilder parent = (SchemaNodeBuilder) newParent;
             QName parentQName = parent.getQName();

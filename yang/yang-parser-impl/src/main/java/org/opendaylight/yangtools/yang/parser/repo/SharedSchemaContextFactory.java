@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -18,13 +19,14 @@ import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
+import java.net.URI;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.TreeMap;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
@@ -35,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserListenerImpl;
@@ -77,13 +80,15 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             final Map<SourceIdentifier, ParserRuleContext> asts =
                     Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
+            final Map<String, TreeMap<Date, URI>> namespaceContext = BuilderUtils.createYangNamespaceContext(
+                    asts.values(), Optional.<SchemaContext> absent());
 
             final ParseTreeWalker walker = new ParseTreeWalker();
             final Map<SourceIdentifier, ModuleBuilder> sourceToBuilder = new LinkedHashMap<>();
 
             for (Entry<SourceIdentifier, ParserRuleContext> entry : asts.entrySet()) {
-                ModuleBuilder moduleBuilder =
-                        YangParserListenerImpl.create(entry.getKey().getName(), walker, entry.getValue()).getModuleBuilder();
+                ModuleBuilder moduleBuilder = YangParserListenerImpl.create(namespaceContext, entry.getKey().getName(),
+                        walker, entry.getValue()).getModuleBuilder();
 
                 moduleBuilder.setSource(srcs.get(entry.getKey()).getYangText());
                 sourceToBuilder.put(entry.getKey(), moduleBuilder);

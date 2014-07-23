@@ -12,16 +12,20 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.io.ByteSource;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -29,10 +33,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.IOUtils;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_header_stmtsContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Namespace_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtsContext;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -60,6 +67,8 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils;
+import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
@@ -68,6 +77,7 @@ import org.slf4j.LoggerFactory;
 
 public final class BuilderUtils {
 
+    private static final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final Logger LOG = LoggerFactory.getLogger(BuilderUtils.class);
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
@@ -169,6 +179,26 @@ public final class BuilderUtils {
         return dependentModule;
     }
 
+    public static ModuleBuilder findModuleFromBuilders(ModuleImport imp, Iterable<ModuleBuilder> modules) {
+        String name = imp.getModuleName();
+        Date revision = imp.getRevision();
+        TreeMap<Date, ModuleBuilder> map = new TreeMap<>();
+        for (ModuleBuilder module : modules) {
+            if (module != null) {
+                if (module.getName().equals(name)) {
+                    map.put(module.getRevision(), module);
+                }
+            }
+        }
+        if (map.isEmpty()) {
+            return null;
+        }
+        if (revision == null) {
+            return map.lastEntry().getValue();
+        }
+        return map.get(revision);
+    }
+
     /**
      * Find module from context based on prefix.
      *
@@ -217,32 +247,6 @@ public final class BuilderUtils {
         }
 
         return result;
-    }
-
-    /**
-     * Parse XPath string.
-     *
-     * @param xpathString
-     *            XPath as String
-     * @return SchemaPath from given String
-     */
-    public static SchemaPath parseXPathString(final String xpathString) {
-        final boolean absolute = !xpathString.isEmpty() && xpathString.charAt(0) == '/';
-
-        final List<QName> path = new ArrayList<>();
-        for (String pathElement : SLASH_SPLITTER.split(xpathString)) {
-            final Iterator<String> it = COLON_SPLITTER.split(pathElement).iterator();
-            final String s = it.next();
-
-            final QName name;
-            if (it.hasNext()) {
-                name = QName.create(QNameModule.create(null, null), s, it.next());
-            } else {
-                name = QName.create(QNameModule.create(null, null), s);
-            }
-            path.add(name);
-        }
-        return SchemaPath.create(path, absolute);
     }
 
     /**
@@ -357,12 +361,13 @@ public final class BuilderUtils {
         }
     }
 
-    public static DataSchemaNodeBuilder findSchemaNode(final List<QName> path, final SchemaNodeBuilder parentNode) {
+    public static DataSchemaNodeBuilder findSchemaNode(final Iterable<QName> path, final SchemaNodeBuilder parentNode) {
         DataSchemaNodeBuilder node = null;
         SchemaNodeBuilder parent = parentNode;
+        int size = Iterables.size(path);
         int i = 0;
-        while (i < path.size()) {
-            String name = path.get(i).getLocalName();
+        for (QName qname : path) {
+            String name = qname.getLocalName();
             if (parent instanceof DataNodeContainerBuilder) {
                 node = ((DataNodeContainerBuilder) parent).getDataChildByName(name);
             } else if (parent instanceof ChoiceBuilder) {
@@ -379,7 +384,7 @@ public final class BuilderUtils {
                 return null;
             }
 
-            if (i < path.size() - 1) {
+            if (i < size - 1) {
                 parent = node;
             }
             i = i + 1;
@@ -593,7 +598,7 @@ public final class BuilderUtils {
      */
     public static boolean processAugmentation(final AugmentationSchemaBuilder augment,
             final ModuleBuilder firstNodeParent) {
-        Optional<SchemaNodeBuilder> potentialTargetNode = findSchemaNodeInModule(augment.getTargetNodeSchemaPath(),
+        Optional<SchemaNodeBuilder> potentialTargetNode = findSchemaNodeInModule(augment.getTargetPath(),
                 firstNodeParent);
         if (!potentialTargetNode.isPresent()) {
             return false;
@@ -607,8 +612,8 @@ public final class BuilderUtils {
         return true;
     }
 
-    public static IdentitySchemaNodeBuilder findBaseIdentity(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final ModuleBuilder module, final String baseString, final int line) {
+    public static IdentitySchemaNodeBuilder findBaseIdentity(final ModuleBuilder module, final String baseString,
+            final int line) {
 
         // FIXME: optimize indexOf() away?
         if (baseString.indexOf(':') != -1) {
@@ -754,6 +759,71 @@ public final class BuilderUtils {
         } else {
             return module.getImportedModule(prefix);
         }
+    }
+
+    public static ModuleBuilder findModule(final QName qname, final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
+        TreeMap<Date, ModuleBuilder> map = modules.get(qname.getNamespace());
+        if (map == null) {
+            return null;
+        }
+        if (qname.getRevision() == null) {
+            return map.lastEntry().getValue();
+        }
+        return map.get(qname.getRevision());
+    }
+
+    public static Map<String, TreeMap<Date, URI>> createYangNamespaceContext(
+            final Collection<? extends ParseTree> modules, final Optional<SchemaContext> context) {
+        Map<String, TreeMap<Date, URI>> map = new HashMap<>();
+        for (ParseTree module : modules) {
+            for (int i = 0; i < module.getChildCount(); i++) {
+                ParseTree moduleTree = module.getChild(i);
+                if (moduleTree instanceof Module_stmtContext) {
+                    Module_stmtContext moduleCtx = (Module_stmtContext) moduleTree;
+                    final String moduleName = ParserListenerUtils.stringFromNode(moduleCtx);
+                    Date rev = null;
+                    URI namespace = null;
+                    for (int j = 0; j < moduleCtx.getChildCount(); j++) {
+                        ParseTree moduleCtxChildTree = moduleCtx.getChild(j);
+                        if (moduleCtxChildTree instanceof Revision_stmtsContext) {
+                            String revisionDateStr = YangModelDependencyInfo
+                                    .getLatestRevision((Revision_stmtsContext) moduleCtxChildTree);
+                            rev = QName.parseRevision(revisionDateStr);
+                        }
+                        if (moduleCtxChildTree instanceof Module_header_stmtsContext) {
+                            Module_header_stmtsContext headerCtx = (Module_header_stmtsContext) moduleCtxChildTree;
+                            for (int k = 0; k < headerCtx.getChildCount(); k++) {
+                                ParseTree ctx = headerCtx.getChild(k);
+                                if (ctx instanceof Namespace_stmtContext) {
+                                    final String namespaceStr = ParserListenerUtils.stringFromNode(ctx);
+                                    namespace = URI.create(namespaceStr);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    TreeMap<Date, URI> revToNs = map.get(moduleName);
+                    if (revToNs == null) {
+                        revToNs = new TreeMap<>();
+                        revToNs.put(rev, namespace);
+                        map.put(moduleName, revToNs);
+                    }
+                    revToNs.put(rev, namespace);
+                }
+            }
+        }
+        if (context.isPresent()) {
+            for (Module module : context.get().getModules()) {
+                TreeMap<Date, URI> revToNs = map.get(module.getName());
+                if (revToNs == null) {
+                    revToNs = new TreeMap<>();
+                    revToNs.put(module.getRevision(), module.getNamespace());
+                    map.put(module.getName(), revToNs);
+                }
+                revToNs.put(module.getRevision(), module.getNamespace());
+            }
+        }
+        return map;
     }
 
 }

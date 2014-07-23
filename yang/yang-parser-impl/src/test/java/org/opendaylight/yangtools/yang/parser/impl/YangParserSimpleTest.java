@@ -60,7 +60,6 @@ public class YangParserSimpleTest {
         // test SchemaNode args
         QName qname = data.getQName();
         assertEquals("data", qname.getLocalName());
-        assertEquals(snPref, qname.getPrefix());
         assertEquals(snNS, qname.getNamespace());
         assertEquals(snRev, qname.getRevision());
         assertEquals("anyxml desc", data.getDescription());
@@ -160,8 +159,8 @@ public class YangParserSimpleTest {
         assertEquals(typedefQName, nodesType.getQName());
         SchemaPath nodesTypePath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "nodes-type");
         assertEquals(nodesTypePath, nodesType.getPath());
-        assertNull(nodesType.getDescription());
-        assertNull(nodesType.getReference());
+        assertTrue(nodesType.getDescription().isEmpty());
+        assertTrue(nodesType.getReference().isEmpty());
         assertEquals(Status.CURRENT, nodesType.getStatus());
         assertEquals(0, nodesType.getUnknownSchemaNodes().size());
 
