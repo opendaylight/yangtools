@@ -197,16 +197,16 @@ abstract class BaseTemplate {
 
         return '''
             «IF !type.isDocumentationParametersNullOrEmtpy»
+                «IF typeModuleName != null && !typeModuleName.empty»
+                Module name:
+                    «typeModuleName»
+               «ENDIF»
                «IF typeDescription != null && !typeDescription.empty»
                 «formatToParagraph(typeDescription)»
                «ENDIF»
                «IF typeReference != null && !typeReference.empty»
                 Reference:
                     «formatReference(typeReference)»
-               «ENDIF»
-               «IF typeModuleName != null && !typeModuleName.empty»
-                Module name:
-                    «typeModuleName»
                «ENDIF»
                «IF typeSchemaPath != null && !typeSchemaPath.empty»
                 Schema path:
