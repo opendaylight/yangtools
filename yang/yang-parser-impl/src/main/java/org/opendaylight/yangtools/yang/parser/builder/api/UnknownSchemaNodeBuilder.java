@@ -8,13 +8,16 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.PrefixedQName;
 
 public interface UnknownSchemaNodeBuilder extends SchemaNodeBuilder, DocumentedNodeBuilder {
 
-    @Override
-    SchemaPath getPath();
+    void setQName(QName qname);
+
+    PrefixedQName getPrefixedQName();
+
+    void setPrefixedQName(PrefixedQName prefixedQName);
 
     /**
      * Returns true if node was added via uses statement
@@ -85,5 +88,14 @@ public interface UnknownSchemaNodeBuilder extends SchemaNodeBuilder, DocumentedN
      * @param qName node type associated with this unknown schema node
      */
     void setNodeType(QName qName);
+
+    PrefixedQName getPrefixedNodeType();
+
+    void setPrefixeNodeType(PrefixedQName prefixedNodeType);
+
+    /**
+     * Transform prefixedQName to QName and build correct final SchemaPath.
+     */
+    void setResolved();
 
 }

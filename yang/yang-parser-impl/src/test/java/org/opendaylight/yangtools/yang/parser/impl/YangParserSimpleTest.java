@@ -60,7 +60,6 @@ public class YangParserSimpleTest {
         // test SchemaNode args
         QName qname = data.getQName();
         assertEquals("data", qname.getLocalName());
-        assertEquals(snPref, qname.getPrefix());
         assertEquals(snNS, qname.getNamespace());
         assertEquals(snRev, qname.getRevision());
         assertEquals("anyxml desc", data.getDescription());

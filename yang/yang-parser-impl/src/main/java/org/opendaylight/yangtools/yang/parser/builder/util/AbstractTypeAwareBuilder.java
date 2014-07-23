@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.builder.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.PrefixedQName;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 
@@ -19,6 +20,8 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
     protected QName qname;
     protected TypeDefinition<?> type;
     protected TypeDefinitionBuilder typedef;
+
+    private PrefixedQName baseTypeName;
 
     protected AbstractTypeAwareBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line);
@@ -50,6 +53,16 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
     public void setTypedef(TypeDefinitionBuilder typedef) {
         this.typedef = typedef;
         this.type = null;
+    }
+
+    @Override
+    public PrefixedQName getBaseTypeQName() {
+        return baseTypeName;
+    }
+
+    @Override
+    public void setBaseTypeQName(PrefixedQName qname) {
+        this.baseTypeName = qname;
     }
 
 }
