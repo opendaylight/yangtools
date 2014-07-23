@@ -8,21 +8,45 @@
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.parser.builder.api.DocumentedNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 
 /**
  * Basic implementation for TypeAwareBuilder builders.
  */
-public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implements TypeAwareBuilder {
+public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implements TypeAwareBuilder, DocumentedNodeBuilder {
     protected QName qname;
     protected TypeDefinition<?> type;
     protected TypeDefinitionBuilder typedef;
+    protected String description;
+    protected String reference;
+    protected Status status = Status.CURRENT;
+    protected boolean augmenting;
+    protected boolean addedByUses;
+    protected boolean configuration;
 
     protected AbstractTypeAwareBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line);
         this.qname = qname;
+    }
+
+    protected AbstractTypeAwareBuilder(final String moduleName, final int line, final QName qname,
+            final SchemaPath path, final DataSchemaNode base) {
+        super(moduleName, line);
+
+        this.qname = qname;
+        this.description = base.getDescription();
+        this.reference = base.getReference();
+        this.status = base.getStatus();
+        this.augmenting = base.isAugmenting();
+        this.addedByUses = base.isAddedByUses();
+        this.configuration = base.isConfiguration();
+        unknownNodes.addAll(base.getUnknownSchemaNodes());
     }
 
     @Override
@@ -52,4 +76,33 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
         this.type = null;
     }
 
+    @Override
+    public String getDescription() {
+        return this.description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String getReference() {
+        return this.reference;
+    }
+
+    @Override
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    @Override
+    public Status getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

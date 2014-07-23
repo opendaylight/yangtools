@@ -30,18 +30,11 @@ import com.google.common.collect.ImmutableList;
 public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder {
     private LeafListSchemaNodeImpl instance;
     private boolean userOrdered;
-    // SchemaNode args
-    private SchemaPath schemaPath;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
-    // DataSchemaNode args
-    private boolean augmenting;
-    private boolean addedByUses;
+
     private LeafListSchemaNode originalNode;
     private LeafListSchemaNodeBuilder originalBuilder;
-    private boolean configuration;
     private final ConstraintsBuilder constraints;
+    private SchemaPath schemaPath;
 
     public LeafListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
         super(moduleName, line, qname);
@@ -51,20 +44,12 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
 
     public LeafListSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
             final LeafListSchemaNode base) {
-        super(moduleName, line, qname);
+        super(moduleName, line, qname, path, base);
         this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
         constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
-
-        description = base.getDescription();
-        reference = base.getReference();
-        status = base.getStatus();
-        augmenting = base.isAugmenting();
-        addedByUses = base.isAddedByUses();
         originalNode = base;
-        configuration = base.isConfiguration();
         this.type = base.getType();
         userOrdered = base.isUserOrdered();
-        unknownNodes.addAll(base.getUnknownSchemaNodes());
     }
 
     @Override
@@ -113,11 +98,6 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
     @Override
     public void setPath(final SchemaPath path) {
         this.schemaPath = path;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
     }
 
     @Override

@@ -32,18 +32,10 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     private LeafSchemaNodeImpl instance;
     private String defaultStr;
     private String unitsStr;
-    // SchemaNode args
-    private SchemaPath schemaPath;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
-    // DataSchemaNode args
-    private boolean augmenting;
-    private boolean addedByUses;
     private LeafSchemaNode originalNode;
     private LeafSchemaNodeBuilder originalBuilder;
-    private boolean configuration;
     private final ConstraintsBuilder constraints;
+    private SchemaPath schemaPath;
 
     public LeafSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath schemaPath) {
         super(moduleName, line, qname);
@@ -52,20 +44,10 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     }
 
     public LeafSchemaNodeBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path, final LeafSchemaNode base) {
-        super(moduleName, line, qname);
-        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
+        super(moduleName, line, qname, path, base);
         constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
-
-        description = base.getDescription();
-        reference = base.getReference();
-        status = base.getStatus();
-        augmenting = base.isAugmenting();
-        addedByUses = base.isAddedByUses();
-        originalNode =base;
-        configuration = base.isConfiguration();
+        originalNode = base;
         this.type = base.getType();
-        unknownNodes.addAll(base.getUnknownSchemaNodes());
-
         defaultStr = base.getDefault();
         unitsStr = base.getUnits();
     }
