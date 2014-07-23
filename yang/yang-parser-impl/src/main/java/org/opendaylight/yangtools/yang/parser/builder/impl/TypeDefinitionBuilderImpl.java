@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +75,8 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
             type = typedef.build();
         }
 
-        typeBuilder = new ExtendedType.Builder(qname, type, description, reference, schemaPath);
+        typeBuilder = ExtendedType.builder(qname, type, Optional.fromNullable(description),
+                Optional.fromNullable(reference), schemaPath);
         typeBuilder.status(status);
         typeBuilder.units(units);
         typeBuilder.defaultValue(defaultValue);

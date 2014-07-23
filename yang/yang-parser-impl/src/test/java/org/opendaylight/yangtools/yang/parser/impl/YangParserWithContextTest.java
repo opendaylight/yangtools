@@ -73,14 +73,12 @@ public class YangParserWithContextTest {
         QName qname = leafType.getQName();
         assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
         assertEquals(simpleDateFormat.parse("2013-06-18"), qname.getRevision());
-        assertEquals("t1", qname.getPrefix());
         assertEquals("port-number", qname.getLocalName());
 
         ExtendedType leafBaseType = (ExtendedType) leafType.getBaseType();
         qname = leafBaseType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
         assertEquals(simpleDateFormat.parse("2010-09-24"), qname.getRevision());
-        assertEquals("inet", qname.getPrefix());
         assertEquals("port-number", qname.getLocalName());
 
         ExtendedType dscpExt = (ExtendedType) TestUtils.findTypedef(module.getTypeDefinitions(), "dscp-ext");
@@ -294,14 +292,12 @@ public class YangParserWithContextTest {
         QName idQName = identity.getQName();
         assertEquals(URI.create("urn:simple.demo.test3"), idQName.getNamespace());
         assertEquals(simpleDateFormat.parse("2013-06-18"), idQName.getRevision());
-        assertEquals("t3", idQName.getPrefix());
         assertEquals("pt", idQName.getLocalName());
 
         IdentitySchemaNode baseIdentity = identity.getBaseIdentity();
         QName idBaseQName = baseIdentity.getQName();
         assertEquals(URI.create("urn:custom.types.demo"), idBaseQName.getNamespace());
         assertEquals(simpleDateFormat.parse("2012-04-16"), idBaseQName.getRevision());
-        assertEquals("iit", idBaseQName.getPrefix());
         assertEquals("service-type", idBaseQName.getLocalName());
     }
 
@@ -327,7 +323,6 @@ public class YangParserWithContextTest {
         QName unType = un.getNodeType();
         assertEquals(URI.create("urn:custom.types.demo"), unType.getNamespace());
         assertEquals(simpleDateFormat.parse("2012-04-16"), unType.getRevision());
-        assertEquals("custom", unType.getPrefix());
         assertEquals("mountpoint", unType.getLocalName());
         assertEquals("point", un.getNodeParameter());
         assertNotNull(un.getExtensionDefinition());
