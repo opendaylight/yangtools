@@ -176,7 +176,6 @@ public class YangParserTest {
         ExtendedType leafType = (ExtendedType) int32Leaf.getType();
         QName leafTypeQName = leafType.getQName();
         assertEquals("int32-ext2", leafTypeQName.getLocalName());
-        assertEquals("foo", leafTypeQName.getPrefix());
         assertEquals(fooNS, leafTypeQName.getNamespace());
         assertEquals(fooRev, leafTypeQName.getRevision());
         assertNull(leafType.getUnits());
@@ -192,7 +191,6 @@ public class YangParserTest {
         ExtendedType baseType = (ExtendedType) leafType.getBaseType();
         QName baseTypeQName = baseType.getQName();
         assertEquals("int32-ext2", baseTypeQName.getLocalName());
-        assertEquals("bar", baseTypeQName.getPrefix());
         assertEquals(barNS, baseTypeQName.getNamespace());
         assertEquals(barRev, baseTypeQName.getRevision());
         assertEquals("mile", baseType.getUnits());
@@ -211,7 +209,6 @@ public class YangParserTest {
         ExtendedType base = (ExtendedType) baseType.getBaseType();
         QName baseQName = base.getQName();
         assertEquals("int32-ext1", baseQName.getLocalName());
-        assertEquals("bar", baseQName.getPrefix());
         assertEquals(barNS, baseQName.getNamespace());
         assertEquals(barRev, baseQName.getRevision());
         assertNull(base.getUnits());
@@ -235,7 +232,6 @@ public class YangParserTest {
         ExtendedType type = (ExtendedType) stringleaf.getType();
         QName typeQName = type.getQName();
         assertEquals("string-ext4", typeQName.getLocalName());
-        assertEquals("bar", typeQName.getPrefix());
         assertEquals(barNS, typeQName.getNamespace());
         assertEquals(barRev, typeQName.getRevision());
         assertNull(type.getUnits());
@@ -250,7 +246,6 @@ public class YangParserTest {
         ExtendedType baseType1 = (ExtendedType) type.getBaseType();
         QName baseType1QName = baseType1.getQName();
         assertEquals("string-ext3", baseType1QName.getLocalName());
-        assertEquals("bar", baseType1QName.getPrefix());
         assertEquals(barNS, baseType1QName.getNamespace());
         assertEquals(barRev, baseType1QName.getRevision());
         assertNull(baseType1.getUnits());
@@ -265,7 +260,6 @@ public class YangParserTest {
         ExtendedType baseType2 = (ExtendedType) baseType1.getBaseType();
         QName baseType2QName = baseType2.getQName();
         assertEquals("string-ext2", baseType2QName.getLocalName());
-        assertEquals("bar", baseType2QName.getPrefix());
         assertEquals(barNS, baseType2QName.getNamespace());
         assertEquals(barRev, baseType2QName.getRevision());
         assertNull(baseType2.getUnits());
@@ -281,7 +275,6 @@ public class YangParserTest {
         ExtendedType baseType3 = (ExtendedType) baseType2.getBaseType();
         QName baseType3QName = baseType3.getQName();
         assertEquals("string-ext1", baseType3QName.getLocalName());
-        assertEquals("bar", baseType3QName.getPrefix());
         assertEquals(barNS, baseType3QName.getNamespace());
         assertEquals(barRev, baseType3QName.getRevision());
         assertNull(baseType3.getUnits());
@@ -309,7 +302,6 @@ public class YangParserTest {
 
         QName typeQName = type.getQName();
         assertEquals("string-ext2", typeQName.getLocalName());
-        assertEquals("foo", typeQName.getPrefix());
         assertEquals(fooNS, typeQName.getNamespace());
         assertEquals(fooRev, typeQName.getRevision());
         assertNull(type.getUnits());
@@ -325,7 +317,6 @@ public class YangParserTest {
         ExtendedType baseType1 = (ExtendedType) type.getBaseType();
         QName baseType1QName = baseType1.getQName();
         assertEquals("string-ext2", baseType1QName.getLocalName());
-        assertEquals("bar", baseType1QName.getPrefix());
         assertEquals(barNS, baseType1QName.getNamespace());
         assertEquals(barRev, baseType1QName.getRevision());
         assertNull(baseType1.getUnits());
@@ -341,7 +332,6 @@ public class YangParserTest {
         ExtendedType baseType2 = (ExtendedType) baseType1.getBaseType();
         QName baseType2QName = baseType2.getQName();
         assertEquals("string-ext1", baseType2QName.getLocalName());
-        assertEquals("bar", baseType2QName.getPrefix());
         assertEquals(barNS, baseType2QName.getNamespace());
         assertEquals(barRev, baseType2QName.getRevision());
         assertNull(baseType2.getUnits());
@@ -368,7 +358,6 @@ public class YangParserTest {
         ExtendedType type = (ExtendedType) testleaf.getType();
         QName typeQName = type.getQName();
         assertEquals("my-decimal-type", typeQName.getLocalName());
-        assertEquals("foo", typeQName.getPrefix());
         assertEquals(fooNS, typeQName.getNamespace());
         assertEquals(fooRev, typeQName.getRevision());
         assertNull(type.getUnits());
@@ -381,7 +370,6 @@ public class YangParserTest {
         ExtendedType typeBase = (ExtendedType) type.getBaseType();
         QName typeBaseQName = typeBase.getQName();
         assertEquals("my-decimal-type", typeBaseQName.getLocalName());
-        assertEquals("bar", typeBaseQName.getPrefix());
         assertEquals(barNS, typeBaseQName.getNamespace());
         assertEquals(barRev, typeBaseQName.getRevision());
         assertNull(typeBase.getUnits());
@@ -403,7 +391,6 @@ public class YangParserTest {
         ExtendedType type = (ExtendedType) testleaf.getType();
         QName typeQName = type.getQName();
         assertEquals("my-decimal-type", typeQName.getLocalName());
-        assertEquals("bar", typeQName.getPrefix());
         assertEquals(barNS, typeQName.getNamespace());
         assertEquals(barRev, typeQName.getRevision());
         assertNull(type.getUnits());
@@ -425,7 +412,6 @@ public class YangParserTest {
         ExtendedType type = (ExtendedType) unionleaf.getType();
         QName typeQName = type.getQName();
         assertEquals("my-union-ext", typeQName.getLocalName());
-        assertEquals("bar", typeQName.getPrefix());
         assertEquals(barNS, typeQName.getNamespace());
         assertEquals(barRev, typeQName.getRevision());
         assertNull(type.getUnits());
@@ -438,7 +424,6 @@ public class YangParserTest {
         ExtendedType baseType = (ExtendedType) type.getBaseType();
         QName baseTypeQName = baseType.getQName();
         assertEquals("my-union", baseTypeQName.getLocalName());
-        assertEquals("bar", baseTypeQName.getPrefix());
         assertEquals(barNS, baseTypeQName.getNamespace());
         assertEquals(barRev, baseTypeQName.getRevision());
         assertNull(baseType.getUnits());
@@ -455,7 +440,6 @@ public class YangParserTest {
         ExtendedType unionType1 = (ExtendedType) unionTypes.get(0);
         QName unionType1QName = baseType.getQName();
         assertEquals("my-union", unionType1QName.getLocalName());
-        assertEquals("bar", unionType1QName.getPrefix());
         assertEquals(barNS, unionType1QName.getNamespace());
         assertEquals(barRev, unionType1QName.getRevision());
         assertNull(unionType1.getUnits());
@@ -482,7 +466,6 @@ public class YangParserTest {
         QName testleafTypeQName = type.getQName();
         assertEquals(bazNS, testleafTypeQName.getNamespace());
         assertEquals(bazRev, testleafTypeQName.getRevision());
-        assertEquals("baz", testleafTypeQName.getPrefix());
         assertEquals("union1", testleafTypeQName.getLocalName());
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
@@ -495,7 +478,6 @@ public class YangParserTest {
         QName typeBaseQName = typeBase.getQName();
         assertEquals(bazNS, typeBaseQName.getNamespace());
         assertEquals(bazRev, typeBaseQName.getRevision());
-        assertEquals("baz", typeBaseQName.getPrefix());
         assertEquals("union2", typeBaseQName.getLocalName());
         assertNull(typeBase.getUnits());
         assertNull(typeBase.getDefaultValue());
@@ -514,7 +496,6 @@ public class YangParserTest {
         QName uniontType1QName = unionType1.getQName();
         assertEquals(barNS, uniontType1QName.getNamespace());
         assertEquals(barRev, uniontType1QName.getRevision());
-        assertEquals("bar", uniontType1QName.getPrefix());
         assertEquals("nested-union2", uniontType1QName.getLocalName());
         assertNull(unionType1.getUnits());
         assertNull(unionType1.getDefaultValue());
@@ -533,7 +514,6 @@ public class YangParserTest {
         QName myUnionExtQName = myUnionExt.getQName();
         assertEquals(barNS, myUnionExtQName.getNamespace());
         assertEquals(barRev, myUnionExtQName.getRevision());
-        assertEquals("bar", myUnionExtQName.getPrefix());
         assertEquals("my-union-ext", myUnionExtQName.getLocalName());
         assertNull(myUnionExt.getUnits());
         assertNull(myUnionExt.getDefaultValue());
@@ -546,7 +526,6 @@ public class YangParserTest {
         QName myUnionQName = myUnion.getQName();
         assertEquals(barNS, myUnionQName.getNamespace());
         assertEquals(barRev, myUnionQName.getRevision());
-        assertEquals("bar", myUnionQName.getPrefix());
         assertEquals("my-union", myUnionQName.getLocalName());
         assertNull(myUnion.getUnits());
         assertNull(myUnion.getDefaultValue());
@@ -565,7 +544,6 @@ public class YangParserTest {
         QName int16ExtQName = int16Ext.getQName();
         assertEquals(barNS, int16ExtQName.getNamespace());
         assertEquals(barRev, int16ExtQName.getRevision());
-        assertEquals("bar", int16ExtQName.getPrefix());
         assertEquals("int16", int16ExtQName.getLocalName());
         assertNull(int16Ext.getUnits());
         assertNull(int16Ext.getDefaultValue());
@@ -703,7 +681,6 @@ public class YangParserTest {
 
         assertEquals(barNS, int32TypedefQName.getNamespace());
         assertEquals(barRev, int32TypedefQName.getRevision());
-        assertEquals("bar", int32TypedefQName.getPrefix());
         assertEquals("int32-ext1", int32TypedefQName.getLocalName());
 
         SchemaPath typeSchemaPath = int32ext1.getPath();
@@ -728,7 +705,6 @@ public class YangParserTest {
 
         assertEquals(barNS, myDecTypeQName.getNamespace());
         assertEquals(barRev, myDecTypeQName.getRevision());
-        assertEquals("bar", myDecTypeQName.getPrefix());
         assertEquals("my-decimal-type", myDecTypeQName.getLocalName());
 
         SchemaPath typeSchemaPath = myDecType.getPath();
@@ -743,7 +719,6 @@ public class YangParserTest {
 
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:1"), dec64QName.getNamespace());
         assertNull(dec64QName.getRevision());
-        assertEquals("", dec64QName.getPrefix());
         assertEquals("decimal64", dec64QName.getLocalName());
 
         SchemaPath dec64SchemaPath = dec64.getPath();

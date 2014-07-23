@@ -19,33 +19,25 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class DeviationBuilder extends AbstractBuilder {
     private DeviationImpl instance;
-    private final String targetPathStr;
-    private SchemaPath targetPath;
+    private final SchemaPath targetPath;
     private Deviate deviate;
     private String reference;
 
-    DeviationBuilder(final String moduleName, final int line, final String targetPathStr) {
+    DeviationBuilder(final String moduleName, final int line, final SchemaPath targetPath) {
         super(moduleName, line);
-        if (!targetPathStr.startsWith("/")) {
-            throw new YangParseException(moduleName, line,
-                    "Deviation argument string must be an absolute schema node identifier.");
-        }
-        this.targetPathStr = targetPathStr;
-        this.targetPath = BuilderUtils.parseXPathString(targetPathStr);
+        this.targetPath = targetPath;
     }
 
     @Override
     public Deviation build() {
+        if (instance != null) {
+            return instance;
+        }
         if (targetPath == null) {
             throw new YangParseException(getModuleName(), getLine(), "Unresolved deviation target");
         }
 
-        if (instance != null) {
-            return instance;
-        }
-
-        instance = new DeviationImpl();
-        instance.targetPath = targetPath;
+        instance = new DeviationImpl(targetPath);
         instance.deviate = deviate;
         instance.reference = reference;
 
@@ -60,10 +52,6 @@ public final class DeviationBuilder extends AbstractBuilder {
 
     public SchemaPath getTargetPath() {
         return targetPath;
-    }
-
-    public void setTargetPath(final SchemaPath targetPath) {
-        this.targetPath = targetPath;
     }
 
     public void setDeviate(final String deviate) {
@@ -86,16 +74,17 @@ public final class DeviationBuilder extends AbstractBuilder {
 
     @Override
     public String toString() {
-        return "deviation " + targetPathStr;
+        return "deviation " + targetPath;
     }
 
     private static final class DeviationImpl implements Deviation {
-        private SchemaPath targetPath;
+        private final SchemaPath targetPath;
         private Deviate deviate;
         private String reference;
         private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-        private DeviationImpl() {
+        private DeviationImpl(final SchemaPath targetPath) {
+            this.targetPath = targetPath;
         }
 
         @Override

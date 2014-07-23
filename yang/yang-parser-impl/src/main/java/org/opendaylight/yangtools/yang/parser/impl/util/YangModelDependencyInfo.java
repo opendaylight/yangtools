@@ -11,11 +11,9 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.ge
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
-
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Import_stmtContext;
@@ -218,7 +216,7 @@ public abstract class YangModelDependencyInfo {
         return builder.build();
     }
 
-    private static String getLatestRevision(final Revision_stmtsContext revision_stmts) {
+    public static String getLatestRevision(final Revision_stmtsContext revision_stmts) {
         List<Revision_stmtContext> revisions = revision_stmts.getRuleContexts(Revision_stmtContext.class);
         String latestRevision = null;
         for (Revision_stmtContext revisionStmt : revisions) {

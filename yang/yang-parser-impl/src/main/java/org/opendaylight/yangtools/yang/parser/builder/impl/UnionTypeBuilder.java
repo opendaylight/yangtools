@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -40,10 +39,21 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     private UnionType instance;
     private boolean isBuilt;
 
+    private List<QName> baseTypesQNames = new ArrayList<>();
+
     public UnionTypeBuilder(final String moduleName, final int line) {
         super(moduleName, line, BaseTypes.UNION_QNAME);
         types = new ArrayList<>();
         typedefs = new ArrayList<>();
+    }
+
+    public List<QName> getBaseTypeQNames() {
+        return baseTypesQNames;
+    }
+
+    @Override
+    public void setTypeQName(final QName qname) {
+        baseTypesQNames.add(qname);
     }
 
     public List<TypeDefinition<?>> getTypes() {

@@ -60,21 +60,6 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder,Docu
      */
     SchemaPath getTargetPath();
 
-    /**
-     * Get schema path of target node.
-     *
-     * @return SchemaPath of target node
-     */
-    SchemaPath getTargetNodeSchemaPath();
-
-    /**
-     * Set schema path of target node.
-     *
-     * @param path
-     *            SchemaPath of target node
-     */
-    void setTargetNodeSchemaPath(SchemaPath path);
-
     @Override
     AugmentationSchema build();
 

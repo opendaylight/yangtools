@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Splitter;
+import java.net.URI;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -23,45 +25,9 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class GroupingUtils {
-    private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/');
 
     private GroupingUtils() {
-    }
-
-    /**
-     * Common string splitter. Given a string representation of a grouping's
-     * name, it creates a prefix/name pair and returns it.
-     *
-     * @param groupingString
-     *            Grouping string reference
-     * @param module
-     *            Module which we are processing
-     * @param line
-     *            Module line which we are processing
-     * @return An array of two strings, first one is the module prefix, the
-     *         second is the grouping name.
-     */
-    private static String[] getPrefixAndName(final String groupingString, final ModuleBuilder module, final int line) {
-        final String[] ret = new String[2];
-
-        if (groupingString.indexOf(':') != -1) {
-            if (groupingString.indexOf('/') != -1) {
-                throw new YangParseException(module.getName(), line, "Invalid name of target grouping");
-            }
-
-            final Iterator<String> split = COLON_SPLITTER.split(groupingString).iterator();
-            ret[0] = split.next();
-            ret[1] = split.next();
-            if (split.hasNext()) {
-                throw new YangParseException(module.getName(), line, "Invalid name of target grouping");
-            }
-        } else {
-            ret[0] = module.getPrefix();
-            ret[1] = groupingString;
-        }
-
-        return ret;
     }
 
     /**
@@ -76,28 +42,15 @@ public final class GroupingUtils {
      * @return grouping with given name if found, null otherwise
      */
     public static GroupingBuilder getTargetGroupingFromModules(final UsesNodeBuilder usesBuilder,
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
+            final Map<URI, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         final int line = usesBuilder.getLine();
 
-        final String[] split = getPrefixAndName(usesBuilder.getGroupingPathAsString(), module, line);
-        final String groupingPrefix = split[0];
-        final String groupingName = split[1];
-        final ModuleBuilder dependentModule;
-
-        if (groupingPrefix == null) {
-            dependentModule = module;
-        } else if (groupingPrefix.equals(module.getPrefix())) {
-            dependentModule = module;
-        } else {
-            dependentModule = BuilderUtils.findModuleFromBuilders(modules, module, groupingPrefix, line);
-        }
-
-        if (dependentModule == null) {
-            return null;
-        }
+        SchemaPath groupingPath = usesBuilder.getTargetGroupingPath();
+        QName groupingName = groupingPath.getPathFromRoot().iterator().next();
+        ModuleBuilder dependentModule = BuilderUtils.findModule(groupingName, modules);
 
         Set<GroupingBuilder> groupings = dependentModule.getGroupingBuilders();
-        GroupingBuilder result = findGroupingBuilder(groupings, groupingName);
+        GroupingBuilder result = findGroupingBuilder(groupings, groupingName.getLocalName());
         if (result != null) {
             return result;
         }
@@ -109,7 +62,7 @@ public final class GroupingUtils {
             } else if (parent instanceof RpcDefinitionBuilder) {
                 groupings = ((RpcDefinitionBuilder) parent).getGroupings();
             }
-            result = findGroupingBuilder(groupings, groupingName);
+            result = findGroupingBuilder(groupings, groupingName.getLocalName());
             if (result == null) {
                 parent = parent.getParent();
             } else {

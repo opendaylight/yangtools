@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.fillAugmentTarget;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findBaseIdentity;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromBuilders;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromContext;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNode;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNodeInModule;
@@ -22,10 +21,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,9 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.annotation.concurrent.Immutable;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -72,7 +69,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentityrefTypeBuilder;
@@ -91,7 +87,6 @@ import org.slf4j.LoggerFactory;
 @Immutable
 public final class YangParserImpl implements YangContextParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
-    private static final String FAIL_DEVIATION_TARGET = "Failed to find deviation target.";
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final YangParserImpl INSTANCE = new YangParserImpl();
 
@@ -132,7 +127,7 @@ public final class YangParserImpl implements YangContextParser {
             }
         }
 
-        Map<ByteSource, ModuleBuilder> sourceToBuilder = parseSourcesToBuilders(sourceToFile.keySet());
+        Map<ByteSource, ModuleBuilder> sourceToBuilder = parseSourcesToBuilders(sourceToFile.keySet(), null);
         ModuleBuilder main = sourceToBuilder.get(mainFileSource);
 
         List<ModuleBuilder> moduleBuilders = new ArrayList<>();
@@ -142,7 +137,7 @@ public final class YangParserImpl implements YangContextParser {
 
         // module builders sorted by dependencies
         List<ModuleBuilder> sortedBuilders = ModuleDependencySort.sort(resolved);
-        LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sortedBuilders, null);
+        LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sortedBuilders, null);
         Collection<Module> unsorted = build(modules).values();
         Set<Module> result = new LinkedHashSet<>(
                 ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
@@ -197,7 +192,7 @@ public final class YangParserImpl implements YangContextParser {
 
     @Override
     public SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException,YangSyntaxErrorException {
-        return assembleContext(parseYangModelSources(sources).values());
+        return assembleContext(parseYangModelSources(sources, null).values());
     }
 
     @Override
@@ -219,7 +214,7 @@ public final class YangParserImpl implements YangContextParser {
         }
 
         final List<ModuleBuilder> sorted = resolveModuleBuilders(sources, context);
-        final Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sorted, context);
+        final Map<URI, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sorted, context);
 
         final Set<Module> unsorted = new LinkedHashSet<>(build(modules).values());
         if (context != null) {
@@ -234,14 +229,14 @@ public final class YangParserImpl implements YangContextParser {
         return resolveSchemaContext(result);
     }
 
-    private static LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> resolveModulesWithImports(final List<ModuleBuilder> sorted,
+    private static LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> resolveModulesWithImports(final List<ModuleBuilder> sorted,
             final SchemaContext context) {
-        final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
+        final LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
         for (ModuleBuilder module : sorted) {
             if (module != null) {
                 for (ModuleImport imp : module.getImports().values()) {
                     String prefix = imp.getPrefix();
-                    ModuleBuilder targetModule = findModuleFromBuilders(modules, module, prefix, 0);
+                    ModuleBuilder targetModule = BuilderUtils.findModuleFromBuilders(imp, sorted);
                     if (targetModule == null) {
                         Module result = findModuleFromContext(context, module, prefix, 0);
                         targetModule = new ModuleBuilder(result);
@@ -249,7 +244,7 @@ public final class YangParserImpl implements YangContextParser {
                         if (map == null) {
                             map = new TreeMap<>();
                             map.put(targetModule.getRevision(), targetModule);
-                            modules.put(targetModule.getName(), map);
+                            modules.put(targetModule.getNamespace(), map);
                         } else {
                             map.put(targetModule.getRevision(), targetModule);
                         }
@@ -280,7 +275,7 @@ public final class YangParserImpl implements YangContextParser {
 
         Map<ByteSource, Module> byteSourceToModule;
         try {
-            byteSourceToModule = parseYangModelSources(byteSourceToFile.keySet());
+            byteSourceToModule = parseYangModelSources(byteSourceToFile.keySet(), null);
         } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
         }
@@ -310,7 +305,7 @@ public final class YangParserImpl implements YangContextParser {
 
         Map<ByteSource, Module> sourceToModule;
         try {
-            sourceToModule = parseYangModelSources(sourceToStream.keySet());
+            sourceToModule = parseYangModelSources(sourceToStream.keySet(), null);
         } catch (IOException | YangSyntaxErrorException e) {
             throw new YangParseException("Failed to parse yang data", e);
         }
@@ -335,7 +330,7 @@ public final class YangParserImpl implements YangContextParser {
 
     public Collection<Module> buildModules(final Collection<ModuleBuilder> builders) {
         List<ModuleBuilder> sorted = ModuleDependencySort.sort(builders);
-        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sorted, null);
+        Map<URI, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sorted, null);
         Map<ModuleBuilder, Module> builderToModule = build(modules);
 
         return builderToModule.values();
@@ -347,15 +342,15 @@ public final class YangParserImpl implements YangContextParser {
         return resolveSchemaContext(sorted);
     }
 
-    private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
+    private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources, final SchemaContext context) throws IOException, YangSyntaxErrorException {
         if (sources == null || sources.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        Map<ByteSource, ModuleBuilder> sourceToBuilder = resolveSources(sources);
+        Map<ByteSource, ModuleBuilder> sourceToBuilder = resolveSources(sources, context);
         // sort and check for duplicates
         List<ModuleBuilder> sorted = ModuleDependencySort.sort(sourceToBuilder.values());
-        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sorted, null);
+        Map<URI, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sorted, null);
         Map<ModuleBuilder, Module> builderToModule = build(modules);
         Map<ModuleBuilder, ByteSource> builderToSource = HashBiMap.create(sourceToBuilder).inverse();
         sorted = ModuleDependencySort.sort(builderToModule.keySet());
@@ -379,13 +374,13 @@ public final class YangParserImpl implements YangContextParser {
      * @throws YangSyntaxErrorException
      */
     // TODO: remove ByteSource result after removing YangModelParser
-    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams) throws IOException, YangSyntaxErrorException {
-        Map<ByteSource, ModuleBuilder> builders = parseSourcesToBuilders(streams);
+    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams, final SchemaContext context) throws IOException, YangSyntaxErrorException {
+        Map<ByteSource, ModuleBuilder> builders = parseSourcesToBuilders(streams, context);
         return resolveSubmodules(builders);
     }
 
-    private Map<ByteSource, ModuleBuilder> parseSourcesToBuilders(final Collection<ByteSource> sources)
-            throws IOException, YangSyntaxErrorException {
+    private Map<ByteSource, ModuleBuilder> parseSourcesToBuilders(final Collection<ByteSource> sources,
+            final SchemaContext context) throws IOException, YangSyntaxErrorException {
         final ParseTreeWalker walker = new ParseTreeWalker();
         final Map<ByteSource, ParseTree> sourceToTree = parseYangSources(sources);
         final Map<ByteSource, ModuleBuilder> sourceToBuilder = new LinkedHashMap<>();
@@ -393,6 +388,8 @@ public final class YangParserImpl implements YangContextParser {
         // validate yang
         new YangModelBasicValidator(walker).validate(sourceToTree.values());
 
+        Map<String, TreeMap<Date, URI>> namespaceContext = BuilderUtils.createYangNamespaceContext(
+                sourceToTree.values(), Optional.fromNullable(context));
         YangParserListenerImpl yangModelParser;
         for (Map.Entry<ByteSource, ParseTree> entry : sourceToTree.entrySet()) {
             ByteSource source = entry.getKey();
@@ -404,7 +401,7 @@ public final class YangParserImpl implements YangContextParser {
                     path = stream.toString();
                 }
             }
-            yangModelParser = new YangParserListenerImpl(path);
+            yangModelParser = new YangParserListenerImpl(namespaceContext, path);
             walker.walk(yangModelParser, entry.getValue());
             ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
             moduleBuilder.setSource(source);
@@ -500,7 +497,7 @@ public final class YangParserImpl implements YangContextParser {
 
     private List<ModuleBuilder> resolveModuleBuilders(final Collection<ByteSource> yangFileStreams,
             final SchemaContext context) throws IOException, YangSyntaxErrorException {
-        Map<ByteSource, ModuleBuilder> parsedBuilders = resolveSources(yangFileStreams);
+        Map<ByteSource, ModuleBuilder> parsedBuilders = resolveSources(yangFileStreams, context);
         ModuleBuilder[] builders = new ModuleBuilder[parsedBuilders.size()];
         parsedBuilders.values().toArray(builders);
 
@@ -515,31 +512,34 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     /**
-     * Order modules by name and revision.
+     * Order modules by namespace and revision.
      *
      * @param modules
      *            topologically sorted modules
-     * @return modules ordered by name and revision
+     * @return modules ordered by namespace and revision
      */
-    private static LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(final List<ModuleBuilder> modules) {
-        final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
+    private static LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> orderModules(final List<ModuleBuilder> modules) {
+        final LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
         for (final ModuleBuilder builder : modules) {
             if (builder == null) {
                 continue;
             }
-            final String builderName = builder.getName();
-            Date builderRevision = builder.getRevision();
-            if (builderRevision == null) {
-                builderRevision = new Date(0L);
+
+            URI ns = builder.getNamespace();
+            Date rev = builder.getRevision();
+            if (rev == null) {
+                rev = new Date(0);
             }
-            TreeMap<Date, ModuleBuilder> builderByRevision = result.get(builderName);
+
+            TreeMap<Date, ModuleBuilder> builderByRevision = result.get(ns);
             if (builderByRevision == null) {
                 builderByRevision = new TreeMap<>();
-                builderByRevision.put(builderRevision, builder);
-                result.put(builderName, builderByRevision);
+                builderByRevision.put(rev, builder);
+                result.put(ns, builderByRevision);
             } else {
-                builderByRevision.put(builderRevision, builder);
+                builderByRevision.put(rev, builder);
             }
+
         }
         return result;
     }
@@ -660,7 +660,7 @@ public final class YangParserImpl implements YangContextParser {
      *            all loaded modules
      * @return modules mapped on their builders
      */
-    private Map<ModuleBuilder, Module> build(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+    private Map<ModuleBuilder, Module> build(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         resolveDirtyNodes(modules);
         resolveAugmentsTargetPath(modules);
         resolveUsesTargetGrouping(modules);
@@ -668,11 +668,10 @@ public final class YangParserImpl implements YangContextParser {
         resolveUsesForNodes(modules);
         resolveAugments(modules);
         resolveIdentities(modules);
-        resolveDeviations(modules);
 
         // build
         final Map<ModuleBuilder, Module> result = new LinkedHashMap<>();
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder moduleBuilder = childEntry.getValue();
                 final Module module = moduleBuilder.build();
@@ -688,8 +687,8 @@ public final class YangParserImpl implements YangContextParser {
      * @param modules
      *            all loaded modules
      */
-    private void resolveDirtyNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+    private void resolveDirtyNodes(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder module = childEntry.getValue();
                 resolveUnknownNodes(modules, module);
@@ -707,7 +706,7 @@ public final class YangParserImpl implements YangContextParser {
      * @param module
      *            current module
      */
-    private void resolveDirtyNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
+    private void resolveDirtyNodes(final Map<URI, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         final Set<TypeAwareBuilder> dirtyNodes = module.getDirtyNodes();
         if (!dirtyNodes.isEmpty()) {
             for (TypeAwareBuilder nodeToResolve : dirtyNodes) {
@@ -717,7 +716,7 @@ public final class YangParserImpl implements YangContextParser {
                 } else if (nodeToResolve.getTypedef() instanceof IdentityrefTypeBuilder) {
                     // special handling for identityref types
                     IdentityrefTypeBuilder idref = (IdentityrefTypeBuilder) nodeToResolve.getTypedef();
-                    IdentitySchemaNodeBuilder identity = findBaseIdentity(modules, module, idref.getBaseString(),
+                    IdentitySchemaNodeBuilder identity = findBaseIdentity(module, idref.getBaseString(),
                             idref.getLine());
                     if (identity == null) {
                         throw new YangParseException(module.getName(), idref.getLine(), "Failed to find base identity");
@@ -738,85 +737,58 @@ public final class YangParserImpl implements YangContextParser {
      * @param modules
      *            all loaded modules
      */
-    private void resolveAugmentsTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+    private void resolveAugmentsTargetPath(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         // collect augments from all loaded modules
         final List<AugmentationSchemaBuilder> allAugments = new ArrayList<>();
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 allAugments.addAll(inner.getValue().getAllAugments());
             }
         }
 
         for (AugmentationSchemaBuilder augment : allAugments) {
-            setCorrectAugmentTargetPath(modules, augment);
+            setCorrectAugmentTargetPath(augment);
         }
     }
 
     /**
      * Find augment target and set correct schema path for all its child nodes.
      *
-     * @param modules
-     *            all loaded modules
      * @param augment
      *            augment to resolve
      */
-    private void setCorrectAugmentTargetPath(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
-            final AugmentationSchemaBuilder augment) {
-        ModuleBuilder module = BuilderUtils.getParentModule(augment);
-        final SchemaPath newSchemaPath;
-
+    private void setCorrectAugmentTargetPath(final AugmentationSchemaBuilder augment) {
         Builder parent = augment.getParent();
+        final SchemaPath targetNodeSchemaPath;
+
         if (parent instanceof UsesNodeBuilder) {
-            DataNodeContainerBuilder usesParent = ((UsesNodeBuilder) parent).getParent();
-
-            QName baseQName = usesParent.getQName();
-            final QNameModule qnm;
-            String prefix;
-            if (baseQName == null) {
-                ModuleBuilder m = BuilderUtils.getParentModule(usesParent);
-                qnm = m.getQNameModule();
-                prefix = m.getPrefix();
-            } else {
-                qnm = baseQName.getModule();
-                prefix = baseQName.getPrefix();
-            }
-
-            SchemaPath s = usesParent.getPath();
-            for (QName qn : augment.getTargetPath().getPathFromRoot()) {
-                s = s.createChild(QName.create(qnm, prefix, qn.getLocalName()));
-            }
-
-            newSchemaPath = s;
+            targetNodeSchemaPath = findUsesAugmentTargetNodePath(((UsesNodeBuilder) parent).getParent(), augment);
         } else {
-            final List<QName> newPath = new ArrayList<>();
-
-            for (QName qn : augment.getTargetPath().getPathFromRoot()) {
-                QNameModule qnm = module.getQNameModule();
-                String localPrefix = qn.getPrefix();
-                if (localPrefix != null && !localPrefix.isEmpty()) {
-                    ModuleBuilder currentModule = BuilderUtils.getModuleByPrefix(module, localPrefix);
-                    if (currentModule == null) {
-                        throw new YangParseException(module.getName(), augment.getLine(), "Module with prefix "
-                                + localPrefix + " not found.");
-                    }
-                    qnm = currentModule.getQNameModule();
-                }
-                newPath.add(QName.create(qnm, localPrefix, qn.getLocalName()));
-            }
-
-            /*
-             * FIXME: this method of SchemaPath construction is highly ineffective.
-             *        It would be great if we could actually dive into the context,
-             *        find the actual target node and reuse its SchemaPath. Can we
-             *        do that?
-             */
-            newSchemaPath = SchemaPath.create(newPath, true);
+            targetNodeSchemaPath = augment.getTargetPath();
         }
-        augment.setTargetNodeSchemaPath(newSchemaPath);
 
         for (DataSchemaNodeBuilder childNode : augment.getChildNodeBuilders()) {
-            correctPathForAugmentNodes(childNode, augment.getTargetNodeSchemaPath());
+            correctPathForAugmentNodes(childNode, targetNodeSchemaPath);
         }
+    }
+
+    private SchemaPath findUsesAugmentTargetNodePath(DataNodeContainerBuilder usesParent,
+            AugmentationSchemaBuilder augment) {
+        QName parentQName = usesParent.getQName();
+        final QNameModule qnm;
+        if (parentQName == null) {
+            ModuleBuilder m = BuilderUtils.getParentModule(usesParent);
+            qnm = m.getQNameModule();
+        } else {
+            qnm = parentQName.getModule();
+        }
+
+        SchemaPath path = usesParent.getPath();
+        for (QName qname : augment.getTargetPath().getPathFromRoot()) {
+            path = path.createChild(QName.create(qnm, qname.getLocalName()));
+        }
+
+        return path;
     }
 
     /**
@@ -853,11 +825,11 @@ public final class YangParserImpl implements YangContextParser {
      */
     private void checkAugmentMandatoryNodes(final Collection<AugmentationSchemaBuilder> augments) {
         for (AugmentationSchemaBuilder augment : augments) {
-            String augmentPrefix = augment.getTargetPath().getPathFromRoot().iterator().next().getPrefix();
+            URI augmentTargetNs = augment.getTargetPath().getPathFromRoot().iterator().next().getNamespace();
+            Date augmentTargetRev = augment.getTargetPath().getPathFromRoot().iterator().next().getRevision();
             ModuleBuilder module = BuilderUtils.getParentModule(augment);
-            String modulePrefix = module.getPrefix();
 
-            if (augmentPrefix == null || augmentPrefix.isEmpty() || augmentPrefix.equals(modulePrefix)) {
+            if (augmentTargetNs.equals(module.getNamespace()) && augmentTargetRev.equals(module.getRevision())) {
                 continue;
             }
 
@@ -878,9 +850,9 @@ public final class YangParserImpl implements YangContextParser {
      *            all loaded modules topologically sorted (based on dependencies
      *            between each other)
      */
-    private void resolveAugments(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+    private void resolveAugments(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         List<ModuleBuilder> all = new ArrayList<>();
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 all.add(inner.getValue());
             }
@@ -916,7 +888,7 @@ public final class YangParserImpl implements YangContextParser {
      * @return true if augment process succeed
      */
     private boolean resolveUsesAugment(final AugmentationSchemaBuilder augment, final ModuleBuilder module,
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+            final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         if (augment.isResolved()) {
             return true;
         }
@@ -924,7 +896,7 @@ public final class YangParserImpl implements YangContextParser {
         UsesNodeBuilder usesNode = (UsesNodeBuilder) augment.getParent();
         DataNodeContainerBuilder parentNode = usesNode.getParent();
         Optional<SchemaNodeBuilder> potentialTargetNode;
-        SchemaPath resolvedTargetPath = augment.getTargetNodeSchemaPath();
+        SchemaPath resolvedTargetPath = findUsesAugmentTargetNodePath(parentNode, augment);
         if (parentNode instanceof ModuleBuilder && resolvedTargetPath.isAbsolute()) {
             // Uses is directly used in module body, we lookup
             // We lookup in data namespace to find correct augmentation target
@@ -939,7 +911,7 @@ public final class YangParserImpl implements YangContextParser {
             // since resolveUsesAugment occurs before augmenting from external
             // modules.
             potentialTargetNode = Optional.<SchemaNodeBuilder> fromNullable(findSchemaNode(augment.getTargetPath()
-                    .getPath(), (SchemaNodeBuilder) parentNode));
+                    .getPathFromRoot(), (SchemaNodeBuilder) parentNode));
         }
 
         if (potentialTargetNode.isPresent()) {
@@ -972,13 +944,13 @@ public final class YangParserImpl implements YangContextParser {
      * @return true if augment process succeed
      */
     private boolean resolveAugment(final AugmentationSchemaBuilder augment, final ModuleBuilder module,
-            final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+            final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         if (augment.isResolved()) {
             return true;
         }
 
         QName targetModuleName = augment.getTargetPath().getPathFromRoot().iterator().next();
-        ModuleBuilder targetModule = BuilderUtils.getModuleByPrefix(module, targetModuleName.getPrefix());
+        ModuleBuilder targetModule = BuilderUtils.findModule(targetModuleName, modules);
         if (targetModule == null) {
             throw new YangParseException(module.getModuleName(), augment.getLine(), "Failed to resolve augment "
                     + augment);
@@ -994,20 +966,19 @@ public final class YangParserImpl implements YangContextParser {
      * @param modules
      *            all loaded modules
      */
-    private void resolveIdentities(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+    private void resolveIdentities(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 ModuleBuilder module = inner.getValue();
                 final Set<IdentitySchemaNodeBuilder> identities = module.getAddedIdentities();
                 for (IdentitySchemaNodeBuilder identity : identities) {
-                    resolveIdentity(modules, module, identity);
+                    resolveIdentity(module, identity);
                 }
             }
         }
     }
 
-    private void resolveIdentity(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module,
-            final IdentitySchemaNodeBuilder identity) {
+    private void resolveIdentity(final ModuleBuilder module, final IdentitySchemaNodeBuilder identity) {
         final String baseIdentityName = identity.getBaseIdentityName();
         if (baseIdentityName != null) {
             IdentitySchemaNodeBuilder result = null;
@@ -1035,9 +1006,9 @@ public final class YangParserImpl implements YangContextParser {
      * @param modules
      *            all loaded modules
      */
-    private void resolveUsesTargetGrouping(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+    private void resolveUsesTargetGrouping(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         final List<UsesNodeBuilder> allUses = new ArrayList<>();
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 allUses.addAll(inner.getValue().getAllUsesNodes());
             }
@@ -1048,7 +1019,7 @@ public final class YangParserImpl implements YangContextParser {
                     module);
             if (targetGroupingBuilder == null) {
                 throw new YangParseException(module.getName(), usesNode.getLine(), "Referenced grouping '"
-                        + usesNode.getGroupingPathAsString() + "' not found.");
+                        + usesNode.getGroupingPath() + "' not found.");
             }
             usesNode.setGrouping(targetGroupingBuilder);
         }
@@ -1060,9 +1031,9 @@ public final class YangParserImpl implements YangContextParser {
      * @param modules
      *            all loaded modules
      */
-    private void resolveUsesForGroupings(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+    private void resolveUsesForGroupings(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         final Set<GroupingBuilder> allGroupings = new HashSet<>();
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 ModuleBuilder module = inner.getValue();
                 allGroupings.addAll(module.getAllGroupings());
@@ -1084,8 +1055,8 @@ public final class YangParserImpl implements YangContextParser {
      * @param modules
      *            all loaded modules
      */
-    private void resolveUsesForNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+    private void resolveUsesForNodes(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 ModuleBuilder module = inner.getValue();
                 List<UsesNodeBuilder> usesNodes = module.getAllUsesNodes();
@@ -1106,7 +1077,7 @@ public final class YangParserImpl implements YangContextParser {
      * @param modules
      *            all loaded modules
      */
-    private void resolveUses(final UsesNodeBuilder usesNode, final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
+    private void resolveUses(final UsesNodeBuilder usesNode, final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         if (!usesNode.isResolved()) {
             DataNodeContainerBuilder parent = usesNode.getParent();
             ModuleBuilder module = BuilderUtils.getParentModule(parent);
@@ -1165,32 +1136,30 @@ public final class YangParserImpl implements YangContextParser {
      * @param module
      *            current module
      */
-    private void resolveUnknownNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
+    private void resolveUnknownNodes(final Map<URI, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         for (UnknownSchemaNodeBuilder usnb : module.getAllUnknownNodes()) {
             QName nodeType = usnb.getNodeType();
-            ModuleBuilder dependentModuleBuilder = BuilderUtils.getModuleByPrefix(module, nodeType.getPrefix());
-            if (dependentModuleBuilder == null) {
+            String localName = usnb.getNodeType().getLocalName();
+            ModuleBuilder dependentModule = BuilderUtils.findModule(nodeType, modules);
+
+            if (dependentModule == null) {
                 LOG.warn(
                         "Error in module {} at line {}: Failed to resolve node {}: no such extension definition found.",
                         module.getName(), usnb.getLine(), usnb);
                 continue;
             }
-            ExtensionBuilder extBuilder = findExtBuilder(nodeType.getLocalName(),
-                    dependentModuleBuilder.getAddedExtensions());
+
+            ExtensionBuilder extBuilder = findExtBuilder(localName, dependentModule.getAddedExtensions());
             if (extBuilder == null) {
-                ExtensionDefinition extDef = findExtDef(nodeType.getLocalName(), dependentModuleBuilder.getExtensions());
+                ExtensionDefinition extDef = findExtDef(localName, dependentModule.getExtensions());
                 if (extDef == null) {
                     LOG.warn(
                             "Error in module {} at line {}: Failed to resolve node {}: no such extension definition found.",
                             module.getName(), usnb.getLine(), usnb);
                 } else {
-                    usnb.setNodeType(new QName(extDef.getQName().getNamespace(), extDef.getQName().getRevision(),
-                            nodeType.getPrefix(), extDef.getQName().getLocalName()));
                     usnb.setExtensionDefinition(extDef);
                 }
             } else {
-                usnb.setNodeType(QName.create(extBuilder.getQName().getModule(),
-                        nodeType.getPrefix(), extBuilder.getQName().getLocalName()));
                 usnb.setExtensionBuilder(extBuilder);
             }
         }
@@ -1214,74 +1183,4 @@ public final class YangParserImpl implements YangContextParser {
         return null;
     }
 
-    /**
-     * Traverse through modules and resolve their deviation statements.
-     *
-     * @param modules
-     *            all loaded modules
-     */
-    private void resolveDeviations(final Map<String, TreeMap<Date, ModuleBuilder>> modules) {
-        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
-            for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
-                ModuleBuilder b = inner.getValue();
-                resolveDeviation(modules, b);
-            }
-        }
-    }
-
-    /**
-     * Traverse through module and resolve its deviation statements.
-     *
-     * @param modules
-     *            all loaded modules
-     * @param module
-     *            module in which resolve deviations
-     */
-    private void resolveDeviation(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
-        for (DeviationBuilder dev : module.getDeviationBuilders()) {
-            SchemaPath targetPath = dev.getTargetPath();
-            Iterable<QName> path = targetPath.getPathFromRoot();
-            QName q0 = path.iterator().next();
-            String prefix = q0.getPrefix();
-            if (prefix == null) {
-                prefix = module.getPrefix();
-            }
-
-            ModuleBuilder dependentModuleBuilder = BuilderUtils.getModuleByPrefix(module, prefix);
-            processDeviation(dev, dependentModuleBuilder, path, module);
-        }
-    }
-
-    /**
-     * Correct deviation target path in deviation builder.
-     *
-     * @param dev
-     *            deviation
-     * @param dependentModuleBuilder
-     *            module containing deviation target
-     * @param path
-     *            current deviation target path
-     * @param module
-     *            current module
-     */
-    private void processDeviation(final DeviationBuilder dev, final ModuleBuilder dependentModuleBuilder,
-            final Iterable<QName> path, final ModuleBuilder module) {
-        final int line = dev.getLine();
-        Builder currentParent = dependentModuleBuilder;
-
-        for (QName q : path) {
-            if (currentParent == null) {
-                throw new YangParseException(module.getName(), line, FAIL_DEVIATION_TARGET);
-            }
-            String name = q.getLocalName();
-            if (currentParent instanceof DataNodeContainerBuilder) {
-                currentParent = ((DataNodeContainerBuilder) currentParent).getDataChildByName(name);
-            }
-        }
-
-        if (!(currentParent instanceof SchemaNodeBuilder)) {
-            throw new YangParseException(module.getName(), line, FAIL_DEVIATION_TARGET);
-        }
-        dev.setTargetPath(((SchemaNodeBuilder) currentParent).getPath());
-    }
 }
