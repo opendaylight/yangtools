@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.f
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromContext;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNode;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNodeInModule;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.prefixedToSchemaPath;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.processAugmentation;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveType;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnion;
@@ -55,6 +56,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.util.PrefixedQName;
+import org.opendaylight.yangtools.yang.model.util.PrefixedSchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -763,26 +766,23 @@ public final class YangParserImpl implements YangContextParser {
 
             QName baseQName = usesParent.getQName();
             final QNameModule qnm;
-            String prefix;
             if (baseQName == null) {
                 ModuleBuilder m = BuilderUtils.getParentModule(usesParent);
                 qnm = m.getQNameModule();
-                prefix = m.getPrefix();
             } else {
                 qnm = baseQName.getModule();
-                prefix = baseQName.getPrefix();
             }
 
             SchemaPath s = usesParent.getPath();
-            for (QName qn : augment.getTargetPath().getPathFromRoot()) {
-                s = s.createChild(QName.create(qnm, prefix, qn.getLocalName()));
+            for (PrefixedQName qn : augment.getTargetPath().getPathFromRoot()) {
+                s = s.createChild(QName.create(qnm, qn.getLocalName()));
             }
 
             newSchemaPath = s;
         } else {
             final List<QName> newPath = new ArrayList<>();
 
-            for (QName qn : augment.getTargetPath().getPathFromRoot()) {
+            for (PrefixedQName qn : augment.getTargetPath().getPathFromRoot()) {
                 QNameModule qnm = module.getQNameModule();
                 String localPrefix = qn.getPrefix();
                 if (localPrefix != null && !localPrefix.isEmpty()) {
@@ -793,7 +793,7 @@ public final class YangParserImpl implements YangContextParser {
                     }
                     qnm = currentModule.getQNameModule();
                 }
-                newPath.add(QName.create(qnm, localPrefix, qn.getLocalName()));
+                newPath.add(QName.create(qnm, qn.getLocalName()));
             }
 
             /*
@@ -931,7 +931,7 @@ public final class YangParserImpl implements YangContextParser {
             // since resolveUsesAugment occurs before augmenting from external
             // modules.
             potentialTargetNode = Optional.<SchemaNodeBuilder> fromNullable(findSchemaNode(augment.getTargetPath()
-                    .getPath(), (SchemaNodeBuilder) parentNode));
+                    .getPathFromRoot(), (SchemaNodeBuilder) parentNode));
         }
 
         if (potentialTargetNode.isPresent()) {
@@ -939,6 +939,8 @@ public final class YangParserImpl implements YangContextParser {
             if (targetNode instanceof AugmentationTargetBuilder) {
                 fillAugmentTarget(augment, targetNode);
                 ((AugmentationTargetBuilder) targetNode).addAugmentation(augment);
+                SchemaPath correctSchemaPath = prefixedToSchemaPath(module, augment.getTargetPath());
+                augment.setTargetNodeSchemaPath(correctSchemaPath);
                 augment.setResolved(true);
                 return true;
             } else {
@@ -969,7 +971,7 @@ public final class YangParserImpl implements YangContextParser {
             return true;
         }
 
-        QName targetModuleName = augment.getTargetPath().getPathFromRoot().iterator().next();
+        PrefixedQName targetModuleName = augment.getTargetPath().getPathFromRoot().iterator().next();
         ModuleBuilder targetModule = BuilderUtils.getModuleByPrefix(module, targetModuleName.getPrefix());
         if (targetModule == null) {
             throw new YangParseException(module.getModuleName(), augment.getLine(), "Failed to resolve augment "
@@ -1159,32 +1161,39 @@ public final class YangParserImpl implements YangContextParser {
      */
     private void resolveUnknownNodes(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         for (UnknownSchemaNodeBuilder usnb : module.getAllUnknownNodes()) {
-            QName nodeType = usnb.getNodeType();
-            ModuleBuilder dependentModuleBuilder = BuilderUtils.getModuleByPrefix(module, nodeType.getPrefix());
+            String localName;
+            ModuleBuilder dependentModuleBuilder;
+            if (usnb.getNodeType() == null) {
+                PrefixedQName prefixedNodeType = usnb.getPrefixedNodeType();
+                localName = prefixedNodeType.getLocalName();
+                dependentModuleBuilder = BuilderUtils.getModuleByPrefix(module, prefixedNodeType.getPrefix());
+            } else {
+                localName = usnb.getNodeType().getLocalName();
+                dependentModuleBuilder = module;
+            }
             if (dependentModuleBuilder == null) {
                 LOG.warn(
                         "Error in module {} at line {}: Failed to resolve node {}: no such extension definition found.",
                         module.getName(), usnb.getLine(), usnb);
                 continue;
             }
-            ExtensionBuilder extBuilder = findExtBuilder(nodeType.getLocalName(),
-                    dependentModuleBuilder.getAddedExtensions());
+
+            ExtensionBuilder extBuilder = findExtBuilder(localName, dependentModuleBuilder.getAddedExtensions());
             if (extBuilder == null) {
-                ExtensionDefinition extDef = findExtDef(nodeType.getLocalName(), dependentModuleBuilder.getExtensions());
+                ExtensionDefinition extDef = findExtDef(localName, dependentModuleBuilder.getExtensions());
                 if (extDef == null) {
                     LOG.warn(
                             "Error in module {} at line {}: Failed to resolve node {}: no such extension definition found.",
                             module.getName(), usnb.getLine(), usnb);
                 } else {
-                    usnb.setNodeType(new QName(extDef.getQName().getNamespace(), extDef.getQName().getRevision(),
-                            nodeType.getPrefix(), extDef.getQName().getLocalName()));
+                    usnb.setNodeType(QName.create(extDef.getQName().getNamespace(), extDef.getQName().getRevision(), extDef.getQName().getLocalName()));
                     usnb.setExtensionDefinition(extDef);
                 }
             } else {
-                usnb.setNodeType(QName.create(extBuilder.getQName().getModule(),
-                        nodeType.getPrefix(), extBuilder.getQName().getLocalName()));
+                usnb.setNodeType(QName.create(extBuilder.getQName().getModule(), extBuilder.getQName().getLocalName()));
                 usnb.setExtensionBuilder(extBuilder);
             }
+            usnb.setResolved();
         }
     }
 
@@ -1231,9 +1240,9 @@ public final class YangParserImpl implements YangContextParser {
      */
     private void resolveDeviation(final Map<String, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         for (DeviationBuilder dev : module.getDeviationBuilders()) {
-            SchemaPath targetPath = dev.getTargetPath();
-            Iterable<QName> path = targetPath.getPathFromRoot();
-            QName q0 = path.iterator().next();
+            PrefixedSchemaPath targetPath = dev.getTargetPath();
+            Iterable<PrefixedQName> path = targetPath.getPathFromRoot();
+            PrefixedQName q0 = path.iterator().next();
             String prefix = q0.getPrefix();
             if (prefix == null) {
                 prefix = module.getPrefix();
@@ -1257,11 +1266,11 @@ public final class YangParserImpl implements YangContextParser {
      *            current module
      */
     private void processDeviation(final DeviationBuilder dev, final ModuleBuilder dependentModuleBuilder,
-            final Iterable<QName> path, final ModuleBuilder module) {
+            final Iterable<PrefixedQName> path, final ModuleBuilder module) {
         final int line = dev.getLine();
         Builder currentParent = dependentModuleBuilder;
 
-        for (QName q : path) {
+        for (PrefixedQName q : path) {
             if (currentParent == null) {
                 throw new YangParseException(module.getName(), line, FAIL_DEVIATION_TARGET);
             }

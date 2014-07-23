@@ -9,12 +9,10 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -52,17 +50,22 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
     private final boolean addedByUses;
 
     /**
-     *
      * Creates Builder for extended / derived type.
      *
-     * @param typeName QName of derived type
-     * @param baseType Base type of derived type
-     * @param description Description of type
-     * @param reference Reference of Type
-     * @param path Schema path to type definition.
+     * @param typeName
+     *            QName of derived type
+     * @param baseType
+     *            Base type of derived type
+     * @param description
+     *            Description of type
+     * @param reference
+     *            Reference of Type
+     * @param path
+     *            Schema path to type definition.
      */
-    public static final Builder builder(final QName typeName,final TypeDefinition<?> baseType,final Optional<String> description,final Optional<String> reference,final SchemaPath path) {
-        return new Builder(typeName, baseType, description.or(""), reference.or(""), path);
+    public static final Builder builder(final QName typeName, final TypeDefinition<?> baseType,
+            final Optional<String> description, final Optional<String> reference, final SchemaPath path) {
+        return new Builder(typeName, baseType, description.orNull(), reference.orNull(), path);
     }
 
     public static class Builder {

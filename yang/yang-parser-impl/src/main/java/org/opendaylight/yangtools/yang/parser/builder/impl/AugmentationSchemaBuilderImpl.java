@@ -11,19 +11,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.PrefixedSchemaPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -38,17 +37,18 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
     private String whenCondition;
 
     private final String augmentTargetStr;
-    private final SchemaPath targetPath;
+    private final PrefixedSchemaPath targetPath;
     private SchemaPath targetNodeSchemaPath;
 
     private boolean resolved;
     private AugmentationSchemaBuilder copyOf;
 
-    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr, final int order) {
+    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr,
+            final PrefixedSchemaPath targetPath, final int order) {
         super(moduleName, line, null);
         this.order = order;
         this.augmentTargetStr = augmentTargetStr;
-        targetPath = BuilderUtils.parseXPathString(augmentTargetStr);
+        this.targetPath = targetPath;
     }
 
     @Override
@@ -68,7 +68,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
         }
 
         buildChildren();
-        instance = new AugmentationSchemaImpl(targetPath, order,this);
+        instance = new AugmentationSchemaImpl(targetNodeSchemaPath, order,this);
 
         Builder parent = getParent();
         if (parent instanceof ModuleBuilder) {
@@ -81,8 +81,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
             final ModuleBuilder mb = BuilderUtils.getParentModule(this);
 
             List<QName> newPath = new ArrayList<>();
-            for (QName name : targetPath.getPathFromRoot()) {
-                newPath.add(QName.create(mb.getQNameModule(), name.getPrefix(), name.getLocalName()));
+            for (QName name : targetNodeSchemaPath.getPathFromRoot()) {
+                newPath.add(QName.create(mb.getQNameModule(), name.getLocalName()));
             }
             instance.targetPath = SchemaPath.create(newPath, false);
         } else {
@@ -136,7 +136,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
     }
 
     @Override
-    public SchemaPath getTargetPath() {
+    public PrefixedSchemaPath getTargetPath() {
         return targetPath;
     }
 
