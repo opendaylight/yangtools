@@ -118,15 +118,17 @@ import org.opendaylight.yangtools.yang.model.util.Uint16;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
-import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.RefineHolderImpl;
+import org.opendaylight.yangtools.yang.parser.builder.impl.TypeDefinitionBuilderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.TypeConstraints;
 import org.opendaylight.yangtools.yang.parser.util.UnknownBoundaryNumber;
@@ -1036,62 +1038,51 @@ public final class ParserListenerUtils {
     }
 
     /**
-     * Parse type body and create UnknownType definition.
+     * Parse unknown type with body.
      *
-     * @param typedefQName
-     *            qname of current type
-     * @param ctx
+     * @param typeBody
      *            type body
-     * @param actualPath
-     *            actual path in model
-     * @param namespace
-     *            module namespace
-     * @param revision
-     *            module revision
-     * @param prefix
-     *            module prefix
      * @param parent
      *            current node parent
-     * @return UnknownType object with constraints from parsed type body
+     * @param prefixedQName
+     *            type qname with prefix
+     * @param moduleBuilder
+     *            current module builder
+     * @param moduleQName
+     *            current module qname
+     * @param actualPath
+     *            actual path in model
      */
-    public static TypeDefinition<?> parseUnknownTypeWithBody(final QName typedefQName,
-            final Type_body_stmtsContext ctx, final SchemaPath actualPath, final QName moduleQName, final Builder parent) {
-        String moduleName = parent.getModuleName();
-        String typeName = typedefQName.getLocalName();
+    public static void parseUnknownTypeWithBody(Type_body_stmtsContext typeBody, TypeAwareBuilder parent,
+            QName prefixedQName, ModuleBuilder moduleBuilder, QName moduleQName, SchemaPath actualPath) {
+        final int line = typeBody.getStart().getLine();
 
-        UnknownType.Builder unknownType = new UnknownType.Builder(typedefQName);
+        List<RangeConstraint> rangeStatements = getRangeConstraints(typeBody, moduleBuilder.getName());
+        List<LengthConstraint> lengthStatements = getLengthConstraints(typeBody, moduleBuilder.getName());
+        List<PatternConstraint> patternStatements = getPatternConstraint(typeBody);
+        Integer fractionDigits = getFractionDigits(typeBody, moduleBuilder.getName());
 
-        if (ctx != null) {
-            List<RangeConstraint> rangeStatements = getRangeConstraints(ctx, moduleName);
-            List<LengthConstraint> lengthStatements = getLengthConstraints(ctx, moduleName);
-            List<PatternConstraint> patternStatements = getPatternConstraint(ctx);
-            Integer fractionDigits = getFractionDigits(ctx, moduleName);
-
-            if (parent instanceof TypeDefinitionBuilder) {
-                TypeDefinitionBuilder typedef = (TypeDefinitionBuilder) parent;
-                if (!(typedef instanceof UnionTypeBuilder)) {
-                    typedef.setRanges(rangeStatements);
-                    typedef.setLengths(lengthStatements);
-                    typedef.setPatterns(patternStatements);
-                    typedef.setFractionDigits(fractionDigits);
-                }
-                return unknownType.build();
-            } else {
-                TypeDefinition<?> baseType = unknownType.build();
-                QName qname = QName.create(moduleQName, typeName);
-                SchemaPath schemaPath = createTypePath(actualPath, typeName);
-
-                ExtendedType.Builder typeBuilder = ExtendedType.builder(qname, baseType, Optional.<String>absent(), Optional.<String>absent(), schemaPath);
-                typeBuilder.ranges(rangeStatements);
-                typeBuilder.lengths(lengthStatements);
-                typeBuilder.patterns(patternStatements);
-                typeBuilder.fractionDigits(fractionDigits);
-
-                return typeBuilder.build();
-            }
+        if (parent instanceof TypeDefinitionBuilder && !(parent instanceof UnionTypeBuilder)) {
+            TypeDefinitionBuilder typedef = (TypeDefinitionBuilder) parent;
+            typedef.setRanges(rangeStatements);
+            typedef.setLengths(lengthStatements);
+            typedef.setPatterns(patternStatements);
+            typedef.setFractionDigits(fractionDigits);
+            typedef.setTypeQName(prefixedQName);
+            // add parent node of this type statement to dirty nodes
+            moduleBuilder.markActualNodeDirty();
+        } else {
+            QName qname = QName.create(moduleQName, prefixedQName.getLocalName());
+            SchemaPath schemaPath = createTypePath(actualPath, prefixedQName.getLocalName());
+            TypeDefinitionBuilder typeBuilder = new TypeDefinitionBuilderImpl(moduleBuilder.getName(), line, qname, schemaPath);
+            typeBuilder.setRanges(rangeStatements);
+            typeBuilder.setLengths(lengthStatements);
+            typeBuilder.setPatterns(patternStatements);
+            typeBuilder.setFractionDigits(fractionDigits);
+            typeBuilder.setTypeQName(prefixedQName);
+            parent.setTypedef(typeBuilder);
+            moduleBuilder.getDirtyNodes().add(typeBuilder);
         }
-
-        return unknownType.build();
     }
 
     /**

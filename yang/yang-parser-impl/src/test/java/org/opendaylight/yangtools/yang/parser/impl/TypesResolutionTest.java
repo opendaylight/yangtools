@@ -262,13 +262,12 @@ public class TypesResolutionTest {
 
         String expectedDesc = "A timezone location as defined by the IANA timezone";
         assertTrue(testedType.getDescription().contains(expectedDesc));
-        assertNull(testedType.getReference());
+        assertTrue(testedType.getReference().isEmpty());
         assertEquals(Status.CURRENT, testedType.getStatus());
 
         QName testedTypeQName = testedType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:iana-timezones"), testedTypeQName.getNamespace());
         assertEquals(TestUtils.createDate("2012-07-09"), testedTypeQName.getRevision());
-        assertEquals("ianatz", testedTypeQName.getPrefix());
         assertEquals("iana-timezone", testedTypeQName.getLocalName());
 
         EnumerationType enumType = (EnumerationType) testedType.getBaseType();
@@ -300,7 +299,6 @@ public class TypesResolutionTest {
         QName testedTypeQName = testedType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types"), testedTypeQName.getNamespace());
         assertEquals(TestUtils.createDate("2010-09-24"), testedTypeQName.getRevision());
-        assertEquals("yang", testedTypeQName.getPrefix());
         assertEquals("object-identifier-128", testedTypeQName.getLocalName());
 
         ExtendedType testedTypeBase = (ExtendedType) testedType.getBaseType();
@@ -314,7 +312,6 @@ public class TypesResolutionTest {
         QName testedTypeBaseQName = testedTypeBase.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types"), testedTypeBaseQName.getNamespace());
         assertEquals(TestUtils.createDate("2010-09-24"), testedTypeBaseQName.getRevision());
-        assertEquals("yang", testedTypeBaseQName.getPrefix());
         assertEquals("object-identifier", testedTypeBaseQName.getLocalName());
     }
 
@@ -327,7 +324,6 @@ public class TypesResolutionTest {
         QName identity = baseType.getIdentity().getQName();
         assertEquals(URI.create("urn:custom.types.demo"), identity.getNamespace());
         assertEquals(TestUtils.createDate("2012-04-16"), identity.getRevision());
-        assertEquals("iit", identity.getPrefix());
         assertEquals("service-type", identity.getLocalName());
 
         LeafSchemaNode type = (LeafSchemaNode) tested.getDataChildByName("type");

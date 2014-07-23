@@ -11,13 +11,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
@@ -28,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 
@@ -39,16 +35,16 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
 
     private final String augmentTargetStr;
     private final SchemaPath targetPath;
-    private SchemaPath targetNodeSchemaPath;
 
     private boolean resolved;
     private AugmentationSchemaBuilder copyOf;
 
-    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr, final int order) {
+    public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr,
+            final SchemaPath targetPath, final int order) {
         super(moduleName, line, null);
         this.order = order;
         this.augmentTargetStr = augmentTargetStr;
-        targetPath = BuilderUtils.parseXPathString(augmentTargetStr);
+        this.targetPath = targetPath;
     }
 
     @Override
@@ -58,7 +54,12 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
 
     @Override
     public SchemaPath getPath() {
-        return targetNodeSchemaPath;
+        return targetPath;
+    }
+
+    @Override
+    public SchemaPath getTargetPath() {
+        return targetPath;
     }
 
     @Override
@@ -68,6 +69,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
         }
 
         buildChildren();
+
         instance = new AugmentationSchemaImpl(targetPath, order,this);
 
         Builder parent = getParent();
@@ -75,18 +77,6 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
             ModuleBuilder moduleBuilder = (ModuleBuilder) parent;
             instance.namespace = moduleBuilder.getNamespace();
             instance.revision = moduleBuilder.getRevision();
-        }
-
-        if (parent instanceof UsesNodeBuilder) {
-            final ModuleBuilder mb = BuilderUtils.getParentModule(this);
-
-            List<QName> newPath = new ArrayList<>();
-            for (QName name : targetPath.getPathFromRoot()) {
-                newPath.add(QName.create(mb.getQNameModule(), name.getPrefix(), name.getLocalName()));
-            }
-            instance.targetPath = SchemaPath.create(newPath, false);
-        } else {
-            instance.targetPath = targetNodeSchemaPath;
         }
 
         if (copyOf != null) {
@@ -133,21 +123,6 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
     @Override
     public String getTargetPathAsString() {
         return augmentTargetStr;
-    }
-
-    @Override
-    public SchemaPath getTargetPath() {
-        return targetPath;
-    }
-
-    @Override
-    public SchemaPath getTargetNodeSchemaPath() {
-        return targetNodeSchemaPath;
-    }
-
-    @Override
-    public void setTargetNodeSchemaPath(final SchemaPath path) {
-        this.targetNodeSchemaPath = path;
     }
 
     @Override
@@ -208,7 +183,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
 
     private static final class AugmentationSchemaImpl extends AbstractDocumentedDataNodeContainer implements AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentationSchemaImpl> {
         private final int order;
-        private SchemaPath targetPath;
+        private final SchemaPath targetPath;
         private RevisionAwareXPath whenCondition;
 
         private URI namespace;

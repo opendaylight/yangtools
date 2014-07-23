@@ -27,11 +27,11 @@ public interface UsesNodeBuilder extends GroupingMember {
     DataNodeContainerBuilder getParent();
 
     /**
-     * Get grouping path as string.
+     * Get target grouping path.
      *
-     * @return grouping path as String
+     * @return target grouping path
      */
-    String getGroupingPathAsString();
+    SchemaPath getTargetGroupingPath();
 
     /**
      * Get grouping path.

@@ -20,6 +20,8 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
     protected TypeDefinition<?> type;
     protected TypeDefinitionBuilder typedef;
 
+    private QName baseTypeName;
+
     protected AbstractTypeAwareBuilder(final String moduleName, final int line, final QName qname) {
         super(moduleName, line);
         this.qname = qname;
@@ -50,6 +52,16 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
     public void setTypedef(TypeDefinitionBuilder typedef) {
         this.typedef = typedef;
         this.type = null;
+    }
+
+    @Override
+    public QName getTypeQName() {
+        return baseTypeName;
+    }
+
+    @Override
+    public void setTypeQName(QName qname) {
+        this.baseTypeName = qname;
     }
 
 }

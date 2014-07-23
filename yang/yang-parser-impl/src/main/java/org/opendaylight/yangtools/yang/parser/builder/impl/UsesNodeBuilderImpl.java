@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNodeBuilder {
     private UsesNodeImpl instance;
     private DataNodeContainerBuilder parentBuilder;
-    private final String groupingPathString;
+    private final SchemaPath targetGroupingPath;
     private SchemaPath groupingPath;
     private GroupingDefinition groupingDefinition;
     private GroupingBuilder groupingBuilder;
@@ -48,9 +48,9 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     private final List<SchemaNodeBuilder> refineBuilders = new ArrayList<>();
     private final List<RefineBuilder> refines = new ArrayList<>();
 
-    public UsesNodeBuilderImpl(final String moduleName, final int line, final String groupingName) {
+    public UsesNodeBuilderImpl(final String moduleName, final int line, final SchemaPath targetGroupingPath) {
         super(moduleName, line);
-        this.groupingPathString = groupingName;
+        this.targetGroupingPath = targetGroupingPath;
     }
 
     @Override
@@ -132,8 +132,8 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     }
 
     @Override
-    public String getGroupingPathAsString() {
-        return groupingPathString;
+    public SchemaPath getTargetGroupingPath() {
+        return targetGroupingPath;
     }
 
     @Override
@@ -200,7 +200,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((groupingPathString == null) ? 0 : groupingPathString.hashCode());
+        result = prime * result + ((groupingPath == null) ? 0 : groupingPath.hashCode());
         result = prime * result + ((parentBuilder == null) ? 0 : parentBuilder.hashCode());
         return result;
     }
@@ -217,11 +217,11 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
             return false;
         }
         UsesNodeBuilderImpl other = (UsesNodeBuilderImpl) obj;
-        if (groupingPathString == null) {
-            if (other.groupingPathString != null) {
+        if (groupingPath == null) {
+            if (other.groupingPath != null) {
                 return false;
             }
-        } else if (!groupingPathString.equals(other.groupingPathString)) {
+        } else if (!groupingPath.equals(other.groupingPath)) {
             return false;
         }
         if (parentBuilder == null) {
@@ -236,7 +236,7 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
 
     @Override
     public String toString() {
-        return "uses '" + groupingPathString + "'";
+        return "uses '" + groupingPath + "'";
     }
 
     private static final class UsesNodeImpl implements UsesNode {

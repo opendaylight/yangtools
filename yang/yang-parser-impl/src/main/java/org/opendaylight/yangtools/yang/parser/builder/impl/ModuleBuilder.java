@@ -8,7 +8,6 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -528,9 +526,11 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         return builder;
     }
 
-    public AugmentationSchemaBuilder addAugment(final int line, final String augmentTargetStr, final int order) {
+    public AugmentationSchemaBuilder addAugment(final int line, final String augmentTargetStr,
+            final SchemaPath targetPath, final int order) {
         checkNotSealed();
-        final AugmentationSchemaBuilder builder = new AugmentationSchemaBuilderImpl(name, line, augmentTargetStr, order);
+        final AugmentationSchemaBuilder builder = new AugmentationSchemaBuilderImpl(name, line, augmentTargetStr,
+                targetPath, order);
 
         Builder parent = getActualNode();
         builder.setParent(parent);
@@ -562,9 +562,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         return builder;
     }
 
-    public UsesNodeBuilder addUsesNode(final int line, final String groupingPathStr) {
+    public UsesNodeBuilder addUsesNode(final int line, final SchemaPath grouping) {
         checkNotSealed();
-        final UsesNodeBuilder usesBuilder = new UsesNodeBuilderImpl(name, line, groupingPathStr);
+        final UsesNodeBuilder usesBuilder = new UsesNodeBuilderImpl(name, line, grouping);
 
         Builder parent = getActualNode();
         usesBuilder.setParent(parent);
@@ -573,7 +573,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
             addUsesNode(usesBuilder);
         } else {
             if (!(parent instanceof DataNodeContainerBuilder)) {
-                throw new YangParseException(name, line, "Unresolved parent of uses '" + groupingPathStr + "'.");
+                throw new YangParseException(name, line, "Unresolved parent of uses '" + grouping + "'.");
             }
             ((DataNodeContainerBuilder) parent).addUsesNode(usesBuilder);
         }
@@ -826,7 +826,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         }
     }
 
-    public DeviationBuilder addDeviation(final int line, final String targetPath) {
+    public DeviationBuilder addDeviation(final int line, final SchemaPath targetPath) {
         Builder parent = getActualNode();
         if (!(parent.equals(this))) {
             throw new YangParseException(name, line, "deviation can be defined only in module or submodule");
