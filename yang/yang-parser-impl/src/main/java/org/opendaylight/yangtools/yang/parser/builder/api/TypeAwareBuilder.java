@@ -10,12 +10,24 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.PrefixedQName;
 
 /**
  * Builder for nodes, which can have 'type' statement must implement this
  * interface. [typedef, type, leaf, leaf-list, deviate]
  */
 public interface TypeAwareBuilder extends Builder {
+
+    /**
+     * If this builder base type is not resolved, returns qname with prefix of
+     * base type.
+     *
+     * @return qname with prefix of base type if base type is not resolved, null
+     *         otherwise
+     */
+    PrefixedQName getBaseTypeQName();
+
+    void setBaseTypeQName(PrefixedQName qname);
 
     /**
      * Get qname of this node.

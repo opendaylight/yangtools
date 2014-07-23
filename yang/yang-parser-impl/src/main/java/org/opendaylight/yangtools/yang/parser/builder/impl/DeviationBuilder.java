@@ -13,25 +13,21 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.PrefixedSchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class DeviationBuilder extends AbstractBuilder {
     private DeviationImpl instance;
-    private final String targetPathStr;
-    private SchemaPath targetPath;
+    private final PrefixedSchemaPath targetPath;
+    private SchemaPath targetNodeSchemaPath;
     private Deviate deviate;
     private String reference;
 
-    DeviationBuilder(final String moduleName, final int line, final String targetPathStr) {
+    DeviationBuilder(final String moduleName, final int line, final PrefixedSchemaPath targetPath) {
         super(moduleName, line);
-        if (!targetPathStr.startsWith("/")) {
-            throw new YangParseException(moduleName, line,
-                    "Deviation argument string must be an absolute schema node identifier.");
-        }
-        this.targetPathStr = targetPathStr;
-        this.targetPath = BuilderUtils.parseXPathString(targetPathStr);
+        this.targetPath = targetPath;
     }
 
     @Override
@@ -45,7 +41,7 @@ public final class DeviationBuilder extends AbstractBuilder {
         }
 
         instance = new DeviationImpl();
-        instance.targetPath = targetPath;
+        instance.targetPath = targetNodeSchemaPath;
         instance.deviate = deviate;
         instance.reference = reference;
 
@@ -58,12 +54,12 @@ public final class DeviationBuilder extends AbstractBuilder {
         return instance;
     }
 
-    public SchemaPath getTargetPath() {
+    public PrefixedSchemaPath getTargetPath() {
         return targetPath;
     }
 
-    public void setTargetPath(final SchemaPath targetPath) {
-        this.targetPath = targetPath;
+    public void setTargetPath(final SchemaPath targetNodeSchemaPath) {
+        this.targetNodeSchemaPath = targetNodeSchemaPath;
     }
 
     public void setDeviate(final String deviate) {
@@ -86,7 +82,7 @@ public final class DeviationBuilder extends AbstractBuilder {
 
     @Override
     public String toString() {
-        return "deviation " + targetPathStr;
+        return "deviation " + targetPath;
     }
 
     private static final class DeviationImpl implements Deviation {

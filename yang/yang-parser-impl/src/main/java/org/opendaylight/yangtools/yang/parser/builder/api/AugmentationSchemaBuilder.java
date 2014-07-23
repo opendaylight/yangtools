@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.PrefixedSchemaPath;
 
 /**
  * Builder for {@link AugmentationSchema}, which represents 'augment' statement.
@@ -58,7 +59,7 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder,Docu
      *
      * @return path to target node as SchemaPath
      */
-    SchemaPath getTargetPath();
+    PrefixedSchemaPath getTargetPath();
 
     /**
      * Get schema path of target node.

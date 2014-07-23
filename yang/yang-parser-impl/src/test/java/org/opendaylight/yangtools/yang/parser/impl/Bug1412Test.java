@@ -42,8 +42,8 @@ public class Bug1412Test {
 
         Date revision = new SimpleDateFormat("yyyy-MM-dd").parse("2014-07-25");
         QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), revision);
-        QName expectedNodeType = QName.create(qm, "action");
-        assertEquals(expectedNodeType, action.getNodeType());
+        QName expectedNodeType = new QName(null, null, null, "action");
+        assertEquals(QName.create(null, (Date) null, "action"), action.getNodeType());
         assertEquals("hello", action.getNodeParameter());
         QName expectedQName = QName.create(qm, "hello");
         assertEquals(expectedQName, action.getQName());
@@ -70,7 +70,7 @@ public class Bug1412Test {
         assertNotNull(actionPoint);
         assertNotNull(output);
 
-        expectedNodeType = QName.create(qm, "info");
+        expectedNodeType = new QName(null, null, null, "info");
         assertEquals(expectedNodeType, info.getNodeType());
         assertEquals("greeting", info.getNodeParameter());
 
@@ -78,7 +78,7 @@ public class Bug1412Test {
         assertEquals(expectedNodeType, description.getNodeType());
         assertEquals("say greeting", description.getNodeParameter());
 
-        expectedNodeType = QName.create(qm, "actionpoint");
+        expectedNodeType = new QName(null, null, null, "actionpoint");
         assertEquals(expectedNodeType, actionPoint.getNodeType());
         assertEquals("entry", actionPoint.getNodeParameter());
 

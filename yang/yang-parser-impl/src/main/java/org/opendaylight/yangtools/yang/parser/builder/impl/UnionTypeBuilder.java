@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -19,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.PrefixedQName;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
@@ -40,10 +40,21 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     private UnionType instance;
     private boolean isBuilt;
 
+    private List<PrefixedQName> baseTypesQNames = new ArrayList<>();
+
     public UnionTypeBuilder(final String moduleName, final int line) {
         super(moduleName, line, BaseTypes.UNION_QNAME);
         types = new ArrayList<>();
         typedefs = new ArrayList<>();
+    }
+
+    public List<PrefixedQName> getBaseTypeQNames() {
+        return baseTypesQNames;
+    }
+
+    @Override
+    public void setBaseTypeQName(final PrefixedQName qname) {
+        baseTypesQNames.add(qname);
     }
 
     public List<TypeDefinition<?>> getTypes() {

@@ -13,7 +13,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.io.ByteSource;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,7 +31,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -50,6 +48,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.PrefixedQName;
+import org.opendaylight.yangtools.yang.model.util.PrefixedSchemaPath;
+import org.opendaylight.yangtools.yang.model.util.PrefixedSchemaPath.PrefixedSchemaPathBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -224,25 +225,46 @@ public final class BuilderUtils {
      *
      * @param xpathString
      *            XPath as String
+     * @param defaultPrefix
+     *            default prefix
      * @return SchemaPath from given String
      */
-    public static SchemaPath parseXPathString(final String xpathString) {
+    public static PrefixedSchemaPath parseXPathString(final String xpathString, final String defaultPrefix) {
         final boolean absolute = !xpathString.isEmpty() && xpathString.charAt(0) == '/';
 
-        final List<QName> path = new ArrayList<>();
+        PrefixedSchemaPathBuilder builder = PrefixedSchemaPath.builder();
+        builder.setAbsolute(absolute);
+
         for (String pathElement : SLASH_SPLITTER.split(xpathString)) {
             final Iterator<String> it = COLON_SPLITTER.split(pathElement).iterator();
             final String s = it.next();
 
-            final QName name;
             if (it.hasNext()) {
-                name = QName.create(QNameModule.create(null, null), s, it.next());
+                builder.add(new PrefixedQName(s, it.next()));
             } else {
-                name = QName.create(QNameModule.create(null, null), s);
+                builder.add(new PrefixedQName(defaultPrefix, s));
             }
-            path.add(name);
         }
-        return SchemaPath.create(path, absolute);
+        return builder.build();
+    }
+
+    public static SchemaPath prefixedToSchemaPath(ModuleBuilder module, PrefixedSchemaPath path) {
+        PrefixedSchemaPathBuilder builder = PrefixedSchemaPath.builder();
+        String prefix;
+        ModuleBuilder ref;
+        for (PrefixedQName pq : path.getPathFromRoot()) {
+            prefix = pq.getPrefix();
+            if (prefix == null) {
+                ref = module;
+            } else {
+                ref = getModuleByPrefix(module, pq.getPrefix());
+            }
+            pq.setNamespace(ref.getNamespace());
+            pq.setRevision(ref.getRevision());
+            builder.add(pq);
+        }
+        builder.setAbsolute(path.isAbsolute());
+        return builder.build().toSchemaPath();
     }
 
     /**
@@ -357,7 +379,7 @@ public final class BuilderUtils {
         }
     }
 
-    public static DataSchemaNodeBuilder findSchemaNode(final List<QName> path, final SchemaNodeBuilder parentNode) {
+    public static DataSchemaNodeBuilder findSchemaNode(final List<PrefixedQName> path, final SchemaNodeBuilder parentNode) {
         DataSchemaNodeBuilder node = null;
         SchemaNodeBuilder parent = parentNode;
         int i = 0;

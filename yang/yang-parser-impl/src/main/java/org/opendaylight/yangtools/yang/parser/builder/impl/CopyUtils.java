@@ -403,7 +403,7 @@ public final class CopyUtils {
 
     private static AugmentationSchemaBuilder copyAugment(final AugmentationSchemaBuilder old, final Builder newParent) {
         AugmentationSchemaBuilderImpl copy = new AugmentationSchemaBuilderImpl(newParent.getModuleName(),
-                newParent.getLine(), old.getTargetPathAsString(), old.getOrder());
+                newParent.getLine(), old.getTargetPathAsString(), old.getTargetPath(), old.getOrder());
         copy.setParent(newParent);
         copy.setCopyOf(old);
         copy.setDescription(old.getDescription());

@@ -8,7 +8,6 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -41,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.ModuleImportImpl;
+import org.opendaylight.yangtools.yang.model.util.PrefixedSchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
@@ -528,9 +527,11 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         return builder;
     }
 
-    public AugmentationSchemaBuilder addAugment(final int line, final String augmentTargetStr, final int order) {
+    public AugmentationSchemaBuilder addAugment(final int line, final String augmentTargetStr,
+            final PrefixedSchemaPath targetPath, final int order) {
         checkNotSealed();
-        final AugmentationSchemaBuilder builder = new AugmentationSchemaBuilderImpl(name, line, augmentTargetStr, order);
+        final AugmentationSchemaBuilder builder = new AugmentationSchemaBuilderImpl(name, line, augmentTargetStr,
+                targetPath, order);
 
         Builder parent = getActualNode();
         builder.setParent(parent);
@@ -826,7 +827,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         }
     }
 
-    public DeviationBuilder addDeviation(final int line, final String targetPath) {
+    public DeviationBuilder addDeviation(final int line, final PrefixedSchemaPath targetPath) {
         Builder parent = getActualNode();
         if (!(parent.equals(this))) {
             throw new YangParseException(name, line, "deviation can be defined only in module or submodule");
