@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_42976048",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1965
+      },
+      "writtenOn": "2014-07-23T06:06:55Z",
+      "side": 1,
+      "message": "This ParseRevision method is a common method which is being called from multiple places so we must be checking for null in this method only Otherwise it throws date parse exception for null revision.\n\nfor example caller of this method is create method of the same class and constructor of YangModelDependencyInfo class etc.\n\nPlease suggest if my understanding is wrong.",
+      "parentUuid": "fa82b9bf_ff24140e",
+      "revId": "acb0a002cff6f2d9884a85c8e49f7adef2519843",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_9f1dc8c0",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ListSchemaNodeBuilder.java",
         "patchSetId": 2
