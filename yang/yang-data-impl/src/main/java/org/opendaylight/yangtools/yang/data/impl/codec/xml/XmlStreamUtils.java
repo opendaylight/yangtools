@@ -150,7 +150,9 @@ public class XmlStreamUtils {
         writer.writeStartElement(pfx, qname.getLocalName(), ns);
         if (data instanceof AttributesContainer && ((AttributesContainer) data).getAttributes() != null) {
             for (Entry<QName, String> attribute : ((AttributesContainer) data).getAttributes().entrySet()) {
-                writer.writeAttribute(attribute.getKey().getNamespace().toString(), attribute.getKey().getLocalName(), attribute.getValue());
+                QName key = attribute.getKey();
+                String prefix = key.getPrefix() == null ? "" : key.getPrefix();
+                writer.writeAttribute(prefix, key.getNamespace().toString(), key.getLocalName(), attribute.getValue());
             }
         }
 
