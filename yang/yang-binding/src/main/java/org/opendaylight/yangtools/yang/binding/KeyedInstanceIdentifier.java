@@ -7,6 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+/**
+ * An {@link InstanceIdentifier}, which has a list key attached at its last path
+ * element.
+ *
+ * @param <T> Target data type
+ * @param <K> Target key type
+ */
 public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K extends Identifier<T>> extends InstanceIdentifier<T> {
     private final K key;
 
@@ -15,6 +22,12 @@ public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K e
         this.key = key;
     }
 
+    /**
+     * Return the key attached to this identifier. This method is equivalent to
+     * calling {@link InstanceIdentifier#keyOf(InstanceIdentifier)}.
+     *
+     * @return Key associated with this instance identifier.
+     */
     public final K getKey() {
         return key;
     }
