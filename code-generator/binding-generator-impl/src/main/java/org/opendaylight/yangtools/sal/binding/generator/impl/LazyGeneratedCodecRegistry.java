@@ -9,12 +9,16 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.AbstractMap.SimpleEntry;
@@ -31,6 +35,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -81,10 +86,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class LazyGeneratedCodecRegistry implements //
-        CodecRegistry, //
-        SchemaContextListener, //
-        GeneratorListener {
+class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener, GeneratorListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(LazyGeneratedCodecRegistry.class);
 
@@ -130,6 +132,9 @@ class LazyGeneratedCodecRegistry implements //
     private final ClassLoadingStrategy classLoadingStrategy;
     private final AbstractTransformerGenerator generator;
     private final SchemaLock lock;
+
+    private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS =
+            CacheBuilder.newBuilder().weakKeys().softValues().build(new AugmentationGetterLoader());
 
     // FIXME: how is this protected?
     private SchemaContext currentSchema;
@@ -516,8 +521,52 @@ class LazyGeneratedCodecRegistry implements //
         return ret;
     }
 
-    private static abstract class IntermediateCodec<T> implements //
-            DomCodec<T>, Delegator<BindingCodec<Map<QName, Object>, Object>> {
+    private static final class AugmentationGetterLoader extends CacheLoader<Class<?>, AugmentationFieldGetter> {
+        private static final AugmentationFieldGetter DUMMY = new AugmentationFieldGetter() {
+            @Override
+            Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
+                return Collections.emptyMap();
+            }
+        };
+
+        @Override
+        public AugmentationFieldGetter load(final Class<?> key) throws Exception {
+            Field field;
+            try {
+                field = key.getDeclaredField("augmentation");
+            } catch (NoSuchFieldException | SecurityException e) {
+                LOG.debug("Failed to acquire augmentation field", e);
+                return DUMMY;
+            }
+            field.setAccessible(true);
+
+            return new ReflectionAugmentationFieldGetter(field);
+        }
+    }
+
+    private static abstract class AugmentationFieldGetter {
+        abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input);
+    }
+
+    private static final class ReflectionAugmentationFieldGetter extends AugmentationFieldGetter {
+        private final Field augmentationField;
+
+        ReflectionAugmentationFieldGetter(final Field augmentationField) {
+            this.augmentationField = Preconditions.checkNotNull(augmentationField);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
+            try {
+                return (Map<Class<? extends Augmentation<?>>, Augmentation<?>>) augmentationField.get(input);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                throw new IllegalStateException("Failed to access augmentation field", e);
+            }
+        }
+    }
+
+    private static abstract class IntermediateCodec<T> implements DomCodec<T>, Delegator<BindingCodec<Map<QName, Object>, Object>> {
 
         private final BindingCodec<Map<QName, Object>, Object> delegate;
 
@@ -538,9 +587,7 @@ class LazyGeneratedCodecRegistry implements //
 
     }
 
-    private static class IdentifierCodecImpl<T extends Identifier<?>> //
-            extends IntermediateCodec<T> //
-            implements IdentifierCodec<T> {
+    private static class IdentifierCodecImpl<T extends Identifier<?>> extends IntermediateCodec<T> implements IdentifierCodec<T> {
 
         public IdentifierCodecImpl(final BindingCodec<Map<QName, Object>, Object> delegate) {
             super(delegate);
@@ -568,9 +615,7 @@ class LazyGeneratedCodecRegistry implements //
         }
     }
 
-    private static class DataContainerCodecImpl<T extends DataContainer> //
-            extends IntermediateCodec<T> //
-            implements DataContainerCodec<T> {
+    private static class DataContainerCodecImpl<T extends DataContainer> extends IntermediateCodec<T> implements DataContainerCodec<T> {
 
         public DataContainerCodecImpl(final BindingCodec<Map<QName, Object>, Object> delegate) {
             super(delegate);
@@ -684,7 +729,7 @@ class LazyGeneratedCodecRegistry implements //
             /* In case of none is applicable, we return
              * null. Since there is no mixin which
              * is applicable in this location.
-            */
+             */
             if(applicable.isEmpty()) {
                 return null;
             }
@@ -769,7 +814,7 @@ class LazyGeneratedCodecRegistry implements //
 
     @SuppressWarnings("rawtypes")
     private static class ChoiceCaseCodecImpl<T extends DataContainer> implements ChoiceCaseCodec<T>, //
-            Delegator<BindingCodec>, LocationAwareBindingCodec<Node<?>, ValueWithQName<T>> {
+    Delegator<BindingCodec>, LocationAwareBindingCodec<Node<?>, ValueWithQName<T>> {
         private final BindingCodec delegate;
         private final ChoiceCaseNode schema;
         private final Map<InstanceIdentifier<?>, ChoiceCaseNode> instantiatedLocations;
@@ -896,8 +941,7 @@ class LazyGeneratedCodecRegistry implements //
         }
     }
 
-    private static class PublicChoiceCodecImpl<T> implements ChoiceCodec<T>,
-            Delegator<BindingCodec<Map<QName, Object>, Object>> {
+    private static class PublicChoiceCodecImpl<T> implements ChoiceCodec<T>, Delegator<BindingCodec<Map<QName, Object>, Object>> {
 
         private final BindingCodec<Map<QName, Object>, Object> delegate;
 
@@ -973,7 +1017,7 @@ class LazyGeneratedCodecRegistry implements //
             try {
                 @SuppressWarnings("unchecked")
                 Class<? extends DataContainer> clazz = (Class<? extends DataContainer>) classLoadingStrategy
-                        .loadClass(potential);
+                .loadClass(potential);
                 ChoiceCaseCodecImpl codec = tryToLoadImplementation(clazz);
                 addImplementation(codec);
                 return Optional.of(codec);
@@ -1076,7 +1120,7 @@ class LazyGeneratedCodecRegistry implements //
         public Object serialize(final Object input) {
             Preconditions.checkArgument(augmentableType.isInstance(input), "Object %s is not instance of %s ",input,augmentableType);
             if (input instanceof Augmentable<?>) {
-                Map<Class, Augmentation> augmentations = getAugmentations(input);
+                Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations = getAugmentations(input);
                 return serializeImpl(augmentations);
             }
             return null;
@@ -1091,17 +1135,8 @@ class LazyGeneratedCodecRegistry implements //
          * @return Map of augmentations if read was successful, otherwise
          *      empty map.
          */
-        private Map<Class, Augmentation> getAugmentations(final Object input) {
-            Field augmentationField;
-            try {
-                augmentationField = input.getClass().getDeclaredField("augmentation");
-                augmentationField.setAccessible(true);
-                Map<Class, Augmentation> augMap = (Map<Class, Augmentation>) augmentationField.get(input);
-                return augMap;
-            } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-                LOG.debug("Could not read augmentations for {}", input, e);
-            }
-            return Collections.emptyMap();
+        private Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
+            return AUGMENTATION_GETTERS.getUnchecked(input.getClass()).getAugmentations(input);
         }
 
         /**
@@ -1112,13 +1147,12 @@ class LazyGeneratedCodecRegistry implements //
          * @param input Map of classes to augmentations
          * @return List of nodes, which should be added to parent node.
          */
-        @SuppressWarnings("deprecation")
-        private List serializeImpl(final Map<Class, Augmentation> input) {
+        private List serializeImpl(final Map<Class<? extends Augmentation<?>>, Augmentation<?>> input) {
             List ret = new ArrayList<>();
-            for (Entry<Class, Augmentation> entry : input.entrySet()) {
+            for (Entry<Class<? extends Augmentation<?>>, Augmentation<?>> entry : input.entrySet()) {
                 AugmentationCodec codec = getRegistry().getCodecForAugmentation(entry.getKey());
                 CompositeNode node = codec.serialize(new ValueWithQName(null, entry.getValue()));
-                ret.addAll(node.getChildren());
+                ret.addAll(node.getValue());
             }
             return ret;
         }
@@ -1149,14 +1183,14 @@ class LazyGeneratedCodecRegistry implements //
             LOG.trace("{}: Going to deserialize augmentations from {} in location {}. Available codecs {}",this,input,path,codecs);
             Map<Class, Augmentation> ret = new HashMap<>();
             for (AugmentationCodecWrapper codec : codecs) {
-                    // We add Augmentation Identifier to path, in order to
-                    // correctly identify children.
-                    Class type = codec.getDataType();
-                    final InstanceIdentifier augmentPath = path.augmentation(type);
-                    ValueWithQName<?> value = codec.deserialize(input, augmentPath);
-                    if (value != null && value.getValue() != null) {
-                        ret.put(type, (Augmentation) value.getValue());
-                    }
+                // We add Augmentation Identifier to path, in order to
+                // correctly identify children.
+                Class type = codec.getDataType();
+                final InstanceIdentifier augmentPath = path.augmentation(type);
+                ValueWithQName<?> value = codec.deserialize(input, augmentPath);
+                if (value != null && value.getValue() != null) {
+                    ret.put(type, (Augmentation) value.getValue());
+                }
             }
             return ret;
         }
@@ -1289,8 +1323,7 @@ class LazyGeneratedCodecRegistry implements //
     }
 
     @SuppressWarnings("rawtypes")
-    private static class AugmentationCodecWrapper<T extends Augmentation<?>> implements AugmentationCodec<T>,
-            Delegator<BindingCodec>, LocationAwareBindingCodec<Node<?>, ValueWithQName<T>> {
+    private static class AugmentationCodecWrapper<T extends Augmentation<?>> implements AugmentationCodec<T>, Delegator<BindingCodec>, LocationAwareBindingCodec<Node<?>, ValueWithQName<T>> {
 
         private final BindingCodec delegate;
         private final QName augmentationQName;
