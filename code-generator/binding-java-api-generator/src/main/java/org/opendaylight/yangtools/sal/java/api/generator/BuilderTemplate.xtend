@@ -546,10 +546,6 @@ class BuilderTemplate extends BaseTemplate {
                     case 0:
                         this.«augmentField.name» = «Collections.importedName».emptyMap();
                         break;
-                    case 1:
-                        final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = «prop».«augmentField.name».entrySet().iterator().next();
-                        this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
-                        break;
                     default :
                         this.«augmentField.name» = new «HashMap.importedName»<>(«prop».«augmentField.name»);
                     }
