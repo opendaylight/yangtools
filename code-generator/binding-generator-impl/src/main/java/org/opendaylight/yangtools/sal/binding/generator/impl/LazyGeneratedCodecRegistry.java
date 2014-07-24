@@ -7,6 +7,14 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.AbstractMap.SimpleEntry;
@@ -23,7 +31,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -73,15 +80,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 class LazyGeneratedCodecRegistry implements //
         CodecRegistry, //
@@ -1032,20 +1030,51 @@ class LazyGeneratedCodecRegistry implements //
         }
     }
 
+    /**
+     *
+     * Dispatch codec for augmented object, which processes augmentations
+     * <p>
+     * This codec is used from DataObject codec generated using
+     * {@link TransformerGenerator#transformerFor(Class)} and is wired
+     * during {@link LazyGeneratedCodecRegistry#onDataContainerCodecCreated(Class, Class)}.
+     * <p>
+     * Instance of this codec is associated with class of Binding DTO which
+     * represents target for augmentations.
+     *
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     static class AugmentableDispatchCodec extends LocationAwareDispatchCodec<AugmentationCodecWrapper> {
 
         private final Class augmentableType;
 
+        /**
+         * Construct augmetable dispatch codec.
+         *
+         * @param type Class representing augmentation target
+         * @param registry Registry with which this codec is associated.
+         */
         public AugmentableDispatchCodec(final Class type, final LazyGeneratedCodecRegistry registry) {
             super(registry);
             Preconditions.checkArgument(Augmentable.class.isAssignableFrom(type));
             augmentableType = type;
         }
 
+
+
+        /**
+         * Serializes object to list of values which needs to be injected
+         * into resulting DOM Node. Injection of data to parent DOM Node
+         * is handled by caller (in this case generated codec).
+         *
+         * TODO: Deprecate use of augmentation codec without instance
+         *       instance identifier
+         *
+         * @return list of nodes, which needs to be added to parent node.
+         *
+         */
         @Override
-        // TODO deprecate use without iid
         public Object serialize(final Object input) {
+            Preconditions.checkArgument(augmentableType.isInstance(input), "Object %s is not instance of %s ",input,augmentableType);
             if (input instanceof Augmentable<?>) {
                 Map<Class, Augmentation> augmentations = getAugmentations(input);
                 return serializeImpl(augmentations);
@@ -1053,6 +1082,15 @@ class LazyGeneratedCodecRegistry implements //
             return null;
         }
 
+        /**
+         *
+         * Extracts augmentation from Binding DTO field using reflection
+         *
+         * @param input Instance of DataObject which is augmentable and
+         *      may contain augmentation
+         * @return Map of augmentations if read was successful, otherwise
+         *      empty map.
+         */
         private Map<Class, Augmentation> getAugmentations(final Object input) {
             Field augmentationField;
             try {
@@ -1066,6 +1104,14 @@ class LazyGeneratedCodecRegistry implements //
             return Collections.emptyMap();
         }
 
+        /**
+         *
+         * Serialization of augmentations, returns list of composite nodes,
+         * which needs to be injected to parent node.
+         *
+         * @param input Map of classes to augmentations
+         * @return List of nodes, which should be added to parent node.
+         */
         @SuppressWarnings("deprecation")
         private List serializeImpl(final Map<Class, Augmentation> input) {
             List ret = new ArrayList<>();
@@ -1077,6 +1123,26 @@ class LazyGeneratedCodecRegistry implements //
             return ret;
         }
 
+        /**
+         *
+         * Deserialization of augmentation which is location aware.
+         *
+         * Note: In case of composite nodes as an input, each codec
+         * is invoked since there is no augmentation identifier
+         * and we need to look for concrete classes.
+         * FIXME: Maybe faster variation will be by extending
+         * {@link AugmentationCodecWrapper} to look for particular QNames,
+         * which will filter incoming set of codecs.
+         *
+         *
+         * @param input Input representation of data
+         * @param path Wildcarded instance identifier representing location of augmentation parent
+         *       in conceptual schema tree
+         * @param codecs Set of codecs which are applicable for supplied <code>path</code>,
+         *       selected by caller to be used by deserialization
+         *
+         *
+         */
         @Override
         public Map<Class, Augmentation> deserializeImpl(final CompositeNode input, final InstanceIdentifier<?> path,
                 final Iterable<AugmentationCodecWrapper> codecs) {
@@ -1095,6 +1161,17 @@ class LazyGeneratedCodecRegistry implements //
             return ret;
         }
 
+        /**
+         *
+         * Tries to load implementation of concrete augmentation codec for supplied type
+         *
+         * Loading of codec may fail, because of supplied type may not be visible
+         * by classloaders known by registry. If class was not found returns {@link Optional#absent()}.
+         *
+         * @param potential Augmentation class identifier for which codecs should be loaded.
+         * @return Optional with codec for supplied type
+         *
+         */
         protected Optional<AugmentationCodecWrapper> tryToLoadImplementation(final Type potential) {
             try {
                 Class<? extends Augmentation<?>> clazz = (Class<? extends Augmentation<?>>) getRegistry().classLoadingStrategy
