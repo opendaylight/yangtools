@@ -23,6 +23,10 @@ final class RandomPrefix {
     }
 
     String encodeQName(final QName qname) {
+        return encodePrefix(qname) + ':' + qname.getLocalName();
+    }
+
+    String encodePrefix(final QName qname) {
         String prefix = prefixes.get(qname.getNamespace());
         if (prefix == null) {
             prefix = qname.getPrefix();
@@ -40,7 +44,6 @@ final class RandomPrefix {
 
             prefixes.put(qname.getNamespace(), prefix);
         }
-
-        return prefix + ':' + qname.getLocalName();
+        return prefix;
     }
 }
