@@ -12,8 +12,6 @@ import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
@@ -25,31 +23,22 @@ import javassist.CtMethod;
 import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Users of this utility class are expected to synchronize on this instance
+ * it they need to ensure atomic operations on it.
+ */
 public final class JavassistUtils {
     private static final Logger LOG = LoggerFactory.getLogger(JavassistUtils.class);
 
     private static final Map<ClassPool, JavassistUtils> INSTANCES = new WeakHashMap<>();
     private final Map<ClassLoader, ClassPath> loaderClassPaths = new WeakHashMap<>();
-    private final Lock lock = new ReentrantLock();
     private final ClassPool classPool;
 
-    /**
-     * @deprecated Use {@link #forClassPool(ClassPool)} instead.
-     *
-     * This class provides auto-loading into the classpool. Unfortunately reusing
-     * the same class pool with multiple instances can lead the same classpath
-     * being added multiple times, which lowers performance and leaks memory.
-     */
-    @Deprecated
-    public JavassistUtils(final ClassPool pool) {
-        this(pool, null);
-    }
-
-    private JavassistUtils(final ClassPool pool, final Object dummy) {
-        // FIXME: Remove 'dummy' once deprecated constructor is removed
+    private JavassistUtils(final ClassPool pool) {
         classPool = Preconditions.checkNotNull(pool);
     }
 
@@ -64,22 +53,10 @@ public final class JavassistUtils {
     public static synchronized JavassistUtils forClassPool(final ClassPool pool) {
         JavassistUtils ret = INSTANCES.get(Preconditions.checkNotNull(pool));
         if (ret == null) {
-            ret = new JavassistUtils(pool, null);
+            ret = new JavassistUtils(pool);
             INSTANCES.put(pool, ret);
         }
         return ret;
-    }
-
-    /**
-     * Get reference to the internal lock.
-     *
-     * @return Lock object
-     *
-     * @deprecated Synchronize on an instance of this class instead.
-     */
-    @Deprecated
-    public Lock getLock() {
-        return lock;
     }
 
     public void method(final CtClass it, final Class<? extends Object> returnType, final String name,
@@ -160,8 +137,8 @@ public final class JavassistUtils {
     }
 
     public CtField staticField(final CtClass it, final String name,
-                               final Class<? extends Object> returnValue,
-                               SourceCodeGenerator sourceGenerator) throws CannotCompileException {
+            final Class<? extends Object> returnValue,
+            final SourceCodeGenerator sourceGenerator) throws CannotCompileException {
         final CtField field = new CtField(asCtClass(returnValue), name, it);
         field.setModifiers(Modifier.PUBLIC + Modifier.STATIC);
         it.addField(field);
