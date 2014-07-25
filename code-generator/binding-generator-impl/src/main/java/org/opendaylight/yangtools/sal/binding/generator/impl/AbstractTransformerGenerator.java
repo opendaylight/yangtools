@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,8 +26,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-import com.google.common.base.Preconditions;
-
 /**
  * Abstract base class which defines the baseline for the real {@link TransformerGenerator}.
  * This class exists to expose the basic interface and common interactions with the rest
@@ -39,8 +39,7 @@ abstract class AbstractTransformerGenerator {
      * will VerificationErrors.
      */
     @Extension
-    protected static final ClassLoadingStrategy CLASS_LOADING_STRATEGY =
-            GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
+    protected static final ClassLoadingStrategy CLASS_LOADING_STRATEGY = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
     @Extension
     protected final TypeResolver typeResolver;
     @Extension
@@ -78,8 +77,10 @@ abstract class AbstractTransformerGenerator {
 
         lock.lock();
         try {
-            javAssist.appendClassLoaderIfMissing(cls);
-            return ClassLoaderUtils.withClassLoader(cls, function);
+            synchronized (javAssist) {
+                javAssist.appendClassLoaderIfMissing(cls);
+                return ClassLoaderUtils.withClassLoader(cls, function);
+            }
         } finally {
             lock.unlock();
         }
