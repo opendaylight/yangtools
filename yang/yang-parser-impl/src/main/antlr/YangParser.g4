@@ -136,7 +136,7 @@ base_stmt : BASE_KEYWORD string stmtend;
 identity_stmt : IDENTITY_KEYWORD string (SEMICOLON | (LEFT_BRACE  (identifier_stmt | base_stmt | status_stmt | description_stmt | reference_stmt )* RIGHT_BRACE));
 yin_element_arg : string; // TRUE_KEYWORD | FALSE_KEYWORD;
 yin_element_stmt : YIN_ELEMENT_KEYWORD yin_element_arg stmtend;
-argument_stmt : ARGUMENT_KEYWORD string (SEMICOLON | (LEFT_BRACE  (unknown_statement2)? (yin_element_stmt)? RIGHT_BRACE));
+argument_stmt : ARGUMENT_KEYWORD string (SEMICOLON | (LEFT_BRACE  (unknown_statement2)* (yin_element_stmt)? (unknown_statement2)* RIGHT_BRACE));
 extension_stmt : EXTENSION_KEYWORD string (SEMICOLON | (LEFT_BRACE  (unknown_statement | argument_stmt | status_stmt | description_stmt | reference_stmt )* RIGHT_BRACE));
 revision_date_stmt : REVISION_DATE_KEYWORD string stmtend;
 revision_stmt : REVISION_KEYWORD string (SEMICOLON | (LEFT_BRACE  (description_stmt )? (reference_stmt )? RIGHT_BRACE));
