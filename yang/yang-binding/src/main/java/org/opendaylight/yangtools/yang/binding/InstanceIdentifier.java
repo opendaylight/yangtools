@@ -13,9 +13,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -316,10 +318,10 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     }
 
     @SuppressWarnings("unchecked")
-    public final <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifier<N> child(
+    public final <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> KeyedInstanceIdentifier<N, K> child(
             final Class<N> listItem, final K listKey) {
         final PathArgument arg = new IdentifiableItem<>(listItem, listKey);
-        return (InstanceIdentifier<N>) childIdentifier(arg);
+        return (KeyedInstanceIdentifier<N, K>) childIdentifier(arg);
     }
 
     @SuppressWarnings("unchecked")
@@ -528,7 +530,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         }
 
         @Override
-        public int compareTo(PathArgument arg) {
+        public int compareTo(final PathArgument arg) {
             return type.getCanonicalName().compareTo(arg.getType().getCanonicalName());
         }
     }
