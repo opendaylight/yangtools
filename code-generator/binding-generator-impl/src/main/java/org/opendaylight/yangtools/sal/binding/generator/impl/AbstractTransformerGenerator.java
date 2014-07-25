@@ -73,16 +73,9 @@ abstract class AbstractTransformerGenerator {
     }
 
     protected final <V> V runOnClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
-        final Lock lock = javAssist.getLock();
-
-        lock.lock();
-        try {
-            synchronized (javAssist) {
-                javAssist.appendClassLoaderIfMissing(cls);
-                return ClassLoaderUtils.withClassLoader(cls, function);
-            }
-        } finally {
-            lock.unlock();
+        synchronized (javAssist) {
+            javAssist.appendClassLoaderIfMissing(cls);
+            return ClassLoaderUtils.withClassLoader(cls, function);
         }
     }
 
