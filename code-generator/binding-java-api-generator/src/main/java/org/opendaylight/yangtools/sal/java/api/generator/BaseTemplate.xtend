@@ -170,7 +170,7 @@ abstract class BaseTemplate {
     }
 
     def String wrapToDocumentation(String text) {
-        val StringTokenizer tokenizer = new StringTokenizer(text, "\n", false)
+        val StringTokenizer tokenizer = new StringTokenizer(text, '\n', false)
         val StringBuilder sb = new StringBuilder()
 
         if(text.empty)
@@ -197,18 +197,18 @@ abstract class BaseTemplate {
 
         return '''
             «IF !type.isDocumentationParametersNullOrEmtpy»
-               «IF typeDescription != null && !typeDescription.empty»
-                «formatToParagraph(typeDescription)»
-               «ENDIF»
-               «IF typeReference != null && !typeReference.empty»
-                Reference:
-                    «formatReference(typeReference)»
-               «ENDIF»
-               «IF typeModuleName != null && !typeModuleName.empty»
+                «IF !typeModuleName.nullOrEmpty»
                 Module name:
                     «typeModuleName»
                «ENDIF»
-               «IF typeSchemaPath != null && !typeSchemaPath.empty»
+               «IF !typeDescription.nullOrEmpty»
+                «typeDescription»
+               «ENDIF»
+               «IF !typeReference.nullOrEmpty»
+                Reference:
+                    «formatReference(typeReference)»
+               «ENDIF»
+               «IF !typeSchemaPath.nullOrEmpty»
                 Schema path:
                     «formatPath(typeSchemaPath)»
                «ENDIF»
@@ -329,27 +329,15 @@ abstract class BaseTemplate {
     }
 
     def isDocumentationParametersNullOrEmtpy(GeneratedType type) {
-        var boolean isNullOrEmpty = true
-        val String typeDescription = type.description
-        val String typeReference = type.reference
-        val String typeModuleName = type.moduleName
-        val Iterable<QName> typeSchemaPath = type.schemaPath
+        var boolean isNullOrEmpty = false
+        val boolean isDescriptionNullOrEmpty = type.description.nullOrEmpty
+        val boolean isReferenceNullOrEmpty = type.reference.nullOrEmpty
+        val boolean isModuleNameNullOrEmpty = type.moduleName.nullOrEmpty
+        val boolean isSchemaPathNullOrEmpty = type.schemaPath.nullOrEmpty
 
-        if(typeDescription != null && !typeDescription.empty) {
-            isNullOrEmpty = false
-            return isNullOrEmpty
-        }
-        if(typeReference != null && !typeReference.empty) {
-            isNullOrEmpty = false
-            return isNullOrEmpty
-        }
-        if(typeModuleName != null && !typeModuleName.empty) {
-            isNullOrEmpty = false
-            return isNullOrEmpty
-        }
-        if(typeSchemaPath != null && !typeSchemaPath.empty) {
-            isNullOrEmpty = false
-            return isNullOrEmpty
+        if(isDescriptionNullOrEmpty && isReferenceNullOrEmpty && isModuleNameNullOrEmpty
+            && isSchemaPathNullOrEmpty) {
+            isNullOrEmpty = true
         }
         return isNullOrEmpty
     }
