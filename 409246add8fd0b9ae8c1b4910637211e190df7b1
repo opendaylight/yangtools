@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_102a0290",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/ExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-25T02:38:56Z",
+      "side": 1,
+      "message": "we have two paths with the same exception message: here and below. can we make the message differ, such that it is immediately obvious which case occurred?",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b01a367b",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/MappingCheckedFuture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-25T02:38:56Z",
+      "side": 1,
+      "message": "add javadocs, please",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_70102e59",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/OperationFailedException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-25T02:38:56Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull(message), we do not want rogue exceptions",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d01fba6a",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/OperationFailedException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-25T02:38:56Z",
+      "side": 1,
+      "message": "ImmutableList.copyOf(Arrays.asList(errors))",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_500baa29",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/OperationFailedException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-25T02:38:56Z",
+      "side": 1,
+      "message": "I don\u0027t really like this getMessage(), as it is asymmetric to getErrorList() -- e.g. message is not really a property. The body looks like more of what I\u0027d expect from toString().\n\nAnd if it\u0027s toString(), please realize it via Objects.newToStringHelper()",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
