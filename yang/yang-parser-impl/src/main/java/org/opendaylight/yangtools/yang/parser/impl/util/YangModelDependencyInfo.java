@@ -11,9 +11,12 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.ge
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
+
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Import_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Include_stmtContext;
@@ -25,6 +28,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtCont
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 /**
@@ -53,7 +57,7 @@ public abstract class YangModelDependencyInfo {
     private final ImmutableSet<ModuleImport> dependencies;
 
     YangModelDependencyInfo(final String name, final String formattedRevision,
-                            final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
+            final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
         this.name = name;
         this.formattedRevision = formattedRevision;
         this.revision = QName.parseRevision(formattedRevision);
@@ -140,6 +144,29 @@ public abstract class YangModelDependencyInfo {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Extracts {@link YangModelDependencyInfo} from an abstract syntax tree
+     * of a YANG model.
+     *
+     * @param tree Abstract syntax tree
+     * @return {@link YangModelDependencyInfo}
+     * @throws YangSyntaxErrorException
+     *             If the AST is not a valid YANG module/submodule
+     */
+    public static YangModelDependencyInfo fromAST(final String name, final ParserRuleContext tree) throws YangSyntaxErrorException {
+        final Optional<Module_stmtContext> moduleCtx = getFirstContext(tree, Module_stmtContext.class);
+        if (moduleCtx.isPresent()) {
+            return parseModuleContext(moduleCtx.get());
+        }
+
+        final Optional<Submodule_stmtContext> submoduleCtx = getFirstContext(tree, Submodule_stmtContext.class);
+        if (submoduleCtx.isPresent()) {
+            return parseSubmoduleContext(submoduleCtx.get());
+        }
+
+        throw new YangSyntaxErrorException(name, 0, 0, "Unknown YANG text type");
     }
 
     /**
