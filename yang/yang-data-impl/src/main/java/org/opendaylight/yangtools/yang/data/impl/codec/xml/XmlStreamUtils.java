@@ -1,9 +1,11 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
@@ -149,8 +151,9 @@ public class XmlStreamUtils {
 
         writer.writeStartElement(pfx, qname.getLocalName(), ns);
         if (data instanceof AttributesContainer && ((AttributesContainer) data).getAttributes() != null) {
+            RandomPrefix randomPrefix = new RandomPrefix();
             for (Entry<QName, String> attribute : ((AttributesContainer) data).getAttributes().entrySet()) {
-                writer.writeAttribute(attribute.getKey().getNamespace().toString(), attribute.getKey().getLocalName(), attribute.getValue());
+                writeAttribute(writer, attribute, randomPrefix);
             }
         }
 
@@ -184,6 +187,15 @@ public class XmlStreamUtils {
         }
 
         writer.writeEndElement();
+    }
+
+    @VisibleForTesting
+    static void writeAttribute(final XMLStreamWriter writer, final Entry<QName, String> attribute, final RandomPrefix randomPrefix)
+            throws XMLStreamException {
+        final QName key = attribute.getKey();
+        final String prefix = randomPrefix.encodePrefix(key);
+        writer.writeAttribute("xmlns:" + prefix, key.getNamespace().toString());
+        writer.writeAttribute(prefix, key.getNamespace().toString(), key.getLocalName(), attribute.getValue());
     }
 
     /**
