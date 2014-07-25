@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_4b253b07",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/ExceptionMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T13:23:42Z",
+      "side": 1,
+      "message": "I\u0027ll make this one \"execution failed\" or something like hat.",
+      "parentUuid": "fa82b9bf_102a0290",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_b01a367b",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/MappingCheckedFuture.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-25T02:38:56Z",
       "side": 1,
       "message": "add javadocs, please",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_8b0fc387",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/MappingCheckedFuture.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T13:23:42Z",
+      "side": 1,
+      "message": "Will do",
+      "parentUuid": "fa82b9bf_b01a367b",
       "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_0b4413b5",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/OperationFailedException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T13:23:42Z",
+      "side": 1,
+      "message": "Will do",
+      "parentUuid": "fa82b9bf_70102e59",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_d01fba6a",
         "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/OperationFailedException.java",
         "patchSetId": 2
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_ab1407a0",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/OperationFailedException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T13:23:42Z",
+      "side": 1,
+      "message": "Ah - I missed the copyOf method - I had looked for an equivalent of() method.",
+      "parentUuid": "fa82b9bf_d01fba6a",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_500baa29",
         "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/OperationFailedException.java",
         "patchSetId": 2
@@ -81,6 +153,24 @@
       "writtenOn": "2014-07-25T02:38:56Z",
       "side": 1,
       "message": "I don\u0027t really like this getMessage(), as it is asymmetric to getErrorList() -- e.g. message is not really a property. The body looks like more of what I\u0027d expect from toString().\n\nAnd if it\u0027s toString(), please realize it via Objects.newToStringHelper()",
+      "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_6b0a7f7a",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/OperationFailedException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T13:23:42Z",
+      "side": 1,
+      "message": "Yeah I see your point. I\u0027ll move it to toString().",
+      "parentUuid": "fa82b9bf_500baa29",
       "revId": "409246add8fd0b9ae8c1b4910637211e190df7b1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
