@@ -139,6 +139,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private final static String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
 
+    private final char NEW_LINE = '\n';
+
+    private final char TAB = '\t';
+
     /**
      * Resolves generated types from <code>context</code> schema nodes of all
      * modules.
@@ -284,6 +288,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
         final String packageName = packageNameForGeneratedType(basePackageName, node.getPath());
         final GeneratedTypeBuilder genType = addDefaultInterfaceDefinition(packageName, node, childOf);
         genType.addComment(node.getDescription());
+        genType.setDescription(createDescription(node, genType.getFullyQualifiedName()));
+        genType.setModuleName(module.getName());
+        genType.setReference(node.getReference());
+        genType.setSchemaPath(node.getPath().getPathFromRoot());
         if (node instanceof DataNodeContainer) {
             genCtx.get(module).addChildNodeType(node.getPath(), genType);
             groupingsToGenTypes(module, ((DataNodeContainer) node).getGroupings());
@@ -413,6 +421,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
         addImplementedInterfaceFromUses(module, moduleDataTypeBuilder);
         moduleDataTypeBuilder.addImplementsType(DATA_ROOT);
         moduleDataTypeBuilder.addComment(module.getDescription());
+        moduleDataTypeBuilder.setDescription(createDescription(module));
+        moduleDataTypeBuilder.setReference(module.getReference());
         return moduleDataTypeBuilder;
     }
 
@@ -601,7 +611,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         newType.setAbstract(true);
         newType.addComment(identity.getDescription());
-        newType.setDescription(identity.getDescription());
+        newType.setDescription(createDescription(identity, newType.getFullyQualifiedName()));
         newType.setReference(identity.getReference());
         newType.setModuleName(module.getName());
         newType.setSchemaPath(identity.getPath().getPathFromRoot());
@@ -722,7 +732,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         final String moduleName = BindingMapping.getClassName(module.getName()) + postfix;
 
         final GeneratedTypeBuilderImpl moduleBuilder = new GeneratedTypeBuilderImpl(packageName, moduleName);
-        moduleBuilder.setDescription(module.getDescription());
+        moduleBuilder.setDescription(createDescription(module));
         moduleBuilder.setReference(module.getReference());
         moduleBuilder.setModuleName(moduleName);
 
@@ -1665,14 +1675,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         // FIXME: Validation of name conflict
         final GeneratedTypeBuilderImpl newType = new GeneratedTypeBuilderImpl(packageName, genTypeName);
-        qnameConstant(newType, BindingMapping.QNAME_STATIC_FIELD_NAME, schemaNode.getQName());
-        newType.addComment(schemaNode.getDescription());
-        newType.setDescription(schemaNode.getDescription());
-        newType.setReference(schemaNode.getReference());
-        newType.setSchemaPath(schemaNode.getPath().getPathFromRoot());
 
         final Module module = findParentModule(schemaContext, schemaNode);
+        qnameConstant(newType, BindingMapping.QNAME_STATIC_FIELD_NAME, schemaNode.getQName());
+        newType.addComment(schemaNode.getDescription());
+        newType.setDescription(createDescription(schemaNode, newType.getFullyQualifiedName()));
+        newType.setReference(schemaNode.getReference());
         newType.setModuleName(module.getName());
+        newType.setSchemaPath(schemaNode.getPath().getPathFromRoot());
 
         if (!genTypeBuilders.containsKey(packageName)) {
             final Map<String, GeneratedTypeBuilder> builders = new HashMap<>();
@@ -1685,6 +1695,84 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
         }
         return newType;
+    }
+
+    private String createDescription(final SchemaNode schemaNode, final String fullyQualifiedName) {
+        if(schemaNode instanceof DataSchemaNode) {
+            final StringBuilder sb = new StringBuilder();
+            final Module module = findParentModule(schemaContext, schemaNode);
+            final String yangSnipet = YangTemplate.generateYangSnipet(schemaNode);
+            final String formattedDescription = YangTemplate.formatToParagraph(schemaNode.getDescription(), 0);
+            final String fourSpaceIndent = "    ";
+            final StringBuilder linkToBuilderClass = new StringBuilder();
+            final StringBuilder linkToKeyClass = new StringBuilder();
+            boolean isListOrContainer = false;
+            boolean isList = false;
+            final String[] namespace = fullyQualifiedName.split("\\.");
+            String className = namespace[namespace.length - 1];
+
+            if (schemaNode instanceof ContainerSchemaNode || schemaNode instanceof ListSchemaNode) {
+                linkToBuilderClass.append(className);
+                linkToBuilderClass.append("Builder");
+                isListOrContainer = true;
+
+                if (schemaNode instanceof ListSchemaNode) {
+                    linkToKeyClass.append(className);
+                    linkToKeyClass.append("Key");
+                    isList = true;
+                }
+            }
+
+            sb.append(NEW_LINE);
+            sb.append(formattedDescription);
+            sb.append(NEW_LINE);
+            sb.append("<p>");
+            sb.append("This class represents the following YANG schema fragment defined in module <b>toaster</b>");
+            sb.append(NEW_LINE);
+            sb.append("Source path: <i>");
+            sb.append(module.getModuleSourcePath());
+            sb.append("</i>):");
+            sb.append(NEW_LINE);
+            sb.append("<pre>");
+            sb.append(yangSnipet);
+            sb.append("</pre>");
+            sb.append("The schema path to identify an instance is ");
+            sb.append(NEW_LINE);
+            sb.append("<i>");
+            sb.append(YangTemplate.formatSchemaPath(schemaNode.getPath().getPathFromRoot()));
+            sb.append("</i>");
+
+            if (isListOrContainer) {
+                sb.append("See also:");
+                sb.append(NEW_LINE);
+                sb.append(fourSpaceIndent);
+                sb.append("@see ");
+                sb.append(linkToBuilderClass);
+                if (isList) {
+                    sb.append(TAB);
+                    sb.append("@see ");
+                    sb.append(linkToKeyClass);
+                }
+                sb.append(NEW_LINE);
+            }
+            sb.append(NEW_LINE);
+
+            return sb.toString();
+        }
+        return schemaNode.getDescription();
+    }
+
+    private String createDescription(final Module module) {
+        final StringBuilder sb = new StringBuilder();
+        final String yangSnipet = YangTemplate.generateYangSnipet(module);
+
+        sb.append("\nModule source path:\n");
+        sb.append(module.getModuleSourcePath());
+        sb.append("\n\n");
+        sb.append("Yang snipet:\n\n");
+        sb.append(yangSnipet);
+
+        return sb.toString();
     }
 
     /**
@@ -1935,7 +2023,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
                             + builder.getName());
                 }
                 builder.addImplementsType(genType);
+
                 builder.addComment(genType.getComment());
+                builder.setDescription(genType.getDescription());
+                builder.setModuleName(genType.getModuleName());
+                builder.setReference(genType.getReference());
+                builder.setSchemaPath(genType.getSchemaPath());
             }
         }
         return builder;
