@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_cb65cbb5",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingSchemaContextUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-07-25T10:36:24Z",
+      "side": 1,
+      "message": "Could you add here quick check which will be\nif( originalDefinition.equals(potential) {\n  return Optional.of(potential)\n}\nSo we will not use utility if they are same from begining.",
+      "revId": "cbb8bfd8253f3e8b018ae587aae9690b6d29041a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_6b56ffcf",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingSchemaContextUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-07-25T10:36:24Z",
+      "side": 1,
+      "message": "Please remove whitespace.",
+      "revId": "cbb8bfd8253f3e8b018ae587aae9690b6d29041a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ab6087a5",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingSchemaContextUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-07-25T10:36:24Z",
+      "side": 1,
+      "message": "NPE Still possible here",
+      "revId": "cbb8bfd8253f3e8b018ae587aae9690b6d29041a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
