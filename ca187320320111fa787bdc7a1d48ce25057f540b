@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_0b2ad38f",
+        "filename": "common/util/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-07-25T16:24:10Z",
+      "side": 1,
+      "message": "It\u0027s probably worth having consistent formatting here in terms of tabs/spaces.",
+      "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_960cca3c",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/BlockingThreadPoolExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-07-25T16:24:10Z",
+      "side": 1,
+      "message": "A comment explaining what 0 and 15L are would be nice.",
+      "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1618ba73",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-07-25T16:24:10Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be listener.equals(other.listener)? Especially if we\u0027re using listener.hashCode() to provide hashCode().",
+      "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d6549200",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/concurrent/BlockingThreadPoolExecutorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-07-25T16:24:10Z",
+      "side": 1,
+      "message": "This file seems to have windows end of line characters.",
+      "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
