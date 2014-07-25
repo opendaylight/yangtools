@@ -98,18 +98,18 @@ public final class QNameModule implements Immutable, Serializable {
             return false;
         }
         final QNameModule other = (QNameModule) obj;
-        if (namespace == null) {
-            if (other.namespace != null) {
-                return false;
-            }
-        } else if (!namespace.equals(other.namespace)) {
-            return false;
-        }
         if (revision == null) {
             if (other.revision != null) {
                 return false;
             }
         } else if (!revision.equals(other.revision)) {
+            return false;
+        }
+        if (namespace == null) {
+            if (other.namespace != null) {
+                return false;
+            }
+        } else if (!namespace.equals(other.namespace)) {
             return false;
         }
         return true;
