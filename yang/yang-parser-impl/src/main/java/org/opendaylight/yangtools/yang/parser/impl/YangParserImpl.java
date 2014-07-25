@@ -39,7 +39,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import javax.annotation.concurrent.Immutable;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.UnbufferedCharStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangLexer;
@@ -583,8 +585,7 @@ public final class YangParserImpl implements YangContextParser {
         }
     }
 
-    private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException,
-    YangSyntaxErrorException {
+    private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
         final Map<ByteSource, ParseTree> trees = new HashMap<>();
         for (ByteSource source : sources) {
             trees.put(source, parseYangSource(source));
@@ -592,21 +593,25 @@ public final class YangParserImpl implements YangContextParser {
         return trees;
     }
 
-    private YangContext parseYangSource(final ByteSource source) throws IOException, YangSyntaxErrorException {
+    public static YangContext parseYangSource(final InputStream input) throws IOException, YangSyntaxErrorException {
+        final CharStream stream = new UnbufferedCharStream(input);
+        final YangLexer lexer = new YangLexer(stream);
+        final CommonTokenStream tokens = new CommonTokenStream(lexer);
+        final YangParser parser = new YangParser(tokens);
+        parser.removeErrorListeners();
+
+        final YangErrorListener errorListener = new YangErrorListener();
+        parser.addErrorListener(errorListener);
+
+        final YangContext result = parser.yang();
+        errorListener.validate();
+
+        return result;
+    }
+
+    private static YangContext parseYangSource(final ByteSource source) throws IOException, YangSyntaxErrorException {
         try (InputStream stream = source.openStream()) {
-            final ANTLRInputStream input = new ANTLRInputStream(stream);
-            final YangLexer lexer = new YangLexer(input);
-            final CommonTokenStream tokens = new CommonTokenStream(lexer);
-            final YangParser parser = new YangParser(tokens);
-            parser.removeErrorListeners();
-
-            final YangErrorListener errorListener = new YangErrorListener();
-            parser.addErrorListener(errorListener);
-
-            final YangContext result = parser.yang();
-            errorListener.validate();
-
-            return result;
+            return parseYangSource(source.openStream());
         }
     }
 
