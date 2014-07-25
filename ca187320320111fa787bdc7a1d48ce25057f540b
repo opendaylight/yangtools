@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_366a9eb3",
+        "filename": "common/util/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T16:55:31Z",
+      "side": 1,
+      "message": "damn tabs - the dependency GUI put those in",
+      "parentUuid": "fa82b9bf_0b2ad38f",
+      "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_960cca3c",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/BlockingThreadPoolExecutor.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-25T16:24:10Z",
       "side": 1,
       "message": "A comment explaining what 0 and 15L are would be nice.",
+      "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_566722e9",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/BlockingThreadPoolExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T16:55:31Z",
+      "side": 1,
+      "message": "ok although the javadocs for \u0027super\u0027 explain them",
+      "parentUuid": "fa82b9bf_960cca3c",
       "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_f65f560d",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T16:55:31Z",
+      "side": 1,
+      "message": "My intention is to use identity hash/equals so the \u0027\u003d\u003d\u0027 here is correct b/c I\u0027m interested in the actual reference. But I should be using System.identityHashCode. Although most listener classes probably wouldn\u0027t override hashCode/equals, I prefer using identity in these cases where I don\u0027t know anything about the class impls. Since I\u0027m mixing multiple listener class instances in the same map, I don\u0027t want to rely on overridden equals methods always checking for instance of class - some may just blindly cast the other Object to compare. I\u0027ve been burned by that in the past.",
+      "parentUuid": "fa82b9bf_1618ba73",
+      "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_d6549200",
         "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/concurrent/BlockingThreadPoolExecutorTest.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2014-07-25T16:24:10Z",
       "side": 1,
       "message": "This file seems to have windows end of line characters.",
+      "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_165d1a15",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/concurrent/BlockingThreadPoolExecutorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-25T16:55:31Z",
+      "side": 1,
+      "message": "Not sure how they got there - I already removed them in patch set 2.",
+      "parentUuid": "fa82b9bf_d6549200",
       "revId": "ca187320320111fa787bdc7a1d48ce25057f540b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
