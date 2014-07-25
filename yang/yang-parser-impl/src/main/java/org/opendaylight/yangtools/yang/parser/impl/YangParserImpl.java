@@ -583,31 +583,29 @@ public final class YangParserImpl implements YangContextParser {
         }
     }
 
-    private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException,
-    YangSyntaxErrorException {
+    private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
         final Map<ByteSource, ParseTree> trees = new HashMap<>();
         for (ByteSource source : sources) {
-            trees.put(source, parseYangSource(source));
+            try (InputStream stream = source.openStream()) {
+                trees.put(source, parseYangSource(stream));
+            }
         }
         return trees;
     }
 
-    private YangContext parseYangSource(final ByteSource source) throws IOException, YangSyntaxErrorException {
-        try (InputStream stream = source.openStream()) {
-            final ANTLRInputStream input = new ANTLRInputStream(stream);
-            final YangLexer lexer = new YangLexer(input);
-            final CommonTokenStream tokens = new CommonTokenStream(lexer);
-            final YangParser parser = new YangParser(tokens);
-            parser.removeErrorListeners();
+    public static YangContext parseYangSource(final InputStream stream) throws IOException, YangSyntaxErrorException {
+        final YangLexer lexer = new YangLexer(new ANTLRInputStream(stream));
+        final CommonTokenStream tokens = new CommonTokenStream(lexer);
+        final YangParser parser = new YangParser(tokens);
+        parser.removeErrorListeners();
 
-            final YangErrorListener errorListener = new YangErrorListener();
-            parser.addErrorListener(errorListener);
+        final YangErrorListener errorListener = new YangErrorListener();
+        parser.addErrorListener(errorListener);
 
-            final YangContext result = parser.yang();
-            errorListener.validate();
+        final YangContext result = parser.yang();
+        errorListener.validate();
 
-            return result;
-        }
+        return result;
     }
 
     /**
