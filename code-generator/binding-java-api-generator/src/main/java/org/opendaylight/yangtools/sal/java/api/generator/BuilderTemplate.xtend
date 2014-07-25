@@ -542,17 +542,21 @@ class BuilderTemplate extends BaseTemplate {
                 «IF !impl»if (base instanceof «type.name»«IMPL») {«ENDIF»
                     «IF !impl»«type.name»«IMPL» _impl = («type.name»«IMPL») base;«ENDIF»
                     «val prop = if (impl) "base" else "_impl"»
-                    switch («prop».«augmentField.name».size()) {
-                    case 0:
-                        this.«augmentField.name» = «Collections.importedName».emptyMap();
-                        break;
-                    case 1:
-                        final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = «prop».«augmentField.name».entrySet().iterator().next();
-                        this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
-                        break;
-                    default :
+                    «IF impl»
+                        switch («prop».«augmentField.name».size()) {
+                        case 0:
+                            this.«augmentField.name» = «Collections.importedName».emptyMap();
+                            break;
+                            case 1:
+                                final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = «prop».«augmentField.name».entrySet().iterator().next();
+                                this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());       
+                            break;
+                        default :
+                            this.«augmentField.name» = new «HashMap.importedName»<>(«prop».«augmentField.name»);
+                        }
+                    «ELSE»
                         this.«augmentField.name» = new «HashMap.importedName»<>(«prop».«augmentField.name»);
-                    }
+                    «ENDIF»
                 «IF !impl»}«ENDIF»
             «ENDIF»
         }
