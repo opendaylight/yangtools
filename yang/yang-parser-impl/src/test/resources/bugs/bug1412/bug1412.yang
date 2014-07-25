@@ -1,0 +1,23 @@
+module bug1412 {
+    yang-version 1;
+    namespace "urn:test:bug1412";
+    prefix "b1412";
+
+    revision "2014-07-25" {
+    }
+
+
+    container node {
+        ext:action hello {
+            ext:info "greeting";
+            description "say greeting";
+            ext:actionpoint entry {
+                ext:internal;
+            }
+            output {
+                uses params;
+            }
+        }
+    }
+
+}
