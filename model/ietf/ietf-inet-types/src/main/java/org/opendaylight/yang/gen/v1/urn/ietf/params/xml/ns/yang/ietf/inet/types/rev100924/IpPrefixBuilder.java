@@ -7,39 +7,36 @@
  */
 package org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
-**/
-public class IpPrefixBuilder {
+ **/
+public final class IpPrefixBuilder {
+    private static final Pattern IPV4_PATTERN = Pattern.compile("(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))");
+    private static final Pattern IPV6_PATTERN1 = Pattern.compile("((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))");
+    private static final Pattern IPV6_PATTERN2 = Pattern.compile("(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(/.+)");
 
-    public static IpPrefix getDefaultInstance(String defaultValue) {
-        String ipv4Pattern = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))";
-        String ipv6Pattern1 = "((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))";
-        String ipv6Pattern2 = "(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(/.+)";
+    private IpPrefixBuilder() {
 
-        List<String> matchers = new ArrayList<>();
-        if (defaultValue.matches(ipv4Pattern)) {
-            matchers.add(Ipv4Address.class.getSimpleName());
-        }
-        if (defaultValue.matches(ipv6Pattern1) && defaultValue.matches(ipv6Pattern2)) {
-            matchers.add(Ipv6Address.class.getSimpleName());
-        }
-        if (matchers.size() > 1) {
-            throw new IllegalArgumentException("Cannot create IpPrefix from " + defaultValue
-                    + ". Value is ambigious for " + matchers);
-        }
+    }
 
-        if (defaultValue.matches(ipv4Pattern)) {
-            Ipv4Prefix ipv4 = new Ipv4Prefix(defaultValue);
-            return new IpPrefix(ipv4);
+    public static IpPrefix getDefaultInstance(final String defaultValue) {
+        final Matcher ipv4Matcher = IPV4_PATTERN.matcher(defaultValue);
+
+        if (ipv4Matcher.matches()) {
+            if (IPV6_PATTERN1.matcher(defaultValue).matches() && IPV6_PATTERN2.matcher(defaultValue).matches()) {
+                throw new IllegalArgumentException(
+                        String.format("Cannot create IpPrefix from \"%s\", matches both %s and %s",
+                                defaultValue, Ipv4Address.class.getSimpleName(), Ipv6Address.class.getSimpleName()));
+
+            }
+            return new IpPrefix(new Ipv4Prefix(defaultValue));
+        } else if (IPV6_PATTERN1.matcher(defaultValue).matches() && IPV6_PATTERN2.matcher(defaultValue).matches()) {
+            return new IpPrefix(new Ipv6Prefix(defaultValue));
+        } else {
+            throw new IllegalArgumentException("Cannot create IpPrefix from " + defaultValue);
         }
-        if (defaultValue.matches(ipv6Pattern1) && defaultValue.matches(ipv6Pattern2)) {
-            Ipv6Prefix ipv6 = new Ipv6Prefix(defaultValue);
-            return new IpPrefix(ipv6);
-        }
-        throw new IllegalArgumentException("Cannot create IpPrefix from " + defaultValue);
     }
 
 }
