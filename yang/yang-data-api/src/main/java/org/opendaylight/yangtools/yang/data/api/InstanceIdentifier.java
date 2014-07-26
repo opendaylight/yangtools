@@ -29,7 +29,6 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
-import org.opendaylight.yangtools.concepts.util.Immutables;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -147,19 +146,12 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
             return EMPTY;
         }
 
-        if (Immutables.isImmutable(path)) {
-            return trustedCreate((Iterable<PathArgument>) path);
-        } else {
-            return trustedCreate(ImmutableList.copyOf(path));
-        }
+        return trustedCreate(ImmutableList.copyOf(path));
     }
 
     public static final InstanceIdentifier create(final PathArgument... path) {
-        if (path.length == 0) {
-            return EMPTY;
-        }
-
-        return trustedCreate(Arrays.asList(path));
+        // We are forcing a copy, since we cannot trust the user
+        return create(Arrays.asList(path));
     }
 
     @Override
@@ -193,7 +185,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
     }
 
     /**
-     *
      * Constructs a new Instance Identifier with new {@link NodeIdentifier} added to the end of path arguments
      *
      * @param name QName of {@link NodeIdentifier}
@@ -211,7 +202,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
      * @return Instance Identifier with additional path argument added to the end.
      */
     public InstanceIdentifier node(final PathArgument arg) {
-        return trustedCreate(Iterables.concat(pathArguments, Collections.singleton(arg)));
+        return new InstanceIdentifier(Iterables.concat(pathArguments, Collections.singleton(arg)), HashCodeBuilder.nextHashCode(hash, arg));
     }
 
     /**
@@ -479,17 +470,12 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         public int hashCode() {
             final int prime = 31;
             int result = super.hashCode();
-            result = prime * result + hashKeyValues();
-            return result;
-        }
+            result = prime * result;
 
-        private int hashKeyValues() {
-            int hash = 0;
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
-                hash += Objects.hashCode(entry.getKey()) + InstanceIdentifier.hashCode(entry.getValue());
+                result += Objects.hashCode(entry.getKey()) + InstanceIdentifier.hashCode(entry.getValue());
             }
-
-            return hash;
+            return result;
         }
 
         @Override
@@ -516,7 +502,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
 
         @Override
         public String toString() {
-            return super.toString() + "[" + keyValues + "]";
+            return super.toString() + '[' + keyValues + ']';
         }
     }
 
@@ -557,7 +543,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
 
         @Override
         public String toString() {
-            return super.toString() + "[" + value + "]";
+            return super.toString() + '[' + value + ']';
         }
     }
 
