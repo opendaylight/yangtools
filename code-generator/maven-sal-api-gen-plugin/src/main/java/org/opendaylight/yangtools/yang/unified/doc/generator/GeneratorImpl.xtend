@@ -367,7 +367,7 @@ class GeneratorImpl {
         return targetPathNodes
     }
     
-    private def DataSchemaNode findNodeInChildNodes(QName findingNode, Set<DataSchemaNode> childNodes) {
+    private def DataSchemaNode findNodeInChildNodes(QName findingNode, Iterable<DataSchemaNode> childNodes) {
         for(child : childNodes) {
             if (child.QName.equals(findingNode))
                 return child;
@@ -950,7 +950,7 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence printChildren(Set<DataSchemaNode> nodes, int level, InstanceIdentifier path) {
+    def CharSequence printChildren(Iterable<DataSchemaNode> nodes, int level, InstanceIdentifier path) {
         val anyxmlNodes = nodes.filter(AnyXmlSchemaNode)
         val leafNodes = nodes.filter(LeafSchemaNode)
         val leafListNodes = nodes.filter(LeafListSchemaNode)
@@ -1000,13 +1000,13 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence xmlExample(Set<DataSchemaNode> nodes, QName name,InstanceIdentifier path) '''
+    def CharSequence xmlExample(Iterable<DataSchemaNode> nodes, QName name,InstanceIdentifier path) '''
     <pre>
         «xmlExampleTag(name,nodes.xmplExampleTags(path))»
     </pre>
     '''
 
-    def CharSequence xmplExampleTags(Set<DataSchemaNode> nodes, InstanceIdentifier identifier) '''
+    def CharSequence xmplExampleTags(Iterable<DataSchemaNode> nodes, InstanceIdentifier identifier) '''
         <!-- Child nodes -->
         «FOR node : nodes»
         <!-- «node.QName.localName» -->

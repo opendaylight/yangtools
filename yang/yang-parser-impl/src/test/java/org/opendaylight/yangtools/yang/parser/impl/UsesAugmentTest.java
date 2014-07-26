@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -20,10 +21,12 @@ import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -130,7 +133,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, pcreq.getPath());
-        Set<DataSchemaNode> childNodes = pcreq.getChildNodes();
+        Collection<DataSchemaNode> childNodes = pcreq.getChildNodes();
         assertEquals(4, childNodes.size());
         // * |-- leaf version
         LeafSchemaNode version = (LeafSchemaNode) pcreq.getDataChildByName("version");

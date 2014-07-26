@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -122,7 +123,7 @@ public class GroupingTest {
         Set<GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
         GroupingDefinition grouping = groupings.iterator().next();
-        Set<DataSchemaNode> children = grouping.getChildNodes();
+        Collection<DataSchemaNode> children = grouping.getChildNodes();
         assertEquals(5, children.size());
     }
 
@@ -352,7 +353,7 @@ public class GroupingTest {
         assertEquals(1, usesAugments.size());
         AugmentationSchema augment = usesAugments.iterator().next();
         assertEquals("inner augment", augment.getDescription());
-        Set<DataSchemaNode> children = augment.getChildNodes();
+        Collection<DataSchemaNode> children = augment.getChildNodes();
         assertEquals(1, children.size());
         DataSchemaNode leaf = children.iterator().next();
         assertTrue(leaf instanceof LeafSchemaNode);
@@ -411,7 +412,7 @@ public class GroupingTest {
         SchemaPath expectedPath;
 
         // grouping-U
-        Set<DataSchemaNode> childNodes = gu.getChildNodes();
+        Collection<DataSchemaNode> childNodes = gu.getChildNodes();
         assertEquals(7, childNodes.size());
 
         LeafSchemaNode leafGroupingU = (LeafSchemaNode) gu.getDataChildByName("leaf-grouping-U");
