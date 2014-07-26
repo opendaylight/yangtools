@@ -13,7 +13,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.Set;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -71,7 +73,7 @@ public class OrderingTest {
         Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         Module foo = TestUtils.findModule(modules, "foo");
 
-        Set<DataSchemaNode> childNodes = foo.getChildNodes();
+        Collection<DataSchemaNode> childNodes = foo.getChildNodes();
         String[] expectedOrder = new String[] { "int32-leaf", "string-leaf", "length-leaf", "decimal-leaf",
                 "decimal-leaf2", "ext", "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data",
                 "how", "address", "port", "addresses", "peer" };
@@ -93,7 +95,7 @@ public class OrderingTest {
         assertEquals(1, groupings.size());
         GroupingDefinition target = groupings.iterator().next();
 
-        Set<DataSchemaNode> childNodes = target.getChildNodes();
+        Collection<DataSchemaNode> childNodes = target.getChildNodes();
         String[] expectedOrder = new String[] { "data", "how", "address", "port", "addresses" };
         String[] actualOrder = new String[childNodes.size()];
 
@@ -109,10 +111,9 @@ public class OrderingTest {
     public void testOrderingNestedChildNodes3() throws Exception {
         Module baz = TestUtils.loadModule(getClass().getResourceAsStream("/ordering/foo.yang"));
         ContainerSchemaNode x = (ContainerSchemaNode) baz.getDataChildByName("x");
-        Set<DataSchemaNode> childNodes = x.getChildNodes();
+        Collection<DataSchemaNode> childNodes = x.getChildNodes();
 
-        String[] expectedOrder = new String[] { "x15", "x10", "x5", "x1", "a5", "a1", "x2", "b5", "b1", "x3", "ax15",
-                "ax5" };
+        String[] expectedOrder = new String[] { "x15", "x10", "x5", "x1", "a5", "a1", "x2", "b5", "b1", "x3", "ax15", "ax5" };
         String[] actualOrder = new String[childNodes.size()];
 
         int i = 0;

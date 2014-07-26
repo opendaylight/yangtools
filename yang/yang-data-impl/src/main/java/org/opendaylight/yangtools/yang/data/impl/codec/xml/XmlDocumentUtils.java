@@ -9,6 +9,13 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,13 +60,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 public class XmlDocumentUtils {
     private static class ElementWithSchemaContext {
@@ -278,8 +278,8 @@ public class XmlDocumentUtils {
         checkState(qName.getLocalName().equals(xmlElement.getLocalName()));
     }
 
-    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Set<DataSchemaNode> dataSchemaNode) {
-        if (dataSchemaNode != null && !dataSchemaNode.isEmpty() && qname != null) {
+    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
+        if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
                     return Optional.<DataSchemaNode> of(dsn);
@@ -326,7 +326,7 @@ public class XmlDocumentUtils {
         return ImmutableCompositeNode.create(qname, values.build());
     }
 
-    public static List<Node<?>> toDomNodes(final Element element, final Optional<Set<DataSchemaNode>> context,final SchemaContext schemaCtx) {
+    public static List<Node<?>> toDomNodes(final Element element, final Optional<? extends Iterable<DataSchemaNode>> context, final SchemaContext schemaCtx) {
         return forEachChild(element.getChildNodes(),schemaCtx, new Function<ElementWithSchemaContext, Optional<Node<?>>>() {
 
             @Override
@@ -335,7 +335,7 @@ public class XmlDocumentUtils {
                     QName partialQName = qNameFromElement(input.getElement());
                     Optional<DataSchemaNode> schemaNode = findFirstSchema(partialQName, context.get());
                     if (schemaNode.isPresent()) {
-                        return Optional.<Node<?>> fromNullable(//
+                        return Optional.<Node<?>> fromNullable(
                                 toNodeWithSchema(input.getElement(), schemaNode.get(), XmlUtils.DEFAULT_XML_CODEC_PROVIDER, input.getSchemaContext()));
                     }
                 }
@@ -346,8 +346,8 @@ public class XmlDocumentUtils {
 
     }
 
-    public static List<Node<?>> toDomNodes(final Element element, final Optional<Set<DataSchemaNode>> context) {
-        return toDomNodes(element,context,null);
+    public static List<Node<?>> toDomNodes(final Element element, final Optional<? extends Iterable<DataSchemaNode>> context) {
+        return toDomNodes(element, context, null);
     }
 
     /**
@@ -383,9 +383,9 @@ public class XmlDocumentUtils {
                     final Optional<NotificationDefinition> notificationDef = findNotification(partialQName,
                             notifications.get());
                     if (notificationDef.isPresent()) {
-                        final Set<DataSchemaNode> dataNodes = notificationDef.get().getChildNodes();
+                        final Iterable<DataSchemaNode> dataNodes = notificationDef.get().getChildNodes();
                         final List<Node<?>> domNodes = toDomNodes(childElement,
-                                Optional.<Set<DataSchemaNode>> fromNullable(dataNodes),schemaCtx);
+                                Optional.<Iterable<DataSchemaNode>> fromNullable(dataNodes),schemaCtx);
                         return ImmutableCompositeNode.create(notificationDef.get().getQName(), domNodes);
                     }
                 }

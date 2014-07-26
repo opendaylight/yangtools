@@ -7,6 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
@@ -38,34 +44,28 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 public class NormalizedDataBuilderTest {
 
     private ContainerSchemaNode containerNode;
     private SchemaContext schema;
 
-    SchemaContext parseTestSchema(String... yangPath) {
+    SchemaContext parseTestSchema(final String... yangPath) {
         YangParserImpl yangParserImpl = new YangParserImpl();
         Set<Module> modules = yangParserImpl.parseYangModelsFromStreams(getTestYangs(yangPath));
         return yangParserImpl.resolveSchemaContext(modules);
     }
 
-    List<InputStream> getTestYangs(String... yangPaths) {
+    List<InputStream> getTestYangs(final String... yangPaths) {
 
         return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
                 new Function<String, InputStream>() {
-                    @Override
-                    public InputStream apply(String input) {
-                        InputStream resourceAsStream = getClass().getResourceAsStream(input);
-                        Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
-                        return resourceAsStream;
-                    }
-                }));
+            @Override
+            public InputStream apply(final String input) {
+                InputStream resourceAsStream = getClass().getResourceAsStream(input);
+                Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
+                return resourceAsStream;
+            }
+        }));
     }
 
     @Before
@@ -92,8 +92,8 @@ public class NormalizedDataBuilderTest {
                 .withChildValue(1)
                 .withChild(
                         Builders.<Integer> leafSetEntryBuilder()
-                                .withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
-                .build();
+                        .withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
+                        .build();
         builder.withChild(leafList);
 
         // list
@@ -101,12 +101,12 @@ public class NormalizedDataBuilderTest {
                 .mapEntryBuilder()
                 .withChild(
                         Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"))
-                                .withValue(1).build())
-                .withChild(Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("containerInList")).build())
-                .withNodeIdentifier(
-                        new InstanceIdentifier.NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
-                                Collections.singletonMap(getNodeIdentifier("uint32InList").getNodeType(), (Object) 1)))
-                .build();
+                        .withValue(1).build())
+                        .withChild(Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("containerInList")).build())
+                        .withNodeIdentifier(
+                                new InstanceIdentifier.NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
+                                        Collections.singletonMap(getNodeIdentifier("uint32InList").getNodeType(), (Object) 1)))
+                                        .build();
 
         MapNode list = Builders.mapBuilder().withChild(listChild1).withNodeIdentifier(getNodeIdentifier("list"))
                 .build();
@@ -116,8 +116,8 @@ public class NormalizedDataBuilderTest {
                 .augmentationBuilder()
                 .withNodeIdentifier(
                         new InstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(getQName("augmentUint32"))))
-                .withChild(
-                        Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
+                        .withChild(
+                                Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
                                 .withValue(11).build()).build();
 
         builder.withChild(augmentation);
@@ -186,7 +186,7 @@ public class NormalizedDataBuilderTest {
         // .build());
     }
 
-    private AugmentationSchema getAugmentationSchemaForChild(ContainerSchemaNode containerNode, QName qName) {
+    private AugmentationSchema getAugmentationSchemaForChild(final ContainerSchemaNode containerNode, final QName qName) {
         for (AugmentationSchema augmentationSchema : containerNode.getAvailableAugmentations()) {
             if (augmentationSchema.getDataChildByName(qName) != null) {
                 return augmentationSchema;
@@ -195,20 +195,20 @@ public class NormalizedDataBuilderTest {
         throw new IllegalStateException("Unable to find child augmentation in " + containerNode);
     }
 
-    private InstanceIdentifier.NodeWithValue getNodeWithValueIdentifier(String localName, Object value) {
+    private InstanceIdentifier.NodeWithValue getNodeWithValueIdentifier(final String localName, final Object value) {
         return new InstanceIdentifier.NodeWithValue(getQName(localName), value);
     }
 
-    private QName getQName(String localName) {
+    private QName getQName(final String localName) {
         String namespace = "namespace";
         return new QName(URI.create(namespace), localName);
     }
 
-    private InstanceIdentifier.NodeIdentifier getNodeIdentifier(String localName) {
+    private InstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
         return new InstanceIdentifier.NodeIdentifier(getQName(localName));
     }
 
-    public static DataSchemaNode getSchemaNode(SchemaContext context, String moduleName, String childNodeName) {
+    public static DataSchemaNode getSchemaNode(final SchemaContext context, final String moduleName, final String childNodeName) {
         for (Module module : context.getModules()) {
             if (module.getName().equals(moduleName)) {
                 DataSchemaNode found = findChildNode(module.getChildNodes(), childNodeName);
@@ -219,12 +219,13 @@ public class NormalizedDataBuilderTest {
         throw new IllegalStateException("Unable to find child node " + childNodeName);
     }
 
-    static DataSchemaNode findChildNode(Set<DataSchemaNode> children, String name) {
+    private static DataSchemaNode findChildNode(final Iterable<DataSchemaNode> children, final String name) {
         List<DataNodeContainer> containers = Lists.newArrayList();
 
         for (DataSchemaNode dataSchemaNode : children) {
-            if (dataSchemaNode.getQName().getLocalName().equals(name))
+            if (dataSchemaNode.getQName().getLocalName().equals(name)) {
                 return dataSchemaNode;
+            }
             if (dataSchemaNode instanceof DataNodeContainer) {
                 containers.add((DataNodeContainer) dataSchemaNode);
             } else if (dataSchemaNode instanceof ChoiceNode) {

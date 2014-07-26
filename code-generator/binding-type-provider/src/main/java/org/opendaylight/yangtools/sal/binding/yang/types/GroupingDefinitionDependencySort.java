@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,9 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public class GroupingDefinitionDependencySort {
 
@@ -132,7 +132,7 @@ public class GroupingDefinitionDependencySort {
      *            data node container which can contain some uses of grouping
      * @return set of uses nodes which were find in <code>container</code>.
      */
-    private Set<UsesNode> getAllUsesNodes(DataNodeContainer container) {
+    private Set<UsesNode> getAllUsesNodes(final DataNodeContainer container) {
         Set<UsesNode> ret = new HashSet<>();
         Set<UsesNode> usesNodes = container.getUses();
         ret.addAll(usesNodes);
@@ -146,8 +146,7 @@ public class GroupingDefinitionDependencySort {
         for (GroupingDefinition groupingDefinition : groupings) {
             ret.addAll(getAllUsesNodes(groupingDefinition));
         }
-        Set<DataSchemaNode> childNodes = container.getChildNodes();
-        for (DataSchemaNode childNode : childNodes) {
+        for (DataSchemaNode childNode : container.getChildNodes()) {
             if (childNode instanceof DataNodeContainer) {
                 ret.addAll(getAllUsesNodes((DataNodeContainer) childNode));
             } else if (childNode instanceof ChoiceNode) {
