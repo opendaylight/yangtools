@@ -30,6 +30,7 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findP
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -525,8 +527,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         notification.getChildNodes());
 
                 listenerInterface.addMethod("on" + notificationInterface.getName())
-                        .setAccessModifier(AccessModifier.PUBLIC).addParameter(notificationInterface, "notification")
-                        .setComment(notification.getDescription()).setReturnType(Types.VOID);
+                .setAccessModifier(AccessModifier.PUBLIC).addParameter(notificationInterface, "notification")
+                .setComment(notification.getDescription()).setReturnType(Types.VOID);
             }
         }
 
@@ -594,7 +596,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     .getQNameModule());
             final String returnTypeName = BindingMapping.getClassName(baseIdentity.getQName());
             final GeneratedTransferObject gto = new GeneratedTOBuilderImpl(returnTypePkgName, returnTypeName)
-                    .toInstance();
+            .toInstance();
             newType.setExtendsType(gto);
         }
         newType.setAbstract(true);
@@ -641,7 +643,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private void groupingsToGenTypes(final Module module, final Collection<GroupingDefinition> groupings) {
         final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
         final List<GroupingDefinition> groupingsSortedByDependencies = new GroupingDefinitionDependencySort()
-                .sort(groupings);
+        .sort(groupings);
         for (GroupingDefinition grouping : groupingsSortedByDependencies) {
             groupingToGenType(basePackageName, grouping, module);
         }
@@ -996,8 +998,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *         added to it.
      */
     private GeneratedTypeBuilder resolveDataSchemaNodes(final Module module, final String basePackageName,
-            final GeneratedTypeBuilder parent, final GeneratedTypeBuilder childOf, final Set<DataSchemaNode> schemaNodes) {
-        if ((schemaNodes != null) && (parent != null)) {
+            final GeneratedTypeBuilder parent, final GeneratedTypeBuilder childOf, final Iterable<DataSchemaNode> schemaNodes) {
+        if (schemaNodes != null && parent != null) {
             for (DataSchemaNode schemaNode : schemaNodes) {
                 if (!schemaNode.isAugmenting() && !schemaNode.isAddedByUses()) {
                     addSchemaNodeToBuilderAsMethod(basePackageName, schemaNode, parent, childOf, module);
@@ -1031,7 +1033,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private GeneratedTypeBuilder augSchemaNodeToMethods(final Module module, final String basePackageName,
             final GeneratedTypeBuilder typeBuilder, final GeneratedTypeBuilder childOf,
-            final Set<DataSchemaNode> schemaNodes) {
+            final Iterable<DataSchemaNode> schemaNodes) {
         if ((schemaNodes != null) && (typeBuilder != null)) {
             for (DataSchemaNode schemaNode : schemaNodes) {
                 if (!schemaNode.isAugmenting()) {
@@ -1164,7 +1166,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 caseTypeBuilder.addImplementsType(refChoiceType);
                 genCtx.get(module).addCaseType(caseNode.getPath(), caseTypeBuilder);
                 genCtx.get(module).addChoiceToCaseMapping(refChoiceType, caseTypeBuilder, caseNode);
-                final Set<DataSchemaNode> caseChildNodes = caseNode.getChildNodes();
+                final Iterable<DataSchemaNode> caseChildNodes = caseNode.getChildNodes();
                 if (caseChildNodes != null) {
                     Object parentNode = null;
                     final SchemaPath nodeSp = choiceNode.getPath();
@@ -1183,7 +1185,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                             if (targetSchemaNode == null) {
                                 throw new IllegalStateException(
                                         "Failed to find target node from grouping for augmentation " + augSchema
-                                                + " in module " + module.getName());
+                                        + " in module " + module.getName());
                             }
                         }
                         parent = targetSchemaNode;
@@ -1231,7 +1233,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             </ul>
      */
     private void generateTypesFromAugmentedChoiceCases(final Module module, final String basePackageName,
-            final Type targetType, final ChoiceNode targetNode, final Set<DataSchemaNode> augmentedNodes) {
+            final Type targetType, final ChoiceNode targetNode, final Iterable<DataSchemaNode> augmentedNodes) {
         checkArgument(basePackageName != null, "Base Package Name cannot be NULL.");
         checkArgument(targetType != null, "Referenced Choice Type cannot be NULL.");
         checkArgument(augmentedNodes != null, "Set of Choice Case Nodes cannot be NULL.");
@@ -1267,7 +1269,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 } else {
                     node = targetNode.getCaseNodeByName(caseNode.getQName().getLocalName());
                 }
-                final Set<DataSchemaNode> childNodes = node.getChildNodes();
+                final Iterable<DataSchemaNode> childNodes = node.getChildNodes();
                 if (childNodes != null) {
                     resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, childNodes);
                 }

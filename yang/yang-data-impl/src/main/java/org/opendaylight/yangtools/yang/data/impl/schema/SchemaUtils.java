@@ -36,8 +36,8 @@ public final class SchemaUtils {
     private SchemaUtils() {
     }
 
-    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Set<DataSchemaNode> dataSchemaNode) {
-        if (dataSchemaNode != null && !dataSchemaNode.isEmpty() && qname != null) {
+    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
+        if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
                     return Optional.<DataSchemaNode> of(dsn);
@@ -55,11 +55,10 @@ public final class SchemaUtils {
     }
 
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
-        Set<DataSchemaNode> childNodes = schema.getChildNodes();
-        return findSchemaForChild(schema, qname, childNodes);
+        return findSchemaForChild(schema, qname, schema.getChildNodes());
     }
 
-    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final Set<DataSchemaNode> childNodes) {
+    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final Iterable<DataSchemaNode> childNodes) {
         Optional<DataSchemaNode> childSchema = findFirstSchema(qname, childNodes);
         Preconditions.checkState(childSchema.isPresent(),
                 "Unknown child(ren) node(s) detected, identified by: %s, in: %s", qname, schema);
@@ -125,12 +124,10 @@ public final class SchemaUtils {
      * @return Map with all child nodes, to their most top augmentation
      */
     public static Map<QName, ChoiceNode> mapChildElementsFromChoices(final DataNodeContainer schema) {
-        Set<DataSchemaNode> childNodes = schema.getChildNodes();
-
-        return mapChildElementsFromChoices(schema, childNodes);
+        return mapChildElementsFromChoices(schema, schema.getChildNodes());
     }
 
-    private static Map<QName, ChoiceNode> mapChildElementsFromChoices(final DataNodeContainer schema, final Set<DataSchemaNode> childNodes) {
+    private static Map<QName, ChoiceNode> mapChildElementsFromChoices(final DataNodeContainer schema, final Iterable<DataSchemaNode> childNodes) {
         Map<QName, ChoiceNode> mappedChoices = Maps.newLinkedHashMap();
 
         for (final DataSchemaNode childSchema : childNodes) {

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -662,8 +663,8 @@ public final class BuilderUtils {
     }
 
     public static Set<DataSchemaNodeBuilder> wrapChildNodes(final String moduleName, final int line,
-            final Set<DataSchemaNode> nodes, final SchemaPath parentPath, final QName parentQName) {
-        Set<DataSchemaNodeBuilder> result = new LinkedHashSet<>();
+            final Collection<DataSchemaNode> nodes, final SchemaPath parentPath, final QName parentQName) {
+        Set<DataSchemaNodeBuilder> result = new LinkedHashSet<>(nodes.size());
 
         for (DataSchemaNode node : nodes) {
             QName qname = QName.create(parentQName, node.getQName().getLocalName());

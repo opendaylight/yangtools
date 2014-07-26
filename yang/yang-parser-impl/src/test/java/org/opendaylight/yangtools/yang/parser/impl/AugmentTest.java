@@ -19,10 +19,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -86,7 +88,7 @@ public class AugmentTest {
         expectedSchemaPath = SchemaPath.create(qnames, true);
         assertEquals(expectedSchemaPath, augment.getTargetPath());
 
-        Set<DataSchemaNode> augmentChildren = augment.getChildNodes();
+        Collection<DataSchemaNode> augmentChildren = augment.getChildNodes();
         assertEquals(4, augmentChildren.size());
         for (DataSchemaNode dsn : augmentChildren) {
             TestUtils.checkIsAugmenting(dsn, false);
@@ -285,7 +287,7 @@ public class AugmentTest {
         qnames.add(qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, id.getPath());
-        Set<DataSchemaNode> idChildren = id.getChildNodes();
+        Collection<DataSchemaNode> idChildren = id.getChildNodes();
         assertEquals(1, idChildren.size());
 
         // case node1
@@ -294,7 +296,7 @@ public class AugmentTest {
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, node1.getPath());
-        Set<DataSchemaNode> node1Children = node1.getChildNodes();
+        Collection<DataSchemaNode> node1Children = node1.getChildNodes();
         assertTrue(node1Children.isEmpty());
 
         // case node2
@@ -303,7 +305,7 @@ public class AugmentTest {
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, node2.getPath());
-        Set<DataSchemaNode> node2Children = node2.getChildNodes();
+        Collection<DataSchemaNode> node2Children = node2.getChildNodes();
         assertTrue(node2Children.isEmpty());
 
         // case node3
@@ -312,7 +314,7 @@ public class AugmentTest {
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, node3.getPath());
-        Set<DataSchemaNode> node3Children = node3.getChildNodes();
+        Collection<DataSchemaNode> node3Children = node3.getChildNodes();
         assertEquals(1, node3Children.size());
 
         // test cases
@@ -402,7 +404,7 @@ public class AugmentTest {
         assertEquals(qnames[3], attach.getQName());
         expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
         assertEquals(expectedPath, attach.getPath());
-        Set<DataSchemaNode> attachChildren = attach.getChildNodes();
+        Collection<DataSchemaNode> attachChildren = attach.getChildNodes();
         assertEquals(1, attachChildren.size());
 
         // case create
@@ -410,7 +412,7 @@ public class AugmentTest {
         assertEquals(qnames[3], create.getQName());
         expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
         assertEquals(expectedPath, create.getPath());
-        Set<DataSchemaNode> createChildren = create.getChildNodes();
+        Collection<DataSchemaNode> createChildren = create.getChildNodes();
         assertEquals(1, createChildren.size());
 
         // case attach
@@ -418,7 +420,7 @@ public class AugmentTest {
         assertEquals(qnames[3], destroy.getQName());
         expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
         assertEquals(expectedPath, destroy.getPath());
-        Set<DataSchemaNode> destroyChildren = destroy.getChildNodes();
+        Collection<DataSchemaNode> destroyChildren = destroy.getChildNodes();
         assertEquals(1, destroyChildren.size());
     }
 

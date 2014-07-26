@@ -311,8 +311,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     }
 
     private DataSchemaNode searchInChoices(final DataNodeContainer node, final QName arg) {
-        Set<DataSchemaNode> children = node.getChildNodes();
-        for (DataSchemaNode child : children) {
+        for (DataSchemaNode child : node.getChildNodes()) {
             if (child instanceof ChoiceNode) {
                 ChoiceNode choiceNode = (ChoiceNode) child;
                 DataSchemaNode potential = searchInCases(choiceNode, arg);
@@ -425,8 +424,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         for (Map.Entry<Type, AugmentationSchema> entry : bimap.entrySet()) {
             Type key = entry.getKey();
             AugmentationSchema value = entry.getValue();
-            Set<DataSchemaNode> augmentedNodes = value.getChildNodes();
-            if (augmentedNodes != null && !(augmentedNodes.isEmpty())) {
+            Collection<DataSchemaNode> augmentedNodes = value.getChildNodes();
+            if (augmentedNodes != null && !augmentedNodes.isEmpty()) {
                 typeToAugment.put(key, value);
             }
         }
