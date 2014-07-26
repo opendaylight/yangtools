@@ -416,14 +416,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
 
         /**
-         * @return
-         * @deprecated use {@link #build()}
-         *
-         */
-        @Deprecated
-        InstanceIdentifier getIdentifier();
-
-        /**
          *
          * Builds an {@link InstanceIdentifier} with path arguments from this builder
          *
@@ -703,12 +695,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         @Override
         public InstanceIdentifier build() {
             return new InstanceIdentifier(ImmutableList.copyOf(path), hash.toInstance());
-        }
-
-        @Override
-        @Deprecated
-        public InstanceIdentifier getIdentifier() {
-            return build();
         }
     }
 
