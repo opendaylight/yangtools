@@ -14,6 +14,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,11 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +45,13 @@ public final class ModuleDependencySort {
 
     private static final Date DEFAULT_REVISION = new Date(0);
     private static final Logger LOGGER = LoggerFactory.getLogger(ModuleDependencySort.class);
+    private static final Function<Node, Module> TOPOLOGY_FUNCTION = new Function<TopologicalSort.Node, Module>() {
+        @Override
+        public Module apply(final TopologicalSort.Node input) {
+            ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
+            return moduleOrModuleBuilder.getModule();
+        }
+    };
 
     /**
      * It is not desirable to instance this class
@@ -107,14 +117,7 @@ public final class ModuleDependencySort {
         List<TopologicalSort.Node> sorted = sortInternal(ModuleOrModuleBuilder.fromAll(asList(modules),
                 Collections.<ModuleBuilder>emptyList()));
         // Cast to Module from Node and return
-        return Lists.transform(sorted, new Function<TopologicalSort.Node, Module>() {
-
-            @Override
-            public Module apply(final TopologicalSort.Node input) {
-                ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
-                return moduleOrModuleBuilder.getModule();
-            }
-        });
+        return Lists.transform(sorted, TOPOLOGY_FUNCTION);
     }
 
     private static List<TopologicalSort.Node> sortInternal(final Iterable<ModuleOrModuleBuilder> modules) {
@@ -372,12 +375,12 @@ class ModuleOrModuleBuilder {
     private final Optional<Module> maybeModule;
     private final Optional<ModuleBuilder> maybeModuleBuilder;
 
-    ModuleOrModuleBuilder(Module module) {
+    ModuleOrModuleBuilder(final Module module) {
         maybeModule = Optional.of(module);
         maybeModuleBuilder = Optional.absent();
     }
 
-    ModuleOrModuleBuilder(ModuleBuilder moduleBuilder) {
+    ModuleOrModuleBuilder(final ModuleBuilder moduleBuilder) {
         maybeModule = Optional.absent();
         maybeModuleBuilder = Optional.of(moduleBuilder);
     }
@@ -394,7 +397,7 @@ class ModuleOrModuleBuilder {
         return maybeModuleBuilder.get();
     }
 
-    static List<ModuleOrModuleBuilder> fromAll(Collection<Module> modules, Collection<ModuleBuilder> moduleBuilders) {
+    static List<ModuleOrModuleBuilder> fromAll(final Collection<Module> modules, final Collection<ModuleBuilder> moduleBuilders) {
         List<ModuleOrModuleBuilder> result = new ArrayList<>(modules.size() + moduleBuilders.size());
         for(Module m: modules){
             result.add(new ModuleOrModuleBuilder(m));
