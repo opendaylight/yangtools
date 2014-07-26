@@ -11,6 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
+
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -29,10 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.ImmutableSet;
 
 public class MultipleRevisionsSupportTest {
 
@@ -117,7 +117,7 @@ public class MultipleRevisionsSupportTest {
         verifyBindingDifference(schemaContext, TOPOLOGY_OLD_MODULE, TOPOLOGY_NEW_MODULE);
     }
 
-    private SchemaContext contextVerified(List<InputStream> streams) {
+    private SchemaContext contextVerified(final List<InputStream> streams) {
         YangParserImpl parser = new YangParserImpl();
         Set<Module> modules = parser.parseYangModelsFromStreams(streams);
         assertNotNull(modules);
@@ -127,19 +127,19 @@ public class MultipleRevisionsSupportTest {
         return context;
     }
 
-    private void verifyBindingDifference(SchemaContext schemaContext, YangModuleInfo oldModule, YangModuleInfo newModule) {
+    private void verifyBindingDifference(final SchemaContext schemaContext, final YangModuleInfo oldModule, final YangModuleInfo newModule) {
         generatedTypesVerified(schemaContext, oldModule, newModule);
     }
 
-    private Map<Module, ModuleContext> generatedTypesVerified(SchemaContext schemaContext, YangModuleInfo oldModule,
-            YangModuleInfo newModule) {
+    private Map<Module, ModuleContext> generatedTypesVerified(final SchemaContext schemaContext, final YangModuleInfo oldModule,
+            final YangModuleInfo newModule) {
         BindingGeneratorImpl generator = new BindingGeneratorImpl();
         generator.generateTypes(schemaContext);
         return generator.getModuleContexts();
     }
 
-    private void verifySchemaDifference(SchemaContext context, YangModuleInfo topologyOldModule,
-            YangModuleInfo topologyNewModule) {
+    private void verifySchemaDifference(final SchemaContext context, final YangModuleInfo topologyOldModule,
+            final YangModuleInfo topologyNewModule) {
         Module oldModel = context.findModuleByNamespaceAndRevision(//
                 URI.create(TOPOLOGY_OLD_MODULE.getNamespace()), QName.parseRevision(TOPOLOGY_OLD_MODULE.getRevision()));
 
@@ -156,7 +156,7 @@ public class MultipleRevisionsSupportTest {
         assertDeepRevision(TOPOLOGY_NEW_MODULE.getRevision(), newNode);
     }
 
-    private static void assertDeepRevision(String revision, SchemaNode node) {
+    private static void assertDeepRevision(final String revision, final SchemaNode node) {
         assertEquals("Wrong revision: " + node.getPath(), revision, node.getQName().getFormattedRevision());
         if (node instanceof DataNodeContainer) {
             for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
@@ -169,7 +169,7 @@ public class MultipleRevisionsSupportTest {
         }
     }
 
-    private static final SchemaNode findSchemaNode(DataNodeContainer container, String... pathArgs) {
+    private static final SchemaNode findSchemaNode(final DataNodeContainer container, final String... pathArgs) {
         DataNodeContainer previous = container;
 
         SchemaNode result = (container instanceof SchemaNode) ? (SchemaNode) container : null;
@@ -177,8 +177,7 @@ public class MultipleRevisionsSupportTest {
             if (previous == null) {
                 return null;
             }
-            Set<DataSchemaNode> childs = previous.getChildNodes();
-            for (DataSchemaNode child : childs) {
+            for (DataSchemaNode child : previous.getChildNodes()) {
                 if (child.getQName().getLocalName().equals(arg)) {
                     if (child instanceof DataNodeContainer) {
                         previous = (DataNodeContainer) child;
@@ -193,7 +192,7 @@ public class MultipleRevisionsSupportTest {
         return result;
     }
 
-    private static final Iterable<? extends InputStream> toInputStreams(Set<YangModuleInfo> moduleInfos)
+    private static final Iterable<? extends InputStream> toInputStreams(final Set<YangModuleInfo> moduleInfos)
             throws Exception {
         Builder<InputStream> streams = ImmutableList.<InputStream> builder();
         for (YangModuleInfo yangModuleInfo : moduleInfos) {
