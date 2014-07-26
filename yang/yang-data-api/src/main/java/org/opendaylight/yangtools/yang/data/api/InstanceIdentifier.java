@@ -246,7 +246,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         return Optional.of(trustedCreate(Iterables.skip(pathArguments, common)));
     }
 
-    static int hashCode(final Object value) {
+    private static int hashCode(final Object value) {
         if (value == null) {
             return 0;
         }
@@ -367,9 +367,11 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         }
 
         @Override
-        public abstract int hashCode();
-        @Override
+        public int hashCode() {
+            return 31 + getNodeType().hashCode();
+        }
 
+        @Override
         public abstract boolean equals(Object obj);
     }
 
@@ -442,11 +444,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         }
 
         @Override
-        public int hashCode() {
-            return 31 + getNodeType().hashCode();
-        }
-
-        @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
@@ -462,7 +459,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         public String toString() {
             return getNodeType().toString();
         }
-
     }
 
     /**
@@ -490,9 +486,8 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         @Override
         public int hashCode() {
             final int prime = 31;
-            int result = 1;
-            result = prime * result + ((keyValues == null) ? 0 : hashKeyValues());
-            result = prime * result + ((getNodeType() == null) ? 0 : getNodeType().hashCode());
+            int result = super.hashCode();
+            result = prime * result + hashKeyValues();
             return result;
         }
 
@@ -579,9 +574,8 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         @Override
         public int hashCode() {
             final int prime = 31;
-            int result = 1;
+            int result = super.hashCode();
             result = prime * result + ((value == null) ? 0 : InstanceIdentifier.hashCode(value));
-            result = prime * result + ((getNodeType() == null) ? 0 : getNodeType().hashCode());
             return result;
         }
 
