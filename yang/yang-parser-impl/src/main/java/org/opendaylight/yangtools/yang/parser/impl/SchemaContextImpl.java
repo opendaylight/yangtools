@@ -7,10 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -39,14 +50,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.SetMultimap;
-
 @Immutable
 final class SchemaContextImpl implements SchemaContext {
     private static final Supplier<HashSet<Module>> URI_SET_SUPPLIER = new Supplier<HashSet<Module>>() {
@@ -56,8 +59,23 @@ final class SchemaContextImpl implements SchemaContext {
         }
     };
 
+    private static final Supplier<ArrayList<Module>> MODULE_LIST_SUPPLIER = new Supplier<ArrayList<Module>>() {
+        @Override
+        public ArrayList<Module> get() {
+            return new ArrayList<>();
+        }
+    };
+
+    private static final Comparator<Module> REVISION_COMPARATOR = new Comparator<Module>() {
+        @Override
+        public int compare(final Module o1, final Module o2) {
+            return o1.getRevision().compareTo(o2.getRevision());
+        }
+    };
+
     private final ImmutableMap<ModuleIdentifier, String> identifiersToSources;
     private final ImmutableSetMultimap<URI, Module> namespaceToModules;
+    private final ImmutableListMultimap<String, Module> nameToModules;
     private final ImmutableSet<Module> modules;
 
     SchemaContextImpl(final Set<Module> modules, final Map<ModuleIdentifier, String> identifiersToSources) {
@@ -70,16 +88,27 @@ final class SchemaContextImpl implements SchemaContext {
         this.modules = ImmutableSet.copyOf(ModuleDependencySort.sort(modules.toArray(new Module[modules.size()])));
 
         /*
-         * The most common lookup is from Namespace->Module. Invest some quality time in
-         * building that up.
+         * The most common lookup is from Namespace->Module.
+         *
+         * RESTCONF performs lookups based on module name only, where it wants
+         * to receive the latest revision
+         *
+         * Invest some quality time in building up lookup tables for both.
          */
-        final SetMultimap<URI, Module> multimap = Multimaps.newSetMultimap(
+        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
                 new TreeMap<URI, Collection<Module>>(), URI_SET_SUPPLIER);
+        final ListMultimap<String, Module> nameMap = Multimaps.newListMultimap(
+                new TreeMap<String, Collection<Module>>(), MODULE_LIST_SUPPLIER);
         for (Module m : modules) {
-            multimap.put(m.getNamespace(), m);
+            nameMap.put(m.getName(), m);
+            nsMap.put(m.getNamespace(), m);
+        }
+        for (String key : nameMap.keySet()) {
+            Collections.sort(nameMap.get(key), REVISION_COMPARATOR);
         }
 
-        namespaceToModules = ImmutableSetMultimap.copyOf(multimap);
+        namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
+        nameToModules = ImmutableListMultimap.copyOf(nameMap);
     }
 
     @Override
@@ -125,17 +154,15 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Module findModuleByName(final String name, final Date revision) {
-        if (name != null) {
-            for (final Module module : modules) {
-                if (revision == null) {
-                    if (module.getName().equals(name)) {
-                        return module;
-                    }
-                } else if (module.getName().equals(name) && module.getRevision().equals(revision)) {
+        final List<Module> mods = nameToModules.get(name);
+        if (mods != null) {
+            for (final Module module : mods) {
+                if (revision == null || module.getRevision().equals(revision)) {
                     return module;
                 }
             }
         }
+
         return null;
     }
 
