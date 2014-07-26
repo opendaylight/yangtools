@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import com.google.common.base.Optional;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -15,19 +17,17 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
-
-public abstract class AbstractImmutableDataContainerNode<K extends PathArgument> //
-        extends AbstractImmutableNormalizedNode<K, Iterable<DataContainerChild<? extends PathArgument, ?>>> //
-        implements Immutable, DataContainerNode<K> {
+public abstract class AbstractImmutableDataContainerNode<K extends PathArgument> extends AbstractImmutableNormalizedNode<K, Iterable<DataContainerChild<? extends PathArgument, ?>>>
+implements Immutable, DataContainerNode<K> {
 
     protected final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children;
+    private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> publicChildren;
 
     public AbstractImmutableDataContainerNode(
             final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, final K nodeIdentifier) {
         super(nodeIdentifier);
         this.children = children;
+        this.publicChildren = Collections.unmodifiableMap(children);
     }
 
     @Override
@@ -37,7 +37,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     @Override
     public final Iterable<DataContainerChild<? extends PathArgument, ?>> getValue() {
-        return Iterables.unmodifiableIterable(children.values());
+        return publicChildren.values();
     }
 
     @Override
@@ -46,8 +46,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     }
 
     public final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> getChildren() {
-        // Make sure we do not leak a mutable view
-        return Collections.unmodifiableMap(children);
+        return publicChildren;
     }
 
     @Override
