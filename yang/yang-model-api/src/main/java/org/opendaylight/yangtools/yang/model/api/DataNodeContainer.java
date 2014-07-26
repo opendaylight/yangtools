@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,10 +26,12 @@ public interface DataNodeContainer {
 
     /**
      * Returns set of all child nodes defined within this DataNodeContainer.
+     * Although the return type is a collection, each node is guaranteed to
+     * be present at most once.
      *
      * @return child nodes in lexicographical order
      */
-    Set<DataSchemaNode> getChildNodes();
+    Collection<DataSchemaNode> getChildNodes();
 
     /**
      * Returns set of all groupings defined within this DataNodeContainer.

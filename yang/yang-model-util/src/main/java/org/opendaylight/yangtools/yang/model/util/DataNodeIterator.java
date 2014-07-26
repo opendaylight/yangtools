@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -109,7 +110,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
             return;
         }
 
-        final Set<DataSchemaNode> childNodes = dataNode.getChildNodes();
+        final Iterable<DataSchemaNode> childNodes = dataNode.getChildNodes();
         if (childNodes != null) {
             for (DataSchemaNode childNode : childNodes) {
                 if (childNode.isAugmenting()) {
@@ -183,7 +184,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     @Override
     public boolean hasNext() {
         if (container.getChildNodes() != null) {
-            final Set<DataSchemaNode> childNodes = container.getChildNodes();
+            final Collection<DataSchemaNode> childNodes = container.getChildNodes();
 
             if ((childNodes != null) && !childNodes.isEmpty()) {
                 return childNodes.iterator().hasNext();
