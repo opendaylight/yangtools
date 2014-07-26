@@ -1,9 +1,18 @@
+/*
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+
 import java.util.Map;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -46,12 +55,8 @@ public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocume
 
     @Override
     public final DataSchemaNode getDataChildByName(final QName name) {
-        for (DataSchemaNode node : childNodes.values()) {
-            if (node.getQName().equals(name)) {
-                return node;
-            }
-        }
-        return null;
+        // Child nodes are keyed by their container name, so we can do a direct lookup
+        return childNodes.get(name);
     }
 
     @Override
