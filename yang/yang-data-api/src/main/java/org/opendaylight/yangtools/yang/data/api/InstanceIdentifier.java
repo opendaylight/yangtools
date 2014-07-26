@@ -372,7 +372,21 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         }
 
         @Override
-        public abstract boolean equals(Object obj);
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || this.getClass() != obj.getClass()) {
+                return false;
+            }
+
+            return getNodeType().equals(((AbstractPathArgument)obj).getNodeType());
+        }
+
+        @Override
+        public String toString() {
+            return getNodeType().toString();
+        }
     }
 
     /**
@@ -383,9 +397,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
      *
      */
     public interface InstanceIdentifierBuilder extends Builder<InstanceIdentifier> {
-
         /**
-         *
          * Adds {@link NodeIdentifier} with supplied QName to path arguments of resulting instance identifier.
          *
          * @param nodeType QName of {@link NodeIdentifier} which will be added
@@ -394,7 +406,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         InstanceIdentifierBuilder node(QName nodeType);
 
         /**
-         *
          * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting instance identifier.
          *
          * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
@@ -404,7 +415,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues);
 
         /**
-         *
          * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key, value.
          *
          * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
@@ -415,7 +425,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
 
         /**
-         *
          * @return
          * @deprecated use {@link #build()}
          *
@@ -441,23 +450,6 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
 
         public NodeIdentifier(final QName node) {
             super(node);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof NodeIdentifier)) {
-                return false;
-            }
-            final NodeIdentifier other = (NodeIdentifier) obj;
-            return getNodeType().equals(other.getNodeType());
-        }
-
-        @Override
-        public String toString() {
-            return getNodeType().toString();
         }
     }
 
@@ -502,54 +494,29 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            NodeIdentifierWithPredicates other = (NodeIdentifierWithPredicates) obj;
-            if (keyValues == null) {
-                if (other.keyValues != null) {
-                    return false;
-                }
-            } else if (!keyValuesEquals(other.keyValues)) {
-                return false;
-            }
-            if (getNodeType() == null) {
-                if (other.getNodeType() != null) {
-                    return false;
-                }
-            } else if (!getNodeType().equals(other.getNodeType())) {
-                return false;
-            }
-            return true;
-        }
-
-        private boolean keyValuesEquals(final Map<QName, Object> otherKeyValues) {
-            if (otherKeyValues == null || keyValues.size() != otherKeyValues.size()) {
+            if (!super.equals(obj)) {
                 return false;
             }
 
-            boolean result = true;
+            final Map<QName, Object> otherKeyValues = ((NodeIdentifierWithPredicates) obj).keyValues;
+            if (keyValues.size() != otherKeyValues.size()) {
+                return false;
+            }
+
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
                 if (!otherKeyValues.containsKey(entry.getKey())
                         || !Objects.deepEquals(entry.getValue(), otherKeyValues.get(entry.getKey()))) {
 
-                    result = false;
-                    break;
+                    return false;
                 }
             }
 
-            return result;
+            return true;
         }
 
         @Override
         public String toString() {
-            return getNodeType() + "[" + keyValues + "]";
+            return super.toString() + "[" + keyValues + "]";
         }
     }
 
@@ -581,24 +548,17 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
 
         @Override
         public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
+            if (!super.equals(obj)) {
                 return false;
             }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            NodeWithValue other = (NodeWithValue) obj;
-            return Objects.deepEquals(value, other.value) && Objects.equals(getNodeType(), other.getNodeType());
+            final NodeWithValue other = (NodeWithValue) obj;
+            return Objects.deepEquals(value, other.value);
         }
 
         @Override
         public String toString() {
-            return getNodeType() + "[" + value + "]";
+            return super.toString() + "[" + value + "]";
         }
-
     }
 
     /**
@@ -662,8 +622,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         @Override
         public String toString() {
             final StringBuffer sb = new StringBuffer("AugmentationIdentifier{");
-            sb.append("childNames=").append(childNames);
-            sb.append('}');
+            sb.append("childNames=").append(childNames).append('}');
             return sb.toString();
         }
 
@@ -677,12 +636,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
             }
 
             AugmentationIdentifier that = (AugmentationIdentifier) o;
-
-            if (!childNames.equals(that.childNames)) {
-                return false;
-            }
-
-            return true;
+            return childNames.equals(that.childNames);
         }
 
         @Override
