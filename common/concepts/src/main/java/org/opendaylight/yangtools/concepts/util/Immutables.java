@@ -16,7 +16,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 
-public class Immutables {
+public final class Immutables {
 
     private Immutables() {
         throw new UnsupportedOperationException("Helper class");
@@ -25,7 +25,7 @@ public class Immutables {
     public static final Set<Class<?>> KNOWN_IMMUTABLES = Immutables.<Class<?>> asHashSet(
             //
             Integer.class, Short.class, BigDecimal.class, BigInteger.class, Byte.class, Character.class, Double.class,
-            Float.class);
+            Float.class, String.class);
 
     /**
      * Determines if object is known to be immutable
@@ -37,7 +37,7 @@ public class Immutables {
      *            Reference to check
      * @return true if object is known to be immutable false otherwise.
      */
-    public static boolean isImmutable(Object o) {
+    public static boolean isImmutable(final Object o) {
         if (o == null) {
             throw new IllegalArgumentException("Object should not be null");
         }
@@ -54,7 +54,7 @@ public class Immutables {
     }
 
     @SafeVarargs
-    private static <E> Set<E> asHashSet(E... list) {
+    private static <E> Set<E> asHashSet(final E... list) {
         HashSet<E> ret = new HashSet<>();
         for (E e : list) {
             ret.add(e);
