@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2014 Brocade Communications Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package org.opendaylight.yangtools.util.concurrent;
+
+import java.util.Collection;
+
+/**
+ * Interface for a class that manages queuing and dispatching notifications for multiple listeners.
+ *
+ * @author Thomas Pantelis
+ *
+ * @param <L> the listener type
+ * @param <N> the notification type
+ */
+public interface NotificationManager<L, N> {
+
+    /**
+     * Adds a notification to be queued and dispatched to the given listener.
+     * <p>
+     * <b>Note:</b> This method may block if the queue is currently full.
+     *
+     * @param listener the listener to notify
+     * @param notification the notification to dispatch
+     */
+    public abstract void addNotification( L listener, N notification );
+
+    /**
+     * Adds notifications to be queued and dispatched to the given listener.
+     * <p>
+     * <b>Note:</b> This method may block if the queue is currently full.
+     *
+     * @param listener the listener to notify
+     * @param notifications the notifications to dispatch
+     */
+    public abstract void addNotifications( L listener, Collection<N> notifications );
+
+}
