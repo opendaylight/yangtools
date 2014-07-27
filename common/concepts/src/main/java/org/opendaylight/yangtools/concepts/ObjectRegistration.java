@@ -14,7 +14,7 @@ package org.opendaylight.yangtools.concepts;
  * usual Java reference mechanism, as the entity where the object is
  * registered may reside outside of the Java Virtual Machine.
  */
-public interface ObjectRegistration<T> extends Registration<T> {
+public interface ObjectRegistration<T> extends Registration {
     /**
      * Return the object instance.
      *

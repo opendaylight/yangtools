@@ -14,9 +14,9 @@ import java.util.Set;
 
 public final class CompositeObjectRegistration<T> extends AbstractObjectRegistration<T> {
 
-    private final Set<Registration<? super T>> registrations;
+    private final Set<Registration> registrations;
 
-    public CompositeObjectRegistration(T instance, Collection<? extends Registration<? super T>> registrations) {
+    public CompositeObjectRegistration(final T instance, final Collection<? extends Registration> registrations) {
         super(instance);
         if (registrations == null) {
             throw new IllegalArgumentException();
@@ -26,7 +26,7 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
 
     @Override
     protected void removeRegistration() {
-        for (Registration<? super T> registration : registrations) {
+        for (Registration registration : registrations) {
             try {
                 registration.close();
             } catch (Exception e) {
@@ -35,22 +35,22 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
         }
     }
 
-    public static <T> CompositeObjectRegistrationBuilder<T> builderFor(T instance) {
+    public static <T> CompositeObjectRegistrationBuilder<T> builderFor(final T instance) {
         return new CompositeObjectRegistrationBuilder<>(instance);
     }
 
     public static final class CompositeObjectRegistrationBuilder<T> implements //
-            Builder<CompositeObjectRegistration<T>> {
+    Builder<CompositeObjectRegistration<T>> {
 
         private final T instance;
-        private final Set<Registration<? super T>> registrations;
+        private final Set<Registration> registrations;
 
-        public CompositeObjectRegistrationBuilder(T instance) {
+        public CompositeObjectRegistrationBuilder(final T instance) {
             this.instance = instance;
             registrations = new HashSet<>();
         }
 
-        public CompositeObjectRegistrationBuilder<T> add(ObjectRegistration<? super T> registration) {
+        public CompositeObjectRegistrationBuilder<T> add(final ObjectRegistration<? super T> registration) {
             if (registration.getInstance() != instance) {
                 throw new IllegalArgumentException("Instance must be same.");
             }
@@ -58,7 +58,7 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
             return this;
         }
 
-        public CompositeObjectRegistrationBuilder<T> remove(ObjectRegistration<? super T> registration) {
+        public CompositeObjectRegistrationBuilder<T> remove(final ObjectRegistration<? super T> registration) {
             if (registration.getInstance() != instance) {
                 throw new IllegalArgumentException("Instance must be same.");
             }
