@@ -645,6 +645,8 @@ public class YangParserTest {
         assertEquals(1, extensions.size());
         ExtensionDefinition extension = extensions.get(0);
         assertEquals("name", extension.getArgument());
+        assertEquals("Takes as argument a name string. Makes the code generator use the given name in the #define.",
+                extension.getDescription());
         assertTrue(extension.isYinElement());
     }
 
