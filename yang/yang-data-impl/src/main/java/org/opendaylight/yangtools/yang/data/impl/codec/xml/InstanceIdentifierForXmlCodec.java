@@ -149,7 +149,7 @@ public final class InstanceIdentifierForXmlCodec {
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("It wasn't possible to convert " + namespaceStr + " to URI object.");
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException("I wasn't possible to get namespace for prefix " + prefix);
+            throw new IllegalArgumentException("It wasn't possible to get namespace for prefix " + prefix);
         }
 
         Module module = schemaContext.findModuleByNamespaceAndRevision(namespace, null);
