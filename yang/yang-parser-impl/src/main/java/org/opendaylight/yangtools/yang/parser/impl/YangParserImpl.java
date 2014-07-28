@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import javax.annotation.concurrent.Immutable;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -108,8 +111,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    public SchemaContext parseFile(final File yangFile, final File directory) throws IOException,
-    YangSyntaxErrorException {
+    public SchemaContext parseFile(final File yangFile, final File directory) throws IOException, YangSyntaxErrorException {
         Preconditions.checkState(yangFile.exists(), yangFile + " does not exists");
         Preconditions.checkState(directory.exists(), directory + " does not exists");
         Preconditions.checkState(directory.isDirectory(), directory + " is not a directory");
@@ -195,12 +197,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    public SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException,
-    YangSyntaxErrorException {
-        Collection<Module> unsorted = parseYangModelSources(sources).values();
-        Set<Module> sorted = new LinkedHashSet<>(
-                ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
-        return resolveSchemaContext(sorted);
+    public SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException,YangSyntaxErrorException {
+        return assembleContext(parseYangModelSources(sources).values());
     }
 
     @Override
@@ -237,7 +235,7 @@ public final class YangParserImpl implements YangContextParser {
         return resolveSchemaContext(result);
     }
 
-    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> resolveModulesWithImports(final List<ModuleBuilder> sorted,
+    private static LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> resolveModulesWithImports(final List<ModuleBuilder> sorted,
             final SchemaContext context) {
         final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
         for (ModuleBuilder module : sorted) {
@@ -336,8 +334,21 @@ public final class YangParserImpl implements YangContextParser {
         return new SchemaContextImpl(modules, identifiersToSources);
     }
 
-    private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources) throws IOException,
-    YangSyntaxErrorException {
+    public Collection<Module> buildModules(final Collection<ModuleBuilder> builders) {
+        List<ModuleBuilder> sorted = ModuleDependencySort.sort(builders);
+        Map<String, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sorted, null);
+        Map<ModuleBuilder, Module> builderToModule = build(modules);
+
+        return builderToModule.values();
+    }
+
+    public SchemaContext assembleContext(final Collection<Module> modules) {
+        final Set<Module> sorted = new LinkedHashSet<>(
+                ModuleDependencySort.sort(modules.toArray(new Module[modules.size()])));
+        return resolveSchemaContext(sorted);
+    }
+
+    private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources) throws IOException, YangSyntaxErrorException {
         if (sources == null || sources.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -369,8 +380,7 @@ public final class YangParserImpl implements YangContextParser {
      * @throws YangSyntaxErrorException
      */
     // TODO: remove ByteSource result after removing YangModelParser
-    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams) throws IOException,
-    YangSyntaxErrorException {
+    private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams) throws IOException, YangSyntaxErrorException {
         Map<ByteSource, ModuleBuilder> builders = parseSourcesToBuilders(streams);
         return resolveSubmodules(builders);
     }
@@ -512,7 +522,7 @@ public final class YangParserImpl implements YangContextParser {
      *            topologically sorted modules
      * @return modules ordered by name and revision
      */
-    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(final List<ModuleBuilder> modules) {
+    private static LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> orderModules(final List<ModuleBuilder> modules) {
         final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
         for (final ModuleBuilder builder : modules) {
             if (builder == null) {
@@ -1280,5 +1290,4 @@ public final class YangParserImpl implements YangContextParser {
         }
         dev.setTargetPath(((SchemaNodeBuilder) currentParent).getPath());
     }
-
 }
