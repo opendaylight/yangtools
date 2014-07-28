@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
@@ -29,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -52,31 +51,28 @@ import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 @Immutable
 final class SchemaContextImpl implements SchemaContext {
-    private static final Supplier<HashSet<Module>> URI_SET_SUPPLIER = new Supplier<HashSet<Module>>() {
-        @Override
-        public HashSet<Module> get() {
-            return new HashSet<>();
-        }
-    };
-
-    private static final Supplier<ArrayList<Module>> MODULE_LIST_SUPPLIER = new Supplier<ArrayList<Module>>() {
-        @Override
-        public ArrayList<Module> get() {
-            return new ArrayList<>();
-        }
-    };
-
     private static final Comparator<Module> REVISION_COMPARATOR = new Comparator<Module>() {
         @Override
         public int compare(final Module o1, final Module o2) {
-            return o1.getRevision().compareTo(o2.getRevision());
+            if (o2.getRevision() == null) {
+                return -1;
+            }
+
+            return o2.getRevision().compareTo(o1.getRevision());
         }
     };
 
-    private final ImmutableMap<ModuleIdentifier, String> identifiersToSources;
-    private final ImmutableSetMultimap<URI, Module> namespaceToModules;
-    private final ImmutableListMultimap<String, Module> nameToModules;
-    private final ImmutableSet<Module> modules;
+    private static final Supplier<TreeSet<Module>> MODULE_SET_SUPPLIER = new Supplier<TreeSet<Module>>() {
+        @Override
+        public TreeSet<Module> get() {
+            return new TreeSet<>(REVISION_COMPARATOR);
+        }
+    };
+
+    private final Map<ModuleIdentifier, String> identifiersToSources;
+    private final SetMultimap<URI, Module> namespaceToModules;
+    private final SetMultimap<String, Module> nameToModules;
+    private final Set<Module> modules;
 
     SchemaContextImpl(final Set<Module> modules, final Map<ModuleIdentifier, String> identifiersToSources) {
         this.identifiersToSources = ImmutableMap.copyOf(identifiersToSources);
@@ -96,19 +92,16 @@ final class SchemaContextImpl implements SchemaContext {
          * Invest some quality time in building up lookup tables for both.
          */
         final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
-                new TreeMap<URI, Collection<Module>>(), URI_SET_SUPPLIER);
-        final ListMultimap<String, Module> nameMap = Multimaps.newListMultimap(
-                new TreeMap<String, Collection<Module>>(), MODULE_LIST_SUPPLIER);
+                new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
+                new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
         for (Module m : modules) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
         }
-        for (String key : nameMap.keySet()) {
-            Collections.sort(nameMap.get(key), REVISION_COMPARATOR);
-        }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
-        nameToModules = ImmutableListMultimap.copyOf(nameMap);
+        nameToModules = ImmutableSetMultimap.copyOf(nameMap);
     }
 
     @Override
@@ -154,12 +147,9 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public Module findModuleByName(final String name, final Date revision) {
-        final List<Module> mods = nameToModules.get(name);
-        if (mods != null) {
-            for (final Module module : mods) {
-                if (revision == null || module.getRevision().equals(revision)) {
-                    return module;
-                }
+        for (final Module module : nameToModules.get(name)) {
+            if (revision == null || revision.equals(module.getRevision())) {
+                return module;
             }
         }
 
@@ -177,26 +167,9 @@ final class SchemaContextImpl implements SchemaContext {
         if (namespace == null) {
             return null;
         }
-        final Set<Module> modules = findModuleByNamespace(namespace);
-        if (modules.isEmpty()) {
-            return null;
-        }
-
-        if (revision == null) {
-            // FIXME: The ordering of modules in Multimap could just guarantee this...
-            TreeMap<Date, Module> map = new TreeMap<>();
-            for (Module module : modules) {
-                map.put(module.getRevision(), module);
-            }
-            if (map.isEmpty()) {
-                return null;
-            }
-            return map.lastEntry().getValue();
-        } else {
-            for (Module module : modules) {
-                if (module.getRevision().equals(revision)) {
-                    return(module);
-                }
+        for (Module module : findModuleByNamespace(namespace)) {
+            if (revision == null || revision.equals(module.getRevision())) {
+                return module;
             }
         }
         return null;
@@ -285,26 +258,24 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public DataSchemaNode getDataChildByName(final QName name) {
-        DataSchemaNode result = null;
         for (Module module : modules) {
-            result = module.getDataChildByName(name);
+            final DataSchemaNode result = module.getDataChildByName(name);
             if (result != null) {
-                break;
+                return result;
             }
         }
-        return result;
+        return null;
     }
 
     @Override
     public DataSchemaNode getDataChildByName(final String name) {
-        DataSchemaNode result = null;
         for (Module module : modules) {
-            result = module.getDataChildByName(name);
+            final DataSchemaNode result = module.getDataChildByName(name);
             if (result != null) {
-                break;
+                return result;
             }
         }
-        return result;
+        return null;
     }
 
     @Override
