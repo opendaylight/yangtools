@@ -1,0 +1,50 @@
+module qname-duplicity {
+
+    namespace "urn:test:qname:duplicity";
+    prefix "dup";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    revision 2013-07-09 {
+
+    }
+
+    container cont {
+        choice choice {
+            default second;
+            case first {
+                leaf leaf-case1 {
+                    type int32;
+                }
+            }
+            case second {
+                leaf leaf-case2 {
+                    type int32;
+                }
+            }
+            case third {
+                uses grouping-case-test;
+            }
+            case caseOuter {
+                choice innerChoice {
+                    case innerCase {
+                        uses grouping-inner-case-test;
+                    }
+                }
+            }
+        } 
+    }
+
+    grouping grouping-case-test {
+        leaf leaf-case5 {
+            type string;
+        }
+    }
+
+    grouping grouping-inner-case-test {
+        leaf leaf-case1 {
+            type string;
+        }
+    }
+}
