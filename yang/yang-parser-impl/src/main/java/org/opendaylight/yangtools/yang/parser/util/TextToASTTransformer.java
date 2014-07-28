@@ -16,21 +16,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
 
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformationException;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.parser.impl.YangModelBasicValidationListener;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TextToASTTransformer implements SchemaSourceTransformer<YangTextSchemaSource, ASTSchemaSource> {
+    private static final Logger LOG = LoggerFactory.getLogger(TextToASTTransformer.class);
     private static final Function<Exception, SchemaSourceTransformationException> MAPPER = new ExceptionMapper<SchemaSourceTransformationException>("Source transformation", SchemaSourceTransformationException.class) {
         @Override
         protected SchemaSourceTransformationException newWithCause(final String message, final Throwable cause) {
             return new SchemaSourceTransformationException(message, cause);
         }
     };
+
     private final ListeningExecutorService executor;
 
     TextToASTTransformer(final ListeningExecutorService executor) {
@@ -54,6 +60,13 @@ public class TextToASTTransformer implements SchemaSourceTransformer<YangTextSch
             public ASTSchemaSource call() throws IOException, YangSyntaxErrorException {
                 try (InputStream is = source.openStream()) {
                     final YangContext ctx = YangParserImpl.parseYangSource(is);
+                    LOG.debug("Model {} parsed successfully", source);
+
+                    final ParseTreeWalker walker = new ParseTreeWalker();
+                    final YangModelBasicValidationListener validator = new YangModelBasicValidationListener();
+                    walker.walk(validator, ctx);
+                    LOG.debug("Model {} validated successfully", source);
+
                     return ASTSchemaSource.create(source.getIdentifier().getName(), ctx);
                 }
             }

@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.collect.Sets;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Anyxml_stmtContext;
@@ -66,7 +68,7 @@ import org.slf4j.LoggerFactory;
  * This validator expects only one module or submodule per file and performs
  * only basic validation where context from all yang models is not present.
  */
-final class YangModelBasicValidationListener extends YangParserBaseListener {
+public final class YangModelBasicValidationListener extends YangParserBaseListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(YangModelBasicValidationListener.class);
     private final Set<String> uniquePrefixes = new HashSet<>();
     private final Set<String> uniqueImports = new HashSet<>();
