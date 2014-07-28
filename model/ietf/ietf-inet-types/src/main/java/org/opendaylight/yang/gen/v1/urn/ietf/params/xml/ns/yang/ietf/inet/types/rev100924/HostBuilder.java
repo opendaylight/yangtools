@@ -9,29 +9,38 @@ package org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
-**/
-public class HostBuilder {
-    private static final Pattern ipv4Pattern = Pattern.compile("(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\p{N}\\p{L}]+)?");
-    private static final Pattern  ipv6Pattern1 = Pattern.compile("((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[\\p{N}\\p{L}]+)?");
-    private static final Pattern ipv6Pattern2 = Pattern.compile("(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?");
-    private static final Pattern domainPattern = Pattern.compile("((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)|\\.");
+ **/
+public final class HostBuilder {
+    private static final Pattern IPV4_PATTERN = Pattern.compile("(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\p{N}\\p{L}]+)?");
+    private static final Pattern IPV6_PATTERN1 = Pattern.compile("((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))(%[\\p{N}\\p{L}]+)?");
+    private static final Pattern IPV6_PATTERN2 = Pattern.compile("(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)(%.+)?");
+    private static final Pattern DOMAIN_PATTERN = Pattern.compile("((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)|\\.");
 
-    public static Host getDefaultInstance(String defaultValue) {
+    private HostBuilder() {
 
-        List<String> matchers = new ArrayList<>();
-        if (ipv6Pattern1.matcher(defaultValue).matches() || ipv6Pattern2.matcher(defaultValue).matches()) {
+    }
+
+    public static Host getDefaultInstance(final String defaultValue) {
+        final Matcher ipv4Matcher = IPV4_PATTERN.matcher(defaultValue);
+        final Matcher ipv6Matcher1 = IPV6_PATTERN1.matcher(defaultValue);
+        final Matcher ipv6Matcher2 = IPV6_PATTERN2.matcher(defaultValue);
+        final Matcher domainMatcher = DOMAIN_PATTERN.matcher(defaultValue);
+
+        List<String> matchers = new ArrayList<>(3);
+        if (ipv6Matcher1.matches() || ipv6Matcher2.matches()) {
             matchers.add(Ipv6Address.class.getSimpleName());
         }
 
         // Ipv4 and Domain Name patterns are not exclusive
         // Address 127.0.0.1 matches both patterns
         // This way Ipv4 address is preferred to domain name
-        if (ipv4Pattern.matcher(defaultValue).matches()) {
+        if (ipv4Matcher.matches()) {
             matchers.add(Ipv4Address.class.getSimpleName());
-        } else if (domainPattern.matcher(defaultValue).matches()) {
+        } else if (domainMatcher.matches()) {
             matchers.add(DomainName.class.getSimpleName());
         }
 
@@ -40,17 +49,17 @@ public class HostBuilder {
                     + matchers);
         }
 
-        if (ipv4Pattern.matcher(defaultValue).matches()) {
+        if (ipv4Matcher.matches()) {
             Ipv4Address ipv4 = new Ipv4Address(defaultValue);
             IpAddress ipAddress = new IpAddress(ipv4);
             return new Host(ipAddress);
         }
-        if (ipv6Pattern1.matcher(defaultValue).matches() || ipv6Pattern2.matcher(defaultValue).matches()) {
+        if (ipv6Matcher1.matches() || ipv6Matcher2.matches()) {
             Ipv6Address ipv6 = new Ipv6Address(defaultValue);
             IpAddress ipAddress = new IpAddress(ipv6);
             return new Host(ipAddress);
         }
-        if (domainPattern.matcher(defaultValue).matches()) {
+        if (domainMatcher.matches()) {
             DomainName domainName = new DomainName(defaultValue);
             return new Host(domainName);
         }
