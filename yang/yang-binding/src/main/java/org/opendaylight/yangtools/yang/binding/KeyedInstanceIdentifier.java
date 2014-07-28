@@ -15,6 +15,7 @@ package org.opendaylight.yangtools.yang.binding;
  * @param <K> Target key type
  */
 public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K extends Identifier<T>> extends InstanceIdentifier<T> {
+    private static final long serialVersionUID = 1L;
     private final K key;
 
     KeyedInstanceIdentifier(final Class<T> type, final Iterable<PathArgument> pathArguments, final boolean wildcarded, final int hash, final K key) {

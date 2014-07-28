@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +53,8 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  *
  */
-public class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>, Immutable {
+public class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>, Immutable, Serializable {
+    private static final long serialVersionUID = 1L;
     /*
      * Protected to differentiate internal and external access. Internal
      * access is required never to modify the contents. References passed
