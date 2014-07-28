@@ -39,6 +39,10 @@ public final class ExtensionBuilderImpl extends AbstractSchemaNodeBuilder implem
         instance.argument = argument;
         instance.yin = yin;
 
+        instance.description = description;
+        instance.reference = reference;
+        instance.status = status;
+
         // UNKNOWN NODES
         for (UnknownSchemaNodeBuilder b : addedUnknownNodes) {
             unknownNodes.add(b.build());

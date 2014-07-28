@@ -26,7 +26,6 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.st
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -34,7 +33,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
@@ -824,24 +822,6 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override public void exitUnknown_statement(final YangParser.Unknown_statementContext ctx) {
-        moduleBuilder.exitNode();
-        exitLog("unknown-node", stack.removeNodeFromPath());
-    }
-
-    @Override public void enterUnknown_statement2(final YangParser.Unknown_statement2Context ctx) {
-        handleUnknownNode(ctx.getStart().getLine(), ctx);
-    }
-
-    @Override public void exitUnknown_statement2(final YangParser.Unknown_statement2Context ctx) {
-        moduleBuilder.exitNode();
-        exitLog("unknown-node", stack.removeNodeFromPath());
-    }
-
-    @Override public void enterUnknown_statement3(final YangParser.Unknown_statement3Context ctx) {
-        handleUnknownNode(ctx.getStart().getLine(), ctx);
-    }
-
-    @Override public void exitUnknown_statement3(final YangParser.Unknown_statement3Context ctx) {
         moduleBuilder.exitNode();
         exitLog("unknown-node", stack.removeNodeFromPath());
     }
