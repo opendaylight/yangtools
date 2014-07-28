@@ -14,6 +14,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +54,8 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  *
  */
-public class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>, Immutable {
+public class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>, Immutable, Serializable {
+    private static final long serialVersionUID = 1L;
     /*
      * Protected to differentiate internal and external access. Internal
      * access is required never to modify the contents. References passed
@@ -497,7 +500,8 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         Class<? extends DataObject> getType();
     }
 
-    private static abstract class AbstractPathArgument<T extends DataObject> implements PathArgument {
+    private static abstract class AbstractPathArgument<T extends DataObject> implements PathArgument, Serializable {
+        private static final long serialVersionUID = 1L;
         private final Class<T> type;
 
         protected AbstractPathArgument(final Class<T> type) {
@@ -542,6 +546,8 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @param <T>
      */
     public static final class Item<T extends DataObject> extends AbstractPathArgument<T> {
+        private static final long serialVersionUID = 1L;
+
         public Item(final Class<T> type) {
             super(type);
         }
@@ -560,6 +566,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @param <T> The identifier of the object
      */
     public static final class IdentifiableItem<I extends Identifiable<T> & DataObject, T extends Identifier<I>> extends AbstractPathArgument<I> {
+        private static final long serialVersionUID = 1L;
         private final T key;
 
         public IdentifiableItem(final Class<I> type, final T key) {
@@ -643,5 +650,19 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
          * @return
          */
         InstanceIdentifier<T> build();
+    }
+
+    private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
+        out.writeObject(targetType);
+        out.writeBoolean(wildcarded);
+        out.writeInt(hash);
+        out.write(Iterables.size(pathArguments));
+        for (Object o : pathArguments) {
+            out.writeObject(o);
+        }
+    }
+
+    private void readObject(final java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        // TODO Auto-generated method stub
     }
 }
