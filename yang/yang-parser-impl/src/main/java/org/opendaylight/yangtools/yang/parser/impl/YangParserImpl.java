@@ -22,7 +22,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,9 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.annotation.concurrent.Immutable;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -1164,6 +1161,12 @@ public final class YangParserImpl implements YangContextParser {
         for (UnknownSchemaNodeBuilder usnb : module.getAllUnknownNodes()) {
             QName nodeType = usnb.getNodeType();
             ModuleBuilder dependentModuleBuilder = BuilderUtils.getModuleByPrefix(module, nodeType.getPrefix());
+            if (dependentModuleBuilder == null) {
+                LOG.warn(
+                        "Error in module {} at line {}: Failed to resolve node {}: no such extension definition found.",
+                        module.getName(), usnb.getLine(), usnb);
+                continue;
+            }
             ExtensionBuilder extBuilder = findExtBuilder(nodeType.getLocalName(),
                     dependentModuleBuilder.getAddedExtensions());
             if (extBuilder == null) {
