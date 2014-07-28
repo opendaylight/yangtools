@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_521e4760",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-28T21:08:25Z",
+      "side": 1,
+      "message": "Emitting",
+      "revId": "5573ae892c616a7098edfcbf6c8f239e7103dd87",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_123c3fc7",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-28T21:08:25Z",
+      "side": 1,
+      "message": "brief description of arguments",
+      "revId": "5573ae892c616a7098edfcbf6c8f239e7103dd87",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_72234ba7",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-28T21:08:25Z",
+      "side": 1,
+      "message": "can throw IllegalState if attempting to go up from root?",
+      "revId": "5573ae892c616a7098edfcbf6c8f239e7103dd87",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
