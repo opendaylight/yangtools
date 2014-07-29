@@ -165,6 +165,8 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
             checkNotConflicting(path, original.get(), current.get());
         } else if(original.isPresent()) {
             throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction.");
+        } else if(current.isPresent()) {
+            throw new ConflictingModificationAppliedException(path,"Node was created by other transaction.");
         }
     }
 

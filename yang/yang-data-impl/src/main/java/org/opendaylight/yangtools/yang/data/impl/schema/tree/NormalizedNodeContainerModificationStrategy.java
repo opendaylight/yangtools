@@ -64,14 +64,6 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    @Override
-    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws DataValidationFailedException {
-        // FIXME: Implement proper write check for replacement of node container
-        //        prerequisite is to have transaction chain available for clients
-        //        otherwise this will break chained writes to same node.
-    }
-
     @SuppressWarnings("rawtypes")
     @Override
     protected void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
