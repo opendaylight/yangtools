@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializ
 import java.util.List;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -48,7 +48,7 @@ public abstract class BaseDispatcherSerializer<E, N extends DataContainerNode<?>
      *         Schema should be retrieved from parent schema: schema.
      */
     protected abstract DataSchemaNode getSchemaForChild(S schema,
-            DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> childNode);
+            DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> childNode);
 
     /**
      *
@@ -70,7 +70,7 @@ public abstract class BaseDispatcherSerializer<E, N extends DataContainerNode<?>
     public Iterable<E> serialize(S schema, N node) {
         List<Iterable<E>> choiceChildren = Lists.newArrayList();
 
-        for (DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> choiceChild : node.getValue()) {
+        for (DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> choiceChild : node.getValue()) {
 
             Object childSchema;
 

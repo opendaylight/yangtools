@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractImmutableNormalizedValueNode<K extends InstanceIdentifier.PathArgument, V> extends
+public abstract class AbstractImmutableNormalizedValueNode<K extends YangInstanceIdentifier.PathArgument, V> extends
         AbstractImmutableNormalizedNode<K, V> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractImmutableNormalizedValueNode.class);

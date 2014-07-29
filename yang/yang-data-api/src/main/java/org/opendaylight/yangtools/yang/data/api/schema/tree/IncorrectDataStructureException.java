@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
  * Exception thrown when a proposed change fails validation before being
@@ -22,11 +22,11 @@ public class IncorrectDataStructureException extends DataValidationFailedExcepti
      */
     private static final long serialVersionUID = 1L;
 
-    public IncorrectDataStructureException(final InstanceIdentifier path, final String message, final Throwable cause) {
+    public IncorrectDataStructureException(final YangInstanceIdentifier path, final String message, final Throwable cause) {
         super(path, message, cause);
     }
 
-    public IncorrectDataStructureException(final InstanceIdentifier path, final String message) {
+    public IncorrectDataStructureException(final YangInstanceIdentifier path, final String message) {
         super(path, message);
     }
 

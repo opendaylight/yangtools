@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -33,7 +33,7 @@ public abstract class ChoiceNodeBaseParser<E> extends
         BaseDispatcherParser<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> {
 
     @Override
-    protected final DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> getBuilder(
+    protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> getBuilder(
             org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
         return Builders.choiceBuilder(schema);
     }

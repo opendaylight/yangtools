@@ -7,7 +7,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
 /**
  *
@@ -21,9 +21,9 @@ public interface MapEntryNode extends AttributesContainer, DataContainerNode<Nod
      * Returns identifier of this node in parent map node
      *
      * Contents of identifier is defined by <code>key</code> (
-     * {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.ListSchemaNode#getKeyDefinition()}
+     * {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.ListSchemaNode#getKeyDefinition()}
      * ) statement in YANG schema for associated list item and child {@link LeafNode}s
-     * values with {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier}
+     * values with {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier}
      * as defined in the schema.
      *
      * @return identifier of this node in the context of parent node

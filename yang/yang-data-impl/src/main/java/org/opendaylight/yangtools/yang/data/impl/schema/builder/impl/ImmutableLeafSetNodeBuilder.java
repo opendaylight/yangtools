@@ -15,9 +15,9 @@ import java.util.Map;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
@@ -30,8 +30,8 @@ import com.google.common.collect.Iterables;
 
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
 
-    private final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> value;
-    private InstanceIdentifier.NodeIdentifier nodeIdentifier;
+    private final Map<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> value;
+    private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
 
     protected ImmutableLeafSetNodeBuilder() {
         value = new HashMap<>();
@@ -73,7 +73,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(
-            final InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+            final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }
@@ -90,7 +90,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value, final Map<QName, String> attributes) {
         final ImmutableLeafSetEntryNodeBuilder<T> b = ImmutableLeafSetEntryNodeBuilder.create();
-        b.withNodeIdentifier(new InstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value));
+        b.withNodeIdentifier(new YangInstanceIdentifier.NodeWithValue(nodeIdentifier.getNodeType(), value));
         b.withValue(value);
         b.withAttributes(attributes);
         return withChild(b.build());
@@ -102,19 +102,19 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     }
 
     protected final static class ImmutableLeafSetNode<T> extends
-            AbstractImmutableNormalizedValueNode<InstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements
+            AbstractImmutableNormalizedValueNode<YangInstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements
             Immutable, LeafSetNode<T> {
 
-        private final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children;
+        private final Map<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children;
 
-        ImmutableLeafSetNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
-                final Map<InstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
+        ImmutableLeafSetNode(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
+                final Map<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
             super(nodeIdentifier, Iterables.unmodifiableIterable(children.values()));
             this.children = children;
         }
 
         @Override
-        public Optional<LeafSetEntryNode<T>> getChild(final InstanceIdentifier.NodeWithValue child) {
+        public Optional<LeafSetEntryNode<T>> getChild(final YangInstanceIdentifier.NodeWithValue child) {
             return Optional.fromNullable(children.get(child));
         }
 

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -31,7 +31,7 @@ public abstract class ContainerNodeBaseParser<E> extends
         BaseDispatcherParser<E, ContainerNode, ContainerSchemaNode> {
 
     @Override
-    protected final DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> getBuilder(
+    protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> getBuilder(
             ContainerSchemaNode schema) {
         return Builders.containerBuilder(schema);
     }

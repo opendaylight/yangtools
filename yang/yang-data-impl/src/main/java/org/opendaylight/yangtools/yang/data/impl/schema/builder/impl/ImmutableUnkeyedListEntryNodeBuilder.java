@@ -10,14 +10,14 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
 public class ImmutableUnkeyedListEntryNodeBuilder extends
-        AbstractImmutableDataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> {
+        AbstractImmutableDataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> {
 
     protected ImmutableUnkeyedListEntryNodeBuilder() {
         super();
@@ -27,11 +27,11 @@ public class ImmutableUnkeyedListEntryNodeBuilder extends
         super(node);
     }
 
-    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> create() {
+    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> create() {
         return new ImmutableUnkeyedListEntryNodeBuilder();
     }
 
-    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> create(final UnkeyedListEntryNode node) {
+    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> create(final UnkeyedListEntryNode node) {
         if (!(node instanceof ImmutableUnkeyedListEntryNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -44,11 +44,11 @@ public class ImmutableUnkeyedListEntryNodeBuilder extends
     }
 
     protected static final class ImmutableUnkeyedListEntryNode extends
-            AbstractImmutableDataContainerAttrNode<InstanceIdentifier.NodeIdentifier> implements UnkeyedListEntryNode {
+            AbstractImmutableDataContainerAttrNode<YangInstanceIdentifier.NodeIdentifier> implements UnkeyedListEntryNode {
 
         ImmutableUnkeyedListEntryNode(
-                final InstanceIdentifier.NodeIdentifier nodeIdentifier,
-                final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children,
+                final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
+                final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children,
                 final Map<QName, String> attributes) {
             super(children, nodeIdentifier, attributes);
         }

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializ
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -31,7 +31,7 @@ public abstract class ChoiceNodeBaseSerializer<E>
 
     @Override
     protected final DataSchemaNode getSchemaForChild(final org.opendaylight.yangtools.yang.model.api.ChoiceNode schema,
-            final DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> childNode) {
+            final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> childNode) {
         return SchemaUtils.findSchemaForChild(schema, childNode.getNodeType());
     }
 

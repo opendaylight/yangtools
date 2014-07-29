@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.operations;
 
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -31,7 +31,7 @@ public class MapNodeModification implements Modification<ListSchemaNode, MapNode
         if (modification.isPresent() == false)
             return actual;
 
-        Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> resultNodes = Maps.newLinkedHashMap();
+        Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> resultNodes = Maps.newLinkedHashMap();
         if(actual.isPresent())
             resultNodes.putAll(mapEntries(actual.get()));
 
@@ -41,7 +41,7 @@ public class MapNodeModification implements Modification<ListSchemaNode, MapNode
 
             operationStack.enteringNode(mapEntryModification);
 
-            InstanceIdentifier.NodeIdentifierWithPredicates entryKey = mapEntryModification.getIdentifier();
+            YangInstanceIdentifier.NodeIdentifierWithPredicates entryKey = mapEntryModification.getIdentifier();
 
             switch (operationStack.getCurrentOperation()) {
             case NONE:
@@ -83,7 +83,7 @@ public class MapNodeModification implements Modification<ListSchemaNode, MapNode
         return build(schema, resultNodes);
     }
 
-    private Optional<MapNode> build(ListSchemaNode schema, Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> resultNodes) {
+    private Optional<MapNode> build(ListSchemaNode schema, Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> resultNodes) {
         if(resultNodes.isEmpty())
             return Optional.absent();
 
@@ -96,8 +96,8 @@ public class MapNodeModification implements Modification<ListSchemaNode, MapNode
         return Optional.of(b.build());
     }
 
-    private Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntries(MapNode mapNode) {
-        Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapped = Maps.newLinkedHashMap();
+    private Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntries(MapNode mapNode) {
+        Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapped = Maps.newLinkedHashMap();
 
         for (MapEntryNode mapEntryNode : mapNode.getValue()) {
             mapped.put(mapEntryNode.getIdentifier(), mapEntryNode);

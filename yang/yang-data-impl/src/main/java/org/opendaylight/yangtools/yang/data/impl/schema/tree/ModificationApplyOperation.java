@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -88,5 +88,5 @@ interface ModificationApplyOperation extends StoreTreeNode<ModificationApplyOper
      *         false if modification is no applicable
      * @throws DataValidationFailedException
      */
-    void checkApplicable(InstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException;
+    void checkApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException;
 }

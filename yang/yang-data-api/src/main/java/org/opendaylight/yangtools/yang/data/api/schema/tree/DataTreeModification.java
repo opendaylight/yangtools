@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
@@ -21,7 +21,7 @@ public interface DataTreeModification extends DataTreeSnapshot {
      *
      * @param path Node path
      */
-    void delete(InstanceIdentifier path);
+    void delete(YangInstanceIdentifier path);
 
     /**
      * Merge the specified data with the currently-present data
@@ -30,7 +30,7 @@ public interface DataTreeModification extends DataTreeSnapshot {
      * @param path Node path
      * @param data Data to be merged
      */
-    void merge(InstanceIdentifier path, NormalizedNode<?, ?> data);
+    void merge(YangInstanceIdentifier path, NormalizedNode<?, ?> data);
 
     /**
      * Replace the data at specified path with supplied data.
@@ -38,7 +38,7 @@ public interface DataTreeModification extends DataTreeSnapshot {
      * @param path Node path
      * @param data New node data
      */
-    void write(InstanceIdentifier path, NormalizedNode<?, ?> data);
+    void write(YangInstanceIdentifier path, NormalizedNode<?, ?> data);
 
     /**
      * Finish creation of a modification, making it ready for application

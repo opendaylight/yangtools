@@ -1281,7 +1281,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
                         InstanceIdentifier augPath = augTarget.augmentation(augType);
                         try {
 
-                            org.opendaylight.yangtools.yang.data.api.InstanceIdentifier domPath = getRegistry().getInstanceIdentifierCodec()
+                            org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier domPath = getRegistry().getInstanceIdentifierCodec()
                                     .serialize(augPath);
                             if (domPath == null) {
                                 LOG.error("Unable to serialize instance identifier for {}", augPath);

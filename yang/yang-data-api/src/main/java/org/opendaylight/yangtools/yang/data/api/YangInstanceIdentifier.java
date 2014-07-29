@@ -65,8 +65,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see http://tools.ietf.org/html/rfc6020#section-9.13
  */
-public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immutable, Serializable {
-    private static final InstanceIdentifier EMPTY = trustedCreate(Collections.<PathArgument>emptyList());
+public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+    private static final YangInstanceIdentifier EMPTY = trustedCreate(Collections.<PathArgument>emptyList());
 
     private static final long serialVersionUID = 2L;
     private final Iterable<PathArgument> pathArguments;
@@ -127,21 +127,21 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         return Iterables.getFirst(getReversePathArguments(), null);
     }
 
-    private InstanceIdentifier(final Iterable<PathArgument> path, final int hash) {
+    private YangInstanceIdentifier(final Iterable<PathArgument> path, final int hash) {
         this.pathArguments = Preconditions.checkNotNull(path, "path must not be null.");
         this.hash = hash;
     }
 
-    private static final InstanceIdentifier trustedCreate(final Iterable<PathArgument> path) {
+    private static final YangInstanceIdentifier trustedCreate(final Iterable<PathArgument> path) {
         final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
         for (PathArgument a : path) {
             hash.addArgument(a);
         }
 
-        return new InstanceIdentifier(path, hash.toInstance());
+        return new YangInstanceIdentifier(path, hash.toInstance());
     }
 
-    public static final InstanceIdentifier create(final Iterable<? extends PathArgument> path) {
+    public static final YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
         if (Iterables.isEmpty(path)) {
             return EMPTY;
         }
@@ -149,7 +149,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         return trustedCreate(ImmutableList.copyOf(path));
     }
 
-    public static final InstanceIdentifier create(final PathArgument... path) {
+    public static final YangInstanceIdentifier create(final PathArgument... path) {
         // We are forcing a copy, since we cannot trust the user
         return create(Arrays.asList(path));
     }
@@ -177,7 +177,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         if (getClass() != obj.getClass()) {
             return false;
         }
-        InstanceIdentifier other = (InstanceIdentifier) obj;
+        YangInstanceIdentifier other = (YangInstanceIdentifier) obj;
         if (this.hashCode() != obj.hashCode()) {
             return false;
         }
@@ -190,7 +190,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
      * @param name QName of {@link NodeIdentifier}
      * @return Instance Identifier with additional path argument added to the end.
      */
-    public InstanceIdentifier node(final QName name) {
+    public YangInstanceIdentifier node(final QName name) {
         return node(new NodeIdentifier(name));
     }
 
@@ -201,8 +201,8 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
      * @param arg Path argument which should be added to the end
      * @return Instance Identifier with additional path argument added to the end.
      */
-    public InstanceIdentifier node(final PathArgument arg) {
-        return new InstanceIdentifier(Iterables.concat(pathArguments, Collections.singleton(arg)), HashCodeBuilder.nextHashCode(hash, arg));
+    public YangInstanceIdentifier node(final PathArgument arg) {
+        return new YangInstanceIdentifier(Iterables.concat(pathArguments, Collections.singleton(arg)), HashCodeBuilder.nextHashCode(hash, arg));
     }
 
     /**
@@ -214,7 +214,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
      * @return This object's relative path from parent, or Optional.absent() if
      *         the specified parent is not in fact an ancestor of this object.
      */
-    public Optional<InstanceIdentifier> relativeTo(final InstanceIdentifier ancestor) {
+    public Optional<YangInstanceIdentifier> relativeTo(final YangInstanceIdentifier ancestor) {
         final Iterator<?> lit = pathArguments.iterator();
         final Iterator<?> oit = ancestor.pathArguments.iterator();
         int common = 0;
@@ -268,7 +268,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
      * @param name QName of first node identifier
      * @return Instance Identifier with only one path argument of type {@link NodeIdentifier}
      */
-    public static InstanceIdentifier of(final QName name) {
+    public static YangInstanceIdentifier of(final QName name) {
         return create(new NodeIdentifier(name));
     }
 
@@ -289,7 +289,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
      * @param origin Instace Identifier from which path arguments are copied.
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
-    static public InstanceIdentifierBuilder builder(final InstanceIdentifier origin) {
+    static public InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
         return new BuilderImpl(origin.getPathArguments(), origin.hashCode());
     }
 
@@ -387,7 +387,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
      * @
      *
      */
-    public interface InstanceIdentifierBuilder extends Builder<InstanceIdentifier> {
+    public interface InstanceIdentifierBuilder extends Builder<YangInstanceIdentifier> {
         /**
          * Adds {@link NodeIdentifier} with supplied QName to path arguments of resulting instance identifier.
          *
@@ -417,11 +417,11 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
 
         /**
          *
-         * Builds an {@link InstanceIdentifier} with path arguments from this builder
+         * Builds an {@link YangInstanceIdentifier} with path arguments from this builder
          *
-         * @return {@link InstanceIdentifier}
+         * @return {@link YangInstanceIdentifier}
          */
-        InstanceIdentifier build();
+        YangInstanceIdentifier build();
     }
 
     /**
@@ -465,7 +465,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
             result = prime * result;
 
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
-                result += Objects.hashCode(entry.getKey()) + InstanceIdentifier.hashCode(entry.getValue());
+                result += Objects.hashCode(entry.getKey()) + YangInstanceIdentifier.hashCode(entry.getValue());
             }
             return result;
         }
@@ -520,7 +520,7 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
         public int hashCode() {
             final int prime = 31;
             int result = super.hashCode();
-            result = prime * result + ((value == null) ? 0 : InstanceIdentifier.hashCode(value));
+            result = prime * result + ((value == null) ? 0 : YangInstanceIdentifier.hashCode(value));
             return result;
         }
 
@@ -688,18 +688,18 @@ public final class InstanceIdentifier implements Path<InstanceIdentifier>, Immut
 
         @Override
         @Deprecated
-        public InstanceIdentifier toInstance() {
+        public YangInstanceIdentifier toInstance() {
             return build();
         }
 
         @Override
-        public InstanceIdentifier build() {
-            return new InstanceIdentifier(ImmutableList.copyOf(path), hash.toInstance());
+        public YangInstanceIdentifier build() {
+            return new YangInstanceIdentifier(ImmutableList.copyOf(path), hash.toInstance());
         }
     }
 
     @Override
-    public boolean contains(final InstanceIdentifier other) {
+    public boolean contains(final YangInstanceIdentifier other) {
         Preconditions.checkArgument(other != null, "other should not be null");
 
         final Iterator<?> lit = pathArguments.iterator();

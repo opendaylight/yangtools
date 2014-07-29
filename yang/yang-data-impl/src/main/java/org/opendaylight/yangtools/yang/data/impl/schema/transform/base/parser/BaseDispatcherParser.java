@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBuilder;
@@ -123,7 +123,7 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
                 choicesToElements.putAll(choiceSchema, childrenForQName);
                 // Regular child nodes
             } else {
-                DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> builtChildNode = getDispatcher()
+                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> builtChildNode = getDispatcher()
                         .dispatchChildElement(childSchema, childrenForQName);
                 containerBuilder.withChild(builtChildNode);
             }

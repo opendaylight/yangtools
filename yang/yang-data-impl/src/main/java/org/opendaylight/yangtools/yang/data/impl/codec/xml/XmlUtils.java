@@ -12,10 +12,10 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -42,7 +42,7 @@ public final class XmlUtils {
         return superType;
     }
 
-    static String encodeIdentifier(final RandomPrefix prefixes, final InstanceIdentifier id) {
+    static String encodeIdentifier(final RandomPrefix prefixes, final YangInstanceIdentifier id) {
         StringBuilder textContent = new StringBuilder();
         for (PathArgument pathArgument : id.getPathArguments()) {
             textContent.append('/');

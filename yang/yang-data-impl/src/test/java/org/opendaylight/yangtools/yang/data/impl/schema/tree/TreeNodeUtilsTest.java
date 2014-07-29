@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -30,15 +30,15 @@ public class TreeNodeUtilsTest {
     private static final String TWO_ONE_NAME = "one";
     private static final String TWO_TWO_NAME = "two";
 
-    private static final InstanceIdentifier OUTER_LIST_1_PATH = InstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+    private static final YangInstanceIdentifier OUTER_LIST_1_PATH = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
             .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID) //
             .build();
 
-    private static final InstanceIdentifier OUTER_LIST_2_PATH = InstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+    private static final YangInstanceIdentifier OUTER_LIST_2_PATH = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
             .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID) //
             .build();
 
-    private static final InstanceIdentifier TWO_TWO_PATH = InstanceIdentifier.builder(OUTER_LIST_2_PATH)
+    private static final YangInstanceIdentifier TWO_TWO_PATH = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
             .node(TestModel.INNER_LIST_QNAME) //
             .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_TWO_NAME) //
             .build();
@@ -63,7 +63,7 @@ public class TreeNodeUtilsTest {
     public NormalizedNode<?, ?> createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
-                .withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schemaContext.getQName()))
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schemaContext.getQName()))
                 .withChild(createTestContainer()).build();
 
     }
@@ -71,7 +71,7 @@ public class TreeNodeUtilsTest {
     private ContainerNode createTestContainer() {
         return ImmutableContainerNodeBuilder
                 .create()
-                .withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(
                         mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
                                 .withChild(mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
@@ -99,7 +99,7 @@ public class TreeNodeUtilsTest {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final InstanceIdentifier outerList1InvalidPath = InstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+        final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
         Optional<TreeNode> node = TreeNodeUtils.findNode(rootNode, outerList1InvalidPath);
@@ -125,7 +125,7 @@ public class TreeNodeUtilsTest {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final InstanceIdentifier outerList1InvalidPath = InstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+        final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
         try {
@@ -143,7 +143,7 @@ public class TreeNodeUtilsTest {
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         Optional<TreeNode> expectedNode = TreeNodeUtils.findNode(rootNode, TWO_TWO_PATH);
         assertPresentAndType(expectedNode, TreeNode.class);
-        Map.Entry<InstanceIdentifier, TreeNode> actualNode = TreeNodeUtils.findClosest(rootNode, TWO_TWO_PATH);
+        Map.Entry<YangInstanceIdentifier, TreeNode> actualNode = TreeNodeUtils.findClosest(rootNode, TWO_TWO_PATH);
         Assert.assertEquals("Expected node and actual node are not the same", expectedNode.get(), actualNode.getValue());
     }
 
@@ -152,16 +152,16 @@ public class TreeNodeUtilsTest {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final InstanceIdentifier outerListInnerListPath = InstanceIdentifier.builder(OUTER_LIST_2_PATH)
+        final YangInstanceIdentifier outerListInnerListPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
                 .node(TestModel.INNER_LIST_QNAME)
                 .build();
-        final InstanceIdentifier twoTwoInvalidPath = InstanceIdentifier.builder(OUTER_LIST_2_PATH)
+        final YangInstanceIdentifier twoTwoInvalidPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
                 .node(TestModel.INNER_LIST_QNAME) //
                 .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, "three") //
                 .build();
         Optional<TreeNode> expectedNode = TreeNodeUtils.findNode(rootNode, outerListInnerListPath);
         assertPresentAndType(expectedNode, TreeNode.class);
-        Map.Entry<InstanceIdentifier, TreeNode> actualNode = TreeNodeUtils.findClosest(rootNode, twoTwoInvalidPath);
+        Map.Entry<YangInstanceIdentifier, TreeNode> actualNode = TreeNodeUtils.findClosest(rootNode, twoTwoInvalidPath);
         Assert.assertEquals("Expected node and actual node are not the same", expectedNode.get(), actualNode.getValue());
     }
 

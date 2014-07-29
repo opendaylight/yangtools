@@ -11,8 +11,8 @@ import java.util.Map.Entry;
 
 import javax.annotation.concurrent.GuardedBy;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
@@ -49,13 +49,13 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     @Override
-    public synchronized void write(final InstanceIdentifier path, final NormalizedNode<?, ?> value) {
+    public synchronized void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> value) {
         checkSealed();
         resolveModificationFor(path).write(value);
     }
 
     @Override
-    public synchronized void merge(final InstanceIdentifier path, final NormalizedNode<?, ?> data) {
+    public synchronized void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
         mergeImpl(resolveModificationFor(path),data);
     }
@@ -74,20 +74,20 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     @Override
-    public synchronized void delete(final InstanceIdentifier path) {
+    public synchronized void delete(final YangInstanceIdentifier path) {
         checkSealed();
         resolveModificationFor(path).delete();
     }
 
     @Override
-    public synchronized Optional<NormalizedNode<?, ?>> readNode(final InstanceIdentifier path) {
+    public synchronized Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
         /*
          * Walk the tree from the top, looking for the first node between root and
          * the requested path which has been modified. If no such node exists,
          * we use the node itself.
          */
-        final Entry<InstanceIdentifier, ModifiedNode> entry = TreeNodeUtils.findClosestsOrFirstMatch(rootNode, path, ModifiedNode.IS_TERMINAL_PREDICATE);
-        final InstanceIdentifier key = entry.getKey();
+        final Entry<YangInstanceIdentifier, ModifiedNode> entry = TreeNodeUtils.findClosestsOrFirstMatch(rootNode, path, ModifiedNode.IS_TERMINAL_PREDICATE);
+        final YangInstanceIdentifier key = entry.getKey();
         final ModifiedNode mod = entry.getValue();
 
         final Optional<TreeNode> result = resolveSnapshot(key, mod);
@@ -99,7 +99,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
     }
 
-    private Optional<TreeNode> resolveSnapshot(final InstanceIdentifier path,
+    private Optional<TreeNode> resolveSnapshot(final YangInstanceIdentifier path,
             final ModifiedNode modification) {
         final Optional<Optional<TreeNode>> potentialSnapshot = modification.getSnapshotCache();
         if(potentialSnapshot.isPresent()) {
@@ -115,7 +115,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
     }
 
-    private ModificationApplyOperation resolveModificationStrategy(final InstanceIdentifier path) {
+    private ModificationApplyOperation resolveModificationStrategy(final YangInstanceIdentifier path) {
         LOG.trace("Resolving modification apply strategy for {}", path);
         if(rootNode.getType() == ModificationType.UNMODIFIED) {
             strategyTree.upgradeIfPossible();
@@ -124,7 +124,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         return TreeNodeUtils.<ModificationApplyOperation>findNodeChecked(strategyTree, path);
     }
 
-    private OperationWithModification resolveModificationFor(final InstanceIdentifier path) {
+    private OperationWithModification resolveModificationFor(final YangInstanceIdentifier path) {
         ModifiedNode modification = rootNode;
         // We ensure strategy is present.
         ModificationApplyOperation operation = resolveModificationStrategy(path);

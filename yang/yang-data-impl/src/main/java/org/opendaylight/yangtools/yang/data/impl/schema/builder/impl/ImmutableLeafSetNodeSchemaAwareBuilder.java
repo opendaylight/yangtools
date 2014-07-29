@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.collect.Sets;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
@@ -23,14 +23,14 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
 
     private ImmutableLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
-        super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
     public ImmutableLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema, final ImmutableLeafSetNode<T> node) {
         super(node);
         this.schema = Preconditions.checkNotNull(schema);
         // FIXME: Preconditions.checkArgument(schema.getQName().equals(node.getIdentifier()));
-        super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
@@ -61,7 +61,7 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

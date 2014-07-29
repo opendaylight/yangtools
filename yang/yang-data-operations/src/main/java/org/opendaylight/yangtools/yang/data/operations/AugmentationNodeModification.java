@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.operations;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -29,7 +29,7 @@ final class AugmentationNodeModification extends AbstractContainerNodeModificati
     }
 
     @Override
-    protected Object findSchemaForAugment(AugmentationSchema schema, InstanceIdentifier.AugmentationIdentifier childToProcessId) {
+    protected Object findSchemaForAugment(AugmentationSchema schema, YangInstanceIdentifier.AugmentationIdentifier childToProcessId) {
         throw new UnsupportedOperationException("Augmentation cannot be augmented directly, " + schema);
     }
 

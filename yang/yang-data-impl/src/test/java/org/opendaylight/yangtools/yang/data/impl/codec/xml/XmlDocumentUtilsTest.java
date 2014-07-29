@@ -24,8 +24,8 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -77,7 +77,7 @@ public class XmlDocumentUtilsTest {
 
         final CompositeNode node = inputXmlToCompositeNode(input);
         final SimpleNode<?> refParsed = node.getSimpleNodesByName("ref").iterator().next();
-        Assert.assertEquals(InstanceIdentifier.class, refParsed.getValue().getClass());
+        Assert.assertEquals(YangInstanceIdentifier.class, refParsed.getValue().getClass());
         final Document serializedDocument = inputCompositeNodeToXml(node);
 
         XMLUnit.compareXML(inputDocument, serializedDocument);

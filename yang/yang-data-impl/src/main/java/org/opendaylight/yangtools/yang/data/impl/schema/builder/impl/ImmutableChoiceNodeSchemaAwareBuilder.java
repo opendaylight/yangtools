@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -26,16 +26,16 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
 
     protected ImmutableChoiceNodeSchemaAwareBuilder(org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
         this.schema = Preconditions.checkNotNull(schema, "Schema was null");
-        super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> withNodeIdentifier(InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> withNodeIdentifier(YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
         if(validator == null) {
             Optional<ChoiceCaseNode> detectedCaseOpt = SchemaUtils.detectCase(schema, child);
             DataValidationException.checkLegalChild(detectedCaseOpt.isPresent(), child.getIdentifier(), schema);
@@ -51,7 +51,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
         return super.build();
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> create(org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> create(org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
         return new ImmutableChoiceNodeSchemaAwareBuilder(schema);
     }
 }

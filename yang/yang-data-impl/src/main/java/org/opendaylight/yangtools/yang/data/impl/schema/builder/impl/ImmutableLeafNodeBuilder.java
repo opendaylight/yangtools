@@ -10,14 +10,14 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
 
-public class ImmutableLeafNodeBuilder<T> extends AbstractImmutableNormalizedNodeBuilder<InstanceIdentifier.NodeIdentifier, T, LeafNode<T>> {
+public class ImmutableLeafNodeBuilder<T> extends AbstractImmutableNormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier, T, LeafNode<T>> {
 
-    public static <T> NormalizedNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, T, LeafNode<T>> create() {
+    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, T, LeafNode<T>> create() {
         return new ImmutableLeafNodeBuilder<>();
     }
 
@@ -26,9 +26,9 @@ public class ImmutableLeafNodeBuilder<T> extends AbstractImmutableNormalizedNode
         return new ImmutableLeafNode<>(getNodeIdentifier(), getValue(), getAttributes());
     }
 
-    private static final class ImmutableLeafNode<T> extends AbstractImmutableNormalizedValueAttrNode<InstanceIdentifier.NodeIdentifier, T> implements LeafNode<T> {
+    private static final class ImmutableLeafNode<T> extends AbstractImmutableNormalizedValueAttrNode<YangInstanceIdentifier.NodeIdentifier, T> implements LeafNode<T> {
 
-        ImmutableLeafNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier, final T value, final Map<QName, String> attributes) {
+        ImmutableLeafNode(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier, final T value, final Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);
         }
     }

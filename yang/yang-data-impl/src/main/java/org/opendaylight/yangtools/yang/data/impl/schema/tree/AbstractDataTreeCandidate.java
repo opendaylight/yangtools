@@ -8,20 +8,20 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 
 import com.google.common.base.Preconditions;
 
 abstract class AbstractDataTreeCandidate implements DataTreeCandidate {
-    private final InstanceIdentifier rootPath;
+    private final YangInstanceIdentifier rootPath;
 
-    protected AbstractDataTreeCandidate(final InstanceIdentifier rootPath) {
+    protected AbstractDataTreeCandidate(final YangInstanceIdentifier rootPath) {
         this.rootPath = Preconditions.checkNotNull(rootPath);
     }
 
     @Override
-    public final InstanceIdentifier getRootPath() {
+    public final YangInstanceIdentifier getRootPath() {
         return rootPath;
     }
 

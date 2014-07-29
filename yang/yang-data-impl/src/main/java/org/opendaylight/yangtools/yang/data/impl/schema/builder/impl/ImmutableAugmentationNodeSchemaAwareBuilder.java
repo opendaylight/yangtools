@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -25,16 +25,16 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> withNodeIdentifier(InstanceIdentifier.AugmentationIdentifier nodeIdentifier) {
+    public DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> withNodeIdentifier(YangInstanceIdentifier.AugmentationIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> withChild(DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> withChild(DataContainerChild<?, ?> child) {
         return super.withChild(validator.validateChild(child));
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(AugmentationSchema schema) {
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(AugmentationSchema schema) {
         return new ImmutableAugmentationNodeSchemaAwareBuilder(schema);
     }
 

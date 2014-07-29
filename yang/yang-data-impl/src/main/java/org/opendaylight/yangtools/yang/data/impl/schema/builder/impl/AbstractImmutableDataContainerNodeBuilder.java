@@ -11,18 +11,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
+abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
         implements DataContainerNodeBuilder<I, R> {
 
-    private Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value;
+    private Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value;
     private I nodeIdentifier;
 
     /*
@@ -65,9 +65,9 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends InstanceIdent
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> withValue(final List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value) {
+    public DataContainerNodeBuilder<I, R> withValue(final List<DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value) {
         // TODO Replace or putAll ?
-        for (final DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> dataContainerChild : value) {
+        for (final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild : value) {
             withChild(dataContainerChild);
         }
         return this;

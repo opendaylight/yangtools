@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializ
 
 import java.util.Set;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -29,7 +29,7 @@ public abstract class MapEntryNodeBaseSerializer<E> extends
 
     @Override
     protected final DataSchemaNode getSchemaForChild(ListSchemaNode schema,
-                                               DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> childNode) {
+                                               DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> childNode) {
         return SchemaUtils.findSchemaForChild(schema, childNode.getNodeType());
     }
 

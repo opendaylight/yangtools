@@ -13,10 +13,10 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
@@ -75,7 +75,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         return null;
     }
 
-    public static boolean checkConflicting(final InstanceIdentifier path, final boolean condition, final String message) throws ConflictingModificationAppliedException {
+    public static boolean checkConflicting(final YangInstanceIdentifier path, final boolean condition, final String message) throws ConflictingModificationAppliedException {
         if(!condition) {
             throw new ConflictingModificationAppliedException(path, message);
         }
@@ -102,7 +102,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         }
     }
 
-    private static final void checkNotConflicting(final InstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
+    private static final void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
         checkConflicting(path, original.getVersion().equals(current.getVersion()),
                 "Node was replaced by other transaction.");
         checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
@@ -123,7 +123,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     }
 
     @Override
-    public final void checkApplicable(final InstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
+    public final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
         switch (modification.getType()) {
         case DELETE:
             checkDeleteApplicable(modification, current);
@@ -144,7 +144,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
 
     }
 
-    protected void checkMergeApplicable(final InstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
+    protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
         Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             /*
@@ -159,7 +159,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         }
     }
 
-    protected void checkWriteApplicable(final InstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
+    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
         Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
@@ -220,7 +220,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
      * @throws ConflictingModificationAppliedException If subtree was changed in conflicting way
      * @throws IncorrectDataStructureException If subtree modification is not applicable (e.g. leaf node).
      */
-    protected abstract void checkSubtreeModificationApplicable(InstanceIdentifier path, final NodeModification modification,
+    protected abstract void checkSubtreeModificationApplicable(YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException;
 
     protected abstract void verifyWrittenStructure(NormalizedNode<?, ?> writtenValue);
@@ -270,7 +270,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         }
 
         @Override
-        protected void checkSubtreeModificationApplicable(final InstanceIdentifier path, final NodeModification modification,
+        protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
                 final Optional<TreeNode> current) throws IncorrectDataStructureException {
             throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
         }

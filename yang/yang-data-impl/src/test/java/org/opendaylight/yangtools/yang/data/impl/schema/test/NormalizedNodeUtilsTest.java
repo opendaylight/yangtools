@@ -8,8 +8,8 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
@@ -56,12 +56,12 @@ public class NormalizedNodeUtilsTest {
     private static final String ONE = "one";
     private static final String TWO = "two";
 
-    private static final InstanceIdentifier LIST_A_FOO_PATH = InstanceIdentifier.builder()
+    private static final YangInstanceIdentifier LIST_A_FOO_PATH = YangInstanceIdentifier.builder()
                 //.node(ROOT_QNAME)
                 .node(LIST_A_QNAME)
                 .nodeWithKey(LIST_A_QNAME, LEAF_A_QNAME, FOO)
                 .build();
-    private static final InstanceIdentifier LIST_B_TWO_PATH = InstanceIdentifier.builder()
+    private static final YangInstanceIdentifier LIST_B_TWO_PATH = YangInstanceIdentifier.builder()
                 //.node(ROOT_QNAME)
                 .node(LIST_A_QNAME)
                 .nodeWithKey(LIST_A_QNAME, LEAF_A_QNAME, BAR)

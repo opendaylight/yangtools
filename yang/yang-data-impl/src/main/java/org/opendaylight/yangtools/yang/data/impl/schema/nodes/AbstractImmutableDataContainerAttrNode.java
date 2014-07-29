@@ -11,19 +11,19 @@ import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 import com.google.common.base.Objects.ToStringHelper;
 
-public abstract class AbstractImmutableDataContainerAttrNode<K extends InstanceIdentifier.PathArgument>
+public abstract class AbstractImmutableDataContainerAttrNode<K extends YangInstanceIdentifier.PathArgument>
         extends AbstractImmutableDataContainerNode<K>
     implements AttributesContainer {
 
     private final Map<QName, String> attributes;
 
     public AbstractImmutableDataContainerAttrNode(
-            final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children,
+            final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children,
             final K nodeIdentifier, final Map<QName, String> attributes) {
         super(children, nodeIdentifier);
         this.attributes = attributes;
