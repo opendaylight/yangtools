@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -88,7 +88,7 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
             return actual;
         }
 
-        Set<InstanceIdentifier.PathArgument> toProcess = getChildrenToProcess(schema, actual, modification);
+        Set<YangInstanceIdentifier.PathArgument> toProcess = getChildrenToProcess(schema, actual, modification);
 
         List<? extends DataContainerChild<?, ?>> merged = modifyContainerChildNodes(schema, operationStack,
                 actual.get(), modification.get(), toProcess);
@@ -96,10 +96,10 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
     }
 
     private List<? extends DataContainerChild<?, ?>> modifyContainerChildNodes(S schema, OperationStack operationStack,
-            N actual, N modification, Set<InstanceIdentifier.PathArgument> toProcess) throws DataModificationException {
+            N actual, N modification, Set<YangInstanceIdentifier.PathArgument> toProcess) throws DataModificationException {
         List<DataContainerChild<?, ?>> result = Lists.newArrayList();
 
-        for (InstanceIdentifier.PathArgument childToProcessId : toProcess) {
+        for (YangInstanceIdentifier.PathArgument childToProcessId : toProcess) {
             Object schemaOfChildToProcess = findSchema(schema, childToProcessId);
 
             Optional<? extends DataContainerChild<?, ?>> modifiedValues = modifyContainerNode(operationStack, actual,
@@ -114,7 +114,7 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
     }
 
     private Optional<? extends DataContainerChild<?, ?>> modifyContainerNode(OperationStack operationStack, N actual,
-            N modification, InstanceIdentifier.PathArgument childToProcess, Object schemaChild)
+            N modification, YangInstanceIdentifier.PathArgument childToProcess, Object schemaChild)
             throws DataModificationException {
 
         Optional<DataContainerChild<?, ?>> storedChildren = actual.getChild(childToProcess);
@@ -123,9 +123,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         return NodeDispatcher.dispatchChildModification(schemaChild, storedChildren, modifiedChildren, operationStack);
     }
 
-    private Object findSchema(S schema, InstanceIdentifier.PathArgument childToProcessId) {
-        if (childToProcessId instanceof InstanceIdentifier.AugmentationIdentifier) {
-            return findSchemaForAugment(schema, (InstanceIdentifier.AugmentationIdentifier) childToProcessId);
+    private Object findSchema(S schema, YangInstanceIdentifier.PathArgument childToProcessId) {
+        if (childToProcessId instanceof YangInstanceIdentifier.AugmentationIdentifier) {
+            return findSchemaForAugment(schema, (YangInstanceIdentifier.AugmentationIdentifier) childToProcessId);
         } else {
             return findSchemaForChild(schema, childToProcessId.getNodeType());
         }
@@ -133,7 +133,7 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
 
     protected abstract Object findSchemaForChild(S schema, QName nodeType);
 
-    protected abstract Object findSchemaForAugment(S schema, InstanceIdentifier.AugmentationIdentifier childToProcessId);
+    protected abstract Object findSchemaForAugment(S schema, YangInstanceIdentifier.AugmentationIdentifier childToProcessId);
 
     private Optional<N> build(S schema, List<? extends DataContainerChild<?, ?>> result) {
         DataContainerNodeBuilder<?, N> b = getBuilder(schema);
@@ -151,19 +151,19 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
 
     protected abstract DataContainerNodeBuilder<?, N> getBuilder(S schema);
 
-    protected Set<InstanceIdentifier.PathArgument> getChildrenToProcess(S schema, Optional<N> actual,
+    protected Set<YangInstanceIdentifier.PathArgument> getChildrenToProcess(S schema, Optional<N> actual,
             Optional<N> modification) throws DataModificationException {
-        Set<InstanceIdentifier.PathArgument> qNames = Sets.newLinkedHashSet();
+        Set<YangInstanceIdentifier.PathArgument> qNames = Sets.newLinkedHashSet();
 
         qNames.addAll(getChildQNames(actual));
         qNames.addAll(getChildQNames(modification));
         return qNames;
     }
 
-    private Set<? extends InstanceIdentifier.PathArgument> getChildQNames(Optional<N> actual) {
-        Set<InstanceIdentifier.PathArgument> qNames = Sets.newLinkedHashSet();
+    private Set<? extends YangInstanceIdentifier.PathArgument> getChildQNames(Optional<N> actual) {
+        Set<YangInstanceIdentifier.PathArgument> qNames = Sets.newLinkedHashSet();
 
-        for (DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> child : actual.get().getValue()) {
+        for (DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> child : actual.get().getValue()) {
             qNames.add(child.getIdentifier());
         }
 

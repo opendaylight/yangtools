@@ -70,7 +70,7 @@ public class RuntimeCodecAugmentationWithGroupingsAndCasesTest {
                         .build()) //
                 .build();
 
-        Entry<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier, CompositeNode> result = mappingService
+        Entry<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier, CompositeNode> result = mappingService
                 .toDataDom(new SimpleEntry(GROUPING_AUGMENTATIONS_PATH, caseData));
         assertNotNull(result);
     }

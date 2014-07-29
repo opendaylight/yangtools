@@ -9,16 +9,16 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
 import java.util.List;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
-public interface DataContainerNodeBuilder<I extends InstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
+public interface DataContainerNodeBuilder<I extends YangInstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
         extends NormalizedNodeContainerBuilder<I, PathArgument, DataContainerChild<? extends PathArgument, ?>, R> {
 
     @Override
-    DataContainerNodeBuilder<I, R> withValue(List<DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> value);
+    DataContainerNodeBuilder<I, R> withValue(List<DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value);
 
     @Override
     DataContainerNodeBuilder<I, R> withNodeIdentifier(I nodeIdentifier);

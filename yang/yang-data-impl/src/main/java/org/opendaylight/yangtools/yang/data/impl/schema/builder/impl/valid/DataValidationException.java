@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -24,21 +24,21 @@ public class DataValidationException extends RuntimeException {
         super(message);
     }
 
-    public static void checkLegalChild(final boolean isLegal, final InstanceIdentifier.PathArgument child, final DataNodeContainer schema,
-            final Set<QName> childNodes, final Set<InstanceIdentifier.AugmentationIdentifier> augments) {
+    public static void checkLegalChild(final boolean isLegal, final YangInstanceIdentifier.PathArgument child, final DataNodeContainer schema,
+            final Set<QName> childNodes, final Set<YangInstanceIdentifier.AugmentationIdentifier> augments) {
         if (isLegal == false) {
             throw new IllegalChildException(child, schema, childNodes, augments);
         }
     }
 
-    public static void checkLegalChild(final boolean isLegal, final InstanceIdentifier.PathArgument child, final DataSchemaNode schema,
+    public static void checkLegalChild(final boolean isLegal, final YangInstanceIdentifier.PathArgument child, final DataSchemaNode schema,
             final Set<QName> childNodes) {
         if (isLegal == false) {
             throw new IllegalChildException(child, schema, childNodes);
         }
     }
 
-    public static void checkLegalChild(final boolean isLegal, final InstanceIdentifier.PathArgument child, final ChoiceNode schema) {
+    public static void checkLegalChild(final boolean isLegal, final YangInstanceIdentifier.PathArgument child, final ChoiceNode schema) {
         if (isLegal == false) {
             throw new IllegalChildException(child, schema);
         }
@@ -51,7 +51,7 @@ public class DataValidationException extends RuntimeException {
     }
 
     public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues, final QName keyQName,
-            final InstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
+            final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
         checkListKey(childNode, keyQName, nodeId);
 
         Object expectedValue = nodeId.getKeyValues().get(keyQName);
@@ -61,7 +61,7 @@ public class DataValidationException extends RuntimeException {
         }
     }
 
-    public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final InstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
+    public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
         if (childNode == null) {
             throw new IllegalListKeyException(keyQName, nodeId);
         }
@@ -70,17 +70,17 @@ public class DataValidationException extends RuntimeException {
     static final class IllegalChildException extends DataValidationException {
         private static final long serialVersionUID = 1L;
 
-        public IllegalChildException(final InstanceIdentifier.PathArgument child, final DataNodeContainer schema,
-                final Set<QName> childNodes, final Set<InstanceIdentifier.AugmentationIdentifier> augments) {
+        public IllegalChildException(final YangInstanceIdentifier.PathArgument child, final DataNodeContainer schema,
+                final Set<QName> childNodes, final Set<YangInstanceIdentifier.AugmentationIdentifier> augments) {
             super(String.format("Unknown child node: %s, does not belong to: %s as a direct child. "
                     + "Direct child nodes: %s, augmented child nodes: %s", child, schema, childNodes, augments));
         }
 
-        public IllegalChildException(final InstanceIdentifier.PathArgument child, final ChoiceNode schema) {
+        public IllegalChildException(final YangInstanceIdentifier.PathArgument child, final ChoiceNode schema) {
             super(String.format("Unknown child node: %s, not detected in choice: %s", child, schema));
         }
 
-        public IllegalChildException(final InstanceIdentifier.PathArgument child, final DataSchemaNode schema, final Set<QName> childNodes) {
+        public IllegalChildException(final YangInstanceIdentifier.PathArgument child, final DataSchemaNode schema, final Set<QName> childNodes) {
             super(String.format("Unknown child node: %s, does not belong to: %s as a child. "
                     + "Child nodes: %s", child, schema, childNodes));
         }
@@ -89,11 +89,11 @@ public class DataValidationException extends RuntimeException {
     static final class IllegalListKeyException extends DataValidationException {
         private static final long serialVersionUID = 1L;
 
-        public IllegalListKeyException(final QName keyQName, final InstanceIdentifier.NodeIdentifierWithPredicates id) {
+        public IllegalListKeyException(final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates id) {
             super(String.format("Key value not present for key: %s, in: %s", keyQName, id));
         }
 
-        public IllegalListKeyException(final QName keyQName, final InstanceIdentifier.NodeIdentifierWithPredicates id, final Object actualValue, final Object expectedValue) {
+        public IllegalListKeyException(final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates id, final Object actualValue, final Object expectedValue) {
             super(String.format("Illegal value for key: %s, in: %s, actual value: %s, expected value from key: %s", keyQName, id, actualValue, expectedValue));
         }
     }

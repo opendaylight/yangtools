@@ -11,11 +11,11 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 
-abstract class AbstractImmutableNormalizedNodeBuilder<I extends InstanceIdentifier.PathArgument, V, R extends NormalizedNode<I, ?>>
+abstract class AbstractImmutableNormalizedNodeBuilder<I extends YangInstanceIdentifier.PathArgument, V, R extends NormalizedNode<I, ?>>
         implements NormalizedNodeAttrBuilder<I,V,R> {
 
     private Map<QName, String> attributes = Collections.emptyMap();

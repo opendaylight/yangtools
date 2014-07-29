@@ -23,11 +23,11 @@ import java.util.Map.Entry;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Unit tests for InstanceIdentifier.
@@ -47,10 +47,10 @@ public class InstanceIdentifierTest {
     @Test
     public void testHashCodeEquals() {
 
-        InstanceIdentifier id1 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
-        InstanceIdentifier id2 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
-        InstanceIdentifier id3 = InstanceIdentifier.create(new NodeIdentifier(nodeName2), new NodeIdentifier(nodeName1));
-        InstanceIdentifier id4 = InstanceIdentifier.create(new NodeIdentifier(nodeName1));
+        YangInstanceIdentifier id1 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        YangInstanceIdentifier id2 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        YangInstanceIdentifier id3 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName2), new NodeIdentifier(nodeName1));
+        YangInstanceIdentifier id4 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1));
 
         assertEquals( "hashCode", id1.hashCode(), id2.hashCode() );
         assertEquals( "equals", true, id1.equals( id2 ) );
@@ -63,9 +63,9 @@ public class InstanceIdentifierTest {
     @Test
     public void testNode() {
 
-        InstanceIdentifier id = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        YangInstanceIdentifier id = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
 
-        InstanceIdentifier newID = id.node( nodeName3 );
+        YangInstanceIdentifier newID = id.node( nodeName3 );
 
         assertNotNull( "InstanceIdentifier is null", newID );
         assertEquals( "Path size", 3, Iterables.size(newID.getPathArguments()) );
@@ -89,13 +89,13 @@ public class InstanceIdentifierTest {
     @Test
     public void testRelativeTo() {
 
-        InstanceIdentifier id1 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2),
+        YangInstanceIdentifier id1 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2),
                 new NodeIdentifier(nodeName3), new NodeIdentifier(nodeName4));
-        InstanceIdentifier id2 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
-        InstanceIdentifier id3 = InstanceIdentifier.create(
+        YangInstanceIdentifier id2 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        YangInstanceIdentifier id3 = YangInstanceIdentifier.create(
                 Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
 
-        Optional<InstanceIdentifier> relative = id1.relativeTo( id2 );
+        Optional<YangInstanceIdentifier> relative = id1.relativeTo( id2 );
 
         assertEquals( "isPresent", true, relative.isPresent() );
 
@@ -115,11 +115,11 @@ public class InstanceIdentifierTest {
     @Test
     public void testContains() {
 
-        InstanceIdentifier id1 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2),
+        YangInstanceIdentifier id1 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2),
                 new NodeIdentifier(nodeName3), new NodeIdentifier(nodeName4));
-        InstanceIdentifier id2 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
-        InstanceIdentifier id3 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
-        InstanceIdentifier id4 = InstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName3));
+        YangInstanceIdentifier id2 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        YangInstanceIdentifier id3 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        YangInstanceIdentifier id4 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName3));
 
         assertEquals( "contains", true, id2.contains( id1 ) );
         assertEquals( "contains", true, id2.contains( id3 ) );
@@ -130,7 +130,7 @@ public class InstanceIdentifierTest {
     @Test
     public void testOf() {
 
-        InstanceIdentifier newID = InstanceIdentifier.of( nodeName1 );
+        YangInstanceIdentifier newID = YangInstanceIdentifier.of( nodeName1 );
 
         assertNotNull( "InstanceIdentifier is null", newID );
         assertEquals( "Path size", 1, Iterables.size(newID.getPathArguments()) );
@@ -142,7 +142,7 @@ public class InstanceIdentifierTest {
     @Test
     public void testBuilder() {
 
-        InstanceIdentifier newID = InstanceIdentifier.builder()
+        YangInstanceIdentifier newID = YangInstanceIdentifier.builder()
                 .node( nodeName1 )
                 .nodeWithKey( nodeName2, Collections.<QName,Object>singletonMap( key1, "foo" ) )
                 .nodeWithKey( nodeName3, key2, "bar" ).build();
@@ -155,7 +155,7 @@ public class InstanceIdentifierTest {
         verifyNodeIdentifierWithPredicates( "PathArg 2", it.next(), nodeName2, key1, "foo" );
         verifyNodeIdentifierWithPredicates( "PathArg 3", it.next(), nodeName3, key2, "bar" );
 
-        newID = InstanceIdentifier.builder( newID ).node( nodeName4 ).build();
+        newID = YangInstanceIdentifier.builder( newID ).node( nodeName4 ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
         assertEquals( "Path size", 4, Iterables.size(newID.getPathArguments()) );
@@ -166,7 +166,7 @@ public class InstanceIdentifierTest {
         assertEquals( "PathArg 3 node type", nodeName3, it.next().getNodeType() );
         assertEquals( "PathArg 4 node type", nodeName4, it.next().getNodeType() );
 
-        newID = InstanceIdentifier.builder( nodeName1 ).build();
+        newID = YangInstanceIdentifier.builder( nodeName1 ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
         assertEquals( "Path size", 1, Iterables.size(newID.getPathArguments()) );

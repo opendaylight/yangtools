@@ -5,8 +5,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
@@ -104,7 +104,7 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 
     private final RootNode root;
 
-    InMemoryDataTreeCandidate(final InstanceIdentifier rootPath, final ModifiedNode modificationRoot,
+    InMemoryDataTreeCandidate(final YangInstanceIdentifier rootPath, final ModifiedNode modificationRoot,
             final TreeNode beforeRoot, final TreeNode afterRoot) {
         super(rootPath);
         this.root = new RootNode(modificationRoot, beforeRoot, afterRoot);

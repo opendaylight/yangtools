@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
  * Exception thrown when a proposed change fails validation before being
@@ -22,11 +22,11 @@ public class ConflictingModificationAppliedException extends DataValidationFaile
      */
     private static final long serialVersionUID = 1L;
 
-    public ConflictingModificationAppliedException(final InstanceIdentifier path, final String message, final Throwable cause) {
+    public ConflictingModificationAppliedException(final YangInstanceIdentifier path, final String message, final Throwable cause) {
         super(path, message, cause);
     }
 
-    public ConflictingModificationAppliedException(final InstanceIdentifier path, final String message) {
+    public ConflictingModificationAppliedException(final YangInstanceIdentifier path, final String message) {
         super(path, message);
     }
 

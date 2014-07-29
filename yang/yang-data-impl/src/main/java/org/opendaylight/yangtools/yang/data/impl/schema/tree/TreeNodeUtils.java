@@ -17,8 +17,8 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
@@ -36,7 +36,7 @@ public final class TreeNodeUtils {
      * @param path Path to the node
      * @return Optional with node if the node is present in tree, {@link Optional#absent()} otherwise.
      */
-    public static <T extends StoreTreeNode<T>> Optional<T> findNode(final T tree, final InstanceIdentifier path) {
+    public static <T extends StoreTreeNode<T>> Optional<T> findNode(final T tree, final YangInstanceIdentifier path) {
         Optional<T> current = Optional.<T> of(tree);
         Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
         while (current.isPresent() && pathIter.hasNext()) {
@@ -45,7 +45,7 @@ public final class TreeNodeUtils {
         return current;
     }
 
-    public static <T extends StoreTreeNode<T>> T findNodeChecked(final T tree, final InstanceIdentifier path) {
+    public static <T extends StoreTreeNode<T>> T findNodeChecked(final T tree, final YangInstanceIdentifier path) {
         T current = tree;
 
         int i = 1;
@@ -69,11 +69,11 @@ public final class TreeNodeUtils {
      * @return Map.Entry Entry with key which is path to closest parent and value is parent node.
      *
      */
-    public static <T extends StoreTreeNode<T>> Map.Entry<InstanceIdentifier, T> findClosest(final T tree, final InstanceIdentifier path) {
+    public static <T extends StoreTreeNode<T>> Map.Entry<YangInstanceIdentifier, T> findClosest(final T tree, final YangInstanceIdentifier path) {
         return findClosestsOrFirstMatch(tree, path, Predicates.<T>alwaysFalse());
     }
 
-    public static <T extends StoreTreeNode<T>> Map.Entry<InstanceIdentifier, T> findClosestsOrFirstMatch(final T tree, final InstanceIdentifier path, final Predicate<T> predicate) {
+    public static <T extends StoreTreeNode<T>> Map.Entry<YangInstanceIdentifier, T> findClosestsOrFirstMatch(final T tree, final YangInstanceIdentifier path, final Predicate<T> predicate) {
         Optional<T> parent = Optional.<T>of(tree);
         Optional<T> current = Optional.<T> of(tree);
 
@@ -85,8 +85,8 @@ public final class TreeNodeUtils {
             nesting++;
         }
         if(current.isPresent()) {
-            final InstanceIdentifier currentPath = InstanceIdentifier.create(path.getPath().subList(0, nesting));
-            return new SimpleEntry<InstanceIdentifier,T>(currentPath,current.get());
+            final YangInstanceIdentifier currentPath = YangInstanceIdentifier.create(path.getPath().subList(0, nesting));
+            return new SimpleEntry<YangInstanceIdentifier,T>(currentPath,current.get());
         }
 
         /*
@@ -96,9 +96,9 @@ public final class TreeNodeUtils {
          * present. At any rate we check state just to be on the safe side.
          */
         Preconditions.checkState(nesting > 0);
-        final InstanceIdentifier parentPath = InstanceIdentifier.create(path.getPath().subList(0, nesting - 1));
+        final YangInstanceIdentifier parentPath = YangInstanceIdentifier.create(path.getPath().subList(0, nesting - 1));
 
-        return new SimpleEntry<InstanceIdentifier,T>(parentPath,parent.get());
+        return new SimpleEntry<YangInstanceIdentifier,T>(parentPath,parent.get());
     }
 
     public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent,final PathArgument child) {

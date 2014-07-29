@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataV
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 public class ImmutableAugmentationNodeBuilder
-        extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> {
+        extends AbstractImmutableDataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> {
 
     protected ImmutableAugmentationNodeBuilder() {
         super();
@@ -29,11 +29,11 @@ public class ImmutableAugmentationNodeBuilder
         super(node);
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> create() {
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> create() {
         return new ImmutableAugmentationNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(AugmentationNode node) {
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(AugmentationNode node) {
         if (!(node instanceof ImmutableAugmentationNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -42,7 +42,7 @@ public class ImmutableAugmentationNodeBuilder
     }
 
     @Override
-    public DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> withChild(
+    public DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> withChild(
             final DataContainerChild<?, ?> child) {
         // Check nested augments
         DataValidationException.checkLegalData(child instanceof AugmentationNode == false,
@@ -63,10 +63,10 @@ public class ImmutableAugmentationNodeBuilder
     }
 
     private static final class ImmutableAugmentationNode
-            extends AbstractImmutableDataContainerNode<InstanceIdentifier.AugmentationIdentifier>
+            extends AbstractImmutableDataContainerNode<YangInstanceIdentifier.AugmentationIdentifier>
             implements AugmentationNode {
 
-        ImmutableAugmentationNode(final InstanceIdentifier.AugmentationIdentifier nodeIdentifier, final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
+        ImmutableAugmentationNode(final YangInstanceIdentifier.AugmentationIdentifier nodeIdentifier, final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children) {
             super(children, nodeIdentifier);
         }
     }

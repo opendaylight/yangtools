@@ -21,8 +21,6 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import org.opendaylight.yangtools.yang.common.QName
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
@@ -54,6 +52,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.sonatype.plexus.build.incremental.BuildContext
 import org.sonatype.plexus.build.incremental.DefaultBuildContext
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier
 
 class GeneratorImpl {
 
@@ -756,15 +756,15 @@ class GeneratorImpl {
 
     def CharSequence tree(Module module) '''
         «strong(module.name)»
-        «module.childNodes.treeSet(InstanceIdentifier.builder.toInstance())»
+        «module.childNodes.treeSet(YangInstanceIdentifier.builder.toInstance())»
     '''
 
-    private def dispatch CharSequence tree(ChoiceNode node,InstanceIdentifier path) '''
+    private def dispatch CharSequence tree(ChoiceNode node,YangInstanceIdentifier path) '''
         «node.nodeName» (choice)
         «casesTree(node.cases,path)»
     '''
 
-    def casesTree(Set<ChoiceCaseNode> nodes,InstanceIdentifier path) '''
+    def casesTree(Set<ChoiceCaseNode> nodes,YangInstanceIdentifier path) '''
         <ul>
         «FOR node : nodes»
             <li>
@@ -775,17 +775,17 @@ class GeneratorImpl {
         </ul>
     '''
 
-    private def dispatch CharSequence tree(DataSchemaNode node,InstanceIdentifier path) '''
+    private def dispatch CharSequence tree(DataSchemaNode node,YangInstanceIdentifier path) '''
         «node.nodeName»
     '''
 
-    private def dispatch CharSequence tree(ListSchemaNode node,InstanceIdentifier path) '''
+    private def dispatch CharSequence tree(ListSchemaNode node,YangInstanceIdentifier path) '''
         «val newPath = path.append(node)»
         «localLink(newPath,node.nodeName)»
         «node.childNodes.treeSet(newPath)»
     '''
 
-    private def dispatch CharSequence tree(ContainerSchemaNode node,InstanceIdentifier path) '''
+    private def dispatch CharSequence tree(ContainerSchemaNode node,YangInstanceIdentifier path) '''
         «val newPath = path.append(node)»
         «localLink(newPath,node.nodeName)»
         «node.childNodes.treeSet(newPath)»
@@ -796,7 +796,7 @@ class GeneratorImpl {
         «IF !childNodes.nullOrEmpty»
             <h2>Child nodes</h2>
 
-            «childNodes.printChildren(3,InstanceIdentifier.builder().toInstance())»
+            «childNodes.printChildren(3,YangInstanceIdentifier.builder().toInstance())»
         «ENDIF»
     '''
 
@@ -950,7 +950,7 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence printChildren(Iterable<DataSchemaNode> nodes, int level, InstanceIdentifier path) {
+    def CharSequence printChildren(Iterable<DataSchemaNode> nodes, int level, YangInstanceIdentifier path) {
         val anyxmlNodes = nodes.filter(AnyXmlSchemaNode)
         val leafNodes = nodes.filter(LeafSchemaNode)
         val leafListNodes = nodes.filter(LeafListSchemaNode)
@@ -1000,13 +1000,13 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence xmlExample(Iterable<DataSchemaNode> nodes, QName name,InstanceIdentifier path) '''
+    def CharSequence xmlExample(Iterable<DataSchemaNode> nodes, QName name,YangInstanceIdentifier path) '''
     <pre>
         «xmlExampleTag(name,nodes.xmplExampleTags(path))»
     </pre>
     '''
 
-    def CharSequence xmplExampleTags(Iterable<DataSchemaNode> nodes, InstanceIdentifier identifier) '''
+    def CharSequence xmplExampleTags(Iterable<DataSchemaNode> nodes, YangInstanceIdentifier identifier) '''
         <!-- Child nodes -->
         «FOR node : nodes»
         <!-- «node.QName.localName» -->
@@ -1015,29 +1015,29 @@ class GeneratorImpl {
 
     '''
 
-    private def dispatch CharSequence asXmlExampleTag(LeafSchemaNode node, InstanceIdentifier identifier) '''
+    private def dispatch CharSequence asXmlExampleTag(LeafSchemaNode node, YangInstanceIdentifier identifier) '''
         «node.QName.xmlExampleTag("...")»
     '''
 
-    private def dispatch CharSequence asXmlExampleTag(LeafListSchemaNode node, InstanceIdentifier identifier) '''
+    private def dispatch CharSequence asXmlExampleTag(LeafListSchemaNode node, YangInstanceIdentifier identifier) '''
         &lt!-- This node could appear multiple times --&gt
         «node.QName.xmlExampleTag("...")»
     '''
 
-    private def dispatch CharSequence asXmlExampleTag(ContainerSchemaNode node, InstanceIdentifier identifier) '''
+    private def dispatch CharSequence asXmlExampleTag(ContainerSchemaNode node, YangInstanceIdentifier identifier) '''
         &lt!-- See «localLink(identifier.append(node),"definition")» for child nodes.  --&gt
         «node.QName.xmlExampleTag("...")»
     '''
 
 
-    private def dispatch CharSequence asXmlExampleTag(ListSchemaNode node, InstanceIdentifier identifier) '''
+    private def dispatch CharSequence asXmlExampleTag(ListSchemaNode node, YangInstanceIdentifier identifier) '''
         &lt!-- See «localLink(identifier.append(node),"definition")» for child nodes.  --&gt
         &lt!-- This node could appear multiple times --&gt
         «node.QName.xmlExampleTag("...")»
     '''
 
 
-    private def dispatch CharSequence asXmlExampleTag(DataSchemaNode node, InstanceIdentifier identifier) '''
+    private def dispatch CharSequence asXmlExampleTag(DataSchemaNode node, YangInstanceIdentifier identifier) '''
         <!-- noop -->
     '''
 
@@ -1049,7 +1049,7 @@ class GeneratorImpl {
     def header(int level,QName name) '''<h«level»>«name.localName»</h«level»>'''
 
 
-    def header(int level,InstanceIdentifier name) '''
+    def header(int level,YangInstanceIdentifier name) '''
         <h«level» id="«FOR cmp : name.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">
             «FOR cmp : name.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»
         </h«level»>
@@ -1057,11 +1057,11 @@ class GeneratorImpl {
 
 
 
-    private def dispatch CharSequence printInfo(DataSchemaNode node, int level, InstanceIdentifier path) '''
+    private def dispatch CharSequence printInfo(DataSchemaNode node, int level, YangInstanceIdentifier path) '''
         «header(level+1,node.QName)»
     '''
 
-    private def dispatch CharSequence printInfo(ContainerSchemaNode node, int level, InstanceIdentifier path) '''
+    private def dispatch CharSequence printInfo(ContainerSchemaNode node, int level, YangInstanceIdentifier path) '''
         «val newPath = path.append(node)»
         «header(level,newPath)»
         <dl>
@@ -1073,7 +1073,7 @@ class GeneratorImpl {
         «node.childNodes.printChildren(level,newPath)»
     '''
 
-    private def dispatch CharSequence printInfo(ListSchemaNode node, int level, InstanceIdentifier path) '''
+    private def dispatch CharSequence printInfo(ListSchemaNode node, int level, YangInstanceIdentifier path) '''
         «val newPath = path.append(node)»
         «header(level,newPath)»
         <dl>
@@ -1085,18 +1085,18 @@ class GeneratorImpl {
         «node.childNodes.printChildren(level,newPath)»
     '''
 
-    private def dispatch CharSequence printInfo(ChoiceNode node, int level, InstanceIdentifier path) '''
+    private def dispatch CharSequence printInfo(ChoiceNode node, int level, YangInstanceIdentifier path) '''
         «val Set<DataSchemaNode> choiceCases = new HashSet(node.cases)»
         «choiceCases.printChildren(level,path)»
     '''
 
-    private def dispatch CharSequence printInfo(ChoiceCaseNode node, int level, InstanceIdentifier path) '''
+    private def dispatch CharSequence printInfo(ChoiceCaseNode node, int level, YangInstanceIdentifier path) '''
         «node.childNodes.printChildren(level,path)»
     '''
 
 
 
-    def CharSequence printShortInfo(ContainerSchemaNode node, int level, InstanceIdentifier path) {
+    def CharSequence printShortInfo(ContainerSchemaNode node, int level, YangInstanceIdentifier path) {
         val newPath = path.append(node);
         return '''
             <li>«strong(localLink(newPath,node.QName.localName))» (container)
@@ -1107,7 +1107,7 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence printShortInfo(ListSchemaNode node, int level, InstanceIdentifier path) {
+    def CharSequence printShortInfo(ListSchemaNode node, int level, YangInstanceIdentifier path) {
         val newPath = path.append(node);
         return '''
             <li>«strong(localLink(newPath,node.QName.localName))» (list)
@@ -1118,7 +1118,7 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence printShortInfo(AnyXmlSchemaNode node, int level, InstanceIdentifier path) {
+    def CharSequence printShortInfo(AnyXmlSchemaNode node, int level, YangInstanceIdentifier path) {
         return '''
             <li>«strong((node.QName.localName))» (anyxml)
             <ul>
@@ -1129,7 +1129,7 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence printShortInfo(LeafSchemaNode node, int level, InstanceIdentifier path) {
+    def CharSequence printShortInfo(LeafSchemaNode node, int level, YangInstanceIdentifier path) {
         return '''
             <li>«strong((node.QName.localName))» (leaf)
             <ul>
@@ -1140,7 +1140,7 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence printShortInfo(LeafListSchemaNode node, int level, InstanceIdentifier path) {
+    def CharSequence printShortInfo(LeafListSchemaNode node, int level, YangInstanceIdentifier path) {
         return '''
             <li>«strong((node.QName.localName))» (leaf-list)
             <ul>
@@ -1156,16 +1156,16 @@ class GeneratorImpl {
         '''
     }
 
-    def CharSequence localLink(InstanceIdentifier identifier, CharSequence text) '''
+    def CharSequence localLink(YangInstanceIdentifier identifier, CharSequence text) '''
         <a href="#«FOR cmp : identifier.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">«text»</a>
     '''
 
 
-    private def dispatch InstanceIdentifier append(InstanceIdentifier identifier, ContainerSchemaNode node) {
+    private def dispatch YangInstanceIdentifier append(YangInstanceIdentifier identifier, ContainerSchemaNode node) {
         return identifier.node(node.QName);
     }
 
-    private def dispatch InstanceIdentifier append(InstanceIdentifier identifier, ListSchemaNode node) {
+    private def dispatch YangInstanceIdentifier append(YangInstanceIdentifier identifier, ListSchemaNode node) {
         val keyValues = new LinkedHashMap<QName,Object>();
         if(node.keyDefinition !== null) {
             for(definition : node.keyDefinition) {
@@ -1177,11 +1177,11 @@ class GeneratorImpl {
     }
 
 
-    def asXmlPath(InstanceIdentifier identifier) {
+    def asXmlPath(YangInstanceIdentifier identifier) {
         return "";
     }
 
-    def asRestconfPath(InstanceIdentifier identifier) {
+    def asRestconfPath(YangInstanceIdentifier identifier) {
         val it = new StringBuilder();
         append(currentModule.name)
         append(":")
@@ -1192,7 +1192,7 @@ class GeneratorImpl {
             previous = true;
             if(arg instanceof NodeIdentifierWithPredicates) {
                 val nodeIdentifier = arg as NodeIdentifierWithPredicates;
-                for(qname : nodeIdentifier.keyValues.keySet) {
+                for(qname : nodeIdentifier.getKeyValues.keySet) {
                     append("/{");
                     append(qname.localName)
                     append("}")
@@ -1278,7 +1278,7 @@ class GeneratorImpl {
         «ENDIF»
     '''
 
-    private def CharSequence treeSet(Collection<DataSchemaNode> childNodes, InstanceIdentifier path) '''
+    private def CharSequence treeSet(Collection<DataSchemaNode> childNodes, YangInstanceIdentifier path) '''
         «IF childNodes !== null && !childNodes.empty»
             <ul>
             «FOR child : childNodes»
@@ -1301,7 +1301,7 @@ class GeneratorImpl {
         </ul>
     '''
 
-    private def dispatch CharSequence tree(Void obj, InstanceIdentifier path) '''
+    private def dispatch CharSequence tree(Void obj, YangInstanceIdentifier path) '''
     '''
 
 

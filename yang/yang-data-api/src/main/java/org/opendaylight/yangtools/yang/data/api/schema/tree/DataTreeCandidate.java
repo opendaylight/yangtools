@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
  * An encapsulation of a validated data tree modification. This candidate
@@ -31,5 +31,5 @@ public interface DataTreeCandidate {
      *
      * @return Relative path of the root node
      */
-    InstanceIdentifier getRootPath();
+    YangInstanceIdentifier getRootPath();
 }

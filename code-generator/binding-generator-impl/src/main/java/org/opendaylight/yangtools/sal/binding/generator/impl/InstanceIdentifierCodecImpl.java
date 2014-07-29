@@ -29,9 +29,9 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
@@ -58,12 +58,12 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
 
     @Override
     public InstanceIdentifier<? extends Object> deserialize(
-            final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier input) {
+            final org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier input) {
         Class<?> baType = null;
-        List<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument> biArgs = input.getPath();
+        List<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument> biArgs = input.getPath();
         List<QName> scannedPath = new ArrayList<>(biArgs.size());
         List<InstanceIdentifier.PathArgument> baArgs = new ArrayList<InstanceIdentifier.PathArgument>(biArgs.size());
-        for (org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument biArg : biArgs) {
+        for (org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument biArg : biArgs) {
 
             scannedPath.add(biArg.getNodeType());
             org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument baArg = deserializePathArgument(
@@ -88,7 +88,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
 
     @Override
     public InstanceIdentifier<? extends Object> deserialize(
-            final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier input,
+            final org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier input,
             final InstanceIdentifier<?> bindingIdentifier) {
         return deserialize(input);
     }
@@ -129,7 +129,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     }
 
     @Override
-    public org.opendaylight.yangtools.yang.data.api.InstanceIdentifier serialize(final InstanceIdentifier<?> input) {
+    public org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
         Class<?> previousAugmentation = null;
         Iterable<InstanceIdentifier.PathArgument> pathArgs = input.getPathArguments();
         QName previousQName = null;
@@ -148,8 +148,8 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
                 ensureAugmentation(qnamePath,previousQName,baArg.getType());
             }
         }
-        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier ret =
-                org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.create(components);
+        org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier ret =
+                org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.create(components);
         LOG.debug("Binding Instance Identifier {} serialized to DOM InstanceIdentifier {}", input, ret);
         return ret;
     }
@@ -226,7 +226,7 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     }
 
     private PathArgument serializePathArgumentAndUpdateMapping(final List<QName> parentPath, final InstanceIdentifier.PathArgument baArg, final QName previousQName, final Class<?> previousAugmentation) {
-        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument biArg = serializePathArgument(baArg, previousQName);
+        org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument biArg = serializePathArgument(baArg, previousQName);
         List<QName> qnamePath = new ArrayList<>(parentPath);
         qnamePath.add(biArg.getNodeType());
         ImmutableList<QName> currentPath = ImmutableList.copyOf(qnamePath);

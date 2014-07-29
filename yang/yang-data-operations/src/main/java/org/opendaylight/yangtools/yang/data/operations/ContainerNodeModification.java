@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.operations;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -31,7 +31,7 @@ final class ContainerNodeModification extends AbstractContainerNodeModification<
 
     @Override
     protected Object findSchemaForAugment(ContainerSchemaNode schema,
-            InstanceIdentifier.AugmentationIdentifier childToProcessId) {
+            YangInstanceIdentifier.AugmentationIdentifier childToProcessId) {
         return SchemaUtils.findSchemaForAugment(schema, childToProcessId.getPossibleChildNames());
     }
 

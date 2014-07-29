@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -30,7 +30,7 @@ public abstract class AugmentationNodeBaseParser<E> extends
         BaseDispatcherParser<E,AugmentationNode, AugmentationSchema> {
 
     @Override
-    protected final DataContainerNodeBuilder<InstanceIdentifier.AugmentationIdentifier, AugmentationNode> getBuilder(AugmentationSchema schema) {
+    protected final DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> getBuilder(AugmentationSchema schema) {
         return Builders.augmentationBuilder(schema);
     }
 

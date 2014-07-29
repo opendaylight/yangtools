@@ -49,9 +49,9 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
@@ -191,17 +191,17 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
     }
 
     @Override
-    public Entry<InstanceIdentifier, CompositeNode> toDataDom(
+    public Entry<YangInstanceIdentifier, CompositeNode> toDataDom(
             final Entry<org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject>, DataObject> entry) {
         try {
-            org.opendaylight.yangtools.yang.data.api.InstanceIdentifier key = toDataDom(entry.getKey());
+            org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier key = toDataDom(entry.getKey());
             CompositeNode data;
             if (Augmentation.class.isAssignableFrom(entry.getKey().getTargetType())) {
                 data = toCompositeNodeImplAugument(key, entry.getValue());
             } else {
                 data = toCompositeNodeImpl(key, entry.getValue());
             }
-            return new SimpleEntry<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier, CompositeNode>(key,
+            return new SimpleEntry<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier, CompositeNode>(key,
                     data);
 
         } catch (Exception e) {
@@ -217,7 +217,7 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
         return codec.serialize(new ValueWithQName<DataObject>(null, object));
     }
 
-    private CompositeNode toCompositeNodeImpl(final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier,
+    private CompositeNode toCompositeNodeImpl(final org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier identifier,
             final DataObject object) {
         PathArgument last = identifier.getLastPathArgument();
         Class<? extends DataContainer> cls = object.getImplementedInterface();
@@ -227,11 +227,11 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
     }
 
     private CompositeNode toCompositeNodeImplAugument(
-            final org.opendaylight.yangtools.yang.data.api.InstanceIdentifier identifier, final DataObject object) {
+            final org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier identifier, final DataObject object) {
 
         // val cls = object.implementedInterface;
         // waitForSchema(cls);
-        org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument last = identifier.getLastPathArgument();
+        org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument last = identifier.getLastPathArgument();
         AugmentationCodec codec = registry.getCodecForAugmentation((Class) object.getImplementedInterface());
         CompositeNode ret = codec.serialize(new ValueWithQName<DataObject>(last.getNodeType(), object));
         if (last instanceof NodeIdentifierWithPredicates) {
@@ -261,7 +261,7 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
     }
 
     @Override
-    public InstanceIdentifier toDataDom(
+    public YangInstanceIdentifier toDataDom(
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends DataObject> path) {
         for (final org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument arg : path.getPathArguments()) {
             this.waitForSchema(arg.getType());
@@ -301,7 +301,7 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
     }
 
     @Override
-    public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> fromDataDom(final InstanceIdentifier entry) throws DeserializationException {
+    public org.opendaylight.yangtools.yang.binding.InstanceIdentifier<? extends Object> fromDataDom(final YangInstanceIdentifier entry) throws DeserializationException {
         try {
             final InstanceIdentifierCodec c = registry.getInstanceIdentifierCodec();
             Preconditions.checkState(c != null, "InstanceIdentifierCodec not present");

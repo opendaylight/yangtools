@@ -2,8 +2,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 
 import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
@@ -21,7 +21,7 @@ final class AlwaysFailOperation implements ModificationApplyOperation {
     }
 
     @Override
-    public void checkApplicable(final InstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> storeMetadata) {
+    public void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> storeMetadata) {
         throw new IllegalStateException("Schema Context is not available.");
     }
 

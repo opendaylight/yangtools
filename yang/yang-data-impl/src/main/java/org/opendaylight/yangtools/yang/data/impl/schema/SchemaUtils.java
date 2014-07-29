@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -292,7 +292,7 @@ public final class SchemaUtils {
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             if (child instanceof AugmentationNode
                     && belongsToCaseAugment(choiceCaseNode,
-                            (InstanceIdentifier.AugmentationIdentifier) child.getIdentifier())) {
+                            (YangInstanceIdentifier.AugmentationIdentifier) child.getIdentifier())) {
                 return Optional.of(choiceCaseNode);
             } else if (choiceCaseNode.getDataChildByName(child.getNodeType()) != null) {
                 return Optional.of(choiceCaseNode);
@@ -302,7 +302,7 @@ public final class SchemaUtils {
         return Optional.absent();
     }
 
-    public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode, final InstanceIdentifier.AugmentationIdentifier childToProcess) {
+    public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode, final YangInstanceIdentifier.AugmentationIdentifier childToProcess) {
         for (AugmentationSchema augmentationSchema : caseNode.getAvailableAugmentations()) {
 
             Set<QName> currentAugmentChildNodes = Sets.newHashSet();
@@ -318,8 +318,8 @@ public final class SchemaUtils {
         return false;
     }
 
-    public static InstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
-        return new InstanceIdentifier.AugmentationIdentifier(getChildQNames(schema));
+    public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
+        return new YangInstanceIdentifier.AugmentationIdentifier(getChildQNames(schema));
     }
 
     public static Set<QName> getChildQNames(final AugmentationSchema schema) {

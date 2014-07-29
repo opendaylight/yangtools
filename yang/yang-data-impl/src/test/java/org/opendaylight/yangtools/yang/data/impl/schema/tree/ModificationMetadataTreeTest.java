@@ -18,8 +18,8 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -73,20 +73,20 @@ public class ModificationMetadataTreeTest {
     private static final String TWO_ONE_NAME = "one";
     private static final String TWO_TWO_NAME = "two";
 
-    private static final InstanceIdentifier OUTER_LIST_1_PATH = InstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+    private static final YangInstanceIdentifier OUTER_LIST_1_PATH = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
             .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID) //
             .build();
 
-    private static final InstanceIdentifier OUTER_LIST_2_PATH = InstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+    private static final YangInstanceIdentifier OUTER_LIST_2_PATH = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
             .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID) //
             .build();
 
-    private static final InstanceIdentifier TWO_TWO_PATH = InstanceIdentifier.builder(OUTER_LIST_2_PATH)
+    private static final YangInstanceIdentifier TWO_TWO_PATH = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
             .node(TestModel.INNER_LIST_QNAME) //
             .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_TWO_NAME) //
             .build();
 
-    private static final InstanceIdentifier TWO_TWO_VALUE_PATH = InstanceIdentifier.builder(TWO_TWO_PATH)
+    private static final YangInstanceIdentifier TWO_TWO_VALUE_PATH = YangInstanceIdentifier.builder(TWO_TWO_PATH)
             .node(TestModel.VALUE_QNAME) //
             .build();
 

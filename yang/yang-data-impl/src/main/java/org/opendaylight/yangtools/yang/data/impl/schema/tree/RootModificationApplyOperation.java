@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -23,7 +23,7 @@ public abstract class RootModificationApplyOperation implements ModificationAppl
     }
 
     @Override
-    public final void checkApplicable(final InstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current)
+    public final void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current)
             throws DataValidationFailedException {
         getDelegate().checkApplicable(path, modification, current);
     }

@@ -29,9 +29,9 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -269,32 +269,32 @@ public class TestUtils {
         return build;
     }
 
-    private static InstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
+    private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
         return getNodeIdentifier(MODULE_BASE, localName);
     }
 
-    private static InstanceIdentifier.NodeIdentifier getNodeIdentifier(final QNameModule module, final String localName) {
-        return new InstanceIdentifier.NodeIdentifier(QName.create(module, localName));
+    private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final QNameModule module, final String localName) {
+        return new YangInstanceIdentifier.NodeIdentifier(QName.create(module, localName));
     }
 
-    private static InstanceIdentifier.NodeWithValue getNodeIdentifier(final String localName, final Object value) {
-        return new InstanceIdentifier.NodeWithValue(QName.create(MODULE_BASE, localName),
+    private static YangInstanceIdentifier.NodeWithValue getNodeIdentifier(final String localName, final Object value) {
+        return new YangInstanceIdentifier.NodeWithValue(QName.create(MODULE_BASE, localName),
                 value);
     }
 
-    private static InstanceIdentifier.NodeIdentifierWithPredicates getNodeIdentifierPredicate(final String localName,
+    private static YangInstanceIdentifier.NodeIdentifierWithPredicates getNodeIdentifierPredicate(final String localName,
             final Map<String, Object> keys) {
         Map<QName, Object> predicate = new HashMap<>();
         for (String key : keys.keySet()) {
             predicate.put(QName.create(MODULE_BASE, key), keys.get(key));
         }
 
-        return new InstanceIdentifier.NodeIdentifierWithPredicates(QName.create(MODULE_BASE, localName), predicate);
+        return new YangInstanceIdentifier.NodeIdentifierWithPredicates(QName.create(MODULE_BASE, localName), predicate);
     }
 
-    private static InstanceIdentifier.AugmentationIdentifier getAugmentationIdentifier(final String localName,
+    private static YangInstanceIdentifier.AugmentationIdentifier getAugmentationIdentifier(final String localName,
             final String namespace, final Date revision, final Set<QName> children) {
-        return new InstanceIdentifier.AugmentationIdentifier(children);
+        return new YangInstanceIdentifier.AugmentationIdentifier(children);
     }
 
 }

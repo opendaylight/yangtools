@@ -2,7 +2,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
 import java.util.List;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public interface NormalizedNodeContainerBuilder<K extends PathArgument,CK extends PathArgument,CV extends NormalizedNode<? extends CK, ?>,P extends NormalizedNode<K, ?>>
