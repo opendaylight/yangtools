@@ -7,15 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.util.Map;
-
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -42,9 +37,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareApplyOperation {
 
@@ -62,14 +57,6 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         for (ModifiedNode childModification : modification.getChildren()) {
             resolveChildOperation(childModification.getIdentifier()).verifyStructure(childModification);
         }
-    }
-
-    @Override
-    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws DataValidationFailedException {
-        // FIXME: Implement proper write check for replacement of node container
-        //        prerequisite is to have transaction chain available for clients
-        //        otherwise this will break chained writes to same node.
     }
 
     @SuppressWarnings("rawtypes")
@@ -126,7 +113,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
             final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
 
         for (ModifiedNode mod : modifications) {
-            final PathArgument id = mod.getIdentifier();
+            final YangInstanceIdentifier.PathArgument id = mod.getIdentifier();
             final Optional<TreeNode> cm = meta.getChild(id);
 
             Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
@@ -180,7 +167,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
         final TreeNode currentMeta = current.get();
         for (NodeModification childMod : modification.getChildren()) {
-            final PathArgument childId = childMod.getIdentifier();
+            final YangInstanceIdentifier.PathArgument childId = childMod.getIdentifier();
             final Optional<TreeNode> childMeta = currentMeta.getChild(childId);
 
             YangInstanceIdentifier childPath = path.node(childId);
@@ -201,23 +188,23 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
 
     public static class ChoiceModificationStrategy extends NormalizedNodeContainerModificationStrategy {
 
-        private final Map<PathArgument, ModificationApplyOperation> childNodes;
+        private final Map<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> childNodes;
 
         public ChoiceModificationStrategy(final ChoiceNode schemaNode) {
             super(org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode.class);
-            ImmutableMap.Builder<PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
+            ImmutableMap.Builder<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
 
             for (ChoiceCaseNode caze : schemaNode.getCases()) {
                 for (DataSchemaNode cazeChild : caze.getChildNodes()) {
                     SchemaAwareApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild);
-                    child.put(new NodeIdentifier(cazeChild.getQName()), childNode);
+                    child.put(new YangInstanceIdentifier.NodeIdentifier(cazeChild.getQName()), childNode);
                 }
             }
             childNodes = child.build();
         }
 
         @Override
-        public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
+        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument child) {
             return Optional.fromNullable(childNodes.get(child));
         }
 
@@ -247,8 +234,8 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
 
         @Override
-        public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-            if (identifier instanceof NodeWithValue) {
+        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
+            if (identifier instanceof YangInstanceIdentifier.NodeWithValue) {
                 return entryStrategy;
             }
             return Optional.absent();
@@ -272,8 +259,8 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
 
         @Override
-        public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-            if (identifier instanceof NodeIdentifierWithPredicates) {
+        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
+            if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
                 return entryStrategy;
             }
             return Optional.absent();
@@ -303,8 +290,8 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
 
         @Override
-        public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-            if (identifier instanceof NodeWithValue) {
+        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
+            if (identifier instanceof YangInstanceIdentifier.NodeWithValue) {
                 return entryStrategy;
             }
             return Optional.absent();
@@ -328,8 +315,8 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
 
         @Override
-        public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-            if (identifier instanceof NodeIdentifierWithPredicates) {
+        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
+            if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
                 return entryStrategy;
             }
             return Optional.absent();
