@@ -184,8 +184,17 @@ public class XmlDocumentUtils {
 
     public static Node<?> toDomNode(final Element xmlElement, final Optional<DataSchemaNode> schema,
             final Optional<XmlCodecProvider> codecProvider) {
+        return toDomNode(xmlElement, schema, codecProvider, Optional.<SchemaContext>absent());
+    }
+
+    public static Node<?> toDomNode(final Element xmlElement, final Optional<DataSchemaNode> schema,
+            final Optional<XmlCodecProvider> codecProvider, final Optional<SchemaContext> schemaContext) {
         if (schema.isPresent()) {
-            return toNodeWithSchema(xmlElement, schema.get(), codecProvider.or(XmlUtils.DEFAULT_XML_CODEC_PROVIDER));
+            if(schemaContext.isPresent()) {
+                return toNodeWithSchema(xmlElement, schema.get(), codecProvider.or(XmlUtils.DEFAULT_XML_CODEC_PROVIDER), schemaContext.get());
+            } else {
+                return toNodeWithSchema(xmlElement, schema.get(), codecProvider.or(XmlUtils.DEFAULT_XML_CODEC_PROVIDER));
+            }
         }
         return toDomNode(xmlElement);
     }
@@ -220,10 +229,11 @@ public class XmlDocumentUtils {
         if (codec != null) {
             value = codec.deserialize(text);
         }
+        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(schema.getType());
 
-        if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
+        if (baseType instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
             value = InstanceIdentifierForXmlCodec.deserialize(xmlElement,schemaCtx);
-        } else if(schema.getType() instanceof IdentityrefTypeDefinition){
+        } else if(baseType instanceof IdentityrefTypeDefinition){
             value = InstanceIdentifierForXmlCodec.toIdentity(xmlElement.getTextContent(), xmlElement, schemaCtx);
         }
 
@@ -274,8 +284,8 @@ public class XmlDocumentUtils {
     }
 
     private static void checkQName(final Element xmlElement, final QName qName) {
-        checkState(Objects.equal(xmlElement.getNamespaceURI(), qName.getNamespace().toString()));
-        checkState(qName.getLocalName().equals(xmlElement.getLocalName()));
+        checkState(Objects.equal(xmlElement.getNamespaceURI(), qName.getNamespace().toString()),  "Not equal: %s to: %s for: %s and: %s", qName.getNamespace(), xmlElement.getNamespaceURI(), qName, xmlElement);
+        checkState(qName.getLocalName().equals(xmlElement.getLocalName()), "Not equal: %s to: %s for: %s and: %s", qName.getLocalName(), xmlElement.getLocalName(), qName, xmlElement);
     }
 
     public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
