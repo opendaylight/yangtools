@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
@@ -30,7 +30,7 @@ import com.google.common.base.Preconditions;
  */
 final class InMemoryDataTree implements DataTree {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTree.class);
-    private static final InstanceIdentifier PUBLIC_ROOT_PATH = InstanceIdentifier.builder().build();
+    private static final YangInstanceIdentifier PUBLIC_ROOT_PATH = YangInstanceIdentifier.builder().build();
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock(true);
     private final LatestOperationHolder operationHolder = new LatestOperationHolder();

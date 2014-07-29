@@ -16,7 +16,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
@@ -86,7 +86,7 @@ public class XmlStreamUtils {
      * @param id InstanceIdentifier
      * @throws XMLStreamException
      */
-    public static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull InstanceIdentifier id) throws XMLStreamException {
+    public static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull YangInstanceIdentifier id) throws XMLStreamException {
         Preconditions.checkNotNull(writer, "Writer may not be null");
         Preconditions.checkNotNull(id, "Variable should contain instance of instance identifier and can't be null");
 
@@ -255,8 +255,8 @@ public class XmlStreamUtils {
     }
 
     private static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull InstanceIdentifierTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
-        if (value instanceof InstanceIdentifier) {
-            write(writer, (InstanceIdentifier)value);
+        if (value instanceof YangInstanceIdentifier) {
+            write(writer, (YangInstanceIdentifier)value);
         } else {
             LOG.debug("Value of {}:{} is not an InstanceIdentifier but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
             writer.writeCharacters(String.valueOf(value));

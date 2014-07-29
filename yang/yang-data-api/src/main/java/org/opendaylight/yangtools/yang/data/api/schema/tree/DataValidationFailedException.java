@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 import com.google.common.base.Preconditions;
 
@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
  */
 public class DataValidationFailedException extends Exception {
     private static final long serialVersionUID = 1L;
-    private final InstanceIdentifier path;
+    private final YangInstanceIdentifier path;
 
     /**
      * Create a new instance.
@@ -27,7 +27,7 @@ public class DataValidationFailedException extends Exception {
      * @param path Object path which caused this exception
      * @param message Specific message describing the failure
      */
-    public DataValidationFailedException(final InstanceIdentifier path, final String message) {
+    public DataValidationFailedException(final YangInstanceIdentifier path, final String message) {
         this(path, message, null);
     }
     /**
@@ -37,7 +37,7 @@ public class DataValidationFailedException extends Exception {
      * @param message Specific message describing the failure
      * @param cause Exception which triggered this failure, may be null
      */
-    public DataValidationFailedException(final InstanceIdentifier path, final String message, final Throwable cause) {
+    public DataValidationFailedException(final YangInstanceIdentifier path, final String message, final Throwable cause) {
         super(message, cause);
         this.path = Preconditions.checkNotNull(path);
     }
@@ -47,7 +47,7 @@ public class DataValidationFailedException extends Exception {
      *
      * @return Path of the offending object
      */
-    public InstanceIdentifier getPath() {
+    public YangInstanceIdentifier getPath() {
         return path;
     }
 }

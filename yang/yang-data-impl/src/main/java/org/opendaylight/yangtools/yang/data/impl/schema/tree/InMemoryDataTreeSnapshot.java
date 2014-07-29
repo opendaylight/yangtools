@@ -1,7 +1,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -32,7 +32,7 @@ final class InMemoryDataTreeSnapshot implements DataTreeSnapshot {
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> readNode(final InstanceIdentifier path) {
+    public Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
         return NormalizedNodeUtils.findNode(rootNode.getData(), path);
     }
 

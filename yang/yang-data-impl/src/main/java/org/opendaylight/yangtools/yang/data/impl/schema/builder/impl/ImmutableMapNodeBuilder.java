@@ -13,9 +13,9 @@ import java.util.Map;
 
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
@@ -28,8 +28,8 @@ import com.google.common.collect.Iterables;
 public class ImmutableMapNodeBuilder
         implements CollectionNodeBuilder<MapEntryNode, MapNode> {
 
-    private final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
-    private InstanceIdentifier.NodeIdentifier nodeIdentifier;
+    private final Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
+    private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
 
     protected ImmutableMapNodeBuilder() {
         this.value = new HashMap<>();
@@ -59,7 +59,7 @@ public class ImmutableMapNodeBuilder
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withoutChild(final InstanceIdentifier.PathArgument key) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withoutChild(final YangInstanceIdentifier.PathArgument key) {
         this.value.remove(key);
         return this;
     }
@@ -75,7 +75,7 @@ public class ImmutableMapNodeBuilder
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }
@@ -98,18 +98,18 @@ public class ImmutableMapNodeBuilder
         return withoutChild(key);
     }
 
-    protected static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<InstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements Immutable,MapNode {
+    protected static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<YangInstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements Immutable,MapNode {
 
-        private final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children;
+        private final Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children;
 
-        ImmutableMapNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
-                         final Map<InstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
+        ImmutableMapNode(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
+                         final Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
             super(nodeIdentifier);
             this.children = children;
         }
 
         @Override
-        public Optional<MapEntryNode> getChild(final InstanceIdentifier.NodeIdentifierWithPredicates child) {
+        public Optional<MapEntryNode> getChild(final YangInstanceIdentifier.NodeIdentifierWithPredicates child) {
             return Optional.fromNullable(children.get(child));
         }
 

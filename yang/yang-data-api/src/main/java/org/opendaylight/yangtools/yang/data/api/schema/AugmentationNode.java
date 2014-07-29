@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 
 
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 public interface AugmentationNode extends //
     MixinNode, //
     DataContainerNode<AugmentationIdentifier>,
-    DataContainerChild<InstanceIdentifier.AugmentationIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
+    DataContainerChild<YangInstanceIdentifier.AugmentationIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
 
     /**
      * Gets identifier of augmentation node

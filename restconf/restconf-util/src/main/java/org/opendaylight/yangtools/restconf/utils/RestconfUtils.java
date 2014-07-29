@@ -31,9 +31,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
@@ -61,14 +61,14 @@ public class RestconfUtils {
     public static Entry<String, DataSchemaNode> toRestconfIdentifier(
             final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> bindingIdentifier,
             final BindingIndependentMappingService mappingService, final SchemaContext schemaContext) {
-        InstanceIdentifier domIdentifier = mappingService.toDataDom(bindingIdentifier);
+        YangInstanceIdentifier domIdentifier = mappingService.toDataDom(bindingIdentifier);
         return toRestconfIdentifier(domIdentifier, schemaContext);
     }
 
-    public static Entry<String, DataSchemaNode> toRestconfIdentifier(final InstanceIdentifier xmlInstanceIdentifier,
+    public static Entry<String, DataSchemaNode> toRestconfIdentifier(final YangInstanceIdentifier xmlInstanceIdentifier,
             final SchemaContext schemaContext) {
 
-        final Iterable<InstanceIdentifier.PathArgument> elements = xmlInstanceIdentifier.getPathArguments();
+        final Iterable<YangInstanceIdentifier.PathArgument> elements = xmlInstanceIdentifier.getPathArguments();
         final StringBuilder ret = new StringBuilder();
         final QName startQName = elements.iterator().next().getNodeType();
         URI namespace = startQName.getNamespace();
@@ -76,7 +76,7 @@ public class RestconfUtils {
         final Module initialModule = schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
         DataNodeContainer node = (initialModule);
         DataSchemaNode schemaNode = null;
-        for (final InstanceIdentifier.PathArgument element : elements) {
+        for (final YangInstanceIdentifier.PathArgument element : elements) {
             final DataSchemaNode potentialNode = node.getDataChildByName(element.getNodeType());
             if (!isListOrContainer(potentialNode)) {
                 return null;
@@ -88,13 +88,13 @@ public class RestconfUtils {
         return new SimpleEntry<>(ret.toString(), schemaNode);
     }
 
-    private static CharSequence convertContainerToRestconfIdentifier(final InstanceIdentifier.NodeIdentifier argument,
+    private static CharSequence convertContainerToRestconfIdentifier(final YangInstanceIdentifier.NodeIdentifier argument,
             final SchemaContext schemaContext) {
         return "/" + toRestconfIdentifier(argument.getNodeType(), schemaContext);
     }
 
     private static CharSequence convertListToRestconfIdentifier(
-            final InstanceIdentifier.NodeIdentifierWithPredicates argument, final ListSchemaNode node,
+            final YangInstanceIdentifier.NodeIdentifierWithPredicates argument, final ListSchemaNode node,
             final SchemaContext schemaContext) {
         QName _nodeType = argument.getNodeType();
         final CharSequence nodeIdentifier = toRestconfIdentifier(_nodeType, schemaContext);
@@ -143,11 +143,11 @@ public class RestconfUtils {
         return module + ':' + qname.getLocalName();
     }
 
-    private static CharSequence convertToRestconfIdentifier(final InstanceIdentifier.PathArgument argument,
+    private static CharSequence convertToRestconfIdentifier(final YangInstanceIdentifier.PathArgument argument,
             final DataNodeContainer node, final SchemaContext schemaContext) {
-        if (argument instanceof InstanceIdentifier.NodeIdentifier) {
+        if (argument instanceof YangInstanceIdentifier.NodeIdentifier) {
             return convertContainerToRestconfIdentifier((NodeIdentifier) argument, schemaContext);
-        } else if (argument instanceof InstanceIdentifier.NodeIdentifierWithPredicates
+        } else if (argument instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates
                 && node instanceof ListSchemaNode) {
             return convertListToRestconfIdentifier((NodeIdentifierWithPredicates) argument, (ListSchemaNode) node,
                     schemaContext);

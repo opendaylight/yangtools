@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
  * Exception thrown when a proposed change fails validation before being
@@ -27,11 +27,11 @@ public class ModifiedNodeDoesNotExistException extends DataValidationFailedExcep
      */
     private static final long serialVersionUID = 1L;
 
-    public ModifiedNodeDoesNotExistException(final InstanceIdentifier path, final String message, final Throwable cause) {
+    public ModifiedNodeDoesNotExistException(final YangInstanceIdentifier path, final String message, final Throwable cause) {
         super(path, message, cause);
     }
 
-    public ModifiedNodeDoesNotExistException(final InstanceIdentifier path, final String message) {
+    public ModifiedNodeDoesNotExistException(final YangInstanceIdentifier path, final String message) {
         super(path, message);
     }
 

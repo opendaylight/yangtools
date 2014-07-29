@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
@@ -36,7 +36,7 @@ public abstract class LeafSetEntryNodeBaseParser<E> implements
         final E e = elements.iterator().next();
         Object value = parseLeafListEntry(e,schema);
 
-        NormalizedNodeAttrBuilder<InstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafEntryBuilder = Builders
+        NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafEntryBuilder = Builders
                 .leafSetEntryBuilder(schema);
         leafEntryBuilder.withAttributes(getAttributes(e));
 

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 import com.google.common.base.Optional;
@@ -24,7 +24,7 @@ public interface DataTreeSnapshot {
      * @param path Path of the node
      * @return Optional result encapsulating the presence and value of the node
      */
-    Optional<NormalizedNode<?, ?>> readNode(InstanceIdentifier path);
+    Optional<NormalizedNode<?, ?>> readNode(YangInstanceIdentifier path);
 
     /**
      * Create a new data tree modification based on this snapshot, using the

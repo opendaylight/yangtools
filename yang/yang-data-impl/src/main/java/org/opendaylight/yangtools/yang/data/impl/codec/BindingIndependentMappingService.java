@@ -48,7 +48,7 @@ public interface BindingIndependentMappingService {
      *            class object
      * @return data schema node identifier
      */
-    Entry<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier, CompositeNode> toDataDom(
+    Entry<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier, CompositeNode> toDataDom(
             Entry<InstanceIdentifier<? extends DataObject>, DataObject> entry);
 
     /**
@@ -58,7 +58,7 @@ public interface BindingIndependentMappingService {
      *            class object identifier
      * @return data schema node identifier
      */
-    org.opendaylight.yangtools.yang.data.api.InstanceIdentifier toDataDom(InstanceIdentifier<? extends DataObject> path);
+    org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier toDataDom(InstanceIdentifier<? extends DataObject> path);
 
     /**
      * Create DataObject instance from CompositeNode data based on given path.
@@ -79,7 +79,7 @@ public interface BindingIndependentMappingService {
      *            data schema node identifier
      * @return class object identifier
      */
-    InstanceIdentifier<?> fromDataDom(org.opendaylight.yangtools.yang.data.api.InstanceIdentifier entry)
+    InstanceIdentifier<?> fromDataDom(org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier entry)
             throws DeserializationException;
 
     /**

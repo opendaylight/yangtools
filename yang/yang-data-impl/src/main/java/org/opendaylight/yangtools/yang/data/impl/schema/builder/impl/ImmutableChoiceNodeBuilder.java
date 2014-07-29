@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> {
+public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> {
 
     protected ImmutableChoiceNodeBuilder() {
         super();
@@ -25,11 +25,11 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         super(node);
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> create() {
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> create() {
         return new ImmutableChoiceNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<InstanceIdentifier.NodeIdentifier, ChoiceNode> create(final ChoiceNode node) {
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> create(final ChoiceNode node) {
         if (!(node instanceof ImmutableChoiceNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -43,11 +43,11 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
     }
 
     private static final class ImmutableChoiceNode
-            extends AbstractImmutableDataContainerNode<InstanceIdentifier.NodeIdentifier>
+            extends AbstractImmutableDataContainerNode<YangInstanceIdentifier.NodeIdentifier>
             implements ChoiceNode {
 
-        ImmutableChoiceNode(final InstanceIdentifier.NodeIdentifier nodeIdentifier,
-                            final Map<InstanceIdentifier.PathArgument, DataContainerChild<? extends InstanceIdentifier.PathArgument, ?>> children) {
+        ImmutableChoiceNode(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
+                            final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children) {
             super(children, nodeIdentifier);
         }
     }

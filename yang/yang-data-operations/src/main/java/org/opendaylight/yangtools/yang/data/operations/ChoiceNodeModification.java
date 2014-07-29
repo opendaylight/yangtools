@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.operations;
 import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -36,11 +36,11 @@ final class ChoiceNodeModification extends
     }
 
     @Override
-    protected Set<InstanceIdentifier.PathArgument> getChildrenToProcess(ChoiceNode schema,
+    protected Set<YangInstanceIdentifier.PathArgument> getChildrenToProcess(ChoiceNode schema,
             Optional<org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode> actual,
             Optional<org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode> modification)
             throws DataModificationException {
-        Set<InstanceIdentifier.PathArgument> childrenToProcess = super.getChildrenToProcess(schema, actual,
+        Set<YangInstanceIdentifier.PathArgument> childrenToProcess = super.getChildrenToProcess(schema, actual,
                 modification);
 
         if (modification.isPresent() == false) {
@@ -49,7 +49,7 @@ final class ChoiceNodeModification extends
 
         // Detect case node from modification
         ChoiceCaseNode detectedCase = null;
-        for (DataContainerChild<? extends InstanceIdentifier.PathArgument, ?> child : modification.get().getValue()) {
+        for (DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> child : modification.get().getValue()) {
             Optional<ChoiceCaseNode> detectedCaseForChild = SchemaUtils.detectCase(schema, child);
 
             if(detectedCaseForChild.isPresent() == false) {
@@ -69,12 +69,12 @@ final class ChoiceNodeModification extends
 
         // Filter out child nodes that do not belong to detected case =
         // Nodes from other cases present in actual
-        Set<InstanceIdentifier.PathArgument> childrenToProcessFiltered = Sets.newLinkedHashSet();
-        for (InstanceIdentifier.PathArgument childToProcess : childrenToProcess) {
+        Set<YangInstanceIdentifier.PathArgument> childrenToProcessFiltered = Sets.newLinkedHashSet();
+        for (YangInstanceIdentifier.PathArgument childToProcess : childrenToProcess) {
             // child from other cases, skip
             if (childToProcess instanceof AugmentationNode
                     && SchemaUtils.belongsToCaseAugment(detectedCase,
-                            (InstanceIdentifier.AugmentationIdentifier) childToProcess) == false) {
+                            (YangInstanceIdentifier.AugmentationIdentifier) childToProcess) == false) {
                 continue;
             } else if (belongsToCase(detectedCase, childToProcess) == false) {
                 continue;
@@ -86,12 +86,12 @@ final class ChoiceNodeModification extends
         return childrenToProcessFiltered;
     }
 
-    private boolean belongsToCase(ChoiceCaseNode detectedCase, InstanceIdentifier.PathArgument childToProcess) {
+    private boolean belongsToCase(ChoiceCaseNode detectedCase, YangInstanceIdentifier.PathArgument childToProcess) {
         return detectedCase.getDataChildByName(childToProcess.getNodeType()) != null;
     }
 
     @Override
-    protected Object findSchemaForAugment(ChoiceNode schema, InstanceIdentifier.AugmentationIdentifier childToProcessId) {
+    protected Object findSchemaForAugment(ChoiceNode schema, YangInstanceIdentifier.AugmentationIdentifier childToProcessId) {
         return SchemaUtils.findSchemaForAugment(schema, childToProcessId.getPossibleChildNames());
     }
 

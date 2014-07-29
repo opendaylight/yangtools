@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
  *
  * Node which is normalized according to the YANG schema
- * is identifiable by {@link InstanceIdentifier}.
+ * is identifiable by {@link YangInstanceIdentifier}.
  *
  * See subinterfaces of this interface for concretization
  * of node.
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
  * @param <K> Local identifier of node
  * @param <V> Value of node
  */
-public interface NormalizedNode<K extends InstanceIdentifier.PathArgument, V> extends Identifiable<K> {
+public interface NormalizedNode<K extends YangInstanceIdentifier.PathArgument, V> extends Identifiable<K> {
     /**
      * QName of the node as defined in YANG schema.
      *

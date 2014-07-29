@@ -70,22 +70,22 @@
  * <h3>Tree / subtree structure</h3> <h4>Grammar representation</h4>
  *
  * <pre>
- *  {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument}*
- *  {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier}| {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates}| {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue} | {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier}
+ *  {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument}*
+ *  {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier}| {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates}| {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue} | {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier}
  *
  *  TreeRoot = {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
  *  {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode} = ( {@link org.opendaylight.yangtools.yang.data.api.schema.LeafNode} | {@link org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode} | {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode} | {@link org.opendaylight.yangtools.yang.data.api.schema.MapNode} | {@link org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode})*
- *  ContainerDataNode = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
+ *  ContainerDataNode = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
  *
- *  {@link org.opendaylight.yangtools.yang.data.api.schema.LeafNode} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier} SimpleValue
- *  {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.AugmentationIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
- *  {@link org.opendaylight.yangtools.yang.data.api.schema.MapNode} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode}
- *  {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates} {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
+ *  {@link org.opendaylight.yangtools.yang.data.api.schema.LeafNode} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier} SimpleValue
+ *  {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
+ *  {@link org.opendaylight.yangtools.yang.data.api.schema.MapNode} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode}
+ *  {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates} {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
  *
  *  // Special nodes
- *  {@link org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode}*
- *  {@link org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
- *  {@link org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode} = {@link org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue} SimpleValue
+ *  {@link org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode}*
+ *  {@link org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier} {@link org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode}
+ *  {@link org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode} = {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue} SimpleValue
  * </pre>
  *
  * The resulting tree organization is following:

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
@@ -20,20 +20,20 @@ public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableCon
 
     private ImmutableContainerNodeSchemaAwareBuilder(final ContainerSchemaNode schema) {
         this.validator = new DataNodeContainerValidator(schema);
-        super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
     private ImmutableContainerNodeSchemaAwareBuilder(final ContainerSchemaNode schema, final ImmutableContainerNode node) {
         super(node);
         this.validator = new DataNodeContainerValidator(schema);
-        super.withNodeIdentifier(new InstanceIdentifier.NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
     }
 
-    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> create(final ContainerSchemaNode schema) {
+    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> create(final ContainerSchemaNode schema) {
         return new ImmutableContainerNodeSchemaAwareBuilder(schema);
     }
 
-    public static DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> create(final ContainerSchemaNode schema, final ContainerNode node) {
+    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> create(final ContainerSchemaNode schema, final ContainerNode node) {
         if (!(node instanceof ImmutableContainerNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -41,12 +41,12 @@ public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableCon
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> withNodeIdentifier(final InstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<InstanceIdentifier.NodeIdentifier, ContainerNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> withChild(final DataContainerChild<?, ?> child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
     }

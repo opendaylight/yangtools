@@ -11,7 +11,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -29,7 +29,7 @@ public class DataNodeContainerValidator {
 
     private final DataNodeContainer schema;
     private final Set<QName> childNodes;
-    private final Set<InstanceIdentifier.AugmentationIdentifier> augments = Sets.newHashSet();
+    private final Set<YangInstanceIdentifier.AugmentationIdentifier> augments = Sets.newHashSet();
 
     public DataNodeContainerValidator(DataNodeContainer schema) {
         this.schema = Preconditions.checkNotNull(schema, "Schema was null");
@@ -43,15 +43,15 @@ public class DataNodeContainerValidator {
         }
     }
 
-    private boolean isKnownChild(InstanceIdentifier.PathArgument child) {
-        if(child instanceof InstanceIdentifier.AugmentationIdentifier) {
+    private boolean isKnownChild(YangInstanceIdentifier.PathArgument child) {
+        if(child instanceof YangInstanceIdentifier.AugmentationIdentifier) {
             return augments.contains(child);
         }
 
         return childNodes.contains(child.getNodeType());
     }
 
-    public void validateChild(InstanceIdentifier.PathArgument child) {
+    public void validateChild(YangInstanceIdentifier.PathArgument child) {
         DataValidationException.checkLegalChild(isKnownChild(child), child, schema, childNodes, augments);
     }
 

@@ -13,10 +13,10 @@ import com.google.common.base.Optional;
 
 import java.util.Iterator;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -29,8 +29,8 @@ public final class NormalizedNodeUtils {
         throw new UnsupportedOperationException("Utilities class should not be instantiated");
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final InstanceIdentifier rootPath, final NormalizedNode<?, ?> rootNode, final InstanceIdentifier childPath) {
-        final Optional<InstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
+    public static Optional<NormalizedNode<?, ?>> findNode(final YangInstanceIdentifier rootPath, final NormalizedNode<?, ?> rootNode, final YangInstanceIdentifier childPath) {
+        final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
         if (relativePath.isPresent()) {
             return findNode(rootNode, relativePath.get());
         } else {
@@ -38,7 +38,7 @@ public final class NormalizedNodeUtils {
         }
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree, final InstanceIdentifier path) {
+    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree, final YangInstanceIdentifier path) {
         checkNotNull(tree, "Tree must not be null");
         checkNotNull(path, "Path must not be null");
 

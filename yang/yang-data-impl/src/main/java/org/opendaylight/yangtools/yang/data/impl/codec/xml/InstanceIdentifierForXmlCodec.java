@@ -22,8 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
@@ -37,7 +37,7 @@ public final class InstanceIdentifierForXmlCodec {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static InstanceIdentifier deserialize(final Element element, final SchemaContext schemaContext) {
+    public static YangInstanceIdentifier deserialize(final Element element, final SchemaContext schemaContext) {
         Preconditions.checkNotNull(element, "Value of element for deserialization can't be null");
         Preconditions.checkNotNull(schemaContext,
                 "Schema context for deserialization of instance identifier type can't be null");
@@ -59,10 +59,10 @@ public final class InstanceIdentifierForXmlCodec {
                 result.add(pathArgument);
             }
         }
-        return InstanceIdentifier.create(result);
+        return YangInstanceIdentifier.create(result);
     }
 
-    public static Element serialize(final InstanceIdentifier id, final Element element) {
+    public static Element serialize(final YangInstanceIdentifier id, final Element element) {
         Preconditions.checkNotNull(id, "Variable should contain instance of instance identifier and can't be null");
         Preconditions.checkNotNull(element, "DOM element can't be null");
 
@@ -110,9 +110,9 @@ public final class InstanceIdentifierForXmlCodec {
         }
 
         if (predicates.isEmpty()) {
-            return new InstanceIdentifier.NodeIdentifier(mainQName);
+            return new YangInstanceIdentifier.NodeIdentifier(mainQName);
         } else {
-            return new InstanceIdentifier.NodeIdentifierWithPredicates(mainQName, predicates);
+            return new YangInstanceIdentifier.NodeIdentifierWithPredicates(mainQName, predicates);
         }
 
     }

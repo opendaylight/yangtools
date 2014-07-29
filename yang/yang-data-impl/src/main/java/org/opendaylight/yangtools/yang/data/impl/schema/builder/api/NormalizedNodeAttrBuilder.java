@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public interface NormalizedNodeAttrBuilder<I extends InstanceIdentifier.PathArgument, V, R extends NormalizedNode<I, ?>>
+public interface NormalizedNodeAttrBuilder<I extends YangInstanceIdentifier.PathArgument, V, R extends NormalizedNode<I, ?>>
         extends AttributesBuilder<NormalizedNodeAttrBuilder<I, V, R>>,
         NormalizedNodeBuilder<I, V, R> {
 

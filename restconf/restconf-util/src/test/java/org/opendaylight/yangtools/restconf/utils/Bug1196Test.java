@@ -82,7 +82,7 @@ public class Bug1196Test {
         VsTlv vsTlv = tlvs.getVsTlv();
         assertNotNull(vsTlv.getVendorPayload());
 
-        Entry<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier, CompositeNode> domPcc = mappingService.toDataDom(new SimpleEntry<InstanceIdentifier<?>,DataObject>(PATH_TO_CLIENT,pcc));
+        Entry<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier, CompositeNode> domPcc = mappingService.toDataDom(new SimpleEntry<InstanceIdentifier<?>,DataObject>(PATH_TO_CLIENT,pcc));
         CompositeNode domPccValue = domPcc.getValue();
         assertNotNull(domPccValue);
         CompositeNode domPccTlvs = getFirstReportedLspVsTlvs(domPccValue);
@@ -117,7 +117,7 @@ public class Bug1196Test {
         VsTlv vsTlv = tlvs.getVsTlv();
         assertNotNull(vsTlv.getVendorPayload());
 
-        Entry<org.opendaylight.yangtools.yang.data.api.InstanceIdentifier, CompositeNode> domPcc = mappingService.toDataDom(new SimpleEntry<InstanceIdentifier<?>,DataObject>(PATH_TO_CLIENT,pcc));
+        Entry<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier, CompositeNode> domPcc = mappingService.toDataDom(new SimpleEntry<InstanceIdentifier<?>,DataObject>(PATH_TO_CLIENT,pcc));
         CompositeNode domPccValue = domPcc.getValue();
         assertNotNull(domPccValue);
         CompositeNode domPccTlvs = getFirstReportedLspVsTlvs(domPccValue);

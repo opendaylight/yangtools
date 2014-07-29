@@ -8,17 +8,17 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.Codec;
-import org.opendaylight.yangtools.yang.data.api.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 /**
  *
  * Codec which serializes / deserializes InstanceIdentifier
  *
  * @param <T> Target type
  */
-public interface InstanceIdentifierCodec<T>  extends Codec<T,InstanceIdentifier> {
+public interface InstanceIdentifierCodec<T>  extends Codec<T,YangInstanceIdentifier> {
     @Override
-    T serialize(InstanceIdentifier data);
+    T serialize(YangInstanceIdentifier data);
 
     @Override
-    InstanceIdentifier deserialize(T data);
+    YangInstanceIdentifier deserialize(T data);
 }
