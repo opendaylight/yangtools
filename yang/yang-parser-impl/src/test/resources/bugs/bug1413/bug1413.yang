@@ -1,0 +1,19 @@
+module bug1413 {
+    yang-version 1;
+    namespace "odl:test:bug1413";
+    prefix "b1413";
+
+    revision "2014-07-25" {
+    }
+
+
+    extension info {
+        argument text {
+            yin-element true;
+            ext:arg-type {
+                type string;
+            }
+        }
+    }
+
+}
