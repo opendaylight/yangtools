@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,9 +97,13 @@ public class ClassCodeGeneratorTest {
         assertEquals(2, genTOsCount);
     }
 
-    @Ignore
+    /**
+     * Test for testing of false scenario.
+     *
+     * Test tests value types. Value types are not allowed to have default constructor.
+     */
     @Test
-    public void defaultConstructorTest() {
+    public void defaultConstructorNotPresentInValueTypeTest() {
         final GeneratedTOBuilder toBuilder = new GeneratedTOBuilderImpl(
                 "simple.pack", "DefCtor");
 
@@ -119,7 +121,7 @@ public class ClassCodeGeneratorTest {
         final String outputStr = clsGen.generate(genTO);
 
         assertNotNull(outputStr);
-        assertTrue(outputStr.contains("public DefCtor()"));
+        assertFalse(outputStr.contains("public DefCtor()"));
     }
 
     @Test
