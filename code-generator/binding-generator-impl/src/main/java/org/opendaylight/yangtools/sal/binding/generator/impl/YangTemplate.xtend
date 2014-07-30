@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode
 import org.opendaylight.yangtools.yang.model.api.UsesNode
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair
+import java.util.Collection
 
 class YangTemplate {
 
@@ -518,7 +519,7 @@ class YangTemplate {
         '''
     }
 
-    def static writeDataSchemaNodes(Set<DataSchemaNode> dataSchemaNodes) {
+    def static writeDataSchemaNodes(Collection<DataSchemaNode> dataSchemaNodes) {
         '''
             «FOR schemaNode : dataSchemaNodes»
                 «writeDataSchemaNode(schemaNode)»
