@@ -35,11 +35,30 @@ public final class ImmutableNodes {
         return ImmutableMapNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(name));
     }
 
-    public static final <T> LeafNode<T> leafNode(final QName name,final T value) {
+    /**
+     * Construct immutable leaf node
+     *
+     * @param name Identifier of leaf node
+     * @param value Value of leaf node
+     * @return Leaf node with supplied identifier and value
+     */
+    public static final <T> LeafNode<T> leafNode(final NodeIdentifier name,final T value) {
         return ImmutableLeafNodeBuilder.<T>create()
-                .withNodeIdentifier(new NodeIdentifier(name))
+                .withNodeIdentifier(name)
                 .withValue(value)
                 .build();
+    }
+
+    /**
+     *
+     * Construct immutable leaf node
+     *
+     * @param name QName which will be used as node identifier
+     * @param value Value of leaf node.
+     * @return Leaf node with supplied identifier and value
+     */
+    public static final <T> LeafNode<T> leafNode(final QName name,final T value) {
+        return leafNode(new NodeIdentifier(name), value);
     }
 
     public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(final QName nodeName,final QName keyName,final Object keyValue) {
