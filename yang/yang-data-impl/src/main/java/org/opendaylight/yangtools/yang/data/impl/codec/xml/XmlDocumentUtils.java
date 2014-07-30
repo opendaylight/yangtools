@@ -17,11 +17,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.xml.parsers.DocumentBuilder;
@@ -41,18 +38,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +48,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class XmlDocumentUtils {
+    private final static String RPC_REPLY_LOCAL_NAME = "rpc-reply";
+    private final static String RPC_REPLY_NAMESPACE = "urn:ietf:params:xml:ns:netconf:base:1.0";
+    private final static QName RPC_REPLY_QNAME = QName.create(URI.create(RPC_REPLY_NAMESPACE), null, RPC_REPLY_LOCAL_NAME);
+
     private static class ElementWithSchemaContext {
         Element element;
         SchemaContext schemaContext;
@@ -402,6 +392,60 @@ public class XmlDocumentUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Transforms XML Document representing Rpc output body into Composite Node structure based on Rpc definition
+     * within given Schema Context. The transformation is based on Rpc Definition which is defined in provided Schema Context.
+     * If Rpc Definition is missing from given Schema Context the method will return <code>null</code>
+     *
+     * @param document XML Document containing Output RPC message
+     * @param rpcName Rpc QName
+     * @param context Schema Context
+     * @return Rpc message in Composite Node data structures if Rpc definition is present within provided Schema Context, otherwise
+     * returns <code>null</code>
+     */
+    public static CompositeNode rpcReplyToDomNodes(final Document document, final QName rpcName,
+        final SchemaContext context) {
+        Preconditions.checkNotNull(document);
+        Preconditions.checkNotNull(rpcName);
+        Preconditions.checkNotNull(context);
+
+        Optional<RpcDefinition> rpcDefinition = findRpc(rpcName, context);
+        if (rpcDefinition.isPresent()) {
+             RpcDefinition rpc = rpcDefinition.get();
+
+            final Collection<DataSchemaNode> outputNode = rpc.getOutput().getChildNodes();
+            final Element rpcReplyElement = document.getDocumentElement();
+            final QName partialQName = qNameFromElement(rpcReplyElement);
+
+            if (RPC_REPLY_QNAME.equals(partialQName)) {
+                final List<Node<?>> domNodes = toDomNodes(rpcReplyElement, Optional.fromNullable(outputNode), context);
+                List<Node<?>> rpcOutNodes = Collections.<Node<?>>singletonList(ImmutableCompositeNode.create(
+                    rpc.getOutput().getQName(), domNodes));
+                return ImmutableCompositeNode.create(rpcName, rpcOutNodes);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Method searches given schema context for Rpc Definition with given QName.
+     * Returns Rpc Definition if is present within given Schema Context, otherwise returns Optional.absent().
+     *
+     * @param rpc Rpc QName
+     * @param context Schema Context
+     * @return Rpc Definition if is present within given Schema Context, otherwise returns Optional.absent().
+     */
+    private static Optional<RpcDefinition> findRpc(QName rpc, SchemaContext context) {
+        Preconditions.checkNotNull(rpc);
+        Preconditions.checkNotNull(context);
+        for (final RpcDefinition rpcDefinition : context.getOperations()) {
+            if ((rpcDefinition != null) && rpc.equals(rpcDefinition.getQName())) {
+                return Optional.of(rpcDefinition);
+            }
+        }
+        return Optional.absent();
     }
 
     public static CompositeNode notificationToDomNodes(final Document document,
