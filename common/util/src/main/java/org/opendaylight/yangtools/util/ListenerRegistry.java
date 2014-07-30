@@ -5,23 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.concepts.util;
+package org.opendaylight.yangtools.util;
 
 
 import java.util.Collections;
 import java.util.EventListener;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 
-/**
- * @deprecated Use {@link org.opendaylight.yangtools.util.ListenerRegistry} instead.
- *
- * @param <T>
- */
-@Deprecated
+
 public class ListenerRegistry<T extends EventListener> implements Iterable<ListenerRegistration<T>> {
 
     private final ConcurrentHashMap<ListenerRegistration<? extends T>,ListenerRegistration<? extends T>> listeners;
@@ -40,7 +34,7 @@ public class ListenerRegistry<T extends EventListener> implements Iterable<Liste
         return unmodifiableView;
     }
 
-    public ListenerRegistration<T> register(final T listener) {
+    public ListenerRegistration<T> register(T listener) {
         if (listener == null) {
             throw new IllegalArgumentException("Listener should not be null.");
         }
@@ -48,26 +42,28 @@ public class ListenerRegistry<T extends EventListener> implements Iterable<Liste
         listeners.put(ret,ret);
         return ret;
     }
-
-    public <L extends T> ListenerRegistration<L> registerWithType(final L listener) {
+    
+    public <L extends T> ListenerRegistration<L> registerWithType(L listener) {
         ListenerRegistrationImpl<L> ret = new ListenerRegistrationImpl<L>(listener);
         listeners.put(ret,ret);
         return ret;
     }
-
+    
     @Override
     public java.util.Iterator<ListenerRegistration<T>> iterator() {
         return unmodifiableView.iterator();
     }
 
     @SuppressWarnings("rawtypes")
-    private void remove(final ListenerRegistrationImpl registration) {
+    private void remove(ListenerRegistrationImpl registration) {
         listeners.remove(registration);
     }
 
-    private class ListenerRegistrationImpl<P extends EventListener> extends AbstractObjectRegistration<P> implements ListenerRegistration<P> {
+    private class ListenerRegistrationImpl<P extends EventListener> //
+            extends AbstractObjectRegistration<P> //
+            implements ListenerRegistration<P> {
 
-        public ListenerRegistrationImpl(final P instance) {
+        public ListenerRegistrationImpl(P instance) {
             super(instance);
         }
 
