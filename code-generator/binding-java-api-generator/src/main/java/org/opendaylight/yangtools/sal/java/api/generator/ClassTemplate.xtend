@@ -7,21 +7,24 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
+import com.google.common.collect.Lists
+import com.google.common.collect.Range
+import com.google.common.io.BaseEncoding
+import java.beans.ConstructorProperties
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.Collections
 import java.util.List
+import java.util.regex.Pattern
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants
 import org.opendaylight.yangtools.sal.binding.model.api.Constant
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import java.util.ArrayList
-import java.util.Collectionsimport java.util.Arrays
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
-import com.google.common.collect.Range
-import java.util.regex.Pattern
-import com.google.common.io.BaseEncoding
-import java.beans.ConstructorProperties
-import com.google.common.collect.Lists
 
 /**
  * Template for generating JAVA class. 
@@ -107,6 +110,8 @@ class ClassTemplate extends BaseTemplate {
             «enumDeclarations»
             «constantsDeclarations»
             «generateFields»
+            
+            «generateConstraints()»
 
             «constructors»
             
@@ -132,6 +137,40 @@ class ClassTemplate extends BaseTemplate {
         }
     '''
 
+    def private generateConstraints() '''
+        static {
+            «IF restrictions != null»
+                «IF !restrictions.rangeConstraints.nullOrEmpty»
+                «generateRangeConstraints()»
+                «ENDIF»
+                «IF !restrictions.lengthConstraints.nullOrEmpty»
+                «generateLengthConstraints()»
+                «ENDIF»
+            «ENDIF»
+        }
+    '''
+    
+    private def generateRangeConstraints() '''
+        «IF !allProperties.nullOrEmpty»
+            «val returnType = allProperties.iterator.next.returnType»
+            «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
+                «rangeBody(restrictions, BigDecimal, genTO.importedName, "_range", false)»
+            «ELSE»
+                «rangeBody(restrictions, BigInteger, genTO.importedName, "_range", false)»
+            «ENDIF»
+        «ENDIF»
+    '''
+    
+    private def generateLengthConstraints() '''
+        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
+            «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
+            «IF numberClass.equals(typeof(BigDecimal))»
+                «lengthBody(restrictions, numberClass, genTO.importedName, "_length", false)»
+            «ELSE»
+                «lengthBody(restrictions, typeof(BigInteger), genTO.importedName, "_length", false)»
+            «ENDIF»
+        «ENDIF»
+    '''
 
     /**
      * Template method which generates inner classes inside this interface.

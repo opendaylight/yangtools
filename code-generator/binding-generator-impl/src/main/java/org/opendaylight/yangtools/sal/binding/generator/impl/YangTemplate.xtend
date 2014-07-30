@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode
 import org.opendaylight.yangtools.yang.model.api.UsesNode
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair
+import java.util.Collection
 
 class YangTemplate {
 
@@ -518,7 +519,7 @@ class YangTemplate {
         '''
     }
 
-    def static writeDataSchemaNodes(Set<DataSchemaNode> dataSchemaNodes) {
+    def static writeDataSchemaNodes(Collection<DataSchemaNode> dataSchemaNodes) {
         '''
             «FOR schemaNode : dataSchemaNodes»
                 «writeDataSchemaNode(schemaNode)»
@@ -526,7 +527,7 @@ class YangTemplate {
         '''
     }
 
-    def static writeGroupingDefs(Set<GroupingDefinition> groupingDefs) {
+    def static CharSequence writeGroupingDefs(Set<GroupingDefinition> groupingDefs) {
         '''
             «FOR groupingDef : groupingDefs»
                 «IF groupingDef != null»
@@ -667,7 +668,7 @@ class YangTemplate {
         '''
     }
 
-    def static writeDataSchemaNode(DataSchemaNode child) {
+    def static CharSequence writeDataSchemaNode(DataSchemaNode child) {
         '''
             «IF child instanceof ContainerSchemaNode»
                 «writeContSchemaNode(child as ContainerSchemaNode)»
