@@ -1,0 +1,227 @@
+/*
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.impl.schema;
+
+import com.google.common.base.Preconditions;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
+
+/**
+ *
+ * Implementation of {@link NormalizedNodeStreamWriter}, which constructs
+ * immutable instances of {@link NormalizedNode}s.
+ * <p>
+ * This writer supports two modes of behaviour one is using {@link #from(NormalizedNodeResult)}
+ * where resulting NormalizedNode will be stored in supplied result object.
+ *
+ * Other mode of operation is using {@link #from(NormalizedNodeContainerBuilder)},
+ * where all created nodes will be written to this builder.
+ *
+ *
+ */
+public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+
+
+
+    @SuppressWarnings("rawtypes")
+    private final Deque<NormalizedNodeContainerBuilder> builders;
+
+
+    @SuppressWarnings("rawtypes")
+    private ImmutableNormalizedNodeStreamWriter( final NormalizedNodeContainerBuilder topLevelBuilder) {
+        builders = new ArrayDeque<>();
+        builders.push(topLevelBuilder);
+    }
+
+    public static final NormalizedNodeStreamWriter from(final NormalizedNodeContainerBuilder<?, ?, ?, ?> builder) {
+        return new ImmutableNormalizedNodeStreamWriter(builder);
+    }
+
+    public static final NormalizedNodeStreamWriter from(final NormalizedNodeResult result) {
+        return new ImmutableNormalizedNodeStreamWriter(new NormalizedNodeResultBuilder(result));
+    }
+
+
+    @SuppressWarnings("rawtypes")
+    private NormalizedNodeContainerBuilder getCurrent() {
+        return builders.peek();
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void enter(final NormalizedNodeContainerBuilder next) {
+        builders.push(next);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void writeChild(final NormalizedNode<?, ?> child) {
+        getCurrent().addChild(child);
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes","unchecked"})
+    public void endNode() {
+        final NormalizedNodeContainerBuilder finishedBuilder = builders.poll();
+        Preconditions.checkState(finishedBuilder != null, "Node which should be closed does not exists.");
+        NormalizedNodeContainerBuilder current = getCurrent();
+        Preconditions.checkState(current != null, "Reached top level node, which could not be closed in this writer.");
+        NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
+        current.addChild(product);
+    }
+
+    @Override
+    public void leafNode(final NodeIdentifier name, final Object value) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        writeChild(ImmutableNodes.leafNode(name, value));
+    }
+
+    @Override
+    public void startLeafSet(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.leafSetBuilder();
+        builder.withNodeIdentifier(name);
+        enter(builder);
+    }
+
+    @Override
+    public void leafSetEntryNode(final Object value) throws IllegalArgumentException {
+        Preconditions.checkArgument(getCurrent() instanceof ImmutableLeafSetNodeBuilder<?>);
+        @SuppressWarnings("unchecked")
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
+        builder.withChildValue(value);
+    }
+
+    @Override
+    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IllegalArgumentException {
+        checkDataNodeContainer();
+
+
+    }
+
+    @Override
+    public void startContainerNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        enter(Builders.containerBuilder().withNodeIdentifier(name));
+    }
+
+    @Override
+    public void startUnkeyedList(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        enter(Builders.unkeyedListBuilder().withNodeIdentifier(name));
+    }
+
+    @Override
+    public void startUnkeyedListItem(final NodeIdentifier name,final int childSizeHint) throws IllegalStateException {
+        Preconditions.checkArgument(getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
+        enter(Builders.unkeyedListEntryBuilder().withNodeIdentifier(name));
+    }
+
+    @Override
+    public void startMapNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        enter(Builders.mapBuilder().withNodeIdentifier(name));
+    }
+
+    @Override
+    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier,final int childSizeHint) throws IllegalArgumentException {
+        Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder);
+        enter(Builders.mapEntryBuilder().withNodeIdentifier(identifier));
+    }
+
+    @Override
+    public void startOrderedMapNode(final NodeIdentifier name) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        enter(Builders.mapBuilder().withNodeIdentifier(name));
+    }
+
+    @Override
+    public void startOrderedMapEntryNode(final NodeIdentifierWithPredicates identifier) throws IllegalArgumentException {
+        Preconditions.checkArgument(getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
+        enter(Builders.mapEntryBuilder().withNodeIdentifier(identifier));
+    }
+
+    @Override
+    public void startChoiceNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        enter(Builders.choiceBuilder().withNodeIdentifier(name));
+    }
+    @Override
+    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        Preconditions.checkArgument(!(getCurrent() instanceof ImmutableAugmentationNodeBuilder));
+        enter(Builders.augmentationBuilder().withNodeIdentifier(identifier));
+    }
+
+    private void checkDataNodeContainer() {
+        @SuppressWarnings("rawtypes")
+        NormalizedNodeContainerBuilder current = getCurrent();
+        if(!(current instanceof NormalizedNodeResultBuilder)) {
+        Preconditions.checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static final class NormalizedNodeResultBuilder implements NormalizedNodeContainerBuilder {
+
+        private final NormalizedNodeResult result;
+
+        public NormalizedNodeResultBuilder(final NormalizedNodeResult result) {
+            this.result = result;
+        }
+
+        @Override
+        public NormalizedNodeBuilder withValue(final Object value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public NormalizedNode build() {
+            throw new IllegalStateException("Can not close NormalizedNodeResult");
+        }
+
+        @Override
+        public NormalizedNodeContainerBuilder withNodeIdentifier(final PathArgument nodeIdentifier) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public NormalizedNodeContainerBuilder withValue(final List value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public NormalizedNodeContainerBuilder addChild(final NormalizedNode child) {
+            result.setResult(child);
+            return this;
+        }
+
+        @Override
+        public NormalizedNodeContainerBuilder removeChild(final PathArgument key) {
+            throw new UnsupportedOperationException();
+        }
+
+    }
+
+}
