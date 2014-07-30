@@ -7,24 +7,28 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.Lists
+import com.google.common.collect.Range
+import com.google.common.io.BaseEncoding
+import java.beans.ConstructorProperties
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.Collections
 import java.util.List
+import java.util.regex.Pattern
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants
 import org.opendaylight.yangtools.sal.binding.model.api.Constant
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import java.util.ArrayList
-import java.util.Collectionsimport java.util.Arrays
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
-import com.google.common.collect.Range
-import java.util.regex.Pattern
-import com.google.common.io.BaseEncoding
-import java.beans.ConstructorProperties
-import com.google.common.collect.Lists
 
 /**
- * Template for generating JAVA class. 
+ * Template for generating JAVA class.
  */
 class ClassTemplate extends BaseTemplate {
 
@@ -33,22 +37,21 @@ class ClassTemplate extends BaseTemplate {
     protected val List<GeneratedProperty> parentProperties
     protected val Iterable<GeneratedProperty> allProperties;
     protected val Restrictions restrictions
-    
+
     /**
      * List of enumeration which are generated as JAVA enum type.
      */
     protected val List<Enumeration> enums
-    
+
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
      */
     protected val List<Constant> consts
-    
+
     /**
      * List of generated types which are enclosed inside <code>genType</code>
      */
     protected val List<GeneratedType> enclosedGeneratedTypes;
-    
     
     protected val GeneratedTransferObject genTO;
 
@@ -78,7 +81,6 @@ class ClassTemplate extends BaseTemplate {
         this.enclosedGeneratedTypes = genType.enclosedTypes
     }
 
-
     /**
      * Generates JAVA class source code (class body only).
      * 
@@ -87,7 +89,6 @@ class ClassTemplate extends BaseTemplate {
     def CharSequence generateAsInnerClass() {
         return generateBody(true)
     }
-
 
     override protected body() {
         generateBody(false);
@@ -107,9 +108,14 @@ class ClassTemplate extends BaseTemplate {
             «enumDeclarations»
             «constantsDeclarations»
             «generateFields»
-
-            «constructors»
             
+            «IF restrictions != null && (!restrictions.rangeConstraints.nullOrEmpty || 
+                !restrictions.lengthConstraints.nullOrEmpty)»
+            «generateConstraints»
+            
+            «ENDIF»
+            «constructors»
+
             «defaultInstance»
 
             «FOR field : properties SEPARATOR "\n"»
@@ -125,13 +131,30 @@ class ClassTemplate extends BaseTemplate {
 
             «generateToString(genTO.toStringIdentifiers)»
 
-            «generateLengthMethod("length", genTO, genTO.importedName, "_length")»
+            «generateLengthMethod("length", "_length")»
 
-            «generateRangeMethod("range", genTO.restrictions, genTO.importedName, "_range", allProperties)»
+            «generateRangeMethod("range", "_range")»
 
         }
     '''
 
+    def private generateLengthMethod(String methodName, String varName) '''
+        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
+            «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
+            public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
+                return «varName»;
+            }
+        «ENDIF»
+    '''
+
+    def private generateRangeMethod(String methodName, String varName) '''
+        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
+            «val returnType = allProperties.iterator.next.returnType»
+            public static «List.importedName»<«Range.importedName»<«returnType.importedNumber»>> «methodName»() {
+                return «varName»;
+            }
+        «ENDIF»
+    '''
 
     /**
      * Template method which generates inner classes inside this interface.
@@ -144,13 +167,12 @@ class ClassTemplate extends BaseTemplate {
                 «IF (innerClass instanceof GeneratedTransferObject)»
                     «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
                     «classTemplate.generateAsInnerClass»
-                    
+
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
     '''
-    
-    
+
     def protected constructors() '''
         «IF genTO.unionType»
             «genUnionConstructor»
@@ -162,6 +184,55 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
         «IF properties.empty && !parentProperties.empty »
             «parentConstructor»
+        «ENDIF»
+    '''
+
+    def private generateConstraints() '''
+        static {
+            «IF !restrictions.rangeConstraints.nullOrEmpty»
+            «generateRangeConstraints»
+            «ENDIF»
+            «IF !restrictions.lengthConstraints.nullOrEmpty»
+            «generateLengthConstraints»
+            «ENDIF»
+        }
+    '''
+
+    private def generateRangeConstraints() '''
+        «IF !allProperties.nullOrEmpty»
+            «val returnType = allProperties.iterator.next.returnType»
+            «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
+                «rangeBody(restrictions, BigDecimal, genTO.importedName, "_range")»
+            «ELSE»
+                «rangeBody(restrictions, BigInteger, genTO.importedName, "_range")»
+            «ENDIF»
+        «ENDIF»
+    '''
+
+    private def rangeBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
+        «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
+        «FOR r : restrictions.rangeConstraints»
+            builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
+        «ENDFOR»
+        «varName» = builder.build();
+    '''
+
+    private def lengthBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
+        «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
+        «FOR r : restrictions.lengthConstraints»
+            builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
+        «ENDFOR»
+        «varName» = builder.build();
+    '''
+
+    private def generateLengthConstraints() '''
+        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
+            «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
+            «IF numberClass.equals(typeof(BigDecimal))»
+                «lengthBody(restrictions, numberClass, genTO.importedName, "_length")»
+            «ELSE»
+                «lengthBody(restrictions, typeof(BigInteger), genTO.importedName, "_length")»
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -180,6 +251,7 @@ class ClassTemplate extends BaseTemplate {
             this.«p.fieldName» = «p.fieldName»;
         «ENDFOR»
     }
+    
     '''
 
     def protected genUnionConstructor() '''
@@ -296,7 +368,7 @@ class ClassTemplate extends BaseTemplate {
             ENDFOR»«
         ENDIF
     »'''
-    
+
     /**
      * Template method which generates JAVA enum type.
      * 
@@ -369,10 +441,10 @@ class ClassTemplate extends BaseTemplate {
             «val prop = getPropByName("value")»
             «IF prop != null»
                 «IF !(restrictions.lengthConstraints.empty)»
-                    private static «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _length;
+                    private static final «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _length;
                 «ENDIF»
                 «IF !(restrictions.rangeConstraints.empty)»
-                    private static «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _range;
+                    private static final «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _range;
                 «ENDIF»
             «ENDIF»
         «ENDIF»
