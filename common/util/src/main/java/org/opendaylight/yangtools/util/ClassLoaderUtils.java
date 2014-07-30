@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.binding.util;
+package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -20,15 +20,10 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.locks.Lock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated Use {@link org.opendaylight.yangtools.util.ClassLoaderUtils} instead.
- */
-@Deprecated
 public final class ClassLoaderUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ClassLoaderUtils.class);
 
@@ -83,31 +78,6 @@ public final class ClassLoaderUtils {
             return function.call();
         } finally {
             Thread.currentThread().setContextClassLoader(oldCls);
-        }
-    }
-
-    /**
-     *
-     * Runs {@link Callable} with provided {@link ClassLoader} and Lock.
-     *
-     * Invokes supplies function after acquiring lock
-     * and makes sure that original {@link ClassLoader}
-     * is context {@link ClassLoader} and lock is unlocked
-     * after execution.
-     *
-     * @param cls {@link ClassLoader} to be used.
-     * @param function Function to be executed.
-     * @return Result of Callable invocation.
-     *
-     */
-    public static <V> V withClassLoaderAndLock(final ClassLoader cls, final Lock lock, final Supplier<V> function) {
-        checkNotNull(lock, "Lock should not be null");
-
-        lock.lock();
-        try {
-            return withClassLoader(cls, function);
-        } finally {
-            lock.unlock();
         }
     }
 
