@@ -498,15 +498,15 @@ abstract class BaseTemplate {
             «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
             public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
                 «IF numberClass.equals(typeof(BigDecimal))»
-                    «lengthMethodBody(restrictions, numberClass, className, varName)»
+                    «lengthBody(restrictions, numberClass, className, varName, true)»
                 «ELSE»
-                    «lengthMethodBody(restrictions, typeof(BigInteger), className, varName)»
+                    «lengthBody(restrictions, typeof(BigInteger), className, varName, true)»
                 «ENDIF»
             }
         «ENDIF»
     '''
 
-    def private lengthMethodBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
+    def protected lengthBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName, boolean isMethod) '''
         if («varName» == null) {
             synchronized («className».class) {
                 if («varName» == null) {
@@ -518,7 +518,9 @@ abstract class BaseTemplate {
                 }
             }
         }
+        «IF isMethod»
         return «varName»;
+        «ENDIF»
     '''
 
     def protected generateRangeMethod(String methodName, Restrictions restrictions, Type returnType, String className, String varName) '''
@@ -526,9 +528,9 @@ abstract class BaseTemplate {
             «val number = returnType.importedNumber»
             public static «List.importedName»<«Range.importedName»<«number»>> «methodName»() {
                 «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                    «rangeMethodBody(restrictions, BigDecimal, className, varName)»
+                    «rangeBody(restrictions, BigDecimal, className, varName, true)»
                 «ELSE»
-                    «rangeMethodBody(restrictions, BigInteger, className, varName)»
+                    «rangeBody(restrictions, BigInteger, className, varName, true)»
                 «ENDIF»
             }
         «ENDIF»
@@ -539,15 +541,15 @@ abstract class BaseTemplate {
             «val returnType = properties.iterator.next.returnType»
             public static «List.importedName»<«Range.importedName»<«returnType.importedNumber»>> «methodName»() {
                 «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                    «rangeMethodBody(restrictions, BigDecimal, className, varName)»
+                    «rangeBody(restrictions, BigDecimal, className, varName, true)»
                 «ELSE»
-                    «rangeMethodBody(restrictions, BigInteger, className, varName)»
+                    «rangeBody(restrictions, BigInteger, className, varName, true)»
                 «ENDIF»
             }
         «ENDIF»
     '''
 
-    def private rangeMethodBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
+    def protected rangeBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName, boolean isMethod) '''
         if («varName» == null) {
             synchronized («className».class) {
                 if («varName» == null) {
@@ -559,7 +561,9 @@ abstract class BaseTemplate {
                 }
             }
         }
+        «IF isMethod»
         return «varName»;
+        «ENDIF»
     '''
 
     def protected String importedNumber(Class<? extends Number> clazz) {
@@ -576,7 +580,7 @@ abstract class BaseTemplate {
         return BigInteger.importedName
     }
 
-    def private String numericValue(Class<? extends Number> clazz, Object numberValue) {
+    def protected String numericValue(Class<? extends Number> clazz, Object numberValue) {
         val number = clazz.importedName;
         val value = numberValue.toString
         if (clazz.equals(typeof(BigInteger)) || clazz.equals(typeof(BigDecimal))) {

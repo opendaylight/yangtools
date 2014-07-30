@@ -7,24 +7,27 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
+import com.google.common.collect.Lists
+import com.google.common.collect.Range
+import com.google.common.io.BaseEncoding
+import java.beans.ConstructorProperties
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.Collections
 import java.util.List
+import java.util.regex.Pattern
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants
 import org.opendaylight.yangtools.sal.binding.model.api.Constant
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import java.util.ArrayList
-import java.util.Collectionsimport java.util.Arrays
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
-import com.google.common.collect.Range
-import java.util.regex.Pattern
-import com.google.common.io.BaseEncoding
-import java.beans.ConstructorProperties
-import com.google.common.collect.Lists
 
 /**
- * Template for generating JAVA class. 
+ * Template for generating JAVA class.
  */
 class ClassTemplate extends BaseTemplate {
 
@@ -33,22 +36,21 @@ class ClassTemplate extends BaseTemplate {
     protected val List<GeneratedProperty> parentProperties
     protected val Iterable<GeneratedProperty> allProperties;
     protected val Restrictions restrictions
-    
+
     /**
      * List of enumeration which are generated as JAVA enum type.
      */
     protected val List<Enumeration> enums
-    
+
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
      */
     protected val List<Constant> consts
-    
+
     /**
      * List of generated types which are enclosed inside <code>genType</code>
      */
     protected val List<GeneratedType> enclosedGeneratedTypes;
-    
     
     protected val GeneratedTransferObject genTO;
 
@@ -78,7 +80,6 @@ class ClassTemplate extends BaseTemplate {
         this.enclosedGeneratedTypes = genType.enclosedTypes
     }
 
-
     /**
      * Generates JAVA class source code (class body only).
      * 
@@ -87,7 +88,6 @@ class ClassTemplate extends BaseTemplate {
     def CharSequence generateAsInnerClass() {
         return generateBody(true)
     }
-
 
     override protected body() {
         generateBody(false);
@@ -107,9 +107,13 @@ class ClassTemplate extends BaseTemplate {
             «enumDeclarations»
             «constantsDeclarations»
             «generateFields»
-
-            «constructors»
             
+            «IF restrictions != null»
+            «generateConstraints»
+            
+            «ENDIF»
+            «constructors»
+
             «defaultInstance»
 
             «FOR field : properties SEPARATOR "\n"»
@@ -132,7 +136,6 @@ class ClassTemplate extends BaseTemplate {
         }
     '''
 
-
     /**
      * Template method which generates inner classes inside this interface.
      * 
@@ -144,13 +147,12 @@ class ClassTemplate extends BaseTemplate {
                 «IF (innerClass instanceof GeneratedTransferObject)»
                     «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
                     «classTemplate.generateAsInnerClass»
-                    
+
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
     '''
-    
-    
+
     def protected constructors() '''
         «IF genTO.unionType»
             «genUnionConstructor»
@@ -162,6 +164,39 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
         «IF properties.empty && !parentProperties.empty »
             «parentConstructor»
+        «ENDIF»
+    '''
+
+    def private generateConstraints() '''
+        static {
+            «IF !restrictions.rangeConstraints.nullOrEmpty»
+            «generateRangeConstraints»
+            «ENDIF»
+            «IF !restrictions.lengthConstraints.nullOrEmpty»
+            «generateLengthConstraints»
+            «ENDIF»
+        }
+    '''
+
+    private def generateRangeConstraints() '''
+        «IF !allProperties.nullOrEmpty»
+            «val returnType = allProperties.iterator.next.returnType»
+            «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
+                «rangeBody(restrictions, BigDecimal, genTO.importedName, "_range", false)»
+            «ELSE»
+                «rangeBody(restrictions, BigInteger, genTO.importedName, "_range", false)»
+            «ENDIF»
+        «ENDIF»
+    '''
+
+    private def generateLengthConstraints() '''
+        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
+            «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
+            «IF numberClass.equals(typeof(BigDecimal))»
+                «lengthBody(restrictions, numberClass, genTO.importedName, "_length", false)»
+            «ELSE»
+                «lengthBody(restrictions, typeof(BigInteger), genTO.importedName, "_length", false)»
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -296,7 +331,7 @@ class ClassTemplate extends BaseTemplate {
             ENDFOR»«
         ENDIF
     »'''
-    
+
     /**
      * Template method which generates JAVA enum type.
      * 
