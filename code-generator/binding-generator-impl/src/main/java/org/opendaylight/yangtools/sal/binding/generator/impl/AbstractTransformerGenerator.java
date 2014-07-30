@@ -7,24 +7,26 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-
 import javassist.ClassPool;
-
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
+import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.BindingCodec;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Abstract base class which defines the baseline for the real {@link TransformerGenerator}.
@@ -33,6 +35,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  */
 abstract class AbstractTransformerGenerator {
     private static final Map<SchemaPath, InstanceIdentifier<?>> PATH_TO_BINDING_IDENTIFIER = new ConcurrentHashMap<>();
+
+    protected static final String TO_DOM_VALUE_METHOD_NAME = "toDomValue";
 
     /*
      * The generator has to always use this strategy, otherwise we may end up
@@ -101,6 +105,11 @@ abstract class AbstractTransformerGenerator {
     protected abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> keyTransformerForIdentifierImpl(Class<?> inputType);
     protected abstract Class<? extends BindingCodec<Map<QName, Object>, Object>> transformerForImpl(Class<?> inputType);
 
+
+
+    protected abstract Class<?> valueSerializer(GeneratedTransferObject type, TypeDefinition typeDefinition);
+    protected abstract Class<?> valueSerializer(Enumeration type, TypeDefinition typeDefinition);
+
     // Called from LazyGeneratedCodecRegistry
     final Class<? extends BindingCodec<Map<QName, Object>, Object>> augmentationTransformerFor(final Class<?> inputType) throws TransformerGeneratorException {
         try {
@@ -140,5 +149,18 @@ abstract class AbstractTransformerGenerator {
         } catch (Exception e) {
             throw TransformerGeneratorException.wrap(inputType, e);
         }
+    }
+
+    public Class<?> staticSerializerFor(final Type type) {
+        Optional<Entry<Type, TypeDefinition<?>>> definition = typeResolver.getTypeDefinition(type);
+        if(definition.isPresent()) {
+            Type key = definition.get().getKey();
+            if(key instanceof GeneratedTransferObject) {
+                return valueSerializer((GeneratedTransferObject) key,definition.get().getValue());
+            } else if (key instanceof Enumeration) {
+                return valueSerializer((Enumeration) key,definition.get().getValue());
+            }
+        }
+        return null;
     }
 }

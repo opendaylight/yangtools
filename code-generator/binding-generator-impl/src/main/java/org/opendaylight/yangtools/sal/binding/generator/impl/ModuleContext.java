@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class ModuleContext {
@@ -36,6 +38,9 @@ public final class ModuleContext {
     private final Set<GeneratedTypeBuilder> topLevelNodes = new HashSet<GeneratedTypeBuilder>();
     private final List<GeneratedTypeBuilder> augmentations = new ArrayList<GeneratedTypeBuilder>();
     private final BiMap<Type,AugmentationSchema> typeToAugmentation = HashBiMap.create();
+
+    private final Map<Type,Object> typeToSchema = new HashMap<>();
+
 
     private final Multimap<Type, Type> choiceToCases = HashMultimap.create();
     private final BiMap<Type,ChoiceCaseNode> caseTypeToSchema = HashBiMap.create();
@@ -110,8 +115,9 @@ public final class ModuleContext {
         genTOs.add(b);
     }
 
-    public void addChildNodeType(final SchemaPath p, final GeneratedTypeBuilder b) {
-        childNodes.put(p, b);
+    public void addChildNodeType(final SchemaNode p, final GeneratedTypeBuilder b) {
+        childNodes.put(p.getPath(), b);
+        typeToSchema.put(b,p);
     }
 
     public void addGroupingType(final SchemaPath p, final GeneratedTypeBuilder b) {
@@ -172,19 +178,33 @@ public final class ModuleContext {
 
     public void addTypeToAugmentation(final GeneratedTypeBuilder builder, final AugmentationSchema schema) {
         typeToAugmentation.put(builder, schema);
+        typeToSchema.put(builder, schema);
     }
 
     public void addTargetToAugmentation(final Type target, final GeneratedTypeBuilder augmentation) {
         augmentableToAugmentations.put(target,augmentation);
     }
 
-    public void addChoiceToCaseMapping(Type choiceType, Type caseType, ChoiceCaseNode schema) {
+    public void addChoiceToCaseMapping(final Type choiceType, final Type caseType, final ChoiceCaseNode schema) {
         choiceToCases.put(choiceType, caseType);
         caseTypeToSchema.put(caseType, schema);
+        typeToSchema.put(caseType, schema);
     }
 
     public BiMap<Type, ChoiceCaseNode> getCaseTypeToSchemas() {
         return caseTypeToSchema;
+    }
+
+    /**
+     *
+     * Returns mapping of type to its schema.
+     *
+     * Valid values are only instances of {@link DataSchemaNode} or {@link AugmentationSchema}
+     *
+     * @return
+     */
+    public Map<Type, Object> getTypeToSchema() {
+        return typeToSchema;
     }
 
 }

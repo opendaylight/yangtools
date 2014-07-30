@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.base.Optional;
+import java.util.Map;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Internal interface exposed to TransformerGenerator
@@ -21,4 +24,6 @@ interface TypeResolver {
     GeneratedTypeBuilder getDefinition(Type type);
     SchemaNode getSchemaNode(Type type);
     GeneratedTypeBuilder getTypeBuilder(SchemaPath path);
+
+    Optional<Map.Entry<Type,TypeDefinition<?>>> getTypeDefinition(Type type);
 }

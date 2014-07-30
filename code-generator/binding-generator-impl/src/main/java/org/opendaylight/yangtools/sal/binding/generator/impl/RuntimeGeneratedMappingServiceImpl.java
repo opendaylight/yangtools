@@ -13,7 +13,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-
 import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -28,11 +27,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
-
 import javassist.ClassPool;
-
 import javax.annotation.concurrent.GuardedBy;
-
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -454,5 +450,16 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
     @Override
     public final GeneratedTypeBuilder getTypeBuilder(final SchemaPath path) {
         return pathToType.get(path);
+    }
+
+    @Override
+    public Optional<Entry<Type, TypeDefinition<?>>> getTypeDefinition(final Type type) {
+        Type key = typeDefinitions.get(type);
+        if(key == null) {
+            return Optional.absent();
+        }
+        // FIXME: Resolve type definition
+        TypeDefinition definition = null;
+        return Optional.<Entry<Type, TypeDefinition<?>>>of(new SimpleEntry(key,definition));
     }
 }
