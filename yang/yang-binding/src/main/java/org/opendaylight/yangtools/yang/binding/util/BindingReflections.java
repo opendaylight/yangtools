@@ -10,19 +10,25 @@ package org.opendaylight.yangtools.yang.binding.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.Optional;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
@@ -38,13 +44,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-
 public class BindingReflections {
 
     private static final long EXPIRATION_TIME = 60;
@@ -56,6 +55,7 @@ public class BindingReflections {
             .weakKeys() //
             .expireAfterAccess(EXPIRATION_TIME, TimeUnit.SECONDS) //
             .build(new ClassToQNameLoader());
+
 
 
     private BindingReflections() {
@@ -538,6 +538,19 @@ public class BindingReflections {
         return QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(),
                 moduleInfo.getName());
     }
+
+    /**
+    *
+    * Extracts augmentation from Binding DTO field using reflection
+    *
+    * @param input Instance of DataObject which is augmentable and
+    *      may contain augmentation
+    * @return Map of augmentations if read was successful, otherwise
+    *      empty map.
+    */
+   public static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Augmentable<?> input) {
+       return AugmentationFieldGetter.getGetter(input.getClass()).getAugmentations(input);
+   }
 
 
 }
