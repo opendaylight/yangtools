@@ -285,7 +285,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         final GeneratedTypeBuilder genType = addDefaultInterfaceDefinition(packageName, node, childOf);
         genType.addComment(node.getDescription());
         if (node instanceof DataNodeContainer) {
-            genCtx.get(module).addChildNodeType(node.getPath(), genType);
+            genCtx.get(module).addChildNodeType(node, genType);
             groupingsToGenTypes(module, ((DataNodeContainer) node).getGroupings());
             processUsesAugments((DataNodeContainer) node, module);
         }
@@ -459,7 +459,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     inType.addImplementsType(DATA_OBJECT);
                     inType.addImplementsType(augmentable(inType));
                     resolveDataSchemaNodes(module, basePackageName, inType, inType, input.getChildNodes());
-                    genCtx.get(module).addChildNodeType(input.getPath(), inType);
+                    genCtx.get(module).addChildNodeType(input, inType);
                     final GeneratedType inTypeInstance = inType.toInstance();
                     method.addParameter(inTypeInstance, "input");
                 }
@@ -471,7 +471,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     outType.addImplementsType(DATA_OBJECT);
                     outType.addImplementsType(augmentable(outType));
                     resolveDataSchemaNodes(module, basePackageName, outType, outType, output.getChildNodes());
-                    genCtx.get(module).addChildNodeType(output.getPath(), outType);
+                    genCtx.get(module).addChildNodeType(output, outType);
                     outTypeInstance = outType.toInstance();
                 }
 
@@ -520,7 +520,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 final GeneratedTypeBuilder notificationInterface = addDefaultInterfaceDefinition(basePackageName,
                         notification, BindingTypes.DATA_OBJECT);
                 notificationInterface.addImplementsType(NOTIFICATION);
-                genCtx.get(module).addChildNodeType(notification.getPath(), notificationInterface);
+                genCtx.get(module).addChildNodeType(notification, notificationInterface);
 
                 // Notification object
                 resolveDataSchemaNodes(module, basePackageName, notificationInterface, notificationInterface,
@@ -1116,7 +1116,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             constructGetter(parent, choiceNode.getQName().getLocalName(), choiceNode.getDescription(),
                     choiceTypeBuilder);
             choiceTypeBuilder.addImplementsType(typeForClass(DataContainer.class));
-            genCtx.get(module).addChildNodeType(choiceNode.getPath(), choiceTypeBuilder);
+            genCtx.get(module).addChildNodeType(choiceNode, choiceTypeBuilder);
             generateTypesFromChoiceCases(module, basePackageName, choiceTypeBuilder.toInstance(), choiceNode);
         }
     }

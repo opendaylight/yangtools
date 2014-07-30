@@ -192,6 +192,8 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             return newret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
         ]
     }
+    
+    
 
     private def void createMapping(Class<?> inputType, SchemaNode node, InstanceIdentifier<?> parentId) {
         var ClassLoader cl = inputType.classLoader
@@ -300,7 +302,8 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         transformerFor(cls, node);
     }
 
-    private def Class<?> valueSerializer(GeneratedTransferObject type, TypeDefinition<?> typeDefinition) {
+    
+    override valueSerializer(GeneratedTransferObject type, TypeDefinition<?> typeDefinition) {
         val cls = loadClass(type.resolvedName);
         val transformer = cls.generatedClass;
         if (transformer !== null) {
@@ -317,7 +320,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         ]
     }
 
-    private def Class<?> valueSerializer(Enumeration type, TypeDefinition<?> typeDefinition) {
+    override valueSerializer(Enumeration type, TypeDefinition<?> typeDefinition) {
         val cls = loadClass(type.resolvedName);
         val transformer = cls.generatedClass;
         if (transformer !== null) {
@@ -343,6 +346,8 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                 staticQNameField(node.QName, sourceGenerator);
                 implementsType(BINDING_CODEC)
+                
+                
                 method(Object, "toDomStatic", #[QName, Object]) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val body = '''
@@ -366,6 +371,17 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                     '''
                     setBodyChecked(body, sourceGenerator)
                 ]
+                
+                method(Object,TO_DOM_VALUE_METHOD_NAME, Object) [
+                    modifiers = PUBLIC + FINAL + STATIC
+                    val body = '''
+                        {
+                            return toDomStatic(QNAME,$1);
+                        }
+                    '''
+                    setBodyChecked(body, sourceGenerator)
+                ]
+                
                 method(Object, "fromDomStatic", #[QName, Object]) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val body = '''
@@ -974,7 +990,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                     staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                     implementsType(BindingDeserializer.asCtClass)
                 }
-                method(Object, "toDomValue", Object) [
+                method(Object, TO_DOM_VALUE_METHOD_NAME, Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val ctSpec = typeSpec.asCtClass;
                     val body = '''
@@ -1055,7 +1071,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                     staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                     implementsType(BindingDeserializer.asCtClass)
                 }
-                method(Object, "toDomValue", Object) [
+                method(Object, TO_DOM_VALUE_METHOD_NAME, Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val ctSpec = inputType.asCtClass;
                     val body = '''
@@ -1143,7 +1159,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                     staticField(it, IDENTITYREF_CODEC, BindingCodec, sourceGenerator)
                     implementsType(BindingDeserializer.asCtClass)
                 }
-                method(Object, "toDomValue", Object) [
+                method(Object, TO_DOM_VALUE_METHOD_NAME, Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val ctSpec = typeSpec.asCtClass;
                     val body = '''
@@ -1251,7 +1267,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 implementsType(BindingDeserializer.asCtClass)
             }
             //implementsType(BindingDeserializer.asCtClass)
-            method(Object, "toDomValue", Object) [
+            method(Object, TO_DOM_VALUE_METHOD_NAME, Object) [
                 modifiers = PUBLIC + FINAL + STATIC
                 val body = '''
                     {
@@ -1315,7 +1331,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             val ctCls = createClass(typeSpec.codecClassName) [
                 //staticField(Map,"AUGMENTATION_SERIALIZERS");
                 //implementsType(BINDING_CODEC)
-                method(Object, "toDomValue", Object) [
+                method(Object, TO_DOM_VALUE_METHOD_NAME, Object) [
                     modifiers = PUBLIC + FINAL + STATIC
                     val body = '''
                         {
