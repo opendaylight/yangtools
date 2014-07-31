@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_391923d7",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/CachedThreadPoolExecutor.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-07-31T18:23:25Z",
+      "side": 1,
+      "message": "Bad endlines in this whole file.",
+      "revId": "d57633abeb32a2920c5fc7e669b51f8f8c581f0d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d90b577b",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/FastThreadPoolExecutor.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-07-31T18:23:25Z",
+      "side": 1,
+      "message": "Should this be configurable?",
+      "revId": "d57633abeb32a2920c5fc7e669b51f8f8c581f0d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f90e5b8b",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-07-31T18:23:25Z",
+      "side": 1,
+      "message": "Do we want to make the 1 minute configurable?",
+      "revId": "d57633abeb32a2920c5fc7e669b51f8f8c581f0d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
