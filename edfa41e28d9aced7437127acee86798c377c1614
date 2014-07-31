@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_5e9e4d64",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeResult.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T12:03:48Z",
+      "side": 1,
+      "message": "looks like SPI, let\u0027s not leak it into API. Users of NormalizedNodeStreamWriter do not care about this.\n\nI have a strange feeling that there is only one implementation at this point -- so let\u0027s keep this implementation-private until we actually need it.",
+      "revId": "edfa41e28d9aced7437127acee86798c377c1614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7e99d177",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T12:03:48Z",
+      "side": 1,
+      "message": "who is using this constructor?",
+      "revId": "edfa41e28d9aced7437127acee86798c377c1614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1e8c4535",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T12:03:48Z",
+      "side": 1,
+      "message": "split this one off into a package-private class",
+      "revId": "edfa41e28d9aced7437127acee86798c377c1614",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
