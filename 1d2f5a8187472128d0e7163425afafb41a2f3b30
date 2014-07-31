@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_39f5a356",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-07-31T18:25:50Z",
+      "side": 1,
+      "message": "Is this supposed to be #addNotifications or #addingNotifications?",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
