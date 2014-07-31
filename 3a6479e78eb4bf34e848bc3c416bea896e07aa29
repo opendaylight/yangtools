@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_e408ee29",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/AsyncNotifyingListenableFutureTask.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "Do we need to warn users about the possibility of threadlocals being left in thread pools? I think .set() is not equivalent to .remove()",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_44067a1e",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/AsyncNotifyingListenableFutureTask.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "LOG.trace(), as this is important if things start to break",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c4112a53",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/AsyncNotifyingListeningExecutorService.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "when using toStringHelper(), we usually make toString() final and provide an empty:\n\nprotected toStringHelper addToStringAttributes(ToStringHelper toStringHelper)\n\nwhich subclasses can override. That way all subclassed toString() behave consistently.",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_042392a7",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/CachedThreadPoolExecutor.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "no .* imports, please",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_442d1a94",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/CachedThreadPoolExecutor.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "can we expose this from a constructor (same below)",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_641cde6a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/CachedThreadPoolExecutor.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "if checkNotNull() appropriate? the threadfactory builder below will force that via concat...",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_242a567f",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/CachedThreadPoolExecutor.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "Any reason why we can\u0027t use Objects.ToStringHelper? Multiline toString() results in ugly logs (and broken syslog).",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e41f8e59",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/CachedThreadPoolExecutor.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "Do we need to subclass? Can\u0027t we do a delegate?",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a43d06c6",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/NotificationManager.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "\u0027interface\u0027 implies public abstract, please do not be redundant (sonar warnings ensue)",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_2451f60e",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/NotificationManager.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "Is Collection advantageous, or is Iterable enough?",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e456ae05",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/SpecialExecutors.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:42:14Z",
+      "side": 1,
+      "message": "utility class: needs to be final with a private constructor",
+      "revId": "3a6479e78eb4bf34e848bc3c416bea896e07aa29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
