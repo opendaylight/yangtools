@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_b970d372",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 1730,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-31T16:17:13Z",
+      "side": 1,
+      "message": "This shouldn\u0027t refer to toaster - that was an example. It should be the actual  module name.",
+      "revId": "58d426e36e5409a160349a6b67509980b61c9c36",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
