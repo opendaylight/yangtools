@@ -7,7 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-public interface SchemaContextListener extends SchemaServiceListener {
-    @Override
+import java.util.EventListener;
+
+/**
+ * Interface for listeners interested in updates of the global schema context.
+ * The global schema context reflects the global view of the model world, and
+ * all entities interacting at the global scale need to maintain a consistent
+ * view of that world.
+ */
+public interface SchemaContextListener extends EventListener {
+    /**
+     * The global schema context is being updated.
+     * @param context New global schema context
+     */
     void onGlobalContextUpdated(SchemaContext context);
 }
