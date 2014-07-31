@@ -401,8 +401,8 @@ class GeneratorImpl {
         </pre>
         '''
     }
-    
-    private def printAugmentedNode(DataSchemaNode child) {
+
+    private def CharSequence printAugmentedNode(DataSchemaNode child) {
         
         if(child instanceof ChoiceCaseNode)
             return ''
@@ -812,7 +812,8 @@ class GeneratorImpl {
                 «ENDFOR»
                 </ul>
                 <ul>
-                «FOR typeDef : dataNode.typeDefinitions»
+                «val Set<TypeDefinition<?>> typedefs = dataNode.typeDefinitions»
+                «FOR typeDef : typedefs»
                     «typeDef.restrictions»
                 «ENDFOR»
                 </ul>

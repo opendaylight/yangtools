@@ -1,0 +1,31 @@
+module two-cases {
+
+    namespace "urn:test:two:cases";
+    prefix "two";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    revision 2013-07-09 {
+
+    }
+
+    container cont {
+        choice choice {
+            default second;
+            case first {
+                leaf leaf-case1 {
+                    type int32;
+                }
+            }
+        }
+    }
+
+    augment "/cont/choice/" {
+        case forth {
+            leaf leaf-case1 {
+                type string;
+            }
+        }
+    }
+}

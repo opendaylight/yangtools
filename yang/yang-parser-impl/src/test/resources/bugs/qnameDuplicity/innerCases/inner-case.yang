@@ -1,0 +1,36 @@
+module inner-case {
+
+    namespace "urn:test:inner:case";
+    prefix "inc";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    revision 2013-07-09 {
+
+    }
+
+    container cont {
+        choice choice {
+            default second;
+            case second {
+                leaf leaf-case1 {
+                    type string;
+                }
+            }
+            case caseOuter {
+                choice innerChoice {
+                    case innerCase {
+                        uses grouping-inner-case-test;
+                    }
+                }
+            }
+        }
+    }
+
+    grouping grouping-inner-case-test {
+        leaf leaf-case1 {
+            type string;
+        }
+    }
+}

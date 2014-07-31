@@ -21,6 +21,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterables;
 import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
@@ -47,11 +48,17 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -108,7 +115,7 @@ public final class YangParserImpl implements YangContextParser {
 
     @Override
     public SchemaContext parseFile(final File yangFile, final File directory) throws IOException,
-    YangSyntaxErrorException {
+            YangSyntaxErrorException {
         Preconditions.checkState(yangFile.exists(), yangFile + " does not exists");
         Preconditions.checkState(directory.exists(), directory + " does not exists");
         Preconditions.checkState(directory.isDirectory(), directory + " is not a directory");
@@ -173,7 +180,7 @@ public final class YangParserImpl implements YangContextParser {
 
     @Override
     public SchemaContext parseFiles(final Collection<File> yangFiles, final SchemaContext context) throws IOException,
-    YangSyntaxErrorException {
+            YangSyntaxErrorException {
         if (yangFiles == null) {
             return resolveSchemaContext(Collections.<Module> emptySet());
         }
@@ -195,7 +202,7 @@ public final class YangParserImpl implements YangContextParser {
 
     @Override
     public SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException,
-    YangSyntaxErrorException {
+            YangSyntaxErrorException {
         Collection<Module> unsorted = parseYangModelSources(sources).values();
         Set<Module> sorted = new LinkedHashSet<>(
                 ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
@@ -236,8 +243,8 @@ public final class YangParserImpl implements YangContextParser {
         return resolveSchemaContext(result);
     }
 
-    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> resolveModulesWithImports(final List<ModuleBuilder> sorted,
-            final SchemaContext context) {
+    private LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> resolveModulesWithImports(
+            final List<ModuleBuilder> sorted, final SchemaContext context) {
         final LinkedHashMap<String, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
         for (ModuleBuilder module : sorted) {
             if (module != null) {
@@ -336,7 +343,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     private Map<ByteSource, Module> parseYangModelSources(final Collection<ByteSource> sources) throws IOException,
-    YangSyntaxErrorException {
+            YangSyntaxErrorException {
         if (sources == null || sources.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -369,7 +376,7 @@ public final class YangParserImpl implements YangContextParser {
      */
     // TODO: remove ByteSource result after removing YangModelParser
     private Map<ByteSource, ModuleBuilder> resolveSources(final Collection<ByteSource> streams) throws IOException,
-    YangSyntaxErrorException {
+            YangSyntaxErrorException {
         Map<ByteSource, ModuleBuilder> builders = parseSourcesToBuilders(streams);
         return resolveSubmodules(builders);
     }
@@ -584,7 +591,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     private Map<ByteSource, ParseTree> parseYangSources(final Collection<ByteSource> sources) throws IOException,
-    YangSyntaxErrorException {
+            YangSyntaxErrorException {
         final Map<ByteSource, ParseTree> trees = new HashMap<>();
         for (ByteSource source : sources) {
             trees.put(source, parseYangSource(source));
@@ -661,6 +668,7 @@ public final class YangParserImpl implements YangContextParser {
         resolveAugments(modules);
         resolveIdentities(modules);
         resolveDeviations(modules);
+        checkChoiceCasesForDuplicityQNames(modules);
 
         // build
         final Map<ModuleBuilder, Module> result = new LinkedHashMap<>();
@@ -797,10 +805,10 @@ public final class YangParserImpl implements YangContextParser {
             }
 
             /*
-             * FIXME: this method of SchemaPath construction is highly ineffective.
-             *        It would be great if we could actually dive into the context,
-             *        find the actual target node and reuse its SchemaPath. Can we
-             *        do that?
+             * FIXME: this method of SchemaPath construction is highly
+             * ineffective. It would be great if we could actually dive into the
+             * context, find the actual target node and reuse its SchemaPath.
+             * Can we do that?
              */
             newSchemaPath = SchemaPath.create(newPath, true);
         }
@@ -1005,7 +1013,8 @@ public final class YangParserImpl implements YangContextParser {
             IdentitySchemaNodeBuilder result = null;
             if (baseIdentityName.contains(":")) {
                 final int line = identity.getLine();
-                String[] splittedBase = baseIdentityName.split(":");
+                final Iterable<String> baseIdentityAsString = COLON_SPLITTER.split(baseIdentityName);
+                final String[] splittedBase = Iterables.toArray(baseIdentityAsString, String.class);
                 if (splittedBase.length > 2) {
                     throw new YangParseException(module.getName(), line, "Failed to parse identityref base: "
                             + baseIdentityName);
@@ -1181,8 +1190,8 @@ public final class YangParserImpl implements YangContextParser {
                     usnb.setExtensionDefinition(extDef);
                 }
             } else {
-                usnb.setNodeType(QName.create(extBuilder.getQName().getModule(),
-                        nodeType.getPrefix(), extBuilder.getQName().getLocalName()));
+                usnb.setNodeType(QName.create(extBuilder.getQName().getModule(), nodeType.getPrefix(), extBuilder
+                        .getQName().getLocalName()));
                 usnb.setExtensionBuilder(extBuilder);
             }
         }
@@ -1204,6 +1213,77 @@ public final class YangParserImpl implements YangContextParser {
             }
         }
         return null;
+    }
+
+    /**
+     * Traverse through modules and check if choice has choice cases with the
+     * same qname.
+     *
+     * @param modules
+     *            all loaded modules
+     */
+    private void checkChoiceCasesForDuplicityQNames(final Map<String, TreeMap<Date, ModuleBuilder>>
+modules) {
+        for (Map.Entry<String, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
+                final ModuleBuilder moduleBuilder = childEntry.getValue();
+                final Module module = moduleBuilder.build();
+                final List<ChoiceNode> allChoicesFromModule = getChoicesFrom(module);
+
+                for (ChoiceNode choiceNode : allChoicesFromModule) {
+                    findDuplicityNodesIn(choiceNode, module, moduleBuilder);
+                }
+            }
+        }
+    }
+
+    private void findDuplicityNodesIn(final ChoiceNode choiceNode, final Module module, final ModuleBuilder moduleBuilder) {
+        final Set<QName> duplicityTestList = new HashSet<QName>();
+        for (ChoiceCaseNode choiceCaseNode : choiceNode.getCases()) {
+            for (DataSchemaNode choiceCaseChildNode : choiceCaseNode.getChildNodes()) {
+                if (choiceCaseChildNode instanceof ChoiceNode) {
+                    ChoiceNode chNode = (ChoiceNode)choiceCaseChildNode;
+                    for (ChoiceCaseNode choiceInCase : chNode.getCases()) {
+                        for (DataSchemaNode caseChildInChoice : choiceInCase.getChildNodes()) {
+                            if (!duplicityTestList.add(caseChildInChoice.getQName())) {
+                                throw new YangParseException(module.getName(), moduleBuilder.getLine
+(),
+                                        "Choice has two choice case with same qnames");
+                            }
+                        }
+                    }
+                }
+                else if (!duplicityTestList.add(choiceCaseChildNode.getQName())) {
+                    throw new YangParseException(module.getName(), moduleBuilder.getLine(),
+                            "Choice has two choice case with same qnames");
+                }
+            }
+        }
+    }
+
+    private List<ChoiceNode> getChoicesFrom(final Module module) {
+        final List<ChoiceNode> allChoices = new ArrayList<ChoiceNode>();
+
+        for (DataSchemaNode dataSchemaNode : module.getChildNodes()) {
+            findChoicesIn(dataSchemaNode, allChoices);
+        }
+        return allChoices;
+    }
+
+    private void findChoicesIn(final SchemaNode schemaNode, final List<ChoiceNode> choiceNodes) {
+        if (schemaNode instanceof ContainerSchemaNode) {
+            final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) schemaNode;
+            for (DataSchemaNode dataSchemaNode : contSchemaNode.getChildNodes()) {
+                findChoicesIn(dataSchemaNode, choiceNodes);
+            }
+        } else if (schemaNode instanceof ListSchemaNode) {
+            final ListSchemaNode listSchemaNode = (ListSchemaNode) schemaNode;
+            for (DataSchemaNode dataSchemaNode : listSchemaNode.getChildNodes()) {
+                findChoicesIn(dataSchemaNode, choiceNodes);
+            }
+        } else if (schemaNode instanceof ChoiceNode) {
+            choiceNodes.add((ChoiceNode) schemaNode);
+        }
     }
 
     /**
