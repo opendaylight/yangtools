@@ -13,14 +13,12 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -1428,7 +1426,12 @@ public final class ParserListenerUtils {
             for (int i = 0; i < ctx.getChildCount(); i++) {
                 ParseTree maxArg = ctx.getChild(i);
                 if (maxArg instanceof Max_value_argContext) {
-                    result = Integer.valueOf(stringFromNode(maxArg));
+                    String maxValue = stringFromNode(maxArg);
+                    if ("unbounded".equals(maxValue)) {
+                        result = Integer.MAX_VALUE;
+                    } else {
+                        result = Integer.valueOf(maxValue);
+                    }
                 }
             }
             if (result == null) {

@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -110,7 +109,7 @@ public class GroupingTest {
         assertEquals("addresses reference added by refine", refineList.getReference());
         assertFalse(refineList.isConfiguration());
         assertEquals(2, (int) refineList.getConstraints().getMinElements());
-        assertEquals(12, (int) refineList.getConstraints().getMaxElements());
+        assertEquals(Integer.MAX_VALUE, (int) refineList.getConstraints().getMaxElements());
 
         // leaf id
         assertNotNull(refineInnerLeaf);

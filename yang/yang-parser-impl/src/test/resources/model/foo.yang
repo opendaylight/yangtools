@@ -186,7 +186,7 @@ module foo {
                     reference "addresses reference added by refine";
                     config false;
                     min-elements 2;
-                    max-elements 12;
+                    max-elements unbounded;
                 }
                 refine addresses/id {
                     description "id of address";
