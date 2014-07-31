@@ -29,7 +29,7 @@
         <module>yang-model-util</module>
         <module>yang-parser-api</module>
         <module>yang-parser-impl</module>
-        <module>yang-data-composite-node</module>
+        <module>yang-data-json</module>
     </modules>
     <build>
         <plugins>
