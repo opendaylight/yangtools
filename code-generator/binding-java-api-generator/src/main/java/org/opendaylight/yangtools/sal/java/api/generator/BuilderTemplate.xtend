@@ -736,6 +736,23 @@ class BuilderTemplate extends BaseTemplate {
         return «type.importedName».class;
     }
     '''
+    
+    private def createDescription(GeneratedType type) {
+        return '''
+        Class that builds {@link «type.importedName»} instances.
+        
+        @see «type.importedName»
+    '''
+    }
+    
+    override def protected String formatDataForJavaDoc(GeneratedType type) {
+        val typeDescription = createDescription(type)
 
+        return '''
+            «IF !typeDescription.nullOrEmpty»
+            «typeDescription»
+            «ENDIF»
+        '''.toString
+    }
 }
 
