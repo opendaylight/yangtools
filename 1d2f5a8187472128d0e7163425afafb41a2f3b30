@@ -2,6 +2,74 @@
   "comments": [
     {
       "key": {
+        "uuid": "fa82b9bf_59050712",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:22:10Z",
+      "side": 1,
+      "message": "do we allow null names? I feel we should not",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b90a1324",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:22:10Z",
+      "side": 1,
+      "message": "do an instanceof check",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_191c5f77",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:22:10Z",
+      "side": 1,
+      "message": "add an upper bound by which this finishes, or raises an Error (possibly terminating the process, resolving the unrecoverable state).\n\nmake both that time and the one minute below configurable at instantiation time, so this can be tuned in-field.",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d911175e",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:22:10Z",
+      "side": 1,
+      "message": "please do not use .getClass() here -- the listener object may have a reasonable toString(), which will be more usefull that the class. The default toString() contains class name anyway. Applies to all places where we log such objects.",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_39f5a356",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
         "patchSetId": 13
@@ -31,6 +99,23 @@
       "side": 1,
       "message": "It\u0027s supposed to be the method #submitNotifications. I\u0027ll change it. \u0027#\u0027 is used in javadocs to refer to methods - I\u0027m using that here.",
       "parentUuid": "fa82b9bf_39f5a356",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7929eb99",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T19:22:10Z",
+      "side": 1,
+      "message": "do not use string concat in logging",
       "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
