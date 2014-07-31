@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_5902e7b4",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T16:24:38Z",
+      "side": 1,
+      "message": "unless we have an immediate need for this, let us remove this. if it is a contract between the writer and the user, the user can easily do instanceof check for support of specific interface and cast...",
+      "revId": "c76a78bbb6ec039f5ecb7eb0648d4a941891c5dc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_390cc3ec",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T16:24:38Z",
+      "side": 1,
+      "message": "argument name mismatch",
+      "revId": "c76a78bbb6ec039f5ecb7eb0648d4a941891c5dc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_99fcefb9",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T16:24:38Z",
+      "side": 1,
+      "message": "bad argument name",
+      "revId": "c76a78bbb6ec039f5ecb7eb0648d4a941891c5dc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b9f773d2",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T16:24:38Z",
+      "side": 1,
+      "message": "argument name",
+      "revId": "c76a78bbb6ec039f5ecb7eb0648d4a941891c5dc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
