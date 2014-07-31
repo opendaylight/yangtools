@@ -188,30 +188,20 @@ abstract class BaseTemplate {
 
         return sb.toString
     }
+    
+    
 
     def protected String formatDataForJavaDoc(GeneratedType type) {
-        val typeDescription = type.description
+        val typeDescription = type.getDescription();
         val typeReference = type.reference
         val typeModuleName = type.moduleName
         val typeSchemaPath = type.schemaPath
 
         return '''
             «IF !type.isDocumentationParametersNullOrEmtpy»
-               «IF typeDescription != null && !typeDescription.empty»
-                «formatToParagraph(typeDescription)»
-               «ENDIF»
-               «IF typeReference != null && !typeReference.empty»
-                Reference:
-                    «formatReference(typeReference)»
-               «ENDIF»
-               «IF typeModuleName != null && !typeModuleName.empty»
-                Module name:
-                    «typeModuleName»
-               «ENDIF»
-               «IF typeSchemaPath != null && !typeSchemaPath.empty»
-                Schema path:
-                    «formatPath(typeSchemaPath)»
-               «ENDIF»
+                «IF !typeDescription.nullOrEmpty»
+                «typeDescription»
+                «ENDIF»
             «ENDIF»
         '''.toString
     }
@@ -329,29 +319,16 @@ abstract class BaseTemplate {
     }
 
     def isDocumentationParametersNullOrEmtpy(GeneratedType type) {
-        var boolean isNullOrEmpty = true
-        val String typeDescription = type.description
-        val String typeReference = type.reference
-        val String typeModuleName = type.moduleName
-        val Iterable<QName> typeSchemaPath = type.schemaPath
+        val boolean isTypeDescriptionNullOrEmpty = type.description.nullOrEmpty
+        val boolean isTypeReferenceNullOrEmpty = type.reference.nullOrEmpty
+        val boolean isTypeModuleNameNullOrEmpty = type.moduleName.nullOrEmpty
+        val boolean isTypeSchemaPathNullOrEmpty = type.schemaPath.nullOrEmpty
 
-        if(typeDescription != null && !typeDescription.empty) {
-            isNullOrEmpty = false
-            return isNullOrEmpty
+        if (isTypeDescriptionNullOrEmpty && isTypeReferenceNullOrEmpty && isTypeModuleNameNullOrEmpty
+            && isTypeSchemaPathNullOrEmpty) {
+            return true
         }
-        if(typeReference != null && !typeReference.empty) {
-            isNullOrEmpty = false
-            return isNullOrEmpty
-        }
-        if(typeModuleName != null && !typeModuleName.empty) {
-            isNullOrEmpty = false
-            return isNullOrEmpty
-        }
-        if(typeSchemaPath != null && !typeSchemaPath.empty) {
-            isNullOrEmpty = false
-            return isNullOrEmpty
-        }
-        return isNullOrEmpty
+        return false
     }
 
     def generateRestrictions(Type type, String paramName, Type returnType) '''
