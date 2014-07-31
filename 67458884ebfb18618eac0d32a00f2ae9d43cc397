@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_e4578ec8",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/TransformerGenerator.xtend",
+        "patchSetId": 3
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T20:11:56Z",
+      "side": 1,
+      "message": "whitespace",
+      "revId": "67458884ebfb18618eac0d32a00f2ae9d43cc397",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_246256ae",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/stream/impl/StreamWriterGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T20:11:56Z",
+      "side": 1,
+      "message": "\"Emit\", not \"Emmit\"",
+      "revId": "67458884ebfb18618eac0d32a00f2ae9d43cc397",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_44651ab3",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/stream/impl/StreamWriterGenerator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T20:11:56Z",
+      "side": 1,
+      "message": "Finally tired of xtend? :)",
+      "revId": "67458884ebfb18618eac0d32a00f2ae9d43cc397",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e440ee08",
+        "filename": "restconf/restconf-util/src/test/java/org/opendaylight/yangtools/restconf/utils/BindingStreamWriterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T20:11:56Z",
+      "side": 1,
+      "message": "http://www.clarkware.com/software/JUnitPerf.html",
+      "revId": "67458884ebfb18618eac0d32a00f2ae9d43cc397",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_443e7a8d",
+        "filename": "restconf/restconf-util/src/test/java/org/opendaylight/yangtools/restconf/utils/BindingStreamWriterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T20:11:56Z",
+      "side": 1,
+      "message": "Appreciate the test case, but we need something from yangtools-only, as this will create a circular dependency between the repositories",
+      "revId": "67458884ebfb18618eac0d32a00f2ae9d43cc397",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_0444f218",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/AugmentationFieldGetter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T20:11:56Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "67458884ebfb18618eac0d32a00f2ae9d43cc397",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a44e6639",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/AugmentationFieldGetter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T20:11:56Z",
+      "side": 1,
+      "message": "Create this string in BindingMapping?",
+      "revId": "67458884ebfb18618eac0d32a00f2ae9d43cc397",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
