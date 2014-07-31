@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_7ec23154",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T11:48:56Z",
+      "side": 1,
+      "message": "2014",
+      "revId": "b8515d3e0b090f449f8d104a758a1a89b9e120c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_feb641f8",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T11:48:56Z",
+      "side": 1,
+      "message": "Add comment to this constant, which will explaining the hint mechanism:\n\nMethods in this interface allow users to hint the underlying implementation about the sizing of container-like constructurs (leafLists, containers, etc.). These hints may be taken into account by a particular implementation to improve performance, but clients are not required to provide hints. This constant should be used by clients who either do not have the sizing information, or do not wish to divulge it (for whatever reasons). Implementations are free to ignore these hints completely, but if they do use them, they are expected to be resilient in face of missing and mismatched hints, which is to say the user can specify startLeafSet(..., 1) and then call leafNode() 15 times.\n\nThe acceptable hint values are non-negative integers and this constant, all other values will result, based on implementation preference, in the hint being completely ignored or IllegalArgumentException being thrown.",
+      "revId": "b8515d3e0b090f449f8d104a758a1a89b9e120c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_becc398a",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/BindingStreamEventWriter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T11:48:56Z",
+      "side": 1,
+      "message": "throws IllegalStateException if there is no node open",
+      "revId": "b8515d3e0b090f449f8d104a758a1a89b9e120c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9e985579",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/DataObjectSerializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T11:48:56Z",
+      "side": 1,
+      "message": "2014",
+      "revId": "b8515d3e0b090f449f8d104a758a1a89b9e120c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_feade19b",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/DataObjectSerializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T11:48:56Z",
+      "side": 1,
+      "message": "describe the nature of this interface and add javadocs",
+      "revId": "b8515d3e0b090f449f8d104a758a1a89b9e120c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_deaa5d84",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/DataObjectSerializerImplementation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T11:48:56Z",
+      "side": 1,
+      "message": "javadoc",
+      "revId": "b8515d3e0b090f449f8d104a758a1a89b9e120c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1ea525b5",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/DataObjectSerializerRegistry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T11:48:56Z",
+      "side": 1,
+      "message": "Copyright",
+      "revId": "b8515d3e0b090f449f8d104a758a1a89b9e120c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3ea8298c",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/DataObjectSerializerRegistry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-07-31T11:48:56Z",
+      "side": 1,
+      "message": "Describe that this is an SPI-level interface, used how, when, by whom.",
+      "revId": "b8515d3e0b090f449f8d104a758a1a89b9e120c8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
