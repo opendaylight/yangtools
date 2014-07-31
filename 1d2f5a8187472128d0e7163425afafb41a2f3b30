@@ -16,6 +16,24 @@
       "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_5980a78a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-07-31T19:00:06Z",
+      "side": 1,
+      "message": "It\u0027s supposed to be the method #submitNotifications. I\u0027ll change it. \u0027#\u0027 is used in javadocs to refer to methods - I\u0027m using that here.",
+      "parentUuid": "fa82b9bf_39f5a356",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
