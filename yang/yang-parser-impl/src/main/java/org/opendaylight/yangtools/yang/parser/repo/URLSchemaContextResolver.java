@@ -245,8 +245,7 @@ public class URLSchemaContextResolver {
                     walker.walk(yangModelParser, entry.getValue());
                     ModuleBuilder moduleBuilder = yangModelParser.getModuleBuilder();
 
-                    // FIXME: do we need to lug this around?
-                    // moduleBuilder.setSource(source);
+                    moduleBuilder.setSource(sources.get(entry.getKey()).iterator().next().getYangText());
                     sourceToBuilder.put(entry.getKey(), moduleBuilder);
                 }
                 LOG.debug("Modules ready for integration");
