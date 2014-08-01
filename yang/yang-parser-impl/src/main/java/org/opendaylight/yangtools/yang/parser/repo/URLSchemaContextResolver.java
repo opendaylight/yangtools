@@ -48,9 +48,9 @@ import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformationException;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserListenerImpl;
@@ -104,11 +104,11 @@ public class URLSchemaContextResolver {
 
     private final class URLRegistration extends AbstractObjectRegistration<URL> {
         @GuardedBy("this")
-        private CheckedFuture<ASTSchemaSource, SchemaSourceTransformationException> future;
+        private CheckedFuture<ASTSchemaSource, SchemaSourceException> future;
         @GuardedBy("this")
         private ASTSchemaSource result;
 
-        protected URLRegistration(final URL url, final CheckedFuture<ASTSchemaSource, SchemaSourceTransformationException> future) {
+        protected URLRegistration(final URL url, final CheckedFuture<ASTSchemaSource, SchemaSourceException> future) {
             super(url);
             this.future = Preconditions.checkNotNull(future);
         }
@@ -169,7 +169,7 @@ public class URLSchemaContextResolver {
             }
         };
 
-        final CheckedFuture<ASTSchemaSource, SchemaSourceTransformationException> ast = transformer.transformSchemaSource(text);
+        final CheckedFuture<ASTSchemaSource, SchemaSourceException> ast = transformer.transformSchemaSource(text);
         final URLRegistration reg = new URLRegistration(url, ast);
         outstandingRegs.add(reg);
 

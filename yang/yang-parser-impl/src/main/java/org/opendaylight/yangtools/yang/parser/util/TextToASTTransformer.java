@@ -7,25 +7,29 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.io.CharStreams;
 import com.google.common.io.InputSupplier;
+import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.Callable;
 
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
+import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformationException;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.parser.impl.YangModelBasicValidationListener;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
@@ -40,67 +44,51 @@ import org.slf4j.LoggerFactory;
  * and be invoked on demand when the processing pipeline requests the
  * ASTSchemaSource representation.
  */
-public final class TextToASTTransformer implements SchemaSourceTransformer<YangTextSchemaSource, ASTSchemaSource> {
+public final class TextToASTTransformer implements SchemaSourceListener, SchemaSourceProvider<ASTSchemaSource> {
+    private static final ExceptionMapper<SchemaSourceException> MAPPER = ReflectiveExceptionMapper.create("Source transformation", SchemaSourceException.class);
     private static final Logger LOG = LoggerFactory.getLogger(TextToASTTransformer.class);
-    private static final Function<Exception, SchemaSourceTransformationException> MAPPER = new ExceptionMapper<SchemaSourceTransformationException>("Source transformation", SchemaSourceTransformationException.class) {
-        @Override
-        protected SchemaSourceTransformationException newWithCause(final String message, final Throwable cause) {
-            return new SchemaSourceTransformationException(message, cause);
-        }
-    };
 
-    private final ListeningExecutorService executor;
+    private final SchemaRepository provider;
+    private final SchemaSourceRegistry consumer;
 
-    private TextToASTTransformer(final ListeningExecutorService executor) {
-        this.executor = Preconditions.checkNotNull(executor);
+    private TextToASTTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
+        this.provider = Preconditions.checkNotNull(provider);
+        this.consumer = Preconditions.checkNotNull(consumer);
     }
 
-    public static final TextToASTTransformer create(final ListeningExecutorService executor) {
-        return new TextToASTTransformer(executor);
+    public static final TextToASTTransformer create(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
+        return new TextToASTTransformer(provider, consumer);
     }
 
     @Override
-    public Class<YangTextSchemaSource> getInputRepresentation() {
-        return YangTextSchemaSource.class;
-    }
+    public CheckedFuture<ASTSchemaSource, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
+        final CheckedFuture<YangTextSchemaSource, SchemaSourceException> f = provider.getSchemaSource(sourceIdentifier, YangTextSchemaSource.class);
 
-    @Override
-    public Class<ASTSchemaSource> getOutputRepresentation() {
-        return ASTSchemaSource.class;
-    }
-
-    @Override
-    public CheckedFuture<ASTSchemaSource, SchemaSourceTransformationException> transformSchemaSource(final YangTextSchemaSource source) {
-        return Futures.makeChecked(executor.submit(new Callable<ASTSchemaSource>() {
+        return Futures.makeChecked(Futures.transform(f, new AsyncFunction<YangTextSchemaSource, ASTSchemaSource>() {
             @Override
-            public ASTSchemaSource call() throws IOException, YangSyntaxErrorException {
-                try (InputStream is = source.openStream()) {
+            public ListenableFuture<ASTSchemaSource> apply(final YangTextSchemaSource input) throws IOException, YangSyntaxErrorException {
+                try (InputStream is = input.openStream()) {
                     final YangContext ctx = YangParserImpl.parseYangSource(is);
-                    LOG.debug("Model {} parsed successfully", source);
+                    LOG.debug("Model {} parsed successfully", input);
 
                     final ParseTreeWalker walker = new ParseTreeWalker();
                     final YangModelBasicValidationListener validator = new YangModelBasicValidationListener();
                     walker.walk(validator, ctx);
-                    LOG.debug("Model {} validated successfully", source);
+                    LOG.debug("Model {} validated successfully", input);
 
                     // Backwards compatibility
                     final String text = CharStreams.toString(
                             CharStreams.newReaderSupplier(new InputSupplier<InputStream>() {
                                 @Override
                                 public InputStream getInput() throws IOException {
-                                    return source.openStream();
+                                    return input.openStream();
                                 }
                             }, Charsets.UTF_8));
 
-                    return ASTSchemaSource.create(source.getIdentifier().getName(), ctx, text);
+                    return Futures.immediateFuture(ASTSchemaSource.create(input.getIdentifier().getName(), ctx, text));
                 }
             }
         }), MAPPER);
     }
 
-    @Override
-    public int getCost() {
-        // We perform a direct translation, so the cost is 1.
-        return 1;
-    }
 }
