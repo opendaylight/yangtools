@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import com.google.common.util.concurrent.CheckedFuture;
+
 import javax.annotation.Nonnull;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -26,4 +28,6 @@ public interface SchemaRepository {
      * @return A new schema context factory.
      */
     SchemaContextFactory createSchemaContextFactory(@Nonnull SchemaSourceFilter filter);
+
+    <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(@Nonnull SourceIdentifier id, @Nonnull Class<T> represetation);
 }
