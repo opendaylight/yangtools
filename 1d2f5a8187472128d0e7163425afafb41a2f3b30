@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_7161ffd1",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T11:42:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_e4e78eaa",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_b90a1324",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
         "patchSetId": 13
@@ -177,6 +195,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_d166cbec",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T11:42:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_5980a78a",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_7929eb99",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
         "patchSetId": 13
@@ -224,6 +260,24 @@
       "side": 1,
       "message": "I should say StringBuilder",
       "parentUuid": "fa82b9bf_44f51a55",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_915cc31a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T11:42:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_0415d247",
       "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
