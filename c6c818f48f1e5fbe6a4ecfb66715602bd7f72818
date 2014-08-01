@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_7419ed20",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/ModuleContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:06:16Z",
+      "side": 1,
+      "message": "hmm, can we not leak mutable collections? instantiate an unmodifiable view, or proper lookup methods.",
+      "revId": "c6c818f48f1e5fbe6a4ecfb66715602bd7f72818",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9414b1e9",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/BindingRuntimeContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:06:16Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "c6c818f48f1e5fbe6a4ecfb66715602bd7f72818",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_14e0a1f8",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/BindingRuntimeContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:06:16Z",
+      "side": 1,
+      "message": "some docs would be nice",
+      "revId": "c6c818f48f1e5fbe6a4ecfb66715602bd7f72818",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b4d1b524",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/BindingRuntimeContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:06:16Z",
+      "side": 1,
+      "message": "Preconditions substitute on \"%s\", not \"{}\" (here and above)",
+      "revId": "c6c818f48f1e5fbe6a4ecfb66715602bd7f72818",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_34d7e525",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/BindingRuntimeContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:06:16Z",
+      "side": 1,
+      "message": "private static final Predicate\u003cObject\u003e INSTANCEOF_CHOICENODE \u003d Predicates.instanceOf(ChoiceNode.class);\n\nIterator\u003cChoiceNode\u003e it \u003d Iterators.filter(schema.getChildNodes().iterator(), INSTANCEOF_CHOICENODE);\nwhile (it.hasNext()) {\n\nMore verbose, but saves instantiation of the predicate (implicit) and two FluentIterables",
+      "revId": "c6c818f48f1e5fbe6a4ecfb66715602bd7f72818",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
