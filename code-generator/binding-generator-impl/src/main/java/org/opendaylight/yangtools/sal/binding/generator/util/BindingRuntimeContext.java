@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.AugmentationSchemaProxy;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -158,7 +159,7 @@ public class BindingRuntimeContext implements Immutable {
      * @return Schema node, from which class was generated.
      */
     public DataSchemaNode getSchemaDefinition(final Class<?> cls) {
-        Preconditions.checkArgument(Augmentation.class.isAssignableFrom(cls));
+        Preconditions.checkArgument(!Augmentation.class.isAssignableFrom(cls),"Supplied class must not be augmentation");
         return (DataSchemaNode) typeToDefiningSchema.get(referencedType(cls));
     }
 
@@ -248,6 +249,42 @@ public class BindingRuntimeContext implements Immutable {
         }
         return ImmutableMap.copyOf(childToCase);
 
+    }
+
+    public Class<?> getClassForSchema(final DataSchemaNode childSchema) {
+        DataSchemaNode origSchema = getOriginalSchema(childSchema);
+        Type clazzType = typeToDefiningSchema.inverse().get(origSchema);
+        try {
+            return strategy.loadClass(clazzType);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public ImmutableMap<AugmentationIdentifier,Type> getAvailableAugmentationTypes(final DataNodeContainer container) {
+        Map<AugmentationIdentifier,Type> identifierToType = new HashMap<>();
+        if(container instanceof AugmentationTarget) {
+            Set<AugmentationSchema> augments = ((AugmentationTarget) container).getAvailableAugmentations();
+            for(AugmentationSchema augment : augments) {
+                // Augmentation must have child nodes if is to be used with Binding classes
+                if(!augment.getChildNodes().isEmpty()) {
+                    Type augType = typeToDefiningSchema.inverse().get(augment);
+                    if(augType != null) {
+                        identifierToType.put(getAugmentationIdentifier(augment),augType);
+                    }
+                }
+            }
+        }
+        return ImmutableMap.copyOf(identifierToType);
+
+    }
+
+    private AugmentationIdentifier getAugmentationIdentifier(final AugmentationSchema augment) {
+        Set<QName> childNames = new HashSet<>();
+        for(DataSchemaNode child : augment.getChildNodes()) {
+            childNames.add(child.getQName());
+        }
+        return new AugmentationIdentifier(childNames);
     }
 
     private static Type referencedType(final Type type) {
