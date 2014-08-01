@@ -13,10 +13,12 @@ import static org.junit.Assert.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +27,13 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import static org.opendaylight.yangtools.util.concurrent.AsyncNotifyingListeningExecutorServiceTest.testListenerCallback;
+import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
+import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_CALLABLE;
+import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE;
+import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE_WITH_RESULT;
 
 /**
  * Unit tests for DeadlockDetectingListeningExecutorService.
@@ -32,44 +41,6 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  * @author Thomas Pantelis
  */
 public class DeadlockDetectingListeningExecutorServiceTest {
-
-    interface Invoker {
-        ListenableFuture<?> invokeExecutor( ListeningExecutorService executor );
-    };
-
-    static final Invoker SUBMIT_CALLABLE = new Invoker() {
-        @Override
-        public ListenableFuture<?> invokeExecutor( ListeningExecutorService executor ) {
-            return executor.submit( new Callable<String>() {
-                @Override
-                public String call() throws Exception{
-                    return "foo";
-                }
-            } );
-        }
-    };
-
-    static final Invoker SUBMIT_RUNNABLE =  new Invoker() {
-        @Override
-        public ListenableFuture<?> invokeExecutor( ListeningExecutorService executor ) {
-            return executor.submit( new Runnable() {
-                @Override
-                public void run(){
-                }
-            } );
-        }
-    };
-
-    static final Invoker SUBMIT_RUNNABLE_WITH_RESULT = new Invoker() {
-        @Override
-        public ListenableFuture<?> invokeExecutor( ListeningExecutorService executor ) {
-            return executor.submit( new Runnable() {
-                @Override
-                public void run(){
-                }
-            }, "foo" );
-        }
-    };
 
     interface InitialInvoker {
         void invokeExecutor( ListeningExecutorService executor, Runnable task );
@@ -104,12 +75,24 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
     @Before
     public void setup() {
-        executor = new DeadlockDetectingListeningExecutorService( Executors.newSingleThreadExecutor(),
-                                                                  DEADLOCK_EXECUTOR_FUNCTION );
+    }
+
+    @After
+    public void tearDown() {
+        if( executor != null ) {
+            executor.shutdownNow();
+        }
+    }
+
+    DeadlockDetectingListeningExecutorService newExecutor() {
+        return new DeadlockDetectingListeningExecutorService( Executors.newSingleThreadExecutor(),
+                DEADLOCK_EXECUTOR_FUNCTION );
     }
 
     @Test
     public void testBlockingSubmitOffExecutor() throws Exception {
+
+        executor = newExecutor();
 
         // Test submit with Callable.
 
@@ -144,6 +127,8 @@ public class DeadlockDetectingListeningExecutorServiceTest {
     @Test
     public void testNonBlockingSubmitOnExecutorThread() throws Throwable {
 
+        executor = newExecutor();
+
         testNonBlockingSubmitOnExecutorThread( SUBMIT, SUBMIT_CALLABLE );
         testNonBlockingSubmitOnExecutorThread( SUBMIT, SUBMIT_RUNNABLE );
         testNonBlockingSubmitOnExecutorThread( SUBMIT, SUBMIT_RUNNABLE_WITH_RESULT );
@@ -162,7 +147,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
             @Override
             public void run() {
 
-                Futures.addCallback( invoker.invokeExecutor( executor ), new FutureCallback() {
+                Futures.addCallback( invoker.invokeExecutor( executor, null ), new FutureCallback() {
                     @Override
                     public void onSuccess( Object result ) {
                         futureCompletedLatch.countDown();
@@ -191,6 +176,8 @@ public class DeadlockDetectingListeningExecutorServiceTest {
     @Test
     public void testBlockingSubmitOnExecutorThread() throws Exception {
 
+        executor = newExecutor();
+
         testBlockingSubmitOnExecutorThread( SUBMIT, SUBMIT_CALLABLE );
         testBlockingSubmitOnExecutorThread( SUBMIT, SUBMIT_RUNNABLE );
         testBlockingSubmitOnExecutorThread( SUBMIT, SUBMIT_RUNNABLE_WITH_RESULT );
@@ -209,7 +196,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
             public void run() {
 
                 try {
-                    invoker.invokeExecutor( executor ).get();
+                    invoker.invokeExecutor( executor, null ).get();
                 } catch( ExecutionException e ) {
                     caughtEx.set( e.getCause() );
                 } catch( Throwable e ) {
@@ -228,5 +215,26 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
         assertNotNull( "Expected exception thrown", caughtEx.get() );
         assertEquals( "Caught exception type", TestDeadlockException.class, caughtEx.get().getClass() );
+    }
+
+    @Test
+    public void testListenableFutureCallbackWithExecutor() throws InterruptedException {
+
+        String listenerThreadPrefix = "ListenerThread";
+        ExecutorService listenerExecutor = Executors.newFixedThreadPool( 1,
+                new ThreadFactoryBuilder().setNameFormat( listenerThreadPrefix + "-%d" ).build() );
+
+        executor = new DeadlockDetectingListeningExecutorService(
+                Executors.newSingleThreadExecutor(
+                        new ThreadFactoryBuilder().setNameFormat( "SingleThread" ).build() ),
+                DEADLOCK_EXECUTOR_FUNCTION, listenerExecutor );
+
+        try {
+            testListenerCallback( executor, SUBMIT_CALLABLE, listenerThreadPrefix );
+            testListenerCallback( executor, SUBMIT_RUNNABLE, listenerThreadPrefix );
+            testListenerCallback( executor, SUBMIT_RUNNABLE_WITH_RESULT, listenerThreadPrefix );
+        } finally {
+            listenerExecutor.shutdownNow();
+        }
     }
 }
