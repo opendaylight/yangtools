@@ -16,8 +16,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * Listener for schema source lifecycle events.
  */
 public interface SchemaSourceListener extends EventListener {
-
-    <T extends SchemaSourceRepresentation> void schemaSourceAdded(SourceIdentifier identifier, Class<T> representation);
-    <T extends SchemaSourceRepresentation> void schemaSourceRemoved(SourceIdentifier identifier, Class<T> representation);
-
+    void schemaSourceAdded(SourceIdentifier identifier, Iterable<Class<? extends SchemaSourceRepresentation>> representations);
+    void schemaSourceRemoved(SourceIdentifier identifier, Class<? extends SchemaSourceRepresentation> representation);
 }
