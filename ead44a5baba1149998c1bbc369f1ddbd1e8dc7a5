@@ -16,6 +16,24 @@
       "revId": "ead44a5baba1149998c1bbc369f1ddbd1e8dc7a5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_51c15b52",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/AsyncNotifyingListenableFutureTask.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T14:21:02Z",
+      "side": 1,
+      "message": "You didn\u0027t put me off. I actually initially intended to remove the var but when I did context assist in eclipse I expected to see a clear() method and, failing to see that, I thought set(null) was the way to clear/remove it. I didn\u0027t see the remove() method. \n\nBut thinking about it more:\n\nI think the TL uses an internal map, in which case I would think #set(null) would just store a null value and leave the map entry. Since this class is used with an executor, leaving the map entry should be fine as the thread(s) will likely either be re-used or expire. So #set(null) is probably more efficient than #remove as the next non-null #set won\u0027t have to create a new entry. \n\nI\u0027m leaning towards changing it back. What do you think?",
+      "parentUuid": "fa82b9bf_d1f7abd1",
+      "revId": "ead44a5baba1149998c1bbc369f1ddbd1e8dc7a5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
