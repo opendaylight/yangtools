@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
+import com.google.common.annotations.Beta;
+
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -17,29 +19,28 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * {@link SchemaSourceProvider} instances which would then acquire the schema
  * source.
  */
+@Beta
 public interface SchemaSourceRegistry {
     /**
      * Register a new schema source which is potentially available from a provider.
      * A registration does not guarantee that a subsequent call to
      * {@link SchemaSourceProvider#getSource(SourceIdentifier)} will succeed.
      *
-     * @param identifier Schema source identifier
      * @param provider Resolver which can potentially resolve the identifier
-     * @param representation Schema source representation which the source may
-     *                       be available.
+     * @param source Schema source details
      * @return A registration handle. Invoking {@link SchemaSourceRegistration#close()}
      *         will cancel the registration.
      */
-    <T extends SchemaSourceRepresentation> SchemaSourceRegistration registerSchemaSource(
-            SourceIdentifier identifier, SchemaSourceProvider<? super T> provider, Class<T> representation);
+    <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(SchemaSourceProvider<? super T> provider, PotentialSchemaSource<T> source);
 
     /**
-     * Register a schema transformer. The registry can invoke it to transform between
-     * the various schema source formats.
+     * Register a schema source listener. The listener will be notified as new
+     * sources and their representations become available, subject to the provided
+     * filter.
      *
-     * @param transformer Schema source transformer
-     * @return A registration handle. Invoking {@link SchemaTransformerRegistration#close()}
+     * @param listener Schema source listener
+     * @return A registration handle. Invoking {@link SchemaListenerRegistration#close()}
      *         will cancel the registration.
      */
-    SchemaTransformerRegistration registerSchemaSourceTransformer(SchemaSourceTransformer<?, ?> transformer);
+    SchemaListenerRegistration registerSchemaSourceListener(SchemaSourceListener listener);
 }

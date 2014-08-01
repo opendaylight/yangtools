@@ -5,20 +5,22 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/eplv10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.spi;
+package org.opendaylight.yangtools.yang.model.repo.api;
+
+import com.google.common.annotations.Beta;
 
 /**
- * Exception thrown when a failure to translate a schema source between
- * representations.
+ * Exception thrown when a the specified schema source is not available.
  */
-public class SchemaSourceTransformationException extends Exception {
+@Beta
+public class MissingSchemaSourceException extends SchemaSourceException {
     private static final long serialVersionUID = 1L;
 
-    public SchemaSourceTransformationException(final String message) {
+    public MissingSchemaSourceException(final String message) {
         super(message);
     }
 
-    public SchemaSourceTransformationException(final String message, final Throwable cause) {
+    public MissingSchemaSourceException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

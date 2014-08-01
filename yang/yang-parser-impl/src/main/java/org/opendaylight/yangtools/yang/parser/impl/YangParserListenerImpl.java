@@ -26,6 +26,7 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.st
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -33,7 +34,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Argument_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Base_stmtContext;
@@ -96,6 +99,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuil
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserListenerImpl.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
@@ -111,6 +115,24 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     public YangParserListenerImpl(final String sourcePath) {
         this.sourcePath = sourcePath;
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * FIXME: the resulting type needs to be extracted, such that we can reuse
+     *        the "BaseListener" aspect, which need not be exposed to the user.
+     *        Maybe factor out a base class into repo.spi?
+     *
+     * @param sourcePath
+     * @param walker
+     * @param tree
+     * @return
+     */
+    public static YangParserListenerImpl create(final String sourcePath, final ParseTreeWalker walker, final ParseTree tree) {
+        final YangParserListenerImpl ret = new YangParserListenerImpl(sourcePath);
+        walker.walk(ret, tree);
+        return ret;
     }
 
     @Override

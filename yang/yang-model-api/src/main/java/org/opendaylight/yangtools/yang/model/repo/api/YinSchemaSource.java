@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import com.google.common.annotations.Beta;
+
 import org.w3c.dom.Document;
 
 /**
  * Yin schema source representation. Exposes an RFC6020 YIN XML representation
  * as an W3C {@link Document}.
  */
+@Beta
 public interface YinSchemaSource extends SchemaSourceRepresentation {
     /**
      * {@inheritDoc}

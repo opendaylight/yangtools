@@ -6,6 +6,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import com.google.common.annotations.Beta;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
@@ -27,7 +29,27 @@ import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
  * passes basic semantic validation and we were able to extract dependency
  * information.
  */
+@Beta
 public final class ASTSchemaSource implements SchemaSourceRepresentation {
+    public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER = new Function<ASTSchemaSource, SourceIdentifier>() {
+        @Override
+        public SourceIdentifier apply(final ASTSchemaSource input) {
+            return input.getIdentifier();
+        }
+    };
+    public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO = new Function<ASTSchemaSource, YangModelDependencyInfo>() {
+        @Override
+        public YangModelDependencyInfo apply(final ASTSchemaSource input) {
+            return input.getDependencyInformation();
+        }
+    };
+    public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = new Function<ASTSchemaSource, ParserRuleContext>() {
+        @Override
+        public ParserRuleContext apply(final ASTSchemaSource input) {
+            return input.getAST();
+        }
+    };
+
     private final YangModelDependencyInfo depInfo;
     private final ParserRuleContext tree;
     private final SourceIdentifier id;
