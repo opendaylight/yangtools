@@ -29,9 +29,9 @@ unknown_statement : (YIN_ELEMENT_KEYWORD | YANG_VERSION_KEYWORD | WHEN_KEYWORD |
                     NAMESPACE_KEYWORD | MUST_KEYWORD | MODULE_KEYWORD | MIN_ELEMENTS_KEYWORD | MAX_ELEMENTS_KEYWORD | MANDATORY_KEYWORD | LIST_KEYWORD | 
                     LENGTH_KEYWORD | LEAF_LIST_KEYWORD | LEAF_KEYWORD | KEY_KEYWORD | INPUT_KEYWORD | INCLUDE_KEYWORD | IMPORT_KEYWORD | IF_FEATURE_KEYWORD | 
                     IDENTITY_KEYWORD | GROUPING_KEYWORD | FRACTION_DIGITS_KEYWORD | FEATURE_KEYWORD | DEVIATE_KEYWORD | DEVIATION_KEYWORD | EXTENSION_KEYWORD | 
-                    ERROR_MESSAGE_KEYWORD | ERROR_APP_TAG_KEYWORD | ENUM_KEYWORD | DESCRIPTION_KEYWORD | DEFAULT_KEYWORD | CONTAINER_KEYWORD | CONTACT_KEYWORD | 
+                    ERROR_MESSAGE_KEYWORD | ERROR_APP_TAG_KEYWORD | ENUM_KEYWORD | DESCRIPTION_KEYWORD | STATUS_KEYWORD | DEFAULT_KEYWORD | CONTAINER_KEYWORD | CONTACT_KEYWORD | 
                     CONFIG_KEYWORD | CHOICE_KEYWORD |  CASE_KEYWORD | BIT_KEYWORD | BELONGS_TO_KEYWORD | BASE_KEYWORD | AUGMENT_KEYWORD |  
-                    ANYXML_KEYWORD | IDENTIFIER) string? (SEMICOLON | (LEFT_BRACE unknown_statement* | identifier_stmt* RIGHT_BRACE)*);
+                    ANYXML_KEYWORD | IDENTIFIER) string? (SEMICOLON | (LEFT_BRACE (unknown_statement | identifier_stmt)* RIGHT_BRACE)*);
 
 stmtend : (SEMICOLON) | (LEFT_BRACE identifier_stmt? RIGHT_BRACE);
 deviate_replace_stmt : DEVIATE_KEYWORD string /* REPLACE_KEYWORD */ (SEMICOLON | (LEFT_BRACE (identifier_stmt |type_stmt | units_stmt | default_stmt | config_stmt | mandatory_stmt | min_elements_stmt | max_elements_stmt )* RIGHT_BRACE));
@@ -63,11 +63,11 @@ short_case_stmt : container_stmt | leaf_stmt | leaf_list_stmt | list_stmt | anyx
 choice_stmt : CHOICE_KEYWORD string (SEMICOLON | (LEFT_BRACE  (identifier_stmt |when_stmt | if_feature_stmt | default_stmt | config_stmt | mandatory_stmt | status_stmt | description_stmt | reference_stmt | short_case_stmt | case_stmt)* RIGHT_BRACE));
 unique_stmt : UNIQUE_KEYWORD string stmtend;
 key_stmt : KEY_KEYWORD string stmtend;
-list_stmt : LIST_KEYWORD string LEFT_BRACE  (identifier_stmt |when_stmt | if_feature_stmt | must_stmt | key_stmt | unique_stmt | config_stmt | min_elements_stmt | max_elements_stmt | ordered_by_stmt | status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | data_def_stmt )* RIGHT_BRACE;
+list_stmt : LIST_KEYWORD string LEFT_BRACE  (when_stmt | if_feature_stmt | must_stmt | key_stmt | unique_stmt | config_stmt | min_elements_stmt | max_elements_stmt | ordered_by_stmt | status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | data_def_stmt | identifier_stmt)* RIGHT_BRACE;
 leaf_list_stmt : LEAF_LIST_KEYWORD string LEFT_BRACE  (identifier_stmt |when_stmt | if_feature_stmt | type_stmt | units_stmt | must_stmt | config_stmt | min_elements_stmt | max_elements_stmt | ordered_by_stmt | status_stmt | description_stmt | reference_stmt )* RIGHT_BRACE;
 leaf_stmt : LEAF_KEYWORD string LEFT_BRACE  (identifier_stmt |when_stmt | if_feature_stmt | type_stmt | units_stmt | must_stmt | default_stmt | config_stmt | mandatory_stmt | status_stmt | description_stmt | reference_stmt )* RIGHT_BRACE;
-container_stmt : CONTAINER_KEYWORD string (SEMICOLON | (LEFT_BRACE  (identifier_stmt | when_stmt | if_feature_stmt | must_stmt | presence_stmt | config_stmt | status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | data_def_stmt )* RIGHT_BRACE));
-grouping_stmt : GROUPING_KEYWORD string (SEMICOLON | (LEFT_BRACE  (identifier_stmt |status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | data_def_stmt )* RIGHT_BRACE));
+container_stmt : CONTAINER_KEYWORD string (SEMICOLON | (LEFT_BRACE  (when_stmt | if_feature_stmt | must_stmt | presence_stmt | config_stmt | status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | data_def_stmt | identifier_stmt)* RIGHT_BRACE));
+grouping_stmt : GROUPING_KEYWORD string (SEMICOLON | (LEFT_BRACE (status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | data_def_stmt | identifier_stmt)* RIGHT_BRACE));
 value_stmt : VALUE_KEYWORD string stmtend;
 max_value_arg : /*UNBOUNDED_KEYWORD |*/ string;
 min_value_arg : /*UNBOUNDED_KEYWORD |*/ string;

@@ -108,7 +108,7 @@ END_IDENTIFIER_LEFT_BRACE : '{' ->type(LEFT_BRACE), popMode;
  
 fragment SUB_STRING : ('"' (ESC | ~["])*'"') | ('\'' (ESC | ~['])*'\'') ;
 
-STRING: ((~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '"' | '\'' )+) | SUB_STRING ) ->popMode;// IDENTIFIER ;
+STRING: ((~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '"' | '\'')~( '\r' | '\n' | '\t' | ' ' | ';' | '{' )* ) | SUB_STRING ) ->popMode;// IDENTIFIER ;
 S : [ \n\r\t] -> skip;    
 
 mode BLOCK_COMMENT_MODE;
