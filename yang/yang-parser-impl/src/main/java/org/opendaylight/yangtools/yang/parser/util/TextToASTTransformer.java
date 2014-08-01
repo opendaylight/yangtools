@@ -6,8 +6,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.io.CharStreams;
+import com.google.common.io.InputSupplier;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -80,7 +83,16 @@ public final class TextToASTTransformer implements SchemaSourceTransformer<YangT
                     walker.walk(validator, ctx);
                     LOG.debug("Model {} validated successfully", source);
 
-                    return ASTSchemaSource.create(source.getIdentifier().getName(), ctx);
+                    // Backwards compatibility
+                    final String text = CharStreams.toString(
+                            CharStreams.newReaderSupplier(new InputSupplier<InputStream>() {
+                                @Override
+                                public InputStream getInput() throws IOException {
+                                    return source.openStream();
+                                }
+                            }, Charsets.UTF_8));
+
+                    return ASTSchemaSource.create(source.getIdentifier().getName(), ctx, text);
                 }
             }
         }), MAPPER);
