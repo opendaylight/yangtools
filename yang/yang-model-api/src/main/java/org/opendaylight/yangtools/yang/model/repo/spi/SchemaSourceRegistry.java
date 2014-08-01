@@ -34,12 +34,13 @@ public interface SchemaSourceRegistry {
             SourceIdentifier identifier, SchemaSourceProvider<? super T> provider, Class<T> representation);
 
     /**
-     * Register a schema transformer. The registry can invoke it to transform between
-     * the various schema source formats.
+     * Register a schema source listener. The listener will be notified as new
+     * sources and their representations become available, subject to the provided
+     * filter.
      *
-     * @param transformer Schema source transformer
-     * @return A registration handle. Invoking {@link SchemaTransformerRegistration#close()}
+     * @param listener Schema source listener
+     * @return A registration handle. Invoking {@link SchemaListenerRegistration#close()}
      *         will cancel the registration.
      */
-    SchemaTransformerRegistration registerSchemaSourceTransformer(SchemaSourceTransformer<?, ?> transformer);
+    SchemaListenerRegistration registerSchemaSourceListener(SchemaSourceListener listener);
 }

@@ -10,6 +10,9 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
+/**
+ * Registration of a schema source.
+ */
 public interface SchemaSourceRegistration extends ObjectRegistration<SourceIdentifier> {
     @Override
     void close();
