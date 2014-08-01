@@ -7,10 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import org.opendaylight.yangtools.concepts.ObjectRegistration;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import com.google.common.annotations.Beta;
 
-public interface SchemaSourceRegistration extends ObjectRegistration<SourceIdentifier> {
+import org.opendaylight.yangtools.concepts.ObjectRegistration;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+
+/**
+ * Registration of a schema source.
+ */
+@Beta
+public interface SchemaSourceRegistration<T extends SchemaSourceRepresentation> extends ObjectRegistration<PotentialSchemaSource<T>> {
     @Override
     void close();
 }
