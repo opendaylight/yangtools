@@ -22,7 +22,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,9 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.annotation.concurrent.Immutable;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -895,8 +892,14 @@ public final class YangParserImpl implements YangContextParser {
                     if (!(augment.isResolved())) {
                         boolean resolved = resolveAugment(augment, mb, modules);
                         if (!resolved) {
-                            throw new YangParseException(augment.getModuleName(), augment.getLine(),
-                                    "Error in augment parsing: failed to find augment target: " + augment);
+                            // TODO: exception replaced with log to alow
+                            // augmentation of extension instances
+                            LOG.warn("Error in augment parsing: failed to find augment target: {}", augment);
+                            // throw new
+                            // YangParseException(augment.getModuleName(),
+                            // augment.getLine(),
+                            // "Error in augment parsing: failed to find augment target: "
+                            // + augment);
                         }
                     }
                 }
@@ -954,8 +957,12 @@ public final class YangParserImpl implements YangContextParser {
                         "Failed to resolve augment in uses. Invalid augment target: %s", potentialTargetNode));
             }
         } else {
-            throw new YangParseException(module.getName(), augment.getLine(), String.format(
-                    "Failed to resolve augment in uses. Invalid augment target path: %s", augment.getTargetPath()));
+            // TODO: exception replaced with log to allow augmentation of extension instances
+            LOG.warn("Failed to resolve augment in uses. Invalid augment target path: {}", augment.getTargetPath());
+            // throw new YangParseException(module.getName(), augment.getLine(),
+            // String.format("Failed to resolve augment in uses. Invalid augment target path: %s",
+            // augment.getTargetPath()));
+            return false;
         }
 
     }
