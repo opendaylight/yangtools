@@ -27,7 +27,7 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
     private static final Logger LOG = LoggerFactory.getLogger(ReadOnlyTrieMap.class);
     private final TrieMap<K, V> readWrite;
     private final int size;
-    private TrieMap<K, V> readOnly;
+    private volatile TrieMap<K, V> readOnly;
 
     ReadOnlyTrieMap(final TrieMap<K, V> map, final int size) {
         super();
@@ -43,15 +43,18 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
 
     @Override
     protected Map<K, V> delegate() {
-        if (readOnly == null) {
+        TrieMap<K, V> ret = readOnly;
+        if (ret == null) {
             synchronized (this) {
-                if (readOnly == null) {
-                    readOnly = readWrite.readOnlySnapshot();
+                ret = readOnly;
+                if (ret == null) {
+                    ret = readWrite.readOnlySnapshot();
+                    readOnly = ret;
                 }
             }
         }
 
-        return readOnly;
+        return ret;
     }
 
     @Override
