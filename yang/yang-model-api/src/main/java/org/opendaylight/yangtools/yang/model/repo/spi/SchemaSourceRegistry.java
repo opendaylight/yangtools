@@ -42,4 +42,15 @@ public interface SchemaSourceRegistry {
      *         will cancel the registration.
      */
     SchemaTransformerRegistration registerSchemaSourceTransformer(SchemaSourceTransformer<?, ?> transformer);
+
+    /**
+     * Register a schema source listener. The listener will be notified as new
+     * sources and their representations become available, subject to the provided
+     * filter.
+     *
+     * @param listener Schema source listener
+     * @return A registration handle. Invoking {@link SchemaListenerRegistration#close()}
+     *         will cancel the registration.
+     */
+    SchemaListenerRegistration registerSchemaSourceListener(SchemaSourceListener listener);
 }

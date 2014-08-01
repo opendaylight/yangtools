@@ -22,12 +22,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.concurrent.GuardedBy;
 
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
@@ -56,10 +61,16 @@ public class AbstractSchemaRepository implements SchemaRepository, SchemaSourceR
 
     /*
      * Source identifier -> representation -> provider map. We usually are looking for
-     * a specific representation a source.
+     * a specific representation of a source.
      */
-    private final Map<SourceIdentifier, Multimap<Class<?>, AbstractSchemaSourceRegistration>> sources = new HashMap<>();
+    @GuardedBy("this")
+    private final Map<SourceIdentifier, Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration>> sources = new HashMap<>();
 
+    /*
+     * Schema source listeners.
+     */
+    @GuardedBy("this")
+    private final Collection<SchemaListenerRegistration> listeners = new ArrayList<>();
 
     private static final <T extends SchemaSourceRepresentation> ListenableFuture<Optional<T>> fetchSource(final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration> it) {
         if (!it.hasNext()) {
@@ -79,7 +90,7 @@ public class AbstractSchemaRepository implements SchemaRepository, SchemaSourceR
     }
 
     private <T extends SchemaSourceRepresentation> ListenableFuture<Optional<T>> transformSchemaSource(final SourceIdentifier id, final Class<T> representation) {
-        final Multimap<Class<?>, AbstractSchemaSourceRegistration> srcs = sources.get(id);
+        final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration> srcs = sources.get(id);
         if (srcs.isEmpty()) {
             return Futures.immediateFailedFuture(new SchemaSourceTransformationException(
                     String.format("No providers producing a representation of %s registered", id)));
@@ -117,7 +128,7 @@ public class AbstractSchemaRepository implements SchemaRepository, SchemaSourceR
      * Obtain a SchemaSource is selected representation
      */
     protected <T extends SchemaSourceRepresentation> ListenableFuture<Optional<T>> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
-        final Multimap<Class<?>, AbstractSchemaSourceRegistration> srcs = sources.get(id);
+        final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration> srcs = sources.get(id);
         if (srcs == null) {
             LOG.debug("No providers registered for source {}", id);
             return Futures.immediateFuture(Optional.<T>absent());
@@ -142,20 +153,34 @@ public class AbstractSchemaRepository implements SchemaRepository, SchemaSourceR
         return null;
     }
 
-    private void addSource(final SourceIdentifier id, final Class<?> rep, final AbstractSchemaSourceRegistration reg) {
-        Multimap<Class<?>, AbstractSchemaSourceRegistration> m = sources.get(id);
+
+
+
+
+    private synchronized <T extends SchemaSourceRepresentation> void addSource(final SourceIdentifier id, final Class<T> rep, final AbstractSchemaSourceRegistration reg) {
+        Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration> m = sources.get(id);
         if (m == null) {
             m = HashMultimap.create();
             sources.put(id, m);
         }
 
         m.put(rep, reg);
+
+        final Collection<Class<? extends SchemaSourceRepresentation>> reps = Collections.<Class<? extends SchemaSourceRepresentation>>singleton(rep);
+        for (SchemaListenerRegistration l : listeners) {
+            l.getInstance().schemaSourceAdded(id, reps);
+        }
     }
 
-    private void removeSource(final SourceIdentifier id, final Class<?> rep, final SchemaSourceRegistration reg) {
-        final Multimap<Class<?>, AbstractSchemaSourceRegistration> m = sources.get(id);
+    private synchronized <T extends SchemaSourceRepresentation> void removeSource(final SourceIdentifier id, final Class<T> rep, final SchemaSourceRegistration reg) {
+        final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration> m = sources.get(id);
         if (m != null) {
             m.remove(rep, reg);
+
+            for (SchemaListenerRegistration l : listeners) {
+                l.getInstance().schemaSourceRemoved(id, rep);
+            }
+
             if (m.isEmpty()) {
                 sources.remove(m);
             }
@@ -186,6 +211,25 @@ public class AbstractSchemaRepository implements SchemaRepository, SchemaSourceR
         };
 
         transformers.put(transformer.getOutputRepresentation(), ret);
+        return ret;
+    }
+
+    @Override
+    public SchemaListenerRegistration registerSchemaSourceListener(final SchemaSourceListener listener) {
+        final SchemaListenerRegistration ret = new AbstractSchemaListenerRegistration(listener) {
+            @Override
+            protected void removeRegistration() {
+                listeners.remove(this);
+            }
+        };
+
+        synchronized (this) {
+            listeners.add(ret);
+
+            for (Entry<SourceIdentifier, Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration>> e : sources.entrySet()) {
+                listener.schemaSourceAdded(e.getKey(), e.getValue().keySet());
+            }
+        }
         return ret;
     }
 }
