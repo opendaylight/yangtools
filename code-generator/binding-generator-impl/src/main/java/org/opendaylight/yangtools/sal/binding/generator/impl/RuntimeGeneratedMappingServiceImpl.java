@@ -13,7 +13,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-
 import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -28,11 +27,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
-
 import javassist.ClassPool;
-
 import javax.annotation.concurrent.GuardedBy;
-
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -49,10 +45,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.AugmentationCodec;
