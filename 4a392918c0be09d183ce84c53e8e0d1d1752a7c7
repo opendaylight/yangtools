@@ -34,6 +34,42 @@
       "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_51bddbb5",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/ReadOnlyTrieMap.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T15:15:37Z",
+      "side": 1,
+      "message": "Well, it\u0027s not necessary, but I think it actually it is an optimization. note that we use the value twice: once in the if() statement and second time for return. based on https://stackoverflow.com/questions/4633866/is-volatile-expensive, that would incur two memory loads. Since the local var is non-volatile, I assume it prevents the second load from occuring.",
+      "parentUuid": "fa82b9bf_316297ae",
+      "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d1c80b57",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/ReadOnlyTrieMap.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T15:15:37Z",
+      "side": 1,
+      "message": "Yeah, but the class uses generics, so it won\u0027t ever see \u003c1.5 world :)",
+      "parentUuid": "fa82b9bf_310937de",
+      "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
