@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_548f092a",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeWriterFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "documentation \u0026 copyright",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_14850106",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "hmm... why default visibility?",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f4817dfb",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "abstract class -\u003e protected constructor",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b47f7514",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_74756d30",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "explanatory message",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_94703141",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "looks like strategy should be a static field",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_34936551",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "missing space at \"is",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_54962940",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "explanatory message missing",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b4a695ac",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/StreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "separate file?",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_149c215c",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/StreamWriterGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "noop?",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_d4a1d994",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/spi/StaticConstantDefinition.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T23:20:33Z",
+      "side": 1,
+      "message": "preconditions?",
+      "revId": "a1d76eabe55a801ceb735d82f95f72d0394b4e91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
