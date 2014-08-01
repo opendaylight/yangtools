@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_f40e5de4",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/AugmentationFieldGetter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T22:32:08Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "f831f2781c4fd1571beeac817702ef47c94abc12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_b4fc55b9",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/AugmentationFieldGetter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T22:32:08Z",
+      "side": 1,
+      "message": "please document abstract methods. this should be \u0027protected\u0027 for consistency",
+      "revId": "f831f2781c4fd1571beeac817702ef47c94abc12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1412e108",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/AugmentationFieldGetter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T22:32:08Z",
+      "side": 1,
+      "message": "shouldn\u0027t the field name go to BindingMapping?",
+      "revId": "f831f2781c4fd1571beeac817702ef47c94abc12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
