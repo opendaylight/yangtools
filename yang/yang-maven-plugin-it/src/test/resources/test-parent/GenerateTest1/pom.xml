@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>test-parent</artifactId>
-        <version>1.0</version>
+        <version>0.6.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>generator-test1</artifactId>
@@ -25,7 +25,7 @@
             <plugin>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>${it-project.version}</version>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -51,7 +51,7 @@
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
                         <artifactId>yang-maven-plugin-spi</artifactId>
-                        <version>${it-project.version}</version>
+                        <version>${project.version}</version>
                         <type>test-jar</type>
                     </dependency>
                 </dependencies>
