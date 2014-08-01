@@ -16,6 +16,24 @@
       "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_310937de",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/ReadOnlyTrieMap.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T13:24:49Z",
+      "side": 1,
+      "message": "On a side note, using a local var as above still wouldn\u0027t have made this safe prior to 1.5 b/c non-volatile writes in the ctor could still be re-ordered after line 52. There was no way to make DCL safe prior to 1.5.",
+      "parentUuid": "fa82b9bf_316297ae",
+      "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
