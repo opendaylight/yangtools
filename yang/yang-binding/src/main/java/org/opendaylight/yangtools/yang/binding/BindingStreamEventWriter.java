@@ -251,7 +251,7 @@ public interface BindingStreamEventWriter {
 
     /**
      *
-     * Emits start of map node event.
+     * Emits start of unordered map node event.
      *
      * <p>
      * End of map node event is emitted by invoking {@link #endNode()}. Valid
@@ -272,6 +272,31 @@ public interface BindingStreamEventWriter {
      */
     <T extends DataObject & Identifiable<?>> void startMapNode(Class<T> mapEntryType, int childSizeHint)
             throws IllegalArgumentException;
+
+
+    /**
+    *
+    * Emits start of ordered map node event.
+    *
+    * <p>
+    * End of map node event is emitted by invoking {@link #endNode()}. Valid
+    * subevents is only {@link #startMapEntryNode(Identifier, int)}. All other methods will
+    * throw {@link IllegalArgumentException}.
+    *
+    * @param mapEntryType
+    *            Class of list item, which has defined key.
+    * @param childSizeHint
+    *            Non-negative count of expected direct child nodes or
+    *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+    *            and should not fail writing of child events, if there are more
+    *            events than count.
+    * @throws IllegalArgumentException
+    * @throws IllegalStateException
+    *             If node was emitted inside <code>map</code>,
+    *             <code>choice</code> <code>unkeyed list</code> node.
+    */
+   <T extends DataObject & Identifiable<?>> void startOrderedMapNode(Class<T> mapEntryType, int childSizeHint)
+           throws IllegalArgumentException;
 
     /**
      *
