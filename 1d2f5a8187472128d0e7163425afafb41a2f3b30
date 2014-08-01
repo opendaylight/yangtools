@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_e4e78eaa",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T00:32:46Z",
+      "side": 1,
+      "message": "I suppose not.",
+      "parentUuid": "fa82b9bf_59050712",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_b90a1324",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
         "patchSetId": 13
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-31T19:22:10Z",
       "side": 1,
       "message": "do an instanceof check",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e4822ec7",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T00:32:46Z",
+      "side": 1,
+      "message": "I can but I don\u0027t really need to since the map and key class are private. Less overhead although probably negligible.",
+      "parentUuid": "fa82b9bf_b90a1324",
       "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_c46b6a1c",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T00:32:46Z",
+      "side": 1,
+      "message": "What upper bound should it be? 5 min? I left this as a FIXME for further discussion, hopefully Mon on the hacker\u0027s call.",
+      "parentUuid": "fa82b9bf_191c5f77",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_d911175e",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
         "patchSetId": 13
@@ -64,6 +118,24 @@
       "writtenOn": "2014-07-31T19:22:10Z",
       "side": 1,
       "message": "please do not use .getClass() here -- the listener object may have a reasonable toString(), which will be more usefull that the class. The default toString() contains class name anyway. Applies to all places where we log such objects.",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_844802b4",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T00:32:46Z",
+      "side": 1,
+      "message": "From experience, I\u0027ve used toStrings in these cases before but I\u0027ve seen some impls with large toStrings which clutters the output and makes it harder to decipher. Then I wish I hadn\u0027t used toString. In this case I\u0027m really interested in the listener type so we can easily identify the offending class. The toString, if overridden, may not easily identify the class w/o having to search all code in all projects to find it.",
+      "parentUuid": "fa82b9bf_d911175e",
       "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -116,6 +188,24 @@
       "writtenOn": "2014-07-31T19:22:10Z",
       "side": 1,
       "message": "do not use string concat in logging",
+      "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_44f51a55",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T00:32:46Z",
+      "side": 1,
+      "message": "I guess I can use String.format but it\u0027s negligible as this is an uncommon error condition (or should be). Besides the compiler would likely optimize this to use StringBuffer under the hood anyway.",
+      "parentUuid": "fa82b9bf_7929eb99",
       "revId": "1d2f5a8187472128d0e7163425afafb41a2f3b30",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
