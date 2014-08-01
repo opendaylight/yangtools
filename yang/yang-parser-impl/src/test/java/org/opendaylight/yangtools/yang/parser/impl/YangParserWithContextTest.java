@@ -94,8 +94,11 @@ public class YangParserWithContextTest {
         SchemaContext context;
         try (InputStream stream1 = new FileInputStream(new File(getClass().getResource("/model/baz.yang").toURI()));
                 InputStream stream2 = new FileInputStream(new File(getClass().getResource("/model/bar.yang").toURI()));
-                InputStream stream3 = new FileInputStream(new File(getClass().getResource("/model/foo.yang").toURI()))) {
-            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3)));
+                InputStream stream3 = new FileInputStream(new File(getClass().getResource("/model/foo.yang").toURI()));
+                InputStream stream4 = new FileInputStream(
+                        new File(getClass().getResource("/model/subfoo.yang").toURI()))) {
+            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3,
+                    stream4)));
         }
         Module testModule;
         try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test2.yang")
@@ -198,8 +201,11 @@ public class YangParserWithContextTest {
         SchemaContext context;
         try (InputStream stream1 = new FileInputStream(new File(getClass().getResource("/model/baz.yang").toURI()));
                 InputStream stream2 = new FileInputStream(new File(getClass().getResource("/model/bar.yang").toURI()));
-                InputStream stream3 = new FileInputStream(new File(getClass().getResource("/model/foo.yang").toURI()))) {
-            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3)));
+                InputStream stream3 = new FileInputStream(new File(getClass().getResource("/model/foo.yang").toURI()));
+                InputStream stream4 = new FileInputStream(
+                        new File(getClass().getResource("/model/subfoo.yang").toURI()))) {
+            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3,
+                    stream4)));
         }
         Module module;
         try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test2.yang")

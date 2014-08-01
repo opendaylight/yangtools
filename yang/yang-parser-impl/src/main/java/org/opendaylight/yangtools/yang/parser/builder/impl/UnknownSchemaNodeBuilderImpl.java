@@ -64,7 +64,7 @@ public final class UnknownSchemaNodeBuilderImpl extends AbstractBuilder implemen
 
     @Override
     public SchemaPath getPath() {
-        return instance.path;
+        return schemaPath;
     }
 
     @Override

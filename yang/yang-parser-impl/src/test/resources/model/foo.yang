@@ -13,6 +13,8 @@ module foo {
         revision-date 2013-02-27;
     }
 
+    include subfoo;
+
     organization "opendaylight";
     contact "http://www.opendaylight.org/";
 
