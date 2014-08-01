@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_316297ae",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/ReadOnlyTrieMap.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T13:11:27Z",
+      "side": 1,
+      "message": "Using a local var isn\u0027t actually necessary here. Just making \u0027readOnly\u0027 volatile is enough to make the DCL safe. See my additional comments in the bug. But it\u0027s OK either way although looks cleaner w/o the local.",
+      "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
