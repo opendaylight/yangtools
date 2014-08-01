@@ -9,18 +9,13 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +30,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -55,6 +49,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
+import org.opendaylight.yangtools.yang.binding.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
@@ -133,8 +128,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     private final AbstractTransformerGenerator generator;
     private final SchemaLock lock;
 
-    private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS =
-            CacheBuilder.newBuilder().weakKeys().softValues().build(new AugmentationGetterLoader());
+
 
     // FIXME: how is this protected?
     private SchemaContext currentSchema;
@@ -350,18 +344,36 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T extends Identifiable<?>> IdentifierCodec<?> getIdentifierCodecForIdentifiable(final Class<T> type) {
-        IdentifierCodec<?> obj = identifierCodecs.get(type);
+    public IdentifierCodec<?> getIdentifierCodecForIdentifiable(final Class identifiable) {
+
+        Class identifier= ClassLoaderUtils.findFirstGenericArgument(identifiable, org.opendaylight.yangtools.yang.binding.Identifiable.class);
+        IdentifierCodec<?> obj = identifierCodecs.get(identifier);
         if (obj != null) {
             return obj;
         }
+        return createIdentifierCodec(identifier,identifiable);
+    }
+
+    @Override
+    public <T extends Identifier<?>> IdentifierCodec<T> getCodecForIdentifier(final Class<T> identifier) {
+        @SuppressWarnings("unchecked")
+        IdentifierCodec<T> obj = (IdentifierCodec<T>) identifierCodecs.get(identifier);
+        if (obj != null) {
+            return obj;
+        }
+        Class<? extends Identifiable<T>> identifiable = ClassLoaderUtils.findFirstGenericArgument(identifier, Identifier.class);
+        return createIdentifierCodec(identifier,identifiable);
+    }
+
+    private <T extends Identifier<?>> IdentifierCodec<T> createIdentifierCodec(final Class<T> identifier,final Class<? extends Identifiable<T>> identifiable){
         Class<? extends BindingCodec<Map<QName, Object>, Object>> newCodec = generator
-                .keyTransformerForIdentifiable(type);
+                .keyTransformerForIdentifiable(identifiable);
         BindingCodec<Map<QName, Object>, Object> newInstance;
         newInstance = newInstanceOf(newCodec);
-        IdentifierCodecImpl<?> newWrapper = new IdentifierCodecImpl<>(newInstance);
-        identifierCodecs.put(type, newWrapper);
+        IdentifierCodecImpl<T> newWrapper = new IdentifierCodecImpl<>(newInstance);
+        identifierCodecs.put(identifier, newWrapper);
         return newWrapper;
     }
 
@@ -381,22 +393,6 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     public void onCodecCreated(final Class<?> cls) {
         CodecMapping.setIdentifierCodec(cls, instanceIdentifierCodec);
         CodecMapping.setIdentityRefCodec(cls, identityRefCodec);
-    }
-
-    @Override
-    public <T extends Identifier<?>> IdentifierCodec<T> getCodecForIdentifier(final Class<T> object) {
-        @SuppressWarnings("unchecked")
-        IdentifierCodec<T> obj = (IdentifierCodec<T>) identifierCodecs.get(object);
-        if (obj != null) {
-            return obj;
-        }
-        Class<? extends BindingCodec<Map<QName, Object>, Object>> newCodec = generator
-                .keyTransformerForIdentifier(object);
-        BindingCodec<Map<QName, Object>, Object> newInstance;
-        newInstance = newInstanceOf(newCodec);
-        IdentifierCodecImpl<T> newWrapper = new IdentifierCodecImpl<>(newInstance);
-        identifierCodecs.put(object, newWrapper);
-        return newWrapper;
     }
 
     @SuppressWarnings("rawtypes")
@@ -520,50 +516,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         return ret;
     }
 
-    private static final class AugmentationGetterLoader extends CacheLoader<Class<?>, AugmentationFieldGetter> {
-        private static final AugmentationFieldGetter DUMMY = new AugmentationFieldGetter() {
-            @Override
-            Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
-                return Collections.emptyMap();
-            }
-        };
 
-        @Override
-        public AugmentationFieldGetter load(final Class<?> key) throws Exception {
-            Field field;
-            try {
-                field = key.getDeclaredField("augmentation");
-            } catch (NoSuchFieldException | SecurityException e) {
-                LOG.debug("Failed to acquire augmentation field", e);
-                return DUMMY;
-            }
-            field.setAccessible(true);
-
-            return new ReflectionAugmentationFieldGetter(field);
-        }
-    }
-
-    private static abstract class AugmentationFieldGetter {
-        abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input);
-    }
-
-    private static final class ReflectionAugmentationFieldGetter extends AugmentationFieldGetter {
-        private final Field augmentationField;
-
-        ReflectionAugmentationFieldGetter(final Field augmentationField) {
-            this.augmentationField = Preconditions.checkNotNull(augmentationField);
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
-            try {
-                return (Map<Class<? extends Augmentation<?>>, Augmentation<?>>) augmentationField.get(input);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new IllegalStateException("Failed to access augmentation field", e);
-            }
-        }
-    }
 
     private static abstract class IntermediateCodec<T> implements DomCodec<T>, Delegator<BindingCodec<Map<QName, Object>, Object>> {
 
@@ -1119,24 +1072,13 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         public Object serialize(final Object input) {
             Preconditions.checkArgument(augmentableType.isInstance(input), "Object %s is not instance of %s ",input,augmentableType);
             if (input instanceof Augmentable<?>) {
-                Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations = getAugmentations(input);
+                Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations = BindingReflections.getAugmentations((Augmentable<?>) input);
                 return serializeImpl(augmentations);
             }
             return null;
         }
 
-        /**
-         *
-         * Extracts augmentation from Binding DTO field using reflection
-         *
-         * @param input Instance of DataObject which is augmentable and
-         *      may contain augmentation
-         * @return Map of augmentations if read was successful, otherwise
-         *      empty map.
-         */
-        private Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
-            return AUGMENTATION_GETTERS.getUnchecked(input.getClass()).getAugmentations(input);
-        }
+
 
         /**
          *
@@ -1493,4 +1435,5 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     private static final Type referencedType(final Class<?> augmentableType) {
         return new ReferencedTypeImpl(augmentableType.getPackage().getName(), augmentableType.getSimpleName());
     }
+
 }
