@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -187,7 +186,6 @@ public final class RefineUtils {
         } else if (node instanceof ContainerSchemaNodeBuilder) {
             checkRefineDefault(node, defaultStr, moduleName, line);
             checkRefineMandatory(node, mandatory, moduleName, line);
-            checkRefineMust(node, must, moduleName, line);
             checkRefineMinMax(name, min, max, moduleName, line);
         } else if (node instanceof LeafSchemaNodeBuilder) {
             checkRefinePresence(node, presence, moduleName, line);
