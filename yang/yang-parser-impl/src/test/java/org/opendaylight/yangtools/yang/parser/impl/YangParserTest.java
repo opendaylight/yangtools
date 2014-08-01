@@ -844,15 +844,6 @@ public class YangParserTest {
 
     @Test
     public void testSubmodules() throws Exception {
-        URI yangFilePath = getClass().getResource("/submodule-test/subfoo.yang").toURI();
-        URI directoryPath = getClass().getResource("/model").toURI();
-
-        File directory = new File(directoryPath);
-        File yangFile = new File(yangFilePath);
-
-        Set<Module> modules = new YangParserImpl().parseFile(yangFile, directory).getModules();
-        assertEquals(3, modules.size());
-
         Module foo = TestUtils.findModule(modules, "foo");
 
         DataSchemaNode id = foo.getDataChildByName("id");

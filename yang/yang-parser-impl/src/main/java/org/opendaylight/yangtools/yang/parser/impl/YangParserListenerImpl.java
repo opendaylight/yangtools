@@ -213,7 +213,16 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override
     public void enterBelongs_to_stmt(final YangParser.Belongs_to_stmtContext ctx) {
-        moduleBuilder.setBelongsTo(stringFromNode(ctx));
+        final String belongsTo = stringFromNode(ctx);
+        TreeMap<Date, URI> context = namespaceContext.get(belongsTo);
+        Map.Entry<Date, URI> entry = context.firstEntry();
+        // TODO
+        // Submodule will contain namespace and revision from module to which it
+        // belongs. If there are multiple modules with same name and different
+        // revisions, it will has revision from the newest one.
+        this.moduleQName = QName.create(entry.getValue(), entry.getKey(), moduleQName.getLocalName());
+        moduleBuilder.setQNameModule(moduleQName.getModule());
+        moduleBuilder.setBelongsTo(belongsTo);
     }
 
     @Override
@@ -346,6 +355,31 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitImport_stmt(final Import_stmtContext ctx) {
         exitLog("import");
+    }
+
+    @Override
+    public void enterInclude_stmt(YangParser.Include_stmtContext ctx) {
+        final int line = ctx.getStart().getLine();
+        final String includeName = stringFromNode(ctx);
+        enterLog("import", includeName, line);
+
+        Date includeRevision = null;
+        for (int i = 0; i < ctx.getChildCount(); i++) {
+            ParseTree treeNode = ctx.getChild(i);
+            if (treeNode instanceof Revision_date_stmtContext) {
+                String importRevisionStr = stringFromNode(treeNode);
+                try {
+                    includeRevision = SIMPLE_DATE_FORMAT.parse(importRevisionStr);
+                } catch (ParseException e) {
+                    LOG.warn("Failed to parse import revision-date at line {}: {}", line, importRevisionStr, e);
+                }
+            }
+        }
+        moduleBuilder.addInclude(includeName, includeRevision);
+    }
+
+    @Override public void exitInclude_stmt(YangParser.Include_stmtContext ctx) {
+        exitLog("include");
     }
 
     @Override
@@ -518,6 +552,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 TreeMap<Date, URI> namespaces = namespaceContext.get(imp.getModuleName());
                 URI namespace;
                 if (revision == null) {
+                    if (namespaces == null) {
+                        throw new YangParseException(moduleName, line, "imported module " + imp.getModuleName()
+                                + " with prefix " + imp.getPrefix() + " not found.");
+                    }
                     revision = namespaces.lastEntry().getKey();
                     namespace = namespaces.lastEntry().getValue();
                 } else {

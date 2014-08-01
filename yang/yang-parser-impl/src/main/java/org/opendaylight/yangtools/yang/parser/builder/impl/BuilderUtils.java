@@ -66,6 +66,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingMember;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
@@ -361,8 +362,8 @@ public final class BuilderUtils {
         }
     }
 
-    public static DataSchemaNodeBuilder findSchemaNode(final Iterable<QName> path, final SchemaNodeBuilder parentNode) {
-        DataSchemaNodeBuilder node = null;
+    public static SchemaNodeBuilder findSchemaNode(final Iterable<QName> path, final SchemaNodeBuilder parentNode) {
+        SchemaNodeBuilder node = null;
         SchemaNodeBuilder parent = parentNode;
         int size = Iterables.size(path);
         int i = 0;
@@ -370,18 +371,26 @@ public final class BuilderUtils {
             String name = qname.getLocalName();
             if (parent instanceof DataNodeContainerBuilder) {
                 node = ((DataNodeContainerBuilder) parent).getDataChildByName(name);
+                if (node == null) {
+                    node = findUnknownNode(name, parent);
+                }
             } else if (parent instanceof ChoiceBuilder) {
                 node = ((ChoiceBuilder) parent).getCaseNodeByName(name);
+                if (node == null) {
+                    node = findUnknownNode(name, parent);
+                }
             } else if (parent instanceof RpcDefinitionBuilder) {
                 if ("input".equals(name)) {
                     node = ((RpcDefinitionBuilder) parent).getInput();
                 } else if ("output".equals(name)) {
                     node = ((RpcDefinitionBuilder) parent).getOutput();
                 } else {
-                    return null;
+                    if (node == null) {
+                        node = findUnknownNode(name, parent);
+                    }
                 }
             } else {
-                return null;
+                node = findUnknownNode(name, parent);
             }
 
             if (i < size - 1) {
@@ -391,6 +400,15 @@ public final class BuilderUtils {
         }
 
         return node;
+    }
+
+    private static UnknownSchemaNodeBuilder findUnknownNode(final String name, final Builder parent) {
+        for (UnknownSchemaNodeBuilder un : parent.getUnknownNodes()) {
+            if (un.getQName().getLocalName().equals(name)) {
+                return un;
+            }
+        }
+        return null;
     }
 
     /**
@@ -419,7 +437,16 @@ public final class BuilderUtils {
         Optional<SchemaNodeBuilder> currentNode = getDataNamespaceChild(module, first);
 
         while (currentNode.isPresent() && path.hasNext()) {
-            currentNode = findDataChild(currentNode.get(), path.next());
+            SchemaNodeBuilder currentParent = currentNode.get();
+            QName currentPath = path.next();
+            currentNode = findDataChild(currentParent, currentPath);
+            if (!currentNode.isPresent()) {
+                for (SchemaNodeBuilder un : currentParent.getUnknownNodes()) {
+                    if (un.getQName().equals(currentPath)) {
+                        currentNode = Optional.of(un);
+                    }
+                }
+            }
         }
         return currentNode;
     }
@@ -461,6 +488,7 @@ public final class BuilderUtils {
         return Optional.absent();
     }
 
+    // FIXME: if rpc does not define input or output, this method creates it
     /**
      *
      * Gets input / output container from {@link RpcDefinitionBuilder} if QName
@@ -474,10 +502,27 @@ public final class BuilderUtils {
      * @return Optional of input/output if defined and QName is input/output.
      *         Otherwise {@link Optional#absent()}.
      */
-    private static Optional<ContainerSchemaNodeBuilder> findContainerInRpc(final RpcDefinitionBuilder parent, final QName child) {
+    private static Optional<ContainerSchemaNodeBuilder> findContainerInRpc(final RpcDefinitionBuilder parent,
+            final QName child) {
         if (INPUT.equals(child.getLocalName())) {
+            if (parent.getInput() == null) {
+                QName qname = QName.create(parent.getQName().getModule(), "input");
+                final ContainerSchemaNodeBuilder inputBuilder = new ContainerSchemaNodeBuilder(parent.getModuleName(),
+                        parent.getLine(), qname, parent.getPath().createChild(qname));
+                inputBuilder.setParent(parent);
+                parent.setInput(inputBuilder);
+                return Optional.of(inputBuilder);
+            }
             return Optional.of(parent.getInput());
         } else if (OUTPUT.equals(child.getLocalName())) {
+            if (parent.getOutput() == null) {
+                QName qname = QName.create(parent.getQName().getModule(), "output");
+                final ContainerSchemaNodeBuilder outputBuilder = new ContainerSchemaNodeBuilder(parent.getModuleName(),
+                        parent.getLine(), qname, parent.getPath().createChild(qname));
+                outputBuilder.setParent(parent);
+                parent.setOutput(outputBuilder);
+                return Optional.of(outputBuilder);
+            }
             return Optional.of(parent.getOutput());
         }
         LOG.trace("Child {} not found in node {}", child, parent);
@@ -602,6 +647,9 @@ public final class BuilderUtils {
                 firstNodeParent);
         if (!potentialTargetNode.isPresent()) {
             return false;
+        } else if (potentialTargetNode.get() instanceof UnknownSchemaNodeBuilder) {
+            LOG.warn("Error in augment parsing: unsupported augment target: {}", potentialTargetNode.get());
+            return true;
         }
         SchemaNodeBuilder targetNode = potentialTargetNode.get();
         fillAugmentTarget(augment, targetNode);
