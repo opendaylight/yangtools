@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
@@ -331,6 +332,15 @@ public class TypesResolutionTest {
 
         LeafSchemaNode type = (LeafSchemaNode) tested.getDataChildByName("type");
         assertNotNull(type);
+    }
+
+    @Test
+    public void testUnionWithExt() throws Exception {
+        File extdef = new File(getClass().getResource("/types/union-with-ext/extdef.yang").toURI());
+        File unionbug = new File(getClass().getResource("/types/union-with-ext/unionbug.yang").toURI());
+        File inet = new File(getClass().getResource("/ietf/ietf-inet-types@2010-09-24.yang").toURI());
+        YangContextParser parser = new YangParserImpl();
+        parser.parseFiles(Arrays.asList(extdef, unionbug, inet));
     }
 
 }

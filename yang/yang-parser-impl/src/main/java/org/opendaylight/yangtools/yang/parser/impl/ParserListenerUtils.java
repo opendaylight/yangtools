@@ -1069,10 +1069,12 @@ public final class ParserListenerUtils {
 
             if (parent instanceof TypeDefinitionBuilder) {
                 TypeDefinitionBuilder typedef = (TypeDefinitionBuilder) parent;
-                typedef.setRanges(rangeStatements);
-                typedef.setLengths(lengthStatements);
-                typedef.setPatterns(patternStatements);
-                typedef.setFractionDigits(fractionDigits);
+                if (!(typedef instanceof UnionTypeBuilder)) {
+                    typedef.setRanges(rangeStatements);
+                    typedef.setLengths(lengthStatements);
+                    typedef.setPatterns(patternStatements);
+                    typedef.setFractionDigits(fractionDigits);
+                }
                 return unknownType.build();
             } else {
                 TypeDefinition<?> baseType = unknownType.build();

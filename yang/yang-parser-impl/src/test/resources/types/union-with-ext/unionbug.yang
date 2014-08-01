@@ -1,0 +1,31 @@
+module unionbug {
+    yang-version 1;
+    namespace "urn:test:bug:unionbug";
+    prefix "unionbug";
+
+    import extdef {
+        prefix extdef;
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
+    revision 2012-04-16 {
+    }
+
+    typedef address {
+        type union {
+            type inet:ip-address {
+                extdef:help "IP address";
+            }
+            type inet:ip-prefix {
+                extdef:help "Subnet";
+            }
+            type string {
+                extdef:help "Address name";
+            }
+        }
+    }
+
+}

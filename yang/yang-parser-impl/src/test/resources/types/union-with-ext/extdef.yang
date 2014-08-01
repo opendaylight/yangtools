@@ -1,0 +1,13 @@
+module "extdef" {
+    yang-version 1;
+    namespace "urn:test:bug:extdef";
+    prefix "extdef";
+
+    revision 2012-04-16 {
+    }
+
+    extension "help" {
+        argument "text";
+    }
+
+}
