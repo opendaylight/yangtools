@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 /**
  * Exception thrown when a Schema Source fails to resolve.
  */
-public class SchemaResolutionException extends Exception {
+public class SchemaResolutionException extends SchemaSourceException {
     private static final long serialVersionUID = 1L;
     private final Map<SourceIdentifier, Throwable> unresolvedSources;
 
