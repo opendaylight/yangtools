@@ -70,6 +70,42 @@
       "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_31085791",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/ReadOnlyTrieMap.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T15:38:45Z",
+      "side": 1,
+      "message": "Yeah - good point - it saves a volatile read at the end. Volatile reads are definitely not as cheap as non-volatile, as it incurs a memory barrier, but cheaper than synchronized.",
+      "parentUuid": "fa82b9bf_51bddbb5",
+      "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_11eaf3ab",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/ReadOnlyTrieMap.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-01T15:38:45Z",
+      "side": 1,
+      "message": "Yeah I know - pre-1.5 days are gone forever (thank god). I was referring to the Brian Goetz article and why even volatile wasn\u0027t safe prior to 1.5",
+      "parentUuid": "fa82b9bf_d1c80b57",
+      "revId": "4a392918c0be09d183ce84c53e8e0d1d1752a7c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
