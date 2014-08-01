@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_d1f7abd1",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/AsyncNotifyingListenableFutureTask.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-01T13:49:05Z",
+      "side": 1,
+      "message": "I did not mean to put you off here. Not sure if removing the var is not too expensive, as this will be called a lot.",
+      "revId": "ead44a5baba1149998c1bbc369f1ddbd1e8dc7a5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
