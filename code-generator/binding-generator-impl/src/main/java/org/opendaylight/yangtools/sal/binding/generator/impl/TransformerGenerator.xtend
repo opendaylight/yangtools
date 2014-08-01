@@ -29,7 +29,6 @@ import javassist.CtMethod
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
 import org.opendaylight.yangtools.binding.generator.util.Types
-import org.opendaylight.yangtools.sal.binding.generator.util.ClassLoaderUtils
 import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationException
 import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
@@ -39,6 +38,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder
+import org.opendaylight.yangtools.util.ClassLoaderUtils
 import org.opendaylight.yangtools.yang.binding.Augmentation
 import org.opendaylight.yangtools.yang.binding.BindingCodec
 import org.opendaylight.yangtools.yang.binding.BindingDeserializer
