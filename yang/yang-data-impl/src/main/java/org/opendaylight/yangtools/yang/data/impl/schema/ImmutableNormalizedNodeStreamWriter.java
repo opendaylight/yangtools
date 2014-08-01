@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 
 /**
@@ -175,13 +176,17 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier,final int childSizeHint) throws IllegalArgumentException {
-        Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder);
+        if(!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
+            Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder);
+        }
         enter(Builders.mapEntryBuilder().withNodeIdentifier(identifier));
     }
 
     @Override
     public void startOrderedMapNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
-        checkDataNodeContainer();
+        if(!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
+            Preconditions.checkArgument(getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
+        }
         enter(Builders.mapBuilder().withNodeIdentifier(name));
     }
 
