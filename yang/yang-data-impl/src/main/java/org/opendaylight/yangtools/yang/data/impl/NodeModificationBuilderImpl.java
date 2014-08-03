@@ -20,13 +20,16 @@ import org.opendaylight.yangtools.yang.data.api.MutableNode;
 import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.NodeModificationBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * @author michal.rehak
  *
+ * @deprecated Use {@link Builders} instead.
  */
+@Deprecated
 public class NodeModificationBuilderImpl implements NodeModificationBuilder {
 
     private final SchemaContext context;

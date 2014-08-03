@@ -12,13 +12,16 @@ import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * @author michal.rehak
  * @param <T>
  *            type of simple node value
  *
+ * @deprecated Use one of the {@link NormalizedNode} implementation packages.
  */
+@Deprecated
 public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T> implements MutableSimpleNode<T> {
     private static final long serialVersionUID = 1L;
     private SimpleNode<T> original;
@@ -29,12 +32,12 @@ public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T> implements M
      * @param value
      * @param modifyAction
      */
-    public MutableSimpleNodeTOImpl(QName qname, CompositeNode parent, T value, ModifyAction modifyAction) {
+    public MutableSimpleNodeTOImpl(final QName qname, final CompositeNode parent, final T value, final ModifyAction modifyAction) {
         super(qname, parent, value, modifyAction);
     }
 
     @Override
-    public void setModifyAction(ModifyAction action) {
+    public void setModifyAction(final ModifyAction action) {
         super.setModificationAction(action);
     }
 
@@ -52,7 +55,7 @@ public class MutableSimpleNodeTOImpl<T> extends SimpleNodeTOImpl<T> implements M
      * @param original
      *            the original to set
      */
-    public void setOriginal(SimpleNode<T> original) {
+    public void setOriginal(final SimpleNode<T> original) {
         this.original = original;
     }
 }

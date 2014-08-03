@@ -30,14 +30,15 @@ import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.impl.util.AbstractCompositeNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.util.CompositeNodeBuilder;
 
-public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> implements //
-Immutable, //
-CompositeNode, //
-AttributesContainer, //
-Serializable {
+/**
+ * @deprecated Use one of the {@link NormalizedNodeContainer} implementations.
+ */
+@Deprecated
+public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> implements Immutable, CompositeNode, AttributesContainer, Serializable {
 
     private static final long serialVersionUID = 100L;
 

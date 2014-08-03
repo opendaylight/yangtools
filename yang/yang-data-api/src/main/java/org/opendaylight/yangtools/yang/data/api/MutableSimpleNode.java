@@ -7,17 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+
 
 /**
  * @author michal.rehak
  * @param <T> node value type
  *
+ * @deprecated Use {@link NormalizedNode} instead.
  */
+@Deprecated
 public interface MutableSimpleNode<T> extends MutableNode<T>, SimpleNode<T> {
-    
+
     /**
      * @return original node, if available
      */
     SimpleNode<T> getOriginal();
-    
+
 }

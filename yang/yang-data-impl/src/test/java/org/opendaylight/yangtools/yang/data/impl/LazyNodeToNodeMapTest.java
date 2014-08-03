@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.Node;
  * @author michal.rehak
  *
  */
+@Deprecated
 public class LazyNodeToNodeMapTest {
 
     private LazyNodeToNodeMap lazyN2N;

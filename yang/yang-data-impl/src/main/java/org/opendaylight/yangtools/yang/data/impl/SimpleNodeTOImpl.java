@@ -7,24 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.ModifyAction;
+import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
+import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+
 /**
  * @author michal.rehak
  * @param <T> type of simple node value
  *
+ * @deprecated Use one of the {@link NormalizedNode} implementation packages.
  */
-public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
-        SimpleNode<T>, Serializable {
+@Deprecated
+public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements SimpleNode<T>, Serializable {
 
     private static final long serialVersionUID = 100L;
 
@@ -33,7 +35,7 @@ public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
      * @param parent
      * @param value
      */
-    public SimpleNodeTOImpl(QName qname, CompositeNode parent, T value) {
+    public SimpleNodeTOImpl(final QName qname, final CompositeNode parent, final T value) {
         super(qname, parent, value);
     }
 
@@ -43,7 +45,7 @@ public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
      * @param value
      * @param modifyAction
      */
-    public SimpleNodeTOImpl(QName qname, CompositeNode parent, T value, ModifyAction modifyAction) {
+    public SimpleNodeTOImpl(final QName qname, final CompositeNode parent, final T value, final ModifyAction modifyAction) {
         super(qname, parent, value, modifyAction);
     }
 
@@ -58,9 +60,9 @@ public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
         return super.toString() + ", value = "+getValue();
     }
 
-  // Serialization related
+    // Serialization related
 
-    private void readObject(ObjectInputStream aStream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream aStream) throws IOException, ClassNotFoundException {
         aStream.defaultReadObject();
         QName qName = (QName)aStream.readObject();
         CompositeNode parent = (CompositeNode) aStream.readObject();
@@ -70,7 +72,7 @@ public class SimpleNodeTOImpl<T> extends AbstractNodeTO<T> implements
         init(qName, parent, value, modifyAction);
     }
 
-    private void writeObject(ObjectOutputStream aStream) throws IOException {
+    private void writeObject(final ObjectOutputStream aStream) throws IOException {
         aStream.defaultWriteObject();
         //manually serialize superclass
         aStream.writeObject(getQName());

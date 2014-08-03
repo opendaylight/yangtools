@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
  * @author michal.rehak
  *
  */
+@Deprecated
 public class NodeModificationBuilderImplTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(NodeModificationBuilderImplTest.class);

@@ -8,14 +8,19 @@
 package org.opendaylight.yangtools.yang.data.impl;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.*;
+import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.ModifyAction;
+import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.NodeModification;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 
 /**
  * @author michal.rehak
  * @param <T>
  *            type of node value
- *
+ * @deprecated Use one of the {@link NormalizedNodeBuilder} implementations.
  */
+@Deprecated
 public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
 
     private QName qName;
@@ -33,7 +38,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
      * @param parent
      * @param value
      */
-    public AbstractNodeTO(QName qname, CompositeNode parent, T value) {
+    public AbstractNodeTO(final QName qname, final CompositeNode parent, final T value) {
         this(qname, parent, value, null);
     }
 
@@ -43,7 +48,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
      * @param value
      * @param modifyAction
      */
-    public AbstractNodeTO(QName qname, CompositeNode parent, T value, ModifyAction modifyAction) {
+    public AbstractNodeTO(final QName qname, final CompositeNode parent, final T value, final ModifyAction modifyAction) {
         this.qName = qname;
         this.parent = parent;
         this.value = value;
@@ -71,7 +76,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
      * @param parent
      *            the parent to set
      */
-    public void setParent(CompositeNode parent) {
+    public void setParent(final CompositeNode parent) {
         this.parent = parent;
     }
 
@@ -79,7 +84,8 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
      * @param value
      *            the value to set
      */
-    public T setValue(T value) {
+    @Override
+    public T setValue(final T value) {
         T oldValue = this.value;
         this.value = value;
         return oldValue;
@@ -103,7 +109,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
      * @param modifyAction
      *            the modifyAction to set
      */
-    protected void setModificationAction(ModifyAction modifyAction) {
+    protected void setModificationAction(final ModifyAction modifyAction) {
         this.modifyAction = modifyAction;
     }
 
@@ -132,7 +138,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -172,7 +178,7 @@ public abstract class AbstractNodeTO<T> implements Node<T>, NodeModification {
 
     //Serialization related
 
-    protected final void init(QName qName, CompositeNode parent, T value, ModifyAction modifyAction){
+    protected final void init(final QName qName, final CompositeNode parent, final T value, final ModifyAction modifyAction){
         this.qName = qName;
         this.modifyAction = modifyAction;
         this.parent = parent;

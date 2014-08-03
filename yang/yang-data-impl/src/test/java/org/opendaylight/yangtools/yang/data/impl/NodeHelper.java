@@ -37,6 +37,7 @@ import org.junit.Assert;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangModelParser;
@@ -49,7 +50,9 @@ import org.xml.sax.SAXException;
 /**
  * @author michal.rehak
  *
+ * @deprecated Use {@link NormalizedNodeUtils} instead.
  */
+@Deprecated
 public abstract class NodeHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(NodeHelper.class);

@@ -11,6 +11,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 
+/*
+ * @deprecated Use one of the NormalizedNode builders instead.
+ */
+@Deprecated
 public interface CompositeNodeBuilder<P extends CompositeNode> extends NodeBuilder<P,CompositeNodeBuilder<P>> {
 
     CompositeNodeBuilder<P> addLeaf(QName leafName,Object leafValue);

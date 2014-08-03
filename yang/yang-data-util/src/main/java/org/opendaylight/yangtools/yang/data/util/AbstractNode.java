@@ -11,21 +11,28 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
+/**
+ * @deprecated Use one of the {@link NormalizedNode} implementation packages.
+ */
+@Deprecated
 public abstract class AbstractNode<T> implements Node<T> {
 
     private final QName nodeName;
     private final CompositeNode parent;
 
-    protected AbstractNode(QName name, CompositeNode parent) {
+    protected AbstractNode(final QName name, final CompositeNode parent) {
         nodeName = name;
         this.parent = parent;
     }
 
+    @Override
     public QName getNodeType() {
         return this.nodeName;
     }
 
+    @Override
     public CompositeNode getParent() {
         return parent;
     }

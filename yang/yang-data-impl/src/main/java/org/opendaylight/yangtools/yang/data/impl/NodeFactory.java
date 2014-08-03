@@ -24,11 +24,14 @@ import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.NodeModification;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 
 /**
  * @author michal.rehak
  *
+ * @deprecated Use {@link Builders} instead.
  */
+@Deprecated
 public abstract class NodeFactory {
 
     /**
