@@ -105,7 +105,7 @@ import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.Int16;
 import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.Int64;
@@ -1210,7 +1210,7 @@ public final class ParserListenerUtils {
             constraints.addLengths(binaryType.getLengthConstraints());
             baseType = binaryType;
         } else if ("instance-identifier".equals(typeName)) {
-            return InstanceIdentifier.create(isRequireInstance(typeBody));
+            return InstanceIdentifierType.create(isRequireInstance(typeBody));
         }
 
         if (parent instanceof TypeDefinitionBuilder && !(parent instanceof UnionTypeBuilder)) {

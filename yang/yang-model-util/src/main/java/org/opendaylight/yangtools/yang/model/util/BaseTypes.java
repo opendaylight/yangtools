@@ -191,7 +191,7 @@ public final class BaseTypes {
         } else if ("empty".equals(typeName)) {
             return EmptyType.getInstance();
         } else if ("instance-identifier".equals(typeName)) {
-            return InstanceIdentifier.getInstance();
+            return InstanceIdentifierType.getInstance();
         }
         return null;
     }

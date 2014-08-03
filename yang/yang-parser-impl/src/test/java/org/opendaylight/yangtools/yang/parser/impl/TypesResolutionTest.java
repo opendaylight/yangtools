@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 public class TypesResolutionTest {
@@ -163,7 +163,7 @@ public class TypesResolutionTest {
     public void testInstanceIdentifier1() {
         Module tested = TestUtils.findModule(testedModules, "custom-types-test");
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName("inst-id-leaf1");
-        InstanceIdentifier leafType = (InstanceIdentifier) leaf.getType();
+        InstanceIdentifierType leafType = (InstanceIdentifierType) leaf.getType();
         assertFalse(leafType.requireInstance());
         assertEquals(1, leaf.getUnknownSchemaNodes().size());
     }
@@ -172,7 +172,7 @@ public class TypesResolutionTest {
     public void testInstanceIdentifier2() {
         Module tested = TestUtils.findModule(testedModules, "custom-types-test");
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName("inst-id-leaf2");
-        InstanceIdentifier leafType = (InstanceIdentifier) leaf.getType();
+        InstanceIdentifierType leafType = (InstanceIdentifierType) leaf.getType();
         assertTrue(leafType.requireInstance());
     }
 
