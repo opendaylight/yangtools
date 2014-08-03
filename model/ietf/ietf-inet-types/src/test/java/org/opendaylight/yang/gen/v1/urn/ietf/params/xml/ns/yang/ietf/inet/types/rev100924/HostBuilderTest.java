@@ -8,7 +8,8 @@
 
 package org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 public class HostBuilderTest {
@@ -16,7 +17,7 @@ public class HostBuilderTest {
     @Test
     public void testGetDefaultInstanceIpv4() throws Exception {
         Host host = HostBuilder.getDefaultInstance("127.0.0.1");
-        Assert.assertEquals(new Host(new IpAddress(new Ipv4Address("127.0.0.1"))), host);
+        assertEquals(new Host(new IpAddress(new Ipv4Address("127.0.0.1"))), host);
     }
 
     @Test
@@ -25,14 +26,14 @@ public class HostBuilderTest {
         testIpv6("2001:db8:85a3::8a2e:370:7334");
     }
 
-    private void testIpv6(String ivp6string) {
+    private void testIpv6(final String ivp6string) {
         Host host = HostBuilder.getDefaultInstance(ivp6string);
-        Assert.assertEquals(new Host(new IpAddress(new Ipv6Address(ivp6string))), host);
+        assertEquals(new Host(new IpAddress(new Ipv6Address(ivp6string))), host);
     }
 
     @Test
     public void testGetDefaultInstanceDomain() throws Exception {
         Host host = HostBuilder.getDefaultInstance("localhost");
-        Assert.assertEquals(new Host(new DomainName("localhost")), host);
+        assertEquals(new Host(new DomainName("localhost")), host);
     }
 }

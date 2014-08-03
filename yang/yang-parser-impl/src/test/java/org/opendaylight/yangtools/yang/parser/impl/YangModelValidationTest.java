@@ -7,21 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Sets;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -162,7 +164,7 @@ public class YangModelValidationTest {
             }
         }
 
-        assertThat(thrown, is(3));
+        assertEquals(3, thrown);
     }
 
     @Test(expected = YangValidationException.class)
@@ -200,7 +202,7 @@ public class YangModelValidationTest {
         types.add(Deviate_delete_stmtContext.class);
 
         int count = ValidationUtil.countPresentChildrenOfType(ctx, types);
-        assertThat(count, is(2));
+        assertEquals(2, count);
     }
 
     @Test(expected = YangValidationException.class)
@@ -214,7 +216,7 @@ public class YangModelValidationTest {
         }
     }
 
-    private Import_stmtContext mockImport(String name, String prefixName) {
+    private Import_stmtContext mockImport(final String name, final String prefixName) {
         Import_stmtContext impor = mockStatement(Import_stmtContext.class, name);
 
         Prefix_stmtContext prefix = mockStatement(Prefix_stmtContext.class, prefixName);
@@ -229,7 +231,7 @@ public class YangModelValidationTest {
         return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     }
 
-    private Include_stmtContext mockInclude(String name) {
+    private Include_stmtContext mockInclude(final String name) {
         Include_stmtContext incl = mockStatement(Include_stmtContext.class, name);
 
         Revision_date_stmtContext revDate = mockStatement(Revision_date_stmtContext.class, getFormattedDate());
@@ -238,7 +240,7 @@ public class YangModelValidationTest {
         return incl;
     }
 
-    static void mockName(ParseTree stmt, String name) {
+    static void mockName(final ParseTree stmt, final String name) {
         doReturn(1).when(stmt).getChildCount();
 
         TerminalNode terminalNode = mock(TerminalNode.class);
@@ -252,17 +254,18 @@ public class YangModelValidationTest {
         doReturn(Collections.singletonList(terminalNode)).when(nameCtx).STRING();
     }
 
-    static <T extends ParseTree> T mockStatement(Class<T> stmtType, String name) {
+    static <T extends ParseTree> T mockStatement(final Class<T> stmtType, final String name) {
         T stmt = stmtType.cast(mock(stmtType));
 
         doReturn(0).when(stmt).getChildCount();
 
-        if (name != null)
+        if (name != null) {
             mockName(stmt, name);
+        }
         return stmt;
     }
 
-    static void addChild(ParseTree parent, ParseTree child) {
+    static void addChild(final ParseTree parent, final ParseTree child) {
         int childCount = parent.getChildCount() + 1;
         doReturn(childCount).when(parent).getChildCount();
         doReturn(child).when(parent).getChild(childCount - 1);

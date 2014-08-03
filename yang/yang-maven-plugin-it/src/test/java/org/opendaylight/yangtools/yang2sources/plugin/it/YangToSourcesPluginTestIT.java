@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin.it;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
 import com.google.common.base.Joiner;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.junit.Test;
@@ -59,9 +61,9 @@ public class YangToSourcesPluginTestIT {
                 + "files marked as resources: META-INF/yang");
         v.verifyTextInLog(
                 Joiner.on(File.separator).join(
-                Arrays.asList("target", "generated-sources", "spi"))
+                        Arrays.asList("target", "generated-sources", "spi"))
 
-                + " marked as resources for generator: org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
+                        + " marked as resources for generator: org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
     }
 
     @Test
@@ -93,7 +95,7 @@ public class YangToSourcesPluginTestIT {
         v.verifyTextInLog("[WARNING] Naming conflict for type 'org.opendaylight.yang.gen.v1.urn.yang.test.rev140303.NetworkTopologyRef': file with same name already exists and will not be generated.");
     }
 
-    static void verifyCorrectLog(Verifier v) throws VerificationException {
+    static void verifyCorrectLog(final Verifier v) throws VerificationException {
         v.verifyErrorFreeLog();
         v.verifyTextInLog("[INFO] yang-to-sources: YANG files parsed from");
         v.verifyTextInLog("[INFO] yang-to-sources: Code generator instantiated from org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
@@ -130,19 +132,20 @@ public class YangToSourcesPluginTestIT {
         v.verifyTextInLog("[INFO] yang-to-sources: No input files found");
     }
 
-    static void assertVerificationException(VerificationException e,
-            String string) {
+    static void assertVerificationException(final VerificationException e,
+            final String string) {
         assertThat(e.getMessage(), containsString(string));
     }
 
-    static Verifier setUp(String project, boolean ignoreF)
+    static Verifier setUp(final String project, final boolean ignoreF)
             throws VerificationException, URISyntaxException {
         final URL path = YangToSourcesPluginTestIT.class.getResource("/"
                 + project + "pom.xml");
         File parent = new File(path.toURI());
         Verifier verifier = new Verifier(parent.getParent());
-        if (ignoreF)
+        if (ignoreF) {
             verifier.addCliOption("-fn");
+        }
         verifier.setMavenDebug(true);
         verifier.executeGoal("generate-sources");
         return verifier;
@@ -163,7 +166,7 @@ public class YangToSourcesPluginTestIT {
 
         Properties sp = new Properties();
         try (InputStream is = new FileInputStream(v1.getBasedir() + "/it-project.properties")) {
-             sp.load(is);
+            sp.load(is);
         }
         String buildDir = sp.getProperty("target.dir");
 
@@ -178,7 +181,7 @@ public class YangToSourcesPluginTestIT {
 
         sp = new Properties();
         try (InputStream is = new FileInputStream(v2.getBasedir() + "/it-project.properties")) {
-             sp.load(is);
+            sp.load(is);
         }
         buildDir = sp.getProperty("target.dir");
 

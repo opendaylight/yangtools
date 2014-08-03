@@ -239,7 +239,7 @@ public class NormalizedNodeXmlTranslationTest {
                         Collections.singletonList(doc.getDocumentElement()), containerNode);
 
         if (expectedNode != null) {
-            junit.framework.Assert.assertEquals(expectedNode, built);
+            org.junit.Assert.assertEquals(expectedNode, built);
         }
 
         logger.info("{}", built);

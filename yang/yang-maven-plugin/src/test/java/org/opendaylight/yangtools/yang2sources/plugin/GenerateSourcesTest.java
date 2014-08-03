@@ -7,11 +7,17 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+
+import com.google.common.collect.Lists;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.YangProvider;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
-
-import com.google.common.collect.Lists;
 
 public class GenerateSourcesTest {
 
@@ -68,9 +72,9 @@ public class GenerateSourcesTest {
     @Test
     public void test() throws Exception {
         mojo.execute();
-        assertThat(GeneratorMock.called, is(1));
-        assertThat(GeneratorMock.outputDir, is(outDir));
-        assertThat(GeneratorMock.project, is(project));
+        assertEquals(1, GeneratorMock.called);
+        assertEquals(outDir, GeneratorMock.outputDir);
+        assertEquals(project, GeneratorMock.project);
         assertNotNull(GeneratorMock.log);
         assertTrue(GeneratorMock.additionalCfg.isEmpty());
         assertThat(GeneratorMock.resourceBaseDir.toString(), containsString("target" + File.separator
@@ -87,7 +91,7 @@ public class GenerateSourcesTest {
         private static MavenProject project;
 
         @Override
-        public Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules)
+        public Collection<File> generateSources(final SchemaContext context, final File outputBaseDir, final Set<Module> currentModules)
                 throws IOException {
             called++;
             outputDir = outputBaseDir;
@@ -95,23 +99,23 @@ public class GenerateSourcesTest {
         }
 
         @Override
-        public void setLog(Log log) {
+        public void setLog(final Log log) {
             GeneratorMock.log = log;
         }
 
         @Override
-        public void setAdditionalConfig(Map<String, String> additionalConfiguration) {
+        public void setAdditionalConfig(final Map<String, String> additionalConfiguration) {
             GeneratorMock.additionalCfg = additionalConfiguration;
         }
 
         @Override
-        public void setResourceBaseDir(File resourceBaseDir) {
+        public void setResourceBaseDir(final File resourceBaseDir) {
             GeneratorMock.resourceBaseDir = resourceBaseDir;
 
         }
 
         @Override
-        public void setMavenProject(MavenProject project) {
+        public void setMavenProject(final MavenProject project) {
             GeneratorMock.project = project;
         }
     }
