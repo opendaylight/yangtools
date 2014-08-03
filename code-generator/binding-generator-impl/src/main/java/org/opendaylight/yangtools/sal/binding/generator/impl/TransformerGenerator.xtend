@@ -30,6 +30,8 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
 import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationException
+import org.opendaylight.yangtools.sal.binding.generator.util.SourceCodeGenerator
+import org.opendaylight.yangtools.sal.binding.generator.util.SourceCodeGeneratorFactory
 import org.opendaylight.yangtools.sal.binding.generator.util.XtendHelper
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
@@ -43,7 +45,6 @@ import org.opendaylight.yangtools.yang.binding.Augmentation
 import org.opendaylight.yangtools.yang.binding.BindingCodec
 import org.opendaylight.yangtools.yang.binding.BindingDeserializer
 import org.opendaylight.yangtools.yang.binding.BindingMapping
-import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema
@@ -71,10 +72,6 @@ import static javassist.Modifier.*
 import static org.opendaylight.yangtools.sal.binding.generator.impl.CodecMapping.*
 
 import static extension org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils.*
-import java.util.ArrayList
-import org.opendaylight.yangtools.sal.binding.generator.util.DefaultSourceCodeGenerator
-import org.opendaylight.yangtools.sal.binding.generator.util.SourceCodeGeneratorFactory
-import org.opendaylight.yangtools.sal.binding.generator.util.SourceCodeGenerator
 
 class TransformerGenerator extends AbstractTransformerGenerator {
     private static val LOG = LoggerFactory.getLogger(TransformerGenerator)
