@@ -7,17 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml.test;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -63,7 +65,7 @@ public class RpcReplyToDomTest {
     @Before
     public void setup() throws Exception {
         final List<InputStream> modelsToParse = Collections
-            .singletonList(getClass().getResourceAsStream(RES_SCHEMA_DIR + "/rpc-test-model.yang"));
+                .singletonList(getClass().getResourceAsStream(RES_SCHEMA_DIR + "/rpc-test-model.yang"));
         assertNotNull(modelsToParse);
         assertNotNull(modelsToParse.get(0));
 
@@ -86,7 +88,7 @@ public class RpcReplyToDomTest {
         assertNotNull(testPayload2);
     }
 
-    private static Document readXmlToDocument(InputStream xmlContent) throws SAXException, IOException {
+    private static Document readXmlToDocument(final InputStream xmlContent) throws SAXException, IOException {
         DocumentBuilder dBuilder;
         try {
             dBuilder = BUILDER_FACTORY.newDocumentBuilder();
@@ -102,7 +104,7 @@ public class RpcReplyToDomTest {
     @Test
     public void test() {
         final CompositeNode rockNode = XmlDocumentUtils
-            .rpcReplyToDomNodes(testPayload1, ROCK_THE_HOUSE_QNAME, schemaContext);
+                .rpcReplyToDomNodes(testPayload1, ROCK_THE_HOUSE_QNAME, schemaContext);
         assertNotNull(rockNode);
 
         final String namespace = "org:opendaylight:rpc-reply:test:ns:yang";
@@ -112,25 +114,25 @@ public class RpcReplyToDomTest {
         assertNotNull(output);
 
         final SimpleNode<?> zipCode = output.getFirstSimpleByName(
-            QName.create(namespace, revision, "zip-code"));
+                QName.create(namespace, revision, "zip-code"));
         assertNotNull(zipCode);
 
         final CompositeNode activNode = XmlDocumentUtils
-            .rpcReplyToDomNodes(testPayload2, ACTIV_SW_IMAGE_QNAME, schemaContext);
+                .rpcReplyToDomNodes(testPayload2, ACTIV_SW_IMAGE_QNAME, schemaContext);
         assertNotNull(activNode);
 
         output = activNode.getFirstCompositeByName(RPC_OUTPUT_QNAME);
         assertNotNull(output);
 
         final CompositeNode imgProps = output
-            .getFirstCompositeByName(QName.create(namespace, revision, "image-properties"));
+                .getFirstCompositeByName(QName.create(namespace, revision, "image-properties"));
         assertNotNull(imgProps);
         final CompositeNode imgProperty = imgProps
-            .getFirstCompositeByName(QName.create(namespace, revision, "image-property"));
+                .getFirstCompositeByName(QName.create(namespace, revision, "image-property"));
         assertNotNull(imgProperty);
 
         final SimpleNode<?> imgId = imgProperty
-            .getFirstSimpleByName(QName.create(namespace, revision, "image-id"));
+                .getFirstSimpleByName(QName.create(namespace, revision, "image-id"));
         assertNotNull(imgId);
     }
 }

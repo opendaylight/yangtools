@@ -8,18 +8,22 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.activation.UnsupportedDataTypeException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import junit.framework.Assert;
+
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,7 +81,7 @@ public class XmlDocumentUtilsTest {
 
         final CompositeNode node = inputXmlToCompositeNode(input);
         final SimpleNode<?> refParsed = node.getSimpleNodesByName("ref").iterator().next();
-        Assert.assertEquals(YangInstanceIdentifier.class, refParsed.getValue().getClass());
+        assertEquals(YangInstanceIdentifier.class, refParsed.getValue().getClass());
         final Document serializedDocument = inputCompositeNodeToXml(node);
 
         XMLUnit.compareXML(inputDocument, serializedDocument);
