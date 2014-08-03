@@ -46,7 +46,7 @@
  *       <dt>uint64</dt>
  *       <dd>64-bit unsigned integer -{@link org.opendaylight.yangtools.yang.model.util.Int64}</dd>
  *       <dt>instance-identifier</dt>
- *       <dd>References a data tree node - {@link org.opendaylight.yangtools.yang.model.util.InstanceIdentifier}</dd>
+ *       <dd>References a data tree node - {@link org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType}</dd>
  *       <dt>string</dt>
  *       <dd>{@link org.opendaylight.yangtools.yang.model.util.StringType}</dd>
  *     </dl>

@@ -221,7 +221,7 @@ public class XmlDocumentUtils {
         }
         final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(schema.getType());
 
-        if (baseType instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
+        if (baseType instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType) {
             value = InstanceIdentifierForXmlCodec.deserialize(xmlElement,schemaCtx);
         } else if(baseType instanceof IdentityrefTypeDefinition){
             value = InstanceIdentifierForXmlCodec.toIdentity(xmlElement.getTextContent(), xmlElement, schemaCtx);
@@ -243,7 +243,7 @@ public class XmlDocumentUtils {
         if (codec != null) {
             value = codec.deserialize(text);
         }
-        if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifier) {
+        if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType) {
             value = InstanceIdentifierForXmlCodec.deserialize(xmlElement,schemaCtx);
         }
         if (value == null) {

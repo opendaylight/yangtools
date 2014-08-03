@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
  * @see InstanceIdentifierTypeDefinition
  *
  */
-public final class InstanceIdentifier implements InstanceIdentifierTypeDefinition, Immutable {
+public final class InstanceIdentifierType implements InstanceIdentifierTypeDefinition, Immutable {
 
     private static final QName NAME = BaseTypes.INSTANCE_IDENTIFIER_QNAME;
     private static final SchemaPath PATH = SchemaPath.create(true, NAME);
@@ -40,8 +40,8 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
     private static final String UNITS = "";
     private final Boolean requireInstance;
 
-    private static final InstanceIdentifier INSTANCE_WITH_REQUIRED_TRUE = new InstanceIdentifier(true);
-    private static final InstanceIdentifier INSTANCE_WITH_REQUIRED_FALSE = new InstanceIdentifier(false);
+    private static final InstanceIdentifierType INSTANCE_WITH_REQUIRED_TRUE = new InstanceIdentifierType(true);
+    private static final InstanceIdentifierType INSTANCE_WITH_REQUIRED_FALSE = new InstanceIdentifierType(false);
 
     /**
      * Constructs new instance identifier.
@@ -50,7 +50,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
      * @deprecated Use {@link #getInstance()} for default one, since Instance Identifier does not have xpath.
      */
     @Deprecated
-    public InstanceIdentifier(final RevisionAwareXPath xpath) {
+    public InstanceIdentifierType(final RevisionAwareXPath xpath) {
         requireInstance = true;
     }
 
@@ -62,19 +62,19 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
      * @deprecated Use {@link #create(boolean)}, since Instance Identifier does not have xpath.
      */
     @Deprecated
-    public InstanceIdentifier(final RevisionAwareXPath xpath, final boolean requireInstance) {
+    public InstanceIdentifierType(final RevisionAwareXPath xpath, final boolean requireInstance) {
         this.requireInstance = requireInstance;
     }
 
-    private InstanceIdentifier(final boolean requiredInstance) {
+    private InstanceIdentifierType(final boolean requiredInstance) {
         this.requireInstance = requiredInstance;
     }
 
-    public static InstanceIdentifier getInstance() {
+    public static InstanceIdentifierType getInstance() {
         return INSTANCE_WITH_REQUIRED_TRUE;
     }
 
-    public static InstanceIdentifier create(final boolean requireInstance) {
+    public static InstanceIdentifierType create(final boolean requireInstance) {
         return requireInstance ? INSTANCE_WITH_REQUIRED_TRUE : INSTANCE_WITH_REQUIRED_FALSE;
     }
 
@@ -216,7 +216,7 @@ public final class InstanceIdentifier implements InstanceIdentifierTypeDefinitio
         if (getClass() != obj.getClass()) {
             return false;
         }
-        InstanceIdentifier other = (InstanceIdentifier) obj;
+        InstanceIdentifierType other = (InstanceIdentifierType) obj;
         return requireInstance.equals(other.requireInstance);
     }
 
