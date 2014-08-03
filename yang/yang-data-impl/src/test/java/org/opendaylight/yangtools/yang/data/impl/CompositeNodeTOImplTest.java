@@ -7,19 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.SerializationUtils;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.Node;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-
+@Deprecated
 public class CompositeNodeTOImplTest {
     @Test
     public void testSerialization() throws Exception{

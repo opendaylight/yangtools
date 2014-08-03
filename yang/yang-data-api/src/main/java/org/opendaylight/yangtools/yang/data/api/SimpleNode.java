@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+
 /**
  * Simple node represents a leaf in the data tree, which does not contain any
  * nested nodes, but the value of node. In the terms of the XML the simple node
@@ -17,14 +19,17 @@ package org.opendaylight.yangtools.yang.data.api;
  * the empty type, which in XML form is similar to the empty container.</li>
  * <li><b>item</b> in <b>leaf-list</b></li>
  * </ul>
- * 
- * 
+ *
+ *
  * @param <T>
+ *
+ * @deprecated Use {@link NormalizedNode} instead.
  */
+@Deprecated
 public interface SimpleNode<T> extends Node<T>, NodeModification {
 
     /**
-     * @return cast self to mutable, if possible 
+     * @return cast self to mutable, if possible
      */
     MutableSimpleNode<T> asMutable();
 }

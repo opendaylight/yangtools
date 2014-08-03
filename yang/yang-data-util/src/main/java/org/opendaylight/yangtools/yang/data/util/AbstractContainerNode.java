@@ -16,7 +16,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
+/**
+ * @deprecated Use one of the {@link NormalizedNodeContainer} implementation packages.
+ */
+@Deprecated
 public abstract class AbstractContainerNode extends AbstractNode<List<Node<?>>> implements CompositeNode {
 
     @Override

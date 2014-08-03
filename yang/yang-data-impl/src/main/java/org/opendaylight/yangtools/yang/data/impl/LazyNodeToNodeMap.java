@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
  * @author michal.rehak
  *
  */
+@Deprecated
 public class LazyNodeToNodeMap {
 
     private final Map<Node<?>, Node<?>> node2node = new HashMap<>();
