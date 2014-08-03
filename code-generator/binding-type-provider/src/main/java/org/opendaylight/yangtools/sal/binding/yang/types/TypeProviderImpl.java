@@ -884,8 +884,11 @@ public final class TypeProviderImpl implements TypeProvider {
                         unionTypeName, unionGenTOBuilder);
                 updateUnionTypeAsProperty(unionGenTOBuilder, enumeration, unionTypeName);
             } else {
-                final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(unionType,
+                Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(unionType,
                         parentNode);
+                if(javaType == null) {
+                    javaType = javaTypeForSchemaDefinitionType(unionType,parentNode);
+                }
                 updateUnionTypeAsProperty(unionGenTOBuilder, javaType, unionTypeName);
             }
         }
@@ -964,6 +967,12 @@ public final class TypeProviderImpl implements TypeProvider {
             final TypeDefinition<?> baseType = baseTypeDefForExtendedType(unionSubtype);
             if (unionTypeName.equals(baseType.getQName().getLocalName())) {
                 final Type javaType = BaseYangTypes.BASE_YANG_TYPES_PROVIDER.javaTypeForSchemaDefinitionType(baseType,
+                        parentNode);
+                if (javaType != null) {
+                    updateUnionTypeAsProperty(parentUnionGenTOBuilder, javaType, unionTypeName);
+                }
+            } else {
+                final Type javaType = javaTypeForSchemaDefinitionType(baseType,
                         parentNode);
                 if (javaType != null) {
                     updateUnionTypeAsProperty(parentUnionGenTOBuilder, javaType, unionTypeName);
