@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Collection;

@@ -7,7 +7,8 @@
  */
 package org.mockito.configuration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -16,18 +17,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class DefaultAnswerTest {
-
-	@Test
-	public void testAnswering() throws IOException {
-		Closeable mock = Mockito.mock(Closeable.class);
-		try {
-			mock.close();
-			fail();
-		} catch (UnstubbedMethodException e) {
-			assertEquals("closeable.close(); was not stubbed", e.getMessage());
-		}
-	}
-
-
-
+    @Test
+    public void testAnswering() throws IOException {
+        Closeable mock = Mockito.mock(Closeable.class);
+        try {
+            mock.close();
+            fail();
+        } catch (UnstubbedMethodException e) {
+            assertEquals("closeable.close(); was not stubbed", e.getMessage());
+        }
+    }
 }

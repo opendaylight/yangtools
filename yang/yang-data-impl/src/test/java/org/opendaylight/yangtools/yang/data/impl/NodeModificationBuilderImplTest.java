@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl;
 
+import static org.junit.Assert.assertSame;
+
 import java.net.URI;
 import java.util.Date;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class NodeModificationBuilderImplTest {
         Node<?> mutableEquivalent = nodeModificationBuilder.getMutableEquivalent(topologies);
         CompositeNode topologiesMutable = rootMutable.getCompositesByName("topologies").iterator().next();
 
-        Assert.assertSame(topologiesMutable, mutableEquivalent);
+        assertSame(topologiesMutable, mutableEquivalent);
     }
 
     /**
