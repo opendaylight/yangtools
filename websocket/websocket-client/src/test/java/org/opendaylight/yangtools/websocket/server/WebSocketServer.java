@@ -15,24 +15,21 @@
  */
 package org.opendaylight.yangtools.websocket.server;
 
+import com.google.common.util.concurrent.SettableFuture;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.SocketAddress;
-import java.net.InetSocketAddress;
-
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import com.google.common.util.concurrent.SettableFuture;
 
 /**
  * A HTTP server which serves Web Socket requests at:
@@ -72,11 +69,12 @@ public class WebSocketServer implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class.toString());
 
 
-    public WebSocketServer(int inPort) {
+    public WebSocketServer(final int inPort) {
         this.inPort = inPort;
         port = SettableFuture.<Integer>create();
     }
 
+    @Override
     public void run(){
         try {
             startServer();
@@ -92,8 +90,8 @@ public class WebSocketServer implements Runnable {
     public void startServer() throws Exception {
         try {
             bootstrap.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class)
-             .childHandler(new WebSocketServerInitializer());
+            .channel(NioServerSocketChannel.class)
+            .childHandler(new WebSocketServerInitializer());
 
             Channel ch = bootstrap.bind(inPort).sync().channel();
             SocketAddress localSocket = ch.localAddress();
