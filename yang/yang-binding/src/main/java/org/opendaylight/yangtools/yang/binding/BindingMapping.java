@@ -9,17 +9,15 @@ package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import java.text.SimpleDateFormat;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
 
 public final class BindingMapping {
 
@@ -37,6 +35,7 @@ public final class BindingMapping {
     public static final String NOTIFICATION_LISTENER_SUFFIX = "Listener";
     public static final String QNAME_STATIC_FIELD_NAME = "QNAME";
     public static final String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
+    public static final String AUGMENTATION_FIELD = "augmentation";
 
     private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-").precomputed())
             .omitEmptyStrings().trimResults();
