@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+
 /**
  * @author michal.rehak
- * 
+ *
+ * @deprecated Use {@link NormalizedNodeUtils} instead.
  */
+@Deprecated
 public interface NodeModificationBuilder {
 
     abstract Node<?> getMutableEquivalent(Node<?> originalNode);

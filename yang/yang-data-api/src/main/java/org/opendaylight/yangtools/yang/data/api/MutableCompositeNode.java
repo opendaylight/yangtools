@@ -9,11 +9,15 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import java.util.List;
 
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+
 
 /**
  * @author michal.rehak
  *
+ * @deprecated Deprecated in favor of {@link NormalizedNodeContainer} classes.
  */
+@Deprecated
 public interface MutableCompositeNode extends MutableNode<List<Node<?>>>, CompositeNode {
 
     /**

@@ -20,25 +20,30 @@ import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.api.MutableSimpleNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
+/**
+ * @deprecated Use one of the {@link NormalizedNode} implementation packages.
+ */
+@Deprecated
 public final class Nodes {
 
     private Nodes() {
     }
 
-    public static <T> SimpleNode<T> leafNode(QName name, T value) {
+    public static <T> SimpleNode<T> leafNode(final QName name, final T value) {
         return new SimpleNodeTO<T>(name, value, null);
     }
 
-    public static CompositeNode containerNode(QName name, List<Node<?>> children) {
+    public static CompositeNode containerNode(final QName name, final List<Node<?>> children) {
         return containerNode(name, children, null);
     }
 
-    public static CompositeNode containerNode(QName name, List<Node<?>> children, CompositeNode parent) {
+    public static CompositeNode containerNode(final QName name, final List<Node<?>> children, final CompositeNode parent) {
         return new ContainerNodeTO(name, parent, nodeMapFromList(children));
     }
 
-    public static Map<QName, List<Node<?>>> nodeMapFromList(List<Node<?>> children) {
+    public static Map<QName, List<Node<?>>> nodeMapFromList(final List<Node<?>> children) {
         Map<QName, List<Node<?>>> map = new HashMap<QName, List<Node<?>>>();
         for (Node<?> node : children) {
 
@@ -53,16 +58,20 @@ public final class Nodes {
         return map;
     }
 
+    /**
+     * @deprecated Use one of the {@link NormalizedNode} implementation packages.
+     */
+    @Deprecated
     private static class ContainerNodeTO extends AbstractContainerNode {
 
         private final Map<QName, List<Node<?>>> nodeMap;
 
-        public ContainerNodeTO(QName name, Map<QName, List<Node<?>>> nodeMap) {
+        public ContainerNodeTO(final QName name, final Map<QName, List<Node<?>>> nodeMap) {
             super(name);
             this.nodeMap = nodeMap;
         }
 
-        public ContainerNodeTO(QName name, CompositeNode parent, Map<QName, List<Node<?>>> nodeMap) {
+        public ContainerNodeTO(final QName name, final CompositeNode parent, final Map<QName, List<Node<?>>> nodeMap) {
             super(name, parent);
             this.nodeMap = nodeMap;
         }
@@ -75,7 +84,7 @@ public final class Nodes {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * org.opendaylight.yangtools.yang.data.api.CompositeNode#asMutable()
          */
@@ -91,7 +100,7 @@ public final class Nodes {
         }
 
         @Override
-        public List<Node<?>> setValue(List<Node<?>> value) {
+        public List<Node<?>> setValue(final List<Node<?>> value) {
             return null;
         }
 
@@ -106,32 +115,32 @@ public final class Nodes {
         }
 
         @Override
-        public boolean containsKey(Object key) {
+        public boolean containsKey(final Object key) {
             return nodeMap.containsKey(key);
         }
 
         @Override
-        public boolean containsValue(Object value) {
+        public boolean containsValue(final Object value) {
             return nodeMap.containsValue(value);
         }
 
         @Override
-        public List<Node<?>> get(Object key) {
+        public List<Node<?>> get(final Object key) {
             return nodeMap.get(key);
         }
 
         @Override
-        public List<Node<?>> put(QName key, List<Node<?>> value) {
+        public List<Node<?>> put(final QName key, final List<Node<?>> value) {
             return nodeMap.put(key, value);
         }
 
         @Override
-        public List<Node<?>> remove(Object key) {
+        public List<Node<?>> remove(final Object key) {
             return nodeMap.remove(key);
         }
 
         @Override
-        public void putAll(Map<? extends QName, ? extends List<Node<?>>> m) {
+        public void putAll(final Map<? extends QName, ? extends List<Node<?>>> m) {
             nodeMap.putAll(m);
         }
 
@@ -152,17 +161,21 @@ public final class Nodes {
 
         @Override
         public Set<java.util.Map.Entry<QName, List<Node<?>>>> entrySet() {
-            
+
             return nodeMap.entrySet();
         }
 
     }
 
+    /**
+     * @deprecated Use one of the {@link NormalizedNode} implementation packages.
+     */
+    @Deprecated
     private static class SimpleNodeTO<T> extends AbstractNode<T> implements SimpleNode<T> {
 
         private final T value;
 
-        protected SimpleNodeTO(QName name, T val, CompositeNode parent) {
+        protected SimpleNodeTO(final QName name, final T val, final CompositeNode parent) {
             super(name, parent);
             value = val;
 
@@ -175,7 +188,7 @@ public final class Nodes {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.opendaylight.yangtools.yang.data.api.SimpleNode#asMutable()
          */
         @Override
@@ -183,12 +196,12 @@ public final class Nodes {
             // TODO Auto-generated method stub
             return null;
         }
-        
+
         @Override
-        public T setValue(T value) {
+        public T setValue(final T value) {
             return null;
         }
-        
+
         @Override
         public QName getKey() {
             return getNodeType();

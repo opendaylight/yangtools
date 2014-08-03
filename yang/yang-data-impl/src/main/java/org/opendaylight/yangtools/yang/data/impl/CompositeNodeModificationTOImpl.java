@@ -13,11 +13,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * @author michal.rehak
  *
+ * @deprecated Use one of the {@link NormalizedNode} implementations.
  */
+@Deprecated
 public class CompositeNodeModificationTOImpl extends CompositeNodeTOImpl {
     private static final long serialVersionUID = 1L;
 
@@ -27,8 +30,8 @@ public class CompositeNodeModificationTOImpl extends CompositeNodeTOImpl {
      * @param value
      * @param modifyAction
      */
-    public CompositeNodeModificationTOImpl(QName qname, CompositeNode parent,
-            List<Node<?>> value, ModifyAction modifyAction) {
+    public CompositeNodeModificationTOImpl(final QName qname, final CompositeNode parent,
+            final List<Node<?>> value, final ModifyAction modifyAction) {
         super(qname, parent, value);
         super.setModificationAction(modifyAction);
     }

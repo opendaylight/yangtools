@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 /**
  * Composite node represents a branch in the data tree, which could contain
@@ -28,12 +29,10 @@ import org.opendaylight.yangtools.yang.common.QName;
  * <li><b>anyxml</b></li>
  * </ul>
  *
- *
+ * @deprecated Use {@link NormalizedNodeContainer} instead.
  */
-public interface CompositeNode extends //
-    Node<List<Node<?>>>, //
-    NodeModification, //
-    Map<QName,List<Node<?>>> {
+@Deprecated
+public interface CompositeNode extends Node<List<Node<?>>>, NodeModification, Map<QName,List<Node<?>>> {
 
     /**
      * Returns a list of children as seens in resulting XML serialization

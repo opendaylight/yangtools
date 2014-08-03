@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.data.impl;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
  * @author michal.rehak
  *
  */
+@Deprecated
 public class NodeUtilsTest {
 
     private static final Logger LOG = LoggerFactory
