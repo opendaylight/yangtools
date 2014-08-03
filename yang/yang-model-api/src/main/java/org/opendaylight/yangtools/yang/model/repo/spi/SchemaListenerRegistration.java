@@ -7,9 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import org.opendaylight.yangtools.concepts.ObjectRegistration;
+import com.google.common.annotations.Beta;
 
-public interface SchemaTransformerRegistration extends ObjectRegistration<SchemaSourceTransformer<?, ?>> {
-    @Override
-    void close();
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
+
+/**
+ * Registration of a SchemaSourceListener.
+ */
+@Beta
+public interface SchemaListenerRegistration extends ListenerRegistration<SchemaSourceListener> {
+
 }

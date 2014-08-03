@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import com.google.common.annotations.Beta;
+
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -35,6 +37,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * Implementations of this interface expected to comply with the {@link Immutable}
  * contract.
  */
+@Beta
 public interface SchemaSourceRepresentation extends Identifiable<SourceIdentifier>, Immutable {
     /**
      * {@inheritDoc}

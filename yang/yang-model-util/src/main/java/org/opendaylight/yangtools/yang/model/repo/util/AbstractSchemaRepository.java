@@ -7,155 +7,122 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import com.google.common.base.Optional;
+import com.google.common.annotations.Beta;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import javax.annotation.concurrent.GuardedBy;
+
+import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
+import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
+import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformationException;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaTransformerRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractSchemaRepository implements SchemaRepository, SchemaSourceRegistry {
+/**
+ * Abstract base class for {@link SchemaRepository} implementations. It handles registration
+ * and lookup of schema sources, subclasses need only to provide their own
+ * {@link #createSchemaContextFactory(SchemaSourceFilter)} implementation.
+ */
+@Beta
+public abstract class AbstractSchemaRepository implements SchemaRepository, SchemaSourceRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSchemaRepository.class);
-    private static final Comparator<SchemaTransformerRegistration> TRANSFORMER_COST_COMPARATOR = new Comparator<SchemaTransformerRegistration>() {
-        @Override
-        public int compare(final SchemaTransformerRegistration o1, final SchemaTransformerRegistration o2) {
-            return o1.getInstance().getCost() - o2.getInstance().getCost();
-        }
-    };
-
-    /*
-     * Output-type -> transformer map. Our usage involves knowing the destination type,
-     * so we have to work backwards and find a transformer chain which will get us
-     * to that representation given our available sources.
-     */
-    private final Multimap<Class<? extends SchemaSourceRepresentation>, SchemaTransformerRegistration> transformers =
-            HashMultimap.create();
+    private static final ExceptionMapper<SchemaSourceException> FETCH_MAPPER = ReflectiveExceptionMapper.create("Schema source fetch", SchemaSourceException.class);
 
     /*
      * Source identifier -> representation -> provider map. We usually are looking for
-     * a specific representation a source.
+     * a specific representation of a source.
      */
-    private final Map<SourceIdentifier, Multimap<Class<?>, AbstractSchemaSourceRegistration>> sources = new HashMap<>();
+    @GuardedBy("this")
+    private final Map<SourceIdentifier, Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>>> sources = new HashMap<>();
 
+    /*
+     * Schema source listeners.
+     */
+    @GuardedBy("this")
+    private final Collection<SchemaListenerRegistration> listeners = new ArrayList<>();
 
-    private static final <T extends SchemaSourceRepresentation> ListenableFuture<Optional<T>> fetchSource(final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration> it) {
-        if (!it.hasNext()) {
-            return Futures.immediateFuture(Optional.<T>absent());
-        }
+    private static final <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> fetchSource(final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration<?>> it) {
+        final AbstractSchemaSourceRegistration<?> reg = it.next();
 
-        return Futures.transform(((SchemaSourceProvider<T>)it.next().getProvider()).getSource(id), new AsyncFunction<Optional<T>, Optional<T>>() {
+        @SuppressWarnings("unchecked")
+        final CheckedFuture<? extends T, SchemaSourceException> f = ((SchemaSourceProvider<T>)reg.getProvider()).getSource(id);
+        return Futures.makeChecked(Futures.withFallback(f, new FutureFallback<T>() {
             @Override
-            public ListenableFuture<Optional<T>> apply(final Optional<T> input) throws Exception {
-                if (input.isPresent()) {
-                    return Futures.immediateFuture(input);
-                } else {
+            public ListenableFuture<T> create(final Throwable t) throws SchemaSourceException {
+                LOG.debug("Failed to acquire source from {}", reg, t);
+
+                if (it.hasNext()) {
                     return fetchSource(id, it);
                 }
+
+                throw new MissingSchemaSourceException("All available providers exhausted");
             }
-        });
-    }
-
-    private <T extends SchemaSourceRepresentation> ListenableFuture<Optional<T>> transformSchemaSource(final SourceIdentifier id, final Class<T> representation) {
-        final Multimap<Class<?>, AbstractSchemaSourceRegistration> srcs = sources.get(id);
-        if (srcs.isEmpty()) {
-            return Futures.immediateFailedFuture(new SchemaSourceTransformationException(
-                    String.format("No providers producing a representation of %s registered", id)));
-        }
-
-        final Collection<SchemaTransformerRegistration> ts = transformers.get(representation);
-        if (ts.isEmpty()) {
-            return Futures.immediateFailedFuture(new SchemaSourceTransformationException(
-                    String.format("No transformers producing representation %s registered", representation)));
-        }
-
-        // Build up the candidate list
-        final List<SchemaTransformerRegistration> candidates = new ArrayList<>();
-        for (SchemaTransformerRegistration tr : ts) {
-            final SchemaSourceTransformer<?, ?> t = tr.getInstance();
-            final Class<?> i = t.getInputRepresentation();
-            if (srcs.containsKey(i)) {
-                candidates.add(tr);
-            } else {
-                LOG.debug("Provider for {} in {} not found, skipping transfomer {}", id, i, t);
-            }
-        }
-
-        if (candidates.isEmpty()) {
-            return Futures.immediateFailedFuture(new SchemaSourceTransformationException(
-                    String.format("No matching source/transformer pair for source %s representation %s found", id, representation)));
-        }
-
-        Collections.sort(candidates, TRANSFORMER_COST_COMPARATOR);
-        // return transform(candidates.iterator(), id);
-        return null;
-    }
-
-    /**
-     * Obtain a SchemaSource is selected representation
-     */
-    protected <T extends SchemaSourceRepresentation> ListenableFuture<Optional<T>> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
-        final Multimap<Class<?>, AbstractSchemaSourceRegistration> srcs = sources.get(id);
-        if (srcs == null) {
-            LOG.debug("No providers registered for source {}", id);
-            return Futures.immediateFuture(Optional.<T>absent());
-        }
-
-        final Collection<AbstractSchemaSourceRegistration> candidates = srcs.get(representation);
-        return Futures.transform(AbstractSchemaRepository.<T>fetchSource(id, candidates.iterator()), new AsyncFunction<Optional<T>, Optional<T>>() {
-            @Override
-            public ListenableFuture<Optional<T>> apply(final Optional<T> input) throws Exception {
-                if (input.isPresent()) {
-                    return Futures.immediateFuture(input);
-                }
-
-                return transformSchemaSource(id, representation);
-            }
-        });
+        }), FETCH_MAPPER);
     }
 
     @Override
-    public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    private void addSource(final SourceIdentifier id, final Class<?> rep, final AbstractSchemaSourceRegistration reg) {
-        Multimap<Class<?>, AbstractSchemaSourceRegistration> m = sources.get(id);
-        if (m == null) {
-            m = HashMultimap.create();
-            sources.put(id, m);
+    public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
+        final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
+        if (srcs == null) {
+            return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id));
         }
 
-        m.put(rep, reg);
+        final Iterator<AbstractSchemaSourceRegistration<?>> regs = srcs.get(representation).iterator();
+        if (!regs.hasNext()) {
+            return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(
+                    new MissingSchemaSourceException("No providers for source " + id + " representation " + representation + " available"));
+        }
+
+        return fetchSource(id, regs);
     }
 
-    private void removeSource(final SourceIdentifier id, final Class<?> rep, final SchemaSourceRegistration reg) {
-        final Multimap<Class<?>, AbstractSchemaSourceRegistration> m = sources.get(id);
+    private synchronized <T extends SchemaSourceRepresentation> void addSource(final PotentialSchemaSource<T> source, final AbstractSchemaSourceRegistration<T> reg) {
+        Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m = sources.get(source.getSourceIdentifier());
+        if (m == null) {
+            m = HashMultimap.create();
+            sources.put(source.getSourceIdentifier(), m);
+        }
+
+        m.put(source.getRepresentation(), reg);
+
+        final Collection<PotentialSchemaSource<?>> reps = Collections.<PotentialSchemaSource<?>>singleton(source);
+        for (SchemaListenerRegistration l : listeners) {
+            l.getInstance().schemaSourceRegistered(reps);
+        }
+    }
+
+    private synchronized <T extends SchemaSourceRepresentation> void removeSource(final PotentialSchemaSource<?> source, final SchemaSourceRegistration<?> reg) {
+        final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m = sources.get(source.getSourceIdentifier());
         if (m != null) {
-            m.remove(rep, reg);
+            m.remove(source.getRepresentation(), reg);
+
+            for (SchemaListenerRegistration l : listeners) {
+                l.getInstance().schemaSourceUnregistered(source);
+            }
+
             if (m.isEmpty()) {
                 sources.remove(m);
             }
@@ -163,29 +130,40 @@ public class AbstractSchemaRepository implements SchemaRepository, SchemaSourceR
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> SchemaSourceRegistration registerSchemaSource(
-            final SourceIdentifier identifier, final SchemaSourceProvider<? super T> provider, final Class<T> representation) {
-        final AbstractSchemaSourceRegistration ret = new AbstractSchemaSourceRegistration(identifier, provider) {
+    public <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(final SchemaSourceProvider<? super T> provider, final PotentialSchemaSource<T> source) {
+        final AbstractSchemaSourceRegistration<T> ret = new AbstractSchemaSourceRegistration<T>(provider, source) {
             @Override
             protected void removeRegistration() {
-                removeSource(identifier, representation, this);
+                removeSource(source, this);
             }
         };
 
-        addSource(identifier, representation, ret);
+        addSource(source, ret);
         return ret;
     }
 
     @Override
-    public SchemaTransformerRegistration registerSchemaSourceTransformer(final SchemaSourceTransformer<?, ?> transformer) {
-        final SchemaTransformerRegistration ret = new AbstractSchemaTransformerRegistration(transformer) {
+    public SchemaListenerRegistration registerSchemaSourceListener(final SchemaSourceListener listener) {
+        final SchemaListenerRegistration ret = new AbstractSchemaListenerRegistration(listener) {
             @Override
             protected void removeRegistration() {
-                transformers.remove(transformer.getOutputRepresentation(), this);
+                listeners.remove(this);
             }
         };
 
-        transformers.put(transformer.getOutputRepresentation(), ret);
+        synchronized (this) {
+            final Collection<PotentialSchemaSource<?>> col = new ArrayList<>();
+            for (Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m : sources.values()) {
+                for (AbstractSchemaSourceRegistration<?> r : m.values()) {
+                    col.add(r.getInstance());
+                }
+            }
+
+            // Notify first, so translator-type listeners, who react by registering a source
+            // do not cause infinite loop.
+            listener.schemaSourceRegistered(col);
+            listeners.add(ret);
+        }
         return ret;
     }
 }

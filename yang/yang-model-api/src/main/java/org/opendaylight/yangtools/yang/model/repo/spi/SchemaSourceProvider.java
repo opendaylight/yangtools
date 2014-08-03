@@ -8,9 +8,10 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.CheckedFuture;
 
+import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -29,10 +30,9 @@ public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
      *
      * <ul>
      * <li> If the source identifier specifies a revision, this method returns either
-     * a representation of that particular revision, or report the identifier as absent
-     * by returning {@link Optional#absent()}.
+     * a representation of that particular revision or throw {@link MissingSchemaSourceException}.
      * <li> If the source identifier does not specify a revision, this method returns
-     * the newest available revision, or {@link Optional#absent()}.
+     * the newest available revision, or throws {@link MissingSchemaSourceException}.
      *
      * In either case the returned representation is required to report a non-null
      * revision in the {@link SourceIdentifier} returned from
@@ -43,7 +43,7 @@ public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
      *
      * @param sourceIdentifier source identifier
      * @return source representation if supplied YANG module is available
-     *         {@link Optional#absent()} otherwise.
+     *
      */
-    ListenableFuture<Optional<T>> getSource(SourceIdentifier sourceIdentifier);
+    CheckedFuture<? extends T, SchemaSourceException> getSource(SourceIdentifier sourceIdentifier);
 }

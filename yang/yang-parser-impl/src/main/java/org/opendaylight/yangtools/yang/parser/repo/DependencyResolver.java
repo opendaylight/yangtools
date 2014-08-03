@@ -71,6 +71,8 @@ final class DependencyResolver {
         return rev == null && findWildcard(haystack, mi.getModuleName()) != null;
     }
 
+
+
     public static final DependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
         final Collection<SourceIdentifier> resolved = new ArrayList<>(depInfo.size());
         final Collection<SourceIdentifier> pending = new ArrayList<>(depInfo.keySet());

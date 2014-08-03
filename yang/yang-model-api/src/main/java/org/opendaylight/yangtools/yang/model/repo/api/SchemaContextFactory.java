@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.CheckedFuture;
 
 import java.util.Collection;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * based on a specification of what {@link SourceIdentifier}s are required
  * and dynamic recursive resolution.
  */
+@Beta
 public interface SchemaContextFactory {
     /**
      * Create a new schema context containing specified sources, pulling in

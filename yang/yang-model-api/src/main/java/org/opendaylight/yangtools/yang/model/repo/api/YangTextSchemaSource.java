@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
@@ -21,11 +25,18 @@ import org.opendaylight.yangtools.concepts.Delegator;
  * YANG text schema source representation. Exposes an RFC6020 text representation
  * as an {@link InputStream}.
  */
+@Beta
 public abstract class YangTextSchemaSource extends ByteSource implements SchemaSourceRepresentation {
     private final SourceIdentifier identifier;
 
     protected YangTextSchemaSource(final SourceIdentifier identifier) {
         this.identifier = Preconditions.checkNotNull(identifier);
+    }
+
+    public static SourceIdentifier identifierFromFilename(final String name) {
+        checkArgument(name.endsWith(".yang"), "Filename %s does not have a .yang extension", name);
+        // FIXME: add revision-awareness
+        return SourceIdentifier.create(name.substring(0, name.length() - 5), Optional.<String>absent());
     }
 
     /**

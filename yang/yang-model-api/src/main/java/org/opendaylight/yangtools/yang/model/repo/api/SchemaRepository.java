@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import com.google.common.annotations.Beta;
+import com.google.common.util.concurrent.CheckedFuture;
+
 import javax.annotation.Nonnull;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -15,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * Interface exposed by repository implementations. A schema repository is a logically
  * centralized place for model storage and creation of {@link SchemaContext} instances.
  */
+@Beta
 public interface SchemaRepository {
     /**
      * Instantiate a new {@link SchemaContextFactory}, which will filter available schema
@@ -26,4 +30,6 @@ public interface SchemaRepository {
      * @return A new schema context factory.
      */
     SchemaContextFactory createSchemaContextFactory(@Nonnull SchemaSourceFilter filter);
+
+    <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(@Nonnull SourceIdentifier id, @Nonnull Class<T> represetation);
 }

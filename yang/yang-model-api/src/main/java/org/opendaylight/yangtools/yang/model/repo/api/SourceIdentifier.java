@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
@@ -14,7 +15,6 @@ import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- *
  * YANG Schema source identifier
  *
  * Simple transfer object represents identifier of source for YANG schema (module or submodule),
@@ -34,9 +34,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <p>
  * (For further reference see: http://tools.ietf.org/html/rfc6020#section-5.2 and
  * http://tools.ietf.org/html/rfc6022#section-3.1 ).
- *
- *
  */
+@Beta
 public final class SourceIdentifier implements Identifier, Immutable {
     private static final long serialVersionUID = 1L;
     private final String revision;
