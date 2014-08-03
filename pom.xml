@@ -26,6 +26,7 @@
     <modules>
         <module>code-generator</module>
         <module>common</module>
+        <module>features</module>
         <module>integration-test</module>
         <module>model</module>
         <module>restconf</module>
