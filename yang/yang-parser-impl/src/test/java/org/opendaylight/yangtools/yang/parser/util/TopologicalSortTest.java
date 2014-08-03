@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.Sets;
+
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
@@ -61,10 +62,10 @@ public class TopologicalSortTest {
 
         List<Node> sorted = TopologicalSort.sort(nodes);
 
-        assertThat(sorted.get(0), is(node4));
-        assertThat(sorted.get(1), is(node2));
-        assertThat(sorted.get(2), is(node3));
-        assertThat(sorted.get(3), is(node1));
+        assertEquals(node4, sorted.get(0));
+        assertEquals(node2, sorted.get(1));
+        assertEquals(node3, sorted.get(2));
+        assertEquals(node1, sorted.get(3));
     }
 
 }

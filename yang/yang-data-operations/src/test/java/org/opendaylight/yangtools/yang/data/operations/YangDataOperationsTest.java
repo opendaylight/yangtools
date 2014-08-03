@@ -7,6 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.operations;
 
+import static org.junit.Assert.assertNull;
+
+import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,14 +58,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.io.Files;
-
 @RunWith(Parameterized.class)
 public class YangDataOperationsTest {
 
@@ -74,28 +76,28 @@ public class YangDataOperationsTest {
     @Parameterized.Parameters()
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-            // Container
-            { "/containerTest_createContainer" },
-            { "/containerTest_deleteContainer" },
-            { "/containerTest_innerContainerContainer" },
-            { "/containerTest_innerLeavesBaseOperationsContainer" },
-            { "/containerTest_noneContainer" },
-            { "/containerTest_removeContainer"},
-            { "/containerTest_replaceContainer"},
-            { "/containerTest_choiceActualModificationSameCase"},
-            { "/containerTest_choiceActualModificationDifferentCases"},
-            { "/containerTest_choiceActualOneCaseModificationOtherCase"},
-//            LeafList
-            { "/leafListTest" },
-            // List
-            { "/listTest" },
-            // Additional
-            {"/none_NoChange"},
-            {"/listTest_alterInnerValue"}
+                // Container
+                { "/containerTest_createContainer" },
+                { "/containerTest_deleteContainer" },
+                { "/containerTest_innerContainerContainer" },
+                { "/containerTest_innerLeavesBaseOperationsContainer" },
+                { "/containerTest_noneContainer" },
+                { "/containerTest_removeContainer"},
+                { "/containerTest_replaceContainer"},
+                { "/containerTest_choiceActualModificationSameCase"},
+                { "/containerTest_choiceActualModificationDifferentCases"},
+                { "/containerTest_choiceActualOneCaseModificationOtherCase"},
+                //            LeafList
+                { "/leafListTest" },
+                // List
+                { "/listTest" },
+                // Additional
+                {"/none_NoChange"},
+                {"/listTest_alterInnerValue"}
         });
     }
 
-    public YangDataOperationsTest(String testDir) throws Exception {
+    public YangDataOperationsTest(final String testDir) throws Exception {
         SchemaContext schema = parseTestSchema();
         containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
         this.testDirName = testDir;
@@ -127,13 +129,13 @@ public class YangDataOperationsTest {
         if (result.isPresent()) {
             verifyModificationResult(result, expectedResult);
         } else {
-            junit.framework.Assert.assertNull("Result of modification is empty node, result xml should not be present "
+            assertNull("Result of modification is empty node, result xml should not be present "
                     + expectedResultXmlPath, getClass().getResourceAsStream(expectedResultXmlPath));
         }
 
     }
 
-    private ModifyAction loadModifyAction(String path) throws Exception {
+    private ModifyAction loadModifyAction(final String path) throws Exception {
         URL resource = getClass().getResource(path);
         if (resource == null) {
             return ModifyAction.MERGE;
@@ -142,7 +144,7 @@ public class YangDataOperationsTest {
         return ModifyAction.fromXmlValue(Files.toString(new File(resource.toURI()), Charsets.UTF_8).trim());
     }
 
-    private void verifyModificationResult(Optional<ContainerNode> result, Optional<ContainerNode> expectedResult)
+    private void verifyModificationResult(final Optional<ContainerNode> result, final Optional<ContainerNode> expectedResult)
             throws UnsupportedDataTypeException {
         Assert.assertEquals(
                 String.format(
@@ -151,7 +153,7 @@ public class YangDataOperationsTest {
                         toString(toDom(expectedResult.get()))), expectedResult.get(), result.get());
     }
 
-    private Element toDom(ContainerNode container) {
+    private Element toDom(final ContainerNode container) {
         Iterable<Element> a =
                 DomFromNormalizedNodeSerializerFactory.getInstance(newDocument(), DomUtils.defaultValueCodecProvider())
                 .getContainerNodeSerializer().serialize(containerNode, container);
@@ -166,7 +168,7 @@ public class YangDataOperationsTest {
         }
     }
 
-    private Optional<ContainerNode> loadXmlToCompositeNode(String xmlPath) throws IOException, SAXException {
+    private Optional<ContainerNode> loadXmlToCompositeNode(final String xmlPath) throws IOException, SAXException {
         InputStream resourceAsStream = getClass().getResourceAsStream(xmlPath);
         if (resourceAsStream == null) {
             return Optional.absent();
@@ -189,21 +191,22 @@ public class YangDataOperationsTest {
 
         return Lists.newArrayList(Collections2.transform(Lists.newArrayList("/schemas/test.yang"),
                 new Function<String, InputStream>() {
-                    @Override
-                    public InputStream apply(String input) {
-                        InputStream resourceAsStream = getClass().getResourceAsStream(input);
-                        Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
-                        return resourceAsStream;
-                    }
-                }));
+            @Override
+            public InputStream apply(final String input) {
+                InputStream resourceAsStream = getClass().getResourceAsStream(input);
+                Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
+                return resourceAsStream;
+            }
+        }));
     }
 
-    DataSchemaNode getSchemaNode(SchemaContext context, String moduleName, String childNodeName) {
+    DataSchemaNode getSchemaNode(final SchemaContext context, final String moduleName, final String childNodeName) {
         for (Module module : context.getModules()) {
             if (module.getName().equals(moduleName)) {
                 for (DataSchemaNode dataSchemaNode : module.getChildNodes()) {
-                    if (dataSchemaNode.getQName().getLocalName().equals(childNodeName))
+                    if (dataSchemaNode.getQName().getLocalName().equals(childNodeName)) {
                         return dataSchemaNode;
+                    }
                 }
             }
         }
@@ -222,7 +225,7 @@ public class YangDataOperationsTest {
         BUILDERFACTORY = factory;
     }
 
-    private Document readXmlToDocument(InputStream xmlContent) throws IOException, SAXException {
+    private Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
         DocumentBuilder dBuilder;
         try {
             dBuilder = BUILDERFACTORY.newDocumentBuilder();
@@ -235,7 +238,7 @@ public class YangDataOperationsTest {
         return doc;
     }
 
-    public static String toString(Element xml) {
+    public static String toString(final Element xml) {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");

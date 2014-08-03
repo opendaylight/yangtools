@@ -1,7 +1,9 @@
 package org.opendaylight.yangtools.it.yang.runtime.tests;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import com.google.common.base.Optional;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
@@ -24,8 +26,6 @@ import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-
-import com.google.common.base.Optional;
 
 public class RuntimeCodecAugmentationWithGroupingsAndCasesTest {
 
@@ -63,12 +63,12 @@ public class RuntimeCodecAugmentationWithGroupingsAndCasesTest {
     public void testSerialization() {
 
         ExtWithGroupingAugmentations caseData = new ExtWithGroupingAugmentationsBuilder() //
-                .setGroupingData(new GroupingDataBuilder() //
-                        .addAugmentation(InUsesAugment.class, new InUsesAugmentBuilder() //
-                                .setExtAumentation("InUses") //
-                                .build()) //
-                        .build()) //
-                .build();
+        .setGroupingData(new GroupingDataBuilder() //
+        .addAugmentation(InUsesAugment.class, new InUsesAugmentBuilder() //
+        .setExtAumentation("InUses") //
+        .build()) //
+        .build()) //
+        .build();
 
         Entry<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier, CompositeNode> result = mappingService
                 .toDataDom(new SimpleEntry(GROUPING_AUGMENTATIONS_PATH, caseData));

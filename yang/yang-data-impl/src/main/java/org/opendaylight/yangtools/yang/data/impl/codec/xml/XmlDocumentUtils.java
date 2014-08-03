@@ -17,8 +17,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.xml.parsers.DocumentBuilder;
@@ -38,7 +43,19 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -406,14 +423,14 @@ public class XmlDocumentUtils {
      * returns <code>null</code>
      */
     public static CompositeNode rpcReplyToDomNodes(final Document document, final QName rpcName,
-        final SchemaContext context) {
+            final SchemaContext context) {
         Preconditions.checkNotNull(document);
         Preconditions.checkNotNull(rpcName);
         Preconditions.checkNotNull(context);
 
         Optional<RpcDefinition> rpcDefinition = findRpc(rpcName, context);
         if (rpcDefinition.isPresent()) {
-             RpcDefinition rpc = rpcDefinition.get();
+            RpcDefinition rpc = rpcDefinition.get();
 
             final Collection<DataSchemaNode> outputNode = rpc.getOutput().getChildNodes();
             final Element rpcReplyElement = document.getDocumentElement();
@@ -422,7 +439,7 @@ public class XmlDocumentUtils {
             if (RPC_REPLY_QNAME.equals(partialQName)) {
                 final List<Node<?>> domNodes = toDomNodes(rpcReplyElement, Optional.fromNullable(outputNode), context);
                 List<Node<?>> rpcOutNodes = Collections.<Node<?>>singletonList(ImmutableCompositeNode.create(
-                    rpc.getOutput().getQName(), domNodes));
+                        rpc.getOutput().getQName(), domNodes));
                 return ImmutableCompositeNode.create(rpcName, rpcOutNodes);
             }
         }
@@ -437,7 +454,7 @@ public class XmlDocumentUtils {
      * @param context Schema Context
      * @return Rpc Definition if is present within given Schema Context, otherwise returns Optional.absent().
      */
-    private static Optional<RpcDefinition> findRpc(QName rpc, SchemaContext context) {
+    private static Optional<RpcDefinition> findRpc(final QName rpc, final SchemaContext context) {
         Preconditions.checkNotNull(rpc);
         Preconditions.checkNotNull(context);
         for (final RpcDefinition rpcDefinition : context.getOperations()) {

@@ -1,7 +1,18 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
 import com.google.common.base.Optional;
-import junit.framework.Assert;
+
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -15,11 +26,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-
-import static org.junit.Assert.*;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.*;
 
 
 public class TreeNodeUtilsTest {
@@ -48,7 +54,7 @@ public class TreeNodeUtilsTest {
                     .withChild(mapEntry(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_ONE_NAME)) //
                     .withChild(mapEntry(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_TWO_NAME)) //
                     .build()) //
-            .build();
+                    .build();
 
     private SchemaContext schemaContext;
     private RootModificationApplyOperation rootOper;
@@ -74,8 +80,8 @@ public class TreeNodeUtilsTest {
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(
                         mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
-                                .withChild(mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
-                                .withChild(BAR_NODE).build()).build();
+                        .withChild(mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+                        .withChild(BAR_NODE).build()).build();
     }
 
     private static <T> T assertPresentAndType(final Optional<?> potential, final Class<T> type) {
@@ -103,7 +109,7 @@ public class TreeNodeUtilsTest {
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
         Optional<TreeNode> node = TreeNodeUtils.findNode(rootNode, outerList1InvalidPath);
-        Assert.assertFalse(node.isPresent());
+        assertFalse(node.isPresent());
     }
 
     @Test
@@ -117,7 +123,7 @@ public class TreeNodeUtilsTest {
         } catch (IllegalArgumentException e) {
             fail("Illegal argument exception was thrown and should not have been" + e.getMessage());
         }
-        Assert.assertNotNull(foundNode);
+        assertNotNull(foundNode);
     }
 
     @Test
@@ -144,7 +150,7 @@ public class TreeNodeUtilsTest {
         Optional<TreeNode> expectedNode = TreeNodeUtils.findNode(rootNode, TWO_TWO_PATH);
         assertPresentAndType(expectedNode, TreeNode.class);
         Map.Entry<YangInstanceIdentifier, TreeNode> actualNode = TreeNodeUtils.findClosest(rootNode, TWO_TWO_PATH);
-        Assert.assertEquals("Expected node and actual node are not the same", expectedNode.get(), actualNode.getValue());
+        assertEquals("Expected node and actual node are not the same", expectedNode.get(), actualNode.getValue());
     }
 
     @Test
@@ -162,7 +168,7 @@ public class TreeNodeUtilsTest {
         Optional<TreeNode> expectedNode = TreeNodeUtils.findNode(rootNode, outerListInnerListPath);
         assertPresentAndType(expectedNode, TreeNode.class);
         Map.Entry<YangInstanceIdentifier, TreeNode> actualNode = TreeNodeUtils.findClosest(rootNode, twoTwoInvalidPath);
-        Assert.assertEquals("Expected node and actual node are not the same", expectedNode.get(), actualNode.getValue());
+        assertEquals("Expected node and actual node are not the same", expectedNode.get(), actualNode.getValue());
     }
 
     @Test
@@ -182,6 +188,6 @@ public class TreeNodeUtilsTest {
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         Optional<TreeNode> node = TreeNodeUtils.getChild(Optional.fromNullable(rootNode),
                 TestModel.OUTER_LIST_PATH.getLastPathArgument());
-        Assert.assertFalse(node.isPresent());
+        assertFalse(node.isPresent());
     }
 }

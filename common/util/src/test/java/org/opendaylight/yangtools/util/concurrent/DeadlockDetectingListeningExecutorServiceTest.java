@@ -8,7 +8,20 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.util.concurrent.AsyncNotifyingListeningExecutorServiceTest.testListenerCallback;
+import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_CALLABLE;
+import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE;
+import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE_WITH_RESULT;
+
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -21,19 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.base.Function;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
-import static org.opendaylight.yangtools.util.concurrent.AsyncNotifyingListeningExecutorServiceTest.testListenerCallback;
-import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
-import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_CALLABLE;
-import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE;
-import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE_WITH_RESULT;
+import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
 
 /**
  * Unit tests for DeadlockDetectingListeningExecutorService.
@@ -48,14 +49,14 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
     static final InitialInvoker SUBMIT = new InitialInvoker() {
         @Override
-        public void invokeExecutor( ListeningExecutorService executor, Runnable task ) {
+        public void invokeExecutor( final ListeningExecutorService executor, final Runnable task ) {
             executor.submit( task );
         }
     };
 
     static final InitialInvoker EXECUTE = new InitialInvoker() {
         @Override
-        public void invokeExecutor( ListeningExecutorService executor, Runnable task ) {
+        public void invokeExecutor( final ListeningExecutorService executor, final Runnable task ) {
             executor.execute( task );
         }
     };
@@ -66,7 +67,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
     public static Function<Void, Exception> DEADLOCK_EXECUTOR_FUNCTION = new Function<Void, Exception>() {
         @Override
-        public Exception apply( Void notUsed ) {
+        public Exception apply( final Void notUsed ) {
             return new TestDeadlockException();
         }
     };
@@ -136,8 +137,8 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         testNonBlockingSubmitOnExecutorThread( EXECUTE, SUBMIT_CALLABLE );
     }
 
-    void testNonBlockingSubmitOnExecutorThread( InitialInvoker initialInvoker,
-                                                final Invoker invoker ) throws Throwable {
+    void testNonBlockingSubmitOnExecutorThread( final InitialInvoker initialInvoker,
+            final Invoker invoker ) throws Throwable {
 
         final AtomicReference<Throwable> caughtEx = new AtomicReference<>();
         final CountDownLatch futureCompletedLatch = new CountDownLatch( 1 );
@@ -149,12 +150,12 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
                 Futures.addCallback( invoker.invokeExecutor( executor, null ), new FutureCallback() {
                     @Override
-                    public void onSuccess( Object result ) {
+                    public void onSuccess( final Object result ) {
                         futureCompletedLatch.countDown();
                     }
 
                     @Override
-                    public void onFailure( Throwable t ) {
+                    public void onFailure( final Throwable t ) {
                         caughtEx.set( t );
                         futureCompletedLatch.countDown();
                     }
@@ -166,7 +167,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         initialInvoker.invokeExecutor( executor, task );
 
         assertTrue( "Task did not complete - executor likely deadlocked",
-                    futureCompletedLatch.await( 5, TimeUnit.SECONDS ) );
+                futureCompletedLatch.await( 5, TimeUnit.SECONDS ) );
 
         if( caughtEx.get() != null ) {
             throw caughtEx.get();
@@ -185,8 +186,8 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         testBlockingSubmitOnExecutorThread( EXECUTE, SUBMIT_CALLABLE );
     }
 
-    void testBlockingSubmitOnExecutorThread( InitialInvoker initialInvoker,
-                                             final Invoker invoker ) throws Exception {
+    void testBlockingSubmitOnExecutorThread( final InitialInvoker initialInvoker,
+            final Invoker invoker ) throws Exception {
 
         final AtomicReference<Throwable> caughtEx = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch( 1 );
@@ -211,7 +212,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         initialInvoker.invokeExecutor( executor, task );
 
         assertTrue( "Task did not complete - executor likely deadlocked",
-                    latch.await( 5, TimeUnit.SECONDS ) );
+                latch.await( 5, TimeUnit.SECONDS ) );
 
         assertNotNull( "Expected exception thrown", caughtEx.get() );
         assertEquals( "Caught exception type", TestDeadlockException.class, caughtEx.get().getClass() );
@@ -227,7 +228,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         executor = new DeadlockDetectingListeningExecutorService(
                 Executors.newSingleThreadExecutor(
                         new ThreadFactoryBuilder().setNameFormat( "SingleThread" ).build() ),
-                DEADLOCK_EXECUTOR_FUNCTION, listenerExecutor );
+                        DEADLOCK_EXECUTOR_FUNCTION, listenerExecutor );
 
         try {
             testListenerCallback( executor, SUBMIT_CALLABLE, listenerThreadPrefix );

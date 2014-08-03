@@ -7,14 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.Sets;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -54,13 +57,12 @@ public class ModuleDependencySortTest {
         assertDependencyGraph(ModuleDependencySort.createModuleGraph(ModuleOrModuleBuilder.fromAll(
                 Collections.<Module>emptySet(), Arrays.asList(builders))));
 
-        @SuppressWarnings("unchecked")
-        Matcher<String> cOrD = anyOf(is(c.getName()), is(d.getName()));
+        Matcher<String> cOrD = anyOf(equalTo(c.getName()), equalTo(d.getName()));
 
         assertThat(l.get(0).getName(), cOrD);
         assertThat(l.get(1).getName(), cOrD);
-        assertThat(l.get(2).getName(), is(b.getName()));
-        assertThat(l.get(3).getName(), is(a.getName()));
+        assertEquals(b.getName(), l.get(2).getName());
+        assertEquals(a.getName(), l.get(3).getName());
     }
 
     @Test
@@ -79,9 +81,9 @@ public class ModuleDependencySortTest {
 
         List<Module> l = ModuleDependencySort.sort(builders);
 
-        assertThat(l.get(0).getName(), is(c.getName()));
-        assertThat(l.get(1).getName(), is(b.getName()));
-        assertThat(l.get(2).getName(), is(a.getName()));
+        assertEquals(c.getName(), l.get(0).getName());
+        assertEquals(b.getName(), l.get(1).getName());
+        assertEquals(a.getName(), l.get(2).getName());
     }
 
     @Test(expected = YangValidationException.class)
@@ -163,8 +165,8 @@ public class ModuleDependencySortTest {
     }
 
     private void assertEdgeCount(final Set<Edge> inEdges, final int i, final Set<Edge> outEdges, final int j) {
-        assertThat(inEdges.size(), is(i));
-        assertThat(outEdges.size(), is(j));
+        assertEquals(i, inEdges.size());
+        assertEquals(j, outEdges.size());
     }
 
     private void mockDependency(final ModuleBuilder a, final ModuleBuilder b) {

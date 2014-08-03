@@ -8,15 +8,20 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.AbstractMap;
 import java.util.Map;
+
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-import junit.framework.Assert;
+
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
@@ -51,7 +56,7 @@ public class XmlStreamUtilsTest {
         final String xmlAsString = new String(out.toByteArray());
 
         final Map<String, String> mappedPrefixes = mapPrefixed(randomPrefix.getPrefixes());
-        Assert.assertEquals(2, mappedPrefixes.size());
+        assertEquals(2, mappedPrefixes.size());
         final String randomPrefixValue = mappedPrefixes.get("namespace2");
 
         final String expectedXmlAsString = "<element xmlns:prefix=\"namespace\" prefix:attr=\"value\" xmlns:" + randomPrefixValue + "=\"namespace2\" " + randomPrefixValue + ":attr=\"value\"></element>";
@@ -62,7 +67,7 @@ public class XmlStreamUtilsTest {
         final Diff diff = XMLUnit.compareXML(control, test);
 
         final boolean identical = diff.identical();
-        Assert.assertTrue("Xml differs: " + diff.toString(), identical);
+        assertTrue("Xml differs: " + diff.toString(), identical);
     }
 
     private Map<String, String> mapPrefixed(final Iterable<Map.Entry<URI, String>> prefixes) {

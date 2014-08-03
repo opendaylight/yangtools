@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -161,8 +161,8 @@ public class YangModelValidationModuleTest {
         valid.enterYang_version_stmt(ctx);
     }
 
-    private static Revision_stmtContext mockModuleWithRevision(String date,
-            String moduleName) {
+    private static Revision_stmtContext mockModuleWithRevision(final String date,
+            final String moduleName) {
         Revision_stmtContext mockedRev = YangModelValidationTest.mockStatement(
                 Revision_stmtContext.class, date);
         Revision_stmtsContext revs = YangModelValidationTest.mockStatement(
