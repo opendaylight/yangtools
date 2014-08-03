@@ -44,6 +44,15 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
     }
 
     /**
+     * Return the exception class produced by this instance.
+     *
+     * @return Exception class.
+     */
+    protected final Class<X> getExceptionType() {
+        return exceptionType;
+    }
+
+    /**
      * Invoked to create a new exception instance of the specified type.
      *
      * @param message the message for the new exception.
