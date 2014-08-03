@@ -8,9 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Preconditions;
+
 import java.util.Collections;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -49,7 +52,8 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public IdentityrefType build() {
-        return IdentityrefType.create(schemaPath, baseIdentity.build());
+        IdentitySchemaNode localBaseIdentity = baseIdentity != null ? baseIdentity.build() : null;
+        return IdentityrefType.create(schemaPath, localBaseIdentity);
     }
 
     public String getBaseString() {
@@ -112,7 +116,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public QName getQName() {
-        return null;
+        return qname;
     }
 
     @Override

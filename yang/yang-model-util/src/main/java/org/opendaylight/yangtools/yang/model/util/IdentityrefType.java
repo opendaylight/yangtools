@@ -46,7 +46,7 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
 
     private IdentityrefType(final SchemaPath path, final IdentitySchemaNode baseIdentity) {
         this.path = Preconditions.checkNotNull(path, "Path must be specified");
-        this.identity = Preconditions.checkNotNull(baseIdentity,"baseIdentity must be specified.");
+        this.identity = baseIdentity;
     }
 
     /**
