@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_0aeb9878",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeWriterFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_cac29084",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_6abd8401",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeWriterFactory.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2014-08-04T07:15:25Z",
       "side": 1,
       "message": "a bit of explanation would be useful -- why do we need two methods?",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_aa05cc46",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeWriterFactory.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_6abd8401",
       "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_6afb4447",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_8ab80812",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_2a3bfc9d",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2014-08-04T07:15:25Z",
       "side": 1,
       "message": "please add a message. too",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ca005036",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_2a3bfc9d",
       "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_8af6c85b",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_4a3e808d",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_0ae078f8",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/StreamWriterGenerator.java",
         "patchSetId": 5
@@ -98,6 +188,24 @@
       "writtenOn": "2014-08-04T07:15:25Z",
       "side": 1,
       "message": "class documentation",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_aa8cecda",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/StreamWriterGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_0ae078f8",
       "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_0aa2b84a",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/StreamWriterGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_aaeaacd8",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_cae5b009",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/spi/AbstractSource.java",
         "patchSetId": 5
@@ -132,6 +258,24 @@
       "writtenOn": "2014-08-04T07:15:25Z",
       "side": 1,
       "message": "leaks mutable collection. what is this used for?",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_ca87f0b3",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/spi/AbstractSource.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_cae5b009",
       "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_8a8d68d5",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/spi/StaticConstantDefinition.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_8aeb28db",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_6af024c9",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/spi/StaticConstantDefinition.java",
         "patchSetId": 5
@@ -172,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_0ab95878",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/spi/StaticConstantDefinition.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_6af024c9",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_2abe9cd5",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingCodecContext.java",
         "patchSetId": 5
@@ -183,6 +363,24 @@
       "writtenOn": "2014-08-04T07:15:25Z",
       "side": 1,
       "message": "null?",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_aab38c96",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingCodecContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_2abe9cd5",
       "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -257,6 +455,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_aa614c06",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/CodecContextNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_2a8c5c35",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_4a8f602a",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/ValueTypeCodec.java",
         "patchSetId": 5
@@ -268,6 +484,24 @@
       "writtenOn": "2014-08-04T07:15:25Z",
       "side": 1,
       "message": "static factory method and a LoadingCache, unless there is some other plan",
+      "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_854a3953",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/ValueTypeCodec.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-04T12:28:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_4a8f602a",
       "revId": "792fa1d7966a263459a42fc850315002c81e8ee9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
