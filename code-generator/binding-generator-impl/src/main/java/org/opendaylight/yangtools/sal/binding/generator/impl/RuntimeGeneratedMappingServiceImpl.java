@@ -213,8 +213,15 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
     private CompositeNode toCompositeNodeImpl(final DataObject object) {
         Class<? extends DataContainer> cls = object.getImplementedInterface();
         waitForSchema(cls);
-        DataContainerCodec<DataObject> codec = (DataContainerCodec<DataObject>) registry.getCodecForDataObject(cls);
-        return codec.serialize(new ValueWithQName<DataObject>(null, object));
+
+        if (Augmentation.class.isAssignableFrom(cls)) {
+            AugmentationCodec codec = registry.getCodecForAugmentation((Class) cls);
+            return codec.serialize(new ValueWithQName<DataObject>(codec.getAugmentationQName(), object));
+        } else {
+            DataContainerCodec<DataObject> codec =
+                    (DataContainerCodec<DataObject>) registry.getCodecForDataObject(cls);
+            return codec.serialize(new ValueWithQName<DataObject>(null, object));
+        }
     }
 
     private CompositeNode toCompositeNodeImpl(final org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier identifier,
