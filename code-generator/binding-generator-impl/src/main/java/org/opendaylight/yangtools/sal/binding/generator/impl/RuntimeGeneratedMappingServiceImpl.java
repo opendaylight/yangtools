@@ -119,7 +119,7 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
         binding.setListener(registry);
 
         // if (ctx !== null) {
-        // listenerRegistration = ctx.registerService(SchemaServiceListener,
+        // listenerRegistration = ctx.registerService(SchemaContextListener,
         // this, new Hashtable<String, String>());
         // }
     }
