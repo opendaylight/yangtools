@@ -21,12 +21,20 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         super();
     }
 
+    protected ImmutableChoiceNodeBuilder(final int sizeHint) {
+        super(sizeHint);
+    }
+
     protected ImmutableChoiceNodeBuilder(final ImmutableChoiceNode node) {
         super(node);
     }
 
     public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> create() {
         return new ImmutableChoiceNodeBuilder();
+    }
+
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> create(final int sizeHint) {
+        return new ImmutableChoiceNodeBuilder(sizeHint);
     }
 
     public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> create(final ChoiceNode node) {
@@ -42,12 +50,10 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         return new ImmutableChoiceNode(getNodeIdentifier(), buildValue());
     }
 
-    private static final class ImmutableChoiceNode
-            extends AbstractImmutableDataContainerNode<YangInstanceIdentifier.NodeIdentifier>
-            implements ChoiceNode {
+    private static final class ImmutableChoiceNode extends AbstractImmutableDataContainerNode<YangInstanceIdentifier.NodeIdentifier> implements ChoiceNode {
 
         ImmutableChoiceNode(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
-                            final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children) {
+                final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children) {
             super(children, nodeIdentifier);
         }
     }

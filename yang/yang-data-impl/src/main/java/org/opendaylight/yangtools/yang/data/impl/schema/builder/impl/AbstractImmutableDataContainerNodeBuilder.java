@@ -19,8 +19,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
-        implements DataContainerNodeBuilder<I, R> {
+abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceIdentifier.PathArgument, R extends DataContainerNode<I>> implements DataContainerNodeBuilder<I, R> {
 
     private Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value;
     private I nodeIdentifier;
@@ -35,6 +34,11 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
 
     protected AbstractImmutableDataContainerNodeBuilder() {
         this.value = new HashMap<>();
+        this.dirty = false;
+    }
+
+    protected AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
+        this.value = new HashMap<>(sizeHint);
         this.dirty = false;
     }
 
