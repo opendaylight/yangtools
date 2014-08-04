@@ -44,7 +44,31 @@
     </properties>
 
     <build>
+      <testResources>
+        <testResource>
+          <directory>${basedir}/src/test/resources</directory>
+          <filtering>true</filtering>
+        </testResource>
+      </testResources>
         <plugins>
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-testResources</id>
+                <phase>process-test-resources</phase>
+                <goals>
+                  <goal>testResources</goal>
+                </goals>
+                <configuration>
+                  <useDefaultDelimiters>false</useDefaultDelimiters>
+                  <delimiters>
+                    <delimiter>@</delimiter>
+                  </delimiters>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.16</version>
