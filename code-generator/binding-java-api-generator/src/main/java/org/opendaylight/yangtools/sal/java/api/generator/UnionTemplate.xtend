@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.sal.java.api.generator
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import java.beans.ConstructorProperties
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
+import static org.opendaylight.yangtools.binding.generator.util.Types.*
 
 /**
  * Template for generating JAVA class. 
@@ -77,6 +78,15 @@ class UnionTemplate extends ClassTemplate {
                                 «ELSEIF propRet instanceof GeneratedTransferObject && (propRet as GeneratedTransferObject).unionType»
                                     ««« union type
                                     this.«other.fieldName» = «property.fieldName».getValue();
+                                «ELSEIF propRet instanceof GeneratedTransferObject // Is it a GeneratedTransferObject
+                                        && (propRet as GeneratedTransferObject).typedef  // Is it a typedef
+                                        && (propRet as GeneratedTransferObject).properties != null 
+                                        && !(propRet as GeneratedTransferObject).properties.empty 
+                                        && ((propRet as GeneratedTransferObject).properties.size == 1) 
+                                        && (propRet as GeneratedTransferObject).properties.get(0).name.equals("value") 
+                                        && BOOLEAN.equals((propRet as GeneratedTransferObject).properties.get(0).returnType)» // And the property value is of type boolean
+                                    ««« generated boolean typedef
+                                    this.«other.fieldName» = «property.fieldName».isValue().toString().toCharArray();
                                 «ELSE»
                                     ««« generated type
                                     this.«other.fieldName» = «property.fieldName».getValue().toString().toCharArray();
