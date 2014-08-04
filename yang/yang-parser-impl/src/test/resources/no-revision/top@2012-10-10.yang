@@ -1,0 +1,16 @@
+module top {
+
+    yang-version 1;
+    namespace "urn:simple.demo.test1";
+    prefix "top";
+
+    import imported {
+        prefix "imp";
+    }
+
+    revision 2012-10-10 {}
+
+    organization "opendaylight";
+    contact "WILL-BE-DEFINED-LATER";
+
+}

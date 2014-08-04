@@ -58,7 +58,7 @@ public abstract class YangModelDependencyInfo {
             final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
         this.name = name;
         this.formattedRevision = formattedRevision;
-        this.revision = QName.parseRevision(formattedRevision);
+        this.revision = formattedRevision == null ? null : QName.parseRevision(formattedRevision);
         this.moduleImports = imports;
         this.submoduleIncludes = includes;
         this.dependencies = ImmutableSet.<ModuleImport> builder() //

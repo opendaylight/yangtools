@@ -1,0 +1,27 @@
+module module-without-revision {
+
+    yang-version 1;
+    namespace "urn:simple.demo.test1";
+    prefix "mwr";
+
+    import ietf-inet-types {
+        prefix "inet";
+        revision-date 2010-09-24;
+    }
+
+    organization "opendaylight";
+    contact "WILL-BE-DEFINED-LATER";
+
+    typedef dscp-ext {
+        type inet:dscp {
+            range "min..max";
+        }
+    }
+
+    leaf id {
+        type inet:port-number {
+            range "0..65535";
+        }
+    }
+
+}

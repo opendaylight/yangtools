@@ -37,6 +37,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @Beta
 public final class SourceIdentifier implements Identifier, Immutable {
+
+    /**
+     * Default revision for sources without specified revision.
+     * Marks the source as oldest.
+     */
+    public static final String NOT_PRESENT_FORMATTED_REVISION = "0000-00-00";
+
     private static final long serialVersionUID = 1L;
     private final String revision;
     private final String name;
@@ -48,11 +55,34 @@ public final class SourceIdentifier implements Identifier, Immutable {
      * @param name Name of schema
      * @param formattedRevision Revision of source in format YYYY-mm-dd
      */
-    public SourceIdentifier(final String name, final Optional<String> formattedRevision) {
+    public SourceIdentifier(final String name, final String formattedRevision) {
         super();
         this.name = Preconditions.checkNotNull(name);
-        this.revision = formattedRevision.orNull();
+        this.revision = Preconditions.checkNotNull(formattedRevision);
     }
+
+    /**
+     *
+     * Creates new YANG Schema source identifier.
+     *
+     * @param name Name of schema
+     * @param formattedRevision Revision of source in format YYYY-mm-dd. If not present, default value will be used.
+     */
+    public SourceIdentifier(final String name, final Optional<String> formattedRevision) {
+        this(name, formattedRevision.or(NOT_PRESENT_FORMATTED_REVISION));
+    }
+
+    /**
+     *
+     * Creates new YANG Schema source identifier for sources without revision.
+     * {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as default revision.
+     *
+     * @param name Name of schema
+     */
+    public SourceIdentifier(final String name) {
+        this(name, NOT_PRESENT_FORMATTED_REVISION);
+    }
+
 
     /**
      * Returns model name

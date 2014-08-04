@@ -8,11 +8,8 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
 import javax.annotation.Nonnull;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -71,10 +68,17 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * @return A new representation instance.
      * @throws YangSyntaxErrorException if we fail to extract dependency information.
      */
-    public static final ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree) throws YangSyntaxErrorException {
+    public static ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
-        final SourceIdentifier id = new SourceIdentifier(depInfo.getName(), Optional.of(depInfo.getFormattedRevision()));
+        final SourceIdentifier id = getSourceId(depInfo);
         return new ASTSchemaSource(id, tree, depInfo, null);
+    }
+
+    private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
+        final String name = depInfo.getName();
+        return depInfo.getFormattedRevision() == null
+                ? new SourceIdentifier(name)
+                : new SourceIdentifier(name, depInfo.getFormattedRevision());
     }
 
     /**
@@ -89,9 +93,9 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * @deprecated Migration only, will be removed as soon as the migration is completed.
      */
     @Deprecated
-    public static final ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
+    public static ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
-        final SourceIdentifier id = new SourceIdentifier(depInfo.getName(), Optional.of(depInfo.getFormattedRevision()));
+        final SourceIdentifier id = getSourceId(depInfo);
         return new ASTSchemaSource(id, tree, depInfo, text);
     }
 
