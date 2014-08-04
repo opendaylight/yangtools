@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>test-parent</artifactId>
-        <version>0.6.2-SNAPSHOT</version>
+        <version>@project.parent.version@</version>
     </parent>
 
     <artifactId>yang-root-not-exist</artifactId>
