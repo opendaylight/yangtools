@@ -158,7 +158,7 @@ public class BindingRuntimeContext implements Immutable {
      * @return Schema node, from which class was generated.
      */
     public DataSchemaNode getSchemaDefinition(final Class<?> cls) {
-        Preconditions.checkArgument(Augmentation.class.isAssignableFrom(cls));
+        Preconditions.checkArgument(!Augmentation.class.isAssignableFrom(cls));
         return (DataSchemaNode) typeToDefiningSchema.get(referencedType(cls));
     }
 
