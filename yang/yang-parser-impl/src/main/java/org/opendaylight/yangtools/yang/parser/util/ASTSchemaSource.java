@@ -71,10 +71,17 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * @return A new representation instance.
      * @throws YangSyntaxErrorException if we fail to extract dependency information.
      */
-    public static final ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree) throws YangSyntaxErrorException {
+    public static ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
-        final SourceIdentifier id = new SourceIdentifier(depInfo.getName(), Optional.of(depInfo.getFormattedRevision()));
+        final SourceIdentifier id = getSourceId(depInfo);
         return new ASTSchemaSource(id, tree, depInfo, null);
+    }
+
+    private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
+        final String name = depInfo.getName();
+        final String formattedRevision =
+                depInfo.getFormattedRevision() == null ? YangModelDependencyInfo.NOT_PRESENT_FORMATTED_REVISION : depInfo.getFormattedRevision();
+        return new SourceIdentifier(name, Optional.of(formattedRevision));
     }
 
     /**
@@ -89,9 +96,9 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * @deprecated Migration only, will be removed as soon as the migration is completed.
      */
     @Deprecated
-    public static final ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
+    public static ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
-        final SourceIdentifier id = new SourceIdentifier(depInfo.getName(), Optional.of(depInfo.getFormattedRevision()));
+        final SourceIdentifier id = getSourceId(depInfo);
         return new ASTSchemaSource(id, tree, depInfo, text);
     }
 

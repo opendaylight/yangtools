@@ -47,6 +47,8 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
  */
 public abstract class YangModelDependencyInfo {
 
+    public static final String NOT_PRESENT_FORMATTED_REVISION = "0000-00-00";
+
     private final String name;
     private final String formattedRevision;
     private final Date revision;
@@ -58,7 +60,7 @@ public abstract class YangModelDependencyInfo {
             final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
         this.name = name;
         this.formattedRevision = formattedRevision;
-        this.revision = QName.parseRevision(formattedRevision);
+        this.revision = formattedRevision == null ? null : QName.parseRevision(formattedRevision);
         this.moduleImports = imports;
         this.submoduleIncludes = includes;
         this.dependencies = ImmutableSet.<ModuleImport> builder() //
