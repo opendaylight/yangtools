@@ -83,7 +83,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @param localName
      *            YANG schema identifier
      *
+     * @deprecated Prefix storage in QNames is deprecated.
      */
+    @Deprecated
     public QName(final URI namespace, final Date revision, final String prefix, final String localName) {
         this(QNameModule.create(namespace, revision), prefix, localName);
     }
@@ -183,7 +185,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * Returns locally defined prefix assigned to local name
      *
      * @return locally defined prefix assigned to local name
+     *
+     * @deprecated Prefix storage in QNames is deprecated.
      */
+    @Deprecated
     public String getPrefix() {
         return prefix;
     }
@@ -241,7 +246,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @param localName
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
+     *
+     * @deprecated Prefix storage in QNames is deprecated.
      */
+    @Deprecated
     public static QName create(final QNameModule module, final String prefix, final String localName) {
         if (module == null) {
             throw new NullPointerException("module may not be null");
