@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import org.junit.Test;
@@ -24,8 +25,7 @@ public class YangModelDependencyInfoTest {
         assertEquals("2010-09-24", info.getFormattedRevision());
         assertNotNull(info.getDependencies());
     }
-    
-    
+
     @Test
     public void testModuleWithImports() {
         InputStream stream = getClass().getResourceAsStream("/parse-methods/dependencies/m2@2013-30-09.yang");
@@ -37,4 +37,12 @@ public class YangModelDependencyInfoTest {
         assertEquals(2, info.getDependencies().size());
     }
 
+    @Test
+    public void testModuleWithoutRevision() {
+        InputStream stream = getClass().getResourceAsStream("/no-revision/module-without-revision.yang");
+        YangModelDependencyInfo info = YangModelDependencyInfo.fromInputStream(stream);
+        assertNotNull(info);
+        assertEquals("module-without-revision", info.getName());
+        assertNull(info.getFormattedRevision());
+    }
 }

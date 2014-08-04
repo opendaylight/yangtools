@@ -73,7 +73,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      */
     public static final ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
-        final SourceIdentifier id = new SourceIdentifier(depInfo.getName(), Optional.of(depInfo.getFormattedRevision()));
+        final SourceIdentifier id = new SourceIdentifier(depInfo.getName(), Optional.fromNullable(depInfo.getFormattedRevision()));
         return new ASTSchemaSource(id, tree, depInfo, null);
     }
 
@@ -91,7 +91,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     @Deprecated
     public static final ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
-        final SourceIdentifier id = new SourceIdentifier(depInfo.getName(), Optional.of(depInfo.getFormattedRevision()));
+        final SourceIdentifier id = new SourceIdentifier(depInfo.getName(), Optional.fromNullable(depInfo.getFormattedRevision()));
         return new ASTSchemaSource(id, tree, depInfo, text);
     }
 

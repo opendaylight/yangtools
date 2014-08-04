@@ -52,7 +52,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         InputStream yangStream = getInputStream(source);
         YangModelDependencyInfo modelInfo = YangModelDependencyInfo.fromInputStream(yangStream);
         SourceIdentifier identifier = SourceIdentifier.create(modelInfo.getName(),
-                Optional.of(modelInfo.getFormattedRevision()));
+                Optional.fromNullable(modelInfo.getFormattedRevision()));
         SourceContext sourceContext = new SourceContext(source, identifier, modelInfo);
         availableSources.putIfAbsent(identifier, sourceContext);
         return sourceContext;
