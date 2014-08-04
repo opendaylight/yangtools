@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_8a524833",
+        "filename": "code-generator/binding-type-provider/src/main/java/org/opendaylight/yangtools/sal/binding/yang/types/TypeProviderImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 889,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-04T12:11:22Z",
+      "side": 1,
+      "message": "missing space.",
+      "revId": "507dc935c2d5d9c46513c373caf6861991469b91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_2a353cf7",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/IdentityrefType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-04T12:11:22Z",
+      "side": 1,
+      "message": "why are we removing this requirement? RFC6020 is quite strict about this",
+      "revId": "507dc935c2d5d9c46513c373caf6861991469b91",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
