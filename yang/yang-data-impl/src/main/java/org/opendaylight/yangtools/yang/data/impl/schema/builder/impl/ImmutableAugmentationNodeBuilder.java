@@ -18,14 +18,17 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableAugmentationNodeBuilder
-        extends AbstractImmutableDataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> {
+public class ImmutableAugmentationNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> {
 
     protected ImmutableAugmentationNodeBuilder() {
         super();
     }
 
-    public ImmutableAugmentationNodeBuilder(ImmutableAugmentationNode node) {
+    protected ImmutableAugmentationNodeBuilder(final int sizeHint) {
+        super(sizeHint);
+    }
+
+    public ImmutableAugmentationNodeBuilder(final ImmutableAugmentationNode node) {
         super(node);
     }
 
@@ -33,7 +36,11 @@ public class ImmutableAugmentationNodeBuilder
         return new ImmutableAugmentationNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(AugmentationNode node) {
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(final int sizeHint) {
+        return new ImmutableAugmentationNodeBuilder(sizeHint);
+    }
+
+    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(final AugmentationNode node) {
         if (!(node instanceof ImmutableAugmentationNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -62,9 +69,7 @@ public class ImmutableAugmentationNodeBuilder
         return new ImmutableAugmentationNode(getNodeIdentifier(), buildValue());
     }
 
-    private static final class ImmutableAugmentationNode
-            extends AbstractImmutableDataContainerNode<YangInstanceIdentifier.AugmentationIdentifier>
-            implements AugmentationNode {
+    private static final class ImmutableAugmentationNode extends AbstractImmutableDataContainerNode<YangInstanceIdentifier.AugmentationIdentifier> implements AugmentationNode {
 
         ImmutableAugmentationNode(final YangInstanceIdentifier.AugmentationIdentifier nodeIdentifier, final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children) {
             super(children, nodeIdentifier);

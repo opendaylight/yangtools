@@ -16,11 +16,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
-public class ImmutableUnkeyedListEntryNodeBuilder extends
-        AbstractImmutableDataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> {
+public class ImmutableUnkeyedListEntryNodeBuilder extends AbstractImmutableDataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> {
 
     protected ImmutableUnkeyedListEntryNodeBuilder() {
         super();
+    }
+
+    protected ImmutableUnkeyedListEntryNodeBuilder(final int sizeHint) {
+        super(sizeHint);
     }
 
     protected ImmutableUnkeyedListEntryNodeBuilder(final ImmutableUnkeyedListEntryNode node) {
@@ -29,6 +32,10 @@ public class ImmutableUnkeyedListEntryNodeBuilder extends
 
     public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> create() {
         return new ImmutableUnkeyedListEntryNodeBuilder();
+    }
+
+    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> create(final int sizeHint) {
+        return new ImmutableUnkeyedListEntryNodeBuilder(sizeHint);
     }
 
     public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> create(final UnkeyedListEntryNode node) {
@@ -43,8 +50,7 @@ public class ImmutableUnkeyedListEntryNodeBuilder extends
         return new ImmutableUnkeyedListEntryNode(getNodeIdentifier(), buildValue(), getAttributes());
     }
 
-    protected static final class ImmutableUnkeyedListEntryNode extends
-            AbstractImmutableDataContainerAttrNode<YangInstanceIdentifier.NodeIdentifier> implements UnkeyedListEntryNode {
+    protected static final class ImmutableUnkeyedListEntryNode extends AbstractImmutableDataContainerAttrNode<YangInstanceIdentifier.NodeIdentifier> implements UnkeyedListEntryNode {
 
         ImmutableUnkeyedListEntryNode(
                 final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,

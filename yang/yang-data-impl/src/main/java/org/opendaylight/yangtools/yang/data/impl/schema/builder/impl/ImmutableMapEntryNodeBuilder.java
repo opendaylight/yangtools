@@ -20,13 +20,18 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
-public class ImmutableMapEntryNodeBuilder
-        extends AbstractImmutableDataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> {
+public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> {
 
     protected final Map<QName, YangInstanceIdentifier.PathArgument> childrenQNamesToPaths;
 
     protected ImmutableMapEntryNodeBuilder() {
+        super();
         this.childrenQNamesToPaths = new LinkedHashMap<>();
+    }
+
+    protected ImmutableMapEntryNodeBuilder(final int sizeHint) {
+        super(sizeHint);
+        this.childrenQNamesToPaths = new LinkedHashMap<>(sizeHint);
     }
 
     protected ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
@@ -37,6 +42,10 @@ public class ImmutableMapEntryNodeBuilder
 
     public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> create() {
         return new ImmutableMapEntryNodeBuilder();
+    }
+
+    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> create(final int sizeHint) {
+        return new ImmutableMapEntryNodeBuilder(sizeHint);
     }
 
     public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> create(final MapEntryNode node) {
@@ -67,7 +76,7 @@ public class ImmutableMapEntryNodeBuilder
         return super.withValue(value);
     }
 
-    private static boolean isAugment(YangInstanceIdentifier.PathArgument identifier) {
+    private static boolean isAugment(final YangInstanceIdentifier.PathArgument identifier) {
         return identifier instanceof YangInstanceIdentifier.AugmentationIdentifier;
     }
 
@@ -97,7 +106,7 @@ public class ImmutableMapEntryNodeBuilder
     private static final class ImmutableMapEntryNode extends AbstractImmutableDataContainerAttrNode<YangInstanceIdentifier.NodeIdentifierWithPredicates> implements MapEntryNode {
 
         ImmutableMapEntryNode(final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifier,
-                              final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children, final Map<QName, String> attributes) {
+                final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children, final Map<QName, String> attributes) {
             super(children, nodeIdentifier, attributes);
         }
     }
