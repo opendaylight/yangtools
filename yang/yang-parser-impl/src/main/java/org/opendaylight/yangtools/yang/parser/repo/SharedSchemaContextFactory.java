@@ -117,7 +117,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         // Request all sources be loaded
         final ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(Collections2.transform(requiredSources, requestSources));
 
-        // Assemble sources into a schemacontext
+        // Assemble sources into a schema context
         final ListenableFuture<SchemaContext> cf = Futures.transform(sf, assembleSources);
 
         // Populate cache when successful

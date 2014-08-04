@@ -78,7 +78,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
                     return fetchSource(id, it);
                 }
 
-                throw new MissingSchemaSourceException("All available providers exhausted");
+                throw new MissingSchemaSourceException("All available providers exhausted", t);
             }
         }), FETCH_MAPPER);
     }

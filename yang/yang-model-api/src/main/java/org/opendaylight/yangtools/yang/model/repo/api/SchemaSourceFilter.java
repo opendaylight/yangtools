@@ -13,7 +13,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Collections;
 
-/*
+/**
  * A filter of schema sources. This is used to restrict which sources representation
  * instances are allowed to participate in construction of a schema context. This
  * allows, for example, to create an non-shared island, or require the sources to
