@@ -25,11 +25,14 @@ import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.MutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 /**
  * @author michal.rehak
  *
+ * @deprecated Use one of the {@link NormalizedNodeContainer} implementations.
  */
+@Deprecated
 public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implements CompositeNode, Serializable {
 
     private static final long serialVersionUID = 100L;

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 
 /**
@@ -16,7 +17,10 @@ import org.opendaylight.yangtools.concepts.Mutable;
  *
  *
  * @param <T>
+ *
+ * @deprecated Use {@link NormalizedNode} instead.
  */
+@Deprecated
 public interface MutableNode<T> extends Node<T>,Mutable {
 
     /**

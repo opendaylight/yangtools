@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.NodeModification;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -47,7 +48,9 @@ import org.w3c.dom.Element;
 /**
  * @author michal.rehak
  *
+ * @deprecated Use {@link NormalizedNodeUtils} instead.
  */
+@Deprecated
 public abstract class NodeUtils {
     private static final Joiner DOT_JOINER = Joiner.on(".");
     private static final Logger LOG = LoggerFactory.getLogger(NodeUtils.class);

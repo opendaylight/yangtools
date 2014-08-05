@@ -26,12 +26,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author michal.rehak
- *
  */
+@Deprecated
 public class MyNodeBuilder extends BuilderSupport {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(MyNodeBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyNodeBuilder.class);
 
     private URI qnNamespace;
     private final String qnPrefix;
@@ -39,33 +38,33 @@ public class MyNodeBuilder extends BuilderSupport {
 
     private CompositeNode rootNode;
 
-	/**
-	 * @param baseQName
-	 */
-	private MyNodeBuilder(final QName baseQName) {
-		qnNamespace = baseQName.getNamespace();
-		qnPrefix = baseQName.getPrefix();
-		qnRevision = baseQName.getRevision();
+    /**
+     * @param baseQName
+     */
+    private MyNodeBuilder(final QName baseQName) {
+        qnNamespace = baseQName.getNamespace();
+        qnPrefix = baseQName.getPrefix();
+        qnRevision = baseQName.getRevision();
     }
 
-	/**
-	 * @return initialized singleton instance
-	 */
-	public static MyNodeBuilder newInstance() {
-    	QName qName = null;
-    	try {
-			qName = new QName(
-	                new URI("urn:opendaylight:controller:network"),
-	                new Date(42), "yang-data-impl-groovyTest_", "node");
+    /**
+     * @return initialized singleton instance
+     */
+    public static MyNodeBuilder newInstance() {
+        QName qName = null;
+        try {
+            qName = new QName(
+                    new URI("urn:opendaylight:controller:network"),
+                    new Date(42), "yang-data-impl-groovyTest_", "node");
         } catch (URISyntaxException e) {
-	        LOG.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
         }
         return new MyNodeBuilder(qName);
     }
 
     @Override
     protected void setParent(final Object parent, final Object child) {
-    	// do nothing
+        // do nothing
         if (child instanceof AbstractNodeTO<?>) {
             ((AbstractNodeTO<?>) child).setParent((CompositeNode) parent);
         } else {
@@ -138,53 +137,53 @@ public class MyNodeBuilder extends BuilderSupport {
     }
 
     private QName createQName(final Object localName) {
-    	LOG.debug("qname for: "+localName);
-	    return new QName(qnNamespace, qnRevision, qnPrefix, (String) localName);
+        LOG.debug("qname for: "+localName);
+        return new QName(qnNamespace, qnRevision, qnPrefix, (String) localName);
     }
 
-	protected CompositeNode getCurrentNode() {
-	    if (getCurrent() != null) {
-	        if (getCurrent() instanceof CompositeNode) {
-	            return (CompositeNode) getCurrent();
+    protected CompositeNode getCurrentNode() {
+        if (getCurrent() != null) {
+            if (getCurrent() instanceof CompositeNode) {
+                return (CompositeNode) getCurrent();
 
-	        } else {
-	            throw new IllegalAccessError("current node is not of type CompositeNode, but: "
-	                +getCurrent().getClass().getSimpleName());
-	        }
-	    }
+            } else {
+                throw new IllegalAccessError("current node is not of type CompositeNode, but: "
+                        +getCurrent().getClass().getSimpleName());
+            }
+        }
 
-	    return null;
+        return null;
     }
 
-	@Override
-	protected Object postNodeCompletion(final Object parent, final Object node) {
-	    Node<?> nodeRevisited = (Node<?>) node;
-	    LOG.debug("postNodeCompletion at: \n  "+ nodeRevisited+"\n  "+parent);
-	    if (nodeRevisited instanceof MutableCompositeNode) {
-	        MutableCompositeNode mutant = (MutableCompositeNode) nodeRevisited;
-	        if (mutant.getValue().isEmpty()) {
-	            LOG.error("why is it having empty value? -- " + mutant);
-	        }
-	        nodeRevisited = NodeFactory.createImmutableCompositeNode(
-	                mutant.getNodeType(), mutant.getParent(), mutant.getValue(), mutant.getModificationAction());
-	        NodeUtils.fixChildrenRelation((CompositeNode) nodeRevisited);
+    @Override
+    protected Object postNodeCompletion(final Object parent, final Object node) {
+        Node<?> nodeRevisited = (Node<?>) node;
+        LOG.debug("postNodeCompletion at: \n  "+ nodeRevisited+"\n  "+parent);
+        if (nodeRevisited instanceof MutableCompositeNode) {
+            MutableCompositeNode mutant = (MutableCompositeNode) nodeRevisited;
+            if (mutant.getValue().isEmpty()) {
+                LOG.error("why is it having empty value? -- " + mutant);
+            }
+            nodeRevisited = NodeFactory.createImmutableCompositeNode(
+                    mutant.getNodeType(), mutant.getParent(), mutant.getValue(), mutant.getModificationAction());
+            NodeUtils.fixChildrenRelation((CompositeNode) nodeRevisited);
 
-	        if (parent == null) {
-	            rootNode = (CompositeNode) nodeRevisited;
-	        } else {
-	            NodeUtils.fixParentRelation(nodeRevisited);
-	            nodeRevisited.getParent().getValue().remove(mutant);
-	        }
-	    }
+            if (parent == null) {
+                rootNode = (CompositeNode) nodeRevisited;
+            } else {
+                NodeUtils.fixParentRelation(nodeRevisited);
+                nodeRevisited.getParent().getValue().remove(mutant);
+            }
+        }
 
 
-	    return nodeRevisited;
-	}
+        return nodeRevisited;
+    }
 
-	/**
-	 * @return tree root
-	 */
-	public CompositeNode getRootNode() {
+    /**
+     * @return tree root
+     */
+    public CompositeNode getRootNode() {
         return rootNode;
     }
 }

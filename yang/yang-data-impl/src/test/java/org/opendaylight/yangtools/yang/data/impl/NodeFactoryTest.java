@@ -30,6 +30,7 @@ import org.w3c.dom.Document;
  * @author michal.rehak
  *
  */
+@Deprecated
 public class NodeFactoryTest {
 
     private QName qName;
