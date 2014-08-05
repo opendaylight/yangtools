@@ -11,14 +11,16 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
-import org.opendaylight.yangtools.binding.data.codec.gen.impl.AbstractStreamWriterGenerator;
+import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -35,11 +37,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 
 public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerRegistry, BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
 
-    private final AbstractStreamWriterGenerator generator;
+    private final DataObjectSerializerGenerator generator;
     private final LoadingCache<Class<? extends DataObject>, DataObjectSerializer> serializers;
     private BindingCodecContext codecContext;
 
-    public BindingNormalizedNodeCodecRegistry(final AbstractStreamWriterGenerator generator) {
+    public BindingNormalizedNodeCodecRegistry(final DataObjectSerializerGenerator generator) {
         this.generator = Preconditions.checkNotNull(generator);
         this.serializers = CacheBuilder.newBuilder().weakKeys().build(new GeneratorLoader());
     }
