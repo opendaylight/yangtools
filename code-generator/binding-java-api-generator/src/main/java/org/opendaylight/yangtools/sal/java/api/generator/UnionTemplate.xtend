@@ -52,7 +52,11 @@ class UnionTemplate extends ClassTemplate {
                     «type.name» defInst = «type.name»Builder.getDefaultInstance(defVal);
                     «FOR other : finalProperties»
                         «IF other.name.equals("value")»
+                            «IF other.returnType.importedName.contains("[]")»
+                            this.«other.fieldName» = Arrays.copyOf(«other.fieldName», «other.fieldName».length);
+                            «ELSE»
                             this.«other.fieldName» = «other.fieldName»;
+                            «ENDIF»
                         «ELSE»
                             this.«other.fieldName» = defInst.«other.fieldName»;
                         «ENDIF»
@@ -121,7 +125,11 @@ class UnionTemplate extends ClassTemplate {
             «ENDIF»
             «IF !properties.empty»
                 «FOR p : properties»
+                    «IF p.returnType.importedName.contains("[]")»
+                    this.«p.fieldName» = Arrays.copyOf(source.«p.fieldName», source.«p.fieldName».length);
+                    «ELSE»
                     this.«p.fieldName» = source.«p.fieldName»;
+                    «ENDIF»
                 «ENDFOR»
             «ENDIF»
         }
