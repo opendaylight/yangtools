@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_16298136",
+        "filename": "common/features/src/main/resources/features.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 19
+      },
+      "writtenOn": "2014-08-05T12:48:50Z",
+      "side": 1,
+      "message": "If you add yang-data-composite-node here as dependencies, this need to be added also as explicit dependencies in the common/features/pom.xml else the reactor will not order properly the dependencies and in the feature created the artifact coming from a previous build or from the maven repository will be inserted, causing heisenbugs.",
+      "revId": "7a07578e98d0d1c87da5ea0283b4fbb6f7d585e0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
