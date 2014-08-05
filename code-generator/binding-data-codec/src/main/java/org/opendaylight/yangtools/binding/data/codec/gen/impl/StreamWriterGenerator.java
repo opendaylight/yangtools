@@ -76,7 +76,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
         public abstract CharSequence emitStartEvent();
 
         @Override
-        protected CharSequence getStaticSerializeBody() {
+        protected CharSequence getSerializerBody() {
             StringBuilder b = new StringBuilder();
             b.append("{\n");
             b.append(statement(assign(DataObjectSerializerRegistry.class.getName(), REGISTRY, "$1")));
