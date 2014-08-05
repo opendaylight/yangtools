@@ -30,7 +30,7 @@
                 <version>${maven.surefire.version}</version>
                 <configuration>
                     <argLine>-Dlog4j.configuration=log4j-test.xml
-                        -Xmx1500m</argLine>
+                        -Xmx1500m ${jacoco.agent.ut.arg}</argLine>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
