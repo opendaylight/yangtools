@@ -28,19 +28,40 @@ public final class TreeNodeFactory {
      * @param version data node version
      * @return new AbstractTreeNode instance, covering the data tree provided
      */
-    public static final TreeNode createTreeNode(final NormalizedNode<?, ?> data, final Version version) {
+    public static final TreeNode createTreeNodeRecursively(final NormalizedNode<?, ?> data, final Version version) {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
             NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
-            return ContainerNode.create(version, container);
+            return ContainerNode.createNormalizedNodeRecursively(version, container);
 
         }
         if (data instanceof OrderedNodeContainer<?>) {
             @SuppressWarnings("unchecked")
             OrderedNodeContainer<NormalizedNode<?, ?>> container = (OrderedNodeContainer<NormalizedNode<?, ?>>) data;
-            return ContainerNode.create(version, container);
+            return ContainerNode.createOrderedNodeRecursively(version, container);
         }
 
+        return new ValueNode(data, version);
+    }
+
+    /**
+     * Create a new AbstractTreeNode from a data node.
+     *
+     * @param data data node
+     * @param version data node version
+     * @return new AbstractTreeNode instance, covering the data tree provided
+     */
+    public static final TreeNode createTreeNode(final NormalizedNode<?, ?> data, final Version version) {
+        if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
+            @SuppressWarnings("unchecked")
+            NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
+            return ContainerNode.createNormalizedNode(version, container);
+        }
+        if (data instanceof OrderedNodeContainer<?>) {
+            @SuppressWarnings("unchecked")
+            OrderedNodeContainer<NormalizedNode<?, ?>> container = (OrderedNodeContainer<NormalizedNode<?, ?>>) data;
+            return ContainerNode.createOrderedNode(version, container);
+        }
         return new ValueNode(data, version);
     }
 }

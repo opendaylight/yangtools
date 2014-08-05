@@ -41,7 +41,18 @@ final class ContainerNode extends AbstractTreeNode {
 
     @Override
     public Optional<TreeNode> getChild(final PathArgument key) {
-        return Optional.fromNullable(children.get(key));
+        Optional<TreeNode> explicitNode = Optional.fromNullable(children.get(key));
+        if (explicitNode.isPresent()) {
+            return explicitNode;
+        }
+        final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> castedData = (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) getData();
+        Optional<NormalizedNode<?, ?>> value = castedData.getChild(key);
+        if (value.isPresent()) {
+            //FIXME: consider caching created Tree Nodes.
+            //We are safe to not to cache them, since written Tree Nodes are in read only snapshot.
+            return Optional.of(TreeNodeFactory.createTreeNode(value.get(), getVersion()));
+        }
+        return Optional.absent();
     }
 
     @Override
@@ -60,6 +71,26 @@ final class ContainerNode extends AbstractTreeNode {
             this.children = MapAdaptor.getDefaultInstance().takeSnapshot(parent.children);
             this.subtreeVersion = parent.getSubtreeVersion();
             this.version = parent.getVersion();
+            materializeChildVersion();
+        }
+
+        /**
+         * Traverse whole data tree and instantiate children for each data node. Set version of each MutableTreeNode
+         * accordingly to version in data node.
+         *
+         * Use this method if TreeNode is lazy initialized.
+         */
+        private void materializeChildVersion() {
+            Preconditions.checkState(data instanceof NormalizedNodeContainer);
+            NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> castedData = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
+
+            for(NormalizedNode<?, ?> childData : castedData.getValue()) {
+                PathArgument id = childData.getIdentifier();
+
+                if (!children.containsKey(id)) {
+                    children.put(id, TreeNodeFactory.createTreeNode(childData, version));
+                }
+            }
         }
 
         @Override
@@ -97,22 +128,69 @@ final class ContainerNode extends AbstractTreeNode {
         }
     }
 
-    private static ContainerNode create(final Version version, final NormalizedNode<?, ?> data,
-            final Iterable<NormalizedNode<?, ?>> children) {
+    private static ContainerNode createNodeRecursively(final Version version, final NormalizedNode<?, ?> data,
+        final Iterable<NormalizedNode<?, ?>> children) {
 
         final Map<PathArgument, TreeNode> map = new HashMap<>();
         for (NormalizedNode<?, ?> child : children) {
-            map.put(child.getIdentifier(), TreeNodeFactory.createTreeNode(child, version));
+            map.put(child.getIdentifier(), TreeNodeFactory.createTreeNodeRecursively(child, version));
         }
 
         return new ContainerNode(data, version, map, version);
     }
 
-    public static ContainerNode create(final Version version, final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
-        return create(version, container, container.getValue());
+    public static ContainerNode createNormalizedNodeRecursively(final Version version,
+        final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
+        return createNodeRecursively(version, container, container.getValue());
     }
 
-    public static ContainerNode create(final Version version, final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
-        return create(version, container, container.getValue());
+    public static ContainerNode createOrderedNodeRecursively(final Version version,
+        final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
+        return createNodeRecursively(version, container, container.getValue());
+    }
+
+    public static ContainerNode expandNormalizedNode(final Version version,
+        final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
+        return createExpandedNode(version, container, container.getValue());
+    }
+
+    public static ContainerNode expandOrderedNode(final Version version,
+        final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
+        return createExpandedNode(version, container, container.getValue());
+    }
+
+    private static ContainerNode createExpandedNode(final Version version, final NormalizedNode<?, ?> data,
+        final Iterable<NormalizedNode<?, ?>> children) {
+        final Map<PathArgument, TreeNode> map = new HashMap<>();
+
+        for (final NormalizedNode<?, ?> child : children) {
+            if (child instanceof NormalizedNodeContainer<?, ?, ?>) {
+                @SuppressWarnings("unchecked")
+                NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) child;
+                map.put(child.getIdentifier(), ContainerNode.createNormalizedNode(version, container));
+            } else if (child instanceof OrderedNodeContainer<?>) {
+                @SuppressWarnings("unchecked")
+                OrderedNodeContainer<NormalizedNode<?, ?>> container = (OrderedNodeContainer<NormalizedNode<?, ?>>) child;
+                map.put(child.getIdentifier(), ContainerNode.createOrderedNode(version, container));
+            } else {
+                map.put(child.getIdentifier(), new ValueNode(child, version));
+            }
+        }
+        return new ContainerNode(data, version, map, version);
+    }
+
+    public static ContainerNode createNormalizedNode(final Version version,
+        final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
+        return createNode(version, container);
+    }
+
+    public static ContainerNode createOrderedNode(final Version version,
+        final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
+        return createNode(version, container);
+    }
+
+    private static ContainerNode createNode(final Version version, final NormalizedNode<?, ?> data) {
+        final Map<PathArgument, TreeNode> map = new HashMap<>();
+        return new ContainerNode(data, version, map, version);
     }
 }
