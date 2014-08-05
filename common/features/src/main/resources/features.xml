@@ -33,7 +33,6 @@
         <bundle>mvn:commons-io/commons-io/${commons.io.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-impl/${project.version}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/yang-data-json/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-operations/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-util/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-api/${project.version}</bundle>
