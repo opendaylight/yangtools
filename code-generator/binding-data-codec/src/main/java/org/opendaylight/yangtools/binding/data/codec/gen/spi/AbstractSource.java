@@ -9,9 +9,11 @@ package org.opendaylight.yangtools.binding.data.codec.gen.spi;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
 public abstract class AbstractSource {
@@ -30,7 +32,7 @@ public abstract class AbstractSource {
         StringBuilder builder = new StringBuilder();
         if (object != null) {
             builder.append(object);
-            builder.append(".");
+            builder.append('.');
         }
         builder.append(methodName);
         builder.append('(');
@@ -88,8 +90,7 @@ public abstract class AbstractSource {
         StringBuilder builder = new StringBuilder();
         builder.append("((");
         builder.append(type);
-        builder.append(')');
-        builder.append(' ');
+        builder.append(") ");
         builder.append(value);
         builder.append(')');
         return builder;
