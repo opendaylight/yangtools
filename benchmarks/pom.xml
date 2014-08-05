@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>yangtools-aggregator</artifactId>
+    <groupId>org.opendaylight.yangtools</groupId>
+    <version>0.6.2-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.opendaylight.yangtools</groupId>
+  <artifactId>benchmarks</artifactId>
+
+  <properties>
+    <yangtools.version>0.6.2-SNAPSHOT</yangtools.version>
+    <yang.maven.plugin.version>0.6.2-SNAPSHOT</yang.maven.plugin.version>
+    <java.source.version>1.7</java.source.version>
+    <java.target.version>1.7</java.target.version>
+    <jmh.version>0.9.7</jmh.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>yang-data-impl</artifactId>
+      <version>${yangtools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>yang-parser-impl</artifactId>
+      <version>${yangtools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>${jmh.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>${jmh.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.source.version}</source>
+          <target>${java.source.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

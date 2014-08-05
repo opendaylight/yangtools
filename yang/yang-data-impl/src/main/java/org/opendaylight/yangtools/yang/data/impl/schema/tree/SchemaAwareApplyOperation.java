@@ -9,19 +9,24 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -158,7 +163,18 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         }
     }
 
-    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
+    /**
+     * Checks if write operation can be applied to current TreeNode.
+     * The operation checks if original tree node to which the modification is going to be applied exists and if
+     * current node in TreeNode structure exists.
+     *
+     * @param path Path from current node in TreeNode
+     * @param modification modification to apply
+     * @param current current node in TreeNode for modification to apply
+     * @throws DataValidationFailedException
+     */
+    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+        final Optional<TreeNode> current) throws DataValidationFailedException {
         Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
@@ -249,12 +265,65 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         @Override
         protected TreeNode applyWrite(final ModifiedNode modification,
                 final Optional<TreeNode> currentMeta, final Version version) {
+            final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
+            final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
+
+            if (Iterables.isEmpty(modification.getChildren())) {
+                return newValueMeta;
+            }
+
             /*
-             * FIXME: BUG-1258: This is inefficient: it needlessly creates index nodes for the entire subtree.
-             *        We can determine the depth into which metadata need to be created from the modification
-	     *        -- if it does not have children, no need to bother with metadata.
+             * This is where things get interesting. The user has performed a write and
+             * then she applied some more modifications to it. So we need to make sense
+             * of that an apply the operations on top of the written value. We could have
+             * done it during the write, but this operation is potentially expensive, so
+             * we have left it out of the fast path.
+             *
+             * As it turns out, once we materialize the written data, we can share the
+             * code path with the subtree change. So let's create an unsealed TreeNode
+             * and run the common parts on it -- which end with the node being sealed.
              */
-            return TreeNodeFactory.createTreeNode(modification.getWrittenValue(), version);
+            final MutableTreeNode mutable = newValueMeta.mutable();
+            mutable.setSubtreeVersion(version);
+
+            @SuppressWarnings("rawtypes")
+            final NormalizedNodeContainerBuilder dataBuilder = ImmutableUnkeyedListEntryNodeBuilder
+                .create((UnkeyedListEntryNode) newValue);
+
+            return mutateChildren(mutable, dataBuilder, version, modification.getChildren());
+        }
+
+        /**
+         * Applies write/remove diff operation for each modification child in modification subtree.
+         * Operation also sets the Data tree references for each Tree Node (Index Node) in meta (MutableTreeNode) structure.
+         *
+         * @param meta MutableTreeNode (IndexTreeNode)
+         * @param data DataBuilder
+         * @param nodeVersion Version of TreeNode
+         * @param modifications modification operations to apply
+         * @return Sealed immutable copy of TreeNode structure with all Data Node references set.
+         */
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
+            final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
+
+            for (ModifiedNode mod : modifications) {
+                final PathArgument id = mod.getIdentifier();
+                final Optional<TreeNode> cm = meta.getChild(id);
+
+                Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
+                if (result.isPresent()) {
+                    final TreeNode tn = result.get();
+                    meta.addChild(tn);
+                    data.addChild(tn.getData());
+                } else {
+                    meta.removeChild(id);
+                    data.removeChild(id);
+                }
+            }
+
+            meta.setData(data.build());
+            return meta.seal();
         }
 
         @Override
