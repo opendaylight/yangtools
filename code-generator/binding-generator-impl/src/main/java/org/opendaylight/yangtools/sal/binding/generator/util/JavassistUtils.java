@@ -116,6 +116,28 @@ public final class JavassistUtils {
         return target;
     }
 
+    /**
+     * Instantiate a new class based on a prototype.
+     *
+     * @param prototype Prototype class fully qualified name
+     * @param fqn Target class fully qualified name
+     * @param customizer Customization callback to be invoked on the new class
+     * @return An instance of the new class
+     * @throws NotFoundException when the prototype class is not found
+     */
+    public synchronized CtClass instantiatePrototype(final String prototype, final String fqn, final ClassCustomizer customizer) throws NotFoundException {
+        final CtClass result = classPool.getAndRename(prototype, fqn);
+        try {
+            customizer.customizeClass(result);
+        } catch (Exception e) {
+            LOG.warn("Failed to customize {} from prototype {}", fqn, prototype, e);
+            result.detach();
+            throw new IllegalStateException(String.format("Failed to instantiate prototype %s as %s", prototype, fqn), e);
+        }
+        result.prune();
+        return result;
+    }
+
     public void implementsType(final CtClass it, final CtClass supertype) {
         Preconditions.checkArgument(supertype.isInterface(), "Supertype must be interface");
         it.addInterface(supertype);
