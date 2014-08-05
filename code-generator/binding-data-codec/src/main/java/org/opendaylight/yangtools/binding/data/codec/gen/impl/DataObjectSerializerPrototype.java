@@ -18,9 +18,18 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
  * on a per-type basis. During that time, the {@link #serialize(DataObjectSerializerRegistry, DataObject, BindingStreamEventWriter)}
  * method will be replaced by the real implementation.
  */
-public final class DataObjectSerializerPrototype implements DataObjectSerializerImplementation {
+final class DataObjectSerializerPrototype implements DataObjectSerializerImplementation {
     private static final DataObjectSerializerPrototype INSTANCE = new DataObjectSerializerPrototype();
 
+    private DataObjectSerializerPrototype() {
+        // Intentionally hidden, subclasses can replace it
+    }
+
+    /**
+     * Return the shared serializer instance.
+     *
+     * @return Global singleton instance.
+     */
     public static DataObjectSerializerPrototype getInstance() {
         return INSTANCE;
     }

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.util;
 
+import com.google.common.base.Preconditions;
+
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -25,8 +27,7 @@ public class ChoiceDispatchSerializer implements DataObjectSerializerImplementat
 
     @SuppressWarnings("rawtypes")
     private ChoiceDispatchSerializer(final Class choiceClass) {
-        super();
-        this.choiceClass = choiceClass;
+        this.choiceClass = Preconditions.checkNotNull(choiceClass);
     }
 
     public static final ChoiceDispatchSerializer from(final Class<? extends DataContainer> choiceClass) {
