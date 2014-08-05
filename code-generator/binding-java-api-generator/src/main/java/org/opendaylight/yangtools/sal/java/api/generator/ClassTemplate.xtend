@@ -248,7 +248,11 @@ class ClassTemplate extends BaseTemplate {
             «generateRestrictions(type, p.fieldName.toString, p.returnType)»
         «ENDFOR»
         «FOR p : properties» 
+            «IF p.returnType.importedName.contains("[]")»
+                this.«p.fieldName» = Arrays.copyOf(«p.fieldName», «p.fieldName».length);
+            «ELSE»
             this.«p.fieldName» = «p.fieldName»;
+            «ENDIF»
         «ENDFOR»
     }
     
@@ -460,7 +464,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
         «IF !properties.empty»
             «FOR f : properties»
-                «IF f.readOnly»final«ENDIF» private «f.returnType.importedName» «f.fieldName»;
+                private«IF f.readOnly» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
     '''
