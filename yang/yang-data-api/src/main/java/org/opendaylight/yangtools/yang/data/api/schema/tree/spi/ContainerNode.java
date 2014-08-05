@@ -41,7 +41,18 @@ final class ContainerNode extends AbstractTreeNode {
 
     @Override
     public Optional<TreeNode> getChild(final PathArgument key) {
-        return Optional.fromNullable(children.get(key));
+        Optional<TreeNode> explicitNode = Optional.fromNullable(children.get(key));
+        if (explicitNode.isPresent()) {
+            return explicitNode;
+        }
+        final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> castedData = (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) getData();
+        Optional<NormalizedNode<?, ?>> value = castedData.getChild(key);
+        if (value.isPresent()) {
+            //FIXME: consider caching created Tree Nodes.
+            //We are safe to not to cache them, since written Tree Nodes are in read only snapshot.
+            return Optional.of(TreeNodeFactory.createTreeNode(value.get(), getVersion()));
+        }
+        return Optional.absent();
     }
 
     @Override
@@ -60,6 +71,26 @@ final class ContainerNode extends AbstractTreeNode {
             this.children = MapAdaptor.getDefaultInstance().takeSnapshot(parent.children);
             this.subtreeVersion = parent.getSubtreeVersion();
             this.version = parent.getVersion();
+            materializeChildVersion();
+        }
+
+        /**
+         * Traverse whole data tree and instantiate children for each data node. Set version of each MutableTreeNode
+         * accordingly to version in data node.
+         *
+         * Use this method if TreeNode is lazy initialized.
+         */
+        private void materializeChildVersion() {
+            Preconditions.checkState(data instanceof NormalizedNodeContainer);
+            NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> castedData = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
+
+            for(NormalizedNode<?, ?> childData : castedData.getValue()) {
+                PathArgument id = childData.getIdentifier();
+
+                if (!children.containsKey(id)) {
+                    children.put(id, TreeNodeFactory.createTreeNode(childData, version));
+                }
+            }
         }
 
         @Override
@@ -97,22 +128,99 @@ final class ContainerNode extends AbstractTreeNode {
         }
     }
 
-    private static ContainerNode create(final Version version, final NormalizedNode<?, ?> data,
-            final Iterable<NormalizedNode<?, ?>> children) {
+    /**
+     * Method creates and returns Container root Node and whole subtree for each child node specified in children nodes.
+     * <br>
+     * Reason why is method used recursively is that for each child in children nodes there is call to
+     * {@link TreeNodeFactory#createTreeNodeRecursively}. Each call to <code>createTreeNodeRecursively</code>
+     * calls either {@link #createNormalizedNodeRecursively} or {@link #createOrderedNodeRecursively}
+     * which depends on type of child node.
+     * <br> The root node that is returned holds reference to data node and whole subtree of children also containing references
+     * to data nodes.
+     *
+     * @param version version of indexed data
+     * @param data reference to data node
+     * @param children direct children of root node that is being created
+     * @return Root node with reference to data node and whole subtree of child nodes
+     */
+    private static ContainerNode createNodeRecursively(final Version version, final NormalizedNode<?, ?> data,
+        final Iterable<NormalizedNode<?, ?>> children) {
 
         final Map<PathArgument, TreeNode> map = new HashMap<>();
         for (NormalizedNode<?, ?> child : children) {
-            map.put(child.getIdentifier(), TreeNodeFactory.createTreeNode(child, version));
+            map.put(child.getIdentifier(), TreeNodeFactory.createTreeNodeRecursively(child, version));
         }
 
         return new ContainerNode(data, version, map, version);
     }
 
-    public static ContainerNode create(final Version version, final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
-        return create(version, container, container.getValue());
+    /**
+     * Method creates and returns Normalized Node Container as root and recursively creates whole subtree
+     * from all of the container child iterables stored in {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer#getValue()}
+     * <br>
+     * The reason why is this method called recursively is that in background method calls {@link TreeNodeFactory#createTreeNodeRecursively}
+     * for each child stored in NormalizedNode and after each child is created the method calls again {@link #createNormalizedNodeRecursively} method
+     * until all of the children are resolved.
+     *
+     * @param version version of indexed data
+     * @param container Normalized Node Container
+     * @return Normalized Node Container as root and all whole subtree created from container iterables.
+     */
+    public static ContainerNode createNormalizedNodeRecursively(final Version version,
+        final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
+        return createNodeRecursively(version, container, container.getValue());
     }
 
-    public static ContainerNode create(final Version version, final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
-        return create(version, container, container.getValue());
+    /**
+     * Method creates and returns Ordered Node Container as root and recursively creates whole subtree
+     * from all of the container child iterables stored in {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer#getValue()}
+     * <br>
+     * The reason why is this method called recursively is that in background method calls {@link TreeNodeFactory#createTreeNodeRecursively}
+     * for each child stored in NormalizedNode and after each child is created the method calls again {@link #createNormalizedNodeRecursively} method
+     * until all of the children are resolved.
+     *
+     * @param version version of indexed data
+     * @param container Ordered Node Container
+     * @return Normalized Ordered Container as root and all whole subtree created from container iterables.
+     */
+    public static ContainerNode createOrderedNodeRecursively(final Version version,
+        final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
+        return createNodeRecursively(version, container, container.getValue());
+    }
+
+    /**
+     * Creates and returns single instance of Normalized Node Container with provided version and data reference stored in NormalizedNodeContainer.
+     *
+     * @param version version of indexed data
+     * @param container Normalized Node Container
+     * @return single instance of Normalized node with provided version and data reference stored in NormalizedNodeContainer
+     */
+    public static ContainerNode createNormalizedNode(final Version version,
+        final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
+        return createNode(version, container);
+    }
+
+    /**
+     * Creates and returns single instance of Ordered Node Container with provided version and data reference stored in OrderedNodeContainer.
+     *
+     * @param version version of indexed data
+     * @param container Ordered Node Container
+     * @return single instance of Ordered Node Container with provided version and data reference stored in OrderedNodeContainer.
+     */
+    public static ContainerNode createOrderedNode(final Version version,
+        final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
+        return createNode(version, container);
+    }
+
+    /**
+     * Creates and returns single instance of {@link ContainerNode} with provided version and data reference stored in NormalizedNode.
+     *
+     * @param version version of indexed data
+     * @param data NormalizedNode data container
+     * @return single instance of {@link ContainerNode} with provided version and data reference stored in NormalizedNode.
+     */
+    private static ContainerNode createNode(final Version version, final NormalizedNode<?, ?> data) {
+        final Map<PathArgument, TreeNode> map = new HashMap<>();
+        return new ContainerNode(data, version, map, version);
     }
 }

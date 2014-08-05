@@ -146,7 +146,7 @@ public class ModificationMetadataTreeTest {
     @Test
     public void basicReadWrites() {
         DataTreeModification modificationTree = new InMemoryDataTreeModification(new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper),
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper),
                 rootOper);
         Optional<NormalizedNode<?, ?>> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
