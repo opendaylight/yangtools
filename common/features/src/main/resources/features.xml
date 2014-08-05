@@ -50,6 +50,7 @@
     </feature>
 
     <feature name='yangtools-concepts' version='${project.version}'>
+        <feature version='${project.version}'>yangtools-common</feature>
         <bundle>mvn:org.opendaylight.yangtools/concepts/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-common/${project.version}</bundle>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
