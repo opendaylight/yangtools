@@ -13,8 +13,11 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+
 import java.util.Map.Entry;
+
 import javassist.ClassPool;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,6 +46,7 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.TopologyKey;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.NodeKey;
+import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingSchemaContextUtils;
@@ -73,7 +77,7 @@ public class BindingStreamWriterTest {
 
     private RuntimeGeneratedMappingServiceImpl mappingService;
     private Optional<SchemaContext> schemaContext;
-    private org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator generator;
+    private DataObjectSerializerGenerator generator;
     private BindingNormalizedNodeCodecRegistry registry;
     private DataSchemaNode schema;
     private BindingRuntimeContext runtimeContext;
@@ -87,7 +91,7 @@ public class BindingStreamWriterTest {
         schemaContext = moduleInfo.tryToCreateSchemaContext();
         this.mappingService.onGlobalContextUpdated(moduleInfo.tryToCreateSchemaContext().get());
         JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        generator = new StreamWriterGenerator(utils);
+        generator = StreamWriterGenerator.create(utils);
         registry = new BindingNormalizedNodeCodecRegistry(generator);
         runtimeContext = BindingRuntimeContext.create(moduleInfo, schemaContext.get());
         registry.onBindingRuntimeContextUpdated(runtimeContext);
