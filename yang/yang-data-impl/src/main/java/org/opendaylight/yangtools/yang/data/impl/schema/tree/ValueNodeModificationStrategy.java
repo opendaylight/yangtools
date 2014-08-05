@@ -62,7 +62,7 @@ abstract class ValueNodeModificationStrategy<T extends DataSchemaNode> extends S
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification,
             final Optional<TreeNode> currentMeta, final Version version) {
-        return TreeNodeFactory.createTreeNode(modification.getWrittenValue(), version);
+        return TreeNodeFactory.createTreeNodeRecursively(modification.getWrittenValue(), version);
     }
 
     @Override
