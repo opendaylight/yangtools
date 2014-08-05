@@ -121,6 +121,16 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         return mutateChildren(mutable, dataBuilder, version, modification.getChildren());
     }
 
+    /**
+     * Applies write/remove diff operation for each modification child in modification subtree.
+     * Operation also sets the Data tree references for each Tree Node (Index Node) in meta (MutableTreeNode) structure.
+     *
+     * @param meta MutableTreeNode (IndexTreeNode)
+     * @param data DataBuilder
+     * @param nodeVersion Version of TreeNode
+     * @param modifications modification operations to apply
+     * @return Sealed immutable copy of TreeNode structure with all Data Node references set.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
             final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
