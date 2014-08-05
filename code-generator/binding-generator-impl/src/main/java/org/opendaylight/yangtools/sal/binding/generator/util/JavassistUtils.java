@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import java.util.Collection;
@@ -114,6 +115,31 @@ public final class JavassistUtils {
         implementsType(target, superInterface);
         cls.process(target);
         return target;
+    }
+
+    /**
+     * Instantiate a new class based on a prototype. The class is set to automatically
+     * prune.
+     *
+     * @param prototype Prototype class fully qualified name
+     * @param fqn Target class fully qualified name
+     * @param customizer Customization callback to be invoked on the new class
+     * @return An instance of the new class
+     * @throws NotFoundException when the prototype class is not found
+     */
+    @Beta
+    public synchronized CtClass instantiatePrototype(final String prototype, final String fqn, final ClassCustomizer customizer) throws NotFoundException {
+        final CtClass result = classPool.getAndRename(prototype, fqn);
+        try {
+            customizer.customizeClass(result);
+        } catch (Exception e) {
+            LOG.warn("Failed to customize {} from prototype {}", fqn, prototype, e);
+            result.detach();
+            throw new IllegalStateException(String.format("Failed to instantiate prototype %s as %s", prototype, fqn), e);
+        }
+
+        result.stopPruning(false);
+        return result;
     }
 
     public void implementsType(final CtClass it, final CtClass supertype) {

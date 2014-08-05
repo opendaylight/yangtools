@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.impl.GeneratedClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.yangtools.sal.binding.generator.util.ClassGenerator;
+import org.opendaylight.yangtools.sal.binding.generator.util.ClassCustomizer;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -47,47 +47,43 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractStreamWriterGenerator {
-
-    protected static final String SERIALIZER_SUFFIX = "$StreamWriter";
-    protected static final String STATIC_SERIALIZE_METHOD_NAME = "staticSerialize";
-    protected static final String SERIALIZE_METHOD_NAME = "serialize";
-
-    protected static final AugmentableDispatchSerializer AUGMENTABLE = new AugmentableDispatchSerializer();
+abstract class AbstractStreamWriterGenerator implements DataObjectSerializerGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractStreamWriterGenerator.class);
+    private static final ClassLoadingStrategy STRATEGY = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
+    private static final String SERIALIZER_SUFFIX = "$StreamWriter";
 
-    private final JavassistUtils javassist;
-    private final CtClass serializerCt;
-    private final CtClass dataObjectCt;
-    private final CtClass writerCt;
-    private final CtClass voidCt;
-    private final CtClass registryCt;
-
-    private final CtClass[] serializeArguments;
-    private final CtMethod serializeToMethod;
+    protected static final String SERIALIZE_METHOD_NAME = "serialize";
+    protected static final AugmentableDispatchSerializer AUGMENTABLE = new AugmentableDispatchSerializer();
 
     private final LoadingCache<Class<?>, Class<? extends DataObjectSerializerImplementation>> implementations;
-    private final ClassLoadingStrategy strategy;
-
+    private final CtClass[] serializeArguments;
+    private final JavassistUtils javassist;
     private BindingRuntimeContext context;
 
     protected AbstractStreamWriterGenerator(final JavassistUtils utils) {
         super();
         this.javassist = Preconditions.checkNotNull(utils,"JavassistUtils instance is required.");
-        this.serializerCt = javassist.asCtClass(DataObjectSerializerImplementation.class);
-        this.registryCt = javassist.asCtClass(DataObjectSerializerRegistry.class);
-        this.writerCt = javassist.asCtClass(BindingStreamEventWriter.class);
-        this.dataObjectCt = javassist.asCtClass(DataObject.class);
-        this.voidCt = javassist.asCtClass(Void.class);
-        this.serializeArguments =  new CtClass[] { registryCt,dataObjectCt, writerCt };
+        this.serializeArguments = new CtClass[] {
+                javassist.asCtClass(DataObjectSerializerRegistry.class),
+                javassist.asCtClass(DataObject.class),
+                javassist.asCtClass(BindingStreamEventWriter.class),
+        };
 
-        try {
-            this.serializeToMethod = serializerCt.getDeclaredMethod(SERIALIZE_METHOD_NAME, serializeArguments);
-        } catch (NotFoundException e) {
-            throw new IllegalStateException("Required method " + SERIALIZE_METHOD_NAME + "was not found in class " + BindingStreamEventWriter.class ,e);
-        }
         this.implementations = CacheBuilder.newBuilder().weakKeys().build(new SerializerImplementationLoader());
-        strategy = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
+    }
+
+    @Override
+    public final DataObjectSerializerImplementation getSerializer(final Class<?> type) {
+        try {
+            return implementations.getUnchecked(type).newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public final void onBindingRuntimeContextUpdated(final BindingRuntimeContext runtime) {
+        this.context = runtime;
     }
 
     private final class SerializerImplementationLoader extends
@@ -132,8 +128,6 @@ public abstract class AbstractStreamWriterGenerator {
         }
     }
 
-
-
     protected DataObjectSerializerSource generateEmitterSource(final Class<?> type, final String serializerName) {
         Types.typeForClass(type);
         Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(type);
@@ -161,59 +155,39 @@ public abstract class AbstractStreamWriterGenerator {
     }
 
     private CtClass generateEmitter0(final DataObjectSerializerSource source, final String serializerName) {
-        CtClass product = javassist.createClass(serializerName, serializerCt, new ClassGenerator() {
+        final CtClass product;
+        try {
+            product = javassist.instantiatePrototype(DataObjectSerializerPrototype.class.getName(), serializerName, new ClassCustomizer() {
+                @Override
+                public void customizeClass(final CtClass cls) throws CannotCompileException, NotFoundException {
+                    // getSerializerBody() has side effects
+                    final String body = source.getSerializerBody().toString();
 
-            @Override
-            public void process(final CtClass cls) {
-                final String staticBody = source.getStaticSerializeBody().toString();
-                try {
-
-                    for(StaticConstantDefinition def : source.getStaticConstants()) {
+                    // Generate any static fields
+                    for (StaticConstantDefinition def : source.getStaticConstants()) {
                         CtField field = new CtField(javassist.asCtClass(def.getType()), def.getName(), cls);
                         field.setModifiers(Modifier.PUBLIC + Modifier.STATIC);
                         cls.addField(field);
                     }
 
-                    CtMethod staticSerializeTo = new CtMethod(voidCt, STATIC_SERIALIZE_METHOD_NAME, serializeArguments, cls);
-                    staticSerializeTo.setModifiers(Modifier.PUBLIC + Modifier.FINAL + Modifier.STATIC);
-                    staticSerializeTo.setBody(staticBody);
-                    cls.addMethod(staticSerializeTo);
-
-
-                    CtMethod serializeTo = new CtMethod(serializeToMethod,cls,null);
-                    serializeTo.setModifiers(Modifier.PUBLIC + Modifier.FINAL);
-                    serializeTo.setBody(
-                            new StringBuilder().append('{')
-                            .append(STATIC_SERIALIZE_METHOD_NAME).append("($$);\n")
-                            .append("return null;")
-                            .append('}')
-                            .toString()
-                            );
-                    cls.addMethod(serializeTo);
-                } catch (CannotCompileException e) {
-                    LOG.error("Can not compile body of codec for {}.",serializerName,e);
-                    throw new IllegalStateException(e);
+                    // Replace serialize() -- may reference static fields
+                    final CtMethod serializeTo = cls.getDeclaredMethod(SERIALIZE_METHOD_NAME, serializeArguments);
+                    serializeTo.setBody(body);
                 }
-
-            }
-        });
+            });
+        } catch (NotFoundException e) {
+            LOG.error("Failed to instatiate serializer {}", source, e);
+            throw new LinkageError("Unexpected instantation problem: prototype not found", e);
+        }
         return product;
     }
 
     @SuppressWarnings("unchecked")
     protected Class<? extends DataContainer> loadClass(final Type childType) {
         try {
-            return (Class<? extends DataContainer>) strategy.loadClass(childType);
+            return (Class<? extends DataContainer>) STRATEGY.loadClass(childType);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Could not load referenced class ",e);
-        }
-    }
-
-    public DataObjectSerializerImplementation getSerializer(final Class<?> type) {
-        try {
-            return implementations.getUnchecked(type).newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
         }
     }
 
@@ -309,7 +283,7 @@ public abstract class AbstractStreamWriterGenerator {
          *
          * @return Valid javassist code describing static serialization body.
          */
-        protected abstract CharSequence getStaticSerializeBody();
+        protected abstract CharSequence getSerializerBody();
 
         protected final CharSequence leafNode(final String localName, final CharSequence value) {
             return invoke(STREAM, "leafNode", escape(localName), value);
@@ -368,7 +342,7 @@ public abstract class AbstractStreamWriterGenerator {
 
 
         protected final CharSequence anyxmlNode(final String name, final String value) throws IllegalArgumentException {
-            return invoke(STREAM,"anyxmlNode",escape(name),name);
+            return invoke(STREAM, "anyxmlNode", escape(name),name);
         }
 
         protected final CharSequence endNode() {
@@ -384,19 +358,16 @@ public abstract class AbstractStreamWriterGenerator {
         }
 
         protected final CharSequence staticInvokeEmitter(final Type childType, final String name) {
-            Class<?> cls;
+            final Class<?> cls;
             try {
-                cls = strategy.loadClass(childType);
-                String className = implementations.getUnchecked(cls).getName();
-                return invoke(className, STATIC_SERIALIZE_METHOD_NAME,REGISTRY, name,STREAM);
+                cls = STRATEGY.loadClass(childType);
             } catch (ClassNotFoundException e) {
-                throw new IllegalStateException(e);
+                throw new IllegalStateException("Failed to invoke emitter", e);
             }
-        }
-    }
 
-    public void onBindingRuntimeContextUpdated(final BindingRuntimeContext runtime) {
-        this.context = runtime;
+            String className = implementations.getUnchecked(cls).getName() + ".getInstance()";
+            return invoke(className, SERIALIZE_METHOD_NAME, REGISTRY, name, STREAM);
+        }
     }
 
 }
