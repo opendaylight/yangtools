@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-
 import java.util.List;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -78,17 +76,17 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
     protected NodeCodecContext getYangIdentifierChild(final YangInstanceIdentifier.PathArgument arg) {
         if (arg instanceof YangInstanceIdentifier.AugmentationIdentifier) {
             return getChildByAugmentationIdentifier((YangInstanceIdentifier.AugmentationIdentifier) arg);
-        }
-
-        QName childQName = arg.getNodeType();
-        DataSchemaNode childSchema = schema.getDataChildByName(childQName);
-        Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", arg, schema);
-        if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceNode) {
-            Class<?> childCls = factory.getRuntimeContext().getClassForSchema(childSchema);
-            DataContainerCodecContext<?> childNode = getStreamChild(childCls);
-            return childNode;
         } else {
-            return getLeafChild(childQName.getLocalName());
+            QName childQName = arg.getNodeType();
+            DataSchemaNode childSchema = schema.getDataChildByName(childQName);
+            Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", arg, schema);
+            if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceNode) {
+                Class<?> childCls = factory.getRuntimeContext().getClassForSchema(childSchema);
+                DataContainerCodecContext<?> childNode = getStreamChild(childCls);
+                return childNode;
+            } else {
+                return getLeafChild(childQName.getLocalName());
+            }
         }
     }
 
@@ -114,17 +112,23 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
             return loadAugmentation(childClass);
         }
 
-        DataSchemaNode origDef = factory.getRuntimeContext().getSchemaDefinition(childClass);
-        // Direct instantiation or use in same module in which grouping
-        // was defined.
-        DataSchemaNode sameName = schema.getDataChildByName(origDef.getQName());
+            DataSchemaNode origDef = factory.getRuntimeContext().getSchemaDefinition(childClass);
+            // Direct instantiation or use in same module in which grouping
+            // was defined.
+        DataSchemaNode sameName;
+        try {
+            sameName = schema.getDataChildByName(origDef.getQName());
+        } catch (IllegalArgumentException e) {
+            sameName = null;
+        }
         final DataSchemaNode childSchema;
         if (sameName != null) {
             // Exactly same schema node
             if (origDef.equals(sameName)) {
                 childSchema = sameName;
                 // We check if instantiated node was added via uses
-                // statement and is an instantiation of same grouping
+                // statement
+                // and is instatiation of same grouping
             } else if (origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(sameName))) {
                 childSchema = sameName;
             } else {
@@ -145,7 +149,7 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
             }
         }
         Preconditions
-        .checkArgument(childSchema != null, "Node %s does not have child named %s", schema, childClass);
+                .checkArgument(childSchema != null, "Node %s does not have child named %s", schema, childClass);
         return DataContainerCodecContext.from(childClass, childSchema, factory);
     }
 

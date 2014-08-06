@@ -84,8 +84,9 @@
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.opendaylight.yangtools.sal.binding.generator.impl.*,
-                            org.opendaylight.yangtools.sal.binding.generator.util.*
+                            org.opendaylight.yangtools.binding.data.codec.*,
+                            org.opendaylight.yangtools.binding.data.codec.gen.impl.*,
+                            org.opendaylight.yangtools.binding.data.codec.impl.*,
                         </Export-Package>
                     </instructions>
                 </configuration>
