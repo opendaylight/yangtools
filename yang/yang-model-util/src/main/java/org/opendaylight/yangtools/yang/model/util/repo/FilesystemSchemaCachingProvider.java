@@ -45,7 +45,7 @@ import com.google.common.base.Preconditions;
  */
 public final class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSourceProvider<I, InputStream> {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemSchemaCachingProvider.class);
-    private static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
+    public static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
 
     private final File storageDirectory;
     private final SchemaSourceTransformation<I, String> transformationFunction;
@@ -154,17 +154,21 @@ public final class FilesystemSchemaCachingProvider<I> extends AbstractCachingSch
     }
 
     private File toFile(final SourceIdentifier identifier) {
+        return sourceIdToFile(identifier, storageDirectory);
+    }
+
+    public static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
         File file = null;
         String rev = identifier.getRevision();
         if (rev == null || rev.isEmpty()) {
-            file = findFileWithNewestRev(identifier);
+            file = findFileWithNewestRev(identifier, storageDirectory);
         } else {
             file = new File(storageDirectory, identifier.toYangFilename());
         }
         return file;
     }
 
-    private File findFileWithNewestRev(final SourceIdentifier identifier) {
+    private static File findFileWithNewestRev(final SourceIdentifier identifier, final File storageDirectory) {
         File[] files = storageDirectory.listFiles(new FilenameFilter() {
             final Pattern p = Pattern.compile(Pattern.quote(identifier.getName()) + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)");
 

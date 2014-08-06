@@ -8,22 +8,22 @@
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.TreeMultimap;
 import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.annotation.concurrent.GuardedBy;
-
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -69,6 +69,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         @SuppressWarnings("unchecked")
         final CheckedFuture<? extends T, SchemaSourceException> f = ((SchemaSourceProvider<T>)reg.getProvider()).getSource(id);
+
         return Futures.makeChecked(Futures.withFallback(f, new FutureFallback<T>() {
             @Override
             public ListenableFuture<T> create(final Throwable t) throws SchemaSourceException {
@@ -96,13 +97,29 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
                     new MissingSchemaSourceException("No providers for source " + id + " representation " + representation + " available"));
         }
 
-        return fetchSource(id, regs);
+        CheckedFuture<T, SchemaSourceException> fetchSourceFuture = fetchSource(id, regs);
+        // Add callback to notify cache listeners about encountered schema
+        Futures.addCallback(fetchSourceFuture, new FutureCallback<T>() {
+            @Override
+            public void onSuccess(final T result) {
+                for (final SchemaListenerRegistration listener : listeners) {
+                    listener.getInstance().schemaSourceEncountered(result);
+                }
+            }
+
+            @Override
+            public void onFailure(final Throwable t) {}
+        });
+
+        return fetchSourceFuture;
     }
 
     private synchronized <T extends SchemaSourceRepresentation> void addSource(final PotentialSchemaSource<T> source, final AbstractSchemaSourceRegistration<T> reg) {
         Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m = sources.get(source.getSourceIdentifier());
         if (m == null) {
-            m = HashMultimap.create();
+            // Keep providers ordered by cost, lowest first
+            // Providing comparator for keys is unnecessary, but TreeMultimap requires one
+            m = TreeMultimap.create(SchemaSourceRepresentationComparator.INSTANCE, SchemaProviderCostComparator.INSTANCE);
             sources.put(source.getSourceIdentifier(), m);
         }
 
@@ -165,5 +182,24 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             listeners.add(ret);
         }
         return ret;
+    }
+
+    private static class SchemaSourceRepresentationComparator implements Comparator<Class<? extends SchemaSourceRepresentation>> {
+        public static final SchemaSourceRepresentationComparator INSTANCE = new SchemaSourceRepresentationComparator();
+
+        @Override
+        public int compare(final Class<? extends SchemaSourceRepresentation> o1, final Class<? extends SchemaSourceRepresentation> o2) {
+            // Sorting just by class names
+            return o1.getName().compareTo(o2.getName());
+        }
+    }
+
+    private static class SchemaProviderCostComparator implements Comparator<AbstractSchemaSourceRegistration<?>> {
+        public static final SchemaProviderCostComparator INSTANCE = new SchemaProviderCostComparator();
+
+        @Override
+        public int compare(final AbstractSchemaSourceRegistration<?> o1, final AbstractSchemaSourceRegistration<?> o2) {
+            return o1.getInstance().getCost() - o2.getInstance().getCost();
+        }
     }
 }
