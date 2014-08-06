@@ -23,8 +23,13 @@ import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class GroupingUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(GroupingUtils.class);
+
+    private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/');
 
     private GroupingUtils() {
@@ -116,8 +121,15 @@ public final class GroupingUtils {
 
             DataSchemaNodeBuilder nodeToRefine = (DataSchemaNodeBuilder) currentNode;
             if (nodeToRefine == null) {
-                throw new YangParseException(refine.getModuleName(), refine.getLine(), "Refine target node '"
-                        + refine.getTargetPathString() + "' not found");
+                // FIXME: exception replaced with log to avoid breakage when
+                // user tries to refine instance of extension (unknown node)
+
+                // throw new YangParseException(refine.getModuleName(),
+                // refine.getLine(), "Refine target node '" +
+                // refine.getTargetPathString() + "' not found");
+                LOG.warn("Error in module {} at line {}: Refine target node {} not found.", refine.getModuleName(),
+                        refine.getLine(), refine.getTargetPathString());
+                continue;
             }
             RefineUtils.performRefine(nodeToRefine, refine);
             usesNode.addRefineNode(nodeToRefine);
