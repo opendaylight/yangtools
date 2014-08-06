@@ -33,7 +33,7 @@ import java.util.List;
  * definitions MUST be public, so there is no need to specify the scope of
  * visibility.
  */
-public interface GeneratedType extends Type, DocumentedType {
+public interface GeneratedType extends Type, DocumentedType, BoxableType {
 
     /**
      * Returns the parent type if Generated Type is defined as enclosing type,

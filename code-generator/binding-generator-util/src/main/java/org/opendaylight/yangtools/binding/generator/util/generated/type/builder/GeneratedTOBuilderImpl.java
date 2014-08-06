@@ -337,5 +337,10 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         public String getModuleName() {
             return moduleName;
         }
+
+        @Override
+        public boolean isSuitableForBoxing() {
+            return false;
+        }
     }
 }
