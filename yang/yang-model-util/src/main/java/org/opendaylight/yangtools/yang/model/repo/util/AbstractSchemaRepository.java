@@ -8,22 +8,23 @@
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.annotation.concurrent.GuardedBy;
-
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -56,7 +57,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
      * a specific representation of a source.
      */
     @GuardedBy("this")
-    private final Map<SourceIdentifier, Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>>> sources = new HashMap<>();
+    private final Map<SourceIdentifier, ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>>> sources = new HashMap<>();
 
     /*
      * Schema source listeners.
@@ -69,6 +70,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         @SuppressWarnings("unchecked")
         final CheckedFuture<? extends T, SchemaSourceException> f = ((SchemaSourceProvider<T>)reg.getProvider()).getSource(id);
+
         return Futures.makeChecked(Futures.withFallback(f, new FutureFallback<T>() {
             @Override
             public ListenableFuture<T> create(final Throwable t) throws SchemaSourceException {
@@ -85,24 +87,44 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
     @Override
     public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
-        final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
+        final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
         if (srcs == null) {
             return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id));
         }
 
-        final Iterator<AbstractSchemaSourceRegistration<?>> regs = srcs.get(representation).iterator();
+        // TODO, remove and make sources keep sorted multimap (e.g. ArrayListMultimap with SortedLists)
+        final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations = Lists.newArrayList(srcs.get(representation));
+        Collections.sort(sortedSchemaSourceRegistrations, SchemaProviderCostComparator.INSTANCE);
+
+        final Iterator<AbstractSchemaSourceRegistration<?>> regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
             return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(
                     new MissingSchemaSourceException("No providers for source " + id + " representation " + representation + " available"));
         }
 
-        return fetchSource(id, regs);
+        CheckedFuture<T, SchemaSourceException> fetchSourceFuture = fetchSource(id, regs);
+        // Add callback to notify cache listeners about encountered schema
+        Futures.addCallback(fetchSourceFuture, new FutureCallback<T>() {
+            @Override
+            public void onSuccess(final T result) {
+                for (final SchemaListenerRegistration listener : listeners) {
+                    listener.getInstance().schemaSourceEncountered(result);
+                }
+            }
+
+            @Override
+            public void onFailure(final Throwable t) {
+                LOG.trace("Skipping notification for encountered source {}, fetching source failed", id, t);
+            }
+        });
+
+        return fetchSourceFuture;
     }
 
     private synchronized <T extends SchemaSourceRepresentation> void addSource(final PotentialSchemaSource<T> source, final AbstractSchemaSourceRegistration<T> reg) {
-        Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m = sources.get(source.getSourceIdentifier());
+        ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m = sources.get(source.getSourceIdentifier());
         if (m == null) {
-            m = HashMultimap.create();
+            m = ArrayListMultimap.create();
             sources.put(source.getSourceIdentifier(), m);
         }
 
@@ -165,5 +187,14 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             listeners.add(ret);
         }
         return ret;
+    }
+
+    private static class SchemaProviderCostComparator implements Comparator<AbstractSchemaSourceRegistration<?>> {
+        public static final SchemaProviderCostComparator INSTANCE = new SchemaProviderCostComparator();
+
+        @Override
+        public int compare(final AbstractSchemaSourceRegistration<?> o1, final AbstractSchemaSourceRegistration<?> o2) {
+            return o1.getInstance().getCost() - o2.getInstance().getCost();
+        }
     }
 }
