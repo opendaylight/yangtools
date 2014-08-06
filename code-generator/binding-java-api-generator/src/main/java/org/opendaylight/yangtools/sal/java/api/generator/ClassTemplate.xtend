@@ -316,6 +316,16 @@ class ClassTemplate extends BaseTemplate {
                     return new «genTO.name»(defaultValue);
                 «ELSEIF allProperties.size > 1»
                     «bitsArgs»
+                «ELSEIF "java.lang.Boolean".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(Boolean.valueOf(defaultValue));
+                «ELSEIF "java.lang.Byte".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(Byte.valueOf(defaultValue));
+                «ELSEIF "java.lang.Short".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(Short.valueOf(defaultValue));
+                «ELSEIF "java.lang.Integer".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(Integer.valueOf(defaultValue));
+                «ELSEIF "java.lang.Long".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(Long.valueOf(defaultValue));
                 «ELSE»
                     return new «genTO.name»(new «prop.returnType.importedName»(defaultValue));
                 «ENDIF»
