@@ -1,0 +1,21 @@
+
+module mod-box {
+    yang-version 1;
+    namespace "urn:opendaylight:mod:box";
+    prefix "box";
+
+    revision 2014-08-05 {
+   }
+
+	container cont1 {
+	    choice choice1 {
+			case case1 {
+				container cont2 {
+					leaf leaf1 {
+						type string;
+					}
+				}
+			}
+	    }
+	}
+}

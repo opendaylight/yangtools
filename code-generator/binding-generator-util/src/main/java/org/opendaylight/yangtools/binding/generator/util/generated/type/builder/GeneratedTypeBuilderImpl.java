@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -18,6 +19,8 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
     private String reference;
     private String moduleName;
     private Iterable<QName> schemaPath;
+    private boolean isSuitableForBoxing;
+    private GeneratedTypeBuilder parentType;
 
     public GeneratedTypeBuilderImpl(final String packageName, final String name) {
         super(packageName, name);
@@ -47,6 +50,21 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
     @Override
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    @Override
+    public void setSuitableForBoxing(boolean value) {
+        this.isSuitableForBoxing = value;
+    }
+
+    @Override
+    public void setParentType(GeneratedTypeBuilder parent) {
+        this.parentType = parent;
+    }
+
+    @Override
+    public Type getParent() {
+        return this.parentType;
     }
 
     @Override
@@ -86,6 +104,8 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
         private final String reference;
         private final String moduleName;
         private final Iterable<QName> schemaPath;
+        private final boolean isSuitableForBoxing;
+        private final GeneratedTypeBuilder parentType;
 
         public GeneratedTypeImpl(GeneratedTypeBuilderImpl builder) {
             super(builder);
@@ -94,6 +114,8 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
             this.reference = builder.reference;
             this.moduleName = builder.moduleName;
             this.schemaPath = builder.schemaPath;
+            this.isSuitableForBoxing = builder.isSuitableForBoxing;
+            this.parentType = builder.parentType;
         }
 
         @Override
@@ -115,5 +137,11 @@ public final class GeneratedTypeBuilderImpl extends AbstractGeneratedTypeBuilder
         public String getModuleName() {
             return moduleName;
         }
+
+        @Override
+        public boolean isSuitableForBoxing() {
+            return isSuitableForBoxing;
+        }
     }
+
 }
