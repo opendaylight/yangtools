@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.sal.binding.model.api.type.builder;
 
 import java.util.List;
-
 import org.opendaylight.yangtools.sal.binding.model.api.Constant;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.QName;
