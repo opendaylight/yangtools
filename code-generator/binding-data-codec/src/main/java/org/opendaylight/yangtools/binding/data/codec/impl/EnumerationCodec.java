@@ -9,16 +9,15 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableBiMap;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
+import org.opendaylight.yangtools.binding.data.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-class EnumerationCodec extends ReflectionBasedCodec {
+class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
 
     ImmutableBiMap<String, Enum<?>> yangValueToBinding;
 
@@ -27,14 +26,15 @@ class EnumerationCodec extends ReflectionBasedCodec {
         yangValueToBinding = ImmutableBiMap.copyOf(schema);
     }
 
-    static Callable<ReflectionBasedCodec> loader(final Class<?> returnType,
+
+    static Callable<EnumerationCodec> loader(final Class<?> returnType,
             final EnumTypeDefinition enumSchema) {
         Preconditions.checkArgument(Enum.class.isAssignableFrom(returnType));
         @SuppressWarnings({ "rawtypes", "unchecked" })
         final Class<? extends Enum<?>> enumType = (Class) returnType;
-        return new Callable<ReflectionBasedCodec>() {
+        return new Callable<EnumerationCodec>() {
             @Override
-            public ReflectionBasedCodec call() throws Exception {
+            public EnumerationCodec call() throws Exception {
 
                 Map<String, Enum<?>> nameToValue = new HashMap<>();
                 for (Enum<?> enumValue : enumType.getEnumConstants()) {

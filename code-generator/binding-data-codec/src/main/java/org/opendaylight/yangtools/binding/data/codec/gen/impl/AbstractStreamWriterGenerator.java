@@ -11,18 +11,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
-
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
-
 import org.opendaylight.yangtools.binding.data.codec.gen.spi.StaticConstantDefinition;
 import org.opendaylight.yangtools.binding.data.codec.util.AugmentableDispatchSerializer;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -113,7 +110,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
         @SuppressWarnings("unchecked")
         public DataObjectSerializerImplementation load(final Class<?> type) throws Exception {
             Preconditions.checkArgument(BindingReflections.isBindingClass(type));
-            Preconditions.checkArgument(DataContainer.class.isAssignableFrom(type));
+            Preconditions.checkArgument(DataContainer.class.isAssignableFrom(type),"DataContainer is not assingnable from %s from classloader %s.",type,type.getClassLoader());
 
             final String serializerName = getSerializerName(type);
 
@@ -160,6 +157,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
 
     private DataObjectSerializerSource generateEmitterSource(final Class<?> type, final String serializerName) {
         Types.typeForClass(type);
+        javassist.appendClassLoaderIfMissing(type.getClassLoader());
         Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(type);
         GeneratedType generatedType = typeWithSchema.getKey();
         Object schema = typeWithSchema.getValue();

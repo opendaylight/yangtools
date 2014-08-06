@@ -11,11 +11,11 @@ import org.opendaylight.yangtools.concepts.Codec;
 
 class CompositeValueCodec extends ValueTypeCodec {
 
-    private final ValueTypeCodec bindingToSimpleType;
+    private final SchemaUnawareCodec bindingToSimpleType;
     @SuppressWarnings("rawtypes")
     private final Codec bindingToDom;
 
-    CompositeValueCodec(final ValueTypeCodec extractor,
+    CompositeValueCodec(final SchemaUnawareCodec extractor,
             @SuppressWarnings("rawtypes") final Codec delegate) {
         this.bindingToSimpleType = extractor;
         this.bindingToDom = delegate;

@@ -18,11 +18,12 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import org.opendaylight.yangtools.binding.data.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
-class BitsCodec extends ReflectionBasedCodec {
+class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
 
     private final ImmutableSortedMap<String, Method> valueGetters;
     private final Constructor<?> constructor;
@@ -34,12 +35,12 @@ class BitsCodec extends ReflectionBasedCodec {
         this.constructor = constructor;
     }
 
-    static Callable<ReflectionBasedCodec> loader(final Class<?> returnType,
+    static Callable<BitsCodec> loader(final Class<?> returnType,
             final BitsTypeDefinition rootType) {
-        return new Callable<ReflectionBasedCodec>() {
+        return new Callable<BitsCodec>() {
 
             @Override
-            public ReflectionBasedCodec call() throws Exception {
+            public BitsCodec call() throws Exception {
                 try {
                     SortedMap<String, Method> valueGetters = new TreeMap<>();
                     for (Bit bit : rootType.getBits()) {
@@ -72,6 +73,13 @@ class BitsCodec extends ReflectionBasedCodec {
 
         Object args[] = new Object[valueGetters.size()];
         int currentArg = 0;
+        /*
+         * We could do this walk based on field set
+         * sorted by name, since constructor arguments in
+         * Java Binding are sorted by name, so arguments will match
+         * with values.
+         *
+         */
         for (String value : valueGetters.keySet()) {
             if (casted.contains(value)) {
                 args[currentArg] = Boolean.TRUE;

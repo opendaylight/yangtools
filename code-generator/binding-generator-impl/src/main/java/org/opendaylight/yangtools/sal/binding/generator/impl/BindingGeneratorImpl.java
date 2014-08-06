@@ -942,9 +942,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
         augSchemaNodeToMethods(module, basePackageName, augTypeBuilder, augTypeBuilder, augSchema.getChildNodes());
         augmentBuilders.put(augTypeName, augTypeBuilder);
 
-        genCtx.get(module).addTargetToAugmentation(targetTypeRef, augTypeBuilder);
+        if(!augSchema.getChildNodes().isEmpty()) {
+            genCtx.get(module).addTargetToAugmentation(targetTypeRef, augTypeBuilder);
+            genCtx.get(module).addTypeToAugmentation(augTypeBuilder, augSchema);
+
+        }
         genCtx.get(module).addAugmentType(augTypeBuilder);
-        genCtx.get(module).addTypeToAugmentation(augTypeBuilder, augSchema);
         return augTypeBuilder;
     }
 
@@ -2057,8 +2060,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     private boolean hasBuilderClass(final SchemaNode schemaNode) {
         if (schemaNode instanceof ContainerSchemaNode || schemaNode instanceof ListSchemaNode ||
-                schemaNode instanceof RpcDefinition || schemaNode instanceof NotificationDefinition)
+                schemaNode instanceof RpcDefinition || schemaNode instanceof NotificationDefinition) {
             return true;
+        }
         return false;
     }
 

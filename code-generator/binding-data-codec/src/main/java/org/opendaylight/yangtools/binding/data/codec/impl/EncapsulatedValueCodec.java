@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
+import org.opendaylight.yangtools.binding.data.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 
 /**
  *
@@ -18,7 +19,7 @@ import java.util.concurrent.Callable;
  * types, which are same as in NormalizedNode model.
  *
  */
-class EncapsulatedValueCodec extends ReflectionBasedCodec {
+class EncapsulatedValueCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
 
     private final Method getter;
     private final Constructor<?> constructor;
@@ -33,10 +34,10 @@ class EncapsulatedValueCodec extends ReflectionBasedCodec {
         }
     }
 
-    static Callable<ReflectionBasedCodec> loader(final Class<?> typeClz) {
-        return new Callable<ReflectionBasedCodec>() {
+    static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz) {
+        return new Callable<EncapsulatedValueCodec>() {
             @Override
-            public ReflectionBasedCodec call() throws Exception {
+            public EncapsulatedValueCodec call() throws Exception {
                 return new EncapsulatedValueCodec(typeClz);
             }
         };
