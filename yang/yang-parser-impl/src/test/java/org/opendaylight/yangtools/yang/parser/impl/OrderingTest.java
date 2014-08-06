@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Set;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -76,7 +75,7 @@ public class OrderingTest {
         Collection<DataSchemaNode> childNodes = foo.getChildNodes();
         String[] expectedOrder = new String[] { "int32-leaf", "string-leaf", "length-leaf", "decimal-leaf",
                 "decimal-leaf2", "ext", "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data",
-                "how", "address", "port", "addresses", "peer" };
+                "how", "address", "port", "addresses", "peer", "id", "sub-ext", "sub-transfer", "sub-datas" };
         String[] actualOrder = new String[childNodes.size()];
 
         int i = 0;

@@ -412,24 +412,54 @@ public final class YangParserImpl implements YangContextParser {
 
     private Map<ByteSource, ModuleBuilder> resolveSubmodules(final Map<ByteSource, ModuleBuilder> builders) {
         Map<ByteSource, ModuleBuilder> modules = new HashMap<>();
-        Set<ModuleBuilder> submodules = new HashSet<>();
+        Map<String, TreeMap<Date, ModuleBuilder>> submodules = new HashMap<>();
         for (Map.Entry<ByteSource, ModuleBuilder> entry : builders.entrySet()) {
-            ModuleBuilder moduleBuilder = entry.getValue();
-            if (moduleBuilder.isSubmodule()) {
-                submodules.add(moduleBuilder);
+            ModuleBuilder builder = entry.getValue();
+            if (builder.isSubmodule()) {
+                String submoduleName = builder.getName();
+                TreeMap<Date, ModuleBuilder> map = submodules.get(submoduleName);
+                if (map == null) {
+                    map = new TreeMap<>();
+                    map.put(builder.getRevision(), builder);
+                    submodules.put(submoduleName, map);
+                } else {
+                    map.put(builder.getRevision(), builder);
+                }
             } else {
-                modules.put(entry.getKey(), moduleBuilder);
+                modules.put(entry.getKey(), builder);
             }
         }
 
-        Collection<ModuleBuilder> values = modules.values();
-        for (ModuleBuilder submodule : submodules) {
-            for (ModuleBuilder module : values) {
-                if (module.getName().equals(submodule.getBelongsTo())) {
-                    addSubmoduleToModule(submodule, module);
+        for (ModuleBuilder module : modules.values()) {
+            resolveSubmodules(module, submodules);
+        }
+
+        return modules;
+    }
+
+    private Collection<ModuleBuilder> resolveSubmodules(final Collection<ModuleBuilder> builders) {
+        Collection<ModuleBuilder> modules = new HashSet<>();
+        Map<String, TreeMap<Date, ModuleBuilder>> submodules = new HashMap<>();
+        for (ModuleBuilder builder : builders) {
+            if (builder.isSubmodule()) {
+                String submoduleName = builder.getName();
+                TreeMap<Date, ModuleBuilder> map = submodules.get(submoduleName);
+                if (map == null) {
+                    map = new TreeMap<>();
+                    map.put(builder.getRevision(), builder);
+                    submodules.put(submoduleName, map);
+                } else {
+                    map.put(builder.getRevision(), builder);
                 }
+            } else {
+                modules.add(builder);
             }
         }
+
+        for (ModuleBuilder module : modules) {
+            resolveSubmodules(module, submodules);
+        }
+
         return modules;
     }
 
@@ -437,29 +467,39 @@ public final class YangParserImpl implements YangContextParser {
      * Traverse collection of builders, find builders representing submodule and
      * add this submodule to its parent module.
      *
-     * @param builders
-     *            collection of builders containing modules and submodules
-     * @return collection of module builders
+     * @param module
+     *            current module
+     * @param submodules
+     *            collection all loaded submodules
+     * @return collection of module builders with resolved submodules
      */
-    private Collection<ModuleBuilder> resolveSubmodules(final Collection<ModuleBuilder> builders) {
-        Collection<ModuleBuilder> modules = new HashSet<>();
-        Set<ModuleBuilder> submodules = new HashSet<>();
-        for (ModuleBuilder moduleBuilder : builders) {
-            if (moduleBuilder.isSubmodule()) {
-                submodules.add(moduleBuilder);
-            } else {
-                modules.add(moduleBuilder);
+    private void resolveSubmodules(final ModuleBuilder module,
+            final Map<String, TreeMap<Date, ModuleBuilder>> submodules) {
+        Map<String, Date> includes = module.getIncludedModules();
+        for (Map.Entry<String, Date> entry : includes.entrySet()) {
+            TreeMap<Date, ModuleBuilder> subs = submodules.get(entry.getKey());
+            if (subs == null) {
+                throw new YangParseException("Failed to find references submodule " + entry.getKey() + " in module "
+                        + module.getName());
             }
-        }
-
-        for (ModuleBuilder submodule : submodules) {
-            for (ModuleBuilder module : modules) {
-                if (module.getName().equals(submodule.getBelongsTo())) {
-                    addSubmoduleToModule(submodule, module);
+            Date rev = entry.getValue();
+            ModuleBuilder submodule;
+            if (rev == null) {
+                submodule = subs.lastEntry().getValue();
+            } else {
+                submodule = subs.get(rev);
+                // FIXME an exception should be thrown after issue with
+                // submodule's revisions and namespaces will be resolved
+                if (submodule == null) {
+                    submodule = subs.lastEntry().getValue();
                 }
             }
+
+            if (submodule.getIncludedModules().size() > 0) {
+                resolveSubmodules(submodule, submodules);
+            }
+            addSubmoduleToModule(submodule, module);
         }
-        return modules;
     }
 
     private void addSubmoduleToModule(final ModuleBuilder submodule, final ModuleBuilder module) {
@@ -922,8 +962,11 @@ public final class YangParserImpl implements YangContextParser {
                 augment.setResolved(true);
                 return true;
             } else {
-                throw new YangParseException(module.getName(), augment.getLine(), String.format(
-                        "Failed to resolve augment in uses. Invalid augment target: %s", potentialTargetNode));
+                LOG.warn(
+                        "Error in module {} at line {}: Unsupported augment target: {}. Augmentation process skipped.",
+                        module.getName(), augment.getLine(), potentialTargetNode);
+                augment.setResolved(true);
+                return true;
             }
         } else {
             throw new YangParseException(module.getName(), augment.getLine(), String.format(
