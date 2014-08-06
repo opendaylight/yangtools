@@ -298,18 +298,48 @@ public class BindingGeneratorImpl implements BindingGenerator {
         return genType;
     }
 
+    private boolean hasWhenOrMustConstraints(final SchemaNode node) {
+        boolean hasWhenCondition;
+        boolean hasMustConstraints;
+
+        if (node instanceof ContainerSchemaNode) {
+            ContainerSchemaNode contNode = (ContainerSchemaNode)node;
+            hasWhenCondition = contNode.getConstraints().getWhenCondition() != null;
+            hasMustConstraints = !isNullOrEmpty(contNode.getConstraints().getMustConstraints());
+
+            if (hasWhenCondition || hasMustConstraints)
+                return true;
+        }
+        else if (node instanceof ChoiceCaseNode) {
+            ChoiceCaseNode choiceNode = (ChoiceCaseNode)node;
+            hasWhenCondition = choiceNode.getConstraints().getWhenCondition() != null;
+            hasMustConstraints = !isNullOrEmpty(choiceNode.getConstraints().getMustConstraints());
+
+            if (hasWhenCondition || hasMustConstraints)
+                return true;
+        }
+        return false;
+    }
+
     private void containerToGenType(final Module module, final String basePackageName,
             final GeneratedTypeBuilder parent, final GeneratedTypeBuilder childOf, final ContainerSchemaNode node) {
         final GeneratedTypeBuilder genType = processDataSchemaNode(module, basePackageName, childOf, node);
+
+        if (!parent.getName().equals(childOf) && !parent.getName().contains("Data"))
+            genType.setParentType(parent);
         if (genType != null) {
             constructGetter(parent, node.getQName().getLocalName(), node.getDescription(), genType);
             resolveDataSchemaNodes(module, basePackageName, genType, genType, node.getChildNodes());
         }
+        genType.setSuitableForBoxing(!hasWhenOrMustConstraints(node));
     }
 
     private void listToGenType(final Module module, final String basePackageName, final GeneratedTypeBuilder parent,
             final GeneratedTypeBuilder childOf, final ListSchemaNode node) {
         final GeneratedTypeBuilder genType = processDataSchemaNode(module, basePackageName, childOf, node);
+
+        if (!parent.getName().equals(childOf) && !parent.getName().contains("Data"))
+            genType.setParentType(parent);
         if (genType != null) {
             constructGetter(parent, node.getQName().getLocalName(), node.getDescription(), Types.listTypeFor(genType));
 
@@ -338,6 +368,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
             typeBuildersToGenTypes(module, genType, genTOBuilder);
         }
+        genType.setSuitableForBoxing(!hasWhenOrMustConstraints(node));
     }
 
     private void processUsesAugments(final DataNodeContainer node, final Module module) {
@@ -1130,6 +1161,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             constructGetter(parent, choiceNode.getQName().getLocalName(), choiceNode.getDescription(),
                     choiceTypeBuilder);
             choiceTypeBuilder.addImplementsType(typeForClass(DataContainer.class));
+            choiceTypeBuilder.setParentType(parent);
             genCtx.get(module).addChildNodeType(choiceNode, choiceTypeBuilder);
             generateTypesFromChoiceCases(module, basePackageName, choiceTypeBuilder.toInstance(), choiceNode);
         }
