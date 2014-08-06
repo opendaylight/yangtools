@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ded6cf27",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingCodecContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "typo",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3e149be7",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingCodecContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "message",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fed95357",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BitsCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "Reword for clarity",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9edcc747",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/UnionTypeCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1ef0b7c7",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/UnionTypeCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "final?",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7ee54307",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/UnionTypeCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "private? final?",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_3eeb3bdd",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/UnionTypeCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "private, expose static factory method, allow it to throw  -\u003e does not mas the exception",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_debd6fd9",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/UnionTypeCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "message",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fec07351",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/UnionTypeCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "if (input !\u003d null) {\n    for ...\n\n}\nreturn null",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_beb66bf7",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/UnionTypeCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "move into its own class",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_9eb36709",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/UnionTypeCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-06T14:30:03Z",
+      "side": 1,
+      "message": "null?",
+      "revId": "d55003a905937b321449bda76930201f38f3c06c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
