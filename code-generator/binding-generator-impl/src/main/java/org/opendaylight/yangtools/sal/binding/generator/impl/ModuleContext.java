@@ -180,8 +180,8 @@ public final class ModuleContext {
     }
 
     public void addTypeToAugmentation(final GeneratedTypeBuilder builder, final AugmentationSchema schema) {
-        typeToAugmentation.put(builder, schema);
-        typeToSchema.put(builder, schema);
+            typeToAugmentation.put(builder, schema);
+            typeToSchema.put(builder, schema);
     }
 
     public void addTargetToAugmentation(final Type target, final GeneratedTypeBuilder augmentation) {

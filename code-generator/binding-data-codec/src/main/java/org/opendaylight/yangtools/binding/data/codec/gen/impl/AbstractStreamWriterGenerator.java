@@ -160,6 +160,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
 
     private DataObjectSerializerSource generateEmitterSource(final Class<?> type, final String serializerName) {
         Types.typeForClass(type);
+        javassist.appendClassLoaderIfMissing(type.getClassLoader());
         Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(type);
         GeneratedType generatedType = typeWithSchema.getKey();
         Object schema = typeWithSchema.getValue();
