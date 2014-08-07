@@ -8,7 +8,9 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -21,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.concurrent.GuardedBy;
 
+import org.opendaylight.yangtools.util.jmx.ListenerNotificationQueueStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -183,6 +186,28 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
     }
 
     /**
+     * Returns {@link ListenerNotificationQueueStats} instances for each current listener
+     * notification task in progress.
+     */
+    public List<ListenerNotificationQueueStats> getListenerNotificationQueueStats() {
+        List<ListenerNotificationQueueStats> statsList = new ArrayList<>( listenerCache.size() );
+        for( NotificationTask task: listenerCache.values() ) {
+            statsList.add( new ListenerNotificationQueueStats(
+                    task.listenerKey.getListener().getClass().getName(),
+                    task.notificationQueue.size() ) );
+        }
+
+        return statsList ;
+    }
+
+    /**
+     * Returns the maximum listener queue capacity.
+     */
+    public int getMaxQueueCapacity(){
+        return maxQueueCapacity;
+    }
+
+    /**
      * Used as the listenerCache map key. We key by listener reference identity hashCode/equals.
      * Since we don't know anything about the listener class implementations and we're mixing
      * multiple listener class instances in the same map, this avoids any potential issue with an
@@ -337,6 +362,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                         }
                     }
 
+                    Thread.sleep(20000);
                     notifyListener( notification );
                 }
             } catch( InterruptedException e ) {
