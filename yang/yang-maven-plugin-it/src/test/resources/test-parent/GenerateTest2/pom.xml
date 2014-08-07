@@ -17,7 +17,7 @@
     <artifactId>generator-test2</artifactId>
 
     <properties>
-        <target.dir>${project.build.directory}</target.dir>
+        <target.dir>${project.build.directory}/test-classes/test-parent/GenerateTest2/target</target.dir>
     </properties>
 
     <dependencies>
@@ -26,7 +26,7 @@
             <artifactId>generator-test1</artifactId>
             <version>${project.version}</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../GenerateTest1/target/generator-test1-${project.version}.jar</systemPath>
+            <systemPath>${project.basedir}/target/test-classes/test-parent/GenerateTest1/target/generator-test1-${project.version}.jar</systemPath>
         </dependency>
     </dependencies>
 
@@ -42,7 +42,7 @@
                             <goal>generate-sources</goal>
                         </goals>
                         <configuration>
-                            <yangFilesRootDir>${project.basedir}/yang</yangFilesRootDir>
+                            <yangFilesRootDir>yang</yangFilesRootDir>
                             <inspectDependencies>true</inspectDependencies>
                             <codeGenerators>
                                 <generator>

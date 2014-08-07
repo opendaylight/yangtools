@@ -28,7 +28,7 @@
                             <goal>generate-sources</goal>
                         </goals>
                         <configuration>
-                            <yangFilesRootDir>${basedir}</yangFilesRootDir>
+                            <yangFilesRootDir>../NoYangFiles</yangFilesRootDir>
                             <inspectDependencies>false</inspectDependencies>
                             <codeGenerators>
                                 <generator>
