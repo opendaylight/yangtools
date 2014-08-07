@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_4c8c55da",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangModelDependencyInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-07T15:19:53Z",
+      "side": 1,
+      "message": "So I don\u0027t think we should allow nulls here. Add documentation to the public revision and require users to explicitly use that if they do not have a revision available.",
+      "revId": "077c99365a06c3574feeb9fd6d34ef03b7859fc5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_6c87d9b5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/DependencyResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-07T15:19:53Z",
+      "side": 1,
+      "message": "this is where the special hard-coded revision should be added",
+      "revId": "077c99365a06c3574feeb9fd6d34ef03b7859fc5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_0c92cdf5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ASTSchemaSource.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-07T15:19:53Z",
+      "side": 1,
+      "message": "DependencyInfo should guarantee we can use the original simple way of doing things.",
+      "revId": "077c99365a06c3574feeb9fd6d34ef03b7859fc5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
