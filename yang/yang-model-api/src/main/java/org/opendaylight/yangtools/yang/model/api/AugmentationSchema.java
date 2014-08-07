@@ -6,9 +6,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.List;
-
 import com.google.common.base.Optional;
+
+import java.util.List;
 
 /**
  * AugmentationSchema represents augment definition. The "augment" statement
@@ -19,7 +19,6 @@ import com.google.common.base.Optional;
 public interface AugmentationSchema extends DataNodeContainer {
 
     /**
-     *
      * Returns when statement
      *
      * If when condition is present node defined by the parent data definition
@@ -66,7 +65,7 @@ public interface AugmentationSchema extends DataNodeContainer {
      * Returns Augmentation Definition from which this augmentation is derived
      * if augmentation was added transitively via augmented uses.
      *
-     * @return ugmentation Definition from which this augmentation is derived
+     * @return Augmentation Definition from which this augmentation is derived
      *         if augmentation was added transitively via augmented uses.
      */
     Optional<AugmentationSchema> getOriginalDefinition();
