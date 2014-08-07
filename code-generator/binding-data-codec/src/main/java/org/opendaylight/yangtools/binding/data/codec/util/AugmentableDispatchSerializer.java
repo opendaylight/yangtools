@@ -8,8 +8,13 @@
 package org.opendaylight.yangtools.binding.data.codec.util;
 
 import com.google.common.base.Preconditions;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -21,6 +26,12 @@ import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ * Dispatch serializer, which emits {@link BindingStreamEventWriter#startAugmentationNode(Class)}
+ * events for supplied augmentation node.
+ *
+ */
 public class AugmentableDispatchSerializer implements DataObjectSerializerImplementation {
 
     private static final Logger LOG = LoggerFactory.getLogger(AugmentableDispatchSerializer.class);
@@ -29,12 +40,26 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
     public void serialize(final DataObjectSerializerRegistry reg, final DataObject obj,
             final BindingStreamEventWriter stream) {
         if (obj instanceof Augmentable<?>) {
-            Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations = BindingReflections
-                    .getAugmentations((Augmentable<?>) obj);
+            final Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations;
+            if (reg instanceof AugmentationReader) {
+                augmentations = ((AugmentationReader) reg).getAugmentations(obj);
+            } else if (Proxy.isProxyClass(obj.getClass())) {
+                augmentations = getFromProxy(obj);
+            } else {
+                augmentations = BindingReflections.getAugmentations((Augmentable<?>) obj);
+            }
             for (Entry<Class<? extends Augmentation<?>>, Augmentation<?>> aug : augmentations.entrySet()) {
                 emitAugmentation(aug.getKey(), aug.getValue(), stream, reg);
             }
         }
+    }
+
+    private Map<Class<? extends Augmentation<?>>, Augmentation<?>> getFromProxy(final DataObject obj) {
+        InvocationHandler proxy = Proxy.getInvocationHandler(obj);
+        if (proxy instanceof AugmentationReader) {
+            return ((AugmentationReader) proxy).getAugmentations(obj);
+        }
+        return Collections.emptyMap();
     }
 
     @SuppressWarnings("rawtypes")

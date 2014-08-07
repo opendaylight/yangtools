@@ -8,13 +8,16 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.util.List;
+
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -53,7 +56,6 @@ abstract class NodeCodecContext {
      *
      */
     protected interface CodecContextFactory {
-
         /**
          * Returns immutable runtime context associated with this factory.
          * @return runtime context
@@ -78,7 +80,6 @@ abstract class NodeCodecContext {
          */
         Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> getPathArgumentCodec(Class<?> type,
                 ListSchemaNode schema);
-
     }
 
     /**
@@ -86,7 +87,7 @@ abstract class NodeCodecContext {
      * Serializes supplied Binding Path Argument
      * and adds all necessary YANG instance identifiers to supplied list.
      *
-     * @param arg Bidning Path Argument
+     * @param arg Binding Path Argument
      * @param builder DOM Path argument.
      */
     protected void addYangPathArgument(final InstanceIdentifier.PathArgument arg,
@@ -96,4 +97,11 @@ abstract class NodeCodecContext {
         }
     }
 
+    /**
+     * Return the data object for a normalized node
+     *
+     * @param normalizedNode Backing normalized node
+     * @return Data object
+     */
+    protected abstract Object dataFromNormalizedNode(NormalizedNode<?, ?> normalizedNode);
 }
