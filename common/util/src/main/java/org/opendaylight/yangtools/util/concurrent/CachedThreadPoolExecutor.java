@@ -14,8 +14,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
@@ -32,8 +30,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
 
     private static final long IDLE_TIMEOUT_IN_SEC = 60L;
-
-    private final AtomicLong largestBackingQueueSize = new AtomicLong( 0 );
 
     private final ExecutorQueue executorQueue;
 
@@ -76,13 +72,19 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         executorQueue = (ExecutorQueue)super.getQueue();
 
         rejectedTaskHandler = new RejectedTaskHandler(
-                executorQueue.getBackingQueue(), largestBackingQueueSize );
+                executorQueue.getBackingQueue(), CountingRejectedExecutionHandler.newAbortPolicy() );
         super.setRejectedExecutionHandler( rejectedTaskHandler );
     }
 
     @Override
     public void setRejectedExecutionHandler( RejectedExecutionHandler handler ) {
+        Preconditions.checkNotNull( handler );
         rejectedTaskHandler.setDelegateRejectedExecutionHandler( handler );
+    }
+
+    @Override
+    public RejectedExecutionHandler getRejectedExecutionHandler(){
+        return rejectedTaskHandler.getDelegateRejectedExecutionHandler();
     }
 
     @Override
@@ -91,7 +93,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
     }
 
     public long getLargestQueueSize() {
-        return largestBackingQueueSize.get();
+        return ((TrackingLinkedBlockingQueue<?>)executorQueue.getBackingQueue()).getLargestQueueSize();
     }
 
     protected ToStringHelper addToStringAttributes( ToStringHelper toStringHelper ) {
@@ -129,7 +131,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         private final LinkedBlockingQueue<Runnable> backingQueue;
 
         ExecutorQueue( int maxBackingQueueSize ) {
-            backingQueue = new LinkedBlockingQueue<>( maxBackingQueueSize );
+            backingQueue = new TrackingLinkedBlockingQueue<>( maxBackingQueueSize );
         }
 
         LinkedBlockingQueue<Runnable> getBackingQueue() {
@@ -189,18 +191,21 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
     private static class RejectedTaskHandler implements RejectedExecutionHandler {
 
         private final LinkedBlockingQueue<Runnable> backingQueue;
-        private final AtomicLong largestBackingQueueSize;
         private volatile RejectedExecutionHandler delegateRejectedExecutionHandler;
 
         RejectedTaskHandler( LinkedBlockingQueue<Runnable> backingQueue,
-                             AtomicLong largestBackingQueueSize ) {
+                             RejectedExecutionHandler delegateRejectedExecutionHandler ) {
             this.backingQueue = backingQueue;
-            this.largestBackingQueueSize = largestBackingQueueSize;
+            this.delegateRejectedExecutionHandler = delegateRejectedExecutionHandler;
         }
 
         void setDelegateRejectedExecutionHandler(
-                RejectedExecutionHandler delegateRejectedExecutionHandler ){
+                RejectedExecutionHandler delegateRejectedExecutionHandler ) {
             this.delegateRejectedExecutionHandler = delegateRejectedExecutionHandler;
+        }
+
+        RejectedExecutionHandler getDelegateRejectedExecutionHandler(){
+            return delegateRejectedExecutionHandler;
         }
 
         @Override
@@ -210,19 +215,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
             }
 
             if( !backingQueue.offer( task ) ) {
-                if( delegateRejectedExecutionHandler != null ) {
-                    delegateRejectedExecutionHandler.rejectedExecution( task, executor );
-                } else {
-                    throw new RejectedExecutionException(
-                                                "All threads are in use and the queue is full" );
-                }
-            }
-
-            largestBackingQueueSize.incrementAndGet();
-            long size = backingQueue.size();
-            long largest = largestBackingQueueSize.get();
-            if( size > largest ) {
-                largestBackingQueueSize.compareAndSet( largest, size );
+                delegateRejectedExecutionHandler.rejectedExecution( task, executor );
             }
         }
     }
