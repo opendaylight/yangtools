@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.base.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,11 +17,14 @@ import java.util.Map.Entry;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.Node;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 
-import com.google.common.base.Preconditions;
-
+/**
+ * @deprecated Use {@link NormalizedNode} and their stream writer codec suite.
+ */
+@Deprecated
 public class IntermediateMapping {
     private IntermediateMapping() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
