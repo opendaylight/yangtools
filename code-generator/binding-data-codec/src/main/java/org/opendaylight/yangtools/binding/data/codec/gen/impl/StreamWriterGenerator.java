@@ -63,7 +63,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
     @Override
     protected DataObjectSerializerSource generateContainerSerializer(final GeneratedType type, final ContainerSchemaNode node) {
 
-        return new DataNodeContainerSerializerSource(this, type, node) {
+        return new AugmentableDataNodeContainerEmmiterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
                 return startContainerNode(classReference(type), getChildSizeFromSchema(node));

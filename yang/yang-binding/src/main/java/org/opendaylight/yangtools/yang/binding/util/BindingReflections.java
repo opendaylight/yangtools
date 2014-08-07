@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -394,6 +395,27 @@ public class BindingReflections {
         }
         return ret;
     }
+
+    /**
+    *
+    * Scans supplied class and returns an iterable of all data children classes.
+    *
+    * @param type YANG Modeled Entity derived from DataContainer
+    * @return Iterable of all data children, which have YANG modeled entity
+    */
+   @SuppressWarnings("unchecked")
+   public static Map<Class<?>,Method> getChildrenClassToMethod(final Class<?> type) {
+       checkArgument(type != null, "Target type must not be null");
+       checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
+       Map<Class<?>,Method> ret = new HashMap<>();
+       for (Method method : type.getMethods()) {
+           Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method);
+           if (entity.isPresent()) {
+               ret.put(entity.get(),method);
+           }
+       }
+       return ret;
+   }
 
     @SuppressWarnings("unchecked")
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method) {

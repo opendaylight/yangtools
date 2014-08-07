@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -95,5 +96,7 @@ abstract class NodeCodecContext {
             builder.add(getDomPathArgument());
         }
     }
+
+    abstract Object dataFromNormalizedNode(NormalizedNode<?, ?> normalizedNode);
 
 }

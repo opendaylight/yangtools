@@ -13,11 +13,8 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
 import java.util.Map.Entry;
-
 import javassist.ClassPool;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -49,17 +46,16 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.yangtools.sal.binding.generator.impl.BindingSchemaContextUtils;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class BindingStreamWriterTest {
@@ -79,7 +75,6 @@ public class BindingStreamWriterTest {
     private Optional<SchemaContext> schemaContext;
     private DataObjectSerializerGenerator generator;
     private BindingNormalizedNodeCodecRegistry registry;
-    private DataSchemaNode schema;
     private BindingRuntimeContext runtimeContext;
 
     @Before
@@ -95,16 +90,23 @@ public class BindingStreamWriterTest {
         registry = new BindingNormalizedNodeCodecRegistry(generator);
         runtimeContext = BindingRuntimeContext.create(moduleInfo, schemaContext.get());
         registry.onBindingRuntimeContextUpdated(runtimeContext);
-
-        schema = (DataSchemaNode) BindingSchemaContextUtils.findDataNodeContainer(schemaContext.get(), PATH_TO_CLIENT)
-                .get();
     }
+
 
 
     @Test
-    public void instanceIdentifierCodec() {
+    public void writeWithStreamAndBack() {
+        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> result = registry.toNormalizedNode(PATH_TO_CLIENT, createTestData());
+        NormalizedNode<?, ?> output = result.getValue();
+        assertNotNull(output);
+        assertTrue(output instanceof ContainerNode);
+        Entry<InstanceIdentifier<?>, DataObject> deserialized = registry.fromNormalizedNode(result.getKey(), result.getValue());
+        assertEquals(PATH_TO_CLIENT, deserialized.getKey());
+        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> resultAfterDeserialize = registry.toNormalizedNode((InstanceIdentifier) PATH_TO_CLIENT, deserialized.getValue());
+        assertEquals(result.getValue(), resultAfterDeserialize.getValue());
 
     }
+
 
     @Test
     public void writeWithStreamAPI() {
