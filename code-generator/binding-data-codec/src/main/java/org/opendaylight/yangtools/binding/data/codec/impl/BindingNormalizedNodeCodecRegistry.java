@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator;
@@ -29,8 +29,13 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
@@ -87,10 +92,21 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         return new SimpleEntry<YangInstanceIdentifier,NormalizedNode<?,?>>(writeCtx.getKey(),result.getResult());
     }
 
+    private boolean isBindingRepresentable(final NormalizedNode<?, ?> data) {
+        return !(data instanceof MapNode) && !(data instanceof UnkeyedListNode) && !(data instanceof LeafSetNode) && !(data instanceof LeafNode<?>);
+    }
+
+
     @Override
     public Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
             final NormalizedNode<?, ?> data) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        List<PathArgument> builder = new LinkedList<>();
+        if(isBindingRepresentable(data)) {
+            DataObject lazyObj = (DataObject) codecContext.getCodecContextNode(path, builder).dataFromNormalizedNode(data);
+            InstanceIdentifier<?> bindingPath = InstanceIdentifier.create(builder);
+            return new SimpleEntry<InstanceIdentifier<?>, DataObject>(bindingPath,lazyObj);
+        }
+        return null;
     }
 
     @Override
@@ -107,6 +123,33 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     @Override
     public BindingStreamEventWriter newWriter(final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
         return codecContext.newWriterWithoutIdentifier(path, domWriter);
+    }
+
+
+    public <T extends DataObject> Function<Optional<NormalizedNode<?, ?>>, Optional<T>>  deserializeFunction(final InstanceIdentifier<T> path) {
+        DataObjectCodecContext<?> ctx = (DataObjectCodecContext<?>) codecContext.getCodecContextNode(path, null);
+        return new DeserializeFunction<T>(ctx);
+    }
+
+
+    private static class DeserializeFunction<T> implements Function<Optional<NormalizedNode<?, ?>>, Optional<T>> {
+
+        private final DataObjectCodecContext<?> ctx;
+        public DeserializeFunction(final DataObjectCodecContext<?> ctx) {
+            super();
+            this.ctx = ctx;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Optional<T> apply(final Optional<NormalizedNode<?, ?>> input) {
+            if(input.isPresent()) {
+                return Optional.of((T) ctx.dataFromNormalizedNode(input.get()));
+            }
+            return Optional.absent();
+        }
+
+
     }
 
     private class GeneratorLoader extends CacheLoader<Class<? extends DataObject>, DataObjectSerializer> {
