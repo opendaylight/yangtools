@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_8cdc9d47",
+        "filename": "yang/yang-model-util/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-07T13:47:50Z",
+      "side": 1,
+      "message": "mockito-core, and it is already specified as test scope",
+      "revId": "dff58279b85014b4e29e3b343e022fee330b203e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_4cea15dc",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/repo/util/AbstractSchemaRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-07T13:47:50Z",
+      "side": 1,
+      "message": "add a LOG.trace() about skipping notification",
+      "revId": "dff58279b85014b4e29e3b343e022fee330b203e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_6ce59907",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/repo/util/AbstractSchemaRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-07T13:47:50Z",
+      "side": 1,
+      "message": "this will prevent us from having duplicate registrations for the same source with the same cost. What we need is an ArrayListMultimap, with a special ArrayList supplier, which will perform a ,sort() on each add().",
+      "revId": "dff58279b85014b4e29e3b343e022fee330b203e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_acb641f7",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/repo/util/FilesystemSchemaSourceCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-07T13:47:50Z",
+      "side": 1,
+      "message": "Collections.singletonMap()",
+      "revId": "dff58279b85014b4e29e3b343e022fee330b203e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_6cccb989",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/repo/util/FilesystemSchemaSourceCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-07T13:47:50Z",
+      "side": 1,
+      "message": "We will be deprecating yang.model.util.repo, so this is only for transition.",
+      "revId": "dff58279b85014b4e29e3b343e022fee330b203e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
