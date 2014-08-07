@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
@@ -94,9 +93,7 @@ public final class AugmentationSchemaProxy implements AugmentationSchema {
 
     @Override
     public DataSchemaNode getDataChildByName(final QName name) {
-        final DataSchemaNode ret = mappedChildSchemas.get(name);
-        Preconditions.checkArgument(ret != null, "Unknown child: %s in: %s", name, delegate);
-        return ret;
+        return mappedChildSchemas.get(name);
     }
 
     @Override
