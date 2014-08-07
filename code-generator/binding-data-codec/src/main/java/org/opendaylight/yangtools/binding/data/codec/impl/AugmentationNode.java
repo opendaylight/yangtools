@@ -7,24 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 
 public class AugmentationNode extends DataObjectCodecContext<AugmentationSchema> {
 
-    private final YangInstanceIdentifier.PathArgument yangIdentifier;
-
-    public AugmentationNode(final Class<?> cls, final QNameModule namespace,
-            final AugmentationIdentifier identifier, final AugmentationSchema nodeSchema,
-            final CodecContextFactory loader) {
-        super(cls, namespace, nodeSchema, loader);
-        this.yangIdentifier = identifier;
+    public AugmentationNode(final DataContainerCodecPrototype<AugmentationSchema> prototype) {
+        super(prototype);
     }
 
     @Override
-    public YangInstanceIdentifier.PathArgument getDomPathArgument() {
-        return yangIdentifier;
+    Object dataFromNormalizedNode(final NormalizedNode<?, ?> normalizedNode) {
+        Preconditions.checkArgument(normalizedNode instanceof org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode);
+        return LazyDataObject.create(this, (org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode) normalizedNode);
     }
 }

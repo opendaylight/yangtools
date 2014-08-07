@@ -13,11 +13,8 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
 import java.util.Map.Entry;
-
 import javassist.ClassPool;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -54,6 +51,7 @@ import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedCon
 import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -101,10 +99,20 @@ public class BindingStreamWriterTest {
     }
 
 
+
     @Test
-    public void instanceIdentifierCodec() {
+    public void writeWithStreamAndBack() {
+        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> result = registry.toNormalizedNode(PATH_TO_CLIENT, createTestData());
+        NormalizedNode<?, ?> output = result.getValue();
+        assertNotNull(output);
+        assertTrue(output instanceof ContainerNode);
+        Entry<InstanceIdentifier<?>, DataObject> deserialized = registry.fromNormalizedNode(result.getKey(), result.getValue());
+        assertEquals(PATH_TO_CLIENT, deserialized.getKey());
+        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> resultAfterDeserialize = registry.toNormalizedNode((InstanceIdentifier) PATH_TO_CLIENT, deserialized.getValue());
+        assertEquals(output.getValue(), resultAfterDeserialize.getValue());
 
     }
+
 
     @Test
     public void writeWithStreamAPI() {

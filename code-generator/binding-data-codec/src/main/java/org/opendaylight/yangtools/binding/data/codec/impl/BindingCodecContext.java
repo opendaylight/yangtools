@@ -216,16 +216,15 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
                 } else {
                     continue; // We do not have schema for leaf, so we will ignore it (eg. getClass, getImplementedInterface).
                 }
-                final LeafNodeCodecContext leafNode = leafNodeFrom(valueType, schema);
+                Codec<Object, Object> codec = getCodec(valueType, schema);
+                final LeafNodeCodecContext leafNode = new LeafNodeCodecContext(schema, codec,method);
                 leaves.put(schema.getQName().getLocalName(), leafNode);
             }
         }
         return ImmutableMap.copyOf(leaves);
     }
 
-    private LeafNodeCodecContext leafNodeFrom(final Class<?> returnType, final DataSchemaNode schema) {
-        return new LeafNodeCodecContext(schema, getCodec(returnType, schema));
-    }
+
 
     private Codec<Object, Object> getCodec(final Class<?> valueType, final DataSchemaNode schema) {
         if (Class.class.equals(valueType)) {

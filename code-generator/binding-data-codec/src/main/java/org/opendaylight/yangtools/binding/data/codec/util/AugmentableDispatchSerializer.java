@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.binding.data.codec.util;
 
 import com.google.common.base.Preconditions;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -29,12 +32,28 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
     public void serialize(final DataObjectSerializerRegistry reg, final DataObject obj,
             final BindingStreamEventWriter stream) {
         if (obj instanceof Augmentable<?>) {
-            Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations = BindingReflections
-                    .getAugmentations((Augmentable<?>) obj);
+            final Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations;
+            if (Proxy.isProxyClass(obj.getClass())) {
+                augmentations = getFromProxy(obj);
+
+            } else {
+                augmentations = BindingReflections.getAugmentations((Augmentable<?>) obj);
+            }
             for (Entry<Class<? extends Augmentation<?>>, Augmentation<?>> aug : augmentations.entrySet()) {
                 emitAugmentation(aug.getKey(), aug.getValue(), stream, reg);
             }
         }
+    }
+
+    private Map<Class<? extends Augmentation<?>>, Augmentation<?>> getFromProxy(final DataObject obj) {
+        InvocationHandler proxy = Proxy.getInvocationHandler(obj);
+        if(proxy instanceof AugmentationSupplier) {
+
+            return ((AugmentationSupplier) proxy).getAugmentations();
+        }
+
+
+        return Collections.emptyMap();
     }
 
     @SuppressWarnings("rawtypes")
