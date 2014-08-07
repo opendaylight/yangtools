@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -74,7 +73,7 @@ public final class SpecialExecutors {
 
         FastThreadPoolExecutor executor =
                 new FastThreadPoolExecutor( maximumPoolSize, maximumQueueSize, threadPrefix );
-        executor.setRejectedExecutionHandler( new ThreadPoolExecutor.CallerRunsPolicy() );
+        executor.setRejectedExecutionHandler( CountingRejectedExecutionHandler.newCallerRunsPolicy() );
         return executor;
     }
 
@@ -130,7 +129,7 @@ public final class SpecialExecutors {
 
         CachedThreadPoolExecutor executor =
                 new CachedThreadPoolExecutor( maximumPoolSize, maximumQueueSize, threadPrefix );
-        executor.setRejectedExecutionHandler( new ThreadPoolExecutor.CallerRunsPolicy() );
+        executor.setRejectedExecutionHandler( CountingRejectedExecutionHandler.newCallerRunsPolicy() );
         return executor;
     }
 

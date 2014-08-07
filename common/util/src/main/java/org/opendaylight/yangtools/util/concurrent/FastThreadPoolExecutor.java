@@ -8,7 +8,6 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -70,7 +69,7 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
         // reached, subsequent tasks will be queued. If the queue is full, tasks will be rejected.
 
         super( maximumPoolSize, maximumPoolSize, keepAliveTime, unit,
-               new LinkedBlockingQueue<Runnable>( maximumQueueSize ) );
+               new TrackingLinkedBlockingQueue<Runnable>( maximumQueueSize ) );
 
         this.threadPrefix = threadPrefix;
         this.maximumQueueSize = maximumQueueSize;
@@ -82,6 +81,12 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
             // Need to specifically configure core threads to timeout.
             allowCoreThreadTimeOut( true );
         }
+
+        setRejectedExecutionHandler( CountingRejectedExecutionHandler.newAbortPolicy() );
+    }
+
+    public long getLargestQueueSize() {
+        return ((TrackingLinkedBlockingQueue<?>)getQueue()).getLargestQueueSize();
     }
 
     protected ToStringHelper addToStringAttributes( ToStringHelper toStringHelper ) {
@@ -96,6 +101,7 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
                 .add( "Largest Thread Pool Size", getLargestPoolSize() )
                 .add( "Max Thread Pool Size", getMaximumPoolSize() )
                 .add( "Current Queue Size", getQueue().size() )
+                .add( "Largest Queue Size", getLargestQueueSize() )
                 .add( "Max Queue Size", maximumQueueSize )
                 .add( "Active Thread Count", getActiveCount() )
                 .add( "Completed Task Count", getCompletedTaskCount() )
