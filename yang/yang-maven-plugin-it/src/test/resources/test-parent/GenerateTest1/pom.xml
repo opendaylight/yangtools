@@ -17,7 +17,7 @@
     <artifactId>generator-test1</artifactId>
 
     <properties>
-        <target.dir>${project.build.directory}</target.dir>
+        <target.dir>${project.build.directory}/test-classes/test-parent/GenerateTest1/target</target.dir>
     </properties>
 
     <build>
@@ -32,7 +32,7 @@
                             <goal>generate-sources</goal>
                         </goals>
                         <configuration>
-                            <yangFilesRootDir>${basedir}/src/main/resources</yangFilesRootDir>
+                            <yangFilesRootDir>${basedir}/src/test/resources/test-parent/GenerateTest1/src/main/resources</yangFilesRootDir>
                             <inspectDependencies>false</inspectDependencies>
                             <codeGenerators>
                                 <generator>
