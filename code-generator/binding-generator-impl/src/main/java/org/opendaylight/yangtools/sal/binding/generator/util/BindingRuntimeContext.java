@@ -8,7 +8,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
@@ -17,7 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
@@ -253,6 +251,21 @@ public class BindingRuntimeContext implements Immutable {
         return ImmutableMap.copyOf(childToCase);
     }
 
+    public Set<Class<?>> getCases(final Class<?> choice) {
+        Collection<Type> cazes = choiceToCases.get(referencedType(choice));
+        Set<Class<?>> ret = new HashSet<>();
+        for(Type caze : cazes) {
+            try {
+                ret.add(strategy.loadClass(caze));
+            } catch (ClassNotFoundException e) {
+                // FIXME: Proper reporting Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return ret;
+    }
+
+
     public Class<?> getClassForSchema(final DataSchemaNode childSchema) {
         DataSchemaNode origSchema = getOriginalSchema(childSchema);
         Type clazzType = typeToDefiningSchema.inverse().get(origSchema);
@@ -269,8 +282,13 @@ public class BindingRuntimeContext implements Immutable {
             Set<AugmentationSchema> augments = ((AugmentationTarget) container).getAvailableAugmentations();
             for (AugmentationSchema augment : augments) {
                 // Augmentation must have child nodes if is to be used with Binding classes
+
+                AugmentationSchema augOrig= augment;
+                while(augOrig.getOriginalDefinition().isPresent()) {
+                    augOrig = augOrig.getOriginalDefinition().get();
+                }
                 if (!augment.getChildNodes().isEmpty()) {
-                    Type augType = typeToDefiningSchema.inverse().get(augment);
+                    Type augType = typeToDefiningSchema.inverse().get(augOrig);
                     if (augType != null) {
                         identifierToType.put(getAugmentationIdentifier(augment),augType);
                     }

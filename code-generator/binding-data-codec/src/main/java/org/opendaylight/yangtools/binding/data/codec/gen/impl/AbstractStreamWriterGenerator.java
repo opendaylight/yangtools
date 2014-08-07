@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.data.codec.gen.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -78,7 +79,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
                 javassist.asCtClass(DataObject.class),
                 javassist.asCtClass(BindingStreamEventWriter.class),
         };
-
+        javassist.appendClassLoaderIfMissing(DataObjectSerializerPrototype.class.getClassLoader());
         this.implementations = CacheBuilder.newBuilder().weakKeys().build(new SerializerImplementationLoader());
     }
 
@@ -131,7 +132,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
         private Class<? extends DataObjectSerializerImplementation> generateSerializer(final Class<?> type,
                 final String serializerName) throws CannotCompileException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, NoSuchFieldException {
             final DataObjectSerializerSource source = generateEmitterSource(type, serializerName);
-            final CtClass poolClass = generateEmitter0(source, serializerName);
+            final CtClass poolClass = generateEmitter0(type,source, serializerName);
             @SuppressWarnings("unchecked")
             final Class<? extends DataObjectSerializerImplementation> cls = poolClass.toClass(type.getClassLoader(), type.getProtectionDomain());
 
@@ -182,15 +183,22 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
         return source;
     }
 
-    private CtClass generateEmitter0(final DataObjectSerializerSource source, final String serializerName) {
+    private CtClass generateEmitter0(final Class<?> type,final DataObjectSerializerSource source, final String serializerName) {
         final CtClass product;
         try {
             product = javassist.instantiatePrototype(DataObjectSerializerPrototype.class.getName(), serializerName, new ClassCustomizer() {
                 @Override
                 public void customizeClass(final CtClass cls) throws CannotCompileException, NotFoundException {
-                    // getSerializerBody() has side effects
-                    final String body = source.getSerializerBody().toString();
-
+                    // getSerializerBody() has side effects, such as loading classes
+                    // and codecs, it should be run in model class loader in order to
+                    // correctly reference load child classes
+                    final String body = ClassLoaderUtils.withClassLoader(type.getClassLoader(), new Supplier<String>() {
+                            @Override
+                            public String get() {
+                                return source.getSerializerBody().toString();
+                            }
+                        }
+                    );
                     // Generate any static fields
                     for (StaticConstantDefinition def : source.getStaticConstants()) {
                         CtField field = new CtField(javassist.asCtClass(def.getType()), def.getName(), cls);
