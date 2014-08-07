@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedMap;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+
 import org.opendaylight.yangtools.binding.data.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -74,11 +76,12 @@ class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
         Object args[] = new Object[valueGetters.size()];
         int currentArg = 0;
         /*
-         * We could do this walk based on field set
+         * We can do this walk based on field set
          * sorted by name, since constructor arguments in
-         * Java Binding are sorted by name, so arguments will match
-         * with values.
+         * Java Binding are sorted by name.
          *
+         * This means we will construct correct array
+         * for construction of bits object.
          */
         for (String value : valueGetters.keySet()) {
             if (casted.contains(value)) {

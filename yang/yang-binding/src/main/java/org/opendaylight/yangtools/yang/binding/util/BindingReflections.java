@@ -16,10 +16,12 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
@@ -63,7 +66,6 @@ public class BindingReflections {
     }
 
     /**
-     *
      * Find augmentation target class from concrete Augmentation class
      *
      * This method uses first generic argument of
@@ -395,6 +397,27 @@ public class BindingReflections {
         return ret;
     }
 
+    /**
+    *
+    * Scans supplied class and returns an iterable of all data children classes.
+    *
+    * @param type YANG Modeled Entity derived from DataContainer
+    * @return Iterable of all data children, which have YANG modeled entity
+    */
+   @SuppressWarnings("unchecked")
+   public static Map<Class<?>,Method> getChildrenClassToMethod(final Class<?> type) {
+       checkArgument(type != null, "Target type must not be null");
+       checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
+       Map<Class<?>,Method> ret = new HashMap<>();
+       for (Method method : type.getMethods()) {
+           Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method);
+           if (entity.isPresent()) {
+               ret.put(entity.get(),method);
+           }
+       }
+       return ret;
+   }
+
     @SuppressWarnings("unchecked")
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method) {
         if (method.getName().equals("getClass") || !method.getName().startsWith("get")
@@ -533,6 +556,14 @@ public class BindingReflections {
         }
     }
 
+    /**
+     * Given a {@link YangModuleInfo}, create a QName representing it. The QName
+     * is formed by reusing the module's namespace and revision using the module's
+     * name as the QName's local name.
+     *
+     * @param moduleInfo module information
+     * @return QName representing the module
+     */
     public static QName getModuleQName(final YangModuleInfo moduleInfo) {
         checkArgument(moduleInfo != null, "moduleInfo must not be null.");
         return QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(),
@@ -540,17 +571,14 @@ public class BindingReflections {
     }
 
     /**
-    *
-    * Extracts augmentation from Binding DTO field using reflection
-    *
-    * @param input Instance of DataObject which is augmentable and
-    *      may contain augmentation
-    * @return Map of augmentations if read was successful, otherwise
-    *      empty map.
-    */
-   public static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Augmentable<?> input) {
-       return AugmentationFieldGetter.getGetter(input.getClass()).getAugmentations(input);
-   }
-
-
+     * Extracts augmentation from Binding DTO field using reflection
+     *
+     * @param input Instance of DataObject which is augmentable and
+     *      may contain augmentation
+     * @return Map of augmentations if read was successful, otherwise
+     *      empty map.
+     */
+    public static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Augmentable<?> input) {
+        return AugmentationFieldGetter.getGetter(input.getClass()).getAugmentations(input);
+    }
 }

@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import com.google.common.base.Preconditions;
+
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
-class ContainerNodeCodecContext extends DataObjectCodecContext<ContainerSchemaNode> {
+final class ContainerNodeCodecContext extends DataObjectCodecContext<ContainerSchemaNode> {
 
-    private final YangInstanceIdentifier.PathArgument yangIdentifier;
-
-    protected ContainerNodeCodecContext(final Class<?> cls, final ContainerSchemaNode nodeSchema,
-            final CodecContextFactory loader) {
-        super(cls, nodeSchema.getQName().getModule(), nodeSchema, loader);
-        this.yangIdentifier = (new YangInstanceIdentifier.NodeIdentifier(nodeSchema.getQName()));
+    ContainerNodeCodecContext(final DataContainerCodecPrototype<ContainerSchemaNode> prototype) {
+        super(prototype);
     }
 
     @Override
-    protected YangInstanceIdentifier.PathArgument getDomPathArgument() {
-        return yangIdentifier;
+    protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> data) {
+        Preconditions.checkState(data instanceof ContainerNode);
+        return LazyDataObject.create(this, (ContainerNode) data);
     }
 
 }

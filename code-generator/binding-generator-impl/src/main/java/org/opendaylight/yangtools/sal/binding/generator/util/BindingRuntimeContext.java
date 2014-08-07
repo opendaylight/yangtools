@@ -43,6 +43,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  *
  * Runtime Context for Java YANG Binding classes
@@ -61,7 +63,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
  *
  */
 public class BindingRuntimeContext implements Immutable {
-
+    private static final Logger LOG = LoggerFactory.getLogger(BindingRuntimeContext.class);
     private final ClassLoadingStrategy strategy;
     private final SchemaContext schemaContext;
 
@@ -97,7 +99,6 @@ public class BindingRuntimeContext implements Immutable {
      * @return Instance of BindingRuntimeContext for supplied schema context.
      */
     public static final BindingRuntimeContext create(final ClassLoadingStrategy strategy, final SchemaContext ctx) {
-
         return new BindingRuntimeContext(strategy, ctx);
     }
 
@@ -253,6 +254,20 @@ public class BindingRuntimeContext implements Immutable {
         return ImmutableMap.copyOf(childToCase);
     }
 
+    public Set<Class<?>> getCases(final Class<?> choice) {
+        Collection<Type> cazes = choiceToCases.get(referencedType(choice));
+        Set<Class<?>> ret = new HashSet<>(cazes.size());
+        for(Type caze : cazes) {
+            try {
+                final Class<?> c = strategy.loadClass(caze);
+                ret.add(c);
+            } catch (ClassNotFoundException e) {
+                LOG.warn("Failed to load class for case {}, ignoring it", caze, e);
+            }
+        }
+        return ret;
+    }
+
     public Class<?> getClassForSchema(final DataSchemaNode childSchema) {
         DataSchemaNode origSchema = getOriginalSchema(childSchema);
         Type clazzType = typeToDefiningSchema.inverse().get(origSchema);
@@ -264,21 +279,26 @@ public class BindingRuntimeContext implements Immutable {
     }
 
     public ImmutableMap<AugmentationIdentifier,Type> getAvailableAugmentationTypes(final DataNodeContainer container) {
-        Map<AugmentationIdentifier,Type> identifierToType = new HashMap<>();
+        final Map<AugmentationIdentifier,Type> identifierToType = new HashMap<>();
         if (container instanceof AugmentationTarget) {
             Set<AugmentationSchema> augments = ((AugmentationTarget) container).getAvailableAugmentations();
             for (AugmentationSchema augment : augments) {
                 // Augmentation must have child nodes if is to be used with Binding classes
+                AugmentationSchema augOrig = augment;
+                while (augOrig.getOriginalDefinition().isPresent()) {
+                    augOrig = augOrig.getOriginalDefinition().get();
+                }
+
                 if (!augment.getChildNodes().isEmpty()) {
-                    Type augType = typeToDefiningSchema.inverse().get(augment);
+                    Type augType = typeToDefiningSchema.inverse().get(augOrig);
                     if (augType != null) {
                         identifierToType.put(getAugmentationIdentifier(augment),augType);
                     }
                 }
             }
         }
-        return ImmutableMap.copyOf(identifierToType);
 
+        return ImmutableMap.copyOf(identifierToType);
     }
 
     private AugmentationIdentifier getAugmentationIdentifier(final AugmentationSchema augment) {

@@ -7,62 +7,37 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 abstract class DataContainerCodecContext<T> extends NodeCodecContext {
 
-    protected final T schema;
-    protected final QNameModule namespace;
-    protected final CodecContextFactory factory;
-    protected final Class<?> bindingClass;
-    protected final InstanceIdentifier.Item<?> bindingArg;
+    private final DataContainerCodecPrototype<T> prototype;
 
-    protected final LoadingCache<Class<?>, DataContainerCodecContext<?>> containerChild;
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected DataContainerCodecContext(final Class<?> cls, final QNameModule namespace, final T nodeSchema,
-            final CodecContextFactory factory) {
-        super();
-        this.schema = nodeSchema;
-        this.factory = factory;
-        this.namespace = namespace;
-        this.bindingClass = cls;
-        this.bindingArg = new InstanceIdentifier.Item(bindingClass);
-
-        this.containerChild = CacheBuilder.newBuilder().build(new CacheLoader<Class<?>, DataContainerCodecContext<?>>() {
-            @Override
-            public DataContainerCodecContext<?> load(final Class<?> key) throws Exception {
-                return loadChild(key);
-            }
-        });
+    protected DataContainerCodecContext(final DataContainerCodecPrototype<T> prototype) {
+        this.prototype = prototype;
     }
 
-    static DataContainerCodecContext<?> from(final Class<?> cls, final DataSchemaNode schema,
-            final CodecContextFactory loader) {
-        if (schema instanceof ContainerSchemaNode) {
-            return new ContainerNodeCodecContext(cls, (ContainerSchemaNode) schema, loader);
-        } else if (schema instanceof ListSchemaNode) {
-            return new ListNodeCodecContext(cls, (ListSchemaNode) schema, loader);
-        } else if (schema instanceof ChoiceNode) {
-            return new ChoiceNodeCodecContext(cls, (ChoiceNode) schema, loader);
-        }
-        throw new IllegalArgumentException("Not supported type " + cls + " " + schema);
+    protected final T schema() {
+        return prototype.getSchema();
     }
 
-    protected  T getSchema() {
-        return schema;
+    protected final QNameModule namespace() {
+        return prototype.getNamespace();
+    }
+
+    protected final CodecContextFactory factory() {
+        return prototype.getFactory();
+    }
+
+    @Override
+    protected YangInstanceIdentifier.PathArgument getDomPathArgument() {
+        return prototype.getYangArg();
     }
 
     /**
@@ -92,14 +67,21 @@ abstract class DataContainerCodecContext<T> extends NodeCodecContext {
     }
 
     /**
-     *
      * Returns deserialized Binding Path Argument from YANG instance identifier.
      *
      * @param domArg
      * @return
      */
-    protected  PathArgument getBindingPathArgument(final YangInstanceIdentifier.PathArgument domArg) {
-        return bindingArg;
+    protected PathArgument getBindingPathArgument(final YangInstanceIdentifier.PathArgument domArg) {
+        return bindingArg();
+    }
+
+    protected final PathArgument bindingArg() {
+        return prototype.getBindingArg();
+    }
+
+    protected final Class<?> bindingClass() {
+        return prototype.getBindingClass();
     }
 
     /**
@@ -111,22 +93,11 @@ abstract class DataContainerCodecContext<T> extends NodeCodecContext {
      * @param childClass
      * @return Context of child
      */
-    protected  DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) {
-        return containerChild.getUnchecked(childClass);
-    }
-
-    /**
-     * Loads children identified by supplied class. If children is not
-     * valid, throws {@link IllegalArgumentException}.
-     *
-     * @param childClass
-     * @return Context of child
-     */
-    protected abstract DataContainerCodecContext<?> loadChild(final Class<?> childClass);
+    protected abstract DataContainerCodecContext<?> getStreamChild(final Class<?> childClass);
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [" + bindingClass + "]";
+        return getClass().getSimpleName() + " [" + prototype.getBindingClass() + "]";
     }
 
 }

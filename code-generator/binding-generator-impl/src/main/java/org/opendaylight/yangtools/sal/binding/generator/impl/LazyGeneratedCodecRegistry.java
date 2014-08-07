@@ -15,7 +15,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import java.lang.ref.WeakReference;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -105,9 +106,6 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     private static final Map<Class<?>, QName> identityQNames = Collections
             .synchronizedMap(new WeakHashMap<Class<?>, QName>());
     private static final Map<QName, Type> qnamesToIdentityMap = new ConcurrentHashMap<>();
-    /** Binding type to encountered classes mapping **/
-    @SuppressWarnings("rawtypes")
-    private static final Map<Type, WeakReference<Class>> typeToClass = new ConcurrentHashMap<>();
 
     private static final ConcurrentMap<Type, ChoiceCaseNode> caseTypeToCaseSchema = new ConcurrentHashMap<>();
 
@@ -127,8 +125,6 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     private final ClassLoadingStrategy classLoadingStrategy;
     private final AbstractTransformerGenerator generator;
     private final SchemaLock lock;
-
-
 
     // FIXME: how is this protected?
     private SchemaContext currentSchema;
@@ -194,10 +190,10 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     @Override
     public Class<?> getClassForPath(final List<QName> names) {
         DataSchemaNode node = getSchemaNode(names);
-        Preconditions.checkArgument(node != null, "Path %s points to invalid schema location",names);
+        Preconditions.checkArgument(node != null, "Path %s points to invalid schema location", names);
         SchemaNode originalDefinition = SchemaNodeUtils.getRootOriginalIfPossible(node);
-        if(originalDefinition instanceof DataSchemaNode) {
-            node =(DataSchemaNode) originalDefinition;
+        if (originalDefinition instanceof DataSchemaNode) {
+            node = (DataSchemaNode) originalDefinition;
         }
         final SchemaPath path = node.getPath();
         final Type t = pathToType.get(path);
@@ -210,15 +206,11 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             Preconditions.checkState(type != null, "Failed to lookup instantiated type for path %s", path);
         }
 
-        @SuppressWarnings("rawtypes")
-        final WeakReference<Class> weakRef = typeToClass.get(type);
-        if(weakRef != null) {
-            return weakRef.get();
-        }
         try {
             return classLoadingStrategy.loadClass(type);
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(String.format("Could not find loaded class for path: %s and type: %s", path,type.getFullyQualifiedName()));
+            throw new IllegalStateException(String.format("Could not find loaded class for path: %s and type: %s",
+                    path, type.getFullyQualifiedName()));
         }
     }
 
@@ -254,14 +246,6 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     @Override
     @SuppressWarnings("rawtypes")
     public void bindingClassEncountered(final Class cls) {
-
-        ConcreteType typeRef = Types.typeForClass(cls);
-        if (typeToClass.containsKey(typeRef)) {
-            return;
-        }
-        LOG.trace("Binding Class {} encountered.", cls);
-        WeakReference<Class> weakRef = new WeakReference<>(cls);
-        typeToClass.put(typeRef, weakRef);
         if (Augmentation.class.isAssignableFrom(cls)) {
             // Intentionally NOOP
         } else if (DataObject.class.isAssignableFrom(cls)) {
@@ -271,14 +255,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
     @Override
     public void onClassProcessed(final Class<?> cls) {
-        ConcreteType typeRef = Types.typeForClass(cls);
-        if (typeToClass.containsKey(typeRef)) {
-            return;
-        }
-        LOG.trace("Binding Class {} encountered.", cls);
-        @SuppressWarnings("rawtypes")
-        WeakReference<Class> weakRef = new WeakReference<Class>(cls);
-        typeToClass.put(typeRef, weakRef);
+
     }
 
     private DataSchemaNode getSchemaNode(final List<QName> path) {
@@ -348,12 +325,13 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     @Override
     public IdentifierCodec<?> getIdentifierCodecForIdentifiable(final Class identifiable) {
 
-        Class identifier= ClassLoaderUtils.findFirstGenericArgument(identifiable, org.opendaylight.yangtools.yang.binding.Identifiable.class);
+        Class identifier = ClassLoaderUtils.findFirstGenericArgument(identifiable,
+                org.opendaylight.yangtools.yang.binding.Identifiable.class);
         IdentifierCodec<?> obj = identifierCodecs.get(identifier);
         if (obj != null) {
             return obj;
         }
-        return createIdentifierCodec(identifier,identifiable);
+        return createIdentifierCodec(identifier, identifiable);
     }
 
     @Override
@@ -363,11 +341,13 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         if (obj != null) {
             return obj;
         }
-        Class<? extends Identifiable<T>> identifiable = ClassLoaderUtils.findFirstGenericArgument(identifier, Identifier.class);
-        return createIdentifierCodec(identifier,identifiable);
+        Class<? extends Identifiable<T>> identifiable = ClassLoaderUtils.findFirstGenericArgument(identifier,
+                Identifier.class);
+        return createIdentifierCodec(identifier, identifiable);
     }
 
-    private <T extends Identifier<?>> IdentifierCodec<T> createIdentifierCodec(final Class<T> identifier,final Class<? extends Identifiable<T>> identifiable){
+    private <T extends Identifier<?>> IdentifierCodec<T> createIdentifierCodec(final Class<T> identifier,
+            final Class<? extends Identifiable<T>> identifiable) {
         Class<? extends BindingCodec<Map<QName, Object>, Object>> newCodec = generator
                 .keyTransformerForIdentifiable(identifiable);
         BindingCodec<Map<QName, Object>, Object> newInstance;
@@ -476,7 +456,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         Preconditions.checkState(oldCodec == null);
         BindingCodec<Map<QName, Object>, Object> delegate = newInstanceOf(choiceCodec);
         PublicChoiceCodecImpl<?> newCodec = new PublicChoiceCodecImpl(delegate);
-        DispatchChoiceCodecImpl dispatchCodec = new DispatchChoiceCodecImpl(choiceClass,this);
+        DispatchChoiceCodecImpl dispatchCodec = new DispatchChoiceCodecImpl(choiceClass, this);
         choiceCodecs.put(choiceClass, newCodec);
         synchronized (dispatchCodecs) {
             dispatchCodecs.put(choiceClass, dispatchCodec);
@@ -507,7 +487,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         if (ret != null) {
             return ret;
         }
-        ret = new AugmentableDispatchCodec(dataClass,this);
+        ret = new AugmentableDispatchCodec(dataClass, this);
         augmentableCodecs.put(dataClass, ret);
         synchronized (dispatchCodecs) {
             dispatchCodecs.put(dataClass, ret);
@@ -516,9 +496,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         return ret;
     }
 
-
-
-    private static abstract class IntermediateCodec<T> implements DomCodec<T>, Delegator<BindingCodec<Map<QName, Object>, Object>> {
+    private static abstract class IntermediateCodec<T> implements DomCodec<T>,
+            Delegator<BindingCodec<Map<QName, Object>, Object>> {
 
         private final BindingCodec<Map<QName, Object>, Object> delegate;
 
@@ -539,7 +518,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
     }
 
-    private static class IdentifierCodecImpl<T extends Identifier<?>> extends IntermediateCodec<T> implements IdentifierCodec<T> {
+    private static class IdentifierCodecImpl<T extends Identifier<?>> extends IntermediateCodec<T> implements
+            IdentifierCodec<T> {
 
         public IdentifierCodecImpl(final BindingCodec<Map<QName, Object>, Object> delegate) {
             super(delegate);
@@ -567,7 +547,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         }
     }
 
-    private static class DataContainerCodecImpl<T extends DataContainer> extends IntermediateCodec<T> implements DataContainerCodec<T> {
+    private static class DataContainerCodecImpl<T extends DataContainer> extends IntermediateCodec<T> implements
+            DataContainerCodec<T> {
 
         public DataContainerCodecImpl(final BindingCodec<Map<QName, Object>, Object> delegate) {
             super(delegate);
@@ -610,12 +591,12 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     }
 
     @SuppressWarnings("rawtypes")
-    private static abstract class LocationAwareDispatchCodec<T extends LocationAwareBindingCodec> implements BindingCodec {
+    private static abstract class LocationAwareDispatchCodec<T extends LocationAwareBindingCodec> implements
+            BindingCodec {
 
         private final Map<Class, T> implementations = Collections.synchronizedMap(new WeakHashMap<Class, T>());
         private final Set<InstanceIdentifier<?>> adaptedForPaths = new HashSet<>();
         private LazyGeneratedCodecRegistry registry;
-
 
         protected LocationAwareDispatchCodec(final LazyGeneratedCodecRegistry registry) {
             this.registry = registry;
@@ -648,6 +629,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         protected final LazyGeneratedCodecRegistry getRegistry() {
             return registry;
         }
+
         protected void addImplementation(final T implementation) {
             implementations.put(implementation.getDataType(), implementation);
         }
@@ -665,9 +647,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             ArrayList<T> applicable = new ArrayList<>(implementations.size());
 
             /*
-             * Codecs are filtered to only ones, which
-             * are applicable in supplied parent context.
-             *
+             * Codecs are filtered to only ones, which are applicable in
+             * supplied parent context.
              */
             for (T impl : getImplementations().values()) {
                 @SuppressWarnings("unchecked")
@@ -676,13 +657,14 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
                     applicable.add(impl);
                 }
             }
-            LOG.trace("{}: Deserializing mixins from {}, Schema Location {}, Applicable Codecs: {}, All Codecs: {}",this,parent,parentPath,applicable,getImplementations().values());
+            LOG.trace("{}: Deserializing mixins from {}, Schema Location {}, Applicable Codecs: {}, All Codecs: {}",
+                    this, parent, parentPath, applicable, getImplementations().values());
 
-            /* In case of none is applicable, we return
-             * null. Since there is no mixin which
-             * is applicable in this location.
+            /*
+             * In case of none is applicable, we return null. Since there is no
+             * mixin which is applicable in this location.
              */
-            if(applicable.isEmpty()) {
+            if (applicable.isEmpty()) {
                 return null;
             }
             return deserializeImpl(parentData, parentPath, applicable);
@@ -714,15 +696,15 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             if (adaptedForPaths.contains(path)) {
                 return;
             }
-            LOG.debug("Adapting mixin codec {} for path {}",this,path);
+            LOG.debug("Adapting mixin codec {} for path {}", this, path);
             /**
              * We search in schema context if the use of this location aware
              * codec (augmentable codec, case codec) makes sense on provided
              * location (path)
              *
              */
-            Optional<DataNodeContainer> contextNode = BindingSchemaContextUtils.findDataNodeContainer(getRegistry().currentSchema,
-                    path);
+            Optional<DataNodeContainer> contextNode = BindingSchemaContextUtils.findDataNodeContainer(
+                    getRegistry().currentSchema, path);
             /**
              * If context node is present, this codec makes sense on provided
              * location.
@@ -766,7 +748,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
     @SuppressWarnings("rawtypes")
     private static class ChoiceCaseCodecImpl<T extends DataContainer> implements ChoiceCaseCodec<T>, //
-    Delegator<BindingCodec>, LocationAwareBindingCodec<Node<?>, ValueWithQName<T>> {
+            Delegator<BindingCodec>, LocationAwareBindingCodec<Node<?>, ValueWithQName<T>> {
         private final BindingCodec delegate;
         private final ChoiceCaseNode schema;
         private final Map<InstanceIdentifier<?>, ChoiceCaseNode> instantiatedLocations;
@@ -888,12 +870,12 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
         @Override
         public String toString() {
-            return "ChoiceCaseCodec [case=" + dataType
-                    + ", knownLocations=" + instantiatedLocations.keySet() + "]";
+            return "ChoiceCaseCodec [case=" + dataType + ", knownLocations=" + instantiatedLocations.keySet() + "]";
         }
     }
 
-    private static class PublicChoiceCodecImpl<T> implements ChoiceCodec<T>, Delegator<BindingCodec<Map<QName, Object>, Object>> {
+    private static class PublicChoiceCodecImpl<T> implements ChoiceCodec<T>,
+            Delegator<BindingCodec<Map<QName, Object>, Object>> {
 
         private final BindingCodec<Map<QName, Object>, Object> delegate;
 
@@ -969,7 +951,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             try {
                 @SuppressWarnings("unchecked")
                 Class<? extends DataContainer> clazz = (Class<? extends DataContainer>) classLoadingStrategy
-                .loadClass(potential);
+                        .loadClass(potential);
                 ChoiceCaseCodecImpl codec = tryToLoadImplementation(clazz);
                 addImplementation(codec);
                 return Optional.of(codec);
@@ -1010,15 +992,13 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             for (@SuppressWarnings("rawtypes")
             Entry<Class, ChoiceCaseCodecImpl<?>> codec : getImplementations().entrySet()) {
                 ChoiceCaseCodecImpl<?> caseCodec = codec.getValue();
-                Optional<ChoiceCaseNode> instantiatedSchema = BindingSchemaContextUtils.findInstantiatedCase(newChoice.get(),
-                        caseCodec.getSchema());
+                Optional<ChoiceCaseNode> instantiatedSchema = BindingSchemaContextUtils.findInstantiatedCase(
+                        newChoice.get(), caseCodec.getSchema());
                 if (instantiatedSchema.isPresent()) {
                     caseCodec.adaptForPath(augTarget, instantiatedSchema.get());
                 }
             }
         }
-
-
 
         @Override
         public String toString() {
@@ -1031,8 +1011,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
      * Dispatch codec for augmented object, which processes augmentations
      * <p>
      * This codec is used from DataObject codec generated using
-     * {@link TransformerGenerator#transformerFor(Class)} and is wired
-     * during {@link LazyGeneratedCodecRegistry#onDataContainerCodecCreated(Class, Class)}.
+     * {@link TransformerGenerator#transformerFor(Class)} and is wired during
+     * {@link LazyGeneratedCodecRegistry#onDataContainerCodecCreated(Class, Class)}.
      * <p>
      * Instance of this codec is associated with class of Binding DTO which
      * represents target for augmentations.
@@ -1046,8 +1026,10 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         /**
          * Construct augmetable dispatch codec.
          *
-         * @param type Class representing augmentation target
-         * @param registry Registry with which this codec is associated.
+         * @param type
+         *            Class representing augmentation target
+         * @param registry
+         *            Registry with which this codec is associated.
          */
         public AugmentableDispatchCodec(final Class type, final LazyGeneratedCodecRegistry registry) {
             super(registry);
@@ -1055,37 +1037,36 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             augmentableType = type;
         }
 
-
-
         /**
-         * Serializes object to list of values which needs to be injected
-         * into resulting DOM Node. Injection of data to parent DOM Node
-         * is handled by caller (in this case generated codec).
+         * Serializes object to list of values which needs to be injected into
+         * resulting DOM Node. Injection of data to parent DOM Node is handled
+         * by caller (in this case generated codec).
          *
-         * TODO: Deprecate use of augmentation codec without instance
-         *       instance identifier
+         * TODO: Deprecate use of augmentation codec without instance instance
+         * identifier
          *
          * @return list of nodes, which needs to be added to parent node.
          *
          */
         @Override
         public Object serialize(final Object input) {
-            Preconditions.checkArgument(augmentableType.isInstance(input), "Object %s is not instance of %s ",input,augmentableType);
+            Preconditions.checkArgument(augmentableType.isInstance(input), "Object %s is not instance of %s ", input,
+                    augmentableType);
             if (input instanceof Augmentable<?>) {
-                Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations = BindingReflections.getAugmentations((Augmentable<?>) input);
+                Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations = BindingReflections
+                        .getAugmentations((Augmentable<?>) input);
                 return serializeImpl(augmentations);
             }
             return null;
         }
-
-
 
         /**
          *
          * Serialization of augmentations, returns list of composite nodes,
          * which needs to be injected to parent node.
          *
-         * @param input Map of classes to augmentations
+         * @param input
+         *            Map of classes to augmentations
          * @return List of nodes, which should be added to parent node.
          */
         private List serializeImpl(final Map<Class<? extends Augmentation<?>>, Augmentation<?>> input) {
@@ -1102,26 +1083,30 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
          *
          * Deserialization of augmentation which is location aware.
          *
-         * Note: In case of composite nodes as an input, each codec
-         * is invoked since there is no augmentation identifier
-         * and we need to look for concrete classes.
-         * FIXME: Maybe faster variation will be by extending
-         * {@link AugmentationCodecWrapper} to look for particular QNames,
-         * which will filter incoming set of codecs.
+         * Note: In case of composite nodes as an input, each codec is invoked
+         * since there is no augmentation identifier and we need to look for
+         * concrete classes. FIXME: Maybe faster variation will be by extending
+         * {@link AugmentationCodecWrapper} to look for particular QNames, which
+         * will filter incoming set of codecs.
          *
          *
-         * @param input Input representation of data
-         * @param path Wildcarded instance identifier representing location of augmentation parent
-         *       in conceptual schema tree
-         * @param codecs Set of codecs which are applicable for supplied <code>path</code>,
-         *       selected by caller to be used by deserialization
+         * @param input
+         *            Input representation of data
+         * @param path
+         *            Wildcarded instance identifier representing location of
+         *            augmentation parent in conceptual schema tree
+         * @param codecs
+         *            Set of codecs which are applicable for supplied
+         *            <code>path</code>, selected by caller to be used by
+         *            deserialization
          *
          *
          */
         @Override
         public Map<Class, Augmentation> deserializeImpl(final CompositeNode input, final InstanceIdentifier<?> path,
                 final Iterable<AugmentationCodecWrapper> codecs) {
-            LOG.trace("{}: Going to deserialize augmentations from {} in location {}. Available codecs {}",this,input,path,codecs);
+            LOG.trace("{}: Going to deserialize augmentations from {} in location {}. Available codecs {}", this,
+                    input, path, codecs);
             Map<Class, Augmentation> ret = new HashMap<>();
             for (AugmentationCodecWrapper codec : codecs) {
                 // We add Augmentation Identifier to path, in order to
@@ -1138,12 +1123,16 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
         /**
          *
-         * Tries to load implementation of concrete augmentation codec for supplied type
+         * Tries to load implementation of concrete augmentation codec for
+         * supplied type
          *
-         * Loading of codec may fail, because of supplied type may not be visible
-         * by classloaders known by registry. If class was not found returns {@link Optional#absent()}.
+         * Loading of codec may fail, because of supplied type may not be
+         * visible by classloaders known by registry. If class was not found
+         * returns {@link Optional#absent()}.
          *
-         * @param potential Augmentation class identifier for which codecs should be loaded.
+         * @param potential
+         *            Augmentation class identifier for which codecs should be
+         *            loaded.
          * @return Optional with codec for supplied type
          *
          */
@@ -1160,7 +1149,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
         @Override
         protected AugmentationCodecWrapper tryToLoadImplementation(final Class inputType) {
-            AugmentationCodecWrapper<? extends Augmentation<?>> potentialImpl = getRegistry().getCodecForAugmentation(inputType);
+            AugmentationCodecWrapper<? extends Augmentation<?>> potentialImpl = getRegistry().getCodecForAugmentation(
+                    inputType);
             addImplementation(potentialImpl);
             return potentialImpl;
         }
@@ -1223,8 +1213,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
                         InstanceIdentifier augPath = augTarget.augmentation(augType);
                         try {
 
-                            org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier domPath = getRegistry().getInstanceIdentifierCodec()
-                                    .serialize(augPath);
+                            org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier domPath = getRegistry()
+                                    .getInstanceIdentifierCodec().serialize(augPath);
                             if (domPath == null) {
                                 LOG.error("Unable to serialize instance identifier for {}", augPath);
                             }
@@ -1264,7 +1254,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     }
 
     @SuppressWarnings("rawtypes")
-    private static class AugmentationCodecWrapper<T extends Augmentation<?>> implements AugmentationCodec<T>, Delegator<BindingCodec>, LocationAwareBindingCodec<Node<?>, ValueWithQName<T>> {
+    private static class AugmentationCodecWrapper<T extends Augmentation<?>> implements AugmentationCodec<T>,
+            Delegator<BindingCodec>, LocationAwareBindingCodec<Node<?>, ValueWithQName<T>> {
 
         private final BindingCodec delegate;
         private final QName augmentationQName;
@@ -1329,7 +1320,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         }
 
         @Override
-        public boolean isApplicable(final InstanceIdentifier parentPath,final CompositeNode parentData) {
+        public boolean isApplicable(final InstanceIdentifier parentPath, final CompositeNode parentData) {
             return isAcceptable(parentPath);
         }
 
@@ -1340,8 +1331,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
         @Override
         public String toString() {
-            return "AugmentationCodecWrapper [augmentation=" + augmentationType
-                    + ", knownLocations=" + validAugmentationTargets.keySet() + "]";
+            return "AugmentationCodecWrapper [augmentation=" + augmentationType + ", knownLocations="
+                    + validAugmentationTargets.keySet() + "]";
         }
     }
 
@@ -1356,7 +1347,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
         @Override
         public Class<?> deserialize(final QName input) {
-            if(input == null) {
+            if (input == null) {
                 return null;
             }
             Type type = qnamesToIdentityMap.get(input);
@@ -1365,48 +1356,23 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
                 String className = BindingMapping.getClassName(input);
                 type = new ReferencedTypeImpl(packageName, className);
             }
-            ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
-            WeakReference<Class> softref = typeToClass.get(typeref);
-            if (softref == null) {
-
-                try {
-                    Class<?> cls = classLoadingStrategy.loadClass(typeref.getFullyQualifiedName());
-                    if (cls != null) {
-                        serialize(cls);
-                        return cls;
-                    }
-                } catch (Exception e) {
-                    LOG.warn("Identity {} was not deserialized, because of missing class {}", input,
-                            typeref.getFullyQualifiedName());
+            try {
+                final Class<?> cls = classLoadingStrategy.loadClass(type);
+                if (cls != null) {
+                    serialize(cls);
+                    return cls;
                 }
-                return null;
+            } catch (Exception e) {
+                LOG.warn("Identity {} was not deserialized, because of missing class {}", input,
+                        type.getFullyQualifiedName(), e);
             }
-            return softref.get();
+            return null;
+
         }
 
         @Override
         public Object deserialize(final Object input, final InstanceIdentifier bindingIdentifier) {
-            Type type = qnamesToIdentityMap.get(input);
-            if (type == null) {
-                throw new IllegalArgumentException( "Invalid for \"" + input + "\"." );
-            }
-            ReferencedTypeImpl typeref = new ReferencedTypeImpl(type.getPackageName(), type.getName());
-            WeakReference<Class> softref = typeToClass.get(typeref);
-            if (softref == null) {
-
-                try {
-                    Class<?> cls = classLoadingStrategy.loadClass(typeref.getFullyQualifiedName());
-                    if (cls != null) {
-                        serialize(cls);
-                        return cls;
-                    }
-                } catch (Exception e) {
-                    LOG.warn("Identity {} was not deserialized, because of missing class {}", input,
-                            typeref.getFullyQualifiedName());
-                }
-                return null;
-            }
-            return softref.get();
+            return deserialize(input);
         }
 
         @Override

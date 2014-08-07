@@ -7,30 +7,30 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
+import com.google.common.base.Preconditions;
+
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 
-class CaseNodeCodecContext extends DataObjectCodecContext<ChoiceCaseNode> {
-
-    private final YangInstanceIdentifier.PathArgument yangIdentifier;
-
-    CaseNodeCodecContext(final Class<?> cls, final ChoiceCaseNode nodeSchema,
-            final CodecContextFactory runtimeContext) {
-        super(cls, nodeSchema.getQName().getModule(), nodeSchema, runtimeContext);
-        this.yangIdentifier = (new YangInstanceIdentifier.NodeIdentifier(nodeSchema.getQName()));
-    }
-
-    @Override
-    protected YangInstanceIdentifier.PathArgument getDomPathArgument() {
-        return yangIdentifier;
+final class CaseNodeCodecContext extends DataObjectCodecContext<ChoiceCaseNode> {
+    public CaseNodeCodecContext(final DataContainerCodecPrototype<ChoiceCaseNode> prototype) {
+        super(prototype);
     }
 
     @Override
     protected void addYangPathArgument(final PathArgument arg,
             final List<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument> builder) {
         // NOOP
+    }
+
+    @Override
+    protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> normalizedNode) {
+        Preconditions.checkState(normalizedNode instanceof ChoiceNode);
+        return LazyDataObject.create(this, (ChoiceNode) normalizedNode);
     }
 
 }

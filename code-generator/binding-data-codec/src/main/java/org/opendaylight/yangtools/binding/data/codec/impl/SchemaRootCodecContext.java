@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
@@ -15,6 +18,7 @@ import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -22,8 +26,20 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
 
-    private SchemaRootCodecContext(final CodecContextFactory factory) {
-        super(SchemaRootCodecContext.class, null, factory.getRuntimeContext().getSchemaContext(), factory);
+    private final LoadingCache<Class<?>, DataContainerCodecContext<?>> children = CacheBuilder.newBuilder().build(
+            new CacheLoader<Class<?>, DataContainerCodecContext<?>>() {
+                @Override
+                public DataContainerCodecContext<?> load(final Class<?> key) {
+                    Class<Object> parent = ClassLoaderUtils.findFirstGenericArgument(key, ChildOf.class);
+                    Preconditions.checkArgument(DataRoot.class.isAssignableFrom(parent));
+                    QName qname = BindingReflections.findQName(key);
+                    DataSchemaNode childSchema = schema().getDataChildByName(qname);
+                    return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
+                }
+            });
+
+    private SchemaRootCodecContext(final DataContainerCodecPrototype<SchemaContext> dataPrototype) {
+        super(dataPrototype);
     }
 
     /**
@@ -34,17 +50,13 @@ class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
      * @return
      */
     static SchemaRootCodecContext create(final CodecContextFactory factory) {
-        return new SchemaRootCodecContext(factory);
+        DataContainerCodecPrototype<SchemaContext> prototype = DataContainerCodecPrototype.rootPrototype(factory);
+        return new SchemaRootCodecContext(prototype);
     }
 
     @Override
-    protected DataContainerCodecContext<?> loadChild(final Class<?> childClass) {
-        Class<Object> parent = ClassLoaderUtils.findFirstGenericArgument(childClass, ChildOf.class);
-        Preconditions.checkArgument(DataRoot.class.isAssignableFrom(parent));
-
-        QName qname = BindingReflections.findQName(childClass);
-        DataSchemaNode childSchema = getSchema().getDataChildByName(qname);
-        return DataContainerCodecContext.from(childClass, childSchema, factory);
+    protected DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) {
+        return children.getUnchecked(childClass);
     }
 
     @Override
@@ -54,16 +66,21 @@ class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
 
     @Override
     protected NodeCodecContext getYangIdentifierChild(final YangInstanceIdentifier.PathArgument arg) {
-
+        // FIXME: Optimize this
         QName childQName = arg.getNodeType();
-        DataSchemaNode childSchema = schema.getDataChildByName(childQName);
-        Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", arg, schema);
+        DataSchemaNode childSchema = schema().getDataChildByName(childQName);
+        Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", arg, schema());
         if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceNode) {
-            Class<?> childCls = factory.getRuntimeContext().getClassForSchema(childSchema);
+            Class<?> childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
             DataContainerCodecContext<?> childNode = getStreamChild(childCls);
             return childNode;
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    @Override
+    protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> normalizedNode) {
+        throw new UnsupportedOperationException("Could not create Binding data representation for root");
     }
 }

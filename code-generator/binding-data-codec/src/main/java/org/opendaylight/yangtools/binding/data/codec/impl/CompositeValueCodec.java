@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
-class CompositeValueCodec extends ValueTypeCodec {
+final class CompositeValueCodec extends ValueTypeCodec {
 
     private final SchemaUnawareCodec bindingToSimpleType;
     @SuppressWarnings("rawtypes")
