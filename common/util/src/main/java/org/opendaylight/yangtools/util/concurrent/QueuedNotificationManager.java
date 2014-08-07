@@ -8,7 +8,9 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -21,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.concurrent.GuardedBy;
 
+import org.opendaylight.yangtools.util.jmx.ListenerNotificationQueueStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,6 +183,28 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
             LOG.trace( "{}: submitNotifications dine for listener {}",
                        name, listener.getClass() );
         }
+    }
+
+    /**
+     * Returns {@link ListenerNotificationQueueStats} instances for each current listener
+     * notification task in progress.
+     */
+    public List<ListenerNotificationQueueStats> getListenerNotificationQueueStats() {
+        List<ListenerNotificationQueueStats> statsList = new ArrayList<>( listenerCache.size() );
+        for( NotificationTask task: listenerCache.values() ) {
+            statsList.add( new ListenerNotificationQueueStats(
+                    task.listenerKey.getListener().getClass().getName(),
+                    task.notificationQueue.size() ) );
+        }
+
+        return statsList ;
+    }
+
+    /**
+     * Returns the maximum listener queue capacity.
+     */
+    public int getMaxQueueCapacity(){
+        return maxQueueCapacity;
     }
 
     /**

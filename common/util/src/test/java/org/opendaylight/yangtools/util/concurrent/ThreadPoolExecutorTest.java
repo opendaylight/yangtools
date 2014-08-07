@@ -148,8 +148,9 @@ public class ThreadPoolExecutorTest {
         System.out.println();
     }
 
-    private static class Task implements Runnable {
+    static class Task implements Runnable {
         final CountDownLatch tasksRunLatch;
+        final CountDownLatch blockLatch;
         final ConcurrentMap<Thread, AtomicLong> taskCountPerThread;
         final AtomicReference<AssertionError> threadError;
         final String expThreadPrefix;
@@ -162,16 +163,28 @@ public class ThreadPoolExecutorTest {
             this.threadError = threadError;
             this.expThreadPrefix = expThreadPrefix;
             this.delay = delay;
+            blockLatch = null;
+        }
+
+        Task( CountDownLatch tasksRunLatch, CountDownLatch blockLatch ) {
+            this.tasksRunLatch = tasksRunLatch;
+            this.blockLatch = blockLatch;
+            this.taskCountPerThread = null;
+            this.threadError = null;
+            this.expThreadPrefix = null;
+            this.delay = 0;
         }
 
         @Override
         public void run() {
             try {
-                if( delay > 0 ) {
-                    try {
+                try {
+                    if( delay > 0 ) {
                         TimeUnit.MICROSECONDS.sleep( delay );
-                    } catch( InterruptedException e ) {}
-                }
+                    } else if( blockLatch != null ) {
+                        blockLatch.await();
+                    }
+                } catch( InterruptedException e ) {}
 
                 if( expThreadPrefix != null ) {
                     assertEquals( "Thread name starts with " + expThreadPrefix, true,
