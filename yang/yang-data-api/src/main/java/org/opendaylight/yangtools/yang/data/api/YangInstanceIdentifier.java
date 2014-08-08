@@ -34,11 +34,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 
 /**
- * Unique identifier of a partical node instance in the data tree.
+ * Unique identifier of a particular node instance in the data tree.
  *
  * <p>
  * Java representation of YANG Built-in type <code>instance-identifier</code>,
- * which conceptually is XPath expression minimised to uniquely identify element
+ * which conceptually is XPath expression minimized to uniquely identify element
  * in data tree which conforms to constraints maintained by YANG Model,
  * effectively this makes Instance Identifier a path to element in data tree.
  * <p>
@@ -72,19 +72,21 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     private final Iterable<PathArgument> pathArguments;
     private final int hash;
 
-    private transient ImmutableList<PathArgument> legacyPath = null;
-    private transient String toStringCache = null;
+    private transient volatile ImmutableList<PathArgument> legacyPath = null;
+    private transient volatile String toStringCache = null;
 
     private final ImmutableList<PathArgument> getLegacyPath() {
-        if (legacyPath == null) {
+        // Temporary variable saves a volatile read
+        ImmutableList<PathArgument> ret = legacyPath;
+        if (ret == null) {
             synchronized (this) {
-                if (legacyPath == null) {
-                    legacyPath = ImmutableList.copyOf(pathArguments);
-                }
+                // We could have used a synchronized block, but let's just not bother
+                ret = ImmutableList.copyOf(pathArguments);
+                legacyPath = ret;
             }
         }
 
-        return legacyPath;
+        return ret;
     }
 
     /**
@@ -729,22 +731,27 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
          * The cache is thread-safe - if multiple computations occurs at the
          * same time, cache will be overwritten with same result.
          */
-        if (toStringCache != null) {
-            return toStringCache;
-        }
+        String ret = toStringCache;
+        if (ret == null) {
+            synchronized (this) {
+                ret = toStringCache;
+                if (ret == null) {
+                    final StringBuilder builder = new StringBuilder('/');
+                    boolean first = true;
+                    for (PathArgument argument : getPathArguments()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            builder.append('/');
+                        }
+                        builder.append(argument.toString());
+                    }
 
-        final StringBuilder builder = new StringBuilder('/');
-        boolean first = true;
-        for (PathArgument argument : getPathArguments()) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append('/');
+                    ret = builder.toString();
+                    toStringCache = ret;
+                }
             }
-            builder.append(argument.toString());
         }
-
-        toStringCache = builder.toString();
-        return toStringCache;
+        return ret;
     }
 }
