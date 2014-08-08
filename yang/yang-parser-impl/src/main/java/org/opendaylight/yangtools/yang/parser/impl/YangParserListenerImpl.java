@@ -545,8 +545,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             } else {
                 ModuleImport imp = moduleBuilder.getImport(prefix);
                 if (imp == null) {
-                    LOG.warn("Error in module {} at line {}: No import found with prefix {}", moduleName, line, prefix);
-                    return QName.create(name);
+                    LOG.debug("Error in module {} at line {}: No import found with prefix {}", moduleName, line, prefix);
+                    //return QName.create(name);
+                    throw new YangParseException(moduleName, line, "Error in module " + moduleName
+                        + " No import found with prefix " + prefix + " not found.");
                 }
                 Date revision = imp.getRevision();
                 TreeMap<Date, URI> namespaces = namespaceContext.get(imp.getModuleName());
@@ -1132,7 +1134,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     qname = QName.create(moduleQName, it.next());
                 }
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | YangParseException ex) {
             qname = nodeType;
         }
 
