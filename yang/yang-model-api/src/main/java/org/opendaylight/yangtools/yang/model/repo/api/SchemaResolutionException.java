@@ -40,7 +40,7 @@ public class SchemaResolutionException extends SchemaSourceException {
 
     public SchemaResolutionException(final @Nonnull String message, final Collection<SourceIdentifier> resolvedSources,
             final @Nonnull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
-        this(message, null, Collections.<SourceIdentifier>emptySet(), unsatisfiedImports);
+        this(message, null, resolvedSources, unsatisfiedImports);
     }
 
     public SchemaResolutionException(final @Nonnull String message, final Throwable cause,
