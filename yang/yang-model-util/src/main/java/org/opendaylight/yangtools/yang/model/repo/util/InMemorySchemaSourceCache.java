@@ -54,7 +54,7 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
             return Futures.immediateCheckedFuture(present.source);
         }
 
-        return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found"));
+        return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
     }
 
     @Override

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 
 /**
  * Exception thrown when a the specified schema source is not available.
@@ -16,11 +17,18 @@ import com.google.common.annotations.Beta;
 public class MissingSchemaSourceException extends SchemaSourceException {
     private static final long serialVersionUID = 1L;
 
-    public MissingSchemaSourceException(final String message) {
-        super(message);
+    private final SourceIdentifier id;
+
+    public MissingSchemaSourceException(final String message, final SourceIdentifier id) {
+        this(message, id, null);
     }
 
-    public MissingSchemaSourceException(final String message, final Throwable cause) {
-        super(message, cause);
+    public MissingSchemaSourceException(final String s, final SourceIdentifier id, final Throwable t) {
+        super(s, t);
+        this.id = Preconditions.checkNotNull(id);
+    }
+
+    public SourceIdentifier getSourceId() {
+        return id;
     }
 }

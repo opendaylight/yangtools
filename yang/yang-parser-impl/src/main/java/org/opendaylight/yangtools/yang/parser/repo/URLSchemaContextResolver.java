@@ -169,7 +169,7 @@ public class URLSchemaContextResolver implements SchemaSourceProvider<YangTextSc
         final YangTextSchemaSource ret = sources.getIfPresent(sourceIdentifier);
         if (ret == null) {
             return Futures.<YangTextSchemaSource, SchemaSourceException>immediateFailedCheckedFuture(
-                    new MissingSchemaSourceException("URL for " + sourceIdentifier + " not registered"));
+                    new MissingSchemaSourceException("URL for " + sourceIdentifier + " not registered", sourceIdentifier));
         }
 
         return Futures.immediateCheckedFuture(ret);
