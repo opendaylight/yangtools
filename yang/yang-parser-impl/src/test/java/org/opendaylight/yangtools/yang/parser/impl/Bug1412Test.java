@@ -23,9 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
- * Test antlr grammar capability to parse description statement in unknown node.
+ * Test ANTLR4 grammar capability to parse description statement in unknown node.
  *
- * Not that everything under unknown node is unknown node.
+ * Note: Everything under unknown node is unknown node.
  */
 public class Bug1412Test {
 
@@ -42,8 +42,8 @@ public class Bug1412Test {
 
         Date revision = new SimpleDateFormat("yyyy-MM-dd").parse("2014-07-25");
         QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), revision);
-        QName expectedNodeType = new QName(null, null, null, "action");
-        assertEquals(QName.create(null, (Date) null, "action"), action.getNodeType());
+        QName expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action");
+        assertEquals(expectedNodeType, action.getNodeType());
         assertEquals("hello", action.getNodeParameter());
         QName expectedQName = QName.create(qm, "hello");
         assertEquals(expectedQName, action.getQName());
@@ -70,7 +70,7 @@ public class Bug1412Test {
         assertNotNull(actionPoint);
         assertNotNull(output);
 
-        expectedNodeType = new QName(null, null, null, "info");
+        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "info");
         assertEquals(expectedNodeType, info.getNodeType());
         assertEquals("greeting", info.getNodeParameter());
 
@@ -78,7 +78,7 @@ public class Bug1412Test {
         assertEquals(expectedNodeType, description.getNodeType());
         assertEquals("say greeting", description.getNodeParameter());
 
-        expectedNodeType = new QName(null, null, null, "actionpoint");
+        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "actionpoint");
         assertEquals(expectedNodeType, actionPoint.getNodeType());
         assertEquals("entry", actionPoint.getNodeParameter());
 

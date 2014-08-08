@@ -532,6 +532,20 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         }
     }
 
+    /**
+     * Method transforms string representation of yang element (i.e. leaf name, container name etc.) into QName.
+     * The namespace of QName is assigned from parent module same as revision date of module. If String qname parameter
+     * contains ":" the string is evaluated as prefix:name of element. In this case method will look into import map
+     * and extract correct ModuleImport. If such import is not present in import map the method will throw {@link YangParseException}
+     * <br>
+     * If ModuleImport is present but the value of namespace in ModuleImport is <code>null</code> the method wil throw {@link YangParseException}
+     *
+     * @param qnameString QName value as String
+     * @param line line in Yang model document where QName occur.
+     * @return transformed string qname parameter as QName structure.
+     *
+     * @throws YangParseException
+     */
     private QName parseQName(final String qnameString, final int line) {
         final QName qname;
         if (qnameString.indexOf(':') == -1) {
@@ -545,8 +559,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             } else {
                 ModuleImport imp = moduleBuilder.getImport(prefix);
                 if (imp == null) {
-                    LOG.warn("Error in module {} at line {}: No import found with prefix {}", moduleName, line, prefix);
-                    return QName.create(name);
+                    LOG.debug("Error in module {} at line {}: No import found with prefix {}", moduleName, line, prefix);
+                    throw new YangParseException(moduleName, line, "Error in module " + moduleName
+                        + " No import found with prefix " + prefix + " not found.");
                 }
                 Date revision = imp.getRevision();
                 TreeMap<Date, URI> namespaces = namespaceContext.get(imp.getModuleName());
@@ -1121,6 +1136,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         QName qname = null;
         try {
+            //FIXME: rewrite whole method to handle unknown nodes properly.
+            // This should be bugfix for bug https://bugs.opendaylight.org/show_bug.cgi?id=1539
+            // After this fix bug https://bugs.opendaylight.org/show_bug.cgi?id=1538 MUST be fixed since
+            // they are dependent!!!
             if (Strings.isNullOrEmpty(nodeParameter)) {
                 qname = nodeType;
             } else {
@@ -1132,7 +1151,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     qname = QName.create(moduleQName, it.next());
                 }
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | YangParseException ex) {
             qname = nodeType;
         }
 
