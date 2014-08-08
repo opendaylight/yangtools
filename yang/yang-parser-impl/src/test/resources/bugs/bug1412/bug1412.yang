@@ -3,6 +3,11 @@ module bug1412 {
     namespace "urn:test:bug1412";
     prefix "b1412";
 
+    import extensions {
+        prefix ext;
+        revision-date "2014-07-25";
+    }
+
     revision "2014-07-25" {
     }
 

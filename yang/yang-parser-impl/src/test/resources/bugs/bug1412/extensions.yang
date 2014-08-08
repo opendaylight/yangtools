@@ -1,0 +1,28 @@
+module extensions {
+    yang-version 1;
+    namespace "urn:test:bug1412:ext:definitions";
+    prefix "ext";
+
+    revision "2014-07-25" {
+    }
+
+    extension action {
+        argument hello {
+
+        }
+    }
+
+    extension info {
+        argument string;
+    }
+
+    extension actionpoint {
+        argument entry {
+
+        }
+    }
+
+    extension internal {
+
+    }
+}
