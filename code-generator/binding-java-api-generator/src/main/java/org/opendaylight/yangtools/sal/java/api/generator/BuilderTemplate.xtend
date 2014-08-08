@@ -7,7 +7,14 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
-import java.util.Arrays;
+import com.google.common.collect.ImmutableSortedSet
+import com.google.common.collect.Range
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.Collection
+import java.util.Collections
+import java.util.HashMap
+import java.util.HashSet
 import java.util.LinkedHashSet
 import java.util.List
 import java.util.Map
@@ -15,22 +22,15 @@ import java.util.Set
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
 import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
-import static org.opendaylight.yangtools.binding.generator.util.Types.*
-import java.util.HashMap
-import java.util.Collections
 import org.opendaylight.yangtools.yang.binding.DataObject
-import java.util.ArrayList
-import java.util.HashSet
-import java.util.Collection
 import org.opendaylight.yangtools.yang.binding.Identifiable
-import com.google.common.collect.Range
-import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 
 /**
  * Template for generating JAVA builder classes. 
@@ -63,6 +63,8 @@ class BuilderTemplate extends BaseTemplate {
      */
     val Set<GeneratedProperty> properties
 
+    private static val METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<MethodSignature>();
+
     /**
      * Constructs new instance of this class.
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
@@ -79,15 +81,17 @@ class BuilderTemplate extends BaseTemplate {
      * @returns set of method signature instances
      */
     def private Set<MethodSignature> createMethods() {
-        val Set<MethodSignature> methods = new LinkedHashSet
+        val Set<MethodSignature> methods = new LinkedHashSet();
         methods.addAll(type.methodDefinitions)
         collectImplementedMethods(methods, type.implements)
-        return methods
+        val Set<MethodSignature> sortedMethods = ImmutableSortedSet.orderedBy(METHOD_COMPARATOR).addAll(methods).build()
+
+        return sortedMethods
     }
 
     /**
      * Adds to the <code>methods</code> set all the methods of the <code>implementedIfcs</code> 
-     * and recursivelly their implemented interfaces.
+     * and recursively their implemented interfaces.
      * 
      * @param methods set of method signatures
      * @param implementedIfcs list of implemented interfaces
@@ -187,7 +191,7 @@ class BuilderTemplate extends BaseTemplate {
             throw new IllegalArgumentException("Method, method name, method return type reference cannot be NULL or empty!")
         }
         var prefix = "get";
-        if(BOOLEAN.equals(method.returnType)) {
+        if(Types.BOOLEAN.equals(method.returnType)) {
             prefix = "is";
         } 
         if (method.name.startsWith(prefix)) {

@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
-import org.opendaylight.yangtools.yang.common.QName
 
 abstract class BaseTemplate {
     protected val GeneratedType type;
