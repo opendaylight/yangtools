@@ -363,7 +363,7 @@ abstract class BaseTemplate {
         «IF !properties.empty»
             @Override
             public «String.importedName» toString() {
-                «StringBuilder.importedName» builder = new «StringBuilder.importedName»("«type.class.simpleName» [");
+                «StringBuilder.importedName» builder = new «StringBuilder.importedName»(«type.importedName».class.getSimpleName()).append(" [");
                 boolean first = true;
 
                 «FOR property : properties»
