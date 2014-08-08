@@ -655,13 +655,10 @@ class BuilderTemplate extends BaseTemplate {
                 if (this == obj) {
                     return true;
                 }
-                if (obj == null) {
+                if (!(obj instanceof «type.importedName»)) {
                     return false;
-                }
-                if (getClass() != obj.getClass()) {
-                    return false;
-                }
-                «type.name»«IMPL» other = («type.name»«IMPL») obj;
+                }    
+                «type.importedName» other = («type.importedName») obj;
                 «FOR property : properties»
                     «val fieldName = property.fieldName»
                     if («fieldName» == null) {
@@ -669,9 +666,9 @@ class BuilderTemplate extends BaseTemplate {
                             return false;
                         }
                     «IF property.returnType.name.contains("[")»
-                    } else if(!«Arrays.importedName».equals(«fieldName», other.«fieldName»)) {
+                    } else if(!«Arrays.importedName».equals(«fieldName», other.«property.getterMethod»())) {
                     «ELSE»
-                    } else if(!«fieldName».equals(other.«fieldName»)) {
+                    } else if(!«fieldName».equals(other.«property.getterMethod»())) {
                     «ENDIF»
                         return false;
                     }
