@@ -49,7 +49,7 @@ class YangToSourcesProcessor {
     private final MavenProject project;
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
-    private YangProvider yangProvider;
+    private final YangProvider yangProvider;
 
     @VisibleForTesting
     YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
@@ -180,13 +180,27 @@ class YangToSourcesProcessor {
 
     static class YangProvider {
 
-
-
         void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir, File[] excludedFiles)
                 throws MojoFailureException {
 
             // copy project's src/main/yang/*.yang to target/generated-sources/yang/META-INF/yang/*.yang
+
             File generatedYangDir = new File(project.getBasedir(), CodeGeneratorArg.YANG_GENERATED_DIR);
+            addYangsToMetaInf(log, project, yangFilesRootDir, excludedFiles, generatedYangDir);
+
+            // Also copy to the actual build output dir if different than "target". When running in
+            // Eclipse this can differ (eg "target-ide").
+
+            File actualGeneratedYangDir = new File(project.getBuild().getDirectory(),
+                    CodeGeneratorArg.YANG_GENERATED_DIR.replace("target" + File.separator, ""));
+            if(!actualGeneratedYangDir.equals(generatedYangDir)) {
+                addYangsToMetaInf(log, project, yangFilesRootDir, excludedFiles, actualGeneratedYangDir);
+            }
+        }
+
+        private void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir,
+                File[] excludedFiles, File generatedYangDir)
+                throws MojoFailureException {
 
             File withMetaInf = new File(generatedYangDir, META_INF_YANG_STRING);
             withMetaInf.mkdirs();
@@ -197,9 +211,8 @@ class YangToSourcesProcessor {
                     org.apache.commons.io.FileUtils.copyFile(file, new File(withMetaInf, file.getName()));
                 }
             } catch (IOException e) {
-                String message = "Unable to list yang files into resource folder";
-                log.warn(message, e);
-                throw new MojoFailureException(message, e);
+                log.warn(String.format("Failed to generate files into root %s", yangFilesRootDir), e);
+                throw new MojoFailureException("Unable to list yang files into resource folder", e);
             }
 
             setResource(generatedYangDir, project);
