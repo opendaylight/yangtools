@@ -80,7 +80,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
                     return fetchSource(id, it);
                 }
 
-                throw new MissingSchemaSourceException("All available providers exhausted", t);
+                throw new MissingSchemaSourceException("All available providers exhausted", id, t);
             }
         }), FETCH_MAPPER);
     }
@@ -89,7 +89,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
         final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
         if (srcs == null) {
-            return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id));
+            return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id, id));
         }
 
         // TODO, remove and make sources keep sorted multimap (e.g. ArrayListMultimap with SortedLists)
@@ -99,7 +99,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         final Iterator<AbstractSchemaSourceRegistration<?>> regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
             return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(
-                    new MissingSchemaSourceException("No providers for source " + id + " representation " + representation + " available"));
+                    new MissingSchemaSourceException("No providers for source " + id + " representation " + representation + " available", id));
         }
 
         CheckedFuture<T, SchemaSourceException> fetchSourceFuture = fetchSource(id, regs);
