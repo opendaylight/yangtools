@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.romix.scala.collection.concurrent.TrieMap;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,10 +18,6 @@ import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
-import com.romix.scala.collection.concurrent.TrieMap;
 
 /**
  * A simple layer on top of maps, which performs snapshot mediation and optimization of
@@ -146,7 +146,7 @@ public final class MapAdaptor {
         if (useSingleton && size == 1) {
             final Entry<K, V> e = Iterables.getOnlyElement(input.entrySet());
             final Map<K, V> ret = Collections.singletonMap(e.getKey(), e.getValue());
-            LOG.trace("Reducing input () to singleton map {}", input, ret);
+            LOG.trace("Reducing input {} to singleton map {}", input, ret);
             return ret;
         }
 
