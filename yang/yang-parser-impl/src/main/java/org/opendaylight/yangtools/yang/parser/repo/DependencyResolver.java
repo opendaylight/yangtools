@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
@@ -59,7 +60,7 @@ final class DependencyResolver {
     }
 
     private static boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
-        final String rev = mi.getRevision() != null ? mi.getRevision().toString() : null;
+        final String rev = mi.getRevision() != null ? QName.formattedRevision(mi.getRevision()) : null;
         final SourceIdentifier msi = SourceIdentifier.create(mi.getModuleName(), Optional.fromNullable(rev));
 
         // Quick lookup
