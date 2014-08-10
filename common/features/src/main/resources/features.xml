@@ -7,18 +7,20 @@
  terms of the Eclipse Public License v1.0 which accompanies this distribution,
  and is available at http://www.eclipse.org/legal/epl-v10.html
 -->
-<features>
-
-    <feature name='yangtools-all' version='${project.version}'>
-        <feature version='${project.version}'>yangtools-models</feature>
-        <feature version='${project.version}'>yangtools-data-binding</feature>
-        <feature version='${project.version}'>yangtools-common</feature>
-        <feature version='${project.version}'>yangtools-concepts</feature>
-        <feature version='${project.version}'>yangtools-binding-generator</feature>
-        <feature version='${project.version}'>yangtools-restconf</feature>
+<features name="odl-yangtools-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
+    <feature name='odl-yangtools-all' version='${project.version}' description='OpenDaylight Yangtools All'>
+        <feature version='${project.version}'>odl-yangtools-common</feature>
+        <feature version='${project.version}'>odl-yangtools-binding</feature>
+        <feature version='${project.version}'>odl-yangtools-models</feature>
+        <feature version='${project.version}'>odl-yangtools-data-binding</feature>
+        <feature version='${project.version}'>odl-yangtools-binding-generator</feature>
+        <feature version='${project.version}'>odl-yangtools-restconf</feature>
     </feature>
 
-    <feature name='yangtools-models' version='${project.version}'>
+    <feature name='odl-yangtools-models' version='${project.version}' description='OpenDaylight :: Yangtools :: Models'>
+        <feature version='${project.version}'>odl-yangtools-binding</feature>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-inet-types/${ietf.inet.types.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-yang-types/${ietf.yang.types.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/yang-ext/${yang.ext.version}</bundle>
@@ -26,9 +28,8 @@
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology/${ietf.topology.version}</bundle>
        </feature>
 
-    <feature name='yangtools-data-binding' version='${project.version}'>
-        <feature version='${project.version}'>yangtools-concepts</feature>
-        <feature version='${project.version}'>yangtools-binding</feature>
+    <feature name='odl-yangtools-data-binding' version='${project.version}' description='OpenDaylight :: Yangtools :: Data Binding'>
+        <feature version='${project.version}'>odl-yangtools-binding</feature>
         <bundle>mvn:org.opendaylight.yangtools.thirdparty/antlr4-runtime-osgi-nohead/${antlr4.version}</bundle>
         <bundle>mvn:commons-io/commons-io/${commons.io.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-api/${project.version}</bundle>
@@ -42,27 +43,23 @@
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/${project.version}</bundle>
     </feature>
 
-    <feature name='yangtools-binding' version='${project.version}'>
-        <feature version='${project.version}'>yangtools-concepts</feature>
-        <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
+    <feature name='odl-yangtools-binding' version='${project.version}' description='OpenDaylight :: Yangtools :: Binding'>
+        <feature version='${project.version}'>odl-yangtools-common</feature>
         <bundle>mvn:org.opendaylight.yangtools/yang-binding/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/util/${project.version}</bundle>
     </feature>
 
-    <feature name='yangtools-concepts' version='${project.version}'>
-        <feature version='${project.version}'>yangtools-common</feature>
+    <feature name='odl-yangtools-common' version='${project.version}' description='OpenDaylight :: Yangtools :: Common'>
+        <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/concepts/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-common/${project.version}</bundle>
-        <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
-    </feature>
-    <feature name="yangtools-common" version='${project.version}'>
         <bundle>mvn:org.opendaylight.yangtools/util/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/object-cache-api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/object-cache-guava/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/object-cache-noop/${project.version}</bundle>
     </feature>
-    <feature name='yangtools-binding-generator' version='${project.version}'>
-        <feature version='${project.version}'>yangtools-data-binding</feature>
+    <feature name='odl-yangtools-binding-generator' version='${project.version}' description='OpenDaylight :: Yangtools :: Binding Generator'>
+        <feature version='${project.version}'>odl-yangtools-data-binding</feature>
         <bundle>mvn:org.javassist/javassist/${javassist.version}</bundle>
         <bundle>mvn:org.apache.commons/commons-lang3/${commons.lang3.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-generator-api/${project.version}</bundle>
@@ -71,17 +68,14 @@
         <bundle>mvn:org.opendaylight.yangtools/binding-generator-util/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-model-api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-type-provider/${project.version}</bundle>
-        <bundle>wrap:mvn:org.eclipse.xtend/org.eclipse.xtend.lib/${xtend.version}</bundle>
-        <bundle>wrap:mvn:org.eclipse.xtext/org.eclipse.xtext.xbase.lib/${xtend.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.thirdparty/xtend-lib-osgi/${xtend.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-util/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/${project.version}</bundle>
     </feature>
-    <feature name="yangtools-restconf" version='${project.version}'>
+    <feature name='odl-yangtools-restconf' version='${project.version}' description='OpenDaylight :: Yangtools :: Restconf'>
         <bundle>mvn:org.opendaylight.yangtools/restconf-client-api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/restconf-client-impl/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/restconf-common/${project.version}</bundle>
      </feature>
-
-
 </features>
