@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_82578157",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-10T05:58:15Z",
+      "side": 1,
+      "message": "commented-out code,\n\nthe exception thrown needs to be documented in the method javadoc and please revise the message",
+      "revId": "674ae4458e0ee2fd9719f3626b988d8320a5f7bc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a252c564",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-10T05:58:15Z",
+      "side": 1,
+      "message": "this is the second instance of the exception...",
+      "revId": "674ae4458e0ee2fd9719f3626b988d8320a5f7bc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_424df9c2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1137,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-10T05:58:15Z",
+      "side": 1,
+      "message": "this will catch the case where we have an existing import declaration, but cannot find the module (see above). If that is intentional, there has to be an explicit comment about that",
+      "revId": "674ae4458e0ee2fd9719f3626b988d8320a5f7bc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
