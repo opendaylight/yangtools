@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_62f6fd5e",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/TrackingLinkedBlockingQueue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-10T06:20:29Z",
+      "side": 1,
+      "message": "there may be many instances of the queue -- please use a FieldUpdater",
+      "revId": "106f0b7556f08c2018dbb8b1abac36acab6b2e9e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
