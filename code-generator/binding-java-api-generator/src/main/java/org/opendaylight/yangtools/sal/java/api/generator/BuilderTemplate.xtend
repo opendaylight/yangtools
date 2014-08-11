@@ -655,14 +655,15 @@ class BuilderTemplate extends BaseTemplate {
                 if (this == obj) {
                     return true;
                 }
-                if (obj == null) {
+                if (!(obj instanceof DataObject)) {
                     return false;
                 }
-                if (getClass() != obj.getClass()) {
+                if (!«type.importedName».class.equals(((DataObject)obj).getImplementedInterface())) {
                     return false;
                 }
-                «type.name»«IMPL» other = («type.name»«IMPL») obj;
+                «type.importedName» other = («type.importedName»)obj;
                 «FOR property : properties»
+                    // FIXME: user getters, not direct fields
                     «val fieldName = property.fieldName»
                     if («fieldName» == null) {
                         if (other.«fieldName» != null) {
