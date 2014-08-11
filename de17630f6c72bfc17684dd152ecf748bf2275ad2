@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_3554b1c8",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/AlphabeticallyTypeMemberComparator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-11T06:22:42Z",
+      "side": 1,
+      "message": "the name says a lot, but the class still needs a javadoc.",
+      "revId": "de17630f6c72bfc17684dd152ecf748bf2275ad2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f56169a9",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BuilderTemplate.xtend",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-11T06:22:42Z",
+      "side": 1,
+      "message": "no .* imports, please",
+      "revId": "de17630f6c72bfc17684dd152ecf748bf2275ad2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_554ff533",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BuilderTemplate.xtend",
+        "patchSetId": 2
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-11T06:22:42Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "revId": "de17630f6c72bfc17684dd152ecf748bf2275ad2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
