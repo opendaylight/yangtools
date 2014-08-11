@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_d5b225e4",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-11T11:18:26Z",
+      "side": 1,
+      "message": "Actually timeOf* can just be volatile since they\u0027re only ever set. AtomicDouble is a guava class and there\u0027s no field updater class for it.\n\nSo it looks like the advantage of field updater is it saves memory but at the expense of some performance due to reflection. The usual size vs speed trade-off. I\u0027m using this class for commits so I\u0027d like it to be as fast possible and there\u0027s only 1 instance so the extra memory overhead doesn\u0027t matter. Of course we may use this class in other places where we\u0027d want to optimize for size - we\u0027ll see.",
+      "parentUuid": "fa82b9bf_d5cc65bd",
+      "revId": "fcf5d7d9835dfd11cb9d2f251bf2eeb3ab473cec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_75c79996",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/jmx/AbstractMXBean.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-08-11T06:07:52Z",
       "side": 1,
       "message": "so, this is touching on manageability, with some undocumented concepts/layout being hinted at -- what are type/category?\n\nThis definitely is part of a different patch",
+      "revId": "fcf5d7d9835dfd11cb9d2f251bf2eeb3ab473cec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f592c94a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/jmx/AbstractMXBean.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-11T11:18:26Z",
+      "side": 1,
+      "message": "Type and category are properties of an ObjectName that are used for containment.\n\nI assume you\u0027re referring to having separate patches for the new stat classes and the JMX stuff? Yeah I could do that although I have more changes coming that would make them dependent. I just figured it\u0027s easier with 1 patch - all the changes are related to providing stats via JMX and the controller-side needs all the changes.",
+      "parentUuid": "fa82b9bf_75c79996",
       "revId": "fcf5d7d9835dfd11cb9d2f251bf2eeb3ab473cec",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
