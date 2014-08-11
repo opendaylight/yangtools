@@ -655,35 +655,51 @@ class BuilderTemplate extends BaseTemplate {
                 if (this == obj) {
                     return true;
                 }
-                if (obj == null) {
+                if (!(obj instanceof «DataObject.importedName»)) {
                     return false;
                 }
-                if (getClass() != obj.getClass()) {
+                if (!«type.importedName».class.equals(((«DataObject.importedName»)obj).getImplementedInterface())) {
                     return false;
                 }
-                «type.name»«IMPL» other = («type.name»«IMPL») obj;
+                «type.importedName» other = («type.importedName»)obj;
                 «FOR property : properties»
                     «val fieldName = property.fieldName»
                     if («fieldName» == null) {
-                        if (other.«fieldName» != null) {
+                        if (other.«property.getterMethodName»() != null) {
                             return false;
                         }
                     «IF property.returnType.name.contains("[")»
-                    } else if(!«Arrays.importedName».equals(«fieldName», other.«fieldName»)) {
+                    } else if(!«Arrays.importedName».equals(«fieldName», other.«property.getterMethodName»())) {
                     «ELSE»
-                    } else if(!«fieldName».equals(other.«fieldName»)) {
+                    } else if(!«fieldName».equals(other.«property.getterMethodName»())) {
                     «ENDIF»
                         return false;
                     }
                 «ENDFOR»
                 «IF augmentField != null»
-                    «val fieldName = augmentField.name»
-                    if («fieldName» == null) {
-                        if (other.«fieldName» != null) {
+                    if (getClass() == obj.getClass()) {
+                        // Simple case: we are comparing against self
+                        «type.name»«IMPL» otherImpl = («type.name»«IMPL») obj;
+                        «val fieldName = augmentField.name»
+                        if («fieldName» == null) {
+                            if (otherImpl.«fieldName» != null) {
+                                return false;
+                            }
+                        } else if(!«fieldName».equals(otherImpl.«fieldName»)) {
                             return false;
                         }
-                    } else if(!«fieldName».equals(other.«fieldName»)) {
-                        return false;
+                    } else {
+                        // Hard case: compare our augments with presence there...
+                        for («Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e : «augmentField.name».entrySet()) {
+                            final Object oa = other.getAugmentation(e.getKey());
+                            if (!e.getValue().equals(oa)) {
+                                return false;
+                            }
+                        }
+                        // .. and give the other one the chance to do the same
+                        if (!obj.equals(this)) {
+                            return false;
+                        }
                     }
                 «ENDIF»
                 return true;
