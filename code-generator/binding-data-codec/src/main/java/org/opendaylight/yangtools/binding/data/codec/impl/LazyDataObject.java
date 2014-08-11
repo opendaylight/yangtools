@@ -136,11 +136,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         return cached == NULL_VALUE ? null : cached;
     }
 
-    @Override
-    public Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object obj) {
-        Preconditions.checkArgument(this == Proxy.getInvocationHandler(obj),
-                "Supplied object is not associated with this proxy handler");
-
+    private Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentationsImpl() {
         ImmutableMap<Class<? extends Augmentation<?>>, Augmentation<?>> ret = cachedAugmentations;
         if (ret == null) {
             synchronized (this) {
@@ -153,6 +149,14 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         }
 
         return ret;
+    }
+
+    @Override
+    public Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object obj) {
+        Preconditions.checkArgument(this == Proxy.getInvocationHandler(obj),
+                "Supplied object is not associated with this proxy handler");
+
+        return getAugmentationsImpl();
     }
 
     private Object getAugmentationImpl(final Class<?> cls) {
@@ -176,7 +180,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
             helper.add(m.getName(), getBindingData(m));
         }
         if (Augmentable.class.isAssignableFrom(context.bindingClass())) {
-            helper.add("augmentations", getAugmentations(this));
+            helper.add("augmentations", getAugmentationsImpl());
         }
         return helper.toString();
     }
