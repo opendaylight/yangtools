@@ -100,7 +100,8 @@ public class RestconfUtils {
         final CharSequence nodeIdentifier = toRestconfIdentifier(_nodeType, schemaContext);
         final Map<QName, Object> keyValues = argument.getKeyValues();
 
-        StringBuilder sb = new StringBuilder('/');
+        StringBuilder sb = new StringBuilder();
+        sb.append('/');
         sb.append(nodeIdentifier);
         sb.append('/');
 
