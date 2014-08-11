@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_d5cc65bd",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-11T06:07:52Z",
+      "side": 1,
+      "message": "can we have field updaters for these?",
+      "revId": "fcf5d7d9835dfd11cb9d2f251bf2eeb3ab473cec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_75c79996",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/jmx/AbstractMXBean.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-11T06:07:52Z",
+      "side": 1,
+      "message": "so, this is touching on manageability, with some undocumented concepts/layout being hinted at -- what are type/category?\n\nThis definitely is part of a different patch",
+      "revId": "fcf5d7d9835dfd11cb9d2f251bf2eeb3ab473cec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
