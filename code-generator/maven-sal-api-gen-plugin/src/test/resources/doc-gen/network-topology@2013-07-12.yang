@@ -300,7 +300,7 @@ module network-topology  {
                     case type3 {
                         list c3 {
                             container cc3 {
-                                leaf id {
+                                leaf id3 {
                                     type string;
                                 }
                             }
@@ -387,7 +387,7 @@ module network-topology  {
                         type y;
                     }
                 }
-                leaf id {
+                leaf id77 {
                     type string;
                 }
             }
@@ -423,7 +423,7 @@ module network-topology  {
 
     augment "/network-topology/topology/topology-types" {
         container container-c {
-            leaf id {
+            leaf id85 {
                 type binary;
             }
         }
