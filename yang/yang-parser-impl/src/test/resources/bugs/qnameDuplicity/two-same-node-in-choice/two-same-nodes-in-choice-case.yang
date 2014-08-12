@@ -1,0 +1,28 @@
+module two-same-nodes-in-choice-case {
+
+    namespace "urn:test:two:same-nodes-in-choice-case";
+    prefix "two";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    revision 2013-07-09 {
+
+    }
+
+    container cont3 {
+        choice choice3 {
+            default second;
+            case first {
+                leaf leaf-case1 {
+                    type int32;
+                }
+            }
+            case second {
+                leaf leaf-case1 {
+                    type int32;
+                }
+            }
+        }
+    }
+}
