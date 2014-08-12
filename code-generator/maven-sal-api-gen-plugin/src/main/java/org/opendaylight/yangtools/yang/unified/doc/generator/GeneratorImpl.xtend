@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.unified.doc.generator
 
+import com.google.common.collect.Iterables
 import java.io.BufferedWriter
 import java.io.File
 import java.io.IOException
@@ -21,6 +22,8 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
@@ -52,9 +55,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.sonatype.plexus.build.incremental.BuildContext
 import org.sonatype.plexus.build.incremental.DefaultBuildContext
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier
-import com.google.common.collect.Iterables
 
 class GeneratorImpl {
 
