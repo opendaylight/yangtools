@@ -18,7 +18,6 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.reso
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 import com.google.common.collect.HashBiMap;
 import com.google.common.io.ByteSource;
 import java.io.File;
@@ -47,12 +46,19 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
@@ -87,7 +93,6 @@ import org.slf4j.LoggerFactory;
 @Immutable
 public final class YangParserImpl implements YangContextParser {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserImpl.class);
-    private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final YangParserImpl INSTANCE = new YangParserImpl();
 
     public static YangParserImpl getInstance() {
@@ -708,6 +713,7 @@ public final class YangParserImpl implements YangContextParser {
         resolveUsesForNodes(modules);
         resolveAugments(modules);
         resolveIdentities(modules);
+        checkChoiceCasesForDuplicityQNames(modules);
 
         // build
         final Map<ModuleBuilder, Module> result = new LinkedHashMap<>();
@@ -1224,6 +1230,89 @@ public final class YangParserImpl implements YangContextParser {
             }
         }
         return null;
+    }
+
+
+    /**
+     * Traverse through modules and check if choice has choice cases with the
+     * same qname.
+     *
+     * @param modules
+     *            all loaded modules
+     */
+    private void checkChoiceCasesForDuplicityQNames(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
+        for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
+            for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
+                final ModuleBuilder moduleBuilder = childEntry.getValue();
+                final Module module = moduleBuilder.build();
+                final List<ChoiceNode> allChoicesFromModule = getChoicesFrom(module);
+
+                for (ChoiceNode choiceNode : allChoicesFromModule) {
+                    findDuplicityNodesIn(choiceNode, module, moduleBuilder, modules);
+                }
+            }
+        }
+    }
+
+    private void findDuplicityNodesIn(final ChoiceNode choiceNode, final Module module, final ModuleBuilder moduleBuilder,
+            final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
+        final Set<QName> duplicityTestSet = new HashSet<QName>();
+
+        for (ChoiceCaseNode choiceCaseNode : choiceNode.getCases()) {
+
+            for (DataSchemaNode childSchemaNode : choiceCaseNode.getChildNodes()) {
+                if (!duplicityTestSet.add(childSchemaNode.getQName())) {
+                    final Optional<SchemaNodeBuilder> schemaNodeBuilder = BuilderUtils.findSchemaNodeInModule(childSchemaNode.getPath(), moduleBuilder);
+                    final String nameOfSchemaNode = childSchemaNode.getQName().getLocalName();
+                    int lineOfSchemaNode = 0;
+
+                    if (schemaNodeBuilder.isPresent()) {
+                        lineOfSchemaNode = schemaNodeBuilder.get().getLine();
+                    }
+                    throw new YangParseException(module.getName(), lineOfSchemaNode,
+                            String.format("Choice has two nodes case with same qnames - %s", nameOfSchemaNode));
+                }
+            }
+
+            for (UnknownSchemaNode unknownNode : choiceCaseNode.getUnknownSchemaNodes()) {
+                if (!duplicityTestSet.add(unknownNode.getQName())) {
+                    final Optional<SchemaNodeBuilder> schemaNodeBuilder = BuilderUtils.findSchemaNodeInModule(unknownNode.getPath(), moduleBuilder);
+                    final String nameOfUnknownNode = unknownNode.getQName().getLocalName();
+                    int lineOfUnknownNode = 0;
+
+                    if (schemaNodeBuilder.isPresent()) {
+                        lineOfUnknownNode = schemaNodeBuilder.get().getLine();
+                    }
+                    throw new YangParseException(module.getName(), lineOfUnknownNode,
+                            String.format("Choice has two nodes case with same qnames - %s", nameOfUnknownNode));
+                }
+            }
+        }
+    }
+
+    private List<ChoiceNode> getChoicesFrom(final Module module) {
+        final List<ChoiceNode> allChoices = new ArrayList<ChoiceNode>();
+
+        for (DataSchemaNode dataSchemaNode : module.getChildNodes()) {
+            findChoicesIn(dataSchemaNode, allChoices);
+        }
+        return allChoices;
+    }
+
+    private void findChoicesIn(final SchemaNode schemaNode, final Collection<ChoiceNode> choiceNodes) {
+        if (schemaNode instanceof ContainerSchemaNode) {
+            final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) schemaNode;
+            for (DataSchemaNode dataSchemaNode : contSchemaNode.getChildNodes()) {
+                findChoicesIn(dataSchemaNode, choiceNodes);
+            }
+        } else if (schemaNode instanceof ListSchemaNode) {
+            final ListSchemaNode listSchemaNode = (ListSchemaNode) schemaNode;
+            for (DataSchemaNode dataSchemaNode : listSchemaNode.getChildNodes()) {
+                findChoicesIn(dataSchemaNode, choiceNodes);
+            }
+        } else if (schemaNode instanceof ChoiceNode) {
+            choiceNodes.add((ChoiceNode) schemaNode);
+        }
     }
 
 }
