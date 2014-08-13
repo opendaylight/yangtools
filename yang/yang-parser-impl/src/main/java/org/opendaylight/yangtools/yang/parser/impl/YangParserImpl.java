@@ -329,10 +329,10 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     public Collection<Module> buildModules(final Collection<ModuleBuilder> builders) {
-        List<ModuleBuilder> sorted = ModuleDependencySort.sort(builders);
+        Collection<ModuleBuilder> unsorted = resolveSubmodules(builders);
+        List<ModuleBuilder> sorted = ModuleDependencySort.sort(unsorted);
         Map<URI, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sorted, null);
         Map<ModuleBuilder, Module> builderToModule = build(modules);
-
         return builderToModule.values();
     }
 
