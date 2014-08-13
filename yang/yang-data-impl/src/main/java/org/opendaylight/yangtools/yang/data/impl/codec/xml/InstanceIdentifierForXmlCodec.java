@@ -152,7 +152,8 @@ public final class InstanceIdentifierForXmlCodec {
             throw new IllegalArgumentException("It wasn't possible to get namespace for prefix " + prefix);
         }
 
-        Module module = schemaContext.findModuleByNamespaceAndRevision(namespace, null);
+        final Module module = schemaContext.findModuleByNamespaceAndRevision(namespace, null);
+        Preconditions.checkNotNull(module, "Unknown module: %s, cannot parse identity %s", namespace, xPathArgument);
         return QName.create(module.getQNameModule(), identifier);
     }
 
