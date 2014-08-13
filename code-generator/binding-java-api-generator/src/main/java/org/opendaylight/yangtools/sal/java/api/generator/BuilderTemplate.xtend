@@ -691,8 +691,7 @@ class BuilderTemplate extends BaseTemplate {
                     } else {
                         // Hard case: compare our augments with presence there...
                         for («Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e : «augmentField.name».entrySet()) {
-                            final Object oa = other.getAugmentation(e.getKey());
-                            if (!e.getValue().equals(oa)) {
+                            if (!e.getValue().equals(other.getAugmentation(e.getKey()))) {
                                 return false;
                             }
                         }
