@@ -1,0 +1,7 @@
+Code-Review+2: Lukas Sedlak <lsedlak@cisco.com>
+Verified+1: jenkins-yangtools <jenkins-lispflowmapping@opendaylight.org>
+Submitted-by: Lukas Sedlak <lsedlak@cisco.com>
+Submitted-at: Wed, 13 Aug 2014 13:06:09 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/9919
+Project: yangtools
+Branch: refs/heads/master
