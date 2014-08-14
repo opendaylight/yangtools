@@ -223,6 +223,14 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         this.moduleQName = QName.create(entry.getValue(), entry.getKey(), moduleQName.getLocalName());
         moduleBuilder.setQNameModule(moduleQName.getModule());
         moduleBuilder.setBelongsTo(belongsTo);
+        for (int i = 0; i < ctx.getChildCount(); ++i) {
+            final ParseTree treeNode = ctx.getChild(i);
+            if (treeNode instanceof Prefix_stmtContext) {
+                yangModelPrefix = stringFromNode(treeNode);
+                moduleBuilder.setPrefix(yangModelPrefix);
+                setLog("prefix", yangModelPrefix);
+            }
+        }
     }
 
     @Override

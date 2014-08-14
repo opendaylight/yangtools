@@ -24,10 +24,13 @@ submodule subfoo {
         }
     }
 
+    leaf foo-id {
+        type f:identifier;
+    }
+
     container sub-ext {
         bz:c-define "MY_INTERFACES";
     }
-
 
     container sub-transfer {
         choice how {

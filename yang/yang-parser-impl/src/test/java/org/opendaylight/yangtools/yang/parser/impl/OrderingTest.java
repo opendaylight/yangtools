@@ -75,7 +75,7 @@ public class OrderingTest {
         Collection<DataSchemaNode> childNodes = foo.getChildNodes();
         String[] expectedOrder = new String[] { "int32-leaf", "string-leaf", "length-leaf", "decimal-leaf",
                 "decimal-leaf2", "ext", "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data",
-                "how", "address", "port", "addresses", "peer", "id", "sub-ext", "sub-transfer", "sub-datas" };
+                "how", "address", "port", "addresses", "peer", "id", "foo-id","sub-ext", "sub-transfer", "sub-datas" };
         String[] actualOrder = new String[childNodes.size()];
 
         int i = 0;

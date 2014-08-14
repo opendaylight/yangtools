@@ -22,6 +22,10 @@ module foo {
         reference " WILL BE DEFINED LATER";
     }
 
+    typedef identifier {
+        type int32;
+    }
+
     leaf int32-leaf {
         type br:int32-ext2 {
             range "12..max";
