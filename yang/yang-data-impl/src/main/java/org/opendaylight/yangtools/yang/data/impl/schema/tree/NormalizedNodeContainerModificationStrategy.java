@@ -166,15 +166,12 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     @Override
     protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException {
-        checkDoesNotExists(path, modification.getOriginal().isPresent() || current.isPresent(), "Node does not exist. Could not modify its children.");
+        if (!modification.getOriginal().isPresent() && !current.isPresent()) {
+            throw new ModifiedNodeDoesNotExistException(path, String.format("Node %s does not exist. Cannot apply modification to its children.", path));
+        }
+
         SchemaAwareApplyOperation.checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
         checkChildPreconditions(path, modification, current);
-    }
-
-    private static void checkDoesNotExists(final YangInstanceIdentifier path, final boolean condition, final String message) throws DataValidationFailedException {
-        if(!condition) {
-            throw new ModifiedNodeDoesNotExistException(path,message);
-        }
     }
 
     private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
