@@ -142,9 +142,9 @@ public class BindingRuntimeContext implements Immutable {
      * @throws IllegalArgumentException If supplied class is not an augmentation or current context does not contain schema for augmentation.
      */
     public AugmentationSchema getAugmentationDefinition(final Class<?> augClass) throws IllegalArgumentException {
-        Preconditions.checkArgument(Augmentation.class.isAssignableFrom(augClass), "Class {} does not represent augmentation", augClass);
+        Preconditions.checkArgument(Augmentation.class.isAssignableFrom(augClass), "Class %s does not represent augmentation", augClass);
         final AugmentationSchema ret = augmentationToSchema.get(referencedType(augClass));
-        Preconditions.checkArgument(ret != null, "Supplied augmentation {} is not valid in current context", augClass);
+        Preconditions.checkArgument(ret != null, "Supplied augmentation %s is not valid in current context", augClass);
         return ret;
     }
 
@@ -163,7 +163,7 @@ public class BindingRuntimeContext implements Immutable {
      * @return Schema node, from which class was generated.
      */
     public DataSchemaNode getSchemaDefinition(final Class<?> cls) {
-        Preconditions.checkArgument(!Augmentation.class.isAssignableFrom(cls),"Supplied class must not be augmentation");
+        Preconditions.checkArgument(!Augmentation.class.isAssignableFrom(cls),"Supplied class must not be augmentation (%s is)", cls);
         return (DataSchemaNode) typeToDefiningSchema.get(referencedType(cls));
     }
 
@@ -206,7 +206,7 @@ public class BindingRuntimeContext implements Immutable {
      */
     public ChoiceCaseNode getCaseSchemaDefinition(final ChoiceNode schema, final Class<?> childClass) throws IllegalArgumentException {
         DataSchemaNode origSchema = getSchemaDefinition(childClass);
-        Preconditions.checkArgument(origSchema instanceof ChoiceCaseNode, "Supplied {} is not case.");
+        Preconditions.checkArgument(origSchema instanceof ChoiceCaseNode, "Supplied schema %s is not case.", origSchema);
         /* FIXME: Make sure that if there are multiple augmentations of same
          * named case, with same structure we treat it as equals
          * this is due property of Binding specification and copy builders
@@ -215,7 +215,7 @@ public class BindingRuntimeContext implements Immutable {
          */
         Optional<ChoiceCaseNode> found = BindingSchemaContextUtils.findInstantiatedCase(schema,
                 (ChoiceCaseNode) origSchema);
-        Preconditions.checkArgument(found.isPresent(), "Supplied {} is not valid case in schema", schema);
+        Preconditions.checkArgument(found.isPresent(), "Supplied class %s (schema %s) is not valid case in schema %s", childClass, origSchema, schema);
         return found.get();
     }
 
@@ -345,7 +345,7 @@ public class BindingRuntimeContext implements Immutable {
 
     public Class<?> getIdentityClass(final QName input) {
         Type identityType = identities.get(input);
-        Preconditions.checkArgument(identityType != null, "Supplied QName is not valid identity");
+        Preconditions.checkArgument(identityType != null, "Supplied QName %s is not a valid identity", input);
         try {
             return strategy.loadClass(identityType);
         } catch (ClassNotFoundException e) {

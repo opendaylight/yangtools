@@ -28,7 +28,7 @@ final class SchemaPathStack {
     QName removeNodeFromPath() {
         SchemaPath sp = paths.pop();
         QName ret = sp.getLastComponent();
-        paths.push(Preconditions.checkNotNull(sp.getParent(), "Attempted to remove too many nodes from schemapath at stack {}", paths));
+        paths.push(Preconditions.checkNotNull(sp.getParent(), "Attempted to remove too many nodes from schemapath at stack %s", paths));
         return ret;
     }
 
