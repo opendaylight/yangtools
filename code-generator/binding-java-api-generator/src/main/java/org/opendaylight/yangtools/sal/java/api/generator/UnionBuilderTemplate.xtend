@@ -15,6 +15,12 @@ import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier
  */
 class UnionBuilderTemplate extends ClassTemplate {
 
+    val clarification = "The purpose of generated class in src/main/java for Union types is to create new instances of unions from a string representation. 
+In some cases it is very difficult to automate it since there can be unions such as (uint32 - uint16), or (string - uint32).
+
+The reason behind putting it under src/main/java is:
+This class is generated in form of a stub and needs to be finished by the user. This class is generated only once to prevent loss of user code."
+    
     /**
      * Creates instance of this class with concrete <code>genType</code>.
      *
@@ -25,7 +31,7 @@ class UnionBuilderTemplate extends ClassTemplate {
     }
 
     def override body() '''
-        «wrapToDocumentation(formatDataForJavaDoc(type))»
+        «wrapToDocumentation(formatDataForJavaDoc(type, clarification))»
         public class «type.name» {
 
             «generateMethods»
@@ -38,6 +44,7 @@ class UnionBuilderTemplate extends ClassTemplate {
             «method.accessModifier.accessModifier»«IF method.static»static«ENDIF»«IF method.final» final«ENDIF» «method.
             returnType.importedName» «method.name»(«method.parameters.generateParameters») {
                 throw new «UnsupportedOperationException.importedName»("Not yet implemented");
+                // TO DO: create own instance of union type
             }
         «ENDFOR»
     '''

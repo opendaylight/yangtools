@@ -103,6 +103,7 @@ module foo {
     }
 
     typedef union-ext1 {
+		description "This union is suitable for ...";
         type union {
             type int16 {
                 range "1..100";
@@ -187,4 +188,9 @@ module foo {
         type uint64;
     }
 
+	container cont1 {
+		leaf leaf1 {
+			type union-ext1;
+		}
+	}
 }
