@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_29753563",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BuilderTemplate.xtend",
+        "patchSetId": 2
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-15T05:23:11Z",
+      "side": 1,
+      "message": "please cleanup whitespace",
+      "revId": "b14c022757712be8dae1ae5b6eedccc35fc04fcf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_4970b971",
+        "filename": "code-generator/binding-model-api/src/main/java/org/opendaylight/yangtools/sal/binding/model/api/Box.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-15T05:23:11Z",
+      "side": 1,
+      "message": "Let\u0027s call this BoxableType. A box is something completely different :)",
+      "revId": "b14c022757712be8dae1ae5b6eedccc35fc04fcf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e96aed7f",
+        "filename": "code-generator/binding-model-api/src/main/java/org/opendaylight/yangtools/sal/binding/model/api/type/builder/GeneratedTypeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-15T05:23:11Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "b14c022757712be8dae1ae5b6eedccc35fc04fcf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
