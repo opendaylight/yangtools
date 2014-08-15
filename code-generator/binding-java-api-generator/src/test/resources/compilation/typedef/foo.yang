@@ -186,5 +186,10 @@ module foo {
     typedef h {
         type uint64;
     }
+    container cont1 {
+        leaf leaf1 {
+            type union-ext1;
+        }
+    }
 
 }
