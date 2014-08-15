@@ -203,6 +203,23 @@ abstract class BaseTemplate {
         return description;
     }
 
+    def protected String formatDataForJavaDoc(GeneratedType type, String additionalComment) {
+        val StringBuilder typeDescription = new StringBuilder();
+        if (!type.description.nullOrEmpty) {
+            typeDescription.append(type.description)
+            typeDescription.append(NEW_LINE)
+            typeDescription.append(NEW_LINE)
+            typeDescription.append(NEW_LINE)
+            typeDescription.append(additionalComment)
+        } else {
+            typeDescription.append(additionalComment)
+        }
+
+        return '''
+            «typeDescription.toString»
+        '''.toString
+    }
+
     def asLink(String text) {
         val StringBuilder sb = new StringBuilder()
         var tempText = text
