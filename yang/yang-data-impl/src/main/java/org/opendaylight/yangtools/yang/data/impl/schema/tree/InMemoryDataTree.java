@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.annotation.concurrent.GuardedBy;
+
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
@@ -33,9 +35,14 @@ final class InMemoryDataTree implements DataTree {
     private static final YangInstanceIdentifier PUBLIC_ROOT_PATH = YangInstanceIdentifier.builder().build();
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock(true);
+
+    @GuardedBy("rwLock")
     private final LatestOperationHolder operationHolder = new LatestOperationHolder();
+
+    @GuardedBy("rwLock")
     private SchemaContext currentSchemaContext;
-    private TreeNode rootNode;
+
+    private volatile TreeNode rootNode;
 
     public InMemoryDataTree(final TreeNode rootNode, final SchemaContext schemaContext) {
         this.rootNode = Preconditions.checkNotNull(rootNode);
@@ -47,7 +54,7 @@ final class InMemoryDataTree implements DataTree {
     }
 
     @Override
-    public synchronized void setSchemaContext(final SchemaContext newSchemaContext) {
+    public void setSchemaContext(final SchemaContext newSchemaContext) {
         Preconditions.checkNotNull(newSchemaContext);
 
         LOG.info("Attempting to install schema contexts");
@@ -83,15 +90,17 @@ final class InMemoryDataTree implements DataTree {
 
     @Override
     public void validate(final DataTreeModification modification) throws DataValidationFailedException {
-        Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
+        Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification,
+                "Invalid modification class %s", modification.getClass());
 
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
         m.getStrategy().checkApplicable(PUBLIC_ROOT_PATH, m.getRootModification(), Optional.<TreeNode>of(rootNode));
     }
 
     @Override
-    public synchronized DataTreeCandidate prepare(final DataTreeModification modification) {
-        Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
+    public DataTreeCandidate prepare(final DataTreeModification modification) {
+        Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification,
+                "Invalid modification class %s", modification.getClass());
 
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
         final ModifiedNode root = m.getRootModification();
@@ -100,40 +109,40 @@ final class InMemoryDataTree implements DataTree {
             return new NoopDataTreeCandidate(PUBLIC_ROOT_PATH, root);
         }
 
-        rwLock.writeLock().lock();
-        try {
-            final Optional<TreeNode> newRoot = m.getStrategy().apply(m.getRootModification(),
-                    Optional.<TreeNode>of(rootNode), rootNode.getSubtreeVersion().next());
-            Preconditions.checkState(newRoot.isPresent(), "Apply strategy failed to produce root node");
-            return new InMemoryDataTreeCandidate(PUBLIC_ROOT_PATH, root, rootNode, newRoot.get());
-        } finally {
-            rwLock.writeLock().unlock();
-        }
+        // Capture rootNode in a local var to avoid multiple volatile reads, both for performance
+        // and consistency in case the rootNode reference is changed concurrent with this thread.
+
+        TreeNode localRootNode = rootNode;
+
+        final Optional<TreeNode> newRoot = m.getStrategy().apply(m.getRootModification(),
+                Optional.<TreeNode>of(localRootNode), localRootNode.getSubtreeVersion().next());
+        Preconditions.checkState(newRoot.isPresent(), "Apply strategy failed to produce root node");
+        return new InMemoryDataTreeCandidate(PUBLIC_ROOT_PATH, root, localRootNode, newRoot.get());
     }
 
     @Override
-    public synchronized void commit(final DataTreeCandidate candidate) {
+    public void commit(final DataTreeCandidate candidate) {
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
         }
 
-        Preconditions.checkArgument(candidate instanceof InMemoryDataTreeCandidate, "Invalid candidate class %s", candidate.getClass());
+        Preconditions.checkArgument(candidate instanceof InMemoryDataTreeCandidate,
+                "Invalid candidate class %s", candidate.getClass());
         final InMemoryDataTreeCandidate c = (InMemoryDataTreeCandidate)candidate;
 
-        LOG.debug("Updating datastore from {} to {}", rootNode, c.getAfterRoot());
+        // Capture rootNode in a local var to avoid multiple volatile reads, both for performance
+        // and consistency in case the rootNode reference is changed concurrent with this thread.
+
+        TreeNode localRootNode = rootNode;
+
+        LOG.debug("Updating datastore from {} to {}", localRootNode, c.getAfterRoot());
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Data Tree is {}", StoreUtils.toStringTree(c.getAfterRoot().getData()));
         }
 
-        // Ready to change the context now, make sure no operations are running
-        rwLock.writeLock().lock();
-        try {
-            Preconditions.checkState(c.getBeforeRoot() == rootNode,
-                    String.format("Store tree %s and candidate base %s differ.", rootNode, c.getBeforeRoot()));
-            this.rootNode = c.getAfterRoot();
-        } finally {
-            rwLock.writeLock().unlock();
-        }
+        Preconditions.checkState(c.getBeforeRoot() == localRootNode,
+                "Store tree %s and candidate base %s differ.", localRootNode, c.getBeforeRoot());
+        this.rootNode = c.getAfterRoot();
     }
 }
