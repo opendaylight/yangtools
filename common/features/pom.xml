@@ -17,7 +17,7 @@
       <relativePath>../parent/pom.xml</relativePath>
    </parent>
    <artifactId>features-yangtools</artifactId>
-   <packaging>pom</packaging>
+   <packaging>jar</packaging>
    <properties>
       <features.file>features.xml</features.file>
    </properties>
@@ -81,6 +81,15 @@
                   </configuration>
                </execution>
             </executions>
+         </plugin>
+         <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-surefire-plugin</artifactId>
+           <configuration>
+            <dependenciesToScan>
+              <dependency>org.opendaylight.yangtools:features-test</dependency>
+            </dependenciesToScan>
+           </configuration>
          </plugin>
       </plugins>
    </build>
@@ -220,6 +229,12 @@
      <dependency>
        <groupId>org.opendaylight.yangtools</groupId>
        <artifactId>restconf-common</artifactId>
+     </dependency>
+     <!-- test the features.xml -->
+     <dependency>
+       <groupId>org.opendaylight.yangtools</groupId>
+       <artifactId>features-test</artifactId>
+       <scope>test</scope>
      </dependency>
    </dependencies>
 </project>
