@@ -34,6 +34,7 @@ unknown_statement : (YIN_ELEMENT_KEYWORD | YANG_VERSION_KEYWORD | WHEN_KEYWORD |
                     ANYXML_KEYWORD | IDENTIFIER) string? (SEMICOLON | (LEFT_BRACE (unknown_statement | identifier_stmt)* RIGHT_BRACE)*);
 
 stmtend : (SEMICOLON) | (LEFT_BRACE identifier_stmt? RIGHT_BRACE);
+stmtsep : IDENTIFIER string? (stmtend | (LEFT_BRACE unknown_statement* RIGHT_BRACE));
 deviate_replace_stmt : DEVIATE_KEYWORD string /* REPLACE_KEYWORD */ (SEMICOLON | (LEFT_BRACE (identifier_stmt |type_stmt | units_stmt | default_stmt | config_stmt | mandatory_stmt | min_elements_stmt | max_elements_stmt )* RIGHT_BRACE));
 deviate_delete_stmt : DEVIATE_KEYWORD string /* DELETE_KEYWORD */ (SEMICOLON | (LEFT_BRACE (identifier_stmt |units_stmt | must_stmt | unique_stmt | default_stmt )* RIGHT_BRACE));
 deviate_add_stmt : DEVIATE_KEYWORD string /*ADD_KEYWORD*/ (SEMICOLON | (LEFT_BRACE (identifier_stmt |units_stmt | must_stmt | unique_stmt | default_stmt | config_stmt | mandatory_stmt  | min_elements_stmt  | max_elements_stmt )* RIGHT_BRACE));
@@ -131,10 +132,10 @@ import_stmt : IMPORT_KEYWORD string LEFT_BRACE  prefix_stmt  (revision_date_stmt
 yang_version_stmt : YANG_VERSION_KEYWORD string stmtend;
 data_def_stmt : container_stmt | leaf_stmt | leaf_list_stmt | list_stmt | choice_stmt | anyxml_stmt | uses_stmt;
 body_stmts : (( identifier_stmt| extension_stmt | feature_stmt | identity_stmt | typedef_stmt | grouping_stmt | data_def_stmt | augment_stmt | rpc_stmt | notification_stmt | deviation_stmt) )*;
-revision_stmts : (revision_stmt )*;
-linkage_stmts : (import_stmt | include_stmt )*;
-meta_stmts : (organization_stmt | contact_stmt | description_stmt | reference_stmt )*;
-submodule_header_stmts : (yang_version_stmt | belongs_to_stmt)+ ;
-module_header_stmts :   (yang_version_stmt | namespace_stmt | prefix_stmt)+ ;
+revision_stmts :  (revision_stmt )* (stmtsep)*;
+linkage_stmts : (import_stmt stmtsep? | include_stmt stmtsep?)*;
+meta_stmts : (organization_stmt stmtsep? | contact_stmt stmtsep? | description_stmt stmtsep? | reference_stmt stmtsep?)*;
+submodule_header_stmts : (yang_version_stmt stmtsep? | belongs_to_stmt stmtsep?)+ ;
+module_header_stmts :  (yang_version_stmt stmtsep? | namespace_stmt stmtsep? | prefix_stmt stmtsep?)+ ;
 submodule_stmt : SUBMODULE_KEYWORD string LEFT_BRACE  submodule_header_stmts linkage_stmts meta_stmts revision_stmts body_stmts RIGHT_BRACE;
-module_stmt : MODULE_KEYWORD string LEFT_BRACE  module_header_stmts linkage_stmts meta_stmts revision_stmts body_stmts RIGHT_BRACE;
+module_stmt : MODULE_KEYWORD string LEFT_BRACE stmtsep? module_header_stmts linkage_stmts meta_stmts revision_stmts body_stmts RIGHT_BRACE;
