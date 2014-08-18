@@ -200,23 +200,23 @@ public class BindingRuntimeContext implements Immutable {
      *
      * @param schema Resolved parent choice schema
      * @param childClass Class representing case.
-     * @return Resolved case schema.
-     * @throws IllegalArgumentException If supplied class does not represent case or supplied case class is not
-     * valid in the context of parent choice schema.
+     * @return Optionally a resolved case schema, absent if the choice is not legal in
+     *         the given context.
+     * @throws IllegalArgumentException If supplied class does not represent case.
      */
-    public ChoiceCaseNode getCaseSchemaDefinition(final ChoiceNode schema, final Class<?> childClass) throws IllegalArgumentException {
+    public Optional<ChoiceCaseNode> getCaseSchemaDefinition(final ChoiceNode schema, final Class<?> childClass) throws IllegalArgumentException {
         DataSchemaNode origSchema = getSchemaDefinition(childClass);
         Preconditions.checkArgument(origSchema instanceof ChoiceCaseNode, "Supplied schema %s is not case.", origSchema);
+
         /* FIXME: Make sure that if there are multiple augmentations of same
          * named case, with same structure we treat it as equals
          * this is due property of Binding specification and copy builders
          * that user may be unaware that he is using incorrect case
          * which was generated for choice inside grouping.
          */
-        Optional<ChoiceCaseNode> found = BindingSchemaContextUtils.findInstantiatedCase(schema,
+        final Optional<ChoiceCaseNode> found = BindingSchemaContextUtils.findInstantiatedCase(schema,
                 (ChoiceCaseNode) origSchema);
-        Preconditions.checkArgument(found.isPresent(), "Supplied class %s (schema %s) is not valid case in schema %s", childClass, origSchema, schema);
-        return found.get();
+        return found;
     }
 
     private static Type referencedType(final Class<?> type) {
