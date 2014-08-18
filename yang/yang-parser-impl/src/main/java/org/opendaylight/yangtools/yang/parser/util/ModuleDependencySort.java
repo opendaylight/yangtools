@@ -14,7 +14,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -148,7 +146,7 @@ public final class ModuleDependencySort {
      */
     private static void processDependencies(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
             final Iterable<ModuleOrModuleBuilder> mmbs) {
-        Map<URI, Object> allNS = new HashMap<>();
+        Map<URI, ModuleOrModuleBuilder> allNS = new HashMap<>();
 
         // Create edges in graph
         for (ModuleOrModuleBuilder mmb : mmbs) {
@@ -175,28 +173,15 @@ public final class ModuleDependencySort {
 
             // check for existence of module with same namespace
             if (allNS.containsKey(ns)) {
-                Object mod = allNS.get(ns);
+                ModuleOrModuleBuilder mod = allNS.get(ns);
                 String name = null;
                 Date revision = null;
-
-                if(mod instanceof ModuleOrModuleBuilder) {
-                    ModuleOrModuleBuilder modOrmodBuilder = ((ModuleOrModuleBuilder) mod);
-                    if(modOrmodBuilder.isModule()) {
-                        mod = ((ModuleOrModuleBuilder) mod).getModule();
-                    } else if (modOrmodBuilder.isModuleBuilder()) {
-                        mod = ((ModuleOrModuleBuilder) mod).getModuleBuilder();
-                    } else {
-                        LOGGER.warn("ModuleOrModuleBuilder is neither Module or ModuleBuilder");
-                    }
-                }
-                if (mod instanceof Module) {
-                    name = ((Module) mod).getName();
-                    revision = ((Module) mod).getRevision();
-                } else if (mod instanceof ModuleBuilder) {
-                    name = ((ModuleBuilder) mod).getName();
-                    revision = ((ModuleBuilder) mod).getRevision();
-                } else {
-                    LOGGER.warn("Module has no name: {}", mod);
+                if (mod.isModule()) {
+                    name = mod.getModule().getName();
+                    revision = mod.getModule().getRevision();
+                } else if (mod.isModuleBuilder()) {
+                    name = mod.getModuleBuilder().getName();
+                    revision = mod.getModuleBuilder().getRevision();
                 }
                 if (!(fromName.equals(name))) {
                     LOGGER.warn(
