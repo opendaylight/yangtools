@@ -1,0 +1,7 @@
+Code-Review+2: Martin Vitez <mvitez@cisco.com>
+Verified+1: jenkins-yangtools <jenkins-lispflowmapping@opendaylight.org>
+Submitted-by: Martin Vitez <mvitez@cisco.com>
+Submitted-at: Mon, 18 Aug 2014 09:19:36 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/9841
+Project: yangtools
+Branch: refs/heads/master
