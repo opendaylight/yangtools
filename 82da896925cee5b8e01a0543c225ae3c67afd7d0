@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_3a70150a",
+        "filename": "common/features-test/src/main/java/org/opendaylight/yangtools/featuretest/Constants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-18T14:28:58Z",
+      "side": 1,
+      "message": "utility class: final and private constructor",
+      "revId": "82da896925cee5b8e01a0543c225ae3c67afd7d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_1a71910b",
+        "filename": "common/features-test/src/main/java/org/opendaylight/yangtools/featuretest/PerFeatureRunNotifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-18T14:28:58Z",
+      "side": 1,
+      "message": "missing @Override statements",
+      "revId": "82da896925cee5b8e01a0543c225ae3c67afd7d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_da66c950",
+        "filename": "common/features-test/src/main/java/org/opendaylight/yangtools/featuretest/PerFeatureRunNotifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-18T14:28:58Z",
+      "side": 1,
+      "message": "looks like these should be final",
+      "revId": "82da896925cee5b8e01a0543c225ae3c67afd7d0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
