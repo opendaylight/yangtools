@@ -410,7 +410,7 @@ class YangTemplate {
         '''
             identity «identity.QName.localName» {
                 «IF identity.baseIdentity != null»
-                base "«writeIdentityPrefix(identity.baseIdentity)»«identity.baseIdentity»";
+                base "(«writeIdentityNs(identity.baseIdentity)»)«identity.baseIdentity»";
                 «ENDIF»
                 «IF !identity.description.nullOrEmpty»
                 description
@@ -427,17 +427,14 @@ class YangTemplate {
         '''
     }
 
-    def static writeIdentityPrefix(IdentitySchemaNode identity) {
+    def static writeIdentityNs(IdentitySchemaNode identity) {
         if(module == null)
             return ''
 
-        if(identity.QName.prefix.nullOrEmpty || module.prefix.nullOrEmpty)
-            return ''
+        val identityNs = identity.QName.namespace
 
-        val identityPrefix = identity.QName.prefix
-
-        if(!module.prefix.equals(identity.QName.prefix))
-            return identityPrefix + ":"
+        if(!module.namespace.equals(identityNs))
+            return identityNs + ":"
         return ''
     }
 
@@ -785,12 +782,13 @@ class YangTemplate {
         val StringBuilder sb = new StringBuilder();
 
         for(pathElement : schemaPath) {
-            val prefix = pathElement.prefix
+            val ns = pathElement.namespace
             val localName = pathElement.localName
 
             sb.append("\\")
-            sb.append(prefix)
-            sb.append(":")
+            sb.append('(')
+            sb.append(ns)
+            sb.append(')')
             sb.append(localName)
         }
         return sb.toString

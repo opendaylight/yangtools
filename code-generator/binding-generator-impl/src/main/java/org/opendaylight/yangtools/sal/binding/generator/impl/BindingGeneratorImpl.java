@@ -1436,13 +1436,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     // GeneratedType for this type definition should be already
                     // created
                     QName qname = typeDef.getQName();
-                    Module unionModule = null;
-                    String prefix = qname.getPrefix();
-                    if (prefix == null || prefix.isEmpty() || prefix.equals(module.getPrefix())) {
-                        unionModule = module;
-                    } else {
-                        unionModule = findModuleFromImports(module.getImports(), qname.getPrefix());
-                    }
+                    Module unionModule = schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(),
+                            qname.getRevision());
                     final ModuleContext mc = genCtx.get(unionModule);
                     returnType = mc.getTypedefs().get(typeDef.getPath());
                 } else {
