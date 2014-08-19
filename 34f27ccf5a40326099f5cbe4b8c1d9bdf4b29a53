@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_80fd2e70",
+        "filename": "code-generator/maven-sal-api-gen-plugin/src/main/java/org/opendaylight/yangtools/yang/unified/doc/generator/GeneratorImpl.xtend",
+        "patchSetId": 6
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-08-19T08:24:56Z",
+      "side": 1,
+      "message": "Are changes in this file somehow related to check of duplicates in choice cases? If not it should be documented in commit message or be a part of separated patch.",
+      "revId": "34f27ccf5a40326099f5cbe4b8c1d9bdf4b29a53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_20bea2ae",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1258,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-08-19T08:24:56Z",
+      "side": 1,
+      "message": "Just a question but why \"duplicityTestList\" name for object of type Set?",
+      "revId": "34f27ccf5a40326099f5cbe4b8c1d9bdf4b29a53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_80af6e7c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1290,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-08-19T08:24:56Z",
+      "side": 1,
+      "message": "I don\u0027t understand purpose of this method. What if node is defined under another node and not in module? Why don\u0027t just simply use schemaNodeBuilder.getLine() ?",
+      "revId": "34f27ccf5a40326099f5cbe4b8c1d9bdf4b29a53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a0b2b2e2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1307,
+      "author": {
+        "id": 73
+      },
+      "writtenOn": "2014-08-19T08:24:56Z",
+      "side": 1,
+      "message": "I see no List-specific usage of choiceNodes variable so I think it could be Collection instead of List.",
+      "revId": "34f27ccf5a40326099f5cbe4b8c1d9bdf4b29a53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
