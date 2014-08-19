@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -23,9 +24,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode> {
-
+    private static final Logger LOG = LoggerFactory.getLogger(ChoiceNodeCodecContext.class);
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChild;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClass;
@@ -38,12 +41,14 @@ final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode>
 
         for (Class<?> caze : factory().getRuntimeContext().getCases(bindingClass())) {
             DataContainerCodecPrototype<ChoiceCaseNode> cazeDef = loadCase(caze);
-            byClassBuilder.put(cazeDef.getBindingClass(), cazeDef);
-            for (Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses((Class) caze)) {
-                byCaseChildClassBuilder.put(cazeChild, cazeDef);
-            }
-            for (DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
-                byYangCaseChildBuilder.put(new NodeIdentifier(cazeChild.getQName()), cazeDef);
+            if (cazeDef != null) {
+                byClassBuilder.put(cazeDef.getBindingClass(), cazeDef);
+                for (Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses((Class) caze)) {
+                    byCaseChildClassBuilder.put(cazeChild, cazeDef);
+                }
+                for (DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
+                    byYangCaseChildBuilder.put(new NodeIdentifier(cazeChild.getQName()), cazeDef);
+                }
             }
         }
 
@@ -62,8 +67,13 @@ final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode>
     }
 
     protected DataContainerCodecPrototype<ChoiceCaseNode> loadCase(final Class<?> childClass) {
-        ChoiceCaseNode childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(schema(), childClass);
-        return DataContainerCodecPrototype.from(childClass, childSchema, factory());
+        Optional<ChoiceCaseNode> childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(schema(), childClass);
+        if (childSchema.isPresent()) {
+            return DataContainerCodecPrototype.from(childClass, childSchema.get(), factory());
+        }
+
+        LOG.debug("Supplied class %s is not valid case in schema %s", childClass, schema());
+        return null;
     }
 
     @Override
