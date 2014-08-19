@@ -1345,7 +1345,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 } else if (typeDef instanceof BitsTypeDefinition) {
                     genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, leaf, parentModule);
                     if (genTOBuilder != null) {
-                        returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
+                        returnType = genTOBuilder.toInstance();
                     }
                 } else {
                     final Restrictions restrictions = BindingGeneratorUtil.getRestrictions(typeDef);
@@ -1527,7 +1527,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     }
                 } else if (typeDef instanceof BitsTypeDefinition) {
                     final GeneratedTOBuilder genTOBuilder = addTOToTypeBuilder(typeDef, typeBuilder, node, parentModule);
-                    returnType = new ReferencedTypeImpl(genTOBuilder.getPackageName(), genTOBuilder.getName());
+                    returnType = genTOBuilder.toInstance();
                 } else {
                     final Restrictions restrictions = BindingGeneratorUtil.getRestrictions(typeDef);
                     returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, node, restrictions);
