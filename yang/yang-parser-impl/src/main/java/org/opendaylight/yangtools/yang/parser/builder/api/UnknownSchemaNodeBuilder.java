@@ -72,7 +72,9 @@ public interface UnknownSchemaNodeBuilder extends SchemaNodeBuilder, DocumentedN
 
     /**
      * Sets extension builder, which declares this unknown node
-     * @param extensionBuilder extension definition, which declares this unknown node
+     *
+     * @param extension
+     *            extension builder, which declares this unknown node
      */
     void setExtensionBuilder(ExtensionBuilder extension);
 

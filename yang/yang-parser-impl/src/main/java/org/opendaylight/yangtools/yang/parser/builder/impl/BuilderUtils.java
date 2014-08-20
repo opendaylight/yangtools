@@ -20,8 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -78,9 +76,7 @@ import org.slf4j.LoggerFactory;
 
 public final class BuilderUtils {
 
-    private static final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final Logger LOG = LoggerFactory.getLogger(BuilderUtils.class);
-    private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Date NULL_DATE = new Date(0L);
     private static final String INPUT = "input";
@@ -473,7 +469,7 @@ public final class BuilderUtils {
      *            Class to be checked
      * @param optional
      *            Original value
-     * @return
+     * @return Optional object with type argument casted as cls
      */
     private static <T> Optional<T> castOptional(final Class<T> cls, final Optional<?> optional) {
         if (optional.isPresent()) {
@@ -635,10 +631,9 @@ public final class BuilderUtils {
      * Find augment target node and perform augmentation.
      *
      * @param augment
+     *            augment builder to process
      * @param firstNodeParent
      *            parent of first node in path
-     * @param path
-     *            path to augment target
      * @return true if augmentation process succeed, false otherwise
      */
     public static boolean processAugmentation(final AugmentationSchemaBuilder augment,

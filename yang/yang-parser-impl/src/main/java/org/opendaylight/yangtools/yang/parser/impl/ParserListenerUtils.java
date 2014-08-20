@@ -1091,12 +1091,8 @@ public final class ParserListenerUtils {
      *            type body context
      * @param actualPath
      *            current path in schema
-     * @param namespace
-     *            current namespace
-     * @param revision
-     *            current revision
-     * @param prefix
-     *            current prefix
+     * @param moduleQName
+     *            current module qname
      * @param parent
      *            parent builder
      * @return TypeDefinition object based on parsed values.

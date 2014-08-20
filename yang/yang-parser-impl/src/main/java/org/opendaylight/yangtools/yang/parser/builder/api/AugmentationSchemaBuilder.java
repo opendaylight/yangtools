@@ -19,13 +19,11 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder,Docu
      * Returns when condition
      *
      * If when condition is present node defined by the parent data definition
-     * statement is only valid when the returned XPath
-     * expression conceptually evaluates to "true"
-     * for a particular instance, then the node defined by the parent data
-     * definition statement is valid; otherwise, it is not.
+     * statement is only valid when the returned XPath expression conceptually
+     * evaluates to "true" for a particular instance, then the node defined by
+     * the parent data definition statement is valid; otherwise, it is not.
      *
-     *
-     * @return
+     * @return when condition as string
      */
     String getWhenCondition();
 
