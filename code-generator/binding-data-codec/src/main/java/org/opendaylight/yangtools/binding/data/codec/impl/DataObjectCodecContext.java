@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -111,6 +109,15 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
         DataContainerCodecPrototype<?> childProto = byStreamClass.get(childClass);
         Preconditions.checkArgument(childProto != null, " Child %s is not valid child.",childClass);
         return childProto.get();
+    }
+
+    @Override
+    protected Optional<DataContainerCodecContext<?>> getPossibleStreamChild(final Class<?> childClass) {
+        DataContainerCodecPrototype<?> childProto = byStreamClass.get(childClass);
+        if(childProto != null) {
+            return Optional.<DataContainerCodecContext<?>>of(childProto.get());
+        }
+        return Optional.absent();
     }
 
     @Override

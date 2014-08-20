@@ -11,7 +11,6 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,7 +18,6 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.opendaylight.yangtools.binding.data.codec.util.AugmentationReader;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -164,11 +162,13 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         if (aug != null) {
             return aug.get(cls);
         }
-
-        final DataContainerCodecContext<?> augCtx = context.getStreamChild(cls);
-        final Optional<NormalizedNode<?, ?>> augData = data.getChild(augCtx.getDomPathArgument());
-        if (augData.isPresent()) {
-            return augCtx.dataFromNormalizedNode(augData.get());
+        Preconditions.checkNotNull(cls,"Supplied augmentation must not be null.");
+        final Optional<DataContainerCodecContext<?>> augCtx= context.getPossibleStreamChild(cls);
+        if(augCtx.isPresent()) {
+            final Optional<NormalizedNode<?, ?>> augData = data.getChild(augCtx.get().getDomPathArgument());
+            if (augData.isPresent()) {
+                return augCtx.get().dataFromNormalizedNode(augData.get());
+            }
         }
         return null;
     }

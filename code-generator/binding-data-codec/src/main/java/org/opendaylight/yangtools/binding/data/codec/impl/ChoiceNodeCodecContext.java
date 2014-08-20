@@ -11,10 +11,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -59,7 +57,18 @@ final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode>
 
     @Override
     protected DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) {
-        return byClass.get(childClass).get();
+        DataContainerCodecPrototype<?> child = byClass.get(childClass);
+        Preconditions.checkArgument(child != null,"Supplied class is not valid case",childClass);
+        return child.get();
+    }
+
+    @Override
+    protected Optional<DataContainerCodecContext<?>> getPossibleStreamChild(final Class<?> childClass) {
+        DataContainerCodecPrototype<?> child = byClass.get(childClass);
+        if(child != null) {
+            return Optional.<DataContainerCodecContext<?>>of(child.get());
+        }
+        return Optional.absent();
     }
 
     Iterable<Class<?>> getCaseChildrenClasses() {

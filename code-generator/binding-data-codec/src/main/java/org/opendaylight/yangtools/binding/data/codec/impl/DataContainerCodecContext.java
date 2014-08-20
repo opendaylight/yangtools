@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
+import com.google.common.base.Optional;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
@@ -92,8 +92,20 @@ abstract class DataContainerCodecContext<T> extends NodeCodecContext {
      *
      * @param childClass
      * @return Context of child
+     * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
-    protected abstract DataContainerCodecContext<?> getStreamChild(final Class<?> childClass);
+    protected abstract DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) throws IllegalArgumentException;
+
+    /**
+    *
+    * Returns child context as if it was walked by
+    * {@link BindingStreamEventWriter}. This means that to enter case, one
+    * must issue getChild(ChoiceClass).getChild(CaseClass).
+    *
+    * @param childClass
+    * @return Context of child or Optional absent is supplied class is not applicable in context.
+    */
+   protected abstract Optional<DataContainerCodecContext<?>> getPossibleStreamChild(final Class<?> childClass);
 
     @Override
     public String toString() {

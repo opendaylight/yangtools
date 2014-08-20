@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
@@ -57,6 +57,11 @@ class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
     @Override
     protected DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) {
         return children.getUnchecked(childClass);
+    }
+
+    @Override
+    protected Optional<DataContainerCodecContext<?>> getPossibleStreamChild(final Class<?> childClass) {
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
