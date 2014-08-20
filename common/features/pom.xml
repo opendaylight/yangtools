@@ -238,6 +238,7 @@
      <dependency>
        <groupId>org.opendaylight.yangtools.thirdparty</groupId>
        <artifactId>xtend-lib-osgi</artifactId>
+       <scope>compile</scope>
      </dependency>
      <!-- test the features.xml -->
      <dependency>
