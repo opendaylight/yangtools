@@ -127,14 +127,14 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
      * Create a new instance.
      *
      * FIXME: the resulting type needs to be extracted, such that we can reuse
-     *        the "BaseListener" aspect, which need not be exposed to the user.
-     *        Maybe factor out a base class into repo.spi?
+     * the "BaseListener" aspect, which need not be exposed to the user. Maybe
+     * factor out a base class into repo.spi?
      *
      * @param namespaceContext
      * @param sourcePath
      * @param walker
      * @param tree
-     * @return
+     * @return new instance of YangParserListenerImpl
      */
     public static YangParserListenerImpl create(final Map<String, TreeMap<Date, URI>> namespaceContext,
             final String sourcePath, final ParseTreeWalker walker, final ParseTree tree) {

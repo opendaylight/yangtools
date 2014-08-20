@@ -69,10 +69,10 @@ public interface TypeDefinitionBuilder extends TypeAwareBuilder, SchemaNodeBuild
     List<PatternConstraint> getPatterns();
 
     /**
-     * Set length restrictions for resulting type definition.
+     * Set pattern restrictions for resulting type definition.
      *
-     * @param lengths
-     *            Length restrictions of resulting type definition.
+     * @param patterns
+     *            patterns restrictions of resulting type definition.
      */
     void setPatterns(List<PatternConstraint> patterns);
 
@@ -86,11 +86,8 @@ public interface TypeDefinitionBuilder extends TypeAwareBuilder, SchemaNodeBuild
     Integer getFractionDigits();
 
     /**
-     *
-     * Sets fractions digits of resulting type if it is derived
-     * from <code>decimal</code> built-in type.
-     *
-     * @return fractions digits of resulting type
+     * Sets fractions digits of resulting type if it is derived from
+     * <code>decimal</code> built-in type.
      */
     void setFractionDigits(Integer fractionDigits);
 
