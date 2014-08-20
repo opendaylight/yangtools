@@ -346,8 +346,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             final ParseTree treeNode = ctx.getChild(i);
             if (treeNode instanceof Prefix_stmtContext) {
                 importPrefix = stringFromNode(treeNode);
-            }
-            if (treeNode instanceof Revision_date_stmtContext) {
+            } else if (treeNode instanceof Revision_date_stmtContext) {
                 String importRevisionStr = stringFromNode(treeNode);
                 try {
                     importRevision = SIMPLE_DATE_FORMAT.parse(importRevisionStr);
