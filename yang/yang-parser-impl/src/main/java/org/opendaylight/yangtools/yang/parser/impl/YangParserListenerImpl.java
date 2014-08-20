@@ -546,7 +546,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
      * contains ":" the string is evaluated as prefix:name of element. In this case method will look into import map
      * and extract correct ModuleImport. If such import is not present in import map the method will throw {@link YangParseException}
      * <br>
-     * If ModuleImport is present but the value of namespace in ModuleImport is <code>null</code> the method wil throw {@link YangParseException}
+     * If ModuleImport is present but the value of namespace in ModuleImport is <code>null</code> the method will throw {@link YangParseException}
      *
      * @param qnameString QName value as String
      * @param line line in Yang model document where QName occur.
@@ -573,12 +573,12 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 }
                 Date revision = imp.getRevision();
                 TreeMap<Date, URI> namespaces = namespaceContext.get(imp.getModuleName());
+                if (namespaces == null) {
+                    throw new YangParseException(moduleName, line, String.format("Imported module %s not found",
+                            imp.getModuleName()));
+                }
                 URI namespace;
                 if (revision == null) {
-                    if (namespaces == null) {
-                        throw new YangParseException(moduleName, line, "imported module " + imp.getModuleName()
-                                + " with prefix " + imp.getPrefix() + " not found.");
-                    }
                     revision = namespaces.lastEntry().getKey();
                     namespace = namespaces.lastEntry().getValue();
                 } else {
