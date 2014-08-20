@@ -10,12 +10,16 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -41,9 +45,17 @@ import org.slf4j.LoggerFactory;
 abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataContainerCodecContext<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
 
+    private static final Comparator<Method> METHOD_BY_ALPHABET = new Comparator<Method>() {
+
+        @Override
+        public int compare(final Method o1, final Method o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    };
+
     private final ImmutableMap<String, LeafNodeCodecContext> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
-    private final ImmutableMap<Method, NodeContextSupplier> byMethod;
+    private final ImmutableSortedMap<Method, NodeContextSupplier> byMethod;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     protected final Method augmentationGetter;
@@ -56,7 +68,7 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
         Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(bindingClass());
 
         Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
-        Map<Method, NodeContextSupplier> byMethodBuilder = new HashMap<>();
+        SortedMap<Method, NodeContextSupplier> byMethodBuilder = new TreeMap<>(METHOD_BY_ALPHABET);
         Map<Class<?>, DataContainerCodecPrototype<?>> byStreamClassBuilder = new HashMap<>();
         Map<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClassBuilder = new HashMap<>();
 
@@ -78,7 +90,7 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
                 }
             }
         }
-        this.byMethod = ImmutableMap.copyOf(byMethodBuilder);
+        this.byMethod = ImmutableSortedMap.copyOfSorted(byMethodBuilder);
         if (Augmentable.class.isAssignableFrom(bindingClass())) {
             try {
                 augmentationGetter = bindingClass().getMethod("getAugmentation", Class.class);
