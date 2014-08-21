@@ -75,7 +75,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         } else if (EQUALS.equals(method.getName())) {
             return bindingEquals(args[0]);
         }
-        throw new UnsupportedOperationException("UNsupported method " + method);
+        throw new UnsupportedOperationException("Unsupported method " + method);
     }
 
     private boolean bindingEquals(final Object other) {
@@ -94,7 +94,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
                 }
             }
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            LOG.warn("Can not determine equality of {} and {}",this,other,e);
+            LOG.warn("Can not determine equality of {} and {}", this, other, e);
             return false;
         }
         return true;
@@ -174,7 +174,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
     }
 
     public String bindingToString() {
-        ToStringHelper helper = com.google.common.base.Objects.toStringHelper(context.bindingClass());
+        ToStringHelper helper = com.google.common.base.Objects.toStringHelper(context.bindingClass()).omitNullValues();
 
         for (Method m :context.getHashCodeAndEqualsMethods()) {
             helper.add(m.getName(), getBindingData(m));
