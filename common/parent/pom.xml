@@ -49,6 +49,8 @@
         <sonar.jacoco.reportPath>target/code-coverage/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.profile>Sonar way with Findbugs</sonar.profile>
+
+        <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     </properties>
 
     <profiles>
