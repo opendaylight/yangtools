@@ -1,6 +1,6 @@
 module bug1412 {
     yang-version 1;
-    namespace "urn:test:bug1412";
+    namespace 'urn:test:bug1412';
     prefix "b1412";
 
     import extensions {
