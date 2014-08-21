@@ -11,14 +11,17 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -141,7 +144,8 @@ public final class ParserListenerUtils {
     private static final Splitter KEYDEF_SPLITTER = Splitter.on(' ').omitEmptyStrings();
     private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     private static final Splitter DOT_DOT_SPLITTER = Splitter.on("..").trimResults();
-    private static final CharMatcher QUOTE_MATCHER = CharMatcher.is('"');
+    private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
+    private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
 
     private ParserListenerUtils() {
     }
@@ -168,33 +172,26 @@ public final class ParserListenerUtils {
         StringBuilder sb = new StringBuilder();
         for (TerminalNode stringNode : context.STRING()) {
             final String str = stringNode.getText();
-            final int i = str.indexOf('"');
-
-            if (i == -1) {
+            char firstChar = str.charAt(0);
+            final CharMatcher quoteMatcher;
+            if(SINGLE_QUOTE_MATCHER.matches(firstChar)) {
+                quoteMatcher = SINGLE_QUOTE_MATCHER;
+            } else if (DOUBLE_QUOTE_MATCHER.matches(firstChar)) {
+                quoteMatcher = DOUBLE_QUOTE_MATCHER;
+            } else {
                 sb.append(str);
                 continue;
             }
-
             /*
-             * The string contains quotes, so we have to tread carefully.
-             *
-             * FIXME: I think this code is broken, but proving that requires
-             *        making sense of the parser/lexer and how they tie into
-             *        this method. Especially what format 'str' can have and
-             *        how we need to handle it. The original check was:
-             *
-             *        if (!(result.startsWith("\"")) && result.endsWith("\""))
-             *
-             *        Looking at the parentheses it is hard to justify the
-             *        pair right after negation -- the intent may have been
-             *        to negate the entire expression.
+             * 
+             * It is safe not to check last argument to be same
+             * grammars enforces that.
+             * 
+             * FIXME: Introduce proper escaping and translation of escaped
+             * characters here.
+             * 
              */
-            if (i != 0 && str.endsWith("\"")) {
-                LOG.error("Syntax error in module {} at line {}: missing '\"'.", getParentModule(context),
-                        context.getStart().getLine());
-            } else {
-                sb.append(QUOTE_MATCHER.removeFrom(str));
-            }
+            sb.append(quoteMatcher.removeFrom(str.substring(1, str.length()-1)));
         }
         return sb.toString();
     }
