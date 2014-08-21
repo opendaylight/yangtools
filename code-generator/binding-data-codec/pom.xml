@@ -52,11 +52,12 @@
             <artifactId>jsr305</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-test-model</artifactId>
+            <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -64,12 +65,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-test-model</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
             <dependency><groupId>junit</groupId>
             <artifactId>junit</artifactId>

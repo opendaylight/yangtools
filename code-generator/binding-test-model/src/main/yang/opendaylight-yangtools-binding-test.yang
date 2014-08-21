@@ -1,6 +1,6 @@
-module opendaylight-mdsal-list-test {
+module opendaylight-yangtools-binding-test {
 
-    namespace "urn:opendaylight:params:xml:ns:yang:controller:md:sal:test:list";
+    namespace "urn:opendaylight:params:xml:ns:yang:yangtools:test:binding";
     prefix list-test;
 
 
@@ -46,10 +46,36 @@ module opendaylight-mdsal-list-test {
                     "A list of service functions that compose the service chain";
             }
         }
+        leaf-list top-level-leaf-list {
+            type string;
+        }
+    }
+
+    grouping choice {
+        choice identifier {
+            case simple {
+                container simple-id {
+                    leaf id {
+                        type int32;
+                    }
+                }
+            }
+            case extended {
+                container extended-id {
+                    leaf id {
+                        type string;
+                    }
+                }
+            }
+        }
     }
 
     container top {
         uses two-level-list;
+    }
+
+    container choice-container {
+        uses choice;
     }
 
     rpc put-top {

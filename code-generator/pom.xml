@@ -46,6 +46,11 @@
             <!-- Local Dependencies -->
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>binding-test-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-model-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
