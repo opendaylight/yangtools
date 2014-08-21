@@ -1,0 +1,12 @@
+module import-module {
+    yang-version 1;
+    namespace "yang:test:import";
+    prefix "i";
+
+    revision "2013-11-19" {
+    }
+
+
+    container imp-cont {}
+
+}

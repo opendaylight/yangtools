@@ -1,0 +1,17 @@
+submodule submodule1 {
+
+    belongs-to main-module {
+        prefix m;
+    }
+
+    revision 2014-04-02 {
+    }
+
+
+    typedef sub1-type {
+        type string;
+    }
+
+    container sub1-cont {}
+
+}

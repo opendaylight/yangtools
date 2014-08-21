@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.List;
 import java.util.Set;
-
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -127,6 +126,8 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      *         color="#9400d3">import</font></b>} keywords.
      */
     Set<ModuleImport> getImports();
+
+    Set<Module> getSubmodules();
 
     /**
      * Returns <code>FeatureDefinition</code> instances which contain data from
