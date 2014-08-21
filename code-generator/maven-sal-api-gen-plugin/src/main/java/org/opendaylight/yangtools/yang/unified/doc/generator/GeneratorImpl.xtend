@@ -54,6 +54,7 @@ import org.sonatype.plexus.build.incremental.BuildContext
 import org.sonatype.plexus.build.incremental.DefaultBuildContext
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier
+import com.google.common.collect.Iterables
 
 class GeneratorImpl {
 
@@ -339,11 +340,8 @@ class GeneratorImpl {
     private def parseTargetPath(SchemaPath path) {
         val List<DataSchemaNode> nodes = new ArrayList<DataSchemaNode>();
         for (QName pathElement : path.pathFromRoot) {
-            val prefix = pathElement.prefix
-            val moduleName = imports.get(prefix)
-            if(moduleName != null) {
-                val revision = pathElement.revision
-                val module = ctx.findModuleByName(moduleName, revision)
+            val module = ctx.findModuleByNamespaceAndRevision(pathElement.namespace, pathElement.revision);
+            if (module !== null) {
                 var foundNode = module.getDataChildByName(pathElement)
                 if(foundNode == null) {
                     val child = nodes.last
@@ -833,18 +831,15 @@ class GeneratorImpl {
 
     def String typeAnchorLink(SchemaPath path, CharSequence text) {
         if(path !== null) {
-            val prefix = path.path.last.prefix
-            if(prefix == this.currentModule.prefix) {
+            val lastElement = Iterables.getLast(path.pathFromRoot)
+            val ns = lastElement.namespace
+            if (ns == this.currentModule.namespace) {
                 return '''<a href="#«path.schemaPathToId»">«text»</a>'''
-            } else if(!prefix.nullOrEmpty){
-                val String module = imports.get(prefix)
-                if(!module.nullOrEmpty) {
-                    return '''«prefix»:«text»'''
-                    //to enable external (import) links
-                    //return '''<a href="«module».html#«path.schemaPathToId»">«prefix»:«text»</a>'''
-                }
+            } else {
+                return '''(«ns»)«text»'''
+                //to enable external (import) links
+                //return '''<a href="«module».html#«path.schemaPathToId»">«prefix»:«text»</a>'''
             }
-            return text.toString
         }
     }
 
@@ -1233,13 +1228,8 @@ class GeneratorImpl {
                     }
                 }
 
-                var String prefix = name.prefix
-                var String moduleName
-                if (prefix == null || prefix.empty || prefix.equals(module.prefix)) {
-                    moduleName = module.name
-                } else {
-                    moduleName = imports.get(prefix)
-                }
+                val pathElementModule = ctx.findModuleByNamespaceAndRevision(name.namespace, name.revision)
+                val String moduleName = pathElementModule.name
                 pathString.append(moduleName)
                 pathString.append(':')
                 pathString.append(name.localName)
