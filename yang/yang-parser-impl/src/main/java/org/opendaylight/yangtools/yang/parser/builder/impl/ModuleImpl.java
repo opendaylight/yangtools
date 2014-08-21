@@ -36,6 +36,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
     private final String organization;
     private final String contact;
     private final Set<ModuleImport> imports;
+    private final Set<Module> submodules;
     private final Set<FeatureDefinition> features;
     private final Set<NotificationDefinition> notifications;
     private final Set<AugmentationSchema> augmentations;
@@ -61,6 +62,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         this.name = checkNotNull(name, "Missing name");
         this.sourcePath = sourcePath; //TODO: can this be nullable?
         this.imports = ImmutableSet.<ModuleImport> copyOf(builder.imports.values());
+        this.submodules = ImmutableSet.<Module> copyOf(builder.submodules);
         this.prefix = builder.getPrefix();
 
         this.qnameModule = QNameModule.create(builder.getNamespace(),
@@ -123,6 +125,11 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
     @Override
     public Set<ModuleImport> getImports() {
         return imports;
+    }
+
+    @Override
+    public Set<Module> getSubmodules() {
+        return submodules;
     }
 
     @Override

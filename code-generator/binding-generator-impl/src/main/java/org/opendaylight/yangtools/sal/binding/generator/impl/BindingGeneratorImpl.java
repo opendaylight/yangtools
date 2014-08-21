@@ -285,16 +285,17 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         final String packageName = packageNameForGeneratedType(basePackageName, node.getPath());
         final GeneratedTypeBuilder genType = addDefaultInterfaceDefinition(packageName, node, childOf);
+        if (node instanceof DataNodeContainer) {
+            genCtx.get(module).addChildNodeType(node, genType);
+            groupingsToGenTypes(module, ((DataNodeContainer) node).getGroupings());
+            processUsesAugments((DataNodeContainer) node, module);
+            addImplementedInterfaceFromUses((DataNodeContainer) node, genType);
+        }
         genType.addComment(node.getDescription());
         genType.setDescription(createDescription(node, genType.getFullyQualifiedName()));
         genType.setModuleName(module.getName());
         genType.setReference(node.getReference());
         genType.setSchemaPath(node.getPath().getPathFromRoot());
-        if (node instanceof DataNodeContainer) {
-            genCtx.get(module).addChildNodeType(node, genType);
-            groupingsToGenTypes(module, ((DataNodeContainer) node).getGroupings());
-            processUsesAugments((DataNodeContainer) node, module);
-        }
         return genType;
     }
 
@@ -535,6 +536,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 genCtx.get(module).addChildNodeType(notification, notificationInterface);
 
                 // Notification object
+                groupingsToGenTypes(module, notification.getGroupings());
+                addImplementedInterfaceFromUses(notification, notificationInterface);
                 resolveDataSchemaNodes(module, basePackageName, notificationInterface, notificationInterface,
                         notification.getChildNodes());
 
@@ -680,9 +683,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private void groupingToGenType(final String basePackageName, final GroupingDefinition grouping, final Module module) {
         final String packageName = packageNameForGeneratedType(basePackageName, grouping.getPath());
         final GeneratedTypeBuilder genType = addDefaultInterfaceDefinition(packageName, grouping);
+        groupingsToGenTypes(module, grouping.getGroupings());
+        addImplementedInterfaceFromUses(grouping, genType);
         genCtx.get(module).addGroupingType(grouping.getPath(), genType);
         resolveDataSchemaNodes(module, basePackageName, genType, genType, grouping.getChildNodes());
-        groupingsToGenTypes(module, grouping.getGroupings());
         processUsesAugments(grouping, module);
     }
 
@@ -1180,6 +1184,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             if (caseNode != null && !caseNode.isAddedByUses() && !caseNode.isAugmenting()) {
                 final String packageName = packageNameForGeneratedType(basePackageName, caseNode.getPath());
                 final GeneratedTypeBuilder caseTypeBuilder = addDefaultInterfaceDefinition(packageName, caseNode);
+                addImplementedInterfaceFromUses(caseNode, caseTypeBuilder);
                 caseTypeBuilder.addImplementsType(refChoiceType);
                 genCtx.get(module).addCaseType(caseNode.getPath(), caseTypeBuilder);
                 genCtx.get(module).addChoiceToCaseMapping(refChoiceType, caseTypeBuilder, caseNode);
@@ -1612,10 +1617,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         if (!(schemaNode instanceof GroupingDefinition)) {
             it.addImplementsType(augmentable(it));
-        }
-
-        if (schemaNode instanceof DataNodeContainer) {
-            addImplementedInterfaceFromUses((DataNodeContainer) schemaNode, it);
         }
 
         return it;

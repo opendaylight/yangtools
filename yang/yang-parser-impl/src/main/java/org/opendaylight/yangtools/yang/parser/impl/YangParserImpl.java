@@ -503,6 +503,7 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     private void addSubmoduleToModule(final ModuleBuilder submodule, final ModuleBuilder module) {
+        module.addSubmodule(submodule);
         submodule.setParent(module);
         module.getDirtyNodes().addAll(submodule.getDirtyNodes());
         module.getImports().putAll(submodule.getImports());

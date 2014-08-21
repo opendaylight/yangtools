@@ -35,10 +35,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.IOUtils;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_header_stmtsContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Namespace_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtsContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_header_stmtsContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -822,11 +825,17 @@ public final class BuilderUtils {
 
     public static Map<String, TreeMap<Date, URI>> createYangNamespaceContext(
             final Collection<? extends ParseTree> modules, final Optional<SchemaContext> context) {
-        Map<String, TreeMap<Date, URI>> map = new HashMap<>();
+        Map<String, TreeMap<Date, URI>> namespaceContext = new HashMap<>();
+        Set<Submodule_stmtContext> submodules = new HashSet<>();
+        // first read ParseTree collection and separate modules and submodules
         for (ParseTree module : modules) {
             for (int i = 0; i < module.getChildCount(); i++) {
                 ParseTree moduleTree = module.getChild(i);
-                if (moduleTree instanceof Module_stmtContext) {
+                if (moduleTree instanceof Submodule_stmtContext) {
+                    // put submodule context to separate collection
+                    submodules.add((Submodule_stmtContext) moduleTree);
+                } else if (moduleTree instanceof Module_stmtContext) {
+                    // get name, revision and namespace from module
                     Module_stmtContext moduleCtx = (Module_stmtContext) moduleTree;
                     final String moduleName = ParserListenerUtils.stringFromNode(moduleCtx);
                     Date rev = null;
@@ -854,28 +863,56 @@ public final class BuilderUtils {
                             }
                         }
                     }
-                    TreeMap<Date, URI> revToNs = map.get(moduleName);
+                    // update namespaceContext
+                    TreeMap<Date, URI> revToNs = namespaceContext.get(moduleName);
                     if (revToNs == null) {
                         revToNs = new TreeMap<>();
                         revToNs.put(rev, namespace);
-                        map.put(moduleName, revToNs);
+                        namespaceContext.put(moduleName, revToNs);
                     }
                     revToNs.put(rev, namespace);
                 }
             }
         }
+        // after all ParseTree-s are parsed update namespaceContext with modules
+        // from SchemaContext
         if (context.isPresent()) {
             for (Module module : context.get().getModules()) {
-                TreeMap<Date, URI> revToNs = map.get(module.getName());
+                TreeMap<Date, URI> revToNs = namespaceContext.get(module.getName());
                 if (revToNs == null) {
                     revToNs = new TreeMap<>();
                     revToNs.put(module.getRevision(), module.getNamespace());
-                    map.put(module.getName(), revToNs);
+                    namespaceContext.put(module.getName(), revToNs);
                 }
                 revToNs.put(module.getRevision(), module.getNamespace());
             }
         }
-        return map;
+        // when all modules are processed, traverse submodules and update
+        // namespaceContext with mapping for submodules
+        for (Submodule_stmtContext submodule : submodules) {
+            final String moduleName = ParserListenerUtils.stringFromNode(submodule);
+            for (int i = 0; i < submodule.getChildCount(); i++) {
+                ParseTree subHeaderCtx = submodule.getChild(i);
+                if (subHeaderCtx instanceof Submodule_header_stmtsContext) {
+                    for (int j = 0; j < subHeaderCtx.getChildCount(); j++) {
+                        ParseTree belongsCtx = subHeaderCtx.getChild(j);
+                        if (belongsCtx instanceof Belongs_to_stmtContext) {
+                            final String belongsTo = ParserListenerUtils.stringFromNode(belongsCtx);
+                            TreeMap<Date, URI> ns = namespaceContext.get(belongsTo);
+                            if (ns == null) {
+                                throw new YangParseException(moduleName, submodule.getStart().getLine(), String.format(
+                                        "Unresolved belongs-to statement: %s", belongsTo));
+                            }
+                            // submodule get namespace and revision from module
+                            TreeMap<Date, URI> subNs = new TreeMap<>();
+                            subNs.put(ns.firstKey(), ns.firstEntry().getValue());
+                            namespaceContext.put(moduleName, subNs);
+                        }
+                    }
+                }
+            }
+        }
+        return namespaceContext;
     }
 
 }
