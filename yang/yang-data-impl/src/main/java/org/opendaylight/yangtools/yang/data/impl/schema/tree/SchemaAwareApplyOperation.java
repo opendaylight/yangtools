@@ -9,9 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
-import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -36,6 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
@@ -165,6 +164,8 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
             checkNotConflicting(path, original.get(), current.get());
         } else if(original.isPresent()) {
             throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction.");
+        } else if(current.isPresent()) {
+            throw new ConflictingModificationAppliedException(path,"Node was created by other transaction.");
         }
     }
 
