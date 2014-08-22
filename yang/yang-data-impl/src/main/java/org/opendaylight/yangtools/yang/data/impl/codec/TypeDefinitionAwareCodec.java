@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
@@ -473,8 +475,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public byte[] deserialize(final String stringRepresentation) {
-            return stringRepresentation == null ? null :
-                                         BaseEncoding.base64().decode(stringRepresentation);
+            return stringRepresentation == null ? null : DatatypeConverter.parseBase64Binary(stringRepresentation);
         }
     };
 
