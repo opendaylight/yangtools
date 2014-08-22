@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
+import java.io.IOException;
+
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -105,8 +107,9 @@ public interface NormalizedNodeStreamWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void leafNode(NodeIdentifier name, Object value) throws IllegalArgumentException;
+    void leafNode(NodeIdentifier name, Object value) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -130,8 +133,9 @@ public interface NormalizedNodeStreamWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startLeafSet(NodeIdentifier name, int childSizeHint) throws IllegalArgumentException;
+    void startLeafSet(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      * Emits a leaf set entry node
@@ -142,6 +146,7 @@ public interface NormalizedNodeStreamWriter {
      *             If emitted leaf node has invalid value.
      * @throws IllegalStateException
      *             If node was emitted outside <code>leaf set</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
     void leafSetEntryNode(Object value) throws IllegalArgumentException;
 
@@ -161,8 +166,8 @@ public interface NormalizedNodeStreamWriter {
      * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
      * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
      * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
-    * <li>{@link #startAugmentationNode(AugmentationIdentifier)}</li>
-    * </ul>
+     * <li>{@link #startAugmentationNode(AugmentationIdentifier)}</li>
+     * </ul>
      *
      * @param name
      *            name of node as defined in schema, namespace and revision are
@@ -178,8 +183,9 @@ public interface NormalizedNodeStreamWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startContainerNode(NodeIdentifier name, int childSizeHint) throws IllegalArgumentException;
+    void startContainerNode(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -204,8 +210,9 @@ public interface NormalizedNodeStreamWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startUnkeyedList(NodeIdentifier name, int childSizeHint) throws IllegalArgumentException;
+    void startUnkeyedList(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      * Emits start of new unkeyed list item.
@@ -231,8 +238,9 @@ public interface NormalizedNodeStreamWriter {
      *            events than count.
      * @throws IllegalStateException
      *             If node was emitted outside <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startUnkeyedListItem(NodeIdentifier name, int childSizeHint) throws IllegalStateException;
+    void startUnkeyedListItem(NodeIdentifier name, int childSizeHint) throws IOException, IllegalStateException;
 
     /**
      *
@@ -252,8 +260,9 @@ public interface NormalizedNodeStreamWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startMapNode(NodeIdentifier name, int childSizeHint) throws IllegalArgumentException;
+    void startMapNode(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -281,8 +290,9 @@ public interface NormalizedNodeStreamWriter {
      *             If key contains incorrect value.
      * @throws IllegalStateException
      *             If node was emitted outside <code>map entry</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startMapEntryNode(NodeIdentifierWithPredicates identifier, int childSizeHint) throws IllegalArgumentException;
+    void startMapEntryNode(NodeIdentifierWithPredicates identifier, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -301,8 +311,9 @@ public interface NormalizedNodeStreamWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startOrderedMapNode(NodeIdentifier name, int childSizeHint) throws IllegalArgumentException;
+    void startOrderedMapNode(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -316,8 +327,9 @@ public interface NormalizedNodeStreamWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startChoiceNode(NodeIdentifier name, int childSizeHint) throws IllegalArgumentException;
+    void startChoiceNode(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      * Emits start of augmentation node.
@@ -341,8 +353,9 @@ public interface NormalizedNodeStreamWriter {
      *            Augmentation identifier
      * @throws IllegalArgumentException
      *             If augmentation is invalid in current context.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startAugmentationNode(AugmentationIdentifier identifier) throws IllegalArgumentException;
+    void startAugmentationNode(AugmentationIdentifier identifier) throws IOException, IllegalArgumentException;
 
     /**
      * Emits anyxml node event.
@@ -354,15 +367,22 @@ public interface NormalizedNodeStreamWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void anyxmlNode(NodeIdentifier name, Object value) throws IllegalArgumentException;
+    void anyxmlNode(NodeIdentifier name, Object value) throws IOException, IllegalArgumentException;
 
     /**
      * Emits end event for node.
      *
-     * @throws IllegalStateException If there is no start* event to be closed.B
-     *
+     * @throws IllegalStateException If there is no start* event to be closed.
+     * @throws IOException if an underlying IO error occurs
      */
-    void endNode() throws IllegalStateException;
+    void endNode() throws IOException, IllegalStateException;
 
+    /**
+     * Flush any outstanding cached information onto the underlying media.
+     *
+     * @throws IOException if an underlying IO error occurs
+     */
+    void flush() throws IOException;
 }
