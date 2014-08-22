@@ -187,5 +187,6 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
 
     @Override
     public void flush() throws IOException {
+        getDelegate().flush();
     }
 }
