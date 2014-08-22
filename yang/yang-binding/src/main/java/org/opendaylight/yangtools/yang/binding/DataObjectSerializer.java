@@ -7,24 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import java.io.IOException;
+
 /**
- *
- * Serializer which writes DataObject to supplied stream event writer.
- *
- *
+ * A serializer which writes DataObject to supplied stream event writer.
  */
 public interface DataObjectSerializer {
-
     /**
-     *
      * Writes stream events representing object to supplied stream
-
      *
      * @param obj
      *            Source of stream events
      * @param stream
      *            Stream to which events should be written.
      */
-    void serialize(DataObject obj, BindingStreamEventWriter stream);
-
+    void serialize(DataObject obj, BindingStreamEventWriter stream) throws IOException;
 }
