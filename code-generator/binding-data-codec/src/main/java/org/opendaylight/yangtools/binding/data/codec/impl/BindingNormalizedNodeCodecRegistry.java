@@ -13,11 +13,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
+import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator;
@@ -39,8 +42,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerRegistry, BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
+    private static final Logger LOG = LoggerFactory.getLogger(BindingNormalizedNodeCodecRegistry.class);
 
     private final DataObjectSerializerGenerator generator;
     private final LoadingCache<Class<? extends DataObject>, DataObjectSerializer> serializers;
@@ -87,8 +93,13 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         // We create Binding Stream Writer wchich translates from Binding to Normalized Nodes
         Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx = codecContext.newWriter(path, domWriter);
 
-        // We get serializer which reads binding data and uses Binding To NOrmalized Node writer to write result
-        getSerializer(path.getTargetType()).serialize(data, writeCtx.getValue());
+        // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
+        try {
+            getSerializer(path.getTargetType()).serialize(data, writeCtx.getValue());
+        } catch (IOException e) {
+            LOG.error("Unexpected failure while serializing path {} data {}", path, data, e);
+            throw new IllegalStateException("Failed to create normalized node", e);
+        }
         return new SimpleEntry<YangInstanceIdentifier,NormalizedNode<?,?>>(writeCtx.getKey(),result.getResult());
     }
 
@@ -176,7 +187,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         }
 
         @Override
-        public void serialize(final DataObject obj, final BindingStreamEventWriter stream) {
+        public void serialize(final DataObject obj, final BindingStreamEventWriter stream) throws IOException {
             delegate.serialize(BindingNormalizedNodeCodecRegistry.this, obj, stream);
         }
     }
