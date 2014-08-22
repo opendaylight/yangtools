@@ -24,7 +24,7 @@
  * still result of processing only single unit of schema source (e.g. file, input stream). E.g.:
  * <ul>
  * <li>{@link java.lang.String} - textual representation of source code
- * <li>{@link InputStream} - input stream containing source code
+ * <li>{@link java.io.InputStream} - input stream containing source code
  * <li>{@link com.google.common.io.ByteSource} - source for input streams containing source code
  * <li>Parsed AST - abstract syntax tree, which is result of a parser, but still it is not linked
  * against other schemas.

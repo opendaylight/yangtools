@@ -37,7 +37,7 @@ public final class BaseConstraints {
      *
      * <ul>
      * <li>{@link LengthConstraint#getErrorAppTag()} returns <code>length-out-of-specified-bounds</code>
-     * <li>{@link LengthConstraint#getErrorMessage() returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * <li>{@link LengthConstraint#getErrorMessage()} returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
      * </ul>
      *
      * @see LengthConstraint
@@ -61,7 +61,7 @@ public final class BaseConstraints {
      *
      * <ul>
      * <li>{@link RangeConstraint#getErrorAppTag()} returns <code>range-out-of-specified-bounds</code>
-     * <li>{@link RangeConstraint#getErrorMessage() returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * <li>{@link RangeConstraint#getErrorMessage()} returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
      * </ul>
      *
      *
@@ -94,7 +94,7 @@ public final class BaseConstraints {
      * @param pattern Regular expression, MUST NOT BE null.
      * @param description Description associated with constraint.
      * @param reference Reference associated with constraint.
-     * @returnInstance of {@link PatternConstraint}
+     * @return Instance of {@link PatternConstraint}
      */
     public static PatternConstraint newPatternConstraint(final String pattern, final Optional<String> description,
             final Optional<String> reference) {
@@ -110,7 +110,7 @@ public final class BaseConstraints {
      *
      * <ul>
      * <li>{@link LengthConstraint#getErrorAppTag()} returns <code>length-out-of-specified-bounds</code>
-     * <li>{@link LengthConstraint#getErrorMessage() returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * <li>{@link LengthConstraint#getErrorMessage()} returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
      * </ul>
      *
      * @see LengthConstraint
@@ -136,7 +136,7 @@ public final class BaseConstraints {
      *
      * <ul>
      * <li>{@link RangeConstraint#getErrorAppTag()} returns <code>range-out-of-specified-bounds</code>
-     * <li>{@link RangeConstraint#getErrorMessage() returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * <li>{@link RangeConstraint#getErrorMessage()} returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
      * </ul>
      *
      *
