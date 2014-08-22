@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.binding.data.codec.util;
 
 import com.google.common.base.Preconditions;
 
+import java.io.IOException;
+
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -36,7 +38,7 @@ public class ChoiceDispatchSerializer implements DataObjectSerializerImplementat
 
     @SuppressWarnings("unchecked")
     @Override
-    public void serialize(final DataObjectSerializerRegistry reg, final DataObject obj, final BindingStreamEventWriter stream) {
+    public void serialize(final DataObjectSerializerRegistry reg, final DataObject obj, final BindingStreamEventWriter stream) throws IOException {
         @SuppressWarnings("rawtypes")
         Class cazeClass = obj.getImplementedInterface();
         stream.startChoiceNode(choiceClass, BindingStreamEventWriter.UNKNOWN_SIZE);

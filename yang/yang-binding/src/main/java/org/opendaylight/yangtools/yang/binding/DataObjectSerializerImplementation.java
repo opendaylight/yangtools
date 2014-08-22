@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import java.io.IOException;
+
 /**
  * SPI-level contract for implementations of {@link DataObjectSerializer}.
  * The contract is kept between implementation of {@link DataObjectSerializerRegistry},
@@ -14,7 +16,7 @@ package org.opendaylight.yangtools.yang.binding;
  *
  * FIXME: this interface needs to be moved into .spi, but due to classpath funkyness
  *        of OSGi, that change has to be carefully orchestrated to ensure proper imports
- *        exist in all generated pacakges. One avenue how to achieve that is to move
+ *        exist in all generated packages. One avenue how to achieve that is to move
  *        {@link YangModuleInfo} and modify code generator to add a static field
  *        to all generated classes which will point to the per-model YangModuleInfo
  *        (currently all users of it have to walk the package hierarchy, so that
@@ -22,7 +24,6 @@ package org.opendaylight.yangtools.yang.binding;
  *
  */
 public interface DataObjectSerializerImplementation {
-
     /**
      *
      * Writes stream events for supplied data object to provided stream.
@@ -32,6 +33,5 @@ public interface DataObjectSerializerImplementation {
      * their events.
      *
      */
-    void serialize(DataObjectSerializerRegistry reg,DataObject obj, BindingStreamEventWriter stream);
-
+    void serialize(DataObjectSerializerRegistry reg,DataObject obj, BindingStreamEventWriter stream) throws IOException;
 }
