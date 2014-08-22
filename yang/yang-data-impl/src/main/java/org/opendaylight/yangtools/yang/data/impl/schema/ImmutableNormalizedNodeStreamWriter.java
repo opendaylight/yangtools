@@ -8,9 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.base.Preconditions;
+
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -43,15 +46,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUn
  */
 public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
 
-
-
     @SuppressWarnings("rawtypes")
-    private final Deque<NormalizedNodeContainerBuilder> builders;
-
+    private final Deque<NormalizedNodeContainerBuilder> builders = new ArrayDeque<>();
 
     @SuppressWarnings("rawtypes")
     private ImmutableNormalizedNodeStreamWriter( final NormalizedNodeContainerBuilder topLevelBuilder) {
-        builders = new ArrayDeque<>();
         builders.push(topLevelBuilder);
     }
 
@@ -249,6 +248,17 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         public NormalizedNodeContainerBuilder removeChild(final PathArgument key) {
             throw new UnsupportedOperationException();
         }
+
+    }
+
+    @Override
+    public void flush() {
+        // no-op
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO Auto-generated method stub
 
     }
 
