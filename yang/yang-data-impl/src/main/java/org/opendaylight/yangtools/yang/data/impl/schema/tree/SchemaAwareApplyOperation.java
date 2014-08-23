@@ -74,13 +74,6 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         return null;
     }
 
-    public static boolean checkConflicting(final YangInstanceIdentifier path, final boolean condition, final String message) throws ConflictingModificationAppliedException {
-        if(!condition) {
-            throw new ConflictingModificationAppliedException(path, message);
-        }
-        return condition;
-    }
-
     private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode) {
         List<QName> keyDefinition = schemaNode.getKeyDefinition();
         if (keyDefinition == null || keyDefinition.isEmpty()) {
@@ -102,10 +95,14 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     }
 
     private static final void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
-        checkConflicting(path, original.getVersion().equals(current.getVersion()),
-                "Node was replaced by other transaction.");
-        checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
-                "Node children was modified by other transaction");
+        if (!original.getVersion().equals(current.getVersion())) {
+            LOG.debug("Path {} expected version {} got {}", path, original.getVersion(), current.getVersion());
+            throw new ConflictingModificationAppliedException(path, String.format("Node %s was replaced by another transaction", path));
+        }
+        if (!original.getSubtreeVersion().equals(current.getSubtreeVersion())) {
+            LOG.debug("Path {} expected subtree version {} got {}", path, original.getSubtreeVersion(), current.getSubtreeVersion());
+            throw new ConflictingModificationAppliedException(path, String.format("Node %s children were modified by other transaction", path));
+        }
     }
 
     protected final ModificationApplyOperation resolveChildOperation(final PathArgument child) {
@@ -163,9 +160,9 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
         } else if(original.isPresent()) {
-            throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction.");
+            throw new ConflictingModificationAppliedException(path, String.format("Node %s was deleted by other transaction.", path));
         } else if(current.isPresent()) {
-            throw new ConflictingModificationAppliedException(path,"Node was created by other transaction.");
+            throw new ConflictingModificationAppliedException(path, String.format("Node %s was created by other transaction.", path));
         }
     }
 
