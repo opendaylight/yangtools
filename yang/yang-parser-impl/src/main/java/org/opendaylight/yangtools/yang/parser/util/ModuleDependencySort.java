@@ -178,12 +178,20 @@ public final class ModuleDependencySort {
                 Object mod = allNS.get(ns);
                 String name = null;
                 Date revision = null;
+
+                if(mod instanceof ModuleOrModuleBuilder && ((ModuleOrModuleBuilder) mod).isModule()) {
+                    mod = ((ModuleOrModuleBuilder) mod).getModule();
+                } else if (mod instanceof ModuleOrModuleBuilder && ((ModuleOrModuleBuilder) mod).isModuleBuilder()) {
+                    mod = ((ModuleOrModuleBuilder) mod).getModuleBuilder();
+                }
                 if (mod instanceof Module) {
                     name = ((Module) mod).getName();
                     revision = ((Module) mod).getRevision();
                 } else if (mod instanceof ModuleBuilder) {
                     name = ((ModuleBuilder) mod).getName();
                     revision = ((ModuleBuilder) mod).getRevision();
+                } else {
+                    LOGGER.warn("Module has no name: {}", mod);
                 }
                 if (!(fromName.equals(name))) {
                     LOGGER.warn(
