@@ -8,13 +8,6 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import static java.util.Arrays.asList;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +27,13 @@ import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Creates a module dependency graph from provided {@link ModuleBuilder}s and
@@ -178,12 +178,20 @@ public final class ModuleDependencySort {
                 Object mod = allNS.get(ns);
                 String name = null;
                 Date revision = null;
+
+                if(mod instanceof ModuleOrModuleBuilder && ((ModuleOrModuleBuilder) mod).isModule()) {
+                    mod = ((ModuleOrModuleBuilder) mod).getModule();
+                } else if (mod instanceof ModuleOrModuleBuilder && ((ModuleOrModuleBuilder) mod).isModuleBuilder()) {
+                    mod = ((ModuleOrModuleBuilder) mod).getModuleBuilder();
+                }
                 if (mod instanceof Module) {
                     name = ((Module) mod).getName();
                     revision = ((Module) mod).getRevision();
                 } else if (mod instanceof ModuleBuilder) {
                     name = ((ModuleBuilder) mod).getName();
                     revision = ((ModuleBuilder) mod).getRevision();
+                } else {
+                    LOGGER.warn("Module has no name: {}", mod);
                 }
                 if (!(fromName.equals(name))) {
                     LOGGER.warn(
