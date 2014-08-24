@@ -109,14 +109,25 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(BindingGeneratorImpl.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter BSDOT_SPLITTER = Splitter.on("\\.");
+    private static final char NEW_LINE = '\n';
 
     /**
      * Constant with the concrete name of identifier.
      */
     private static final String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
-    private static final char NEW_LINE = '\n';
+
+    /**
+     * Constant with the concrete name of namespace.
+     */
+    private static final String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
 
     private final Map<Module, ModuleContext> genCtx = new HashMap<>();
+
+    /**
+     * When set to true, generated classes will include javadoc comments which
+     * are useful for users.
+     */
+    private final boolean verboseClassComments;
 
     /**
      * Outer key represents the package name. Outer value represents map of all
@@ -138,9 +149,23 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private SchemaContext schemaContext;
 
     /**
-     * Constant with the concrete name of namespace.
+     * Create a new binding generator with verboe comments.
+     *
+     * @deprecated Use {@link #BindingGeneratorImpl(boolean)} instead.
      */
-    private static final String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
+    @Deprecated
+    public BindingGeneratorImpl() {
+        this(true);
+    }
+
+    /**
+     * Create a new binding generator.
+     *
+     * @param verboseClassComments generate verbose comments
+     */
+    public BindingGeneratorImpl(final boolean verboseClassComments) {
+        this.verboseClassComments = verboseClassComments;
+    }
 
     /**
      * Resolves generated types from <code>context</code> schema nodes of all
@@ -1965,15 +1990,13 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     private String createDescription(final Set<? extends SchemaNode> schemaNodes, final String moduleName, final String moduleSourcePath) {
         final StringBuilder sb = new StringBuilder();
-        final String yangSnipet = YangTemplate.generateYangSnipet(schemaNodes);
 
         if (!isNullOrEmpty(schemaNodes)) {
             final SchemaNode node = schemaNodes.iterator().next();
 
             if (node instanceof RpcDefinition) {
                 sb.append("Interface for implementing the following YANG RPCs defined in module <b>" + moduleName + "</b>");
-            }
-            else if (node instanceof NotificationDefinition) {
+            } else if (node instanceof NotificationDefinition) {
                 sb.append("Interface for receiving the following YANG notifications defined in module <b>" + moduleName + "</b>");
             }
         }
@@ -1982,71 +2005,77 @@ public class BindingGeneratorImpl implements BindingGenerator {
         sb.append(moduleSourcePath);
         sb.append("</i>):");
         sb.append(NEW_LINE);
-        sb.append("<pre>");
-        sb.append(NEW_LINE);
-        sb.append(yangSnipet);
-        sb.append("</pre>");
-        sb.append(NEW_LINE);
+
+        if (verboseClassComments) {
+            sb.append("<pre>");
+            sb.append(NEW_LINE);
+            sb.append(YangTemplate.generateYangSnipet(schemaNodes));
+            sb.append("</pre>");
+            sb.append(NEW_LINE);
+        }
 
         return sb.toString();
     }
 
     private String createDescription(final SchemaNode schemaNode, final String fullyQualifiedName) {
         final StringBuilder sb = new StringBuilder();
-        final Module module = findParentModule(schemaContext, schemaNode);
-        final String yangSnipet = YangTemplate.generateYangSnipet(schemaNode);
         final String formattedDescription = YangTemplate.formatToParagraph(schemaNode.getDescription(), 0);
-        final StringBuilder linkToBuilderClass = new StringBuilder();
-        final StringBuilder linkToKeyClass = new StringBuilder();
-        final String[] namespace = Iterables.toArray(BSDOT_SPLITTER.split(fullyQualifiedName), String.class);
-        String className = namespace[namespace.length - 1];
-
-        if (hasBuilderClass(schemaNode)) {
-            linkToBuilderClass.append(className);
-            linkToBuilderClass.append("Builder");
-
-            if (schemaNode instanceof ListSchemaNode) {
-                linkToKeyClass.append(className);
-                linkToKeyClass.append("Key");
-            }
-        }
 
         if (!isNullOrEmpty(formattedDescription)) {
             sb.append(formattedDescription);
             sb.append(NEW_LINE);
         }
-        sb.append("<p>");
-        sb.append("This class represents the following YANG schema fragment defined in module <b>");
-        sb.append(module.getName());
-        sb.append("</b>");
-        sb.append(NEW_LINE);
-        sb.append("<br />(Source path: <i>");
-        sb.append(module.getModuleSourcePath());
-        sb.append("</i>):");
-        sb.append(NEW_LINE);
-        sb.append("<pre>");
-        sb.append(NEW_LINE);
-        sb.append(yangSnipet);
-        sb.append("</pre>");
-        sb.append(NEW_LINE);
-        sb.append("The schema path to identify an instance is");
-        sb.append(NEW_LINE);
-        sb.append("<i>");
-        sb.append(YangTemplate.formatSchemaPath(module.getName(), schemaNode.getPath().getPathFromRoot()));
-        sb.append("</i>");
-        sb.append(NEW_LINE);
 
-        if (hasBuilderClass(schemaNode)) {
-            sb.append(NEW_LINE);
-            sb.append("<p>To create instances of this class use " + "{@link " + linkToBuilderClass + "}.");
-            sb.append(NEW_LINE);
-            sb.append("@see ");
-            sb.append(linkToBuilderClass);
-            if (schemaNode instanceof ListSchemaNode) {
-                sb.append("@see ");
-                sb.append(linkToKeyClass);
+        if (verboseClassComments) {
+            final Module module = findParentModule(schemaContext, schemaNode);
+            final StringBuilder linkToBuilderClass = new StringBuilder();
+            final StringBuilder linkToKeyClass = new StringBuilder();
+            final String[] namespace = Iterables.toArray(BSDOT_SPLITTER.split(fullyQualifiedName), String.class);
+            String className = namespace[namespace.length - 1];
+
+            if (hasBuilderClass(schemaNode)) {
+                linkToBuilderClass.append(className);
+                linkToBuilderClass.append("Builder");
+
+                if (schemaNode instanceof ListSchemaNode) {
+                    linkToKeyClass.append(className);
+                    linkToKeyClass.append("Key");
+                }
             }
+
+            sb.append("<p>");
+            sb.append("This class represents the following YANG schema fragment defined in module <b>");
+            sb.append(module.getName());
+            sb.append("</b>");
             sb.append(NEW_LINE);
+            sb.append("<br />(Source path: <i>");
+            sb.append(module.getModuleSourcePath());
+            sb.append("</i>):");
+            sb.append(NEW_LINE);
+            sb.append("<pre>");
+            sb.append(NEW_LINE);
+            sb.append(YangTemplate.generateYangSnipet(schemaNode));
+            sb.append("</pre>");
+            sb.append(NEW_LINE);
+            sb.append("The schema path to identify an instance is");
+            sb.append(NEW_LINE);
+            sb.append("<i>");
+            sb.append(YangTemplate.formatSchemaPath(module.getName(), schemaNode.getPath().getPathFromRoot()));
+            sb.append("</i>");
+            sb.append(NEW_LINE);
+
+            if (hasBuilderClass(schemaNode)) {
+                sb.append(NEW_LINE);
+                sb.append("<p>To create instances of this class use " + "{@link " + linkToBuilderClass + "}.");
+                sb.append(NEW_LINE);
+                sb.append("@see ");
+                sb.append(linkToBuilderClass);
+                if (schemaNode instanceof ListSchemaNode) {
+                    sb.append("@see ");
+                    sb.append(linkToKeyClass);
+                }
+                sb.append(NEW_LINE);
+            }
         }
 
         return sb.toString();
@@ -2066,26 +2095,28 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     private String createDescription(final Module module) {
         final StringBuilder sb = new StringBuilder();
-        final String yangSnipet = YangTemplate.generateYangSnipet(module);
         final String formattedDescription = YangTemplate.formatToParagraph(module.getDescription(), 0);
 
         if (!isNullOrEmpty(formattedDescription)) {
             sb.append(formattedDescription);
             sb.append(NEW_LINE);
         }
-        sb.append("<p>");
-        sb.append("This class represents the following YANG schema fragment defined in module <b>");
-        sb.append(module.getName());
-        sb.append("</b>");
-        sb.append(NEW_LINE);
-        sb.append("<br />Source path: <i>");
-        sb.append(module.getModuleSourcePath());
-        sb.append("</i>):");
-        sb.append(NEW_LINE);
-        sb.append("<pre>");
-        sb.append(NEW_LINE);
-        sb.append(yangSnipet);
-        sb.append("</pre>");
+
+        if (verboseClassComments) {
+            sb.append("<p>");
+            sb.append("This class represents the following YANG schema fragment defined in module <b>");
+            sb.append(module.getName());
+            sb.append("</b>");
+            sb.append(NEW_LINE);
+            sb.append("<br />Source path: <i>");
+            sb.append(module.getModuleSourcePath());
+            sb.append("</i>):");
+            sb.append(NEW_LINE);
+            sb.append("<pre>");
+            sb.append(NEW_LINE);
+            sb.append(YangTemplate.generateYangSnipet(module));
+            sb.append("</pre>");
+        }
 
         return sb.toString();
     }
