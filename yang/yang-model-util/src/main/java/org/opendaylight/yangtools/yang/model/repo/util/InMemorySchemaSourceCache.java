@@ -6,6 +6,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Cost
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
+@Beta
 public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T> {
     private static final class CacheEntry<T extends SchemaSourceRepresentation> {
         private final SchemaSourceRegistration<T> reg;
@@ -42,9 +44,13 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
 
     private final Cache<SourceIdentifier, CacheEntry<T>> cache;
 
-    protected InMemorySchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation, final int maxSize) {
+    protected InMemorySchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation, final CacheBuilder<Object, Object> builder) {
         super(consumer, representation, Costs.IMMEDIATE);
-        cache = CacheBuilder.newBuilder().softValues().maximumSize(maxSize).removalListener(LISTENER).build();
+        cache = builder.removalListener(LISTENER).build();
+    }
+
+    public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(final SchemaSourceRegistry consumer, final Class<R> representation) {
+        return new InMemorySchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues());
     }
 
     @Override
