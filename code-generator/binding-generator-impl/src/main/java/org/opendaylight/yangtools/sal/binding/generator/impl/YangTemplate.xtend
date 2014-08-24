@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil
 
 class YangTemplate {
 
+    // FIXME: this is not thread-safe and seems to be unused!
     private static var Module module = null
 
     def static String generateYangSnipet(SchemaNode schemaNode) {
