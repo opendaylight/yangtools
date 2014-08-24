@@ -40,11 +40,14 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil
+import com.google.common.base.CharMatcher
 
 class YangTemplate {
 
     // FIXME: this is not thread-safe and seems to be unused!
     private static var Module module = null
+
+    private static val CharMatcher NEWLINE_OR_TAB = CharMatcher.anyOf("\n\t")
 
     def static String generateYangSnipet(SchemaNode schemaNode) {
         if (schemaNode == null)
@@ -732,8 +735,7 @@ class YangTemplate {
         val lineIndent = computeNextLineIndent(nextLineIndent);
 
         formattedText = formattedText.replace("*/", "&#42;&#47;");
-        formattedText = formattedText.replace("\n", "");
-        formattedText = formattedText.replace("\t", "");
+        formattedText = NEWLINE_OR_TAB.removeFrom(formattedText);
         formattedText = formattedText.replaceAll(" +", " ");
 
         val StringTokenizer tokenizer = new StringTokenizer(formattedText, " ", true);
@@ -781,8 +783,7 @@ class YangTemplate {
             val ns = pathElement.namespace
             val localName = pathElement.localName
 
-            sb.append("\\")
-            sb.append('(')
+            sb.append("\\(")
             sb.append(ns)
             sb.append(')')
             sb.append(localName)
