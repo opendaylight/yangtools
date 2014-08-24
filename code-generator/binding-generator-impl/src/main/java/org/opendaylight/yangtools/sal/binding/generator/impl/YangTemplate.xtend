@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl
 
-import java.text.SimpleDateFormat
 import java.util.Collection
 import java.util.Date
 import java.util.List
@@ -40,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode
 import org.opendaylight.yangtools.yang.model.api.UsesNode
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil
 
 class YangTemplate {
 
@@ -121,16 +121,11 @@ class YangTemplate {
         '''
     }
 
-    def static formatDate(Date moduleRevision) {
-        val SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd")
-        return dateFormat.format(moduleRevision)
-    }
-
     def static writeRevision(Date moduleRevision, String moduleDescription) {
         val revisionIndent = 12
 
         '''
-            revision «formatDate(moduleRevision)» {
+            revision «SimpleDateFormatUtil.getRevisionFormat.format(moduleRevision)» {
                 description "«formatToParagraph(moduleDescription, revisionIndent)»";
             }
         '''
