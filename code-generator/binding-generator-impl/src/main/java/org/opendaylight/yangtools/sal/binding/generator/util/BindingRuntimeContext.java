@@ -77,7 +77,7 @@ public class BindingRuntimeContext implements Immutable {
         this.strategy = strategy;
         this.schemaContext = schema;
 
-        BindingGeneratorImpl generator = new BindingGeneratorImpl();
+        BindingGeneratorImpl generator = new BindingGeneratorImpl(false);
         generator.generateTypes(schema);
         Map<Module, ModuleContext> modules = generator.getModuleContexts();
 
