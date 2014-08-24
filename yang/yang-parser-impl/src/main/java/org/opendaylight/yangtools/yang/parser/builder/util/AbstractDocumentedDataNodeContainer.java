@@ -26,6 +26,7 @@ public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocume
     private final Set<GroupingDefinition> groupings;
     private final Set<UsesNode> uses;
     private final Set<TypeDefinition<?>> typeDefinitions;
+    private final Set<DataSchemaNode> publicChildNodes;
 
     protected AbstractDocumentedDataNodeContainer(final AbstractDocumentedDataNodeContainerBuilder data) {
         super(data);
@@ -36,6 +37,7 @@ public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocume
         groupings = ImmutableSet.copyOf(data.getGroupings());
         uses = ImmutableSet.copyOf(data.getUsesNodes());
         typeDefinitions = ImmutableSet.copyOf(data.getTypeDefinitions());
+        publicChildNodes = ImmutableSet.copyOf(childNodes.values());
     }
 
     @Override
@@ -45,7 +47,7 @@ public abstract class AbstractDocumentedDataNodeContainer extends AbstractDocume
 
     @Override
     public final Set<DataSchemaNode> getChildNodes() {
-        return ImmutableSet.copyOf(childNodes.values());
+        return publicChildNodes;
     }
 
     @Override
