@@ -13,9 +13,9 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 
@@ -37,30 +37,41 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.repo.util.InMemorySchemaSourceCache;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.util.TextToASTTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Beta
-public class URLSchemaContextResolver implements SchemaSourceProvider<YangTextSchemaSource> {
+public class URLSchemaContextResolver implements AutoCloseable, SchemaSourceProvider<YangTextSchemaSource> {
     private static final Logger LOG = LoggerFactory.getLogger(URLSchemaContextResolver.class);
 
-    private final Cache<SourceIdentifier, YangTextSchemaSource> sources = CacheBuilder.newBuilder().build();
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
+    private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
     private final AtomicReference<Optional<SchemaContext>> currentSchemaContext =
             new AtomicReference<>(Optional.<SchemaContext>absent());
+    private final InMemorySchemaSourceCache<ASTSchemaSource> cache;
+    private final SchemaListenerRegistration transReg;
     private final SchemaSourceRegistry registry;
     private final SchemaRepository repository;
     private volatile Object version = new Object();
     private volatile Object contextVersion = version;
 
+
     private URLSchemaContextResolver(final SchemaRepository repository, final SchemaSourceRegistry registry) {
         this.repository = Preconditions.checkNotNull(repository);
         this.registry = Preconditions.checkNotNull(registry);
+
+        final TextToASTTransformer t = TextToASTTransformer.create(repository, registry);
+        transReg = registry.registerSchemaSourceListener(t);
+
+        cache = InMemorySchemaSourceCache.createSoftCache(registry, ASTSchemaSource.class);
     }
 
     public static URLSchemaContextResolver create(final String name) {
@@ -96,23 +107,31 @@ public class URLSchemaContextResolver implements SchemaSourceProvider<YangTextSc
         LOG.trace("Resolved URL {} to source {}", url, ast);
 
         final SourceIdentifier resolvedId = ast.getIdentifier();
-        final SchemaSourceRegistration<YangTextSchemaSource> reg = registry.registerSchemaSource(this,
-                PotentialSchemaSource.create(resolvedId, YangTextSchemaSource.class, 0));
 
-        requiredSources.add(resolvedId);
-        LOG.trace("Added source {} to schema context requirements", resolvedId);
-        version = new Object();
+        synchronized (this) {
+            texts.put(resolvedId, text);
+            LOG.debug("Populated {} with text", resolvedId);
 
-        return new AbstractURLRegistration(text) {
-            @Override
-            protected void removeRegistration() {
-                requiredSources.remove(resolvedId);
-                LOG.trace("Removed source {} from schema context requirements", resolvedId);
-                version = new Object();
-                reg.close();
-                sources.invalidate(resolvedId);
-            }
-        };
+            final SchemaSourceRegistration<YangTextSchemaSource> reg = registry.registerSchemaSource(this,
+                PotentialSchemaSource.create(resolvedId, YangTextSchemaSource.class, Costs.IMMEDIATE.getValue()));
+            requiredSources.add(resolvedId);
+            cache.schemaSourceEncountered(ast);
+            LOG.debug("Added source {} to schema context requirements", resolvedId);
+            version = new Object();
+
+            return new AbstractURLRegistration(text) {
+                @Override
+                protected void removeRegistration() {
+                    synchronized (URLSchemaContextResolver.this) {
+                        requiredSources.remove(resolvedId);
+                        LOG.trace("Removed source {} from schema context requirements", resolvedId);
+                        version = new Object();
+                        reg.close();
+                        texts.remove(resolvedId, text);
+                    }
+                }
+            };
+        }
     }
 
     /**
@@ -139,7 +158,7 @@ public class URLSchemaContextResolver implements SchemaSourceProvider<YangTextSc
             Collection<SourceIdentifier> sources;
             do {
                 v = version;
-                sources = ImmutableList.copyOf(requiredSources);
+                sources = ImmutableSet.copyOf(requiredSources);
             } while (v != version);
 
             while (true) {
@@ -165,13 +184,20 @@ public class URLSchemaContextResolver implements SchemaSourceProvider<YangTextSc
     }
 
     @Override
-    public CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-        final YangTextSchemaSource ret = sources.getIfPresent(sourceIdentifier);
-        if (ret == null) {
+    public synchronized CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
+        final Collection<YangTextSchemaSource> ret = texts.get(sourceIdentifier);
+
+        LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
+        if (ret.isEmpty()) {
             return Futures.<YangTextSchemaSource, SchemaSourceException>immediateFailedCheckedFuture(
                     new MissingSchemaSourceException("URL for " + sourceIdentifier + " not registered", sourceIdentifier));
         }
 
-        return Futures.immediateCheckedFuture(ret);
+        return Futures.immediateCheckedFuture(ret.iterator().next());
+    }
+
+    @Override
+    public void close() {
+        transReg.close();
     }
 }
