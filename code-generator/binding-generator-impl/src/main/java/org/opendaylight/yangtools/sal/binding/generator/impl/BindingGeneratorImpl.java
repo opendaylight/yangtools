@@ -30,6 +30,7 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findP
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -105,6 +107,14 @@ import org.slf4j.LoggerFactory;
 
 public class BindingGeneratorImpl implements BindingGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(BindingGeneratorImpl.class);
+    private static final Splitter COLON_SPLITTER = Splitter.on(':');
+    private static final Splitter BSDOT_SPLITTER = Splitter.on("\\.");
+
+    /**
+     * Constant with the concrete name of identifier.
+     */
+    private static final String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
+    private static final char NEW_LINE = '\n';
 
     private final Map<Module, ModuleContext> genCtx = new HashMap<>();
 
@@ -130,16 +140,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
     /**
      * Constant with the concrete name of namespace.
      */
-    private final static String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
-
-    /**
-     * Constant with the concrete name of identifier.
-     */
-    private final static String AUGMENT_IDENTIFIER_NAME = "augment-identifier";
-
-    private final char NEW_LINE = '\n';
-
-    private final char TAB = '\t';
+    private static final String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
 
     /**
      * Resolves generated types from <code>context</code> schema nodes of all
@@ -617,7 +618,6 @@ public class BindingGeneratorImpl implements BindingGenerator {
         newType.setDescription(createDescription(identity, newType.getFullyQualifiedName()));
         newType.setReference(identity.getReference());
         newType.setModuleName(module.getName());
-        SchemaPath path = identity.getPath();
         newType.setSchemaPath(identity.getPath().getPathFromRoot());
 
         final QName qname = identity.getQName();
@@ -1368,7 +1368,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 final String nodeParam = node.getNodeParameter();
                 IdentitySchemaNode identity = null;
                 String basePackageName = null;
-                final Iterable<String> splittedElement = Splitter.on(':').split(nodeParam);
+                final Iterable<String> splittedElement = COLON_SPLITTER.split(nodeParam);
                 final Iterator<String> iterator = splittedElement.iterator();
                 final int length = Iterables.size(splittedElement);
                 if (length == 1) {
@@ -1998,8 +1998,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         final String formattedDescription = YangTemplate.formatToParagraph(schemaNode.getDescription(), 0);
         final StringBuilder linkToBuilderClass = new StringBuilder();
         final StringBuilder linkToKeyClass = new StringBuilder();
-        final Splitter splitter = Splitter.on("\\.");
-        final String[] namespace = Iterables.toArray(splitter.split(fullyQualifiedName), String.class);
+        final String[] namespace = Iterables.toArray(BSDOT_SPLITTER.split(fullyQualifiedName), String.class);
         String className = namespace[namespace.length - 1];
 
         if (hasBuilderClass(schemaNode)) {
