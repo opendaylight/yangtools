@@ -46,8 +46,8 @@ input_stmt : INPUT_KEYWORD LEFT_BRACE (identifier_stmt |typedef_stmt | grouping_
 rpc_stmt : RPC_KEYWORD string (SEMICOLON | (LEFT_BRACE (identifier_stmt |if_feature_stmt  | status_stmt | description_stmt | reference_stmt | typedef_stmt | grouping_stmt | input_stmt | output_stmt )* RIGHT_BRACE));
 when_stmt : WHEN_KEYWORD string (SEMICOLON | (LEFT_BRACE (identifier_stmt |description_stmt | reference_stmt )* RIGHT_BRACE));
 
-augment_stmt : AUGMENT_KEYWORD string LEFT_BRACE  (identifier_stmt |when_stmt | if_feature_stmt | status_stmt | description_stmt | reference_stmt | data_def_stmt | case_stmt)+ RIGHT_BRACE;
-uses_augment_stmt : AUGMENT_KEYWORD string LEFT_BRACE  (identifier_stmt |when_stmt | if_feature_stmt | status_stmt | description_stmt | reference_stmt | data_def_stmt | case_stmt)+ RIGHT_BRACE;
+augment_stmt : AUGMENT_KEYWORD string LEFT_BRACE  (identifier_stmt |when_stmt | if_feature_stmt | status_stmt | description_stmt | reference_stmt | data_def_stmt | case_stmt)* RIGHT_BRACE;
+uses_augment_stmt : AUGMENT_KEYWORD string LEFT_BRACE  (identifier_stmt |when_stmt | if_feature_stmt | status_stmt | description_stmt | reference_stmt | data_def_stmt | case_stmt)* RIGHT_BRACE;
 refine_anyxml_stmts : (identifier_stmt |must_stmt | config_stmt | mandatory_stmt | description_stmt | reference_stmt )*;
 refine_case_stmts : (identifier_stmt |description_stmt | reference_stmt )*;
 refine_choice_stmts : (identifier_stmt |default_stmt | config_stmt | mandatory_stmt | description_stmt | reference_stmt )*;
