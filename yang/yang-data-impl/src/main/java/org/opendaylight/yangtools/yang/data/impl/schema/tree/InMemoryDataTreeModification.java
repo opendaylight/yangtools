@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     private final RootModificationApplyOperation strategyTree;
     private final InMemoryDataTreeSnapshot snapshot;
     private final ModifiedNode rootNode;
+    private final Version version;
 
     @GuardedBy("this")
     private boolean sealed = false;
@@ -38,6 +40,17 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         this.snapshot = Preconditions.checkNotNull(snapshot);
         this.strategyTree = Preconditions.checkNotNull(resolver).snapshot();
         this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode());
+        /*
+         * We could allocate version beforehand, since Version contract
+         * states two allocated version must be allways different.
+         * 
+         * Preallocating version simplifies scenarios such as
+         * chaining of modifications, since version for particular
+         * node in modification and in data tree (if successfully
+         * commited) will be same and will not change.
+         * 
+         */
+        this.version = snapshot.getRootNode().getSubtreeVersion().next();
     }
 
     ModifiedNode getRootModification() {
@@ -108,7 +121,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
         try {
             return resolveModificationStrategy(path).apply(modification, modification.getOriginal(),
-                    snapshot.getRootNode().getSubtreeVersion().next());
+                    version);
         } catch (Exception e) {
             LOG.error("Could not create snapshot for {}:{}", path,modification,e);
             throw e;
@@ -160,22 +173,17 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
 
         /*
-         *  FIXME: Add advanced transaction chaining for modification of not rebased
-         *  modification.
-         *
-         *  Current computation of tempRoot may yeld incorrect subtree versions
-         *  if there are multiple concurrent transactions, which may break
-         *  versioning preconditions for modification of previously occured write,
-         *  directly nested under parent node, since node version is derived from
-         *  subtree version.
-         *
-         *  For deeper nodes subtree version is derived from their respective metadata
-         *  nodes, so this incorrect root subtree version is not affecting us.
+         *  We will use preallocated version, this means returned snapshot will 
+         *  have same version each time this method is called.
          */
         TreeNode originalSnapshotRoot = snapshot.getRootNode();
-        Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), originalSnapshotRoot.getSubtreeVersion().next());
+        Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
 
         InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(), strategyTree);
         return tempTree.newModification();
+    }
+
+    Version getVersion() {
+        return version;
     }
 }
