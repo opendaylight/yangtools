@@ -7,18 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ThreadLocalRandom;
-
 import org.opendaylight.yangtools.yang.common.QName;
 
 final class RandomPrefix {
-    final Map<URI, String> prefixes = new HashMap<>();
 
-    Iterable<Entry<URI, String>> getPrefixes() {
+    public static final char STARTING_CHAR = 'a';
+    public static final int CHARACTER_RANGE = 26;
+    public static final int PREFIX_MAX_LENGTH = 4;
+
+    public static final int MAX_COUNTER_VALUE = (int) Math.pow(CHARACTER_RANGE, PREFIX_MAX_LENGTH);
+    private static final int STARTING_WITH_XML = decode("xml");
+
+    private int counter = 0;
+
+    // BiMap to make values lookup faster
+    private final BiMap<URI, String> prefixes = HashBiMap.create();
+
+    Iterable<Map.Entry<URI, String>> getPrefixes() {
         return prefixes.entrySet();
     }
 
@@ -28,22 +39,65 @@ final class RandomPrefix {
 
     String encodePrefix(final QName qname) {
         String prefix = prefixes.get(qname.getNamespace());
-        if (prefix == null) {
-            prefix = qname.getPrefix();
-            if (prefix == null || prefix.isEmpty() || prefixes.containsValue(prefix)) {
-                final ThreadLocalRandom random = ThreadLocalRandom.current();
-                do {
-                    final StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < 4; i++) {
-                        sb.append((char)('a' + random.nextInt(25)));
-                    }
-
-                    prefix = sb.toString();
-                } while (prefixes.containsValue(prefix));
-            }
-
-            prefixes.put(qname.getNamespace(), prefix);
+        if (prefix != null) {
+            return prefix;
         }
+
+        // Reuse prefix from QName if possible
+        final String qNamePrefix = qname.getPrefix();
+
+        if (!Strings.isNullOrEmpty(qNamePrefix) && !qNamePrefix.startsWith("xml") && !alreadyUsedPrefix(qNamePrefix)) {
+            prefix = qNamePrefix;
+        } else {
+
+            do {
+                // Skip values starting with xml (Expecting only 4 chars max since division is calculated only once)
+                while (counter == STARTING_WITH_XML
+                        || counter / CHARACTER_RANGE == STARTING_WITH_XML) {
+                    counter++;
+                }
+
+                // Reset in case of max prefix generated
+                if (counter >= MAX_COUNTER_VALUE) {
+                    counter = 0;
+                    prefixes.clear();
+                }
+
+                prefix = encode(counter);
+                counter++;
+            } while (alreadyUsedPrefix(prefix));
+        }
+
+        prefixes.put(qname.getNamespace(), prefix);
         return prefix;
+    }
+
+    private boolean alreadyUsedPrefix(final String prefix) {
+        return prefixes.values().contains(prefix);
+    }
+
+    @VisibleForTesting
+    static int decode(final String s) {
+        int num = 0;
+        for (final char ch : s.toCharArray()) {
+            num *= CHARACTER_RANGE;
+            num += (ch - STARTING_CHAR);
+        }
+        return num;
+    }
+
+    @VisibleForTesting
+    static String encode(int num) {
+        if (num == 0) {
+            return "a";
+        }
+
+        final StringBuilder sb = new StringBuilder();
+        while (num != 0) {
+            sb.append(((char) (num % CHARACTER_RANGE + STARTING_CHAR)));
+            num /= CHARACTER_RANGE;
+        }
+
+        return sb.reverse().toString();
     }
 }
