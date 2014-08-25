@@ -208,6 +208,13 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
         @Override
         public boolean equals( Object obj ) {
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof ListenerKey<?>)) {
+                return false;
+            }
+
             ListenerKey<?> other = (ListenerKey<?>) obj;
             return listener == other.listener;
         }
