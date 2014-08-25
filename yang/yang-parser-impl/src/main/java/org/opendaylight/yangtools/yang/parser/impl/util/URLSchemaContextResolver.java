@@ -13,6 +13,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.io.ByteSource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -20,8 +21,10 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
+
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
@@ -32,6 +35,11 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.parser.repo.URLSchemaContextResolver}
+ * instead.
+ */
+@Deprecated
 @ThreadSafe
 public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<InputStream> {
 
@@ -47,7 +55,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     /**
      * Register new yang schema when it appears.
      */
-    public synchronized ObjectRegistration<URL> registerSource(URL source) {
+    public synchronized ObjectRegistration<URL> registerSource(final URL source) {
         checkArgument(source != null, "Supplied source must not be null");
         InputStream yangStream = getInputStream(source);
         YangModelDependencyInfo modelInfo = YangModelDependencyInfo.fromInputStream(yangStream);
@@ -63,7 +71,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     }
 
     @Override
-    public synchronized Optional<InputStream> getSchemaSource(SourceIdentifier key) {
+    public synchronized Optional<InputStream> getSchemaSource(final SourceIdentifier key) {
         SourceContext ctx = availableSources.get(key);
         if (ctx != null) {
             InputStream stream = getInputStream(ctx.getInstance());
@@ -73,11 +81,11 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
     }
 
     @Override
-    public Optional<InputStream> getSchemaSource(String name, Optional<String> version) {
+    public Optional<InputStream> getSchemaSource(final String name, final Optional<String> version) {
         return getSchemaSource(SourceIdentifier.create(name, version));
     }
 
-    private static InputStream getInputStream(URL source) {
+    private static InputStream getInputStream(final URL source) {
         InputStream stream;
         try {
             stream = source.openStream();
@@ -93,7 +101,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         final SourceIdentifier identifier;
         final YangModelDependencyInfo dependencyInfo;
 
-        public SourceContext(URL instance, SourceIdentifier identifier, YangModelDependencyInfo modelInfo) {
+        public SourceContext(final URL instance, final SourceIdentifier identifier, final YangModelDependencyInfo modelInfo) {
             super(instance);
             this.identifier = identifier;
             this.dependencyInfo = modelInfo;
@@ -114,7 +122,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         }
     }
 
-    private synchronized void removeSource(SourceContext sourceContext) {
+    private synchronized void removeSource(final SourceContext sourceContext) {
         boolean removed = availableSources.remove(sourceContext.getIdentifier(), sourceContext);
         if (removed) {
             tryToUpdateSchemaContext();
