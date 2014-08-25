@@ -1299,9 +1299,10 @@ public final class TypeProviderImpl implements TypeProvider {
             }
             typeDefinitionsConcreteDepth.add(unsortedTypeDefinition);
         }
-        // keys are in ascending order
-        for (Map.Entry<Integer, List<TypeDefinition<?>>> entry : typeDefinitionsDepths.entrySet()) {
-            sortedTypeDefinition.addAll(entry.getValue());
+
+        // SortedMap guarantees order corresponding to keys in ascending order
+        for (List<TypeDefinition<?>> v : typeDefinitionsDepths.values()) {
+            sortedTypeDefinition.addAll(v);
         }
 
         return sortedTypeDefinition;
