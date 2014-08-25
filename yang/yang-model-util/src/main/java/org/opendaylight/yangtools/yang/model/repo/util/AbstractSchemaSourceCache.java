@@ -53,7 +53,7 @@ public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresenta
      *
      * @param sourceIdentifier Source identifier
      * @return schema source registration, which the subclass needs to
-     *         {@link SchemaSourceRegistration#close() once it expunges the source
+     *         {@link SchemaSourceRegistration#close()} once it expunges the source
      *         from the cache.
      */
     protected final SchemaSourceRegistration<T> register(final SourceIdentifier sourceIdentifier) {
