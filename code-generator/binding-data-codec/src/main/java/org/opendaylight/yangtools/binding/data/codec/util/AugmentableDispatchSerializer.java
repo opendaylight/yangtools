@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.util;
 
 import com.google.common.base.Preconditions;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.Collections;
@@ -38,7 +39,7 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
 
     @Override
     public void serialize(final DataObjectSerializerRegistry reg, final DataObject obj,
-            final BindingStreamEventWriter stream) {
+            final BindingStreamEventWriter stream) throws IOException {
         if (obj instanceof Augmentable<?>) {
             final Map<Class<? extends Augmentation<?>>, Augmentation<?>> augmentations;
             if (reg instanceof AugmentationReader) {
@@ -64,7 +65,7 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
 
     @SuppressWarnings("rawtypes")
     private void emitAugmentation(final Class type, final Augmentation<?> value, final BindingStreamEventWriter stream,
-            final DataObjectSerializerRegistry registry) {
+            final DataObjectSerializerRegistry registry) throws IOException {
         Preconditions.checkArgument(value instanceof DataObject);
         @SuppressWarnings("unchecked")
         DataObjectSerializer serializer = registry.getSerializer(type);

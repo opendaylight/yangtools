@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
+
 
 /**
  * Event Stream Writer for Binding Representation
@@ -31,33 +35,33 @@ package org.opendaylight.yangtools.yang.binding;
  * and finished using {@link #endNode()}.</li>
  *
  * <li><code>UnkeyedList</code> - Unkeyed list represent list without keys,
- * unkeyed list start is emmited using {@link #startUnkeyedList(Class, int)} list
- * end is emmited using {@link #endNode()}. Each list item is emmited using
+ * unkeyed list start is emitted using {@link #startUnkeyedList(Class, int)} list
+ * end is emitted using {@link #endNode()}. Each list item is emitted using
  * {@link #startUnkeyedListItem()} and ended using {@link #endNode()}.</li>
  * </ul>
  *
  * <li><code>leaf</code> - Leaf node event is emitted using
- * {@link #leafNode(String, Object)}. {@link #endNode()} MUST be not emmited for
+ * {@link #leafNode(String, Object)}. {@link #endNode()} MUST be not emitted for
  * leaf node.</li>
  *
  * <li><code>leaf-list</code> - Leaf list start is emitted using
  * {@link #startLeafSet(String, int)}. Leaf list end is emitted using
- * {@link #endNode()}. Leaf list entries are emmited using
+ * {@link #endNode()}. Leaf list entries are emitted using
  * {@link #leafSetEntryNode(Object).
  *
  * <li><code>anyxml - Anyxml node event is emitted using
- * {@link #leafNode(String, Object)}. {@link #endNode()} MUST be not emmited
+ * {@link #leafNode(String, Object)}. {@link #endNode()} MUST be not emitted
  * for anyxml node.</code></li>
  *
  *
- * <li><code>choice</code> Choice node event is emmited by
+ * <li><code>choice</code> Choice node event is emitted by
  * {@link #startChoiceNode(Class, int)} event and must be immediately followed by
- * {@link #startCase(Class, int)} event. Choice node is finished by emitting
+ * {@link #startCase(Class, int)} event. Choice node is finished by emitting an
  * {@link #endNode()} event.</li>
  *
  * <li>
  * <code>case</code> - Case node may be emitted only inside choice node by
- * invoking {@link #startCase(Class, int)}. Case node is finished be emitting
+ * invoking {@link #startCase(Class, int)}. Case node is finished be emitting an
  * {@link #endNode()} event.</li>
  *
  * <li>
@@ -82,11 +86,11 @@ package org.opendaylight.yangtools.yang.binding;
  *
  *
  */
-public interface BindingStreamEventWriter {
+public interface BindingStreamEventWriter extends Closeable, Flushable {
 
     /**
      * Methods in this interface allow users to hint the underlying
-     * implementation about the sizing of container-like constructurs
+     * implementation about the sizing of container-like constructors
      * (leafLists, containers, etc.). These hints may be taken into account by a
      * particular implementation to improve performance, but clients are not
      * required to provide hints. This constant should be used by clients who
@@ -117,8 +121,9 @@ public interface BindingStreamEventWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void leafNode(String localName, Object value) throws IllegalArgumentException;
+    void leafNode(String localName, Object value) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -142,8 +147,9 @@ public interface BindingStreamEventWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startLeafSet(String localName, int childSizeHint) throws IllegalArgumentException;
+    void startLeafSet(String localName, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      * Emits a leaf set entry node
@@ -154,8 +160,9 @@ public interface BindingStreamEventWriter {
      *             If emitted leaf node has invalid value.
      * @throws IllegalStateException
      *             If node was emitted outside <code>leaf set</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void leafSetEntryNode(Object value) throws IllegalArgumentException;
+    void leafSetEntryNode(Object value) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -190,8 +197,9 @@ public interface BindingStreamEventWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startContainerNode(Class<? extends DataObject> container, int childSizeHint) throws IllegalArgumentException;
+    void startContainerNode(Class<? extends DataObject> container, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -216,8 +224,9 @@ public interface BindingStreamEventWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startUnkeyedList(Class<? extends DataObject> localName, int childSizeHint) throws IllegalArgumentException;
+    void startUnkeyedList(Class<? extends DataObject> localName, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      * Emits start of new unkeyed list item.
@@ -246,8 +255,9 @@ public interface BindingStreamEventWriter {
      *            events than count.
      * @throws IllegalStateException
      *             If node was emitted outside <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startUnkeyedListItem(int childSizeHint) throws IllegalStateException;
+    void startUnkeyedListItem(int childSizeHint) throws IOException, IllegalStateException;
 
     /**
      *
@@ -269,34 +279,35 @@ public interface BindingStreamEventWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
     <T extends DataObject & Identifiable<?>> void startMapNode(Class<T> mapEntryType, int childSizeHint)
-            throws IllegalArgumentException;
-
+            throws IOException, IllegalArgumentException;
 
     /**
-    *
-    * Emits start of ordered map node event.
-    *
-    * <p>
-    * End of map node event is emitted by invoking {@link #endNode()}. Valid
-    * subevents is only {@link #startMapEntryNode(Identifier, int)}. All other methods will
-    * throw {@link IllegalArgumentException}.
-    *
-    * @param mapEntryType
-    *            Class of list item, which has defined key.
-    * @param childSizeHint
-    *            Non-negative count of expected direct child nodes or
-    *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
-    *            and should not fail writing of child events, if there are more
-    *            events than count.
-    * @throws IllegalArgumentException
-    * @throws IllegalStateException
-    *             If node was emitted inside <code>map</code>,
-    *             <code>choice</code> <code>unkeyed list</code> node.
-    */
-   <T extends DataObject & Identifiable<?>> void startOrderedMapNode(Class<T> mapEntryType, int childSizeHint)
-           throws IllegalArgumentException;
+     *
+     * Emits start of ordered map node event.
+     *
+     * <p>
+     * End of map node event is emitted by invoking {@link #endNode()}. Valid
+     * subevents is only {@link #startMapEntryNode(Identifier, int)}. All other methods will
+     * throw {@link IllegalArgumentException}.
+     *
+     * @param mapEntryType
+     *            Class of list item, which has defined key.
+     * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
+     * @throws IllegalArgumentException
+     * @throws IllegalStateException
+     *             If node was emitted inside <code>map</code>,
+     *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
+     */
+    <T extends DataObject & Identifiable<?>> void startOrderedMapNode(Class<T> mapEntryType, int childSizeHint)
+           throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -330,8 +341,9 @@ public interface BindingStreamEventWriter {
      *             If key contains incorrect value.
      * @throws IllegalStateException
      *             If node was emitted outside <code>map entry</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startMapEntryNode(Identifier<?> keyValues, int childSizeHint) throws IllegalArgumentException;
+    void startMapEntryNode(Identifier<?> keyValues, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      * Emits start of choice node.
@@ -353,8 +365,9 @@ public interface BindingStreamEventWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>, <code>choice
      *             </code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startChoiceNode(Class<? extends DataContainer> choice, int childSizeHint) throws IllegalArgumentException;
+    void startChoiceNode(Class<? extends DataContainer> choice, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      *
@@ -374,8 +387,9 @@ public interface BindingStreamEventWriter {
      *
      * @param name
      * @throws IllegalArgumentException
+     * @throws IOException if an underlying IO error occurs
      */
-    void startCase(Class<? extends DataObject> caze, int childSizeHint) throws IllegalArgumentException;
+    void startCase(Class<? extends DataObject> caze, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
      * Emits start of augmentation node.
@@ -407,8 +421,9 @@ public interface BindingStreamEventWriter {
      *            Local names of all valid children defined by augmentation.
      * @throws IllegalArgumentException
      *             If augmentation is invalid in current context.
+     * @throws IOException if an underlying IO error occurs
      */
-    void startAugmentationNode(Class<? extends Augmentation<?>> augmentationType) throws IllegalArgumentException;
+    void startAugmentationNode(Class<? extends Augmentation<?>> augmentationType) throws IOException, IllegalArgumentException;
 
     /**
      * Emits anyxml node event.
@@ -419,13 +434,21 @@ public interface BindingStreamEventWriter {
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void anyxmlNode(String name, Object value) throws IllegalArgumentException;
+    void anyxmlNode(String name, Object value) throws IOException, IllegalArgumentException;
 
     /**
      * Emits end event for node.
      *
      * @throws IllegalStateException If there is no open node.
+     * @throws IOException if an underlying IO error occurs
      */
-    void endNode() throws IllegalStateException;
+    void endNode() throws IOException, IllegalStateException;
+
+    @Override
+    void flush() throws IOException;
+
+    @Override
+    void close() throws IOException;
 }
