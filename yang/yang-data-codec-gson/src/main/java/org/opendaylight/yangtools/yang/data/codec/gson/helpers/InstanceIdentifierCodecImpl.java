@@ -133,10 +133,9 @@ class InstanceIdentifierCodecImpl extends AbstractCodecImpl implements InstanceI
     }
 
     private static List<Predicate> keyValuesToPredicateList(final Map<QName, Object> keyValues) {
-        List<Predicate> result = new ArrayList<>();
-        for (QName qName : keyValues.keySet()) {
-            Object value = keyValues.get(qName);
-            result.add(new Predicate(qNameToIdentityValue(qName), String.valueOf(value)));
+        List<Predicate> result = new ArrayList<>(keyValues.size());
+        for (Map.Entry<QName, Object> e : keyValues.entrySet()) {
+            result.add(new Predicate(qNameToIdentityValue(e.getKey()), String.valueOf(e.getValue())));
         }
         return result;
     }
