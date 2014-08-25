@@ -79,7 +79,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     final Map<String, ModuleImport> imports = new HashMap<>();
     final Map<String, ModuleBuilder> importedModules = new HashMap<>();
 
-    private final Map<String, Date> includedModules = new HashMap<>();
+    final Set<ModuleBuilder> addedSubmodules = new HashSet<>();
+    final Set<Module> submodules = new HashSet<>();
+    final Map<String, Date> includedModules = new HashMap<>();
 
     private final Set<AugmentationSchema> augments = new LinkedHashSet<>();
     private final List<AugmentationSchemaBuilder> augmentBuilders = new ArrayList<>();
@@ -170,6 +172,11 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         }
 
         buildChildren();
+
+        // SUBMODULES
+        for (ModuleBuilder submodule : addedSubmodules) {
+            submodules.add(submodule.build());
+        }
 
         // FEATURES
         for (FeatureBuilder fb : addedFeatures) {
@@ -372,6 +379,10 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     public void addInclude(final String name, final Date revision) {
         includedModules.put(name, revision);
+    }
+
+    public void addSubmodule(final ModuleBuilder submodule) {
+        addedSubmodules.add(submodule);
     }
 
     protected String getSource() {

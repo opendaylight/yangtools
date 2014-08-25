@@ -1,0 +1,21 @@
+submodule submodule2 {
+
+    belongs-to main-module {
+        prefix m;
+    }
+
+    include submodule1 {
+        revision-date 2014-04-02;
+    }
+
+    revision 2014-06-30 {
+    }
+
+
+    grouping sub2-gr {
+        leaf sub2-leaf {
+            type string;
+        }
+    }
+
+}

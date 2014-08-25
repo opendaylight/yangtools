@@ -1,0 +1,25 @@
+module main-module {
+
+    namespace "yang:test:main";
+    prefix m;
+
+    include submodule1 {
+        revision-date 2014-04-02;
+    }
+
+    include submodule2 {
+        revision-date 2014-06-30;
+    }
+
+    include submodule3 {
+        revision-date 2014-06-30;
+    }
+
+    import import-module {
+        prefix n;
+    }
+
+    revision 2014-06-30 {
+    }
+
+}

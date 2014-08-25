@@ -33,6 +33,7 @@ import com.google.common.collect.ImmutableSet
 import static org.opendaylight.yangtools.yang.binding.BindingMapping.*
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
 import com.google.common.base.Preconditions
+import org.opendaylight.yangtools.yang.binding.BindingMapping
 
 class YangModuleInfoTemplate {
 
@@ -72,7 +73,7 @@ class YangModuleInfoTemplate {
                     return INSTANCE;
                 }
 
-                «module.classBody»
+                «classBody(module, MODULE_INFO_CLASS_NAME)»
             }
         '''
         return '''
@@ -96,10 +97,12 @@ class YangModuleInfoTemplate {
 
     }
 
-    private def CharSequence classBody(Module m) '''
-        private «MODULE_INFO_CLASS_NAME»() {
-            «IF m.imports.size != 0»
+    private def CharSequence classBody(Module m, String className) '''
+        private «className»() {
+            «IF !m.imports.empty || !m.submodules.empty»
                 «Set.importedName»<«YangModuleInfo.importedName»> set = new «HashSet.importedName»<>();
+            «ENDIF»
+            «IF !m.imports.empty»
                 «FOR imp : m.imports»
                     «val name = imp.moduleName»
                     «val rev = imp.revision»
@@ -116,10 +119,18 @@ class YangModuleInfoTemplate {
                         set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(ctx.findModuleByName(name, rev))».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ENDIF»
                 «ENDFOR»
-                importedModules = «ImmutableSet.importedName».copyOf(set);
-            «ELSE»
-                importedModules = «Collections.importedName».emptySet();
             «ENDIF»
+            «IF !m.submodules.empty»
+                «FOR submodule : m.submodules»
+                    set.add(«BindingMapping.getClassName(submodule.name)»Info.getInstance());
+                «ENDFOR»
+            «ENDIF»
+            «IF m.imports.empty && m.submodules.empty»
+                importedModules = «Collections.importedName».emptySet();
+            «ELSE»
+                importedModules = «ImmutableSet.importedName».copyOf(set);
+            «ENDIF»
+
             «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream(resourcePath);
             if (stream == null) {
                 throw new IllegalStateException("Resource '" + resourcePath + "' is missing");
@@ -172,6 +183,9 @@ class YangModuleInfoTemplate {
             sb.append("]");
             return sb.toString();
         }
+
+        «generateSubInfo(m)»
+
     '''
 
     def getSourcePath() {
@@ -285,5 +299,28 @@ class YangModuleInfoTemplate {
         }
         return builder.toString();
     }
+
+    private def generateSubInfo(Module module) '''
+        «FOR submodule : module.submodules»
+            private static final class «BindingMapping.getClassName(submodule.name)»Info implements «YangModuleInfo.importedName» {
+
+                private static final «YangModuleInfo.importedName» INSTANCE = new «BindingMapping.getClassName(submodule.name)»Info();
+
+                private final «String.importedName» name = "«submodule.name»";
+                private final «String.importedName» namespace = "«submodule.namespace.toString»";
+                «val DateFormat df = new SimpleDateFormat("yyyy-MM-dd")»
+                private final «String.importedName» revision = "«df.format(submodule.revision)»";
+                private final «String.importedName» resourcePath = "/«submodule.moduleSourcePath.replace(java.io.File.separatorChar, '/')»";
+
+                private final «Set.importedName»<YangModuleInfo> importedModules;
+
+                public static «YangModuleInfo.importedName» getInstance() {
+                    return INSTANCE;
+                }
+
+                «classBody(submodule, BindingMapping.getClassName(submodule.name + "Info"))»
+            }
+        «ENDFOR»
+    '''
 
 }
