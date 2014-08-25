@@ -11,6 +11,18 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
@@ -29,17 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware {
     private static final String FS = File.separator;
     private BuildContext buildContext;
@@ -57,7 +58,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
 
         outputBaseDir = outputDir == null ? getDefaultOutputBaseDir() : outputDir;
 
-        final BindingGenerator bindingGenerator = new BindingGeneratorImpl();
+        final BindingGenerator bindingGenerator = new BindingGeneratorImpl(true);
         final List<Type> types = bindingGenerator.generateTypes(context, yangModules);
         final GeneratorJavaFile generator = new GeneratorJavaFile(buildContext, types);
 
@@ -78,8 +79,8 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         return result;
     }
 
-    private Collection<? extends File> generateModuleInfos(File outputBaseDir, Set<Module> yangModules,
-                                                           SchemaContext context) {
+    private Collection<? extends File> generateModuleInfos(final File outputBaseDir, final Set<Module> yangModules,
+                                                           final SchemaContext context) {
         Builder<File> result = ImmutableSet.builder();
         Builder<String> bindingProviders = ImmutableSet.builder();
         for (Module module : yangModules) {
@@ -96,8 +97,8 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         return result.build();
     }
 
-    private File writeMetaInfServices(File outputBaseDir, Class<YangModelBindingProvider> serviceClass,
-            ImmutableSet<String> services) {
+    private File writeMetaInfServices(final File outputBaseDir, final Class<YangModelBindingProvider> serviceClass,
+            final ImmutableSet<String> services) {
         File metainfServicesFolder = new File(outputBaseDir, "META-INF" + File.separator + "services");
         metainfServicesFolder.mkdirs();
         File serviceFile = new File(metainfServicesFolder, serviceClass.getName());
@@ -118,38 +119,38 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         return outputBaseDir;
     }
 
-    private static void setOutputBaseDirAsSourceFolder(File outputBaseDir, MavenProject mavenProject) {
+    private static void setOutputBaseDirAsSourceFolder(final File outputBaseDir, final MavenProject mavenProject) {
         Preconditions.checkNotNull(mavenProject, "Maven project needs to be set in this phase");
         mavenProject.addCompileSourceRoot(outputBaseDir.getPath());
     }
 
     @Override
-    public void setLog(Log log) {
+    public void setLog(final Log log) {
     }
 
     @Override
-    public void setAdditionalConfig(Map<String, String> additionalConfiguration) {
+    public void setAdditionalConfig(final Map<String, String> additionalConfiguration) {
         this.additionalConfig = additionalConfiguration;
     }
 
     @Override
-    public void setResourceBaseDir(File resourceBaseDir) {
+    public void setResourceBaseDir(final File resourceBaseDir) {
         this.resourceBaseDir = resourceBaseDir;
     }
 
     @Override
-    public void setMavenProject(MavenProject project) {
+    public void setMavenProject(final MavenProject project) {
         this.mavenProject = project;
         this.projectBaseDir = project.getBasedir();
     }
 
     @Override
-    public void setBuildContext(BuildContext buildContext) {
+    public void setBuildContext(final BuildContext buildContext) {
         this.buildContext = Preconditions.checkNotNull(buildContext);
     }
 
-    private Set<File> generateYangModuleInfo(File outputBaseDir, Module module, SchemaContext ctx,
-            Builder<String> providerSourceSet) {
+    private Set<File> generateYangModuleInfo(final File outputBaseDir, final Module module, final SchemaContext ctx,
+            final Builder<String> providerSourceSet) {
         Builder<File> generatedFiles = ImmutableSet.<File> builder();
 
         final YangModuleInfoTemplate template = new YangModuleInfoTemplate(module, ctx);
@@ -171,7 +172,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
 
     }
 
-    private File writeJavaSource(File packageDir, String className, String source) {
+    private File writeJavaSource(final File packageDir, final String className, final String source) {
         if (!packageDir.exists()) {
             packageDir.mkdirs();
         }
@@ -180,7 +181,7 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
         return file;
     }
 
-    private File writeFile(File file, String source) {
+    private File writeFile(final File file, final String source) {
         try (final OutputStream stream = buildContext.newFileOutputStream(file)) {
             try (final Writer fw = new OutputStreamWriter(stream)) {
                 try (final BufferedWriter bw = new BufferedWriter(fw)) {
