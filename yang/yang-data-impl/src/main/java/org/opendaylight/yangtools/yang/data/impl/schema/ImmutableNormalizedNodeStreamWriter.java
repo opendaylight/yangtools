@@ -176,17 +176,15 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier,final int childSizeHint) throws IllegalArgumentException {
         if(!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
-            Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder);
+            Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
         }
         enter(Builders.mapEntryBuilder().withNodeIdentifier(identifier));
     }
 
     @Override
     public void startOrderedMapNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
-        if(!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
-            Preconditions.checkArgument(getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
-        }
-        enter(Builders.mapBuilder().withNodeIdentifier(name));
+        checkDataNodeContainer();
+        enter(Builders.orderedMapBuilder().withNodeIdentifier(name));
     }
 
     @Override
