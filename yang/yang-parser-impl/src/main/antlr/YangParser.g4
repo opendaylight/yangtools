@@ -89,7 +89,7 @@ status_stmt : STATUS_KEYWORD status_arg stmtend;
 position_stmt : POSITION_KEYWORD string stmtend;
 bit_stmt : BIT_KEYWORD string (SEMICOLON | (LEFT_BRACE  (identifier_stmt |position_stmt | status_stmt | description_stmt | reference_stmt )* RIGHT_BRACE));
 bits_specification : bit_stmt (bit_stmt | identifier_stmt)*;
-union_specification : type_stmt (identifier_stmt | type_stmt )+;
+union_specification : type_stmt (identifier_stmt | type_stmt )*;
 identityref_specification : base_stmt  ;
 instance_identifier_specification : (require_instance_stmt )?;
 require_instance_arg :string; // TRUE_KEYWORD | FALSE_KEYWORD;
