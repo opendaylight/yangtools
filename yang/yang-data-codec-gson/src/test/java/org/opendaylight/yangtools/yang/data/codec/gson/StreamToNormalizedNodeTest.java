@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonReader;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,9 +15,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,10 +44,10 @@ public class StreamToNormalizedNodeTest {
     private static String streamAsString;
 
     @BeforeClass
-    public static void initialization() throws IOException {
+    public static void initialization() throws IOException, URISyntaxException {
         schemaContext = loadModules("/complexjson/yang");
-        streamAsString = loadTextFile(StreamToNormalizedNodeTest.class.getResource("/complexjson/complex-json.json")
-                .getPath());
+        streamAsString = loadTextFile(new File(StreamToNormalizedNodeTest.class.getResource(
+                "/complexjson/complex-json.json").toURI()));
     }
 
     /**
@@ -138,8 +137,8 @@ public class StreamToNormalizedNodeTest {
         return parser.parseFiles(testFiles);
     }
 
-    private static String loadTextFile(final String filePath) throws IOException {
-        FileReader fileReader = new FileReader(filePath);
+    private static String loadTextFile(final File file) throws IOException {
+        FileReader fileReader = new FileReader(file);
         BufferedReader bufReader = new BufferedReader(fileReader);
 
         String line = null;
