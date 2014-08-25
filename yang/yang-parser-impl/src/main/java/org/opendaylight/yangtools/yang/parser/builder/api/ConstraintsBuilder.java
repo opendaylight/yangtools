@@ -65,7 +65,7 @@ public interface ConstraintsBuilder extends Builder<ConstraintDefinition> {
      *
      * This constraint has meaning only if associated node is list or leaf-list.
      *
-     * @param minElements
+     * @param maxElements
      *            number of maximum required elements.
      */
     void setMaxElements(Integer maxElements);
@@ -119,7 +119,7 @@ public interface ConstraintsBuilder extends Builder<ConstraintDefinition> {
     /**
      * Build constraint definition
      *
-     * @return
+     * @return instance of ConstraintDefinition created from this builder
      */
     ConstraintDefinition toInstance();
 

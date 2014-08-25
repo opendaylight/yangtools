@@ -106,7 +106,7 @@ public interface RefineBuilder extends DocumentedNodeBuilder {
    *
    * This constraint has meaning only if associated node is list or leaf-list.
    *
-   * @param minElements number of maximum required elements.
+   * @param maxElements number of maximum required elements.
    */
    void setMaxElements(Integer maxElements);
 
