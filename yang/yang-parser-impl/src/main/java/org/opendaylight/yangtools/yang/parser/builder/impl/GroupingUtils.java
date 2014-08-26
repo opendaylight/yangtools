@@ -44,7 +44,9 @@ public final class GroupingUtils {
      *            all loaded modules
      * @param module
      *            current module
-     * @return grouping with given name if found, null otherwise
+     * @return grouping with given name, never null
+     * @throws YangParseException
+     *             if no grouping found
      */
     public static GroupingBuilder getTargetGroupingFromModules(final UsesNodeBuilder usesBuilder,
             final Map<URI, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {

@@ -240,7 +240,7 @@ public final class YangParserImpl implements YangContextParser {
                     if (targetModule == null) {
                         Module result = findModuleFromContext(context, module, prefix, 0);
                         targetModule = new ModuleBuilder(result);
-                        TreeMap<Date, ModuleBuilder> map = modules.get(prefix);
+                        TreeMap<Date, ModuleBuilder> map = modules.get(targetModule.getNamespace());
                         if (map == null) {
                             map = new TreeMap<>();
                             map.put(targetModule.getRevision(), targetModule);
@@ -1061,10 +1061,6 @@ public final class YangParserImpl implements YangContextParser {
             ModuleBuilder module = BuilderUtils.getParentModule(usesNode);
             final GroupingBuilder targetGroupingBuilder = GroupingUtils.getTargetGroupingFromModules(usesNode, modules,
                     module);
-            if (targetGroupingBuilder == null) {
-                throw new YangParseException(module.getName(), usesNode.getLine(), "Referenced grouping '"
-                        + usesNode.getGroupingPath() + "' not found.");
-            }
             usesNode.setGrouping(targetGroupingBuilder);
         }
     }
