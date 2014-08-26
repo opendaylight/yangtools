@@ -975,9 +975,9 @@ class GeneratorImpl {
             </ul>
             «ENDIF»
 
-            «IF !path.path.empty»
+            «IF path.pathArguments.iterator.hasNext»
             <h3>XML example</h3>
-            «nodes.xmlExample(path.path.last.nodeType,path)»
+            «nodes.xmlExample(path.pathArguments.last.nodeType,path)»
             </h3>
             «ENDIF»
             «FOR childNode : containers»
@@ -1045,8 +1045,8 @@ class GeneratorImpl {
 
 
     def header(int level,YangInstanceIdentifier name) '''
-        <h«level» id="«FOR cmp : name.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">
-            «FOR cmp : name.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»
+        <h«level» id="«FOR cmp : name.pathArguments SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">
+            «FOR cmp : name.pathArguments SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»
         </h«level»>
     '''
 
@@ -1152,7 +1152,7 @@ class GeneratorImpl {
     }
 
     def CharSequence localLink(YangInstanceIdentifier identifier, CharSequence text) '''
-        <a href="#«FOR cmp : identifier.path SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">«text»</a>
+        <a href="#«FOR cmp : identifier.pathArguments SEPARATOR "/"»«cmp.nodeType.localName»«ENDFOR»">«text»</a>
     '''
 
 
@@ -1181,7 +1181,7 @@ class GeneratorImpl {
         append(currentModule.name)
         append(":")
         var previous = false;
-        for(arg : identifier.path) {
+        for(arg : identifier.pathArguments) {
             if(previous) append("/")
             append(arg.nodeType.localName);
             previous = true;
