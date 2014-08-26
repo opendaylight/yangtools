@@ -16,12 +16,15 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Sets;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -580,5 +583,52 @@ public class BindingReflections {
      */
     public static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Augmentable<?> input) {
         return AugmentationFieldGetter.getGetter(input.getClass()).getAugmentations(input);
+    }
+
+    /**
+     *
+     * Determines if two augmentation classes or case classes represents same data.
+     * <p>
+     * Two augmentations or cases could be substituted only if and if:
+     * <ul>
+     * <li>Both implements same interfaces</li>
+     * <li>Both have same children</li>
+     * <li>If augmentations: Both have same augmentation target class. Target class was generated for data node in grouping.</li>
+     * <li>If cases: Both are from same choice. Choice class was generated for data node in grouping.</li>
+     * </ul>
+     * <p>
+     * <b>Explanation:</b> Binding Specification reuses classes generated for groupings as part of normal data tree,
+     * this classes from grouping could be used at various locations and user may not be aware of it
+     * and may use incorrect case or augmentation in particular subtree (via copy constructors, etc).
+     *
+     * @param potential Class which is potential substition
+     * @param target Class which should be used at particular subtree
+     * @return true if and only if classes represents same data.
+     */
+    @SuppressWarnings({"rawtypes","unchecked"})
+    public static boolean isSubstitutionFor(Class potential, Class target) {
+        HashSet<Class> subImplemented = Sets.newHashSet(potential.getInterfaces());
+        HashSet<Class> targetImplemented = Sets.newHashSet(target.getInterfaces());
+        if(!subImplemented.equals(targetImplemented)) {
+            return false;
+        }
+        if(Augmentation.class.isAssignableFrom(potential)
+                && !BindingReflections.findAugmentationTarget(potential).equals(BindingReflections.findAugmentationTarget(target))) {
+                return false;
+        }
+        for(Method potentialMethod : potential.getMethods()) {
+            try {
+                Method targetMethod = target.getMethod(potentialMethod.getName(), potentialMethod.getParameterTypes());
+                if(!potentialMethod.getReturnType().equals(targetMethod.getReturnType())) {
+                    return false;
+                }
+            } catch (NoSuchMethodException e) {
+                // Counterpart method is missing, so classes could not be substituted.
+                return false;
+            } catch (SecurityException e) {
+                throw new IllegalStateException("Could not compare methods",e);
+            }
+        }
+        return true;
     }
 }
