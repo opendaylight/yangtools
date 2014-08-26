@@ -14,6 +14,9 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findD
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import com.google.common.io.BaseEncoding;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -31,7 +34,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
@@ -89,10 +91,6 @@ import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import com.google.common.io.BaseEncoding;
 
 public final class TypeProviderImpl implements TypeProvider {
     private static final Pattern NUMBERS_PATTERN = Pattern.compile("[0-9]+\\z");
@@ -810,11 +808,13 @@ public final class TypeProviderImpl implements TypeProvider {
         final List<GeneratedTOBuilder> genTOBuilders = provideGeneratedTOBuildersForUnionTypeDef(basePackageName,
                 typedef, typeDefName, parentNode);
         GeneratedTOBuilder resultTOBuilder = null;
-        if (!genTOBuilders.isEmpty()) {
-            resultTOBuilder = genTOBuilders.remove(0);
-            for (GeneratedTOBuilder genTOBuilder : genTOBuilders) {
-                resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
-            }
+        if (genTOBuilders.isEmpty()) {
+            throw new IllegalStateException("No GeneratedTOBuilder objects generated from union " + typedef);
+        }
+
+        resultTOBuilder = genTOBuilders.remove(0);
+        for (GeneratedTOBuilder genTOBuilder : genTOBuilders) {
+            resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
         }
 
         final GeneratedPropertyBuilder genPropBuilder = resultTOBuilder.addProperty("value");
@@ -1062,7 +1062,7 @@ public final class TypeProviderImpl implements TypeProvider {
         final String packageName = packageNameForGeneratedType(basePackageName, typedef.getPath());
         final String typeDefTOName = typedef.getQName().getLocalName();
 
-        if ((packageName != null) && (typedef != null) && (typeDefTOName != null)) {
+        if ((packageName != null) && (typeDefTOName != null)) {
             final String genTOName = BindingMapping.getClassName(typeDefTOName);
             final GeneratedTOBuilderImpl newType = new GeneratedTOBuilderImpl(packageName, genTOName);
 
@@ -1300,9 +1300,8 @@ public final class TypeProviderImpl implements TypeProvider {
             typeDefinitionsConcreteDepth.add(unsortedTypeDefinition);
         }
         // keys are in ascending order
-        Set<Integer> depths = typeDefinitionsDepths.keySet();
-        for (Integer depth : depths) {
-            sortedTypeDefinition.addAll(typeDefinitionsDepths.get(depth));
+        for (Map.Entry<Integer, List<TypeDefinition<?>>> entry : typeDefinitionsDepths.entrySet()) {
+            sortedTypeDefinition.addAll(entry.getValue());
         }
 
         return sortedTypeDefinition;
