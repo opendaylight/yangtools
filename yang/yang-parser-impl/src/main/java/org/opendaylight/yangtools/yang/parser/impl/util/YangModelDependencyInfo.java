@@ -196,14 +196,11 @@ public abstract class YangModelDependencyInfo {
 
     private static YangModelDependencyInfo parseModuleContext(final Module_stmtContext module) {
         String name = getArgumentString(module);
-        // String prefix =
-        // getArgumentString(module.module_header_stmts().prefix_stmt(0));
-        String namespace = getArgumentString(module.module_header_stmts().namespace_stmt(0));
         String latestRevision = getLatestRevision(module.revision_stmts());
         ImmutableSet<ModuleImport> imports = parseImports(module.linkage_stmts().import_stmt());
         ImmutableSet<ModuleImport> includes = parseIncludes(module.linkage_stmts().include_stmt());
 
-        return new ModuleDependencyInfo(name, latestRevision, namespace, imports, includes);
+        return new ModuleDependencyInfo(name, latestRevision, imports, includes);
     }
 
     private static ImmutableSet<ModuleImport> parseImports(final List<Import_stmtContext> importStatements) {
@@ -265,7 +262,7 @@ public abstract class YangModelDependencyInfo {
      */
     public static final class ModuleDependencyInfo extends YangModelDependencyInfo {
 
-        private ModuleDependencyInfo(final String name, final String latestRevision, final String namespace,
+        private ModuleDependencyInfo(final String name, final String latestRevision,
                 final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
             super(name, latestRevision, imports, includes);
         }
