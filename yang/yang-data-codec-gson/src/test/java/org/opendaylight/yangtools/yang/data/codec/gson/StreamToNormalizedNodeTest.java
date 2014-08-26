@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,9 +121,9 @@ public class StreamToNormalizedNodeTest {
         LOG.debug("Serialized JSON: {}", writer.toString());
     }
 
-    private static SchemaContext loadModules(final String resourceDirectory) throws IOException {
+    private static SchemaContext loadModules(final String resourceDirectory) throws IOException, URISyntaxException {
         YangContextParser parser = new YangParserImpl();
-        String path = StreamToNormalizedNodeTest.class.getResource(resourceDirectory).getPath();
+        URI path = StreamToNormalizedNodeTest.class.getResource(resourceDirectory).toURI();
         final File testDir = new File(path);
         final String[] fileList = testDir.list();
         final List<File> testFiles = new ArrayList<File>();
