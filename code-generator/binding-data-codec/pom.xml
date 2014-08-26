@@ -66,8 +66,14 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.xtend</groupId>
-            <artifactId>org.eclipse.xtend.lib</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-test-model</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+            <dependency><groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
