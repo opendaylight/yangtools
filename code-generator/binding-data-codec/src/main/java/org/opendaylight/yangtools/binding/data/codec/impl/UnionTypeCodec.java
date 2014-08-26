@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.ImmutableSet;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -39,7 +41,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         return new Callable<UnionTypeCodec>() {
 
             @Override
-            public UnionTypeCodec call() throws Exception {
+            public UnionTypeCodec call() throws NoSuchMethodException, SecurityException {
                 Set<UnionValueOptionContext> values = new HashSet<>();
                 for(TypeDefinition<?> subtype : unionType.getTypes()) {
                     String methodName = "get" + BindingMapping.getClassName(subtype.getQName());
