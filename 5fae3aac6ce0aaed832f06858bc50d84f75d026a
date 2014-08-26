@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_1ddbbd7c",
+        "filename": "code-generator/binding-data-codec/src/test/java/org/opendaylight/yangtools/binding/data/codec/test/AbstractBindingRuntimeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-26T12:45:46Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "revId": "5fae3aac6ce0aaed832f06858bc50d84f75d026a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_bde5f138",
+        "filename": "code-generator/binding-test-model/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-26T12:45:46Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "5fae3aac6ce0aaed832f06858bc50d84f75d026a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
