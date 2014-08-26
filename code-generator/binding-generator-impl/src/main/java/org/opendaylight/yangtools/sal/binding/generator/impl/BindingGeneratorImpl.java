@@ -30,7 +30,6 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findP
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -1918,11 +1916,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
             genTOBuilders.addAll(types);
 
             GeneratedTOBuilder resultTOBuilder = null;
-            if (!types.isEmpty()) {
-                resultTOBuilder = types.remove(0);
-                for (GeneratedTOBuilder genTOBuilder : types) {
-                    resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
-                }
+            if (types.isEmpty()) {
+                throw new IllegalStateException("No GeneratedTOBuilder objects generated from union " + typeDef);
+            }
+            resultTOBuilder = types.remove(0);
+            for (GeneratedTOBuilder genTOBuilder : types) {
+                resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
             }
 
             final GeneratedPropertyBuilder genPropBuilder = resultTOBuilder.addProperty("value");
