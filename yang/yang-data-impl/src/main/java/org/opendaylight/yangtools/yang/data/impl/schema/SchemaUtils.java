@@ -14,12 +14,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
@@ -150,7 +148,7 @@ public final class SchemaUtils {
     }
 
     private static boolean isFromAugment(final DataNodeContainer schema, final DataSchemaNode childSchema) {
-        if(schema instanceof AugmentationTarget == false) {
+        if (!(schema instanceof AugmentationTarget)) {
             return false;
         }
 
@@ -186,7 +184,7 @@ public final class SchemaUtils {
 
             for (DataSchemaNode child : ((DataNodeContainer) schema).getChildNodes()) {
                 // If is not augmented child, continue
-                if (augments.containsKey(child.getQName()) == false) {
+                if (!(augments.containsKey(child.getQName()))) {
                     continue;
                 }
 
@@ -212,7 +210,7 @@ public final class SchemaUtils {
         // Choice Node has to map child nodes from all its cases
         if (schema instanceof ChoiceNode) {
             for (ChoiceCaseNode choiceCaseNode : ((ChoiceNode) schema).getCases()) {
-                if (augments.containsKey(choiceCaseNode.getQName()) == false) {
+                if (!(augments.containsKey(choiceCaseNode.getQName()))) {
                     continue;
                 }
 
@@ -257,7 +255,7 @@ public final class SchemaUtils {
      *
      */
     public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema, final AugmentationSchema augmentSchema) {
-        if(targetSchema.getAvailableAugmentations().contains(augmentSchema) == false) {
+        if (!(targetSchema.getAvailableAugmentations().contains(augmentSchema))) {
             return Collections.emptySet();
         }
 
