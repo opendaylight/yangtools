@@ -236,6 +236,10 @@
        <artifactId>restconf-common</artifactId>
      </dependency>
      <dependency>
+       <groupId>org.opendaylight.yangtools</groupId>
+       <artifactId>binding-data-codec</artifactId>
+     </dependency>
+     <dependency>
        <groupId>org.opendaylight.yangtools.thirdparty</groupId>
        <artifactId>xtend-lib-osgi</artifactId>
        <scope>compile</scope>
