@@ -107,6 +107,29 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
     @Override
     protected DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) {
         DataContainerCodecPrototype<?> childProto = byStreamClass.get(childClass);
+        if (childProto != null) {
+            return childProto.get();
+        }
+
+        if (Augmentation.class.isAssignableFrom(childClass))  {
+            /*
+             * It is potentially mismatched valid augmentation - we look up equivalent augmentation
+             * using reflection and walk all stream child and compare augmenations classes
+             * if they are equivalent.
+             *
+             * FIXME: Cache mapping of mismatched augmentation to real one, to speed up lookup.
+             */
+            Class<?> augTarget = BindingReflections.findAugmentationTarget((Class) childClass);
+            if ((bindingClass().equals(augTarget))) {
+                for (DataContainerCodecPrototype<?> realChild : byStreamClass.values()) {
+                    if (Augmentation.class.isAssignableFrom(realChild.getBindingClass())
+                            && BindingReflections.isSubstitutionFor(childClass,realChild.getBindingClass())) {
+                        childProto = realChild;
+                        break;
+                    }
+                }
+            }
+        }
         Preconditions.checkArgument(childProto != null, " Child %s is not valid child.",childClass);
         return childProto.get();
     }
