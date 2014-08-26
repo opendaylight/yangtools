@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import com.google.common.collect.ImmutableList;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -29,10 +27,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.CompositeNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.CodecRegistry;
@@ -60,9 +58,9 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     public InstanceIdentifier<? extends Object> deserialize(
             final org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier input) {
         Class<?> baType = null;
-        List<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument> biArgs = input.getPath();
-        List<QName> scannedPath = new ArrayList<>(biArgs.size());
-        List<InstanceIdentifier.PathArgument> baArgs = new ArrayList<InstanceIdentifier.PathArgument>(biArgs.size());
+        Iterable<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument> biArgs = input.getPathArguments();
+        List<QName> scannedPath = new ArrayList<>();
+        List<InstanceIdentifier.PathArgument> baArgs = new ArrayList<InstanceIdentifier.PathArgument>();
         for (org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument biArg : biArgs) {
 
             scannedPath.add(biArg.getNodeType());
