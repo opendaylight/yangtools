@@ -10,6 +10,9 @@ package org.opendaylight.yangtools.binding.data.codec.api;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -18,7 +21,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 /**
  * Serialization service, which provides two-way serialization between
  * Java Binding Data representation and NormalizedNode representation.
- *
  */
 public interface BindingNormalizedNodeSerializer {
 
@@ -28,15 +30,16 @@ public interface BindingNormalizedNodeSerializer {
       * @param binding Binding Instance Identifier
       * @return DOM Instance Identifier
       */
-     YangInstanceIdentifier toYangInstanceIdentifier(InstanceIdentifier<?> binding);
+     YangInstanceIdentifier toYangInstanceIdentifier(@Nonnull InstanceIdentifier<?> binding);
 
      /**
       * Translates supplied YANG Instance Identifier into Binding instance identifier.
       *
       * @param dom YANG Instance Identifier
-      * @return Binding Instance Identifier
+      * @return Binding Instance Identifier, or null if the instance identifier is not
+      *         representable.
       */
-     InstanceIdentifier<?> fromYangInstanceIdentifier(YangInstanceIdentifier dom);
+     @Nullable InstanceIdentifier<?> fromYangInstanceIdentifier(@Nonnull YangInstanceIdentifier dom);
 
      /**
       * Translates supplied Binding Instance Identifier and data into NormalizedNode representation.
@@ -45,7 +48,7 @@ public interface BindingNormalizedNodeSerializer {
       * @param data Data object representing data
       * @return NormalizedNode representation
       */
-     <T extends DataObject> Entry<YangInstanceIdentifier,NormalizedNode<?,?>> toNormalizedNode(InstanceIdentifier<T> path, T data);
+     <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode<?,?>> toNormalizedNode(InstanceIdentifier<T> path, T data);
 
      /**
       * Translates supplied YANG Instance Identifier and NormalizedNode into Binding data.
@@ -54,7 +57,7 @@ public interface BindingNormalizedNodeSerializer {
       * @param data NormalizedNode representing data
       * @return DOM Instance Identifier
       */
-     Entry<InstanceIdentifier<?>,DataObject> fromNormalizedNode(YangInstanceIdentifier path, NormalizedNode<?, ?> data);
+     @Nullable Entry<InstanceIdentifier<?>,DataObject> fromNormalizedNode(@Nonnull YangInstanceIdentifier path, NormalizedNode<?, ?> data);
 
      /**
       * Returns map view which contains translated set of entries to normalized nodes.
