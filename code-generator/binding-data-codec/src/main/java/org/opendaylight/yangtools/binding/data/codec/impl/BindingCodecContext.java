@@ -18,12 +18,16 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opendaylight.yangtools.binding.data.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.yangtools.concepts.Codec;
@@ -52,10 +56,13 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class BindingCodecContext implements CodecContextFactory, Immutable {
-
+    private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
     private static final String GETTER_PREFIX = "get";
+
     private final SchemaRootCodecContext root;
     private final BindingRuntimeContext context;
     private final Codec<YangInstanceIdentifier, InstanceIdentifier<?>> instanceIdentifierCodec =
@@ -72,7 +79,7 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
         return context;
     }
 
-    public Codec<YangInstanceIdentifier, InstanceIdentifier<?>> getInstanceIdentifierCodec() {
+    Codec<YangInstanceIdentifier, InstanceIdentifier<?>> getInstanceIdentifierCodec() {
         return instanceIdentifierCodec;
     }
 
@@ -102,14 +109,27 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
         return currentNode;
     }
 
-    public NodeCodecContext getCodecContextNode(final YangInstanceIdentifier dom,
-            final List<InstanceIdentifier.PathArgument> builder) {
+    /**
+     * Multi-purpose utility function. Traverse the codec tree, looking for
+     * the appropriate codec for the specified {@link YangInstanceIdentifier}.
+     * As a side-effect, gather all traversed binding {@link InstanceIdentifier.PathArgument}s
+     * into the supplied collection.
+     *
+     * @param dom {@link YangInstanceIdentifier} which is to be translated
+     * @param bindingArguments Collection for traversed path arguments
+     * @return Codec for target node, or @null if the node does not have a
+     *         binding representation (choice, case, leaf).
+     */
+    @Nullable NodeCodecContext getCodecContextNode(final @Nonnull YangInstanceIdentifier dom,
+            final @Nonnull Collection<InstanceIdentifier.PathArgument> bindingArguments) {
         NodeCodecContext currentNode = root;
         ListNodeCodecContext currentList = null;
+
         for (YangInstanceIdentifier.PathArgument domArg : dom.getPathArguments()) {
-            Preconditions.checkArgument(currentNode instanceof DataContainerCodecContext<?>);
-            DataContainerCodecContext<?> previous = (DataContainerCodecContext<?>) currentNode;
-            NodeCodecContext nextNode = previous.getYangIdentifierChild(domArg);
+            Preconditions.checkArgument(currentNode instanceof DataContainerCodecContext<?>, "Unexpected child of non-container node %s", currentNode);
+            final DataContainerCodecContext<?> previous = (DataContainerCodecContext<?>) currentNode;
+            final NodeCodecContext nextNode = previous.getYangIdentifierChild(domArg);
+
             /*
              * List representation in YANG Instance Identifier consists of two
              * arguments: first is list as a whole, second is list as an item so
@@ -119,19 +139,13 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
              * Identifier as Item or IdentifiableItem
              */
             if (currentList != null) {
+                Preconditions.checkArgument(currentList == nextNode, "List should be referenced two times in YANG Instance Identifier %s", dom);
 
-                if (currentList == nextNode) {
-
-                    // We entered list, so now we have all information to emit
-                    // list
-                    // path using second list argument.
-                    builder.add(currentList.getBindingPathArgument(domArg));
-                    currentList = null;
-                    currentNode = nextNode;
-                } else {
-                    throw new IllegalArgumentException(
-                            "List should be referenced two times in YANG Instance Identifier");
-                }
+                // We entered list, so now we have all information to emit
+                // list path using second list argument.
+                bindingArguments.add(currentList.getBindingPathArgument(domArg));
+                currentList = null;
+                currentNode = nextNode;
             } else if (nextNode instanceof ListNodeCodecContext) {
                 // We enter list, we do not update current Node yet,
                 // since we need to verify
@@ -141,24 +155,27 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
                 // it is not supported by binding instance identifier.
                 currentNode = nextNode;
             } else if (nextNode instanceof DataContainerCodecContext<?>) {
-                builder.add(((DataContainerCodecContext<?>) nextNode).getBindingPathArgument(domArg));
+                bindingArguments.add(((DataContainerCodecContext<?>) nextNode).getBindingPathArgument(domArg));
                 currentNode = nextNode;
             } else if (nextNode instanceof LeafNodeCodecContext) {
-                Preconditions.checkArgument(builder == null, "Instance Identifier for leaf is not representable.");
-
+                LOG.debug("Instance identifier referencing a leaf is not representable (%s)", dom);
+                return null;
             }
         }
+
         // Algorithm ended in list as whole representation
         // we sill need to emit identifier for list
-
-        if (builder != null) {
-            Preconditions.checkArgument(!(currentNode instanceof ChoiceNodeCodecContext),
-                    "Instance Identifier for choice is not representable.");
-            Preconditions.checkArgument(!(currentNode instanceof CaseNodeCodecContext),
-                    "Instance Identifier for case is not representable.");
+        if (currentNode instanceof ChoiceNodeCodecContext) {
+            LOG.debug("Instance identifier targeting a choice is not representable (%s)", dom);
+            return null;
         }
+        if (currentNode instanceof CaseNodeCodecContext) {
+            LOG.debug("Instance identifier targeting a case is not representable (%s)", dom);
+            return null;
+        }
+
         if (currentList != null) {
-            builder.add(currentList.getBindingPathArgument(null));
+            bindingArguments.add(currentList.getBindingPathArgument(null));
             return currentList;
         }
         return currentNode;
@@ -278,16 +295,16 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
         @Override
         public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
-            List<YangInstanceIdentifier.PathArgument> domArgs = new LinkedList<>();
+            List<YangInstanceIdentifier.PathArgument> domArgs = new ArrayList<>();
             getCodecContextNode(input, domArgs);
             return YangInstanceIdentifier.create(domArgs);
         }
 
         @Override
         public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
-            List<InstanceIdentifier.PathArgument> builder = new LinkedList<>();
-            getCodecContextNode(input, builder);
-            return InstanceIdentifier.create(builder);
+            final List<InstanceIdentifier.PathArgument> builder = new ArrayList<>();
+            final NodeCodecContext codec = getCodecContextNode(input, builder);
+            return codec == null ? null : InstanceIdentifier.create(builder);
         }
     }
 

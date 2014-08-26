@@ -16,6 +16,7 @@ import com.google.common.cache.LoadingCache;
 
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -82,15 +83,15 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     @Override
     public InstanceIdentifier<?> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
         return codecContext.getInstanceIdentifierCodec().deserialize(dom);
-   }
+    }
 
     @Override
     public <T extends DataObject> Entry<YangInstanceIdentifier,NormalizedNode<?,?>> toNormalizedNode(final InstanceIdentifier<T> path, final T data) {
         NormalizedNodeResult result = new NormalizedNodeResult();
-        // We create dom stream writer which produces normalized nodes
+        // We create DOM stream writer which produces normalized nodes
         NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        // We create Binding Stream Writer wchich translates from Binding to Normalized Nodes
+        // We create Binding Stream Writer which translates from Binding to Normalized Nodes
         Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx = codecContext.newWriter(path, domWriter);
 
         // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
@@ -107,17 +108,20 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         return !(data instanceof MapNode) && !(data instanceof UnkeyedListNode) && !(data instanceof LeafSetNode) && !(data instanceof LeafNode<?>);
     }
 
-
     @Override
     public Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
             final NormalizedNode<?, ?> data) {
-        List<PathArgument> builder = new LinkedList<>();
-        if(isBindingRepresentable(data)) {
-            DataObject lazyObj = (DataObject) codecContext.getCodecContextNode(path, builder).dataFromNormalizedNode(data);
-            InstanceIdentifier<?> bindingPath = InstanceIdentifier.create(builder);
-            return new SimpleEntry<InstanceIdentifier<?>, DataObject>(bindingPath,lazyObj);
+        if (!isBindingRepresentable(data)) {
+            return null;
         }
-        return null;
+
+        final List<PathArgument> builder = new ArrayList<>();
+        final NodeCodecContext codec = codecContext.getCodecContextNode(path, builder);
+        Preconditions.checkArgument(codec != null, "Data path %s does not have a binding equivalent", path);
+
+        final DataObject lazyObj = (DataObject) codec.dataFromNormalizedNode(data);
+        final InstanceIdentifier<?> bindingPath = InstanceIdentifier.create(builder);
+        return new SimpleEntry<InstanceIdentifier<?>, DataObject>(bindingPath, lazyObj);
     }
 
     @Override
@@ -144,8 +148,8 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
 
     private static class DeserializeFunction<T> implements Function<Optional<NormalizedNode<?, ?>>, Optional<T>> {
-
         private final DataObjectCodecContext<?> ctx;
+
         public DeserializeFunction(final DataObjectCodecContext<?> ctx) {
             super();
             this.ctx = ctx;
@@ -159,8 +163,6 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             }
             return Optional.absent();
         }
-
-
     }
 
     private class GeneratorLoader extends CacheLoader<Class<? extends DataObject>, DataObjectSerializer> {
