@@ -264,12 +264,11 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
         } else if (rootType instanceof InstanceIdentifierTypeDefinition) {
             return ValueTypeCodec.encapsulatedValueCodecFor(valueType, instanceIdentifierCodec);
         } else if (rootType instanceof UnionTypeDefinition) {
-            Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType,
-                    getInstanceIdentifierCodec(), getIdentityCodec());
+            Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType);
             try {
                 return loader.call();
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to load codec for "+valueType,e);
+                throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
         }
         return ValueTypeCodec.getCodecFor(valueType, instantiatedType);

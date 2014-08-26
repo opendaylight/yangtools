@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -36,10 +35,8 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    static final Callable<UnionTypeCodec> loader(final Class<?> unionCls,final UnionTypeDefinition unionType, final Codec instanceIdentifier, final Codec identity) {
+    static final Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType) {
         return new Callable<UnionTypeCodec>() {
-
             @Override
             public UnionTypeCodec call() throws NoSuchMethodException, SecurityException {
                 Set<UnionValueOptionContext> values = new HashSet<>();
