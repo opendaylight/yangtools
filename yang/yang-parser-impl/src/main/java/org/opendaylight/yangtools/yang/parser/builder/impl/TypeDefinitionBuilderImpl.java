@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.UnknownType;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
@@ -68,11 +67,12 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     public TypeDefinition<? extends TypeDefinition<?>> build() {
         TypeDefinition<?> result;
         ExtendedType.Builder typeBuilder;
-        if ((type == null || type instanceof UnknownType) && typedef == null) {
-            throw new YangParseException("Unresolved type: '" + qname.getLocalName() + "'.");
-        }
-        if (type == null || type instanceof UnknownType) {
-            type = typedef.build();
+        if (type == null) {
+            if (typedef == null) {
+                throw new YangParseException("Unresolved type: '" + qname.getLocalName() + "'.");
+            } else {
+                type = typedef.build();
+            }
         }
 
         typeBuilder = ExtendedType.builder(qname, type, Optional.fromNullable(description),
