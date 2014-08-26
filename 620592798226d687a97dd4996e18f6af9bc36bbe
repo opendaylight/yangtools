@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_5dcce5ba",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/ChoiceNodeCodecContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-26T12:49:55Z",
+      "side": 1,
+      "message": "trailing whitespace, also above and below",
+      "revId": "620592798226d687a97dd4996e18f6af9bc36bbe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_fdc61999",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/DataObjectCodecContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-26T12:49:55Z",
+      "side": 1,
+      "message": "inconsistent spaces",
+      "revId": "620592798226d687a97dd4996e18f6af9bc36bbe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
