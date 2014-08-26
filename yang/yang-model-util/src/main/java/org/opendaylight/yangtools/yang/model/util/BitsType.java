@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 /**
  * The <code>default</code> implementation of Bits Type Definition interface.
@@ -28,7 +26,7 @@ public final class BitsType implements BitsTypeDefinition {
     private final static QName NAME = BaseTypes.BITS_QNAME;
 
     private final SchemaPath path;
-    private final String description = "The bits built-in type represents a bit set.  "
+    private static final String DESCRIPTION = "The bits built-in type represents a bit set. "
             + "That is, a bits value is a set of flags identified by small integer position "
             + "numbers starting at 0.  Each bit number has an assigned name.";
 
@@ -129,7 +127,7 @@ public final class BitsType implements BitsTypeDefinition {
      */
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     /*
@@ -167,7 +165,6 @@ public final class BitsType implements BitsTypeDefinition {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((bits == null) ? 0 : bits.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + NAME.hashCode();
         result = prime * result + path.hashCode();
         return result;
@@ -192,14 +189,6 @@ public final class BitsType implements BitsTypeDefinition {
         } else if (!bits.equals(other.bits)) {
             return false;
         }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-
         if (path == null) {
             if (other.path != null) {
                 return false;
@@ -218,7 +207,7 @@ public final class BitsType implements BitsTypeDefinition {
         builder.append(", path=");
         builder.append(path);
         builder.append(", description=");
-        builder.append(description);
+        builder.append(DESCRIPTION);
         builder.append(", reference=");
         builder.append(REFERENCE);
         builder.append(", bits=");
