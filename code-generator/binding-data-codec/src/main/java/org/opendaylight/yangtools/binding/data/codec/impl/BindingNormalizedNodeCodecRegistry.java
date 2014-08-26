@@ -17,7 +17,6 @@ import com.google.common.cache.LoadingCache;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -75,8 +74,6 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
     @Override
     public YangInstanceIdentifier toYangInstanceIdentifier(final InstanceIdentifier<?> binding) {
-        List<YangInstanceIdentifier.PathArgument> builder = new LinkedList<>();
-        codecContext.getCodecContextNode(binding, builder);
         return codecContext.getInstanceIdentifierCodec().serialize(binding);
     }
 
