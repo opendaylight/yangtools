@@ -11,8 +11,13 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -36,20 +41,50 @@ final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode>
         Map<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChildBuilder = new HashMap<>();
         Map<Class<?>, DataContainerCodecPrototype<?>> byClassBuilder = new HashMap<>();
         Map<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClassBuilder = new HashMap<>();
-
+        Set<Class<?>> potentialSubstitutions = new HashSet<>();
+        // Walks all cases for supplied choice in current runtime context
         for (Class<?> caze : factory().getRuntimeContext().getCases(bindingClass())) {
+            // We try to load case using exact match thus name
+            // and original schema must equals
             DataContainerCodecPrototype<ChoiceCaseNode> cazeDef = loadCase(caze);
+            // If we have case definition, this case is instantiated
+            // at current location and thus is valid in context of parent choice
             if (cazeDef != null) {
                 byClassBuilder.put(cazeDef.getBindingClass(), cazeDef);
+                // Updates collection of case children
                 for (Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses((Class) caze)) {
                     byCaseChildClassBuilder.put(cazeChild, cazeDef);
                 }
+                // Updates collection of YANG instance identifier to case
                 for (DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
                     byYangCaseChildBuilder.put(new NodeIdentifier(cazeChild.getQName()), cazeDef);
                 }
+            } else {
+                /*
+                 * If case definition is not available, we store it for
+                 * later check if it could be used as substitution of existing one.
+                 */
+                potentialSubstitutions.add(caze);
             }
         }
 
+        Map<Class<?>, DataContainerCodecPrototype<?>> bySubstitutionBuilder = new HashMap<>();
+        /*
+         * Walks all cases which are not directly instantiated and
+         * tries to match them to instantiated cases - represent same data as instantiated case,
+         * only case name or schema path is different. This is required due property of
+         * binding specification, that if choice is in grouping schema path location is lost,
+         * and users may use incorrect case class using copy builders.
+         */
+        for(Class<?> substitution : potentialSubstitutions) {
+            search: for(Entry<Class<?>, DataContainerCodecPrototype<?>> real : byClassBuilder.entrySet()) {
+                if(BindingReflections.isSubstitutionFor(substitution, real.getKey())) {
+                    bySubstitutionBuilder.put(substitution, real.getValue());
+                    break search;
+                }
+            }
+        }
+        byClassBuilder.putAll(bySubstitutionBuilder);
         byYangCaseChild = ImmutableMap.copyOf(byYangCaseChildBuilder);
         byClass = ImmutableMap.copyOf(byClassBuilder);
         byCaseChildClass = ImmutableMap.copyOf(byCaseChildClassBuilder);
