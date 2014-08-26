@@ -192,6 +192,10 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         }
     }
 
+    boolean isOrdered() {
+        return false;
+    }
+
     @Override
     public final Optional<TreeNode> apply(final ModifiedNode modification,
             final Optional<TreeNode> currentMeta, final Version version) {
@@ -248,6 +252,11 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
 
         protected UnkeyedListModificationStrategy(final ListSchemaNode schema) {
             entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.UnkeyedListItemModificationStrategy(schema));
+        }
+
+        @Override
+        boolean isOrdered() {
+            return true;
         }
 
         @Override

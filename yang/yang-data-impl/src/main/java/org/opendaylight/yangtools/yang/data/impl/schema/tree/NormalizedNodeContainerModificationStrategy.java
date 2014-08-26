@@ -233,6 +233,11 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
             entryStrategy = Optional.<ModificationApplyOperation> of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
         }
 
+        @Override
+        boolean isOrdered() {
+            return true;
+        }
+
         @SuppressWarnings("rawtypes")
         @Override
         protected NormalizedNodeContainerBuilder createBuilder(final NormalizedNode<?, ?> original) {
@@ -256,6 +261,11 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         protected OrderedMapModificationStrategy(final ListSchemaNode schema) {
             super(OrderedMapNode.class);
             entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
+        }
+
+        @Override
+        boolean isOrdered() {
+            return true;
         }
 
         @SuppressWarnings("rawtypes")
