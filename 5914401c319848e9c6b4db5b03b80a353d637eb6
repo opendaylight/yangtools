@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_890a2b88",
+        "filename": "code-generator/binding-data-codec/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-27T16:10:46Z",
+      "side": 1,
+      "message": "Dependency is declared two times.",
+      "revId": "5914401c319848e9c6b4db5b03b80a353d637eb6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c9d4b3ea",
+        "filename": "code-generator/maven-sal-api-gen-plugin/META-INF/services/org.opendaylight.yangtools.yang.binding.YangModelBindingProvider",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-08-27T16:10:46Z",
+      "side": 1,
+      "message": "Could you explain why this file is added to maven-sal-api-gen-plugin?",
+      "revId": "5914401c319848e9c6b4db5b03b80a353d637eb6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
