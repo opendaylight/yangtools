@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -110,6 +111,9 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             return false;
         }
         if (data instanceof LeafSetNode) {
+            return false;
+        }
+        if( data instanceof LeafSetEntryNode<?>) {
             return false;
         }
         if (data instanceof MapNode) {
