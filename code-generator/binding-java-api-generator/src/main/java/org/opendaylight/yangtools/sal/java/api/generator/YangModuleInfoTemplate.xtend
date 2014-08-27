@@ -189,7 +189,7 @@ class YangModuleInfoTemplate {
     '''
 
     def getSourcePath() {
-        return "/" + module.moduleSourcePath.replace(java.io.File.separatorChar, '/')
+        return module.moduleSourcePath.replace(java.io.File.separatorChar, '/')
     }
 
     private def imports() ''' 
