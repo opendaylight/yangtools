@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -72,7 +71,7 @@ final class ChoiceNodeModification extends
         Set<YangInstanceIdentifier.PathArgument> childrenToProcessFiltered = Sets.newLinkedHashSet();
         for (YangInstanceIdentifier.PathArgument childToProcess : childrenToProcess) {
             // child from other cases, skip
-            if (childToProcess instanceof AugmentationNode
+            if (childToProcess instanceof YangInstanceIdentifier.AugmentationIdentifier
                     && SchemaUtils.belongsToCaseAugment(detectedCase,
                             (YangInstanceIdentifier.AugmentationIdentifier) childToProcess) == false) {
                 continue;
