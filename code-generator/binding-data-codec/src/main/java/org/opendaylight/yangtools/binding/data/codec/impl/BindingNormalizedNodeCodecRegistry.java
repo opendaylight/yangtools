@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -102,6 +103,9 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
     private static boolean isBindingRepresentable(final NormalizedNode<?, ?> data) {
+        if (data instanceof ChoiceNode) {
+            return false;
+        }
         if (data instanceof LeafNode<?>) {
             return false;
         }
@@ -127,9 +131,8 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         final List<PathArgument> builder = new ArrayList<>();
         final NodeCodecContext codec = codecContext.getCodecContextNode(path, builder);
         if (codec == null) {
-            // FIXME: do we allow data == null?
             if (data != null) {
-                LOG.warn("Path %s does not have a binding equivalent, should have been caught earlier", path);
+                LOG.warn("Path %s does not have a binding equivalent, should have been caught earlier (%s)", path, data.getClass());
             }
             return null;
         }
