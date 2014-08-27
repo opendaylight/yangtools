@@ -11,17 +11,14 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -183,13 +180,13 @@ public final class ParserListenerUtils {
                 continue;
             }
             /*
-             * 
+             *
              * It is safe not to check last argument to be same
              * grammars enforces that.
-             * 
+             *
              * FIXME: Introduce proper escaping and translation of escaped
              * characters here.
-             * 
+             *
              */
             sb.append(quoteMatcher.removeFrom(str.substring(1, str.length()-1)));
         }
@@ -378,7 +375,15 @@ public final class ParserListenerUtils {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Value_stmtContext) {
                 String valueStr = stringFromNode(child);
-                value = Integer.valueOf(valueStr);
+                try {
+                    // yang enum value has same restrictions as JAVA Integer
+                    value = Integer.valueOf(valueStr);
+                } catch (NumberFormatException e) {
+                    String err = String
+                            .format("Error on enum '%s': the enum value MUST be in the range from -2147483648 to 2147483647, but was: %s",
+                                    name, valueStr);
+                    throw new YangParseException(moduleName, ctx.getStart().getLine(), err, e);
+                }
             } else if (child instanceof Description_stmtContext) {
                 description = stringFromNode(child);
             } else if (child instanceof Reference_stmtContext) {
@@ -390,10 +395,6 @@ public final class ParserListenerUtils {
 
         if (value == null) {
             value = highestValue + 1;
-        }
-        if (value < -2147483648 || value > 2147483647) {
-            throw new YangParseException(moduleName, ctx.getStart().getLine(), "Error on enum '" + name
-                    + "': the enum value MUST be in the range from -2147483648 to 2147483647, but was: " + value);
         }
 
         EnumPairImpl result = new EnumPairImpl();
