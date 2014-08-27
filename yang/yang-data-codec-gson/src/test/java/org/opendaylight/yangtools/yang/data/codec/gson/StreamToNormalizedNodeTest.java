@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonReader;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -32,6 +34,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
@@ -83,11 +86,10 @@ public class StreamToNormalizedNodeTest {
          * This is the parsing part
          */
         // This is where we will output the nodes
-        final NormalizedNodeContainerBuilder<NodeIdentifier, ?, ?, ? extends NormalizedNode<?, ?>> parent =
-                Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(QName.create("dummy", "2014-12-31", "dummy")));
+        NormalizedNodeResult result = new NormalizedNodeResult();
 
         // StreamWriter which attaches NormalizedNode under parent
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(parent);
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         // JSON -> StreamWriter parser
         try (JsonParserStream handler = JsonParserStream.create(streamWriter, schemaContext)) {
@@ -95,7 +97,7 @@ public class StreamToNormalizedNodeTest {
         }
 
         // Finally build the node
-        final NormalizedNode<?, ?> parsedData = parent.build();
+        final NormalizedNode<?, ?> parsedData = result.getResult();
         LOG.debug("Parsed NormalizedNodes: {}", parsedData);
 
         /*
