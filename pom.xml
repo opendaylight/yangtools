@@ -31,7 +31,8 @@
         <module>restconf</module>
         <module>websocket</module>
         <module>yang</module>
-        <!-- module>third-party</module -->
+        <module>benchmarks</module>
+      <!-- module>third-party</module -->
     </modules>
 
     <build>
