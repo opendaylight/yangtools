@@ -39,7 +39,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
         this.strategyTree = Preconditions.checkNotNull(resolver).snapshot();
-        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode());
+        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), false);
         /*
          * We could allocate version beforehand, since Version contract
          * states two allocated version must be allways different.
@@ -141,8 +141,13 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         ModifiedNode modification = rootNode;
         // We ensure strategy is present.
         ModificationApplyOperation operation = resolveModificationStrategy(path);
+        boolean isOrdered = true;
+        if (operation instanceof SchemaAwareApplyOperation) {
+            isOrdered = ((SchemaAwareApplyOperation) operation).isOrdered();
+        }
+
         for (PathArgument pathArg : path.getPathArguments()) {
-            modification = modification.modifyChild(pathArg);
+            modification = modification.modifyChild(pathArg, isOrdered);
         }
         return OperationWithModification.from(operation, modification);
     }
