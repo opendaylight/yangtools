@@ -132,7 +132,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         final NodeCodecContext codec = codecContext.getCodecContextNode(path, builder);
         if (codec == null) {
             if (data != null) {
-                LOG.warn("Path %s does not have a binding equivalent, should have been caught earlier (%s)", path, data.getClass());
+                LOG.warn("Path {} does not have a binding equivalent, should have been caught earlier ({})", path, data.getClass());
             }
             return null;
         }
