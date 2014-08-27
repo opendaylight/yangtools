@@ -133,7 +133,7 @@ yang_version_stmt : YANG_VERSION_KEYWORD string stmtend;
 data_def_stmt : container_stmt | leaf_stmt | leaf_list_stmt | list_stmt | choice_stmt | anyxml_stmt | uses_stmt;
 body_stmts : (( identifier_stmt| extension_stmt | feature_stmt | identity_stmt | typedef_stmt | grouping_stmt | data_def_stmt | augment_stmt | rpc_stmt | notification_stmt | deviation_stmt) )*;
 revision_stmts :  (revision_stmt )* (stmtsep)*;
-linkage_stmts : (import_stmt stmtsep? | include_stmt stmtsep?)*;
+linkage_stmts : identifier_stmt* (import_stmt stmtsep? | include_stmt stmtsep?)*;
 meta_stmts : (organization_stmt stmtsep? | contact_stmt stmtsep? | description_stmt stmtsep? | reference_stmt stmtsep?)*;
 submodule_header_stmts : (yang_version_stmt stmtsep? | belongs_to_stmt stmtsep?)+ ;
 module_header_stmts :  (yang_version_stmt stmtsep? | namespace_stmt stmtsep? | prefix_stmt stmtsep?)+ ;
