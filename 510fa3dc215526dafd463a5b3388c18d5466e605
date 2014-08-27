@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_6ea48db9",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingNormalizedNodeCodecRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1450
+      },
+      "writtenOn": "2014-08-27T12:27:45Z",
+      "side": 1,
+      "message": "Hmm... I think these should be {} instead of %s. If its easier, please merge this gerrit to pick the changes:\nhttps://git.opendaylight.org/gerrit/10372",
+      "revId": "510fa3dc215526dafd463a5b3388c18d5466e605",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
