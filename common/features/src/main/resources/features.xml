@@ -34,14 +34,18 @@
         <bundle>mvn:org.opendaylight.yangtools.thirdparty/antlr4-runtime-osgi-nohead/${antlr4.version}</bundle>
         <bundle>mvn:commons-io/commons-io/${commons.io.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-api/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-composite-node/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-impl/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-operations/${project.version}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/yang-data-composite-node/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-util/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-api/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-util/${project.version}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/${project.version}</bundle>
+
+        <!-- GSON-based JSON codec. Can be split out -->
+        <bundle>mvn:com.google.code.gson/gson/${gson.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-gson/${project.version}</bundle>
     </feature>
 
     <feature name='odl-yangtools-binding' version='${project.version}' description='OpenDaylight :: Yangtools :: Binding'>
