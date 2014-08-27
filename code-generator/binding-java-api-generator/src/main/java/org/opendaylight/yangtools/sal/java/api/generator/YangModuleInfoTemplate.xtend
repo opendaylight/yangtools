@@ -34,6 +34,9 @@ import static org.opendaylight.yangtools.yang.binding.BindingMapping.*
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
 import com.google.common.base.Preconditions
 import org.opendaylight.yangtools.yang.binding.BindingMapping
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 
 class YangModuleInfoTemplate {
 
@@ -66,7 +69,7 @@ class YangModuleInfoTemplate {
                 «val DateFormat df = new SimpleDateFormat("yyyy-MM-dd")»
                 private final «String.importedName» revision = "«df.format(module.revision)»";
                 private final «String.importedName» resourcePath = "«sourcePath»";
-                
+
                 private final «Set.importedName»<YangModuleInfo> importedModules;
 
                 public static «YangModuleInfo.importedName» getInstance() {
@@ -131,10 +134,20 @@ class YangModuleInfoTemplate {
                 importedModules = «ImmutableSet.importedName».copyOf(set);
             «ENDIF»
 
-            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream(resourcePath);
-            if (stream == null) {
-                throw new IllegalStateException("Resource '" + resourcePath + "' is missing");
-            }
+            «val File file = new File(module.moduleSourcePath)»
+            «IF file.isAbsolute»
+                «InputStream.importedName» stream = null;
+                try {
+                    stream = new «FileInputStream.importedName»(resourcePath);
+                } catch («FileNotFoundException.importedName» e) {
+                    throw new IllegalStateException("Resource '" + resourcePath + "' is missing");
+                }
+            «ELSE»
+                «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream(resourcePath);
+                if (stream == null) {
+                    throw new IllegalStateException("Resource '" + resourcePath + "' is missing");
+                }
+            «ENDIF»
             try {
                 stream.close();
             } catch («IOException.importedName» e) {
