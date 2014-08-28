@@ -104,7 +104,7 @@ public class StreamToNormalizedNodeTest {
          * This is the serialization part.
          */
         // We want to write the first child out
-        final DataContainerChild<? extends PathArgument, ?> firstChild = ((ContainerNode) parsedData).getValue().iterator().next();
+        final DataContainerChild<? extends PathArgument, ?> firstChild = (DataContainerChild<? extends PathArgument, ?>) parsedData;
         LOG.debug("Serializing first child: {}", firstChild);
 
         // String holder
