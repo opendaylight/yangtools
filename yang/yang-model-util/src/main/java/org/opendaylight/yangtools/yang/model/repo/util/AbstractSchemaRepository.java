@@ -146,7 +146,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             }
 
             if (m.isEmpty()) {
-                sources.remove(m);
+                sources.remove(source.getSourceIdentifier());
             }
         }
     }
