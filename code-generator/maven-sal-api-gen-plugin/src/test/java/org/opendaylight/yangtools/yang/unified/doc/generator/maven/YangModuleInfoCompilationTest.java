@@ -82,13 +82,9 @@ public class YangModuleInfoCompilationTest {
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
         // Create URLClassLoader
-        File[] roots = File.listRoots();
-        URL[] urls = new URL[roots.length + 1];
-        for (int i = 0; i < roots.length; i++) {
-            urls[i] = roots[i].toURI().toURL();
-
-        }
-        urls[roots.length] = compiledOutputDir.toURI().toURL();
+        URL[] urls = new URL[2];
+        urls[0] = compiledOutputDir.toURI().toURL();
+        urls[1] = new File(System.getProperty("user.dir")).toURI().toURL();
         ClassLoader loader = new URLClassLoader(urls);
 
         // Load class
@@ -176,13 +172,16 @@ public class YangModuleInfoCompilationTest {
     private static List<File> getSourceFiles(String path) throws Exception {
         final URI resPath = YangModuleInfoCompilationTest.class.getResource(path).toURI();
         final File sourcesDir = new File(resPath);
+        final URI currentDir = new File(System.getProperty("user.dir")).toURI();
         if (sourcesDir.exists()) {
             final List<File> sourceFiles = new ArrayList<>();
             final File[] fileArray = sourcesDir.listFiles();
             if (fileArray == null) {
                 throw new IllegalArgumentException("Unable to locate files in " + sourcesDir);
             }
-            sourceFiles.addAll(Arrays.asList(fileArray));
+            for (File sourceFile : fileArray) {
+                sourceFiles.add(new File(currentDir.relativize(sourceFile.toURI()).toString()));
+            }
             return sourceFiles;
         } else {
             throw new FileNotFoundException("Testing files were not found(" + sourcesDir.getName() + ")");
