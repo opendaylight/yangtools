@@ -34,6 +34,24 @@
       "revId": "106f0b7556f08c2018dbb8b1abac36acab6b2e9e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_7e9bdc17",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/TrackingLinkedBlockingQueue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-28T15:33:25Z",
+      "side": 1,
+      "message": "I\u0027m a little wary of a FieldUpdater as it uses reflection to update the field. This may be updated a lot so I think it would be better to optimize for execution speed over memory usage. You\u0027d probably need millions of queue instances before the extra memory might become an issue.",
+      "parentUuid": "fa82b9bf_62f6fd5e",
+      "revId": "106f0b7556f08c2018dbb8b1abac36acab6b2e9e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
