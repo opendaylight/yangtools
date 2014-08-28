@@ -25,6 +25,8 @@ import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 @Path("restconf")
 public interface RestRestconfService {
 
+    public static final String IDENTIFIER = "identifier";
+    public static final String INPUT = "input";
     public static final String XML = "+xml";
     public static final String JSON = "+json";
 
@@ -45,48 +47,48 @@ public interface RestRestconfService {
     @Consumes({Draft01.MediaTypes.DATA+JSON,Draft01.MediaTypes.DATA+XML,
             Draft02.MediaTypes.DATA+JSON,Draft02.MediaTypes.DATA+XML,
             MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
-    public String invokeRpc(@PathParam("identifier") String identifier, @QueryParam("input") CompositeNode payload);
+    public String invokeRpc(@PathParam(IDENTIFIER) String identifier, @QueryParam(INPUT) CompositeNode payload);
 
     @POST
     @Path("/operations/{identifier}")
     @Produces({Draft01.MediaTypes.DATA+JSON,Draft01.MediaTypes.DATA+XML,
             Draft02.MediaTypes.DATA+JSON,Draft02.MediaTypes.DATA+XML,
             MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
-    public String invokeRpc(@PathParam("identifier") String identifier);
+    public String invokeRpc(@PathParam(IDENTIFIER) String identifier);
 
     @GET
     @Path("/config/{identifier:.+}")
     @Produces({Draft02.MediaTypes.DATA+JSON,Draft02.MediaTypes.DATA+XML,
             MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
-    public String readConfigurationData(@PathParam("identifier") String identifier);
+    public String readConfigurationData(@PathParam(IDENTIFIER) String identifier);
 
     @GET
     @Path("/operational/{identifier:.+}")
     @Produces({Draft02.MediaTypes.DATA+JSON,Draft02.MediaTypes.DATA+XML,
             MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
-    public String readOperationalData(@PathParam("identifier") String identifier);
+    public String readOperationalData(@PathParam(IDENTIFIER) String identifier);
 
     @PUT
     @Path("/config/{identifier:.+}")
     @Consumes({Draft02.MediaTypes.DATA+JSON,Draft02.MediaTypes.DATA+XML,
             MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
-    public Response updateConfigurationData(@PathParam("identifier") String identifier,@QueryParam("input") CompositeNode payload);
+    public Response updateConfigurationData(@PathParam(IDENTIFIER) String identifier,@QueryParam(INPUT) CompositeNode payload);
 
     @POST
     @Path("/config/{identifier:.+}")
     @Consumes({Draft02.MediaTypes.DATA+JSON,Draft02.MediaTypes.DATA+XML,
             MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
-    public Response createConfigurationData(@PathParam("identifier") String identifier, @QueryParam("input") CompositeNode payload);
+    public Response createConfigurationData(@PathParam(IDENTIFIER) String identifier, @QueryParam(INPUT) CompositeNode payload);
 
     @POST
     @Path("/config")
     @Consumes({Draft02.MediaTypes.DATA+JSON,Draft02.MediaTypes.DATA+XML,
             MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
-    public Response createConfigurationData( @QueryParam("input") CompositeNode payload);
+    public Response createConfigurationData( @QueryParam(INPUT) CompositeNode payload);
 
     @DELETE
     @Path("/config/{identifier:.+}")
-    public Response deleteConfigurationData(@PathParam("identifier") String identifier);
+    public Response deleteConfigurationData(@PathParam(IDENTIFIER) String identifier);
 
 
 }
