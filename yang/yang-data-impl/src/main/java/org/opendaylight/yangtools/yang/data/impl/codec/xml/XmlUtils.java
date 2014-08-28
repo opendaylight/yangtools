@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import java.util.Map;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -50,10 +48,10 @@ public final class XmlUtils {
             if (pathArgument instanceof NodeIdentifierWithPredicates) {
                 Map<QName, Object> predicates = ((NodeIdentifierWithPredicates) pathArgument).getKeyValues();
 
-                for (QName keyValue : predicates.keySet()) {
-                    String predicateValue = String.valueOf(predicates.get(keyValue));
+                for (Map.Entry<QName, Object> entry : predicates.entrySet()) {
+                    String predicateValue = String.valueOf(entry.getValue());
                     textContent.append('[');
-                    textContent.append(prefixes.encodeQName(keyValue));
+                    textContent.append(prefixes.encodeQName(entry.getKey()));
                     textContent.append("='");
                     textContent.append(predicateValue);
                     textContent.append("']");
