@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import org.opendaylight.yangtools.yang.binding.BindingCodec;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
-public interface InstanceIdentifierCodec extends BindingCodec<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier,InstanceIdentifier<?>> {
+public interface InstanceIdentifierCodec extends BindingCodec<YangInstanceIdentifier, InstanceIdentifier<?>> {
+    @Override
+    YangInstanceIdentifier serialize(InstanceIdentifier<?> input);
 
     @Override
-    org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier serialize(InstanceIdentifier<?> input);
-
-    @Override
-    InstanceIdentifier<?> deserialize(org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier input);
+    InstanceIdentifier<?> deserialize(YangInstanceIdentifier input);
 }
