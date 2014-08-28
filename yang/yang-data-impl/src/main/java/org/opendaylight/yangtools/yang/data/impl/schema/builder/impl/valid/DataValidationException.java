@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -26,26 +25,26 @@ public class DataValidationException extends RuntimeException {
 
     public static void checkLegalChild(final boolean isLegal, final YangInstanceIdentifier.PathArgument child, final DataNodeContainer schema,
             final Set<QName> childNodes, final Set<YangInstanceIdentifier.AugmentationIdentifier> augments) {
-        if (isLegal == false) {
+        if (!isLegal) {
             throw new IllegalChildException(child, schema, childNodes, augments);
         }
     }
 
     public static void checkLegalChild(final boolean isLegal, final YangInstanceIdentifier.PathArgument child, final DataSchemaNode schema,
             final Set<QName> childNodes) {
-        if (isLegal == false) {
+        if (!isLegal) {
             throw new IllegalChildException(child, schema, childNodes);
         }
     }
 
     public static void checkLegalChild(final boolean isLegal, final YangInstanceIdentifier.PathArgument child, final ChoiceNode schema) {
-        if (isLegal == false) {
+        if (!isLegal) {
             throw new IllegalChildException(child, schema);
         }
     }
 
     public static void checkLegalData(final boolean isLegal, final String messageTemplate, final Object... messageAttrs) {
-        if (isLegal == false) {
+        if (!isLegal) {
             throw new DataValidationException(String.format(messageTemplate, messageAttrs));
         }
     }
@@ -56,9 +55,6 @@ public class DataValidationException extends RuntimeException {
 
         Object expectedValue = nodeId.getKeyValues().get(keyQName);
         Object actualValue = childNode.getValue();
-        if (childNode == null) {
-            throw new IllegalListKeyException(keyQName, nodeId, actualValue, expectedValue);
-        }
     }
 
     public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
