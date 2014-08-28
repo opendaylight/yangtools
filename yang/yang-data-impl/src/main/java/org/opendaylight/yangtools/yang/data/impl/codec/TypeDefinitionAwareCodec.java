@@ -25,15 +25,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.xml.bind.DatatypeConverter;
-
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
@@ -97,11 +94,11 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                     return 8;
                 } else {
                     String formatedMessage = String.format("Incorrect lexical representation of integer value: %s."
-                            + "\nAn integer value can be defined as: "
-                            + "\n  - a decimal number,"
-                            + "\n  - a hexadecimal number (prefix 0x),"
-                            + "\n  - an octal number (prefix 0)."
-                            + "\nSigned values are allowed. Spaces between digits are NOT allowed.", integer);
+                            + "%nAn integer value can be defined as: "
+                            + "%n  - a decimal number,"
+                            + "%n  - a hexadecimal number (prefix 0x),"
+                            + "%n  - an octal number (prefix 0)."
+                            + "%nSigned values are allowed. Spaces between digits are NOT allowed.", integer);
                     throw new NumberFormatException(formatedMessage);
                 }
             }
@@ -349,7 +346,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String serialize(final String data) {
-            return data == null ? "" : data.toString();
+            return data == null ? "" : data;
         }
     };
 
