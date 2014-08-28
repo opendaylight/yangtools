@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 
 /**
@@ -311,7 +312,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     /**
      * Path argument / component of InstanceIdentifier
      *
-     * Path argument uniquelly identifies node in data tree on particular
+     * Path argument uniquely identifies node in data tree on particular
      * level.
      * <p>
      * This interface itself is used as common parent for actual
@@ -339,6 +340,17 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
          * @return Node type
          */
         QName getNodeType();
+
+        /**
+         * Return the string representation of this object for use in context
+         * provided by a previous object. This method can be implemented in
+         * terms of {@link #toString()}, but implementations are encourage to
+         * reuse any context already emitted by the previous object.
+         *
+         * @param previous Previous path argument
+         * @return String representation
+         */
+        String toRelativeString(PathArgument previous);
     }
 
     private static abstract class AbstractPathArgument implements PathArgument {
@@ -378,6 +390,18 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
 
         @Override
         public String toString() {
+            return getNodeType().toString();
+        }
+
+        @Override
+        public String toRelativeString(final PathArgument previous) {
+            if (previous instanceof AbstractPathArgument) {
+                final QNameModule mod = ((AbstractPathArgument)previous).getNodeType().getModule();
+                if (getNodeType().getModule().equals(mod)) {
+                    return getNodeType().getLocalName();
+                }
+            }
+
             return getNodeType().toString();
         }
     }
@@ -498,6 +522,11 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         public String toString() {
             return super.toString() + '[' + keyValues + ']';
         }
+
+        @Override
+        public String toRelativeString(final PathArgument previous) {
+            return super.toRelativeString(previous) + '[' + keyValues + ']';
+        }
     }
 
     /**
@@ -538,6 +567,11 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         @Override
         public String toString() {
             return super.toString() + '[' + value + ']';
+        }
+
+        @Override
+        public String toRelativeString(final PathArgument previous) {
+            return super.toRelativeString(previous) + '[' + value + ']';
         }
     }
 
@@ -590,7 +624,6 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         }
 
         /**
-         *
          * Returns set of all possible child nodes
          *
          * @return set of all possible child nodes.
@@ -604,6 +637,11 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             final StringBuffer sb = new StringBuffer("AugmentationIdentifier{");
             sb.append("childNames=").append(childNames).append('}');
             return sb.toString();
+        }
+
+        @Override
+        public String toRelativeString(final PathArgument previous) {
+            return toString();
         }
 
         @Override
@@ -736,15 +774,14 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             synchronized (this) {
                 ret = toStringCache;
                 if (ret == null) {
-                    final StringBuilder builder = new StringBuilder('/');
-                    boolean first = true;
+                    final StringBuilder builder = new StringBuilder("/");
+                    PathArgument prev = null;
                     for (PathArgument argument : getPathArguments()) {
-                        if (first) {
-                            first = false;
-                        } else {
+                        if (prev != null) {
                             builder.append('/');
                         }
-                        builder.append(argument.toString());
+                        builder.append(argument.toRelativeString(prev));
+                        prev = argument;
                     }
 
                     ret = builder.toString();
