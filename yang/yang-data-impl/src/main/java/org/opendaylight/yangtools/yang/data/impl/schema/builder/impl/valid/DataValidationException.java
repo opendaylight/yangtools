@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -56,9 +55,6 @@ public class DataValidationException extends RuntimeException {
 
         Object expectedValue = nodeId.getKeyValues().get(keyQName);
         Object actualValue = childNode.getValue();
-        if (childNode == null) {
-            throw new IllegalListKeyException(keyQName, nodeId, actualValue, expectedValue);
-        }
     }
 
     public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
