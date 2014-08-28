@@ -16,6 +16,24 @@
       "revId": "106f0b7556f08c2018dbb8b1abac36acab6b2e9e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_146dcfcb",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/TrackingLinkedBlockingQueue.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1840
+      },
+      "writtenOn": "2014-08-28T15:29:18Z",
+      "side": 1,
+      "message": "Robert - how many instance of this queue do you see being used... I see maybe hundreds.... max...\n\nseems like more explicit AtomicLong is better than the more abstract FieldUpdater in this situation. If we see millions of these things being created then we can reconsider.... my 2 cents",
+      "parentUuid": "fa82b9bf_62f6fd5e",
+      "revId": "106f0b7556f08c2018dbb8b1abac36acab6b2e9e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
