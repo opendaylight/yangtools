@@ -15,7 +15,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +29,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -268,7 +266,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         while (iterator.hasNext()) {
             QName arg = iterator.next();
             DataSchemaNode currentNode = previous.getDataChildByName(arg);
-            if (currentNode == null && previous instanceof DataNodeContainer) {
+            if (currentNode == null) {
                 currentNode = searchInChoices(previous, arg);
             }
             if (currentNode instanceof DataNodeContainer) {
@@ -852,7 +850,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             if (!parentQName.equals(choiceName)) {
                 // This item is instantiation of choice via uses in other YANG
                 // module
-                if (choiceName.getNamespace().equals(schema.getQName())) {
+                if (choiceName.getNamespace().equals(schema.getQName().getNamespace())) {
                     // Original definition of grouping is in same namespace
                     // as original definition of case
                     // so for sure case is introduced via instantiation of
