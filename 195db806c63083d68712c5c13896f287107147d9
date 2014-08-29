@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ca157e40",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/TrackingLinkedBlockingQueue.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-29T14:07:54Z",
+      "side": 1,
+      "message": "Oops - spaces... good thing checkstyle doesn\u0027t run in yang tools.",
+      "revId": "195db806c63083d68712c5c13896f287107147d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_2a0bca24",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/TrackingLinkedBlockingQueue.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-29T14:07:54Z",
+      "side": 1,
+      "message": "I think we can just read the volatile directly here - even though updater is efficient, probably quicker to read directly?",
+      "revId": "195db806c63083d68712c5c13896f287107147d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_0a084626",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/TrackingLinkedBlockingQueue.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-29T14:07:54Z",
+      "side": 1,
+      "message": "Same as above re: reading volatile.  We should only need the updater for CAS.",
+      "revId": "195db806c63083d68712c5c13896f287107147d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
