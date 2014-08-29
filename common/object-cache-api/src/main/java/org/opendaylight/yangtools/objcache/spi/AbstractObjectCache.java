@@ -7,19 +7,17 @@
  */
 package org.opendaylight.yangtools.objcache.spi;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-
-import org.opendaylight.yangtools.concepts.ProductAwareBuilder;
-import org.opendaylight.yangtools.objcache.ObjectCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.base.FinalizableSoftReference;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import org.opendaylight.yangtools.concepts.ProductAwareBuilder;
+import org.opendaylight.yangtools.objcache.ObjectCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract object cache implementation. This implementation takes care
@@ -53,7 +51,7 @@ public abstract class AbstractObjectCache implements ObjectCache {
              * to be on the lookout for WeakKeys, as we cannot pass them
              * directly to productEquals().
              */
-            if (obj != null && obj instanceof SoftKey) {
+            if (obj instanceof SoftKey) {
                 obj = ((SoftKey<?>)obj).get();
             }
 
