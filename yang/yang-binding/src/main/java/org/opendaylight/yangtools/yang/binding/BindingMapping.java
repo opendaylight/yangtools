@@ -12,10 +12,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+
 import java.text.SimpleDateFormat;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
@@ -66,11 +68,11 @@ public final class BindingMapping {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
 
-    public static final String getRootPackageName(final QName module) {
+    public static String getRootPackageName(final QName module) {
         return getRootPackageName(module.getModule());
     }
 
-    public static final String getRootPackageName(final QNameModule module) {
+    public static String getRootPackageName(final QNameModule module) {
         checkArgument(module != null, "Module must not be null");
         checkArgument(module.getRevision() != null, "Revision must not be null");
         checkArgument(module.getNamespace() != null, "Namespace must not be null");
@@ -132,22 +134,22 @@ public final class BindingMapping {
         return builder.toString();
     }
 
-    public static final String getMethodName(final QName name) {
+    public static String getMethodName(final QName name) {
         checkArgument(name != null, "Name should not be null.");
         return getMethodName(name.getLocalName());
     }
 
-    public static final String getClassName(final String localName) {
+    public static String getClassName(final String localName) {
         checkArgument(localName != null, "Name should not be null.");
         return toFirstUpper(toCamelCase(localName));
     }
 
-    public static final String getMethodName(final String yangIdentifier) {
+    public static String getMethodName(final String yangIdentifier) {
         checkArgument(yangIdentifier != null,"Identifier should not be null");
         return toFirstLower(toCamelCase(yangIdentifier));
     }
 
-    public static final String getClassName(final QName name) {
+    public static String getClassName(final QName name) {
         checkArgument(name != null, "Name should not be null.");
         return toFirstUpper(toCamelCase(name.getLocalName()));
     }
@@ -160,7 +162,7 @@ public final class BindingMapping {
         return potential;
     }
 
-    private static final String toCamelCase(final String rawString) {
+    private static String toCamelCase(final String rawString) {
         checkArgument(rawString != null, "String should not be null");
         Iterable<String> components = CAMEL_SPLITTER.split(rawString);
         StringBuilder builder = new StringBuilder();
@@ -170,7 +172,7 @@ public final class BindingMapping {
         return checkNumericPrefix(builder.toString());
     }
 
-    private static final String checkNumericPrefix(final String rawString) {
+    private static String checkNumericPrefix(final String rawString) {
         if (rawString == null || rawString.isEmpty()) {
             return rawString;
         }

@@ -30,7 +30,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            Name of Enclosing Type
      * @return <code>new</code> Instance of Generated Type Builder.
      */
-    GeneratedTOBuilder addEnclosingTransferObject(final String name);
+    GeneratedTOBuilder addEnclosingTransferObject(String name);
 
     /**
      * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into
@@ -49,7 +49,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @param genTOBuilder
      *            Name of Enclosing Type
      */
-    T addEnclosingTransferObject(final GeneratedTOBuilder genTOBuilder);
+    T addEnclosingTransferObject(GeneratedTOBuilder genTOBuilder);
 
     /**
      * Adds String definition of comment into Method Signature definition. <br>
@@ -59,7 +59,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @param comment
      *            Comment String.
      */
-    T addComment(final String comment);
+    T addComment(String comment);
 
     /**
      * The method creates new AnnotationTypeBuilder containing specified package
@@ -74,7 +74,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            Name of Annotation Type
      * @return <code>new</code> instance of Annotation Type Builder.
      */
-    AnnotationTypeBuilder addAnnotation(final String packageName, final String name);
+    AnnotationTypeBuilder addAnnotation(String packageName, String name);
 
     boolean isAbstract();
 
@@ -96,7 +96,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            Type to implement
      * @return <code>true</code> if the addition of type is successful.
      */
-    T addImplementsType(final Type genType);
+    T addImplementsType(Type genType);
 
     /**
      * Adds Constant definition and returns <code>new</code> Constant instance. <br>
@@ -113,7 +113,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            Assigned Value
      * @return <code>new</code> Constant instance.
      */
-    Constant addConstant(final Type type, final String name, final Object value);
+    Constant addConstant(Type type, String name, Object value);
 
     /**
      * Adds new Enumeration definition for Generated Type Builder and returns
@@ -128,7 +128,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            Enumeration Name
      * @return <code>new</code> instance of Enumeration Builder.
      */
-    EnumBuilder addEnumeration(final String name);
+    EnumBuilder addEnumeration(String name);
 
     List<MethodSignatureBuilder> getMethodDefinitions();
 
@@ -146,7 +146,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            Name of Method
      * @return <code>new</code> instance of Method Signature Builder.
      */
-    MethodSignatureBuilder addMethod(final String name);
+    MethodSignatureBuilder addMethod(String name);
 
     /**
      * Checks if GeneratedTypeBuilder contains method with name
@@ -155,7 +155,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @param methodName
      *            is method name
      */
-    boolean containsMethod(final String methodName);
+    boolean containsMethod(String methodName);
 
     List<GeneratedPropertyBuilder> getProperties();
 
@@ -169,7 +169,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            Name of Property
      * @return <code>new</code> instance of Generated Property Builder.
      */
-    GeneratedPropertyBuilder addProperty(final String name);
+    GeneratedPropertyBuilder addProperty(String name);
 
     /**
      * Check whether GeneratedTOBuilder contains property with name
@@ -179,7 +179,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            of property which existance is checked
      * @return true if property <code>name</code> exists in list of properties.
      */
-    boolean containsProperty(final String name);
+    boolean containsProperty(String name);
 
     /**
      * Set a string that contains a human-readable textual description of type
