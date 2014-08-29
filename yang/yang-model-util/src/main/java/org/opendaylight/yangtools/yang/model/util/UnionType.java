@@ -90,7 +90,7 @@ public final class UnionType implements UnionTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((types == null) ? 0 : types.hashCode());
+        result = prime * result + types.hashCode();
         return result;
     }
 
@@ -119,9 +119,9 @@ public final class UnionType implements UnionTypeDefinition {
         builder.append(BaseTypes.UNION_QNAME);
         builder.append(" (types=[");
         for (TypeDefinition<?> td : types) {
-            builder.append(", " + td.getQName().getLocalName());
+            builder.append(", " ).append(td.getQName().getLocalName());
         }
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 
