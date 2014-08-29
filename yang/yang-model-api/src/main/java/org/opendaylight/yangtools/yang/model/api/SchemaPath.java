@@ -92,14 +92,21 @@ public abstract class SchemaPath implements Immutable {
      * Cached legacy path, filled-in when {@link #getPath()} or {@link #getPathTowardsRoot()}
      * is invoked.
      */
-    private ImmutableList<QName> legacyPath;
+    private volatile ImmutableList<QName> legacyPath;
 
     private ImmutableList<QName> getLegacyPath() {
-        if (legacyPath == null) {
-            legacyPath = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
+        ImmutableList<QName> ret = legacyPath;
+        if (ret == null) {
+            synchronized (this) {
+                ret = legacyPath;
+                if (ret == null) {
+                    ret = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
+                    legacyPath = ret;
+                }
+            }
         }
 
-        return legacyPath;
+        return ret;
     }
 
     /**
