@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_2a118a03",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/TrackingLinkedBlockingQueue.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-08-29T16:29:48Z",
+      "side": 1,
+      "message": "It\u0027s perfectly safe to read the volatile directly. In fact google\u0027s AtomicDouble does that. It only uses the updater for CAS and other atomic operations. From my research, that\u0027s how updaters are typically used, i.e. use direct read/write for optimal performance and only use updater for atomic operations. One quote \"So if every ounce of performance counts you probably should do volatile reads and writes to the field handled by the updater directly and only use it for CAS.\". It doesn\u0027t really matter here but in updateLargestQueueSize we should optimize for performance as that will get called a lot.",
+      "parentUuid": "fa82b9bf_2acc2aba",
+      "revId": "195db806c63083d68712c5c13896f287107147d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_0a084626",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/TrackingLinkedBlockingQueue.java",
         "patchSetId": 6
