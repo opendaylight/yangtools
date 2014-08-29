@@ -46,6 +46,9 @@ public final class ModuleDependencySort {
     private static final Function<Node, Module> TOPOLOGY_FUNCTION = new Function<TopologicalSort.Node, Module>() {
         @Override
         public Module apply(final TopologicalSort.Node input) {
+            if (input == null) {
+                return null;
+            }
             ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
             return moduleOrModuleBuilder.getModule();
         }
@@ -65,6 +68,9 @@ public final class ModuleDependencySort {
         @Override
         public ModuleBuilder apply(final TopologicalSort.Node input) {
             // Cast to ModuleBuilder from Node and return
+            if (input == null) {
+                return null;
+            }
             ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
             return moduleOrModuleBuilder.getModuleBuilder();
         }
@@ -95,6 +101,9 @@ public final class ModuleDependencySort {
 
             @Override
             public ModuleBuilder apply(final TopologicalSort.Node input) {
+                if (input == null) {
+                    return null;
+                }
                 ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
                 if (moduleOrModuleBuilder.isModuleBuilder()) {
                     return moduleOrModuleBuilder.getModuleBuilder();
