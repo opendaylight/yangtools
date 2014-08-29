@@ -357,7 +357,7 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
     }
 
-    private class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
+    private static class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
 
         private final ImmutableSortedMap<QName, ValueContext> keyValueContexts;
         private final ListSchemaNode schema;
