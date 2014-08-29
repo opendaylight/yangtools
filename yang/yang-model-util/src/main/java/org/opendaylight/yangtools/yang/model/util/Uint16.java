@@ -19,7 +19,7 @@ public final class Uint16 extends AbstractUnsignedInteger implements Immutable {
     public static final int MAX_VALUE = 65535;
     private static final String DESCRIPTION = "uint16 represents integer values between 0 and 65535, inclusively.";
 
-    private static Uint16 INSTANCE = new Uint16();
+    private static final Uint16 INSTANCE = new Uint16();
 
     private Uint16() {
         super(BaseTypes.UINT16_QNAME, DESCRIPTION, MAX_VALUE, "");
