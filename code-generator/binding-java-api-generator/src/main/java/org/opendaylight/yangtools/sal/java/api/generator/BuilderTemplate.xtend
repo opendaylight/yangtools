@@ -213,7 +213,7 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateFields(false)»
 
-            «generateAugmentField(true)»
+            «generateAugmentField(false)»
 
             «generateConstructorsFromIfcs(type)»
 
@@ -235,7 +235,7 @@ class BuilderTemplate extends BaseTemplate {
 
                 «generateFields(true)»
 
-                «generateAugmentField(false)»
+                «generateAugmentField(true)»
 
                 «generateCopyConstructor(true)»
 
@@ -421,9 +421,9 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def private generateAugmentField(boolean init) '''
+    def private generateAugmentField(boolean isPrivate) '''
         «IF augmentField != null»
-            private «Map.importedName»<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = new «HashMap.importedName»<>();
+            «IF isPrivate»private «ENDIF»«Map.importedName»<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = new «HashMap.importedName»<>();
         «ENDIF»
     '''
 
