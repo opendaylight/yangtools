@@ -7,30 +7,32 @@
  */
 package org.opendaylight.yangtools.objcache;
 
+import com.google.common.base.Preconditions;
+
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.GuardedBy;
 
 import org.opendaylight.yangtools.objcache.impl.StaticObjectCacheBinder;
 import org.opendaylight.yangtools.objcache.spi.IObjectCacheFactory;
 import org.opendaylight.yangtools.objcache.spi.NoopObjectCacheBinder;
 
-import com.google.common.base.Preconditions;
-
 /**
  * Point of entry for acquiring an {@link ObjectCache} instance.
  */
 public final class ObjectCacheFactory {
-    private static IObjectCacheFactory FACTORY;
+    private static volatile IObjectCacheFactory factory;
 
+    @GuardedBy("this")
     private static synchronized IObjectCacheFactory initialize() {
         // Double-check under lock
-        if (FACTORY != null) {
-            return FACTORY;
+        IObjectCacheFactory f = factory;
+        if (f != null) {
+            return f;
         }
 
-        IObjectCacheFactory f;
         try {
             f = StaticObjectCacheBinder.getInstance().getProductCacheFactory();
-            FACTORY = f;
+            factory = f;
         } catch (NoClassDefFoundError e) {
             f = NoopObjectCacheBinder.INSTANCE.getProductCacheFactory();
         }
@@ -39,7 +41,7 @@ public final class ObjectCacheFactory {
     }
 
     public static synchronized void reset() {
-        FACTORY = null;
+        factory = null;
     }
 
     /**
@@ -50,7 +52,7 @@ public final class ObjectCacheFactory {
      * @return Object cache instance.
      */
     public static ObjectCache getObjectCache(@Nonnull final Class<?> objClass) {
-        IObjectCacheFactory f = FACTORY;
+        IObjectCacheFactory f = factory;
         if (f == null) {
             f = initialize();
         }
