@@ -288,7 +288,7 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
             } else if (!mustConstraints.equals(other.mustConstraints)) {
                 return false;
             }
-            if (mandatory != other.mandatory) {
+            if (mandatory.equals(other.mandatory)) {
                 return false;
             }
             if (minElements == null) {
