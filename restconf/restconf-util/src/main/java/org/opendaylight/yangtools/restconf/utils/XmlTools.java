@@ -152,8 +152,8 @@ public final class XmlTools {
             restModule.setName(eElement.getElementsByTagName("name").item(0).getTextContent());
             restModule.setNamespace(eElement.getElementsByTagName("namespace").item(0).getTextContent());
             restModule.setRevision(eElement.getElementsByTagName("revision").item(0).getTextContent());
-        } catch (NullPointerException npe){
-            throw new IllegalStateException("Incomplete module data in xml.");
+        } catch (NullPointerException e) {
+            throw new IllegalStateException("Incomplete module data in xml.", e);
         }
         return restModule;
     }

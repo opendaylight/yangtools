@@ -160,10 +160,8 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
         }
         try {
             this.listenerCallbackMethod.invoke(message);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e.getMessage());
-        } catch (InvocationTargetException e) {
-            throw new IllegalStateException(e.getMessage());
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException("Failed to invoke callback", e);
         }
     }
 
