@@ -1918,11 +1918,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
             genTOBuilders.addAll(types);
 
             GeneratedTOBuilder resultTOBuilder = null;
-            if (!types.isEmpty()) {
-                resultTOBuilder = types.remove(0);
-                for (GeneratedTOBuilder genTOBuilder : types) {
-                    resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
-                }
+            if (types.isEmpty()) {
+                throw new IllegalStateException("No GeneratedTOBuilder objects generated from union " + typeDef);
+            }
+            resultTOBuilder = types.remove(0);
+            for (GeneratedTOBuilder genTOBuilder : types) {
+                resultTOBuilder.addEnclosingTransferObject(genTOBuilder);
             }
 
             final GeneratedPropertyBuilder genPropBuilder = resultTOBuilder.addProperty("value");
