@@ -61,10 +61,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>
-                          org.opendaylight.yangtools.util,
-                          org.opendaylight.yangtools.util.concurrent
-                        </Export-Package>
                         <Embed-Dependency>java-concurrent-hash-trie-map;inline=true</Embed-Dependency>
                     </instructions>
                 </configuration>
