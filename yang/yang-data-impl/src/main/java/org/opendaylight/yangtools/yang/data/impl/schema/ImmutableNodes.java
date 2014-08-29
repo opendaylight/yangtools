@@ -27,11 +27,11 @@ public final class ImmutableNodes {
         throw new UnsupportedOperationException("Utilities class should not be instantiated");
     }
 
-    public static final CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder() {
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder() {
         return ImmutableMapNodeBuilder.create();
     }
 
-    public static final CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final QName name) {
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final QName name) {
         return ImmutableMapNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(name));
     }
 
@@ -42,7 +42,7 @@ public final class ImmutableNodes {
      * @param value Value of leaf node
      * @return Leaf node with supplied identifier and value
      */
-    public static final <T> LeafNode<T> leafNode(final NodeIdentifier name,final T value) {
+    public static <T> LeafNode<T> leafNode(final NodeIdentifier name,final T value) {
         return ImmutableLeafNodeBuilder.<T>create()
                 .withNodeIdentifier(name)
                 .withValue(value)
@@ -50,14 +50,13 @@ public final class ImmutableNodes {
     }
 
     /**
-     *
      * Construct immutable leaf node
      *
      * @param name QName which will be used as node identifier
      * @param value Value of leaf node.
      * @return Leaf node with supplied identifier and value
      */
-    public static final <T> LeafNode<T> leafNode(final QName name,final T value) {
+    public static <T> LeafNode<T> leafNode(final QName name,final T value) {
         return leafNode(new NodeIdentifier(name), value);
     }
 
