@@ -344,12 +344,12 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
         @Override
         public String deserialize(final String stringRepresentation) {
-            return stringRepresentation == null ? "" :stringRepresentation;
+            return stringRepresentation == null ? "" : stringRepresentation;
         }
 
         @Override
         public String serialize(final String data) {
-            return data == null ? "" : data.toString();
+            return data == null ? "" : data;
         }
     };
 
