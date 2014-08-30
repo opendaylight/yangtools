@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.codec.gson.helpers.IdentityValuesDTO;
@@ -207,12 +206,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             inputValue = value;
         }
 
-        // FIXME: extract this as a cacheable context?
-        final Codec<Object, Object> codec = codecs.codecFor(typeDefinition);
-        if (codec == null) {
-            return null;
-        }
-        return codec.deserialize(inputValue);
+        return codecs.codecFor(typeDefinition).deserialize(inputValue);
     }
 
     private static TypeDefinition<? extends Object> typeDefinition(final DataSchemaNode node) {

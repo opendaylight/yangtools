@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.data.codec.gson.helpers;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -18,6 +21,13 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 @Beta
 public final class RestCodecFactory {
+    private final LoadingCache<TypeDefinition<?>, Codec<Object, Object>> codecs =
+            CacheBuilder.newBuilder().softValues().build(new CacheLoader<TypeDefinition<?>, Codec<Object, Object>>() {
+        @Override
+        public Codec<Object, Object> load(final TypeDefinition<?> key) throws Exception {
+            return new ObjectCodec(utils, key);
+        }
+    });
     private final SchemaContextUtils utils;
 
     private RestCodecFactory(final SchemaContextUtils utils) {
@@ -29,7 +39,6 @@ public final class RestCodecFactory {
     }
 
     public final Codec<Object, Object> codecFor(final TypeDefinition<?> typeDefinition) {
-        // FIXME: implement loadingcache
-        return new ObjectCodec(utils, typeDefinition);
+        return codecs.getUnchecked(typeDefinition);
     }
 }
