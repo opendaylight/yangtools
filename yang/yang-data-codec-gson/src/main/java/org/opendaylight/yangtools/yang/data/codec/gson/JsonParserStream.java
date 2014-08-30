@@ -288,7 +288,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private NamespaceAndName resolveNamespace(final String childName) {
-        int lastIndexOfColon = childName.lastIndexOf(":");
+        int lastIndexOfColon = childName.lastIndexOf(':');
         String moduleNamePart = null;
         String nodeNamePart = null;
         URI namespace = null;
