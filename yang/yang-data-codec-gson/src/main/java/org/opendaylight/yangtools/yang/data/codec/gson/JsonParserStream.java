@@ -303,14 +303,14 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     /**
-     * Returns stack of schema nodes via which it was necessary to prass to get schema node with specified
+     * Returns stack of schema nodes via which it was necessary to pass to get schema node with specified
      * {@code childName} and {@code namespace}
      *
      * @param dataSchemaNode
      * @param childName
      * @param namespace
-     * @return stack of schema nodes via which it was passed through. If found schema node is dirrect child then stack
-     *         contains only one node. If it is found under choice and case then stack should conains 2*n+1 element
+     * @return stack of schema nodes via which it was passed through. If found schema node is direct child then stack
+     *         contains only one node. If it is found under choice and case then stack should contains 2*n+1 element
      *         (where n is number of choices through it was passed)
      */
     private Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,
