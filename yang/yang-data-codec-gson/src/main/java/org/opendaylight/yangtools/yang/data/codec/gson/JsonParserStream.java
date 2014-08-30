@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterators;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -59,8 +56,6 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
  */
 @Beta
 public final class JsonParserStream implements Closeable, Flushable {
-    private static final Splitter COLON_SPLITTER = Splitter.on(':');
-
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final SchemaContextUtils utils;
@@ -250,25 +245,24 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private static URI getNamespaceFor(final String jsonElementName) {
-        final Iterator<String> it = COLON_SPLITTER.split(jsonElementName).iterator();
-
         // The string needs to me in form "moduleName:localName"
-        if (it.hasNext()) {
-            final String maybeURI = it.next();
-            if (Iterators.size(it) == 1) {
-                return URI.create(maybeURI);
-            }
+        final int idx = jsonElementName.indexOf(':');
+        if (idx == -1 || jsonElementName.indexOf(':', idx + 1) != -1) {
+            return null;
         }
 
-        return null;
+        // FIXME: is this correct? This should be looking up module name instead
+        return URI.create(jsonElementName.substring(0, idx));
     }
 
     private static String getLocalNameFor(final String jsonElementName) {
-        final Iterator<String> it = COLON_SPLITTER.split(jsonElementName).iterator();
-
         // The string needs to me in form "moduleName:localName"
-        final String ret = Iterators.get(it, 1, null);
-        return ret != null && !it.hasNext() ? ret : jsonElementName;
+        final int idx = jsonElementName.indexOf(':');
+        if (idx == -1 || jsonElementName.indexOf(':', idx + 1) != -1) {
+            return jsonElementName;
+        }
+
+        return jsonElementName.substring(idx + 1);
     }
 
     private void removeNamespace() {
