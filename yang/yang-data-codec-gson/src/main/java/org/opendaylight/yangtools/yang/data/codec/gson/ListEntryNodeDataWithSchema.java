@@ -49,16 +49,16 @@ class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    protected void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
         int keyCount = ((ListSchemaNode) getSchema()).getKeyDefinition().size();
         if (keyCount == 0) {
-            nnStreamWriter.startUnkeyedListItem(provideNodeIdentifier(), UNKNOWN_SIZE);
-            super.writeToStream(nnStreamWriter);
-            nnStreamWriter.endNode();
+            writer.startUnkeyedListItem(provideNodeIdentifier(), UNKNOWN_SIZE);
+            super.write(writer);
+            writer.endNode();
         } else if (keyCount == qNameToKeys.size()) {
-            nnStreamWriter.startMapEntryNode(provideNodeIdentifierWithPredicates(), UNKNOWN_SIZE);
-            super.writeToStream(nnStreamWriter);
-            nnStreamWriter.endNode();
+            writer.startMapEntryNode(provideNodeIdentifierWithPredicates(), UNKNOWN_SIZE);
+            super.write(writer);
+            writer.endNode();
         } else {
             throw new IllegalStateException("Some of keys of " + getSchema().getQName() + " are missing in input.");
         }

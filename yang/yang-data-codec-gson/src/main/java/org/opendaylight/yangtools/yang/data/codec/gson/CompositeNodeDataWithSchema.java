@@ -200,22 +200,22 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     @Override
-    protected void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
         for (AbstractNodeDataWithSchema child : childs) {
-            child.writeToStream(nnStreamWriter);
+            child.write(writer);
         }
         for (Entry<AugmentationSchema, List<AbstractNodeDataWithSchema>> augmentationToChild : augmentationsToChild.entrySet()) {
 
             final List<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
 
             if (!childsFromAgumentation.isEmpty()) {
-                nnStreamWriter.startAugmentationNode(toAugmentationIdentifier(augmentationToChild));
+                writer.startAugmentationNode(toAugmentationIdentifier(augmentationToChild));
 
                 for (AbstractNodeDataWithSchema nodeDataWithSchema : childsFromAgumentation) {
-                    nodeDataWithSchema.writeToStream(nnStreamWriter);
+                    nodeDataWithSchema.write(writer);
                 }
 
-                nnStreamWriter.endNode();
+                writer.endNode();
             }
         }
     }

@@ -6,10 +6,6 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
-
-import java.io.IOException;
-
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 
 class CaseNodeDataWithSchema extends CompositeNodeDataWithSchema {
@@ -18,8 +14,4 @@ class CaseNodeDataWithSchema extends CompositeNodeDataWithSchema {
         super(schema);
     }
 
-    @Override
-    protected void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException {
-        super.writeToStream(nnStreamWriter);
-    }
 }
