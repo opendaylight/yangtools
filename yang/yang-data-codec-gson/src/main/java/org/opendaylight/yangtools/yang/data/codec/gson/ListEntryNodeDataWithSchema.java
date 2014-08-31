@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     @Override
     public void addChild(final AbstractNodeDataWithSchema newChild) {
-        DataSchemaNode childSchema = newChild.getSchema();
+        final DataSchemaNode childSchema = newChild.getSchema();
         if (childSchema instanceof LeafSchemaNode && isPartOfKey((LeafSchemaNode) childSchema)) {
             qNameToKeys.put(childSchema.getQName(), (SimpleNodeDataWithSchema)newChild);
         }
@@ -64,14 +65,13 @@ class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
             writer.startUnkeyedListItem(provideNodeIdentifier(), childSizeHint());
             super.write(writer);
             writer.endNode();
-        } else if (keyCount == qNameToKeys.size()) {
-            writer.startMapEntryNode(
-                new NodeIdentifierWithPredicates(getSchema().getQName(), Maps.transformValues(qNameToKeys, VALUE_FUNCTION)),
-                childSizeHint());
-            super.write(writer);
-            writer.endNode();
-        } else {
-            throw new IllegalStateException("Some of keys of " + getSchema().getQName() + " are missing in input.");
         }
+
+        Preconditions.checkState(keyCount == qNameToKeys.size(), "Input is missing some of the keys of %s", getSchema().getQName());
+        writer.startMapEntryNode(
+            new NodeIdentifierWithPredicates(getSchema().getQName(), Maps.transformValues(qNameToKeys, VALUE_FUNCTION)),
+            childSizeHint());
+        super.write(writer);
+        writer.endNode();
     }
 }
