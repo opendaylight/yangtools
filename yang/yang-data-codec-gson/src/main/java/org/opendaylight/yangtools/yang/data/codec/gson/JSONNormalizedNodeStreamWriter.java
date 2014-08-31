@@ -17,10 +17,17 @@ import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.codec.gson.helpers.RestCodecFactory;
+import org.opendaylight.yangtools.yang.data.codec.gson.helpers.SchemaContextUtils;
+import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -68,6 +75,9 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     private final Deque<TypeInfo> stack = new ArrayDeque<>();
     private final SchemaContext schemaContext;
+    private final SchemaContextUtils utils;
+    private final RestCodecFactory codecs;
+    private final SchemaTracker tracker;
     private final Writer writer;
     private final String indent;
 
@@ -80,12 +90,15 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         this.writer = Preconditions.checkNotNull(writer);
 
         Preconditions.checkArgument(indentSize >= 0, "Indent size must be non-negative");
-
         if (indentSize != 0) {
             indent = Strings.repeat(" ", indentSize);
         } else {
             indent = null;
         }
+
+        this.utils = SchemaContextUtils.create(schemaContext);
+        this.codecs = RestCodecFactory.create(utils);
+        this.tracker = SchemaTracker.create(schemaContext);
     }
 
     /**
@@ -113,15 +126,20 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
+        final LeafSchemaNode schema = tracker.leafNode(name);
+        final Codec<Object, Object> codec = codecs.codecFor(schema.getType());
+
         separateElementFromPreviousElement();
         writeJsonIdentifier(name);
         currentNamespace = stack.peek().getNamespace();
-        writeValue(value.toString());
+        writeValue(String.valueOf(codec.serialize(value)));
         separateNextSiblingsWithComma();
     }
 
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        tracker.startLeafSet(name);
+
         separateElementFromPreviousElement();
         stack.push(new TypeInfo(NodeType.LIST, name.getNodeType().getNamespace()));
         writeJsonIdentifier(name);
@@ -131,8 +149,11 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
+        final LeafListSchemaNode schema = tracker.leafSetEntryNode();
+        final Codec<Object, Object> codec = codecs.codecFor(schema.getType());
+
         separateElementFromPreviousElement();
-        writeValue(value.toString());
+        writeValue(String.valueOf(codec.serialize(value)));
         separateNextSiblingsWithComma();
     }
 
@@ -147,6 +168,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        tracker.startList(name);
+
         separateElementFromPreviousElement();
         stack.push(new TypeInfo(NodeType.LIST, name.getNodeType().getNamespace()));
         writeJsonIdentifier(name);
@@ -156,6 +179,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        tracker.startListItem(name);
+
         stack.push(new TypeInfo(NodeType.OBJECT, name.getNodeType().getNamespace()));
         separateElementFromPreviousElement();
         writeStartObject();
@@ -164,6 +189,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        tracker.startList(name);
+
         separateElementFromPreviousElement();
         stack.push(new TypeInfo(NodeType.LIST, name.getNodeType().getNamespace()));
         writeJsonIdentifier(name);
@@ -174,6 +201,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
             throws IOException {
+        tracker.startListItem(identifier);
+
         stack.push(new TypeInfo(NodeType.OBJECT, identifier.getNodeType().getNamespace()));
         separateElementFromPreviousElement();
         writeStartObject();
@@ -182,6 +211,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        tracker.startListItem(name);
+
         stack.push(new TypeInfo(NodeType.LIST, name.getNodeType().getNamespace()));
         separateElementFromPreviousElement();
         writeJsonIdentifier(name);
@@ -191,16 +222,21 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
+        tracker.startChoiceNode(name);
         handleInvisibleNode(name.getNodeType().getNamespace());
     }
 
     @Override
     public void startAugmentationNode(final AugmentationIdentifier identifier) throws IllegalArgumentException {
+        tracker.startAugmentationNode(identifier);
         handleInvisibleNode(currentNamespace);
     }
 
     @Override
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
+        final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
+        // FIXME: should have a codec based on this :)
+
         separateElementFromPreviousElement();
         writeJsonIdentifier(name);
         currentNamespace = stack.peek().getNamespace();
@@ -224,6 +260,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         default:
             break;
         }
+
+        tracker.endNode();
         stack.pop();
         currentNamespace = stack.isEmpty() ? null : stack.peek().getNamespace();
         separateNextSiblingsWithComma();
