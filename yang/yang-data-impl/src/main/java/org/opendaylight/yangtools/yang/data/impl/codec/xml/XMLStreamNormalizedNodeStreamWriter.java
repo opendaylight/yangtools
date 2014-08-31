@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -24,14 +22,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -47,21 +40,12 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     private static final XmlStreamUtils UTILS = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER);
 
-    private final Deque<Object> schemaStack = new ArrayDeque<>();
     private final XMLStreamWriter writer;
-    private final DataNodeContainer root;
+    private final SchemaTracker tracker;
 
     private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
         this.writer = Preconditions.checkNotNull(writer);
-
-        DataNodeContainer current = context;
-        for (QName qname : path.getPathFromRoot()) {
-            final DataSchemaNode child = current.getDataChildByName(qname);
-            Preconditions.checkArgument(child instanceof DataNodeContainer);
-            current = (DataNodeContainer) child;
-        }
-
-        this.root = current;
+        this.tracker = SchemaTracker.create(context, path);
     }
 
     /**
@@ -89,27 +73,6 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         return new XMLStreamNormalizedNodeStreamWriter(writer, context, path);
     }
 
-    private final Object getParent() {
-        if (schemaStack.isEmpty()) {
-            return root;
-        }
-        return schemaStack.peek();
-    }
-
-    private final SchemaNode getSchema(final PathArgument name) {
-        final Object parent = getParent();
-        Preconditions.checkState(parent instanceof DataNodeContainer);
-
-        final QName qname = name.getNodeType();
-        final SchemaNode schema = ((DataNodeContainer)parent).getDataChildByName(qname);
-        Preconditions.checkArgument(schema != null, "Could not find schema for node %s", qname);
-        return schema;
-    }
-
-    private void push(final Object schema) {
-        schemaStack.push(schema);
-    }
-
     private void writeElement(final QName qname, final TypeDefinition<?> type, final Object value) throws IOException {
         final String ns = qname.getNamespace().toString();
 
@@ -135,52 +98,36 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     }
 
     private void startList(final NodeIdentifier name) {
-        final SchemaNode schema = getSchema(name);
-        Preconditions.checkArgument(schema instanceof ListSchemaNode, "Node %s is not a list", schema.getPath());
-        push(schema);
+        tracker.startList(name);
     }
 
     private void startListItem(final PathArgument name) throws IOException {
-        final Object schema = getParent();
-        Preconditions.checkArgument(schema instanceof ListSchemaNode, "List item is not appropriate");
+        tracker.startListItem(name);
         startElement(name.getNodeType());
-        push(schema);
     }
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
-        final SchemaNode schema = getSchema(name);
+        final LeafSchemaNode schema = tracker.leafNode(name);
 
-        Preconditions.checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema.getPath());
-        final TypeDefinition<?> type = ((LeafSchemaNode) schema).getType();
-        writeElement(schema.getQName(), type, value);
+        writeElement(schema.getQName(), schema.getType(), value);
     }
 
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
-        final SchemaNode schema = getSchema(name);
-
-        Preconditions.checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema.getPath());
-        push(schema);
+        tracker.startLeafSet(name);
     }
 
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
-        final Object parent = getParent();
-
-        Preconditions.checkArgument(parent instanceof LeafListSchemaNode, "Not currently in a leaf-list");
-        final LeafListSchemaNode schema = (LeafListSchemaNode) parent;
+        final LeafListSchemaNode schema = tracker.leafSetEntryNode();
         writeElement(schema.getQName(), schema.getType(), value);
     }
 
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        final SchemaNode schema = getSchema(name);
-        final QName qname = schema.getQName();
-
-        Preconditions.checkArgument(schema instanceof ContainerSchemaNode, "Node %s is not a container", schema.getPath());
-        startElement(qname);
-        push(schema);
+        final SchemaNode schema = tracker.startContainerNode(name);
+        startElement(schema.getQName());
     }
 
     @Override
@@ -210,27 +157,17 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
-        final SchemaNode schema = getSchema(name);
-
-        Preconditions.checkArgument(schema instanceof ChoiceNode, "Node %s is not a choice", schema.getPath());
-        push(schema);
+        tracker.startChoiceNode(name);
     }
 
     @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        final Object parent = getParent();
-
-        Preconditions.checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
-        final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());
-        push(schema);
+    public void startAugmentationNode(final AugmentationIdentifier identifier) {
+        tracker.startAugmentationNode(identifier);
     }
 
     @Override
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        final SchemaNode schema = getSchema(name);
-
-        Preconditions.checkArgument(schema instanceof AnyXmlSchemaNode, "Node %s is not anyxml", schema.getPath());
-
+        final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         final QName qname = schema.getQName();
         final String ns = qname.getNamespace().toString();
 
@@ -249,12 +186,12 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     @Override
     public void endNode() throws IOException {
-        final Object schema = schemaStack.pop();
+        final Object schema = tracker.endNode();
 
         try {
             if (schema instanceof ListSchemaNode) {
                 // For lists, we only emit end element on the inner frame
-                final Object parent = getParent();
+                final Object parent = tracker.getParent();
                 if (parent == schema) {
                     writer.writeEndElement();
                 }
