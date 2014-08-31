@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_c0fa3d74",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/BaseConstraintsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-31T09:13:58Z",
+      "side": 1,
+      "message": "missing copyright",
+      "revId": "02742ede3ca327d8d20905d5641e5184f72d9b47",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_2000c964",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/BaseConstraintsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-31T09:13:58Z",
+      "side": 1,
+      "message": "expand imports, please",
+      "revId": "02742ede3ca327d8d20905d5641e5184f72d9b47",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e0f50183",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/BaseConstraintsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-08-31T09:13:58Z",
+      "side": 1,
+      "message": "do not submit commented-out code",
+      "revId": "02742ede3ca327d8d20905d5641e5184f72d9b47",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
