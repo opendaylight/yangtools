@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_2014494b",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 4
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-08-31T18:41:45Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this line be removed? It will run twice because ti\u0027s identical to the first line outside the if.",
+      "revId": "7700073ebb4d5c7e4a57dca3a465165f0bc2306a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c00ebd3a",
+        "filename": "code-generator/maven-sal-api-gen-plugin/src/main/java/org/opendaylight/yangtools/yang/unified/doc/generator/GeneratorImpl.xtend",
+        "patchSetId": 4
+      },
+      "lineNbr": 403,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-08-31T18:41:45Z",
+      "side": 1,
+      "message": "This change seems unrelated to unions.",
+      "revId": "7700073ebb4d5c7e4a57dca3a465165f0bc2306a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e0098131",
+        "filename": "code-generator/maven-sal-api-gen-plugin/src/main/java/org/opendaylight/yangtools/yang/unified/doc/generator/GeneratorImpl.xtend",
+        "patchSetId": 4
+      },
+      "lineNbr": 813,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2014-08-31T18:41:45Z",
+      "side": 1,
+      "message": "This change seems unrelated to unions.",
+      "revId": "7700073ebb4d5c7e4a57dca3a465165f0bc2306a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
