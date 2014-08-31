@@ -9,16 +9,16 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
@@ -51,7 +51,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     /**
      * nodes which were added to schema via augmentation and are present in data input
      */
-    private final Map<AugmentationSchema, List<AbstractNodeDataWithSchema>> augmentationsToChild = new LinkedHashMap<>();
+    private final Multimap<AugmentationSchema, AbstractNodeDataWithSchema> augmentationsToChild = ArrayListMultimap.create();
 
     /**
      * remaining data nodes (which aren't added via augment). Every of one them should have the same QName.
@@ -89,7 +89,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         }
 
         // looking for existing choice
-        final List<AbstractNodeDataWithSchema> childNodes;
+        final Collection<AbstractNodeDataWithSchema> childNodes;
         if (augSchema != null) {
             childNodes = augmentationsToChild.get(augSchema);
         } else {
@@ -121,7 +121,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
                 augSchema = findCorrespondingAugment(getSchema(), schema);
             }
             if (augSchema != null) {
-                addChildToAugmentation(augSchema, newChild);
+                augmentationsToChild.put(augSchema, newChild);
             } else {
                 addChild(newChild);
             }
@@ -130,16 +130,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return null;
     }
 
-    private void addChildToAugmentation(final AugmentationSchema augSchema, final AbstractNodeDataWithSchema newChild) {
-        List<AbstractNodeDataWithSchema> childsInAugment = augmentationsToChild.get(augSchema);
-        if (childsInAugment == null) {
-            childsInAugment = new ArrayList<>();
-            augmentationsToChild.put(augSchema, childsInAugment);
-        }
-        childsInAugment.add(newChild);
-    }
-
-    private CaseNodeDataWithSchema findChoice(final List<AbstractNodeDataWithSchema> childNodes, final DataSchemaNode choiceCandidate,
+    private CaseNodeDataWithSchema findChoice(final Collection<AbstractNodeDataWithSchema> childNodes, final DataSchemaNode choiceCandidate,
             final DataSchemaNode caseCandidate) {
         if (childNodes != null) {
             for (AbstractNodeDataWithSchema nodeDataWithSchema : childNodes) {
@@ -176,7 +167,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     void addCompositeChild(final CompositeNodeDataWithSchema newChild) {
         AugmentationSchema augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
         if (augSchema != null) {
-            addChildToAugmentation(augSchema, newChild);
+            augmentationsToChild.put(augSchema, newChild);
         } else {
             addChild(newChild);
         }
@@ -220,8 +211,8 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         for (AbstractNodeDataWithSchema child : children) {
             child.write(writer);
         }
-        for (Entry<AugmentationSchema, List<AbstractNodeDataWithSchema>> augmentationToChild : augmentationsToChild.entrySet()) {
-            final List<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
+        for (Entry<AugmentationSchema, Collection<AbstractNodeDataWithSchema>> augmentationToChild : augmentationsToChild.asMap().entrySet()) {
+            final Collection<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
                 writer.startAugmentationNode(toAugmentationIdentifier(augmentationToChild.getKey()));
 
