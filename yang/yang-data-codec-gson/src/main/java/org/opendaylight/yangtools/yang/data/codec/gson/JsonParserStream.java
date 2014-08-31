@@ -14,7 +14,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.MalformedJsonException;
 
 import java.io.Closeable;
@@ -108,31 +107,26 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
     }
 
-    public void read(final JsonReader in, final AbstractNodeDataWithSchema parent) throws IOException {
+    private final void setValue(final AbstractNodeDataWithSchema parent, final String value) {
+        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type", parent);
 
-        final JsonToken peek = in.peek();
-        Optional<String> value = Optional.absent();
-        switch (peek) {
+        final Object translatedValue = translateValueByType(value, parent.getSchema());
+        ((SimpleNodeDataWithSchema) parent).setValue(translatedValue);
+    }
+
+    public void read(final JsonReader in, final AbstractNodeDataWithSchema parent) throws IOException {
+        switch (in.peek()) {
         case STRING:
         case NUMBER:
-            value = Optional.of(in.nextString());
+            setValue(parent, in.nextString());
             break;
         case BOOLEAN:
-            value = Optional.of(Boolean.toString(in.nextBoolean()));
+            setValue(parent, Boolean.toString(in.nextBoolean()));
             break;
         case NULL:
             in.nextNull();
-            value = Optional.of((String) null);
+            setValue(parent, null);
             break;
-        default:
-            break;
-        }
-        if (value.isPresent()) {
-            final Object translatedValue = translateValueByType(value.get(), parent.getSchema());
-            ((SimpleNodeDataWithSchema) parent).setValue(translatedValue);
-        }
-
-        switch (peek) {
         case BEGIN_ARRAY:
             in.beginArray();
             while (in.hasNext()) {
@@ -183,6 +177,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         case NAME:
         case END_OBJECT:
         case END_ARRAY:
+            break;
         }
     }
 
