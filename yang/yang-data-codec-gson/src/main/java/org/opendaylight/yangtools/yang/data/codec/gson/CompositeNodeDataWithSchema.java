@@ -112,22 +112,20 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
             newChild = new LeafNodeDataWithSchema(schema);
         } else if (schema instanceof AnyXmlSchemaNode) {
             newChild = new AnyXmlNodeDataWithSchema(schema);
+        } else {
+            return null;
         }
 
-        if (newChild != null) {
-
-            AugmentationSchema augSchema = null;
-            if (schema.isAugmenting()) {
-                augSchema = findCorrespondingAugment(getSchema(), schema);
-            }
-            if (augSchema != null) {
-                augmentationsToChild.put(augSchema, newChild);
-            } else {
-                addChild(newChild);
-            }
-            return newChild;
+        AugmentationSchema augSchema = null;
+        if (schema.isAugmenting()) {
+            augSchema = findCorrespondingAugment(getSchema(), schema);
         }
-        return null;
+        if (augSchema != null) {
+            augmentationsToChild.put(augSchema, newChild);
+        } else {
+            addChild(newChild);
+        }
+        return newChild;
     }
 
     private CaseNodeDataWithSchema findChoice(final Collection<AbstractNodeDataWithSchema> childNodes, final DataSchemaNode choiceCandidate,

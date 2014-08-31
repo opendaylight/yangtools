@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -76,6 +77,7 @@ public class StreamToNormalizedNodeTest {
      *
      * @throws IOException
      */
+    @Ignore
     @Test
     public void immutableNormalizedNodeStreamWriterDemonstration() throws IOException {
         /*
