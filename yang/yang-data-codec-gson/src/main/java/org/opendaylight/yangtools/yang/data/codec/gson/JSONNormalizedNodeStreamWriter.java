@@ -10,13 +10,11 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
-
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -28,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -97,6 +96,23 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         this.tracker = SchemaTracker.create(schemaContext);
     }
 
+    private JSONNormalizedNodeStreamWriter(final SchemaContext schemaContext, final SchemaPath path,
+            final Writer writer, final int indentSize) {
+        this.schemaContext = Preconditions.checkNotNull(schemaContext);
+        this.writer = Preconditions.checkNotNull(writer);
+
+        Preconditions.checkArgument(indentSize >= 0, "Indent size must be non-negative");
+        if (indentSize != 0) {
+            indent = Strings.repeat(" ", indentSize);
+        } else {
+            indent = null;
+        }
+
+        this.utils = SchemaContextUtils.create(schemaContext);
+        this.codecs = RestCodecFactory.create(utils);
+        this.tracker = SchemaTracker.create(schemaContext,path);
+    }
+
     /**
      * Create a new stream writer, which writes to the specified {@link Writer}.
      *
@@ -106,6 +122,17 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer) {
         return new JSONNormalizedNodeStreamWriter(schemaContext, writer, 0);
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified {@link Writer}.
+     *
+     * @param schemaContext Schema context
+     * @param writer Output writer
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, SchemaPath path,final Writer writer) {
+        return new JSONNormalizedNodeStreamWriter(schemaContext, path, writer, 0);
     }
 
     /**
