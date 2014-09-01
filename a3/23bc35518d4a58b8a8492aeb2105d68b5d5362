@@ -1,0 +1,8 @@
+Code-Review+2: Tony Tkacik <ttkacik@cisco.com>
+Verified+1: jenkins-yangtools <jenkins-lispflowmapping@opendaylight.org>
+Code-Review+1: Robert Varga <rovarga@cisco.com>
+Submitted-by: Tony Tkacik <ttkacik@cisco.com>
+Submitted-at: Mon, 01 Sep 2014 16:21:08 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/9706
+Project: yangtools
+Branch: refs/heads/master
